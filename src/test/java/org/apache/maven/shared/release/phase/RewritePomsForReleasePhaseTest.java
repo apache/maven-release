@@ -16,8 +16,8 @@ package org.apache.maven.shared.release.phase;
  * limitations under the License.
  */
 
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -262,7 +262,6 @@ public class RewritePomsForReleasePhaseTest
 
         assertTrue( compareFiles( reactorProjects ) );
     }
-
 
     protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )
     {

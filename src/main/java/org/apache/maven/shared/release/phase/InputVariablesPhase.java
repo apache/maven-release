@@ -19,9 +19,15 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 
@@ -40,9 +46,34 @@ public class InputVariablesPhase
      */
     private Prompter prompter;
 
+    /**
+    * Tool that gets a configured SCM repository from release configuration.
+    */
+    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+
     void setPrompter( Prompter prompter )
     {
         this.prompter = prompter;
+    }
+
+    protected ScmProvider getScmProvider( ReleaseDescriptor releaseDescriptor, Settings settings )
+        throws ReleaseScmRepositoryException, ReleaseExecutionException
+    {
+        try
+        {
+            ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
+
+            return scmRepositoryConfigurator.getRepositoryProvider( repository );
+        }
+        catch ( ScmRepositoryException e )
+        {
+            throw new ReleaseScmRepositoryException( e.getMessage() + " for URL: " +
+                releaseDescriptor.getScmSourceUrl(), e.getValidationMessages() );
+        }
+        catch ( NoSuchScmProviderException e )
+        {
+            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+        }
     }
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
@@ -66,6 +97,20 @@ public class InputVariablesPhase
             }
 
             String defaultTag = project.getArtifactId() + "-" + releaseVersion;
+
+            ScmProvider provider = null;
+            try
+            {
+                provider = getScmProvider( releaseDescriptor, settings );
+            }
+            catch ( ReleaseScmRepositoryException e )
+            {
+                throw new ReleaseExecutionException( "No scm provider can be found for url: " +
+                    releaseDescriptor.getScmSourceUrl(), e );
+            }
+
+            defaultTag = provider.sanitizeTagName(defaultTag);
+
             if ( releaseDescriptor.isInteractive() )
             {
                 try

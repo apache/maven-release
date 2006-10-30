@@ -64,6 +64,7 @@ public class InputVariablesPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         phase.execute( releaseDescriptor, null, reactorProjects );
 
@@ -71,6 +72,7 @@ public class InputVariablesPhaseTest
 
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         mockPrompter.reset();
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
@@ -126,6 +128,7 @@ public class InputVariablesPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         phase.execute( releaseDescriptor, null, reactorProjects );
 
@@ -137,6 +140,7 @@ public class InputVariablesPhaseTest
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         phase.simulate( releaseDescriptor, null, reactorProjects );
 
@@ -211,6 +215,7 @@ public class InputVariablesPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         try
         {
@@ -225,6 +230,7 @@ public class InputVariablesPhaseTest
 
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         mockPrompter.reset();
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will(
@@ -240,6 +246,38 @@ public class InputVariablesPhaseTest
         {
             assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
         }
+    }
+
+    //MRELEASE-110
+    public void testCvsTag()
+        throws Exception
+    {
+        Mock mockPrompter = new Mock( Prompter.class );
+        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+
+        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+
+        ReleaseDescriptor releaseConfiguration = new ReleaseDescriptor();
+        releaseConfiguration.setInteractive( false );
+        releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseConfiguration.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
+
+        phase.execute( releaseConfiguration, null, reactorProjects );
+
+        assertEquals( "Check tag", "artifactId-1_0", releaseConfiguration.getScmReleaseLabel() );
+
+        mockPrompter.reset();
+        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
+
+        releaseConfiguration = new ReleaseDescriptor();
+        releaseConfiguration.setInteractive( false );
+        releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseConfiguration.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
+
+        phase.simulate( releaseConfiguration, null, reactorProjects );
+
+        assertEquals( "Check tag", "artifactId-1_0", releaseConfiguration.getScmReleaseLabel() );
     }
 
     private static MavenProject createProject( String artifactId, String version )
