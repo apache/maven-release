@@ -111,7 +111,7 @@ public class DefaultScmRepositoryConfiguratorTest
     }
 
     public void testGetConfiguredRepositoryInvalidScmUrl()
-        throws NoSuchScmProviderException
+        throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
@@ -122,7 +122,7 @@ public class DefaultScmRepositoryConfiguratorTest
 
             fail( "Expected failure to get a repository with an invalid SCM URL" );
         }
-        catch ( ScmRepositoryException e )
+        catch ( IllegalArgumentException e )
         {
             // expected
         }
