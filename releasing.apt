@@ -1,0 +1,38 @@
+ -----
+ Releasing
+ -----
+ Jason van Zyl
+ -----
+ 9 December 2006
+ -----
+
+What happens during a release
+
+ * put everything into a staging directory by using the latest feature in the
+   deploy plugin that allows you to set a alt repository
+  
+ * put the site in a staging directory
+
+ * use tom's new tools to copy the mini repository over
+
+ * need something to copy the site over
+ 
+ []
+
+Releasing
+
+ * Show issues resolved for this release                            
+ 
+ * Show the link to the artifacts for release    
+
+ * Show the revision used to create the release
+
+ * Show the link to the site for the release                                 
+ 
+ * Show the output of the docck plugin                     
+
+ * Show expanded forms of deliverables so they can be inspected on line   
+
+ * Show results of the license header verifier     
+
+ []
