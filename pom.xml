@@ -33,6 +33,7 @@
             <tagBase>https://svn.apache.org/repos/asf/maven/release/tags</tagBase>
           </configuration>
         </plugin>
-    </plugins>
+      </plugins>
+    </pluginManagement>
   </build>
 </project>
