@@ -282,7 +282,7 @@
     /**
      * A map of projects to original versions before any transformation.
      */
-    private Map originalVersions;
+    private java.util.Map originalVersions;
 
     /**
      * Retrieve the original version map, before transformation, keyed by project's versionless identifier.
@@ -291,12 +291,12 @@
      *
      * @return the map of project IDs to versions.
      */
-    public synchronized Map getOriginalVersions(List reactorProjects)
+    public synchronized java.util.Map getOriginalVersions( java.util.List reactorProjects )
     {
         if ( originalVersions == null )
         {
-            originalVersions = new HashMap();
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            originalVersions = new java.util.HashMap();
+            for ( java.util.Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
                 org.apache.maven.project.MavenProject project = (org.apache.maven.project.MavenProject) i.next();
                 originalVersions.put( org.apache.maven.artifact.ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
@@ -417,7 +417,7 @@
         return true;
     }
 
-    private boolean compareScmCollections( Map that )
+    private boolean compareScmCollections( java.util.Map that )
     {
         // Must manually compare as Scm doesn't have an equals method
         if (that == null && originalScmInfo == null) {
@@ -433,9 +433,9 @@
             return false;
         }
 
-        for ( Iterator i = originalScmInfo.entrySet().iterator(); i.hasNext(); )
+        for ( java.util.Iterator i = originalScmInfo.entrySet().iterator(); i.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry) i.next();
+            java.util.Map.Entry entry = (java.util.Map.Entry) i.next();
 
             org.apache.maven.model.Scm thatScm = (org.apache.maven.model.Scm) that.get( entry.getKey() );
 
