@@ -10,29 +10,52 @@ What happens during a release
 
  * put everything into a staging directory by using the latest feature in the
    deploy plugin that allows you to set a alt repository
-  
+
  * put the site in a staging directory
 
  * use tom's new tools to copy the mini repository over
 
  * need something to copy the site over
- 
+
  []
+
+Developer Setup for a release
+
+ * $HOME/.m2/settings.xml
+
+  <profiles>
+    <profile>
+      <id>staging</id>
+      <properties>
+        <gpg.passphrase>secretPhrase</gpg.passphrase>
+        <staging.siteURL>
+          scp://hostname/path/to/directory/stage/sites
+        </staging.siteURL>
+        <deploy.altRepository>
+          username::default::scp://hostname/path/to/directory/stage/repo
+        </deploy.altRepository>
+      </properties>
+    </profile>
+  </profiles>
+
+Commands
+
+  * mvn -Pstaging clean deploy
 
 Releasing
 
- * Show issues resolved for this release                            
- 
- * Show the link to the artifacts for release    
+ * Show issues resolved for this release
+
+ * Show the link to the artifacts for release
 
  * Show the revision used to create the release
 
- * Show the link to the site for the release                                 
- 
- * Show the output of the docck plugin                     
+ * Show the link to the site for the release
 
- * Show expanded forms of deliverables so they can be inspected on line   
+ * Show the output of the docck plugin
 
- * Show results of the license header verifier     
+ * Show expanded forms of deliverables so they can be inspected on line
+
+ * Show results of the license header verifier
 
  []
