@@ -6,7 +6,7 @@
     <version>4</version>
     <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
-  <groupId>org.apache.maven</groupId>
+  <groupId>org.apache.maven.release</groupId>
   <artifactId>maven-release</artifactId>
   <version>1-SNAPSHOT</version>
   <packaging>pom</packaging>
