@@ -44,6 +44,8 @@ Commands
 
 Releasing
 
+ * Date of the last release (we need the release descriptor from the release plugin)                                
+
  * Show issues resolved for this release
 
  * Show the link to the artifacts for release
