@@ -1,21 +1,32 @@
 package org.apache.maven.shared.release;
 
 /*
- * Copyright 2005-2006 The Apache Software Foundation.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 
+import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.command.checkout.CheckOutScmResult;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
@@ -25,14 +36,6 @@ import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.apache.maven.scm.ScmException;
-import org.apache.maven.scm.ScmFileSet;
-import org.apache.maven.scm.command.checkout.CheckOutScmResult;
-import org.apache.maven.scm.manager.NoSuchScmProviderException;
-import org.apache.maven.scm.provider.ScmProvider;
-import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
@@ -96,8 +99,9 @@ public class DefaultReleaseManager
         prepare( releaseDescriptor, settings, reactorProjects, resume, dryRun, null );
     }
 
-    public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
-                         boolean dryRun, ReleaseManagerListener listener )
+    public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
+                                            List reactorProjects, boolean resume, boolean dryRun,
+                                            ReleaseManagerListener listener )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -133,7 +137,7 @@ public class DefaultReleaseManager
     }
 
     private void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
-                         boolean dryRun, ReleaseManagerListener listener, ReleaseResult result )
+                          boolean dryRun, ReleaseManagerListener listener, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         updateListener( listener, "prepare", GOAL_START );
@@ -169,7 +173,7 @@ public class DefaultReleaseManager
         if ( index == preparePhases.size() - 1 )
         {
             logInfo( result, "Release preparation already completed. You can now continue with release:perform, " +
-                             "or start again using the -Dresume=false flag" );
+                "or start again using the -Dresume=false flag" );
         }
         else if ( index >= 0 )
         {
@@ -239,13 +243,13 @@ public class DefaultReleaseManager
                          ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, checkoutDirectory, goals,
-                 useReleaseProfile, listener, new ReleaseResult() );
+        perform( releaseDescriptor, settings, reactorProjects, checkoutDirectory, goals, useReleaseProfile, listener,
+                 new ReleaseResult() );
     }
 
-    public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                                            File checkoutDirectory, String goals, boolean useReleaseProfile,
-                                            ReleaseManagerListener listener )
+    public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
+                                            List reactorProjects, File checkoutDirectory, String goals,
+                                            boolean useReleaseProfile, ReleaseManagerListener listener )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -253,8 +257,8 @@ public class DefaultReleaseManager
         {
             result.setStartTime( System.currentTimeMillis() );
 
-            perform( releaseDescriptor, settings, reactorProjects, checkoutDirectory, goals,
-                     useReleaseProfile, listener, result );
+            perform( releaseDescriptor, settings, reactorProjects, checkoutDirectory, goals, useReleaseProfile,
+                     listener, result );
 
             result.setResultCode( ReleaseResult.SUCCESS );
         }
@@ -275,8 +279,8 @@ public class DefaultReleaseManager
     }
 
     private void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                         File checkoutDirectory, String goals, boolean useReleaseProfile,
-                         ReleaseManagerListener listener, ReleaseResult result )
+                          File checkoutDirectory, String goals, boolean useReleaseProfile,
+                          ReleaseManagerListener listener, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         updateListener( listener, "perform", GOAL_START );
@@ -367,7 +371,8 @@ public class DefaultReleaseManager
         CheckOutScmResult scmResult;
         try
         {
-            scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ), config.getScmReleaseLabel() );
+            scmResult =
+                provider.checkOut( repository, new ScmFileSet( checkoutDirectory ), config.getScmReleaseLabel() );
         }
         catch ( ScmException e )
         {
@@ -450,7 +455,7 @@ public class DefaultReleaseManager
     {
         if ( listener != null )
         {
-            switch( state )
+            switch ( state )
             {
                 case GOAL_START:
                     listener.goalStart( name, getGoalPhases( name ) );
