@@ -6,6 +6,23 @@
  9 December 2006
  -----
 
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
 What happens during a release
 
  * put everything into a staging directory by using the latest feature in the
@@ -44,7 +61,7 @@ Commands
 
 Releasing
 
- * Date of the last release (we need the release descriptor from the release plugin)                                
+ * Date of the last release (we need the release descriptor from the release plugin)
 
  * Show issues resolved for this release
 
@@ -59,11 +76,11 @@ Releasing
  * Show expanded forms of deliverables so they can be inspected on line
 
  * Show results of the license header verifier
- 
+
  * Show any change reports that are available (the changelog, this can become standard over time)
 
  []
- 
+
 Announcing
 
  * Make sure that the release has propagated to the central repository before announcing.
@@ -71,8 +88,8 @@ Announcing
  * Send email to the appropriate lists
 
   * The url the directory with the release artifacts
-  
+
   * Roadmap/Changelog for the release
-  
+
   * Instructions on how to use the new release. For a plugin this is updating a version or using the -U flag, for a library just updating the
     version.
