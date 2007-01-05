@@ -137,7 +137,7 @@ public class ScmCommitPhase
 
     private String createMessage( ReleaseDescriptor releaseDescriptor )
     {
-        return MessageFormat.format( messageFormat, new Object[]{releaseDescriptor.getScmReleaseLabel()} );
+        return MessageFormat.format( releaseDescriptor.getScmCommentPrefix() + messageFormat, new Object[]{releaseDescriptor.getScmReleaseLabel()} );
     }
 
     private static Collection createPomFiles( List reactorProjects )

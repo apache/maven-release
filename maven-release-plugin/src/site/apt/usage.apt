@@ -91,6 +91,3 @@ mvn release:clean
 ------
 mvn --batch-mode release:prepare
 ------
-
-
-

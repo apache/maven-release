@@ -37,6 +37,8 @@ Maven Release Plugin
 
   * {{{prepare-mojo.html}release:prepare}} Prepare for a release in SCM.
 
+  * {{{rollback-mojo.html}release:rollback}} Rollback a previous relase.
+
 * Usage
 
   Instructions on how to use the Maven Release Plugin can be found {{{usage.html}here}}.

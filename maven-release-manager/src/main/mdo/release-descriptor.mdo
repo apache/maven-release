@@ -56,6 +56,15 @@
             The description of this release configuration
           </description>
         </field>
+        <field>
+          <name>ScmCommentPrefix</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <defaultValue>[maven-release-manager] </defaultValue>
+          <description>
+            The prefix of SCM modification messages
+          </description>
+        </field>
         <!-- Settings needs to be resolved -->
         <!-- SCM Information -->
         <field>
