@@ -46,6 +46,7 @@
           <phase>check-poms</phase>
           <phase>scm-check-modifications</phase>
           <phase>check-dependency-snapshots</phase>
+          <phase>create-backup-poms</phase>
           <phase>map-release-versions</phase>
           <phase>input-variables</phase>
           <phase>map-development-versions</phase>
@@ -67,6 +68,11 @@
           <phase>build-project</phase>
           <phase>cleanup</phase>
         </performPhases>
+        <rollbackPhases>
+          <phase>restore-backup-poms</phase>
+          <phase>scm-commit-rollback</phase>
+          <phase>remove-scm-tag</phase>
+        </rollbackPhases>
       </configuration>
     </component>
     <component>
@@ -185,7 +191,7 @@
         </requirement>
       </requirements>
       <configuration>
-        <messageFormat>[maven-release-plugin] prepare release {0}</messageFormat>
+        <messageFormat>prepare release {0}</messageFormat>
       </configuration>
     </component>
     <component>
@@ -198,7 +204,7 @@
         </requirement>
       </requirements>
       <configuration>
-        <messageFormat>[maven-release-plugin] prepare for next development iteration</messageFormat>
+        <messageFormat>prepare for next development iteration</messageFormat>
       </configuration>
     </component>
     <component>
@@ -269,6 +275,34 @@
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>end-release</role-hint>
       <implementation>org.apache.maven.shared.release.phase.EndReleasePhase</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>create-backup-poms</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.CreateBackupPomsPhase</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>restore-backup-poms</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.RestoreBackupPomsPhase</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>remove-scm-tag</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.RemoveScmTagPhase</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>scm-commit-rollback</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.ScmCommitPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+      </requirements>
+      <configuration>
+        <messageFormat>rollback the release of {0}</messageFormat>
+      </configuration>
     </component>
   </components>
 </component-set>

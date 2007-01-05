@@ -69,6 +69,7 @@ public interface ReleaseManager
      *
      * @param releaseDescriptor the configuration to use for release
      * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
      * @param checkoutDirectory the location to checkout to and build from
      * @param goals             the goals to execute
      * @param useReleaseProfile whether to use the release profile from the super POM or not
@@ -86,6 +87,18 @@ public interface ReleaseManager
      * @param reactorProjects   the reactor projects
      */
     void clean( ReleaseDescriptor releaseDescriptor, List reactorProjects );
+
+    /**
+     * Rollback changes made by the previous release
+     *
+     * @param releaseDescriptor the configuration to use for release
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
+     * @throws ReleaseExecutionException if there is a problem during release rollback
+     * @throws ReleaseFailureException   if there is a problem during release rollback
+     */
+    void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException;
 
     void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
                   boolean dryRun, ReleaseManagerListener listener )

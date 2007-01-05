@@ -43,6 +43,7 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,11 @@ public class DefaultReleaseManager
 
     //todo implement
     private List performPhases;
+
+    /**
+     * The phases of release to run to rollback changes
+     */
+    private List rollbackPhases;
 
     /**
      * The available phases.
@@ -145,14 +151,7 @@ public class DefaultReleaseManager
         ReleaseDescriptor config;
         if ( resume )
         {
-            try
-            {
-                config = configStore.read( releaseDescriptor );
-            }
-            catch ( ReleaseDescriptorStoreException e )
-            {
-                throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
-            }
+            config = loadReleaseDescriptor( releaseDescriptor, listener );
         }
         else
         {
@@ -231,6 +230,26 @@ public class DefaultReleaseManager
         updateListener( listener, "prepare", GOAL_END );
     }
 
+    public void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, null );
+
+        for( Iterator phases = rollbackPhases.iterator(); phases.hasNext(); )
+        {
+            String name = (String) phases.next();
+
+            ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
+
+            if ( phase == null )
+            {
+                throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
+            }
+
+            phase.execute( releaseDescriptor, settings, reactorProjects );
+        }
+    }
+
     public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
                          File checkoutDirectory, String goals, boolean useReleaseProfile )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -289,17 +308,7 @@ public class DefaultReleaseManager
 
         updateListener( listener, "verify-release-configuration", PHASE_START );
 
-        ReleaseDescriptor config;
-        try
-        {
-            config = configStore.read( releaseDescriptor );
-        }
-        catch ( ReleaseDescriptorStoreException e )
-        {
-            updateListener( listener, e.getMessage(), ERROR );
-
-            throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
-        }
+        ReleaseDescriptor config = loadReleaseDescriptor( releaseDescriptor, listener );
 
         updateListener( listener, "verify-release-configuration", PHASE_END );
         updateListener( listener, "verify-completed-prepare-phases", PHASE_START );
@@ -425,6 +434,21 @@ public class DefaultReleaseManager
         updateListener( listener, "perform", GOAL_END );
     }
 
+    private ReleaseDescriptor loadReleaseDescriptor( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener )
+        throws ReleaseExecutionException
+    {
+        try
+        {
+            return configStore.read( releaseDescriptor );
+        }
+        catch ( ReleaseDescriptorStoreException e )
+        {
+            updateListener( listener, e.getMessage(), ERROR );
+
+            throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
+        }
+    }
+
     public void clean( ReleaseDescriptor releaseDescriptor, List reactorProjects )
     {
         getLogger().info( "Cleaning up after release..." );
@@ -490,8 +514,12 @@ public class DefaultReleaseManager
         {
             phases.addAll( this.performPhases );
         }
+        else if ( "rollback".equals( name ) )
+        {
+            phases.addAll( this.rollbackPhases );
+        }
 
-        return phases;
+        return Collections.unmodifiableList( phases );
     }
 
     private void logInfo( ReleaseResult result, String message )
