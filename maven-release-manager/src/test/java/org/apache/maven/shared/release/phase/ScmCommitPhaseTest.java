@@ -60,7 +60,7 @@ import java.util.List;
 public class ScmCommitPhaseTest
     extends AbstractReleaseTestCase
 {
-    private static final String PREFIX = "[maven-release-plugin] prepare release ";
+    private static final String PREFIX = "[maven-release-manager] prepare release ";
 
     private static final File[] EMPTY_FILE_ARRAY = new File[0];
 
@@ -147,7 +147,7 @@ public class ScmCommitPhaseTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
-            new IsEqual( "[maven-release-plugin] prepare for next development iteration" )};
+            new IsEqual( "[maven-release-manager] prepare for next development iteration" )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will(
             new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
