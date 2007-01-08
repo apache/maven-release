@@ -248,6 +248,9 @@ public class DefaultReleaseManager
 
             phase.execute( releaseDescriptor, settings, reactorProjects );
         }
+
+        //call release:clean so that resume will not be possible anymore after a rollback
+        clean( releaseDescriptor, reactorProjects );
     }
 
     public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
