@@ -233,6 +233,15 @@ public class DefaultReleaseManager
     public void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        rollback( releaseDescriptor, settings, reactorProjects, null );
+    }
+
+    public void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                          ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        updateListener( listener, "rollback", GOAL_START );
+
         releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, null );
 
         for( Iterator phases = rollbackPhases.iterator(); phases.hasNext(); )
@@ -246,11 +255,14 @@ public class DefaultReleaseManager
                 throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
             }
 
+            updateListener( listener, name, PHASE_START );
             phase.execute( releaseDescriptor, settings, reactorProjects );
+            updateListener( listener, name, PHASE_END );
         }
 
         //call release:clean so that resume will not be possible anymore after a rollback
         clean( releaseDescriptor, reactorProjects );
+        updateListener( listener, "prepare", GOAL_END );
     }
 
     public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
