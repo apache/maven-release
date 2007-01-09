@@ -100,6 +100,10 @@ public interface ReleaseManager
     void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
+    void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                   ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
     void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
                   boolean dryRun, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
