@@ -52,6 +52,8 @@ public class ReleaseUtils
         mergeInto.setScmPrivateKey( mergeOverride( mergeInto.getScmPrivateKey(), toBeMerged.getScmPrivateKey() ) );
         mergeInto.setScmPrivateKeyPassPhrase(
             mergeOverride( mergeInto.getScmPrivateKeyPassPhrase(), toBeMerged.getScmPrivateKeyPassPhrase() ) );
+        mergeInto.setScmCommentPrefix(
+            mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
         mergeInto.setAdditionalArguments(
             mergeOverride( mergeInto.getAdditionalArguments(), toBeMerged.getAdditionalArguments() ) );
         mergeInto.setPreparationGoals(
