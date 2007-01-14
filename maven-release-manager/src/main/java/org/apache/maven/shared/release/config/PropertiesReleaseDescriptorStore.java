@@ -90,6 +90,7 @@ public class PropertiesReleaseDescriptorStore
         releaseDescriptor.setScmPrivateKeyPassPhrase( properties.getProperty( "scm.passphrase" ) );
         releaseDescriptor.setScmTagBase( properties.getProperty( "scm.tagBase" ) );
         releaseDescriptor.setScmReleaseLabel( properties.getProperty( "scm.tag" ) );
+        releaseDescriptor.setScmCommentPrefix( properties.getProperty( "scm.commentPrefix" ) );
         releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
         releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
         releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
@@ -190,6 +191,10 @@ public class PropertiesReleaseDescriptorStore
         if ( config.getScmReleaseLabel() != null )
         {
             properties.setProperty( "scm.tag", config.getScmReleaseLabel() );
+        }
+        if ( config.getScmCommentPrefix() != null )
+        {
+            properties.setProperty( "scm.commentPrefix", config.getScmCommentPrefix() );
         }
         if ( config.getAdditionalArguments() != null )
         {
