@@ -79,4 +79,10 @@
       </plugin>
     </plugins>
   </build>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-release-plugin</url>
+    </site>
+  </distributionManagement>
 </project>
