@@ -34,6 +34,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  * @aggregator
+ * @requiresDependencyResolution test
  * @goal prepare
  * @todo [!] check how this works with version ranges
  */
