@@ -142,6 +142,9 @@
         <requirement>
           <role>org.codehaus.plexus.components.interactivity.Prompter</role>
         </requirement>
+        <requirement>
+          <role>org.apache.maven.artifact.factory.ArtifactFactory</role>
+        </requirement>
       </requirements>
     </component>
     <component>

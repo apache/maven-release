@@ -21,7 +21,9 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -53,6 +55,11 @@ public class CheckDependencySnapshotsPhase
      * Component used to prompt for input.
      */
     private Prompter prompter;
+
+    /**
+     * Component used to create artifacts
+     */
+    private ArtifactFactory artifactFactory;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -88,14 +95,23 @@ public class CheckDependencySnapshotsPhase
             }
         }
 
-        for ( Iterator i = project.getArtifacts().iterator(); i.hasNext(); )
+        try
         {
-            Artifact artifact = (Artifact) i.next();
+            Set dependencyArtifacts = project.createArtifacts( artifactFactory, null, null );
 
-            if ( checkArtifact( artifact, originalVersions ) )
+            for ( Iterator i = dependencyArtifacts.iterator(); i.hasNext(); )
             {
-                snapshotDependencies.add( artifact );
+                Artifact artifact = (Artifact) i.next();
+
+                if ( checkArtifact( artifact, originalVersions ) )
+                {
+                    snapshotDependencies.add( artifact );
+                }
             }
+        }
+        catch ( InvalidDependencyVersionException e )
+        {
+            throw new ReleaseExecutionException( "Failed to create dependency artifacts", e );
         }
 
         for ( Iterator i = project.getPluginArtifacts().iterator(); i.hasNext(); )
