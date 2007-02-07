@@ -1,5 +1,5 @@
  -----
- Releasing
+ Releasing A Maven Project
  -----
  Jason van Zyl
  -----
@@ -23,73 +23,75 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-What happens during a release
+Releasing A Maven Project
 
- * put everything into a staging directory by using the latest feature in the
-   deploy plugin that allows you to set a alt repository
+ What follows is a description of releasing a Maven project to a staging repository, whereupon it is scruntized by
+ the community, approved, and transfered to a production repository. In order to release a project you must have the 
+ following setup in your <<<$HOME/.m2/settings.xml>>> which is a profile which provides settings for:
+ 
+ * Your GPG passphrase which will be used to sign all artifacts that are released.
+ 
+ * The repository that you want to deploy the release to.
 
- * put the site in a staging directory
-
- * use tom's new tools to copy the mini repository over
-
- * need something to copy the site over
-
- []
-
-Developer Setup for a release
-
- * $HOME/.m2/settings.xml
-
+ Here's what your <<<release>>> profile might look like in your <<<$HOME/.m2/settings.xml>>>:
+ 
++-----+
+<settings>
+  ...
   <profiles>
     <profile>
-      <id>staging</id>
+      <id>release</id>
       <properties>
         <gpg.passphrase>secretPhrase</gpg.passphrase>
-        <staging.siteURL>
-          scp://hostname/path/to/directory/stage/sites
-        </staging.siteURL>
-        <deploy.altRepository>
-          username::default::scp://hostname/path/to/directory/stage/repo
-        </deploy.altRepository>
+        <deploy.altRepository>username::default::scp://hostname/path/to/directory/stage/repo</deploy.altRepository>
       </properties>
     </profile>
   </profiles>
+  ...
+</settings>
++-----+  
 
-Commands
+ Everything that you need to release has been configured in the POM all Maven projects inherit from. The release plugin configuration
+ being used is the following:
 
-  * mvn -Pstaging clean deploy
+%{snippet|id=release-plugin-configuration|url=http://svn.apache.org/repos/asf/maven/pom/trunk/maven/pom.xml}
+ 
+ And the profile being used for releases is the following:
+ 
+%{snippet|id=release-profile|url=http://svn.apache.org/repos/asf/maven/pom/trunk/maven/pom.xml}
 
-Releasing
+ All you need to do in order to release are the familiar 
+ 
++-----+
+mvn release:perform
 
- * Date of the last release (we need the release descriptor from the release plugin)
+mvn release:prepare
++-----+
 
- * Show issues resolved for this release
+ Once the release is deemed fit for public consumption it can be transfered to a production repository where it will
+ be available to all users. Currently the tools to do this are inconvenient so if you want to stage a release you 
+ can contact Jason and he'll show you how to do it. Otherwise you can release directly to a production repository.
+ 
+Releasing a Project Directly into a Production Repository
 
- * Show the link to the artifacts for release
+ If you want to release directly to a production repository then you simply make the staging repository point at 
+ the production repository by using the following in your <<<$HOME/.m2/settings.xml>>>:
 
- * Show the revision used to create the release
++-----+
+<settings>
+  ...
+  <profiles>
+    <profile>
+      <id>release</id>
+      <properties>
+        <gpg.passphrase>secretPhrase</gpg.passphrase>
+        <deploy.altRepository>username::default::scp://people.apache.org/www/people.apache.org/repo/m2-ibiblio-rsync-repository</deploy.altRepository>
+      </properties>
+    </profile>
+  </profiles>
+  ...
+</settings>
++-----+  
 
- * Show the link to the site for the release
-
- * Show the output of the docck plugin
-
- * Show expanded forms of deliverables so they can be inspected on line
-
- * Show results of the license header verifier
-
- * Show any change reports that are available (the changelog, this can become standard over time)
-
- []
-
-Announcing
-
- * Make sure that the release has propagated to the central repository before announcing.
-
- * Send email to the appropriate lists
-
-  * The url the directory with the release artifacts
-
-  * Roadmap/Changelog for the release
-
-  * Instructions on how to use the new release. For a plugin this is updating a version or using the -U flag, for a library just updating the
-    version.
+ This will allow you to by pass the staging phase and push the release directly into a production repository. It is assume that
+ you have pushed a snapshot somewhere that people have looked at and approve of.

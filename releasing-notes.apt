@@ -1,0 +1,35 @@
+Releasing
+
+ * Date of the last release (we need the release descriptor from the release plugin)
+
+ * Show issues resolved for this release
+
+ * Show the link to the artifacts for release
+
+ * Show the revision used to create the release
+
+ * Show the link to the site for the release
+
+ * Show the output of the docck plugin
+
+ * Show expanded forms of deliverables so they can be inspected on line
+
+ * Show results of the license header verifier
+
+ * Show any change reports that are available (the changelog, this can become standard over time)
+
+ []
+
+Announcing
+
+ * Make sure that the release has propagated to the central repository before announcing.
+
+ * Send email to the appropriate lists
+
+  * The url the directory with the release artifacts
+
+  * Roadmap/Changelog for the release
+
+  * Instructions on how to use the new release. For a plugin this is updating a version or using the -U flag, for a library just updating the
+    version.
+
