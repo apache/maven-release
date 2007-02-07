@@ -266,6 +266,21 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( compareFiles( reactorProjects ) );
     }
 
+    public void testRewritePomWithParentAndProperties()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "pom-with-parent-and-properties" );
+
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject2", ALTERNATIVE_NEXT_VERSION );
+
+        phase.execute( config, null, reactorProjects );
+
+        assertTrue( compareFiles( reactorProjects ) );
+    }
+
     protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )
     {
         ReleaseDescriptor descriptor = super.createDescriptorFromProjects( reactorProjects );
