@@ -1,11 +1,11 @@
-------
-Run Goals Before Commit
-------
-Carlos Sanchez <carlos@apache.org>
-Brett Porter <brett@apache.org>
-John Tolentino <jtolentino@apache.org>
-------
-September 18, 2006
+  ------
+  Run Goals Before Commit
+  ------
+  Carlos Sanchez <carlos@apache.org>
+  Brett Porter <brett@apache.org>
+  John Tolentino <jtolentino@apache.org>
+  ------
+  September 18, 2006
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
