@@ -101,4 +101,18 @@ public class RewritePomsForDevelopmentPhase
     {
         return releaseDescriptor.getDevelopmentVersions();
     }
+
+    protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshotsMap )
+    {
+        Map versionsMap = (Map) resolvedSnapshotsMap.get( artifactVersionlessKey );
+
+        if ( versionsMap != null )
+        {
+            return (String) ( versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+        }
+        else
+        {
+            return null;
+        }
+    }
 }

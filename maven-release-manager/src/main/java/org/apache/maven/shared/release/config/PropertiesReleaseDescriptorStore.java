@@ -30,9 +30,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Read and write release configuration and state from a properties file.
@@ -94,6 +97,8 @@ public class PropertiesReleaseDescriptorStore
         releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
         releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
         releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
+
+        loadResolvedDependencies( properties, releaseDescriptor );
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
@@ -253,6 +258,12 @@ public class PropertiesReleaseDescriptorStore
             }
         }
 
+        if ( ( config.getResolvedSnapshotDependencies() != null ) &&
+            ( config.getResolvedSnapshotDependencies().size() > 0 ) )
+        {
+            processResolvedDependencies( properties, config.getResolvedSnapshotDependencies() );
+        }
+
         OutputStream outStream = null;
         //noinspection OverlyBroadCatchBlock
         try
@@ -273,8 +284,82 @@ public class PropertiesReleaseDescriptorStore
 
     }
 
+    private void processResolvedDependencies( Properties prop, Map resolvedDependencies )
+    {
+        Set entries = resolvedDependencies.entrySet();
+        Iterator iterator = entries.iterator();
+        Entry currentEntry;
+
+        while ( iterator.hasNext() )
+        {
+            currentEntry = (Entry) iterator.next();
+
+            Map versionMap = (Map) currentEntry.getValue();
+
+            prop.setProperty( "dependency." + currentEntry.getKey() + ".release",
+                              (String) versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+            prop.setProperty( "dependency." + currentEntry.getKey() + ".development",
+                              (String) versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+        }
+    }
+
     private static File getDefaultReleasePropertiesFile( ReleaseDescriptor mergeDescriptor )
     {
         return new File( mergeDescriptor.getWorkingDirectory(), "release.properties" );
+    }
+
+    private void loadResolvedDependencies( Properties prop, ReleaseDescriptor descriptor )
+    {
+        Map resolvedDependencies = new HashMap();
+
+        Set entries = prop.entrySet();
+        Iterator iterator = entries.iterator();
+        String propertyName;
+        Entry currentEntry;
+
+        while ( iterator.hasNext() )
+        {
+            currentEntry = (Entry) iterator.next();
+            propertyName = (String) currentEntry.getKey();
+
+            if ( propertyName.startsWith( "dependency." ) )
+            {
+                Map versionMap;
+                String artifactVersionlessKey;
+                int startIndex;
+                int endIndex;
+                String versionType;
+
+                versionMap = new HashMap();
+                startIndex = propertyName.lastIndexOf( "dependency." );
+
+                if ( propertyName.indexOf( ".development" ) != -1 )
+                {
+                    endIndex = propertyName.indexOf( ".development" );
+                    versionType = ReleaseDescriptor.DEVELOPMENT_KEY;
+                }
+                else
+                {
+                    endIndex = propertyName.indexOf( ".release" );
+                    versionType = ReleaseDescriptor.RELEASE_KEY;
+                }
+
+                artifactVersionlessKey = propertyName.substring( startIndex, endIndex );
+
+                if ( resolvedDependencies.containsKey( artifactVersionlessKey ) )
+                {
+                    versionMap = (Map) resolvedDependencies.get( artifactVersionlessKey );
+                }
+                else
+                {
+                    versionMap = new HashMap();
+                    resolvedDependencies.put( artifactVersionlessKey, versionMap );
+                }
+
+                versionMap.put( versionType, currentEntry.getValue() );
+            }
+        }
+
+        descriptor.setResolvedSnapshotDependencies( resolvedDependencies );
     }
 }
