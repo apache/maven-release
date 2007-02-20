@@ -29,12 +29,16 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.versions.DefaultVersionInfo;
+import org.apache.maven.shared.release.versions.VersionInfo;
+import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -51,6 +55,26 @@ import java.util.Set;
 public class CheckDependencySnapshotsPhase
     extends AbstractReleasePhase
 {
+    public static final String RESOLVE_SNAPSHOT_MESSAGE = "There are still some remaining snapshot dependencies.";
+
+    public static final String RESOLVE_SNAPSHOT_PROMPT = "Do you want to resolve them now?";
+
+    public static final String RESOLVE_SNAPSHOT_TYPE_MESSAGE = "Dependency type to resolve,";
+
+    public static final String RESOLVE_SNAPSHOT_TYPE_PROMPT =
+        "specify the selection number ( 0:All 1:Project Dependencies 2:Plugins 3:Reports 4:Extensions ):";
+
+    public static final String RESOLVE_ALL_SNAPSHOT_MESSAGE = "Resolve All Snapshots.";
+
+    public static final String RESOLVE_ALL_PROJECT_DEPENDENCIES_SNAPSHOT_MESSAGE =
+        "Resolve Project Dependency Snapshots.";
+
+    public static final String RESOLVE_ALL_REPORTS_SNAPSHOT_MESSAGE = "Resolve Report Dependency Snapshots.";
+
+    public static final String RESOLVE_ALL_EXTENSIONS_SNAPSHOT_MESSAGE = "Resolve Extension Dependency Snapshots.";
+
+    public static final String RESOLVE_ALL_PLUGIN_SNAPSHOT_MESSAGE = "Resolve Plugin Dependency Snapshots.";
+
     /**
      * Component used to prompt for input.
      */
@@ -86,6 +110,9 @@ public class CheckDependencySnapshotsPhase
         throws ReleaseFailureException, ReleaseExecutionException
     {
         Set snapshotDependencies = new HashSet();
+        Set snapshotReportDependencies = new HashSet();
+        Set snapshotExtensionsDependencies = new HashSet();
+        Set snapshotPluginDependencies = new HashSet();
 
         if ( project.getParentArtifact() != null )
         {
@@ -149,7 +176,7 @@ public class CheckDependencySnapshotsPhase
 
                 if ( addToFailures )
                 {
-                    snapshotDependencies.add( artifact );
+                    snapshotPluginDependencies.add( artifact );
                 }
             }
         }
@@ -160,7 +187,8 @@ public class CheckDependencySnapshotsPhase
 
             if ( checkArtifact( artifact, originalVersions ) )
             {
-                snapshotDependencies.add( artifact );
+                //snapshotDependencies.add( artifact );
+                snapshotReportDependencies.add( artifact );
             }
         }
 
@@ -170,32 +198,33 @@ public class CheckDependencySnapshotsPhase
 
             if ( checkArtifact( artifact, originalVersions ) )
             {
-                snapshotDependencies.add( artifact );
+                snapshotExtensionsDependencies.add( artifact );
             }
         }
 
-        if ( !snapshotDependencies.isEmpty() )
+        if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty() ||
+            !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
         {
-            List snapshotsList = new ArrayList( snapshotDependencies );
-
-            Collections.sort( snapshotsList );
-
-            StringBuffer message = new StringBuffer();
-
-            for ( Iterator i = snapshotsList.iterator(); i.hasNext(); )
+            if ( releaseDescriptor.isInteractive() )
             {
-                Artifact artifact = (Artifact) i.next();
-
-                message.append( "    " );
-
-                message.append( artifact );
-
-                message.append( "\n" );
+                resolveSnapshots( snapshotDependencies, snapshotReportDependencies, snapshotExtensionsDependencies,
+                                  snapshotPluginDependencies, releaseDescriptor );
             }
 
-            message.append( "in project '" + project.getName() + "' (" + project.getId() + ")" );
+            if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty() ||
+                !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
+            {
+                StringBuffer message = new StringBuffer();
 
-            throw new ReleaseFailureException( "Can't release project due to non released dependencies :\n" + message );
+                printSnapshotDependencies( snapshotDependencies, message );
+                printSnapshotDependencies( snapshotReportDependencies, message );
+                printSnapshotDependencies( snapshotExtensionsDependencies, message );
+                printSnapshotDependencies( snapshotPluginDependencies, message );
+                message.append( "in project '" + project.getName() + "' (" + project.getId() + ")" );
+
+                throw new ReleaseFailureException(
+                    "Can't release project due to non released dependencies :\n" + message );
+            }
         }
     }
 
@@ -219,5 +248,132 @@ public class CheckDependencySnapshotsPhase
     public void setPrompter( Prompter prompter )
     {
         this.prompter = prompter;
+    }
+
+    private StringBuffer printSnapshotDependencies( Set snapshotsSet, StringBuffer message )
+    {
+        List snapshotsList = new ArrayList( snapshotsSet );
+
+        Collections.sort( snapshotsList );
+
+        for ( Iterator i = snapshotsList.iterator(); i.hasNext(); )
+        {
+            Artifact artifact = (Artifact) i.next();
+
+            message.append( "    " );
+
+            message.append( artifact );
+
+            message.append( "\n" );
+        }
+
+        return message;
+    }
+
+    private void resolveSnapshots( Set projectDependencies, Set reportDependencies, Set extensionDependencies,
+                                   Set pluginDependencies, ReleaseDescriptor releaseDescriptor )
+        throws ReleaseExecutionException
+    {
+        try
+        {
+            prompter.showMessage( RESOLVE_SNAPSHOT_MESSAGE );
+            String result =
+                prompter.prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( new String[]{"yes", "no"} ), "no" );
+
+            if ( result.toLowerCase().startsWith( "y" ) )
+            {
+                Set snapshotSet = new HashSet();
+                Map resolvedSnapshots = null;
+                prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
+                result = prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT,
+                                          Arrays.asList( new String[]{"0", "1", "2", "3"} ), "1" );
+
+                switch ( Integer.parseInt( result.toLowerCase() ) )
+                {
+                    // all
+                    case 0:
+                        prompter.showMessage( RESOLVE_ALL_SNAPSHOT_MESSAGE );
+                        snapshotSet.addAll( projectDependencies );
+                        snapshotSet.addAll( reportDependencies );
+                        snapshotSet.addAll( extensionDependencies );
+                        snapshotSet.addAll( pluginDependencies );
+                        resolvedSnapshots = processSnapshot( snapshotSet );
+                        break;
+
+                        // project dependencies
+                    case 1:
+                        prompter.showMessage( RESOLVE_ALL_PROJECT_DEPENDENCIES_SNAPSHOT_MESSAGE );
+                        resolvedSnapshots = processSnapshot( projectDependencies );
+                        break;
+
+                        // plugins
+                    case 2:
+                        prompter.showMessage( RESOLVE_ALL_PLUGIN_SNAPSHOT_MESSAGE );
+                        resolvedSnapshots = processSnapshot( pluginDependencies );
+                        break;
+
+                        // reports
+                    case 3:
+                        prompter.showMessage( RESOLVE_ALL_REPORTS_SNAPSHOT_MESSAGE );
+                        resolvedSnapshots = processSnapshot( reportDependencies );
+                        break;
+
+                        // extensions
+                    case 4:
+                        prompter.showMessage( RESOLVE_ALL_EXTENSIONS_SNAPSHOT_MESSAGE );
+                        resolvedSnapshots = processSnapshot( extensionDependencies );
+                        break;
+                }
+
+                releaseDescriptor.setResolvedSnapshotDependencies( resolvedSnapshots );
+            }
+        }
+        catch ( PrompterException e )
+        {
+            throw new ReleaseExecutionException( e.getMessage(), e );
+        }
+        catch ( VersionParseException e )
+        {
+            throw new ReleaseExecutionException( e.getMessage(), e );
+        }
+    }
+
+    private Map processSnapshot( Set snapshotSet )
+        throws PrompterException, VersionParseException
+    {
+        Map resolvedSnapshots = new HashMap();
+        Iterator iterator = snapshotSet.iterator();
+        Artifact currentArtifact;
+        String result;
+        VersionInfo version;
+
+        while ( iterator.hasNext() )
+        {
+            currentArtifact = (Artifact) iterator.next();
+            version = new DefaultVersionInfo( currentArtifact.getVersion() );
+
+            result = prompter.prompt( "'" + ArtifactUtils.versionlessKey( currentArtifact ) + "' set to release?",
+                                      Arrays.asList( new String[]{"yes", "no"} ), "yes" );
+
+            if ( result.toLowerCase().startsWith( "y" ) )
+            {
+                VersionInfo nextDevelopmentVersion;
+                Map versionMap = new HashMap();
+
+                iterator.remove();
+                result = prompter.prompt( "What is the next development version?", Collections.singletonList(
+                    version.getNextVersion().getSnapshotVersionString() ),
+                                                                                   version.getNextVersion().getSnapshotVersionString() );
+
+                nextDevelopmentVersion = new DefaultVersionInfo( result );
+                versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, version.toString() );
+                versionMap.put( ReleaseDescriptor.DEVELOPMENT_KEY, nextDevelopmentVersion.getSnapshotVersionString() );
+                versionMap.put( ReleaseDescriptor.RELEASE_KEY, version.getReleaseVersionString() );
+
+                resolvedSnapshots.put( ArtifactUtils.versionlessKey( currentArtifact ), versionMap );
+            }
+        }
+
+        return resolvedSnapshots;
     }
 }

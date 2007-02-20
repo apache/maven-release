@@ -319,6 +319,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertTrue( "Expected no release version mappings", config.getReleaseVersions().isEmpty() );
         assertTrue( "Expected no dev version mappings", config.getDevelopmentVersions().isEmpty() );
         assertTrue( "Expected no scm mappings", config.getOriginalScmInfo().isEmpty() );
+        assertNotNull( "Expected resolved snapshot dependencies map", config.getResolvedSnapshotDependencies() );
     }
 
     public ReleaseDescriptor createMergeConfiguration()
@@ -369,6 +370,8 @@ public class PropertiesReleaseDescriptorStoreTest
         scm.setTag( null );
         scm.setDeveloperConnection( null );
         expected.mapOriginalScmInfo( "groupId:artifactId2", scm );
+        expected.mapResolvedSnapshotDependencies( "external:artifactId", "1.0", "1.1-SNAPSHOT" );
+
         return expected;
     }
 

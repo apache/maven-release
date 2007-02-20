@@ -161,6 +161,18 @@
           </description>
         </field>
         <field>
+          <name>resolvedSnapshotDependencies</name>
+          <version>1.0.0</version>
+          <type>Map</type>
+          <association stash.keyType="String">
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            A map of resolved snapshot dependencies versions.
+          </description>
+        </field>
+        <field>
           <name>originalScmInfo</name>
           <version>1.0.0</version>
           <type>Map</type>
@@ -257,6 +269,31 @@
         <codeSegment>
           <version>1.0.0</version>
           <code><![CDATA[
+    public static final String DEVELOPMENT_KEY = "dev";
+    
+    public static final String RELEASE_KEY = "rel";
+    
+    public static final String ORIGINAL_VERSION = "original";
+                        
+    /**
+     * Map a given snapshot dependency to a specified version from when it is released.
+     *
+     */
+    public void mapResolvedSnapshotDependencies( String artifactName, String releaseVersion, String developmentVersion )
+    {
+        if (resolvedSnapshotDependencies == null) {
+            resolvedSnapshotDependencies = new java.util.HashMap();
+        } else {
+            assert !resolvedSnapshotDependencies.containsKey( artifactName );
+        }
+
+        java.util.Map versionsMap = new java.util.HashMap();
+
+        versionsMap.put( DEVELOPMENT_KEY, developmentVersion );
+        versionsMap.put( RELEASE_KEY, releaseVersion );
+        resolvedSnapshotDependencies.put( artifactName, versionsMap );
+    }
+          
     /**
      * Map a given project to a specified version from when it is released.
      *
@@ -333,6 +370,34 @@
             }
         }
         return originalVersions;
+    }
+
+    /**
+     * Retrieve the release version for the resolved snapshot dependency.
+     *
+     */
+    public String getDependencyDevelopmentVersion( String artifactConflictId )
+    {
+        if ( ( resolvedSnapshotDependencies == null ) && ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) ) )
+        {
+            java.util.Map versionMap = ( java.util.Map ) resolvedSnapshotDependencies.get( artifactConflictId );
+            return ( String ) versionMap.get( DEVELOPMENT_KEY );
+        }
+        return null;
+    }
+
+    /**
+     * Retrieve the release version for the resolved snapshot dependency.
+     *
+     */
+    public String getDependencyReleaseVersion( String artifactConflictId )
+    {
+        if ( ( resolvedSnapshotDependencies == null ) && ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) ) )
+        {
+            java.util.Map versionMap = ( java.util.Map ) resolvedSnapshotDependencies.get( artifactConflictId );
+            return ( String ) versionMap.get( RELEASE_KEY );
+        }
+        return null;
     }
 
     public boolean equals( Object obj )
