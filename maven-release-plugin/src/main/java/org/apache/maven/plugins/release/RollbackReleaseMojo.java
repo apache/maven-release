@@ -30,6 +30,7 @@ import org.apache.maven.shared.release.ReleaseFailureException;
  *
  * @aggregator
  * @goal rollback
+ * @since 2.0-beta-5
  *
  * @author Edwin Punzalan
  */
