@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
+import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
 
 /**
@@ -31,7 +32,7 @@ public class SubversionScmTranslator
 {
     public String translateTagUrl( String url, String tag, String tagBase )
     {
-        return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, tag );
+        return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, new ScmTag( tag ) );
     }
 
     public String resolveTag( String tag )
