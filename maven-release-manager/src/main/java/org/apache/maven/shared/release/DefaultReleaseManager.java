@@ -21,6 +21,7 @@ package org.apache.maven.shared.release;
 
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -244,7 +245,7 @@ public class DefaultReleaseManager
 
         releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, null );
 
-        for( Iterator phases = rollbackPhases.iterator(); phases.hasNext(); )
+        for ( Iterator phases = rollbackPhases.iterator(); phases.hasNext(); )
         {
             String name = (String) phases.next();
 
@@ -395,8 +396,8 @@ public class DefaultReleaseManager
         CheckOutScmResult scmResult;
         try
         {
-            scmResult =
-                provider.checkOut( repository, new ScmFileSet( checkoutDirectory ), config.getScmReleaseLabel() );
+            scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ),
+                                           new ScmTag( config.getScmReleaseLabel() ) );
         }
         catch ( ScmException e )
         {
@@ -449,7 +450,8 @@ public class DefaultReleaseManager
         updateListener( listener, "perform", GOAL_END );
     }
 
-    private ReleaseDescriptor loadReleaseDescriptor( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener )
+    private ReleaseDescriptor loadReleaseDescriptor( ReleaseDescriptor releaseDescriptor,
+                                                     ReleaseManagerListener listener )
         throws ReleaseExecutionException
     {
         try
