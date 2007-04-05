@@ -78,7 +78,8 @@ public class ScmTagPhaseTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments =
-            new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" )};
+            new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" ),
+                             new IsEqual( "[maven-release-manager] copy for tag release-label" )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
             new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
@@ -104,7 +105,8 @@ public class ScmTagPhaseTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments =
-            new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" )};
+            new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" ),
+                             new IsEqual( "[maven-release-manager] copy for tag release-label" )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
             new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
