@@ -43,6 +43,7 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.FileUtils;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsAnything;
@@ -762,4 +763,28 @@ public class DefaultReleaseManagerTest
         }
     }
 
+    public void testDetermineWorkingDirectory()
+        throws Exception
+    {
+        DefaultReleaseManager defaultReleaseManager = new DefaultReleaseManager();
+        
+        File checkoutDir = getTestFile( "target/checkout" );
+        FileUtils.forceDelete( checkoutDir );
+        checkoutDir.mkdirs();
+
+        File projectDir = getTestFile( "target/checkout/my/project" );
+        projectDir.mkdirs();
+
+        // only checkout dir
+        assertEquals( checkoutDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, "" ) );
+        assertEquals( checkoutDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, null ) );
+
+        // checkout dir and relative path project dir
+        assertEquals( projectDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, "my/project" ) );
+        assertEquals( projectDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, "my/project/" ) );
+        assertEquals( projectDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, "my"
+                + File.separator + "project" ) );
+
+        FileUtils.forceDelete( checkoutDir);
+    }
 }
