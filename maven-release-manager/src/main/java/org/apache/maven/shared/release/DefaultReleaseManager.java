@@ -431,7 +431,8 @@ public class DefaultReleaseManager
 
         try
         {
-            mavenExecutor.executeGoals( checkoutDirectory, goals, config.isInteractive(), additionalArguments,
+            File workingDirectory = determineWorkingDirectory(checkoutDirectory, scmResult.getRelativePathProjectDirectory());
+            mavenExecutor.executeGoals( workingDirectory, goals, config.isInteractive(), additionalArguments,
                                         config.getPomFileName(), result );
         }
         catch ( MavenExecutorException e )
@@ -448,6 +449,30 @@ public class DefaultReleaseManager
         updateListener( listener, "cleanup", PHASE_END );
 
         updateListener( listener, "perform", GOAL_END );
+    }
+
+    /**
+     * Determines the path of the working directory. By default, this is the
+     * checkout directory. For some SCMs, the project root directory is not the
+     * checkout directory itself, but a SCM-specific subdirectory.
+     * 
+     * @param checkoutDirectory
+     *            The checkout directory as java.io.File
+     * @param relativePathProjectDirectory
+     *            The relative path of the project directory within the checkout
+     *            directory or ""
+     * @return The working directory
+     */
+    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory)
+    {
+        if ( StringUtils.isNotEmpty( relativePathProjectDirectory ) )
+        {
+            return new File( checkoutDirectory, relativePathProjectDirectory );
+        }
+        else
+        {
+            return checkoutDirectory;
+        }
     }
 
     private ReleaseDescriptor loadReleaseDescriptor( ReleaseDescriptor releaseDescriptor,

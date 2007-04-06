@@ -266,6 +266,11 @@
       <implementation>org.apache.maven.shared.release.scm.CvsScmTranslator</implementation>
     </component>
     <component>
+      <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
+      <role-hint>clearcase</role-hint>
+      <implementation>org.apache.maven.shared.release.scm.ClearCaseScmTranslator</implementation>
+    </component>
+    <component>
       <role>org.apache.maven.shared.release.exec.MavenExecutor</role>
       <implementation>org.apache.maven.shared.release.exec.ForkedMavenExecutor</implementation>
       <requirements>
