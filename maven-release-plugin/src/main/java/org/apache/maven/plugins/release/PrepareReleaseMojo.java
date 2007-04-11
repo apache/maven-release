@@ -64,8 +64,8 @@ public class PrepareReleaseMojo
 
     /**
      * Dry run: don't checkin or tag anything in the scm repository, or modify the checkout.
-     * Running <code>mvn -Dtestmode=true release:prepare</code> could be useful in order to check that modifications to
-     * poms and scm operations (only listed in console) are working as expected.
+     * Running <code>mvn -DdryRun=true release:prepare</code> is useful in order to check that modifications to
+     * poms and scm operations (only listed on the console) are working as expected.
      * Modified POMs are written alongside the originals without modifying them.
      *
      * @parameter expression="${dryRun}" default-value="false"
