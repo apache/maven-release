@@ -26,7 +26,7 @@
     <version>1</version>
   </parent>
   <artifactId>maven-release-manager</artifactId>
-  <version>1.0-alpha-1</version>
+  <version>1.0-alpha-2-SNAPSHOT</version>
   <prerequisites>
     <maven>2.0.1</maven>
   </prerequisites>
@@ -219,10 +219,4 @@
       </plugin>
     </plugins>
   </build>
-
-  <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/release/tags/maven-release-manager-1.0-alpha-1</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/release/tags/maven-release-manager-1.0-alpha-1</developerConnection>
-    <url>https://svn.apache.org/repos/asf/maven/release/tags/maven-release-manager-1.0-alpha-1</url>
-  </scm>
 </project>
