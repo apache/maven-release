@@ -21,6 +21,7 @@ package org.apache.maven.shared.release;
 
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
@@ -42,10 +43,12 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.util.FileUtils;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.constraint.IsEqual;
+import org.jmock.core.constraint.IsInstanceOf;
 import org.jmock.core.constraint.IsNull;
 import org.jmock.core.constraint.IsSame;
 import org.jmock.core.matcher.InvokeOnceMatcher;
@@ -400,7 +403,7 @@ public class DefaultReleaseManagerTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-            new IsNull()};
+            new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
             new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
 
@@ -429,7 +432,7 @@ public class DefaultReleaseManagerTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-            new IsNull()};
+            new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
             new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
 
@@ -460,7 +463,7 @@ public class DefaultReleaseManagerTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-            new IsNull()};
+            new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
             new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
 
@@ -490,7 +493,7 @@ public class DefaultReleaseManagerTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-            new IsNull()};
+            new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
             new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
 
@@ -519,7 +522,7 @@ public class DefaultReleaseManagerTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-            new IsNull()};
+            new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
             new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
 
@@ -741,7 +744,7 @@ public class DefaultReleaseManagerTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-            new IsNull()};
+            new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
             new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
 
@@ -760,4 +763,28 @@ public class DefaultReleaseManagerTest
         }
     }
 
+    public void testDetermineWorkingDirectory()
+        throws Exception
+    {
+        DefaultReleaseManager defaultReleaseManager = new DefaultReleaseManager();
+        
+        File checkoutDir = getTestFile( "target/checkout" );
+        FileUtils.forceDelete( checkoutDir );
+        checkoutDir.mkdirs();
+
+        File projectDir = getTestFile( "target/checkout/my/project" );
+        projectDir.mkdirs();
+
+        // only checkout dir
+        assertEquals( checkoutDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, "" ) );
+        assertEquals( checkoutDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, null ) );
+
+        // checkout dir and relative path project dir
+        assertEquals( projectDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, "my/project" ) );
+        assertEquals( projectDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, "my/project/" ) );
+        assertEquals( projectDir, defaultReleaseManager.determineWorkingDirectory( checkoutDir, "my"
+                + File.separator + "project" ) );
+
+        FileUtils.forceDelete( checkoutDir);
+    }
 }

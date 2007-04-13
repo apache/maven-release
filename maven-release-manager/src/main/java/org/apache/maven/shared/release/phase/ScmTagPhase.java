@@ -82,7 +82,8 @@ public class ScmTagPhase
         {
             // TODO: want includes/excludes?
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) );
-            result = provider.tag( repository, fileSet, releaseDescriptor.getScmReleaseLabel() );
+            String tagName = releaseDescriptor.getScmReleaseLabel();
+            result = provider.tag( repository, fileSet, tagName, "[maven-release-manager] copy for tag " + tagName );
         }
         catch ( ScmException e )
         {

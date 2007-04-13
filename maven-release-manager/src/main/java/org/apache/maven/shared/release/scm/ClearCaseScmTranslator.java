@@ -19,24 +19,28 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
-import org.apache.maven.scm.ScmTag;
-import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
-
 /**
- * Subversion tag translator.
+ * ClearCase tag translator.
  *
- * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @author <a href="mailto:arne@degenring.com">Arne Degenring</a>
  */
-public class SubversionScmTranslator
+public class ClearCaseScmTranslator
     implements ScmTranslator
 {
     public String translateTagUrl( String url, String tag, String tagBase )
     {
-        return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, new ScmTag( tag ) );
+        return url;
     }
 
     public String resolveTag( String tag )
     {
-        return null;
+        if ( !"HEAD".equals( tag ) )
+        {
+            return tag;
+        }
+        else
+        {
+            return null;
+        }
     }
 }

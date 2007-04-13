@@ -21,6 +21,7 @@ package org.apache.maven.shared.release;
 
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -244,7 +245,7 @@ public class DefaultReleaseManager
 
         releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, null );
 
-        for( Iterator phases = rollbackPhases.iterator(); phases.hasNext(); )
+        for ( Iterator phases = rollbackPhases.iterator(); phases.hasNext(); )
         {
             String name = (String) phases.next();
 
@@ -395,8 +396,8 @@ public class DefaultReleaseManager
         CheckOutScmResult scmResult;
         try
         {
-            scmResult =
-                provider.checkOut( repository, new ScmFileSet( checkoutDirectory ), config.getScmReleaseLabel() );
+            scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ),
+                                           new ScmTag( config.getScmReleaseLabel() ) );
         }
         catch ( ScmException e )
         {
@@ -430,7 +431,8 @@ public class DefaultReleaseManager
 
         try
         {
-            mavenExecutor.executeGoals( checkoutDirectory, goals, config.isInteractive(), additionalArguments,
+            File workingDirectory = determineWorkingDirectory(checkoutDirectory, scmResult.getRelativePathProjectDirectory());
+            mavenExecutor.executeGoals( workingDirectory, goals, config.isInteractive(), additionalArguments,
                                         config.getPomFileName(), result );
         }
         catch ( MavenExecutorException e )
@@ -449,7 +451,32 @@ public class DefaultReleaseManager
         updateListener( listener, "perform", GOAL_END );
     }
 
-    private ReleaseDescriptor loadReleaseDescriptor( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener )
+    /**
+     * Determines the path of the working directory. By default, this is the
+     * checkout directory. For some SCMs, the project root directory is not the
+     * checkout directory itself, but a SCM-specific subdirectory.
+     * 
+     * @param checkoutDirectory
+     *            The checkout directory as java.io.File
+     * @param relativePathProjectDirectory
+     *            The relative path of the project directory within the checkout
+     *            directory or ""
+     * @return The working directory
+     */
+    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory)
+    {
+        if ( StringUtils.isNotEmpty( relativePathProjectDirectory ) )
+        {
+            return new File( checkoutDirectory, relativePathProjectDirectory );
+        }
+        else
+        {
+            return checkoutDirectory;
+        }
+    }
+
+    private ReleaseDescriptor loadReleaseDescriptor( ReleaseDescriptor releaseDescriptor,
+                                                     ReleaseManagerListener listener )
         throws ReleaseExecutionException
     {
         try

@@ -94,7 +94,8 @@ public class ScmCommitPhase
         try
         {
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), files );
-            result = provider.checkIn( repository, fileSet, null, createMessage( releaseDescriptor ) );
+            //TODO: Use ScmVersion instead of String for the branch/tag/revision parameter
+            result = provider.checkIn( repository, fileSet, (String) null, createMessage( releaseDescriptor ) );
         }
         catch ( ScmException e )
         {
