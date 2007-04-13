@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>4</version>
+    <version>5</version>
     <relativePath>../pom/maven/pom.xml</relativePath>
   </parent>
   <groupId>org.apache.maven.release</groupId>
@@ -38,7 +38,9 @@
   </issueManagement>
   <modules>
     <module>maven-release-manager</module>
+    <!-- Commenting out to release parent pom and manager
     <module>maven-release-plugin</module>
+    -->
   </modules>
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/release/trunk</connection>
