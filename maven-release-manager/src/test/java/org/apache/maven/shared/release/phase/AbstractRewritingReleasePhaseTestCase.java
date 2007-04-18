@@ -371,6 +371,17 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( compareFiles( reactorProjects ) );
     }
 
+    public void testRewritePomExtensionUndefinedVersion()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "pom-without-extension-version" );
+        ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
+
+        phase.execute( config, null, reactorProjects );
+
+        assertTrue( compareFiles( reactorProjects ) );
+    }
+
     public void testRewriteBasicPomWithEditMode()
         throws Exception
     {

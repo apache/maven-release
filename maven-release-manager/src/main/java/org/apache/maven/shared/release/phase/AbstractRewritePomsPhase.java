@@ -372,9 +372,12 @@ public abstract class AbstractRewritePomsPhase
             {
                 Extension extension = (Extension) i.next();
 
-                updateDomVersion( extension.getGroupId(), extension.getArtifactId(), mappedVersions,
-                                  resolvedSnapshotDependencies, extension.getVersion(), originalVersions, "extensions",
-                                  "extension", extensionRoot, projectId, properties, result );
+                if ( extension.getVersion() != null )
+                {
+                    updateDomVersion( extension.getGroupId(), extension.getArtifactId(), mappedVersions,
+                                      resolvedSnapshotDependencies, extension.getVersion(), originalVersions,
+                                      "extensions", "extension", extensionRoot, projectId, properties, result );
+                }
             }
         }
     }
