@@ -36,10 +36,8 @@
     <url>http://jira.codehaus.org/browse/MRELEASE</url>
   </issueManagement>
   <modules>
-    <!-- Commenting out to release parent pom
     <module>maven-release-manager</module>
     <module>maven-release-plugin</module>
-    -->
   </modules>
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/release/trunk</connection>
