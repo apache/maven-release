@@ -80,6 +80,43 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getReleaseVersions() );
     }
 
+    /**
+     * Test to release "SNAPSHOT" version
+     * MRELEASE-90
+     */
+    public void testMapReleaseVersionsInteractiveWithSnaphotVersion()
+        throws Exception
+    {
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
+
+        Mock mockPrompter = new Mock( Prompter.class );
+        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
+                                                                                 new IsEqual( "1.0" ) ).will(
+            new ReturnStub( "2.0" ) );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+
+        List reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+
+        phase.execute( releaseDescriptor, null, reactorProjects );
+
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
+                      releaseDescriptor.getReleaseVersions() );
+
+        releaseDescriptor = new ReleaseDescriptor();
+
+        mockPrompter.reset();
+        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
+                                                                                 new IsEqual( "1.0" ) ).will(
+            new ReturnStub( "2.0" ) );
+
+        phase.simulate( releaseDescriptor, null, reactorProjects );
+
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
+                      releaseDescriptor.getReleaseVersions() );
+    }
+
     public void testMapReleaseVersionsNonInteractive()
         throws Exception
     {

@@ -96,7 +96,15 @@ public class MapVersionsPhase
                     String nextVersion = null;
                     if ( version != null )
                     {
-                        nextVersion = version.getNextVersion().getSnapshotVersionString();
+                        VersionInfo versionInfo = version.getNextVersion();
+                        if ( versionInfo != null )
+                        {
+                            nextVersion = versionInfo.getSnapshotVersionString();
+                        }
+                        else
+                        {
+                            nextVersion = "1.0-SNAPSHOT";
+                        }
                     }
 
                     if ( releaseDescriptor.isInteractive() )

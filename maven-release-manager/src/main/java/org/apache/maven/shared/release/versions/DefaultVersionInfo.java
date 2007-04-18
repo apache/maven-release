@@ -271,6 +271,11 @@ public class DefaultVersionInfo
 
     public String getSnapshotVersionString()
     {
+        if ( strVersion.equals( Artifact.SNAPSHOT_VERSION ) )
+        {
+            return strVersion;
+        }
+
         String baseVersion = getReleaseVersionString();
 
         if ( baseVersion.length() > 0 )
@@ -296,7 +301,7 @@ public class DefaultVersionInfo
         }
         else if ( baseVersion.equals( Artifact.SNAPSHOT_VERSION ) )
         {
-            baseVersion = "";
+            baseVersion = "1.0";
         }
         return baseVersion;
     }

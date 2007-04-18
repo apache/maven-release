@@ -361,9 +361,19 @@ public class CheckDependencySnapshotsPhase
                 Map versionMap = new HashMap();
 
                 iterator.remove();
-                result = prompter.prompt( "What is the next development version?", Collections.singletonList(
-                    version.getNextVersion().getSnapshotVersionString() ),
-                                                                                   version.getNextVersion().getSnapshotVersionString() );
+
+                VersionInfo versionInfo = version.getNextVersion();
+                String nextVersion;
+                if ( versionInfo != null )
+                {
+                    nextVersion = versionInfo.getSnapshotVersionString();
+                }
+                else
+                {
+                    nextVersion = "1.0-SNAPSHOT";
+                }
+                result = prompter.prompt( "What is the next development version?",
+                                          Collections.singletonList( nextVersion ), nextVersion );
 
                 nextDevelopmentVersion = new DefaultVersionInfo( result );
                 versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, version.toString() );
