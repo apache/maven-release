@@ -33,6 +33,6 @@
   <scm>
     <connection>scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1</connection>
     <developerConnection>scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1</developerConnection>
-    <url>file://localhost/tmp/scm-repo/trunk/subproject1</url>
+    <url>http://localhost/viewvc/mypath/trunk/subproject1</url>
   </scm>
 </project>

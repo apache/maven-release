@@ -263,7 +263,8 @@ public class RewritePomsForDevelopmentPhaseTest
         Scm scm = new Scm();
         scm.setConnection( "scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1" );
         scm.setDeveloperConnection( "scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1" );
-        scm.setUrl( "file://localhost/tmp/scm-repo/trunk/subproject1" );
+        //MRELEASE-107
+        scm.setUrl( "http://localhost/viewvc/mypath/trunk/subproject1" );
         config.mapOriginalScmInfo( "groupId:subproject1", scm );
         config.mapOriginalScmInfo( "groupId:subsubproject", null );
 

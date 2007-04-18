@@ -31,6 +31,6 @@
   <scm>
     <connection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label/subproject1</connection>
     <developerConnection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label/subproject1</developerConnection>
-    <url>file://localhost/tmp/scm-repo/tags/release-label/subproject1</url>
+    <url>http://localhost/viewvc/mypath/tags/release-label/subproject1</url>
   </scm>
 </project>
