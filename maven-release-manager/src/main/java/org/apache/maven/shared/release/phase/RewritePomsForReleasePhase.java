@@ -47,7 +47,7 @@ public class RewritePomsForReleasePhase
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
-                                 ReleaseResult result )
+                                 ReleaseResult result, MavenProject rootProject )
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
@@ -57,7 +57,7 @@ public class RewritePomsForReleasePhase
             {
                 releaseDescriptor.mapOriginalScmInfo( projectId, project.getScm() );
 
-                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result );
+                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, rootProject );
             }
             else
             {
@@ -75,7 +75,8 @@ public class RewritePomsForReleasePhase
                         scmRoot = new Element( "scm" );
                         scmRoot.addContent( "\n  " );
 
-                        if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result ) )
+                        if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
+                                           rootProject ) )
                         {
                             rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
                         }
@@ -86,7 +87,8 @@ public class RewritePomsForReleasePhase
     }
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Element scmRoot,
-                                  Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult )
+                                  Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult,
+                                  MavenProject rootProject )
     {
         ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
         boolean result = false;
@@ -95,6 +97,7 @@ public class RewritePomsForReleasePhase
             Scm scm = project.getScm();
             String tag = releaseDescriptor.getScmReleaseLabel();
             String tagBase = releaseDescriptor.getScmTagBase();
+            String subDirectoryTag = "";
 
             // TODO: svn utils should take care of prepending this
             if ( tagBase != null )
@@ -103,7 +106,12 @@ public class RewritePomsForReleasePhase
             }
             if ( scm.getConnection() != null )
             {
-                String value = translator.translateTagUrl( scm.getConnection(), tag, tagBase );
+                if ( rootProject.getScm().getConnection() != null &&
+                    scm.getConnection().indexOf( rootProject.getScm().getConnection() ) == 0 )
+                {
+                    subDirectoryTag = scm.getConnection().substring( rootProject.getScm().getConnection().length() );
+                }
+                String value = translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, tagBase );
                 if ( !value.equals( scm.getConnection() ) )
                 {
                     rewriteElement( "connection", value, scmRoot, namespace );
@@ -113,7 +121,14 @@ public class RewritePomsForReleasePhase
 
             if ( scm.getDeveloperConnection() != null )
             {
-                String value = translator.translateTagUrl( scm.getDeveloperConnection(), tag, tagBase );
+                if ( rootProject.getScm().getDeveloperConnection() != null &&
+                    scm.getDeveloperConnection().indexOf( rootProject.getScm().getDeveloperConnection() ) == 0 )
+                {
+                    subDirectoryTag = scm.getDeveloperConnection().substring(
+                        rootProject.getScm().getDeveloperConnection().length() );
+                }
+                String value =
+                    translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {
                     rewriteElement( "developerConnection", value, scmRoot, namespace );
@@ -123,8 +138,14 @@ public class RewritePomsForReleasePhase
 
             if ( scm.getUrl() != null )
             {
+                if ( rootProject.getScm().getUrl() != null &&
+                    scm.getUrl().indexOf( rootProject.getScm().getUrl() ) == 0 )
+                {
+                    subDirectoryTag = scm.getUrl().substring( rootProject.getScm().getUrl().length() );
+                }
                 // use original tag base without protocol
-                String value = translator.translateTagUrl( scm.getUrl(), tag, releaseDescriptor.getScmTagBase() );
+                String value = translator.translateTagUrl( scm.getUrl(), tag + subDirectoryTag,
+                                                           releaseDescriptor.getScmTagBase() );
                 if ( !value.equals( scm.getUrl() ) )
                 {
                     rewriteElement( "url", value, scmRoot, namespace );

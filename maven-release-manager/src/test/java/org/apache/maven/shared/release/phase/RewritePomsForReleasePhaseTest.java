@@ -115,17 +115,18 @@ public class RewritePomsForReleasePhaseTest
         assertFalse( testFile.exists() );
     }
 
-/* TODO: MRELEASE-78
+    //MRELEASE-116
     public void testScmOverridden()
         throws Exception
     {
-        ReleaseDescriptor config = createConfigurationForWithParentNextVersion( "pom-with-overridden-scm" );
+        List reactorProjects = createReactorProjects( "pom-with-overridden-scm" );
+        ReleaseDescriptor config = createConfigurationForWithParentNextVersion( reactorProjects );
+        config.mapReleaseVersion( "groupId:subsubproject", NEXT_VERSION );
 
-        phase.execute( config, null, getReactorProjects() );
+        phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( getReactorProjects() ) );
+        assertTrue( compareFiles( reactorProjects ) );
     }
-*/
 
     protected void mapAlternateNextVersion( ReleaseDescriptor config, String projectId )
     {

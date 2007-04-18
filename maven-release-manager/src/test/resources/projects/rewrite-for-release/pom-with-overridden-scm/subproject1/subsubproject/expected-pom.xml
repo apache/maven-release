@@ -20,19 +20,10 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>groupId</groupId>
-    <artifactId>artifactId</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <artifactId>subproject1</artifactId>
+    <version>1.0</version>
   </parent>
 
-  <artifactId>subproject1</artifactId>
-
-  <modules>
-    <module>subsubproject</module>
-  </modules>
-
-  <scm>
-    <connection>scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1</connection>
-    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1</developerConnection>
-    <url>file://localhost/tmp/scm-repo/trunk/subproject1</url>
-  </scm>
+  <artifactId>subsubproject</artifactId>
 </project>
+

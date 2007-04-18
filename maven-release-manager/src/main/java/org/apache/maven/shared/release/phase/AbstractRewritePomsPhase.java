@@ -261,7 +261,8 @@ public abstract class AbstractRewritePomsPhase
             }
         }
 
-        transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result );
+        transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result,
+                      (MavenProject) reactorProjects.get( 0 ) );
     }
 
     private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,
@@ -655,7 +656,7 @@ public abstract class AbstractRewritePomsPhase
 
     protected abstract void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                           ReleaseDescriptor releaseDescriptor, String projectId,
-                                          ScmRepository scmRepository, ReleaseResult result )
+                                          ScmRepository scmRepository, ReleaseResult result, MavenProject rootProject )
         throws ReleaseExecutionException;
 
     protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshots )

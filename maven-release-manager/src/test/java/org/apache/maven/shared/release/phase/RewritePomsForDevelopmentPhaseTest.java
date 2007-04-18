@@ -260,7 +260,11 @@ public class RewritePomsForDevelopmentPhaseTest
         config.mapReleaseVersion( "groupId:subsubproject", RELEASE_VERSION );
         config.mapDevelopmentVersion( "groupId:subsubproject", NEXT_VERSION );
         config.mapOriginalScmInfo( "groupId:artifactId", null );
-        config.mapOriginalScmInfo( "groupId:subproject1", null );
+        Scm scm = new Scm();
+        scm.setConnection( "scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1" );
+        scm.setDeveloperConnection( "scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1" );
+        scm.setUrl( "file://localhost/tmp/scm-repo/trunk/subproject1" );
+        config.mapOriginalScmInfo( "groupId:subproject1", scm );
         config.mapOriginalScmInfo( "groupId:subsubproject", null );
 
         phase.execute( config, null, reactorProjects );
