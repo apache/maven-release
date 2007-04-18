@@ -104,12 +104,14 @@ public class RewritePomsForReleasePhase
             {
                 tagBase = "scm:svn:" + tagBase;
             }
+
+            Scm rootScm = rootProject.getScm();
             if ( scm.getConnection() != null )
             {
-                if ( rootProject.getScm().getConnection() != null &&
-                    scm.getConnection().indexOf( rootProject.getScm().getConnection() ) == 0 )
+                if ( rootScm.getConnection() != null &&
+                    scm.getConnection().indexOf( rootScm.getConnection() ) == 0 )
                 {
-                    subDirectoryTag = scm.getConnection().substring( rootProject.getScm().getConnection().length() );
+                    subDirectoryTag = scm.getConnection().substring( rootScm.getConnection().length() );
                 }
                 String value = translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, tagBase );
                 if ( !value.equals( scm.getConnection() ) )
@@ -121,11 +123,11 @@ public class RewritePomsForReleasePhase
 
             if ( scm.getDeveloperConnection() != null )
             {
-                if ( rootProject.getScm().getDeveloperConnection() != null &&
-                    scm.getDeveloperConnection().indexOf( rootProject.getScm().getDeveloperConnection() ) == 0 )
+                if ( rootScm.getDeveloperConnection() != null &&
+                    scm.getDeveloperConnection().indexOf( rootScm.getDeveloperConnection() ) == 0 )
                 {
                     subDirectoryTag = scm.getDeveloperConnection().substring(
-                        rootProject.getScm().getDeveloperConnection().length() );
+                        rootScm.getDeveloperConnection().length() );
                 }
                 String value =
                     translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
@@ -138,10 +140,10 @@ public class RewritePomsForReleasePhase
 
             if ( scm.getUrl() != null )
             {
-                if ( rootProject.getScm().getUrl() != null &&
-                    scm.getUrl().indexOf( rootProject.getScm().getUrl() ) == 0 )
+                if ( rootScm.getUrl() != null &&
+                    scm.getUrl().indexOf( rootScm.getUrl() ) == 0 )
                 {
-                    subDirectoryTag = scm.getUrl().substring( rootProject.getScm().getUrl().length() );
+                    subDirectoryTag = scm.getUrl().substring( rootScm.getUrl().length() );
                 }
                 // use original tag base without protocol
                 String value = translator.translateTagUrl( scm.getUrl(), tag + subDirectoryTag,
