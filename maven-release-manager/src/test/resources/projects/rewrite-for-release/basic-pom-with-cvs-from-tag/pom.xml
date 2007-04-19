@@ -27,9 +27,13 @@
   </prerequisites>
 
   <scm>
-    <connection>scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module</connection>
-    <developerConnection>scm:cvs:ext:${username}@localhost:/tmp/scm-repo:module</developerConnection>
-    <url>http://localhost/viewcvs.cgi/module</url>
+    <connection>${scm.base}:pserver:anoncvs@localhost:/tmp/scm-repo:module</connection>
+    <developerConnection>${scm.base}:ext:${username}@localhost:/tmp/scm-repo:module</developerConnection>
+    <url>${baseUrl}/module</url>
     <tag>original-tag</tag>
   </scm>
+  <properties>
+    <scm.base>scm:cvs</scm.base>
+    <baseUrl>http://localhost/viewcvs.cgi</baseUrl>
+  </properties>
 </project>

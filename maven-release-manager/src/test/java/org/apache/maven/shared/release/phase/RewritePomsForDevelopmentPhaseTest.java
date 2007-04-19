@@ -216,9 +216,9 @@ public class RewritePomsForDevelopmentPhaseTest
         mapNextVersion( config, "groupId:artifactId" );
 
         Scm scm = new Scm();
-        scm.setConnection( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
-        scm.setDeveloperConnection( "scm:cvs:ext:${username}@localhost:/tmp/scm-repo:module" );
-        scm.setUrl( "http://localhost/viewcvs.cgi/module" );
+        scm.setConnection( "${scm.base}:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
+        scm.setDeveloperConnection( "${scm.base}:ext:${username}@localhost:/tmp/scm-repo:module" );
+        scm.setUrl( "${baseUrl}/module" );
         config.mapOriginalScmInfo( "groupId:artifactId", scm );
 
         phase.execute( config, null, reactorProjects );
