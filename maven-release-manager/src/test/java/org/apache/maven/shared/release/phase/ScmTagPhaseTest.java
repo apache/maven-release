@@ -73,13 +73,14 @@ public class ScmTagPhaseTest
         MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
+        descriptor.setScmCommentPrefix( "[my prefix]");
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments =
             new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" ),
-                             new IsEqual( "[maven-release-manager] copy for tag release-label" )};
+                             new IsEqual( "[my prefix] copy for tag release-label" )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
             new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
@@ -100,13 +101,14 @@ public class ScmTagPhaseTest
         MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
+        descriptor.setScmCommentPrefix( "[my prefix]");
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments =
             new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" ),
-                             new IsEqual( "[maven-release-manager] copy for tag release-label" )};
+                             new IsEqual( "[my prefix] copy for tag release-label" )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
             new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
