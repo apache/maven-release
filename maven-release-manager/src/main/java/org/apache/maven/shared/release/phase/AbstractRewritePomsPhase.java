@@ -423,7 +423,20 @@ public abstract class AbstractRewritePomsPhase
                 "' and artifactId='" + artifactId + "']" );
         }
 
-        return (Element) xpath.selectSingleNode( dependencyRoot );
+        Element elem = (Element) xpath.selectSingleNode( dependencyRoot );
+
+        //MRELEASE-147
+        if ( elem == null && groupId.indexOf( "${" ) == -1 )
+        {
+            elem = getDependency( "${project.groupId}", artifactId, groupTagName, tagName, dependencyRoot );
+
+            if ( elem == null )
+            {
+                elem = getDependency( "${pom.groupId}", artifactId, groupTagName, tagName, dependencyRoot );
+            }
+        }
+
+        return elem;
     }
 
     private void updateDomVersion( String groupId, String artifactId, Map mappedVersions,
@@ -437,7 +450,7 @@ public abstract class AbstractRewritePomsPhase
         String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDepedencies );
         Object originalVersion = originalVersions.get( key );
 
-        // workaround 
+        // workaround
         if ( originalVersion == null )
         {
             originalVersion = getOriginalResolvedSnapshotVersion( key, resolvedSnapshotDepedencies );
