@@ -56,6 +56,8 @@
             The description of this release configuration
           </description>
         </field>
+        <!-- Settings needs to be resolved -->
+        <!-- SCM Information -->
         <field>
           <name>ScmCommentPrefix</name>
           <version>1.0.0</version>
@@ -65,8 +67,6 @@
             The prefix of SCM modification messages
           </description>
         </field>
-        <!-- Settings needs to be resolved -->
-        <!-- SCM Information -->
         <field>
           <name>scmSourceUrl</name>
           <version>1.0.0</version>
@@ -249,6 +249,15 @@
           <type>String</type>
           <description>
             The goals to execute in preparation for the release.
+          </description>
+        </field>
+        <field>
+          <name>commitByProject</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            The commits must be done by modules or not. Set it to true in case of flat directory structure.
           </description>
         </field>
 

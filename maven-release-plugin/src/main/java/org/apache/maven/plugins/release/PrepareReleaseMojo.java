@@ -87,6 +87,13 @@ public class PrepareReleaseMojo
      */
     private String preparationGoals;
 
+    /**
+     * Commits to do are atomic or by project.
+     *
+     * @parameter expression="${commitByProject}" default-value="false"
+     */
+    private boolean commitByProject;
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -95,6 +102,7 @@ public class PrepareReleaseMojo
         config.setGenerateReleasePoms( generateReleasePoms );
         config.setScmUseEditMode( useEditMode );
         config.setPreparationGoals( preparationGoals );
+        config.setCommitByProject( commitByProject );
 
         try
         {

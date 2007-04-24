@@ -90,24 +90,47 @@ public class ScmCommitPhase
 
         List pomFiles = createPomFiles( reactorProjects );
 
-        CheckInScmResult result;
-        try
+        if ( releaseDescriptor.isCommitByProject() )
+        {
+            for ( Iterator i = pomFiles.iterator(); i.hasNext(); )
+            {
+                File pomFile = (File) i.next();
+                ScmFileSet fileSet = new ScmFileSet( pomFile.getParentFile(), pomFile );
+
+                checkin( provider, repository, fileSet, createMessage( releaseDescriptor ) );
+            }
+        }
+        else
         {
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), pomFiles );
-            result = provider.checkIn( repository, fileSet, (ScmVersion) null, createMessage( releaseDescriptor ) );
-        }
-        catch ( ScmException e )
-        {
-            throw new ReleaseExecutionException( "An error is occurred in the checkin process: " + e.getMessage(), e );
-        }
-        if ( !result.isSuccess() )
-        {
-            throw new ReleaseScmCommandException( "Unable to commit files", result );
+
+            checkin( provider, repository, fileSet, createMessage( releaseDescriptor ) );
         }
 
         relResult.setResultCode( ReleaseResult.SUCCESS );
 
         return relResult;
+    }
+
+    private void checkin( ScmProvider provider, ScmRepository repository, ScmFileSet fileSet,
+                                      String message )
+        throws ReleaseExecutionException, ReleaseScmCommandException
+    {
+        CheckInScmResult result;
+
+        try
+        {
+            result = provider.checkIn( repository, fileSet, (ScmVersion) null, message );
+        }
+        catch ( ScmException e )
+        {
+            throw new ReleaseExecutionException( "An error is occurred in the checkin process: " + e.getMessage(), e );
+        }
+
+        if ( !result.isSuccess() )
+        {
+            throw new ReleaseScmCommandException( "Unable to commit files", result );
+        }
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
