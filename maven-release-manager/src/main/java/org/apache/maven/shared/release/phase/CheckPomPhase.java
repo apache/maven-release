@@ -30,6 +30,7 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.Iterator;
@@ -56,7 +57,7 @@ public class CheckPomPhase
         // Currently, we don't deal with multiple SCM locations in a multiproject
         if ( StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
         {
-            MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+            MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
             if ( rootProject != null && rootProject.getScm() != null )
             {
                 if ( rootProject.getScm().getDeveloperConnection() != null )

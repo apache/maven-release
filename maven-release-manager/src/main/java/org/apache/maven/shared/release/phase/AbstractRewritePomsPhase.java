@@ -40,6 +40,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -262,7 +263,7 @@ public abstract class AbstractRewritePomsPhase
         }
 
         transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result,
-                      (MavenProject) reactorProjects.get( 0 ) );
+                      ReleaseUtil.getRootProject( reactorProjects ) );
     }
 
     private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,

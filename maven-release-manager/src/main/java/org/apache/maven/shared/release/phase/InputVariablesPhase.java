@@ -31,6 +31,7 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 
@@ -85,7 +86,7 @@ public class InputVariablesPhase
         ReleaseResult result = new ReleaseResult();
 
         // get the root project
-        MavenProject project = (MavenProject) reactorProjects.get( 0 );
+        MavenProject project = ReleaseUtil.getRootProject( reactorProjects );
 
         String tag = releaseDescriptor.getScmReleaseLabel();
 

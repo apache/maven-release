@@ -36,6 +36,7 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsAnything;
@@ -70,17 +71,16 @@ public class ScmTagPhaseTest
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         List reactorProjects = createReactorProjects();
         descriptor.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setScmCommentPrefix( "[my prefix]");
+        descriptor.setScmCommentPrefix( "[my prefix]" );
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
-        Constraint[] arguments =
-            new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" ),
-                             new IsEqual( "[my prefix] copy for tag release-label" )};
+        Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ),
+            new IsEqual( "release-label" ), new IsEqual( "[my prefix] copy for tag release-label" )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
             new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
@@ -98,17 +98,16 @@ public class ScmTagPhaseTest
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         List reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms", false );
         descriptor.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setScmCommentPrefix( "[my prefix]");
+        descriptor.setScmCommentPrefix( "[my prefix]" );
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
-        Constraint[] arguments =
-            new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" ),
-                             new IsEqual( "[my prefix] copy for tag release-label" )};
+        Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ),
+            new IsEqual( "release-label" ), new IsEqual( "[my prefix] copy for tag release-label" )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
             new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
 
@@ -143,7 +142,7 @@ public class ScmTagPhaseTest
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         List reactorProjects = createReactorProjects();
         descriptor.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
 

@@ -36,6 +36,7 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsAnything;
@@ -78,7 +79,7 @@ public class ScmCommitPhaseTest
         List reactorProjects = createReactorProjects();
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         descriptor.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
 
@@ -104,7 +105,7 @@ public class ScmCommitPhaseTest
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         List reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms", false );
         descriptor.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
 
@@ -139,7 +140,7 @@ public class ScmCommitPhaseTest
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         List reactorProjects = createReactorProjects();
         descriptor.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
 
@@ -182,7 +183,7 @@ public class ScmCommitPhaseTest
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         List reactorProjects = createReactorProjects();
         descriptor.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
 

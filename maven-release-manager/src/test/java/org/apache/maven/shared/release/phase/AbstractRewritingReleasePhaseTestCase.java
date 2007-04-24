@@ -35,6 +35,7 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 import org.jmock.Mock;
 import org.jmock.core.constraint.IsEqual;
@@ -666,7 +667,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )
     {
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        MavenProject rootProject = (MavenProject) reactorProjects.get( 0 );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         if ( rootProject.getScm() == null )
         {
             descriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo/trunk" );
