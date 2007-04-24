@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -87,15 +88,14 @@ public class ScmCommitPhase
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
         }
 
-        Collection pomFiles = createPomFiles( reactorProjects );
-        File[] files = (File[]) pomFiles.toArray( new File[pomFiles.size()] );
+        List pomFiles = createPomFiles( reactorProjects );
 
         CheckInScmResult result;
         try
         {
-            ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), files );
+            ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), pomFiles );
             //TODO: Use ScmVersion instead of String for the branch/tag/revision parameter
-            result = provider.checkIn( repository, fileSet, (String) null, createMessage( releaseDescriptor ) );
+            result = provider.checkIn( repository, fileSet, (ScmVersion) null, createMessage( releaseDescriptor ) );
         }
         catch ( ScmException e )
         {
@@ -138,10 +138,11 @@ public class ScmCommitPhase
 
     private String createMessage( ReleaseDescriptor releaseDescriptor )
     {
-        return MessageFormat.format( releaseDescriptor.getScmCommentPrefix() + messageFormat, new Object[]{releaseDescriptor.getScmReleaseLabel()} );
+        return MessageFormat.format( releaseDescriptor.getScmCommentPrefix() + messageFormat,
+                                     new Object[]{releaseDescriptor.getScmReleaseLabel()} );
     }
 
-    private static Collection createPomFiles( List reactorProjects )
+    private static List createPomFiles( List reactorProjects )
     {
         List pomFiles = new ArrayList( reactorProjects.size() );
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
