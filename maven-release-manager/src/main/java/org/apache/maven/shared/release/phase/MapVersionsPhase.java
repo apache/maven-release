@@ -125,28 +125,35 @@ public class MapVersionsPhase
                 }
                 else
                 {
-                    String nextVersion = null;
-                    if ( version != null )
+                    if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
                     {
-                        nextVersion = version.getReleaseVersionString();
-                    }
+                        String nextVersion = null;
+                        if ( version != null )
+                        {
+                            nextVersion = version.getReleaseVersionString();
+                        }
 
-                    if ( releaseDescriptor.isInteractive() )
-                    {
-                        nextVersion = prompter.prompt(
-                            "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
-                            nextVersion );
+                        if ( releaseDescriptor.isInteractive() )
+                        {
+                            nextVersion = prompter.prompt(
+                                "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
+                                nextVersion );
+                        }
+                        else
+                        {
+                            Map relVersions = releaseDescriptor.getReleaseVersions();
+                            if ( relVersions.containsKey( projectId ) )
+                            {
+                                nextVersion = relVersions.remove( projectId ).toString();
+                            }
+                        }
+
+                        releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
                     }
                     else
                     {
-                        Map relVersions = releaseDescriptor.getReleaseVersions();
-                        if ( relVersions.containsKey( projectId ) )
-                        {
-                            nextVersion = relVersions.remove( projectId ).toString();
-                        }
+                        releaseDescriptor.mapReleaseVersion( projectId, project.getVersion() );
                     }
-
-                    releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
                 }
             }
             catch ( PrompterException e )

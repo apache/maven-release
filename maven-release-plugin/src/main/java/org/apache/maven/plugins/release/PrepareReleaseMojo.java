@@ -63,6 +63,13 @@ public class PrepareReleaseMojo
     private boolean useEditMode;
 
     /**
+     * Whether to update dependencies version to the next development version.
+     *
+     * @parameter expression="${updateDependencies}" default-value="true"
+     */
+    private boolean updateDependencies;
+
+    /**
      * Dry run: don't checkin or tag anything in the scm repository, or modify the checkout.
      * Running <code>mvn -DdryRun=true release:prepare</code> is useful in order to check that modifications to
      * poms and scm operations (only listed on the console) are working as expected.
@@ -103,6 +110,7 @@ public class PrepareReleaseMojo
         config.setScmUseEditMode( useEditMode );
         config.setPreparationGoals( preparationGoals );
         config.setCommitByProject( commitByProject );
+        config.setUpdateDependencies( updateDependencies );
 
         try
         {

@@ -91,17 +91,21 @@ public class CheckPomPhase
             }
         }
 
+        boolean containsSnapshotProjects = false;
+
         for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
         {
             MavenProject project = (MavenProject) it.next();
 
-            String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-
-            if ( !ArtifactUtils.isSnapshot( project.getVersion() ) )
+            if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
             {
-                throw new ReleaseFailureException(
-                    "The project " + projectId + " isn't a snapshot (" + project.getVersion() + ")." );
+                containsSnapshotProjects = true;
             }
+        }
+
+        if ( !containsSnapshotProjects )
+        {
+            throw new ReleaseFailureException( "You don't have a SNAPSHOT project in the reactor projects list." );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );
