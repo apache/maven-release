@@ -173,6 +173,15 @@
           </description>
         </field>
         <field>
+          <name>updateDependencies</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            If updateDependencies is false, dependencies version won't be updated to the next development version.
+          </description>
+        </field>
+        <field>
           <name>originalScmInfo</name>
           <version>1.0.0</version>
           <type>Map</type>

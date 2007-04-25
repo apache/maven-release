@@ -292,4 +292,18 @@ public class RewritePomsForDevelopmentPhaseTest
 
         assertTrue( compareFiles( reactorProjects ) );
     }
+
+    public void testRewritePomDependenciesWithoutDependenciesVersionUpdate()
+        throws Exception
+    {
+        List reactorProjects =
+            createReactorProjects( "internal-snapshot-dependencies-without-dependencies-version-update" );
+        ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
+        config.setUpdateDependencies( false );
+        mapNextVersion( config, "groupId:subsubproject" );
+
+        phase.execute( config, null, reactorProjects );
+
+        assertTrue( compareFiles( reactorProjects ) );
+    }
 }
