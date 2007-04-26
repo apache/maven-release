@@ -147,7 +147,7 @@ public abstract class AbstractReleaseTestCase
 
             // Recopy the test resources since they are modified in some tests
             String filePath = file.getPath();
-            int index = filePath.indexOf( "projects" );
+            int index = filePath.indexOf( "test-classes" ) + "test-classes".length() + 1;
             filePath = filePath.substring( index );
 
             FileUtils.copyFile( getTestFile( "src/test/resources/" + filePath ),
