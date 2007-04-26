@@ -70,6 +70,14 @@ public class PrepareReleaseMojo
     private boolean updateDependencies;
 
     /**
+     * Whether to automatically assign submodules the parent version.  If set to false,
+     * the user will be prompted for the version of each submodules. 
+     *
+     * @parameter expression="${autoVersionSubmodules}" default-value="false"
+     */
+    private boolean autoVersionSubmodules;
+
+    /**
      * Dry run: don't checkin or tag anything in the scm repository, or modify the checkout.
      * Running <code>mvn -DdryRun=true release:prepare</code> is useful in order to check that modifications to
      * poms and scm operations (only listed on the console) are working as expected.
@@ -111,7 +119,7 @@ public class PrepareReleaseMojo
         config.setPreparationGoals( preparationGoals );
         config.setCommitByProject( commitByProject );
         config.setUpdateDependencies( updateDependencies );
-
+        config.setAutoVersionSubmodules( autoVersionSubmodules );
         try
         {
             releaseManager.prepare( config, settings, reactorProjects, resume, dryRun );

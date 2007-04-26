@@ -25,6 +25,7 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
@@ -63,91 +64,59 @@ public class MapVersionsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+
+        if ( releaseDescriptor.isAutoVersionSubmodules() && ArtifactUtils.isSnapshot( rootProject.getVersion() ) )
         {
-            MavenProject project = (MavenProject) i.next();
+            // get the root project
+            MavenProject project = rootProject;
 
             String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-            VersionInfo version = null;
-            try
+            String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );
+
+            if ( convertToSnapshot )
             {
-                version = new DefaultVersionInfo( project.getVersion() );
+                releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
             }
-            catch ( VersionParseException e )
+            else
             {
-                String msg = "Error parsing version, cannot determine next version: " + e.getMessage();
-                if ( releaseDescriptor.isInteractive() )
+                releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
+            }
+
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            {
+                MavenProject subProject = (MavenProject) i.next();
+                String subProjectId =
+                    ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
+                if ( convertToSnapshot )
                 {
-                    logWarn( result, msg );
-                    logDebug( result, e.getMessage(), e );
+                    releaseDescriptor.mapDevelopmentVersion( subProjectId, nextVersion );
                 }
                 else
                 {
-                    // cannot proceed without a next value in batch mode
-                    throw new ReleaseExecutionException( msg, e );
+                    releaseDescriptor.mapReleaseVersion( subProjectId, nextVersion );
                 }
             }
-
-            try
+        }
+        else
+        {
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
+                MavenProject project = (MavenProject) i.next();
+
+                String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+                String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );
+
                 if ( convertToSnapshot )
                 {
-                    String nextVersion = null;
-                    if ( version != null )
-                    {
-                        VersionInfo versionInfo = version.getNextVersion();
-                        if ( versionInfo != null )
-                        {
-                            nextVersion = versionInfo.getSnapshotVersionString();
-                        }
-                        else
-                        {
-                            nextVersion = "1.0-SNAPSHOT";
-                        }
-                    }
-
-                    if ( releaseDescriptor.isInteractive() )
-                    {
-                        nextVersion = prompter.prompt( "What is the new development version for \"" +
-                            project.getName() + "\"? (" + projectId + ")", nextVersion );
-                    }
-                    else
-                    {
-                        Map devVersions = releaseDescriptor.getDevelopmentVersions();
-                        if ( devVersions.containsKey( projectId ) )
-                        {
-                            nextVersion = devVersions.remove( projectId ).toString();
-                        }
-                    }
-
                     releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
                 }
                 else
                 {
                     if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
                     {
-                        String nextVersion = null;
-                        if ( version != null )
-                        {
-                            nextVersion = version.getReleaseVersionString();
-                        }
-
-                        if ( releaseDescriptor.isInteractive() )
-                        {
-                            nextVersion = prompter.prompt(
-                                "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
-                                nextVersion );
-                        }
-                        else
-                        {
-                            Map relVersions = releaseDescriptor.getReleaseVersions();
-                            if ( relVersions.containsKey( projectId ) )
-                            {
-                                nextVersion = relVersions.remove( projectId ).toString();
-                            }
-                        }
-
                         releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
                     }
                     else
@@ -156,15 +125,107 @@ public class MapVersionsPhase
                     }
                 }
             }
-            catch ( PrompterException e )
-            {
-                throw new ReleaseExecutionException( "Error reading version from input handler: " + e.getMessage(), e );
-            }
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
+    }
+
+    private String getNextVersion( MavenProject project, String projectId, ReleaseDescriptor releaseDescriptor,
+                                   ReleaseResult result )
+        throws ReleaseExecutionException
+    {
+        String nextVersion = null;
+
+        VersionInfo version = null;
+        try
+        {
+            version = new DefaultVersionInfo( project.getVersion() );
+        }
+        catch ( VersionParseException e )
+        {
+            String msg = "Error parsing version, cannot determine next version: " + e.getMessage();
+            if ( releaseDescriptor.isInteractive() )
+            {
+                logWarn( result, msg );
+                logDebug( result, e.getMessage(), e );
+            }
+            else
+            {
+                // cannot proceed without a next value in batch mode
+                throw new ReleaseExecutionException( msg, e );
+            }
+        }
+
+        try
+        {
+            if ( convertToSnapshot )
+            {
+                if ( version != null )
+                {
+                    VersionInfo versionInfo = version.getNextVersion();
+                    if ( versionInfo != null )
+                    {
+                        nextVersion = versionInfo.getSnapshotVersionString();
+                    }
+                    else
+                    {
+                        nextVersion = "1.0-SNAPSHOT";
+                    }
+                }
+
+                if ( releaseDescriptor.isInteractive() )
+                {
+                    nextVersion = prompter.prompt(
+                        "What is the new development version for \"" + project.getName() + "\"? (" + projectId + ")",
+                        nextVersion );
+                }
+                else
+                {
+                    Map devVersions = releaseDescriptor.getDevelopmentVersions();
+                    if ( devVersions.containsKey( projectId ) )
+                    {
+                        nextVersion = devVersions.remove( projectId ).toString();
+                    }
+                }
+            }
+            else
+            {
+                if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
+                {
+                    if ( version != null )
+                    {
+                        nextVersion = version.getReleaseVersionString();
+                    }
+
+                    if ( releaseDescriptor.isInteractive() )
+                    {
+                        nextVersion = prompter.prompt(
+                            "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
+                            nextVersion );
+                    }
+                    else
+                    {
+                        Map relVersions = releaseDescriptor.getReleaseVersions();
+                        if ( relVersions.containsKey( projectId ) )
+                        {
+                            nextVersion = relVersions.remove( projectId ).toString();
+                        }
+                    }
+                }
+                else
+                {
+                    nextVersion = project.getVersion();
+                }
+            }
+        }
+        catch ( PrompterException e )
+        {
+            throw new ReleaseExecutionException( "Error reading version from input handler: " + e.getMessage(), e );
+        }
+
+        return nextVersion;
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
@@ -179,5 +240,4 @@ public class MapVersionsPhase
 
         return result;
     }
-
 }

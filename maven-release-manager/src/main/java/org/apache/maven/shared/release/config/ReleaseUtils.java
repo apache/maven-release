@@ -44,6 +44,7 @@ public class ReleaseUtils
     {
         // Overridden if configured from the caller
         mergeInto.setScmSourceUrl( mergeOverride( mergeInto.getScmSourceUrl(), toBeMerged.getScmSourceUrl() ) );
+        mergeInto.setScmCommentPrefix( mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix()));
         mergeInto.setScmReleaseLabel(
             mergeOverride( mergeInto.getScmReleaseLabel(), toBeMerged.getScmReleaseLabel() ) );
         mergeInto.setScmTagBase( mergeOverride( mergeInto.getScmTagBase(), toBeMerged.getScmTagBase() ) );
@@ -63,6 +64,10 @@ public class ReleaseUtils
         mergeInto.setAddSchema( toBeMerged.isAddSchema() );
         mergeInto.setGenerateReleasePoms( toBeMerged.isGenerateReleasePoms() );
         mergeInto.setInteractive( toBeMerged.isInteractive() );
+        mergeInto.setUpdateDependencies( toBeMerged.isUpdateDependencies());
+        mergeInto.setCommitByProject( toBeMerged.isCommitByProject());
+
+        mergeInto.setAutoVersionSubmodules( toBeMerged.isAutoVersionSubmodules() );
 
         // These must be overridden, as they are not stored
         mergeInto.setWorkingDirectory(

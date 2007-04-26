@@ -227,6 +227,14 @@
           </description>
         </field>
         <field>
+          <name>autoVersionSubmodules</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <description>
+            Whether to use the parent pom version for submodule verstions.
+          </description>
+        </field>
+        <field>
           <name>interactive</name>
           <version>1.0.0</version>
           <type>boolean</type>
