@@ -25,6 +25,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  * Create a command line instance.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.exec.CommandLineFactory"
  */
 public class DefaultCommandLineFactory
     implements CommandLineFactory

@@ -41,6 +41,7 @@ import java.util.Set;
  * Read and write release configuration and state from a properties file.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.config.ReleaseDescriptorStore" role-hint="properties"
  */
 public class PropertiesReleaseDescriptorStore
     extends AbstractLogEnabled

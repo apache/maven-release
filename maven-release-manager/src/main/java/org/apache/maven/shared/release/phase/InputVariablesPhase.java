@@ -41,17 +41,22 @@ import java.util.List;
  * Input any variables that were not yet configured.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="input-variables"
  */
 public class InputVariablesPhase
     extends AbstractReleasePhase
 {
     /**
      * Component used to prompt for input.
+     *
+     * @plexus.requirement
      */
     private Prompter prompter;
 
     /**
      * Tool that gets a configured SCM repository from release configuration.
+     *
+     * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 

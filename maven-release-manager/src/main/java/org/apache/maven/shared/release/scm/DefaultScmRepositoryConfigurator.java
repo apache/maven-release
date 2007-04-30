@@ -37,6 +37,7 @@ import org.codehaus.plexus.util.StringUtils;
  * Tool that gets a configured SCM repository from release configuration.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.scm.ScmRepositoryConfigurator"
  */
 public class DefaultScmRepositoryConfigurator
     extends AbstractLogEnabled
@@ -44,6 +45,8 @@ public class DefaultScmRepositoryConfigurator
 {
     /**
      * The SCM manager.
+     *
+     * @plexus.requirement
      */
     private ScmManager scmManager;
 

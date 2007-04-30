@@ -19,20 +19,21 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
-import java.util.List;
-import java.util.Iterator;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Edwin Punzalan
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="create-backup-poms"
  */
 public class CreateBackupPomsPhase
     extends AbstractBackupPomsPhase
@@ -45,7 +46,7 @@ public class CreateBackupPomsPhase
         //remove previous backups, if any
         clean( reactorProjects );
 
-        for( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
         {
             MavenProject project = (MavenProject) projects.next();
 
@@ -61,7 +62,7 @@ public class CreateBackupPomsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        for( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
         {
             MavenProject project = (MavenProject) projects.next();
 

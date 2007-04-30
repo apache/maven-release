@@ -19,21 +19,22 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.FileUtils;
 
-import java.util.List;
-import java.util.Iterator;
-import java.io.IOException;
 import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Edwin Punzalan
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="restore-backup-poms"
  */
 public class RestoreBackupPomsPhase
     extends AbstractBackupPomsPhase
@@ -43,7 +44,7 @@ public class RestoreBackupPomsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        for( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
         {
             MavenProject project = (MavenProject) projects.next();
 
@@ -68,8 +69,8 @@ public class RestoreBackupPomsPhase
 
         if ( !pomBackup.exists() )
         {
-            throw new ReleaseExecutionException( "Cannot restore from a missing backup POM: " +
-                pomBackup.getAbsolutePath() );
+            throw new ReleaseExecutionException(
+                "Cannot restore from a missing backup POM: " + pomBackup.getAbsolutePath() );
         }
 
         try

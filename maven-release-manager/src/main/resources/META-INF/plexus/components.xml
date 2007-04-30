@@ -61,7 +61,6 @@
           <phase>end-release</phase>
         </preparePhases>
         <performPhases>
-          <phase>verify-release-configuration</phase>
           <phase>verify-completed-prepare-phases</phase>
           <phase>configure-repositories</phase>
           <phase>checkout-project-from-scm</phase>
@@ -74,30 +73,6 @@
           <phase>remove-scm-tag</phase>
         </rollbackPhases>
       </configuration>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>check-poms</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.CheckPomPhase</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>input-variables</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.InputVariablesPhase</implementation>
-      <requirements>
-        <requirement>
-          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
-          <role-hint>default</role-hint>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
-      </requirements>
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
@@ -129,30 +104,6 @@
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>scm-check-modifications</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.ScmCheckModificationsPhase</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>check-dependency-snapshots</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.CheckDependencySnapshotsPhase</implementation>
-      <requirements>
-        <requirement>
-          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
-          <role-hint>default</role-hint>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.artifact.factory.ArtifactFactory</role>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>rewrite-poms-for-release</role-hint>
       <implementation>org.apache.maven.shared.release.phase.RewritePomsForReleasePhase</implementation>
       <configuration>
@@ -165,26 +116,6 @@
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
           <field-name>scmTranslators</field-name>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>generate-release-poms</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.GenerateReleasePomsPhase</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>remove-release-poms</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.RemoveReleasePomsPhase</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>run-preparation-goals</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.RunGoalsPhase</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.exec.MavenExecutor</role>
         </requirement>
       </requirements>
     </component>
@@ -216,16 +147,6 @@
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>scm-tag</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.ScmTagPhase</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>rewrite-poms-for-development</role-hint>
       <implementation>org.apache.maven.shared.release.phase.RewritePomsForDevelopmentPhase</implementation>
       <configuration>
@@ -240,68 +161,6 @@
           <field-name>scmTranslators</field-name>
         </requirement>
       </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.config.ReleaseDescriptorStore</role>
-      <role-hint>properties</role-hint>
-      <implementation>org.apache.maven.shared.release.config.PropertiesReleaseDescriptorStore</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-      <implementation>org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.scm.manager.ScmManager</role>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
-      <role-hint>svn</role-hint>
-      <implementation>org.apache.maven.shared.release.scm.SubversionScmTranslator</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
-      <role-hint>cvs</role-hint>
-      <implementation>org.apache.maven.shared.release.scm.CvsScmTranslator</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
-      <role-hint>clearcase</role-hint>
-      <implementation>org.apache.maven.shared.release.scm.ClearCaseScmTranslator</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.exec.MavenExecutor</role>
-      <implementation>org.apache.maven.shared.release.exec.ForkedMavenExecutor</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.exec.CommandLineFactory</role>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.exec.CommandLineFactory</role>
-      <implementation>org.apache.maven.shared.release.exec.DefaultCommandLineFactory</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>end-release</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.EndReleasePhase</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>create-backup-poms</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.CreateBackupPomsPhase</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>restore-backup-poms</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.RestoreBackupPomsPhase</implementation>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>remove-scm-tag</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.RemoveScmTagPhase</implementation>
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>

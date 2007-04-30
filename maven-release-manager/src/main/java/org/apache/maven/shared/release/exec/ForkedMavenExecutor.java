@@ -33,6 +33,7 @@ import java.io.File;
  * Fork Maven to executed a series of goals.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.exec.MavenExecutor"
  */
 public class ForkedMavenExecutor
     extends AbstractLogEnabled
@@ -40,6 +41,8 @@ public class ForkedMavenExecutor
 {
     /**
      * Command line factory.
+     *
+     * @plexus.requirement
      */
     private CommandLineFactory commandLineFactory;
 

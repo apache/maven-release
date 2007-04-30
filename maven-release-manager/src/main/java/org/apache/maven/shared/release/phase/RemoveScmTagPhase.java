@@ -1,10 +1,10 @@
 package org.apache.maven.shared.release.phase;
 
-import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.settings.Settings;
 
 import java.util.List;
 
@@ -29,6 +29,7 @@ import java.util.List;
 
 /**
  * @author Edwin Punzalan
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="remove-scm-tag"
  */
 public class RemoveScmTagPhase
     extends AbstractReleasePhase

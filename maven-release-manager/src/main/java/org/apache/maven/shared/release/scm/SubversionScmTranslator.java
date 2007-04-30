@@ -26,6 +26,7 @@ import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
  * Subversion tag translator.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.scm.ScmTranslator" role-hint="svn"
  */
 public class SubversionScmTranslator
     implements ScmTranslator

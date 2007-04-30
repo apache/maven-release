@@ -31,11 +31,11 @@ import java.util.List;
  * Finalise release preparation so it can be flagged complete..
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="end-release"
  */
 public class EndReleasePhase
     extends AbstractReleasePhase
 {
-
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {

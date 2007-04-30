@@ -47,12 +47,15 @@ import java.util.Set;
  * See if there are any local modifications to the files before proceeding with SCM operations and the release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="scm-check-modifications"
  */
 public class ScmCheckModificationsPhase
     extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
+     *
+     * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
@@ -61,9 +64,8 @@ public class ScmCheckModificationsPhase
      *
      * @todo proper construction of filenames, especially release properties
      */
-    private Set excludedFiles = new HashSet( Arrays.asList(
-        new String[]{"pom.xml", "pom.xml.backup", "pom.xml.tag", "pom.xml.next", "release.properties",
-            "pom.xml.releaseBackup"} ) );
+    private Set excludedFiles = new HashSet( Arrays.asList( new String[]{"pom.xml", "pom.xml.backup", "pom.xml.tag",
+        "pom.xml.next", "release.properties", "pom.xml.releaseBackup"} ) );
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException

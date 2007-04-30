@@ -34,12 +34,15 @@ import java.util.List;
  * Run the integration tests for the project to verify that it builds before committing.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="run-preparation-goals"
  */
 public class RunGoalsPhase
     extends AbstractReleasePhase
 {
     /**
      * Component to assist in executing Maven.
+     *
+     * @plexus.requirement
      */
     private MavenExecutor mavenExecutor;
 

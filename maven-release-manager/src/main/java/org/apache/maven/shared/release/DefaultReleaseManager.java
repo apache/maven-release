@@ -322,11 +322,8 @@ public class DefaultReleaseManager
 
         logInfo( result, "Checking out the project to perform the release ..." );
 
-        updateListener( listener, "verify-release-configuration", PHASE_START );
-
         ReleaseDescriptor config = loadReleaseDescriptor( releaseDescriptor, listener );
 
-        updateListener( listener, "verify-release-configuration", PHASE_END );
         updateListener( listener, "verify-completed-prepare-phases", PHASE_START );
 
         // if we stopped mid-way through preparation - don't perform
@@ -350,6 +347,7 @@ public class DefaultReleaseManager
         }
 
         updateListener( listener, "verify-completed-prepare-phases", PHASE_END );
+
         updateListener( listener, "configure-repositories", PHASE_START );
 
         ScmRepository repository;
@@ -431,7 +429,8 @@ public class DefaultReleaseManager
 
         try
         {
-            File workingDirectory = determineWorkingDirectory(checkoutDirectory, scmResult.getRelativePathProjectDirectory());
+            File workingDirectory =
+                determineWorkingDirectory( checkoutDirectory, scmResult.getRelativePathProjectDirectory() );
             mavenExecutor.executeGoals( workingDirectory, goals, config.isInteractive(), additionalArguments,
                                         config.getPomFileName(), result );
         }
@@ -455,15 +454,13 @@ public class DefaultReleaseManager
      * Determines the path of the working directory. By default, this is the
      * checkout directory. For some SCMs, the project root directory is not the
      * checkout directory itself, but a SCM-specific subdirectory.
-     * 
-     * @param checkoutDirectory
-     *            The checkout directory as java.io.File
-     * @param relativePathProjectDirectory
-     *            The relative path of the project directory within the checkout
-     *            directory or ""
+     *
+     * @param checkoutDirectory            The checkout directory as java.io.File
+     * @param relativePathProjectDirectory The relative path of the project directory within the checkout
+     *                                     directory or ""
      * @return The working directory
      */
-    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory)
+    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory )
     {
         if ( StringUtils.isNotEmpty( relativePathProjectDirectory ) )
         {
@@ -481,7 +478,10 @@ public class DefaultReleaseManager
     {
         try
         {
-            return configStore.read( releaseDescriptor );
+            updateListener( listener, "verify-release-configuration", PHASE_START );
+            ReleaseDescriptor descriptor = configStore.read( releaseDescriptor );
+            updateListener( listener, "verify-release-configuration", PHASE_END );
+            return descriptor;
         }
         catch ( ReleaseDescriptorStoreException e )
         {

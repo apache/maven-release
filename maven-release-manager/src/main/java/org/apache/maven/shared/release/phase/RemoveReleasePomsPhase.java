@@ -30,6 +30,7 @@ import java.util.List;
  * Remove release POMs.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="remove-release-poms"
  */
 public class RemoveReleasePomsPhase
     extends AbstractReleasePhase

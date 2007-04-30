@@ -42,12 +42,15 @@ import java.util.List;
  * Tag the SCM repository after committing the release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="scm-tag"
  */
 public class ScmTagPhase
     extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
+     *
+     * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 

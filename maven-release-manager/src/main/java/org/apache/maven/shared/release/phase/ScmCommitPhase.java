@@ -112,8 +112,7 @@ public class ScmCommitPhase
         return relResult;
     }
 
-    private void checkin( ScmProvider provider, ScmRepository repository, ScmFileSet fileSet,
-                                      String message )
+    private void checkin( ScmProvider provider, ScmRepository repository, ScmFileSet fileSet, String message )
         throws ReleaseExecutionException, ReleaseScmCommandException
     {
         CheckInScmResult result;

@@ -51,6 +51,7 @@ import java.util.Set;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @todo plugins with no version will be resolved to RELEASE which is not a snapshot, but remains unresolved to this point. This is a potential hole in the check, and should be revisited after the release pom writing is done and resolving versions to verify whether it is.
  * @todo plugins injected by the lifecycle are not tested here. They will be injected with a RELEASE version so are covered under the above point.
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="check-dependency-snapshots"
  */
 public class CheckDependencySnapshotsPhase
     extends AbstractReleasePhase
@@ -77,11 +78,15 @@ public class CheckDependencySnapshotsPhase
 
     /**
      * Component used to prompt for input.
+     *
+     * @plexus.requirement
      */
     private Prompter prompter;
 
     /**
      * Component used to create artifacts
+     *
+     * @plexus.requirement
      */
     private ArtifactFactory artifactFactory;
 

@@ -23,6 +23,7 @@ package org.apache.maven.shared.release.scm;
  * ClearCase tag translator.
  *
  * @author <a href="mailto:arne@degenring.com">Arne Degenring</a>
+ * @plexus.component role="org.apache.maven.shared.release.scm.ScmTranslator" role-hint="clearcase"
  */
 public class ClearCaseScmTranslator
     implements ScmTranslator

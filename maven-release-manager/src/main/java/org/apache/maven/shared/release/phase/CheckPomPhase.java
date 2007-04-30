@@ -40,12 +40,15 @@ import java.util.List;
  * Phase that checks the validity of the POM before release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="check-poms"
  */
 public class CheckPomPhase
     extends AbstractReleasePhase
 {
     /**
      * Retrieve an SCM repository, useful for validating an URL.
+     *
+     * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
