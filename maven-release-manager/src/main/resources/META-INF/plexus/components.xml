@@ -37,9 +37,6 @@
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
         </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.exec.MavenExecutor</role>
-        </requirement>
       </requirements>
       <configuration>
         <preparePhases>
@@ -62,10 +59,8 @@
         </preparePhases>
         <performPhases>
           <phase>verify-completed-prepare-phases</phase>
-          <phase>configure-repositories</phase>
           <phase>checkout-project-from-scm</phase>
-          <phase>build-project</phase>
-          <phase>cleanup</phase>
+          <phase>run-perform-goals</phase>
         </performPhases>
         <rollbackPhases>
           <phase>restore-backup-poms</phase>

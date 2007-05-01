@@ -19,30 +19,16 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
-import org.apache.maven.scm.ScmException;
-import org.apache.maven.scm.ScmFileSet;
-import org.apache.maven.scm.ScmTag;
-import org.apache.maven.scm.command.checkout.CheckOutScmResult;
-import org.apache.maven.scm.manager.NoSuchScmProviderException;
-import org.apache.maven.scm.provider.ScmProvider;
-import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
-import org.apache.maven.shared.release.exec.MavenExecutor;
-import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.apache.maven.shared.release.phase.ReleasePhase;
-import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
-import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -63,7 +49,9 @@ public class DefaultReleaseManager
      */
     private List preparePhases;
 
-    //todo implement
+    /**
+     * The phases of release to run to perform.
+     */
     private List performPhases;
 
     /**
@@ -85,11 +73,6 @@ public class DefaultReleaseManager
      * Tool for configuring SCM repositories from release configuration.
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
-
-    /**
-     * Tool to execute Maven.
-     */
-    private MavenExecutor mavenExecutor;
 
     private static final int PHASE_SKIP = 0, PHASE_START = 1, PHASE_END = 2, GOAL_START = 11, GOAL_END = 12, ERROR = 99;
 
@@ -262,29 +245,25 @@ public class DefaultReleaseManager
         }
 
         //call release:clean so that resume will not be possible anymore after a rollback
-        clean( releaseDescriptor, reactorProjects );
+        clean( releaseDescriptor, listener, reactorProjects );
         updateListener( listener, "prepare", GOAL_END );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                         File checkoutDirectory, String goals, boolean useReleaseProfile )
+    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, checkoutDirectory, goals, useReleaseProfile, null );
+        perform( releaseDescriptor, settings, reactorProjects, null );
     }
 
     public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                         File checkoutDirectory, String goals, boolean useReleaseProfile,
                          ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, checkoutDirectory, goals, useReleaseProfile, listener,
-                 new ReleaseResult() );
+        perform( releaseDescriptor, settings, reactorProjects, listener, new ReleaseResult() );
     }
 
     public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
-                                            List reactorProjects, File checkoutDirectory, String goals,
-                                            boolean useReleaseProfile, ReleaseManagerListener listener )
+                                            List reactorProjects, ReleaseManagerListener listener )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -292,8 +271,7 @@ public class DefaultReleaseManager
         {
             result.setStartTime( System.currentTimeMillis() );
 
-            perform( releaseDescriptor, settings, reactorProjects, checkoutDirectory, goals, useReleaseProfile,
-                     listener, result );
+            perform( releaseDescriptor, settings, reactorProjects, listener, result );
 
             result.setResultCode( ReleaseResult.SUCCESS );
         }
@@ -314,138 +292,31 @@ public class DefaultReleaseManager
     }
 
     private void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                          File checkoutDirectory, String goals, boolean useReleaseProfile,
                           ReleaseManagerListener listener, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         updateListener( listener, "perform", GOAL_START );
 
-        logInfo( result, "Checking out the project to perform the release ..." );
+        releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, listener );
 
-        ReleaseDescriptor config = loadReleaseDescriptor( releaseDescriptor, listener );
-
-        updateListener( listener, "verify-completed-prepare-phases", PHASE_START );
-
-        // if we stopped mid-way through preparation - don't perform
-        if ( config.getCompletedPhase() != null && !"end-release".equals( config.getCompletedPhase() ) )
+        for ( Iterator phases = performPhases.iterator(); phases.hasNext(); )
         {
-            String message = "Cannot perform release - the preparation step was stopped mid-way. Please re-run " +
-                "release:prepare to continue, or perform the release from an SCM tag.";
+            String name = (String) phases.next();
 
-            updateListener( listener, message, ERROR );
+            ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
 
-            throw new ReleaseFailureException( message );
-        }
-
-        if ( config.getScmSourceUrl() == null )
-        {
-            String message = "No SCM URL was provided to perform the release from";
-
-            updateListener( listener, message, ERROR );
-
-            throw new ReleaseFailureException( message );
-        }
-
-        updateListener( listener, "verify-completed-prepare-phases", PHASE_END );
-
-        updateListener( listener, "configure-repositories", PHASE_START );
-
-        ScmRepository repository;
-        ScmProvider provider;
-        try
-        {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( config, settings );
-
-            provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
-        }
-        catch ( ScmRepositoryException e )
-        {
-            updateListener( listener, e.getMessage(), ERROR );
-
-            throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
-        }
-        catch ( NoSuchScmProviderException e )
-        {
-            updateListener( listener, e.getMessage(), ERROR );
-
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
-        }
-
-        // TODO: sanity check that it is not . or .. or lower
-
-        updateListener( listener, "configure-repositories", PHASE_END );
-        updateListener( listener, "checkout-project-from-scm", PHASE_START );
-
-        if ( checkoutDirectory.exists() )
-        {
-            try
+            if ( phase == null )
             {
-                FileUtils.deleteDirectory( checkoutDirectory );
+                throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
             }
-            catch ( IOException e )
-            {
-                updateListener( listener, e.getMessage(), ERROR );
 
-                throw new ReleaseExecutionException( "Unable to remove old checkout directory: " + e.getMessage(), e );
-            }
-        }
-        checkoutDirectory.mkdirs();
-
-        CheckOutScmResult scmResult;
-        try
-        {
-            scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ),
-                                           new ScmTag( config.getScmReleaseLabel() ) );
-        }
-        catch ( ScmException e )
-        {
-            updateListener( listener, e.getMessage(), ERROR );
-
-            throw new ReleaseExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
-        }
-        if ( !scmResult.isSuccess() )
-        {
-            updateListener( listener, scmResult.getProviderMessage(), ERROR );
-
-            throw new ReleaseScmCommandException( "Unable to checkout from SCM", scmResult );
+            updateListener( listener, name, PHASE_START );
+            phase.execute( releaseDescriptor, settings, reactorProjects );
+            updateListener( listener, name, PHASE_END );
         }
 
-        updateListener( listener, "checkout-project-from-scm", PHASE_END );
-        updateListener( listener, "build-project", PHASE_START );
-
-        String additionalArguments = config.getAdditionalArguments();
-
-        if ( useReleaseProfile )
-        {
-            if ( !StringUtils.isEmpty( additionalArguments ) )
-            {
-                additionalArguments = additionalArguments + " -DperformRelease=true";
-            }
-            else
-            {
-                additionalArguments = "-DperformRelease=true";
-            }
-        }
-
-        try
-        {
-            File workingDirectory =
-                determineWorkingDirectory( checkoutDirectory, scmResult.getRelativePathProjectDirectory() );
-            mavenExecutor.executeGoals( workingDirectory, goals, config.isInteractive(), additionalArguments,
-                                        config.getPomFileName(), result );
-        }
-        catch ( MavenExecutorException e )
-        {
-            updateListener( listener, e.getMessage(), ERROR );
-
-            throw new ReleaseExecutionException( "Error executing Maven: " + e.getMessage(), e );
-        }
-
-        updateListener( listener, "build-project", PHASE_END );
-
-        updateListener( listener, "cleanup", PHASE_START );
-        clean( config, reactorProjects );
-        updateListener( listener, "cleanup", PHASE_END );
+        //call release:clean so that resume will not be possible anymore after a perform
+        clean( releaseDescriptor, listener, reactorProjects );
 
         updateListener( listener, "perform", GOAL_END );
     }
@@ -491,8 +362,10 @@ public class DefaultReleaseManager
         }
     }
 
-    public void clean( ReleaseDescriptor releaseDescriptor, List reactorProjects )
+    public void clean( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener, List reactorProjects )
     {
+        updateListener( listener, "cleanup", PHASE_START );
+
         getLogger().info( "Cleaning up after release..." );
 
         configStore.delete( releaseDescriptor );
@@ -505,16 +378,13 @@ public class DefaultReleaseManager
 
             phase.clean( reactorProjects );
         }
+
+        updateListener( listener, "cleanup", PHASE_END );
     }
 
     void setConfigStore( ReleaseDescriptorStore configStore )
     {
         this.configStore = configStore;
-    }
-
-    void setMavenExecutor( MavenExecutor mavenExecutor )
-    {
-        this.mavenExecutor = mavenExecutor;
     }
 
     void updateListener( ReleaseManagerListener listener, String name, int state )

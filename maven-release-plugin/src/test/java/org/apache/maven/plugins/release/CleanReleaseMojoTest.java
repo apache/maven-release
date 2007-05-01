@@ -45,6 +45,7 @@ import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.jmock.Mock;
 import org.jmock.core.constraint.IsEqual;
+import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 
 import java.io.File;
@@ -79,7 +80,7 @@ public class CleanReleaseMojoTest
         descriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
         Mock mock = new Mock( ReleaseManager.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "clean" ).with( new IsEqual( descriptor ),
+        mock.expects( new InvokeOnceMatcher() ).method( "clean" ).with( new IsEqual( descriptor ), new IsNull(),
                                                                         new IsEqual( mojo.getReactorProjects() ) );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
 

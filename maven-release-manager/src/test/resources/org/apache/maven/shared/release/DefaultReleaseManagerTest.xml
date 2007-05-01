@@ -36,9 +36,6 @@
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
         </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.exec.MavenExecutor</role>
-        </requirement>
       </requirements>
       <configuration>
         <preparePhases>
@@ -46,6 +43,11 @@
           <phase>step2</phase>
           <phase>step3</phase>
         </preparePhases>
+        <performPhases>
+          <phase>verify-completed-prepare-phases</phase>
+          <phase>checkout-project-from-scm</phase>
+          <phase>run-perform-goals</phase>
+        </performPhases>
       </configuration>
     </component>
     <component>

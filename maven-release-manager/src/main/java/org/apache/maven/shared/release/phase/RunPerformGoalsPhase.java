@@ -23,8 +23,6 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.exec.MavenExecutor;
-import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -34,43 +32,29 @@ import java.util.List;
  * Run the integration tests for the project to verify that it builds before committing.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="run-preparation-goals"
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="run-perform-goals"
  */
-public class RunGoalsPhase
-    extends AbstractReleasePhase
+public class RunPerformGoalsPhase
+    extends AbstractRunGoalsPhase
 {
-    /**
-     * Component to assist in executing Maven.
-     *
-     * @plexus.requirement
-     */
-    private MavenExecutor mavenExecutor;
-
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException
     {
-        ReleaseResult result = new ReleaseResult();
+        String additionalArguments = releaseDescriptor.getAdditionalArguments();
 
-        try
+        if ( releaseDescriptor.isUseReleaseProfile() )
         {
-            String goals = releaseDescriptor.getPreparationGoals();
-            if ( !StringUtils.isEmpty( goals ) )
+            if ( !StringUtils.isEmpty( additionalArguments ) )
             {
-                logInfo( result, "Executing preparation goals '" + goals + "'..." );
-
-                mavenExecutor.executeGoals( new File( releaseDescriptor.getWorkingDirectory() ), goals,
-                                            releaseDescriptor.isInteractive(),
-                                            releaseDescriptor.getAdditionalArguments(), result );
+                additionalArguments = additionalArguments + " -DperformRelease=true";
+            }
+            else
+            {
+                additionalArguments = "-DperformRelease=true";
             }
         }
-        catch ( MavenExecutorException e )
-        {
-            throw new ReleaseExecutionException( e.getMessage(), e );
-        }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
-
-        return result;
+        return execute( releaseDescriptor, new File( releaseDescriptor.getCheckoutDirectory() ), additionalArguments );
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
@@ -78,16 +62,15 @@ public class RunGoalsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        logInfo( result, "Executing preparation goals - since this is simulation mode it is running against the " +
-            "original project, not the rewritten ones" );
+        logInfo( result, "Executing perform goals" );
 
         execute( releaseDescriptor, settings, reactorProjects );
 
         return result;
     }
 
-    public void setMavenExecutor( MavenExecutor mavenExecutor )
+    protected String getGoals( ReleaseDescriptor releaseDescriptor )
     {
-        this.mavenExecutor = mavenExecutor;
+        return releaseDescriptor.getPerformGoals();
     }
 }

@@ -52,6 +52,12 @@ public abstract class AbstractReleasePhase
         getLogger().warn( message );
     }
 
+    protected void logError( ReleaseResult result, String message )
+    {
+        result.appendWarn( message );
+        getLogger().error( message );
+    }
+
     protected void logDebug( ReleaseResult result, String message, Exception e )
     {
         result.appendDebug( message, e );

@@ -82,6 +82,9 @@ public class PerformReleaseMojo
                 releaseDescriptor.setScmSourceUrl( connectionUrl );
             }
 
+            releaseDescriptor.setCheckoutDirectory( workingDirectory.getAbsolutePath() );
+            releaseDescriptor.setUseReleaseProfile( useReleaseProfile );
+
             if ( goals == null )
             {
                 // set default
@@ -92,9 +95,9 @@ public class PerformReleaseMojo
                     goals += " site-deploy";
                 }
             }
+            releaseDescriptor.setPerformGoals( goals );
 
-            releaseManager.perform( releaseDescriptor, settings, reactorProjects, workingDirectory, goals,
-                                    useReleaseProfile );
+            releaseManager.perform( releaseDescriptor, settings, reactorProjects );
         }
         catch ( ReleaseExecutionException e )
         {

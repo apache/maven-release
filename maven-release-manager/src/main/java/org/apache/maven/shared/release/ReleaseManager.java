@@ -22,7 +22,6 @@ package org.apache.maven.shared.release;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
-import java.io.File;
 import java.util.List;
 
 /**
@@ -70,14 +69,10 @@ public interface ReleaseManager
      * @param releaseDescriptor the configuration to use for release
      * @param settings          the settings.xml configuration
      * @param reactorProjects   the reactor projects
-     * @param checkoutDirectory the location to checkout to and build from
-     * @param goals             the goals to execute
-     * @param useReleaseProfile whether to use the release profile from the super POM or not
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, File checkoutDirectory,
-                  String goals, boolean useReleaseProfile )
+    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -86,7 +81,7 @@ public interface ReleaseManager
      * @param releaseDescriptor the configuration to use for release
      * @param reactorProjects   the reactor projects
      */
-    void clean( ReleaseDescriptor releaseDescriptor, List reactorProjects );
+    void clean( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener, List reactorProjects );
 
     /**
      * Rollback changes made by the previous release
@@ -111,11 +106,10 @@ public interface ReleaseManager
     ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
                                      boolean resume, boolean dryRun, ReleaseManagerListener listener );
 
-    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, File checkoutDirectory,
-                  String goals, boolean useReleaseProfile, ReleaseManagerListener listener )
+    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                  ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                                     File checkoutDirectory, String goals, boolean useReleaseProfile,
                                      ReleaseManagerListener listener );
 }

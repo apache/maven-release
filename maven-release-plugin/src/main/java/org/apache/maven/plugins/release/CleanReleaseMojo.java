@@ -39,6 +39,6 @@ public class CleanReleaseMojo
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( basedir.getAbsolutePath() );
-        releaseManager.clean( releaseDescriptor, reactorProjects );
+        releaseManager.clean( releaseDescriptor, null, reactorProjects );
     }
 }

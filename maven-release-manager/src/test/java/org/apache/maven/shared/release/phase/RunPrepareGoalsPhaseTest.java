@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.exec.MavenExecutor;
@@ -34,23 +35,24 @@ import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * Test the simple test running phase.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class RunGoalsPhaseTest
+public class RunPrepareGoalsPhaseTest
     extends PlexusTestCase
 {
-    private RunGoalsPhase phase;
+    private RunPrepareGoalsPhase phase;
 
     protected void setUp()
         throws Exception
     {
         super.setUp();
 
-        phase = (RunGoalsPhase) lookup( ReleasePhase.ROLE, "run-preparation-goals" );
+        phase = (RunPrepareGoalsPhase) lookup( ReleasePhase.ROLE, "run-preparation-goals" );
     }
 
     public void testExecute()
@@ -70,7 +72,7 @@ public class RunGoalsPhaseTest
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
-        phase.execute( config, null, null );
+        phase.execute( config, (Settings) null, (List) null );
 
         // just needs to survive the mock
         assertTrue( true );
@@ -116,7 +118,7 @@ public class RunGoalsPhaseTest
 
         try
         {
-            phase.execute( config, null, null );
+            phase.execute( config, (Settings) null, (List) null );
 
             fail( "Should have thrown an exception" );
         }
@@ -168,7 +170,7 @@ public class RunGoalsPhaseTest
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
-        phase.execute( config, null, null );
+        phase.execute( config, (Settings) null, (List) null );
 
         // just needs to survive the mock
         assertTrue( true );
