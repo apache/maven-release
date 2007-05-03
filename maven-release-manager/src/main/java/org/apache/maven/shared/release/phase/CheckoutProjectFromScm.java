@@ -133,6 +133,8 @@ public class CheckoutProjectFromScm
 
             throw new ReleaseExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
         }
+
+        releaseDescriptor.setScmRelativePathProjectDirectory( scmResult.getRelativePathProjectDirectory());
         if ( !scmResult.isSuccess() )
         {
             result.setResultCode( ReleaseResult.ERROR );

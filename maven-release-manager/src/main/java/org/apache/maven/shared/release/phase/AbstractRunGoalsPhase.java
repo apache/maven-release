@@ -56,8 +56,9 @@ public abstract class AbstractRunGoalsPhase
             {
                 logInfo( result, "Executing goals '" + goals + "'..." );
 
-                mavenExecutor.executeGoals( workingDirectory, goals, releaseDescriptor.isInteractive(),
-                                            additionalArguments, result );
+                mavenExecutor.executeGoals( determineWorkingDirectory( workingDirectory,
+                                                                       releaseDescriptor.getScmRelativePathProjectDirectory() ),
+                                            goals, releaseDescriptor.isInteractive(), additionalArguments, result );
             }
         }
         catch ( MavenExecutorException e )
@@ -76,4 +77,26 @@ public abstract class AbstractRunGoalsPhase
     }
 
     protected abstract String getGoals( ReleaseDescriptor releaseDescriptor );
+
+    /**
+     * Determines the path of the working directory. By default, this is the
+     * checkout directory. For some SCMs, the project root directory is not the
+     * checkout directory itself, but a SCM-specific subdirectory.
+     *
+     * @param checkoutDirectory            The checkout directory as java.io.File
+     * @param relativePathProjectDirectory The relative path of the project directory within the checkout
+     *                                     directory or ""
+     * @return The working directory
+     */
+    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory )
+    {
+        if ( StringUtils.isNotEmpty( relativePathProjectDirectory ) )
+        {
+            return new File( checkoutDirectory, relativePathProjectDirectory );
+        }
+        else
+        {
+            return checkoutDirectory;
+        }
+    }
 }

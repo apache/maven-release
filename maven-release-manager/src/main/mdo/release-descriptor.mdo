@@ -135,6 +135,14 @@
             if the SCM does not support edit mode, or if edit mode is compulsory for the given SCM.
           </description>
         </field>
+        <field>
+          <name>scmRelativePathProjectDirectory</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            Relative path of the project returned by the checkout command.
+          </description>
+        </field>
         <!-- Maven Information -->
         <field>
           <name>releaseVersions</name>
