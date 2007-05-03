@@ -28,6 +28,11 @@ package org.apache.maven.shared.release.scm;
 public class ClearCaseScmTranslator
     implements ScmTranslator
 {
+    public String translateBranchUrl( String url, String branchName, String branchBase )
+    {
+        return url;
+    }
+
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         return url;

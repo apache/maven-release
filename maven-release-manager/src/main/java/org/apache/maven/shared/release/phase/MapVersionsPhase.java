@@ -50,6 +50,11 @@ public class MapVersionsPhase
     private boolean convertToSnapshot;
 
     /**
+     * Whether to convert to a snapshot or a release.
+     */
+    private boolean convertToBranch;
+
+    /**
      * Component used to prompt for input.
      */
     private Prompter prompter;
@@ -75,9 +80,13 @@ public class MapVersionsPhase
 
             String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );
 
-            if ( convertToSnapshot )
+            if ( convertToSnapshot && !convertToBranch )
             {
                 releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
+            }
+            else if ( convertToSnapshot && convertToBranch )
+            {
+                releaseDescriptor.mapDevelopmentVersion( projectId, project.getVersion() );
             }
             else
             {
@@ -89,9 +98,13 @@ public class MapVersionsPhase
                 MavenProject subProject = (MavenProject) i.next();
                 String subProjectId =
                     ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
-                if ( convertToSnapshot )
+                if ( convertToSnapshot && !convertToBranch )
                 {
                     releaseDescriptor.mapDevelopmentVersion( subProjectId, nextVersion );
+                }
+                else if ( convertToSnapshot && convertToBranch )
+                {
+                    releaseDescriptor.mapReleaseVersion( subProjectId, subProject.getVersion() );
                 }
                 else
                 {
@@ -109,9 +122,20 @@ public class MapVersionsPhase
 
                 String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );
 
-                if ( convertToSnapshot )
+                if ( convertToSnapshot && !convertToBranch)
                 {
                     releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
+                }
+                else if ( convertToSnapshot && convertToBranch )
+                {
+                    if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
+                    {
+                        releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
+                    }
+                    else
+                    {
+                        releaseDescriptor.mapReleaseVersion( projectId, project.getVersion() );
+                    }
                 }
                 else
                 {
@@ -160,7 +184,7 @@ public class MapVersionsPhase
 
         try
         {
-            if ( convertToSnapshot )
+            if ( convertToSnapshot && !convertToBranch )
             {
                 if ( version != null )
                 {
@@ -188,6 +212,35 @@ public class MapVersionsPhase
                     {
                         nextVersion = devVersions.remove( projectId ).toString();
                     }
+                }
+            }
+            else if ( convertToSnapshot && convertToBranch )
+            {
+                if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
+                {
+                    if ( version != null )
+                    {
+                        nextVersion = version.getSnapshotVersionString();
+                    }
+
+                    if ( releaseDescriptor.isInteractive() )
+                    {
+                        nextVersion = prompter.prompt(
+                            "What is the branch version for \"" + project.getName() + "\"? (" + projectId + ")",
+                            nextVersion );
+                    }
+                    else
+                    {
+                        Map relVersions = releaseDescriptor.getDevelopmentVersions();
+                        if ( relVersions.containsKey( projectId ) )
+                        {
+                            nextVersion = relVersions.remove( projectId ).toString();
+                        }
+                    }
+                }
+                else
+                {
+                    nextVersion = project.getVersion();
                 }
             }
             else

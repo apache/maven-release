@@ -64,6 +64,25 @@ public interface ReleaseManager
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
+     * Prepare a release.
+     *
+     * @param releaseDescriptor the configuration to pass to the preparation steps
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
+     * @param resume            resume a previous release, if the properties file exists
+     * @param dryRun            do not commit any changes to the file system or SCM
+     * @param listener          the listener
+     * @throws ReleaseExecutionException if there is a problem performing the release
+     * @throws ReleaseFailureException   if there is a problem performing the release
+     */
+    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
+                  boolean dryRun, ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
+    ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                                     boolean resume, boolean dryRun, ReleaseManagerListener listener );
+
+    /**
      * Perform a release.
      *
      * @param releaseDescriptor the configuration to use for release
@@ -74,6 +93,23 @@ public interface ReleaseManager
      */
     void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
+
+    /**
+     * Perform a release.
+     *
+     * @param releaseDescriptor the configuration to use for release
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
+     * @param listener          the listener
+     * @throws ReleaseExecutionException if there is a problem performing the release
+     * @throws ReleaseFailureException   if there is a problem performing the release
+     */
+    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                  ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
+    ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                                     ReleaseManagerListener listener );
 
     /**
      * Clean a release.
@@ -95,21 +131,45 @@ public interface ReleaseManager
     void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
+    /**
+     * Rollback changes made by the previous release
+     *
+     * @param releaseDescriptor the configuration to use for release
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
+     * @param listener          the listener
+     * @throws ReleaseExecutionException if there is a problem during release rollback
+     * @throws ReleaseFailureException   if there is a problem during release rollback
+     */
     void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
                    ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
-    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
-                  boolean dryRun, ReleaseManagerListener listener )
+    /**
+     * Branch a project
+     *
+     * @param releaseDescriptor the configuration to use for release
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
+     * @param dryRun            do not commit any changes to the file system or SCM
+     * @throws ReleaseExecutionException if there is a problem during release rollback
+     * @throws ReleaseFailureException   if there is a problem during release rollback
+     */
+    void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException;
 
-    ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                                     boolean resume, boolean dryRun, ReleaseManagerListener listener );
-
-    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                  ReleaseManagerListener listener )
+    /**
+     * Branch a project
+     *
+     * @param releaseDescriptor the configuration to use for release
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
+     * @param dryRun            do not commit any changes to the file system or SCM
+     * @param listener          the listener
+     * @throws ReleaseExecutionException if there is a problem during release rollback
+     * @throws ReleaseFailureException   if there is a problem during release rollback
+     */
+    void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean dryRun,
+                 ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
-
-    ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                                     ReleaseManagerListener listener );
 }

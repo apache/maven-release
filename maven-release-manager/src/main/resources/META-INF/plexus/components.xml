@@ -67,6 +67,19 @@
           <phase>scm-commit-rollback</phase>
           <phase>remove-scm-tag</phase>
         </rollbackPhases>
+        <branchPhases>
+          <phase>create-backup-poms</phase>
+          <phase>check-poms</phase>
+          <phase>scm-check-modifications</phase>
+          <phase>map-branch-versions</phase>
+          <phase>map-development-versions</phase>
+          <phase>rewrite-poms-for-branch</phase>
+          <phase>scm-commit-branch</phase>
+          <phase>scm-branch</phase>
+          <phase>rewrite-poms-for-development</phase>
+          <phase>scm-commit-release</phase>
+          <phase>end-release</phase>
+        </branchPhases>
       </configuration>
     </component>
     <component>
@@ -89,6 +102,21 @@
       <implementation>org.apache.maven.shared.release.phase.MapVersionsPhase</implementation>
       <configuration>
         <convertToSnapshot>true</convertToSnapshot>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
+          <role-hint>default</role-hint>
+        </requirement>
+      </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>map-branch-versions</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.MapVersionsPhase</implementation>
+      <configuration>
+        <convertToSnapshot>true</convertToSnapshot>
+        <convertToBranch>true</convertToBranch>
       </configuration>
       <requirements>
         <requirement>
@@ -142,6 +170,19 @@
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>scm-commit-branch</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.ScmCommitPhase</implementation>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+      </requirements>
+      <configuration>
+        <messageFormat>prepare branch {0}</messageFormat>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>rewrite-poms-for-development</role-hint>
       <implementation>org.apache.maven.shared.release.phase.RewritePomsForDevelopmentPhase</implementation>
       <configuration>
@@ -169,6 +210,23 @@
       <configuration>
         <messageFormat>rollback the release of {0}</messageFormat>
       </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>rewrite-poms-for-branch</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.RewritePomsForBranchPhase</implementation>
+      <configuration>
+        <pomSuffix>branch</pomSuffix>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
+          <field-name>scmTranslators</field-name>
+        </requirement>
+      </requirements>
     </component>
   </components>
 </component-set>

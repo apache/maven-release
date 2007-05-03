@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
+import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
 
@@ -31,6 +32,12 @@ import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
 public class SubversionScmTranslator
     implements ScmTranslator
 {
+    public String translateBranchUrl( String url, String branchName, String branchBase )
+    {
+        return SvnTagBranchUtils.resolveUrl( url, branchBase, SvnTagBranchUtils.SVN_BRANCHES,
+                                             new ScmBranch( branchName ) );
+    }
+
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, new ScmTag( tag ) );

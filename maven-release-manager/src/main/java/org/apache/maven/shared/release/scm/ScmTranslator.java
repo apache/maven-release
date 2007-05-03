@@ -33,6 +33,16 @@ public interface ScmTranslator
     String ROLE = ScmTranslator.class.getName();
 
     /**
+     * Take an URL and find the correct replacement URL for a given branch.
+     *
+     * @param url        the source URL
+     * @param branchName the branch name
+     * @param branchBase the branch base for providers that support it
+     * @return the replacement URL
+     */
+    String translateBranchUrl( String url, String branchName, String branchBase );
+
+    /**
      * Take an URL and find the correct replacement URL for a given tag.
      *
      * @param url     the source URL

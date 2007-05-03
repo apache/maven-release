@@ -60,6 +60,11 @@ public class DefaultReleaseManager
     private List rollbackPhases;
 
     /**
+     * The phases to create a branch.
+     */
+    private List branchPhases;
+
+    /**
      * The available phases.
      */
     private Map releasePhases;
@@ -321,6 +326,49 @@ public class DefaultReleaseManager
         updateListener( listener, "perform", GOAL_END );
     }
 
+    public void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean dryRun )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        branch( releaseDescriptor, settings, reactorProjects, dryRun, null );
+    }
+
+    public void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean dryRun,
+                        ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        updateListener( listener, "branch", GOAL_START );
+
+        releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, listener );
+
+        for ( Iterator phases = branchPhases.iterator(); phases.hasNext(); )
+        {
+            String name = (String) phases.next();
+
+            ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
+
+            if ( phase == null )
+            {
+                throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
+            }
+
+            updateListener( listener, name, PHASE_START );
+            if ( dryRun )
+            {
+                phase.simulate( releaseDescriptor, settings, reactorProjects );
+            }
+            else
+            {
+                phase.execute( releaseDescriptor, settings, reactorProjects );
+            }
+            updateListener( listener, name, PHASE_END );
+        }
+
+        //call release:clean so that resume will not be possible anymore after a perform
+        clean( releaseDescriptor, listener, reactorProjects );
+
+        updateListener( listener, "branch", GOAL_END );
+    }
+
     /**
      * Determines the path of the working directory. By default, this is the
      * checkout directory. For some SCMs, the project root directory is not the
@@ -429,6 +477,10 @@ public class DefaultReleaseManager
         else if ( "rollback".equals( name ) )
         {
             phases.addAll( this.rollbackPhases );
+        }
+        else if ( "branch".equals( name ) )
+        {
+            phases.addAll( this.branchPhases );
         }
 
         return Collections.unmodifiableList( phases );
