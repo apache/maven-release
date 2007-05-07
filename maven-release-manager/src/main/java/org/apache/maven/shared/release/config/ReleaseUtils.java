@@ -69,6 +69,10 @@ public class ReleaseUtils
         mergeInto.setUpdateDependencies( toBeMerged.isUpdateDependencies() );
         mergeInto.setCommitByProject( toBeMerged.isCommitByProject() );
         mergeInto.setUseReleaseProfile( toBeMerged.isUseReleaseProfile() );
+        mergeInto.setBranchCreation( toBeMerged.isBranchCreation() );
+        mergeInto.setUpdateBranchVersions( toBeMerged.isUpdateBranchVersions() );
+        mergeInto.setUpdateWorkingCopyVersions( toBeMerged.isUpdateWorkingCopyVersions() );
+        mergeInto.setUpdateVersionsToSnapshot( toBeMerged.isUpdateVersionsToSnapshot() );
 
         mergeInto.setAutoVersionSubmodules( toBeMerged.isAutoVersionSubmodules() );
 

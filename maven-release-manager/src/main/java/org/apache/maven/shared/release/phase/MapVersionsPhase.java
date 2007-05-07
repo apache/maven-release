@@ -80,13 +80,16 @@ public class MapVersionsPhase
 
             String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );
 
-            if ( convertToSnapshot && !convertToBranch )
+            if ( convertToSnapshot )
             {
-                releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
-            }
-            else if ( convertToSnapshot && convertToBranch )
-            {
-                releaseDescriptor.mapDevelopmentVersion( projectId, project.getVersion() );
+                if ( releaseDescriptor.isBranchCreation() && convertToBranch )
+                {
+                    releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
+                }
+                else
+                {
+                    releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
+                }
             }
             else
             {
@@ -98,13 +101,27 @@ public class MapVersionsPhase
                 MavenProject subProject = (MavenProject) i.next();
                 String subProjectId =
                     ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
-                if ( convertToSnapshot && !convertToBranch )
+
+                if ( convertToSnapshot )
                 {
-                    releaseDescriptor.mapDevelopmentVersion( subProjectId, nextVersion );
-                }
-                else if ( convertToSnapshot && convertToBranch )
-                {
-                    releaseDescriptor.mapReleaseVersion( subProjectId, subProject.getVersion() );
+                    String v;
+                    if ( ArtifactUtils.isSnapshot( subProject.getVersion() ) )
+                    {
+                        v = nextVersion;
+                    }
+                    else
+                    {
+                        v = subProject.getVersion();
+                    }
+
+                    if ( releaseDescriptor.isBranchCreation() && convertToBranch )
+                    {
+                        releaseDescriptor.mapReleaseVersion( subProjectId, v );
+                    }
+                    else
+                    {
+                        releaseDescriptor.mapDevelopmentVersion( subProjectId, v );
+                    }
                 }
                 else
                 {
@@ -122,31 +139,20 @@ public class MapVersionsPhase
 
                 String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );
 
-                if ( convertToSnapshot && !convertToBranch)
+                if ( convertToSnapshot )
                 {
-                    releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
-                }
-                else if ( convertToSnapshot && convertToBranch )
-                {
-                    if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
+                    if ( releaseDescriptor.isBranchCreation() && convertToBranch )
                     {
                         releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
                     }
                     else
                     {
-                        releaseDescriptor.mapReleaseVersion( projectId, project.getVersion() );
+                        releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
                     }
                 }
                 else
                 {
-                    if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
-                    {
-                        releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
-                    }
-                    else
-                    {
-                        releaseDescriptor.mapReleaseVersion( projectId, project.getVersion() );
-                    }
+                    releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
                 }
             }
         }
@@ -184,63 +190,110 @@ public class MapVersionsPhase
 
         try
         {
-            if ( convertToSnapshot && !convertToBranch )
+            if ( convertToSnapshot )
             {
-                if ( version != null )
+                if ( releaseDescriptor.isBranchCreation() )
                 {
-                    VersionInfo versionInfo = version.getNextVersion();
-                    if ( versionInfo != null )
+                    if ( convertToBranch )
                     {
-                        nextVersion = versionInfo.getSnapshotVersionString();
-                    }
-                    else
-                    {
-                        nextVersion = "1.0-SNAPSHOT";
-                    }
-                }
-
-                if ( releaseDescriptor.isInteractive() )
-                {
-                    nextVersion = prompter.prompt(
-                        "What is the new development version for \"" + project.getName() + "\"? (" + projectId + ")",
-                        nextVersion );
-                }
-                else
-                {
-                    Map devVersions = releaseDescriptor.getDevelopmentVersions();
-                    if ( devVersions.containsKey( projectId ) )
-                    {
-                        nextVersion = devVersions.remove( projectId ).toString();
-                    }
-                }
-            }
-            else if ( convertToSnapshot && convertToBranch )
-            {
-                if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
-                {
-                    if ( version != null )
-                    {
-                        nextVersion = version.getSnapshotVersionString();
-                    }
-
-                    if ( releaseDescriptor.isInteractive() )
-                    {
-                        nextVersion = prompter.prompt(
-                            "What is the branch version for \"" + project.getName() + "\"? (" + projectId + ")",
-                            nextVersion );
-                    }
-                    else
-                    {
-                        Map relVersions = releaseDescriptor.getDevelopmentVersions();
-                        if ( relVersions.containsKey( projectId ) )
+                        //branch modification
+                        if ( releaseDescriptor.isUpdateBranchVersions() && (
+                            ArtifactUtils.isSnapshot( project.getVersion() ) ||
+                                releaseDescriptor.isUpdateVersionsToSnapshot() ) )
                         {
-                            nextVersion = relVersions.remove( projectId ).toString();
+                            if ( version != null )
+                            {
+                                nextVersion = version.getSnapshotVersionString();
+                            }
+
+                            if ( releaseDescriptor.isInteractive() )
+                            {
+                                nextVersion = prompter.prompt(
+                                    "What is the branch version for \"" + project.getName() + "\"? (" + projectId + ")",
+                                    nextVersion );
+                            }
+                            else
+                            {
+                                Map relVersions = releaseDescriptor.getDevelopmentVersions();
+                                if ( relVersions.containsKey( projectId ) )
+                                {
+                                    nextVersion = relVersions.remove( projectId ).toString();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            nextVersion = project.getVersion();
+                        }
+
+                    }
+                    else
+                    {
+                        //working copy modification
+                        if ( ArtifactUtils.isSnapshot( project.getVersion() ) &&
+                            releaseDescriptor.isUpdateWorkingCopyVersions() )
+                        {
+                            if ( version != null )
+                            {
+                                VersionInfo versionInfo = version.getNextVersion();
+                                if ( versionInfo != null )
+                                {
+                                    nextVersion = versionInfo.getSnapshotVersionString();
+                                }
+                                else
+                                {
+                                    nextVersion = "1.0-SNAPSHOT";
+                                }
+                            }
+
+                            if ( releaseDescriptor.isInteractive() )
+                            {
+                                nextVersion = prompter.prompt( "What is the new working copy version for \"" +
+                                    project.getName() + "\"? (" + projectId + ")", nextVersion );
+                            }
+                            else
+                            {
+                                Map devVersions = releaseDescriptor.getDevelopmentVersions();
+                                if ( devVersions.containsKey( projectId ) )
+                                {
+                                    nextVersion = devVersions.remove( projectId ).toString();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            nextVersion = project.getVersion();
                         }
                     }
                 }
                 else
                 {
-                    nextVersion = project.getVersion();
+                    if ( version != null )
+                    {
+                        VersionInfo versionInfo = version.getNextVersion();
+                        if ( versionInfo != null )
+                        {
+                            nextVersion = versionInfo.getSnapshotVersionString();
+                        }
+                        else
+                        {
+                            nextVersion = "1.0-SNAPSHOT";
+                        }
+                    }
+
+                    if ( releaseDescriptor.isInteractive() )
+                    {
+                        nextVersion = prompter.prompt( "What is the new development version for \"" +
+                            project.getName() + "\"? (" + projectId + ")", nextVersion );
+                    }
+                    else
+                    {
+                        Map devVersions = releaseDescriptor.getDevelopmentVersions();
+                        if ( devVersions.containsKey( projectId ) )
+                        {
+                            nextVersion = devVersions.remove( projectId ).toString();
+                        }
+                    }
                 }
             }
             else

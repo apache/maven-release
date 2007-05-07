@@ -310,6 +310,38 @@
             The commits must be done by modules or not. Set it to true in case of flat directory structure.
           </description>
         </field>
+        <field>
+          <name>branchCreation</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <description>
+            Whether to create a branch instead of do a release.
+          </description>
+        </field>
+        <field>
+          <name>updateBranchVersions</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <description>
+            Whether to update branch POM versions.
+          </description>
+        </field>
+        <field>
+          <name>updateWorkingCopyVersions</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <description>
+            Whether to update working copy POM versions.
+          </description>
+        </field>
+        <field>
+          <name>updateVersionsToSnapshot</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <description>
+            Whether to update branch versions to SNAPSHOT.
+          </description>
+        </field>
 
         <!-- Announcement Information
 

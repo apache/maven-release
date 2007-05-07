@@ -45,6 +45,27 @@ public class BranchReleaseMojo
     private String branchName;
 
     /**
+     * Whether to update versions in the branch.
+     *
+     * @parameter expression="${updateBranchVersions}" default-value="false"
+     */
+    private boolean updateBranchVersions;
+
+    /**
+     * Whether to update versions in the working copy.
+     *
+     * @parameter expression="${updateWorkingCopyVersions}" default-value="true"
+     */
+    private boolean updateWorkingCopyVersions;
+
+    /**
+     * Whether to update versions to SNAPSHOT in the branch.
+     *
+     * @parameter expression="${updateVersionsToSnapshot}" default-value="true"
+     */
+    private boolean updateVersionsToSnapshot;
+
+    /**
      * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
      *
      * @parameter expression="${useEditMode}" default-value="false"
@@ -97,6 +118,11 @@ public class BranchReleaseMojo
         config.setUpdateDependencies( updateDependencies );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
         config.setScmReleaseLabel( branchName );
+        config.setBranchCreation( true );
+        config.setUpdateBranchVersions( updateBranchVersions );
+        config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
+        config.setUpdateVersionsToSnapshot( updateVersionsToSnapshot );
+
         try
         {
             releaseManager.branch( config, settings, reactorProjects, dryRun );
@@ -107,6 +133,7 @@ public class BranchReleaseMojo
         }
         catch ( ReleaseFailureException e )
         {
+            e.printStackTrace();
             throw new MojoFailureException( e.getMessage() );
         }
     }
