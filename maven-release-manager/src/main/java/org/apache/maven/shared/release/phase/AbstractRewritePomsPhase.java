@@ -517,8 +517,8 @@ public abstract class AbstractRewritePomsPhase
                         {
                             versionElement.setText( mappedVersion );
                         }
-                        else
-                        if ( versionText.matches( "\\$\\{project.+\\}" ) || versionText.matches( "\\$\\{pom.+\\}" ) )
+                        else if ( versionText.matches( "\\$\\{project.+\\}" ) ||
+                            versionText.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( versionText ) )
                         {
                             logInfo( result, "Ignoring artifact version update for expression: " + versionText );
                             //ignore... we cannot update this expression
@@ -539,11 +539,22 @@ public abstract class AbstractRewritePomsPhase
                                 }
                                 else if ( !mappedVersion.equals( versionText ) )
                                 {
-                                    // the value of the expression conflicts with what the user wanted to release
-                                    throw new ReleaseFailureException( "The artifact (" + key + ") requires a " +
-                                        "different version (" + mappedVersion + ") than what is found (" +
-                                        propertyValue + ") for the expression (" + expression + ") in the " +
-                                        "project (" + projectId + ")." );
+                                    if ( mappedVersion.matches( "\\$\\{project.+\\}" ) ||
+                                        mappedVersion.matches( "\\$\\{pom.+\\}" ) ||
+                                        "${version}".equals( mappedVersion ) )
+                                    {
+                                        logInfo( result,
+                                                 "Ignoring artifact version update for expression: " + mappedVersion );
+                                        //ignore... we cannot update this expression
+                                    }
+                                    else
+                                    {
+                                        // the value of the expression conflicts with what the user wanted to release
+                                        throw new ReleaseFailureException( "The artifact (" + key + ") requires a " +
+                                            "different version (" + mappedVersion + ") than what is found (" +
+                                            propertyValue + ") for the expression (" + expression + ") in the " +
+                                            "project (" + projectId + ")." );
+                                    }
                                 }
                             }
                             else
