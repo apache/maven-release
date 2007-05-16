@@ -37,7 +37,9 @@ Maven Release Plugin
 
   * {{{prepare-mojo.html}release:prepare}} Prepare for a release in SCM.
 
-  * {{{rollback-mojo.html}release:rollback}} Rollback a previous relase.
+  * {{{rollback-mojo.html}release:rollback}} Rollback a previous release.
+
+  * {{{branch-mojo.html}release:branch}} Create a branch of the current project with all versions updated.
 
 * Usage
 
@@ -59,4 +61,4 @@ Maven Release Plugin
 
   * {{{examples/run-goals-before-commit.html}Run Additional Goals Before Commit}}
 
-
+  * {{{examples/branch.html}Create a branch}}
