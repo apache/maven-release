@@ -35,14 +35,21 @@ public abstract class AbstractBackupPomsPhase
     {
         File pomFile = project.getFile();
 
-        return new File( pomFile.getAbsolutePath() + backupPrefix );
+        if ( pomFile != null )
+        {
+            return new File( pomFile.getAbsolutePath() + backupPrefix );
+        }
+        else
+        {
+            return null;
+        }
     }
 
     protected void deletePomBackup( MavenProject project )
     {
         File pomBackup = getPomBackup( project );
 
-        if ( pomBackup.exists() )
+        if ( pomBackup != null && pomBackup.exists() )
         {
             pomBackup.delete();
         }
