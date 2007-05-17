@@ -108,12 +108,22 @@ public class RewritePomsForReleasePhase
             Scm rootScm = rootProject.getScm();
             if ( scm.getConnection() != null )
             {
-                if ( rootScm.getConnection() != null &&
-                    scm.getConnection().indexOf( rootScm.getConnection() ) == 0 )
+                if ( rootScm.getConnection() != null && scm.getConnection().indexOf( rootScm.getConnection() ) == 0 )
                 {
                     subDirectoryTag = scm.getConnection().substring( rootScm.getConnection().length() );
                 }
-                String value = translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, tagBase );
+                String scmConnectionTag = tagBase;
+                if ( scmConnectionTag != null )
+                {
+                    String trunkUrl = scm.getDeveloperConnection();
+                    if ( trunkUrl == null )
+                    {
+                        trunkUrl = scm.getConnection();
+                    }
+                    scmConnectionTag = this.translateUrlPath( trunkUrl, tagBase, scm.getConnection() );
+                }
+                String value =
+                    translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, scmConnectionTag );
                 if ( !value.equals( scm.getConnection() ) )
                 {
                     rewriteElement( "connection", value, scmRoot, namespace );
@@ -126,8 +136,8 @@ public class RewritePomsForReleasePhase
                 if ( rootScm.getDeveloperConnection() != null &&
                     scm.getDeveloperConnection().indexOf( rootScm.getDeveloperConnection() ) == 0 )
                 {
-                    subDirectoryTag = scm.getDeveloperConnection().substring(
-                        rootScm.getDeveloperConnection().length() );
+                    subDirectoryTag =
+                        scm.getDeveloperConnection().substring( rootScm.getDeveloperConnection().length() );
                 }
                 String value =
                     translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
@@ -140,14 +150,23 @@ public class RewritePomsForReleasePhase
 
             if ( scm.getUrl() != null )
             {
-                if ( rootScm.getUrl() != null &&
-                    scm.getUrl().indexOf( rootScm.getUrl() ) == 0 )
+                if ( rootScm.getUrl() != null && scm.getUrl().indexOf( rootScm.getUrl() ) == 0 )
                 {
                     subDirectoryTag = scm.getUrl().substring( rootScm.getUrl().length() );
                 }
+
+                String tagScmUrl = tagBase;
+                if ( tagScmUrl != null )
+                {
+                    String trunkUrl = scm.getDeveloperConnection();
+                    if ( trunkUrl == null )
+                    {
+                        trunkUrl = scm.getConnection();
+                    }
+                    tagScmUrl = this.translateUrlPath( trunkUrl, tagBase, scm.getUrl() );
+                }
                 // use original tag base without protocol
-                String value = translator.translateTagUrl( scm.getUrl(), tag + subDirectoryTag,
-                                                           releaseDescriptor.getScmTagBase() );
+                String value = translator.translateTagUrl( scm.getUrl(), tag + subDirectoryTag, tagScmUrl );
                 if ( !value.equals( scm.getUrl() ) )
                 {
                     rewriteElement( "url", value, scmRoot, namespace );
@@ -198,5 +217,48 @@ public class RewritePomsForReleasePhase
         {
             return null;
         }
+    }
+
+    /**
+     * Determines the relative path from trunk to tag, and adds this relative path
+     * to the url.
+     *
+     * @param trunkPath - The trunk url
+     * @param tagPath   - The tag base
+     * @param urlPath   - scm.url or scm.connection
+     * @return The url path for the tag.
+     */
+    private String translateUrlPath( String trunkPath, String tagPath, String urlPath )
+    {
+        trunkPath = trunkPath.trim();
+        tagPath = tagPath.trim();
+        //Strip the slash at the end if one is present
+        if ( trunkPath.endsWith( "/" ) )
+        {
+            trunkPath = trunkPath.substring( 0, trunkPath.length() - 1 );
+        }
+        if ( tagPath.endsWith( "/" ) )
+        {
+            tagPath = tagPath.substring( 0, tagPath.length() - 1 );
+        }
+        char[] tagPathChars = trunkPath.toCharArray();
+        char[] trunkPathChars = tagPath.toCharArray();
+        // Find the common path between trunk and tags
+        int i = 0;
+        while ( tagPathChars[i] == trunkPathChars[i] )
+        {
+            ++i;
+        }
+        // If there is nothing common between trunk and tags, or the relative
+        // path does not exist in the url, then just return the tag.
+        if ( i == 0 || !urlPath.contains( trunkPath.substring( i ) ) )
+        {
+            return tagPath;
+        }
+        else
+        {
+            return urlPath.replace( trunkPath.substring( i ), tagPath.substring( i ) );
+        }
+
     }
 }

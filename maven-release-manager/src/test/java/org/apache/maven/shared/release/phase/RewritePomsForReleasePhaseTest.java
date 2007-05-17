@@ -190,6 +190,19 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( compareFiles( reactorProjects ) );
     }
 
+    public void testRewriteBasicPomWithTagBaseAndVaryingScmUrls()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "basic-pom-with-tag-base-and-varying-scm-urls" );
+        ReleaseDescriptor config = this.createDescriptorFromProjects( reactorProjects );
+        config.setScmTagBase( "file://localhost/tmp/scm-repo/allprojects/releases" );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config, null, reactorProjects );
+
+        assertTrue( compareFiles( reactorProjects ) );
+    }
+
     public void testRewriteBasicPomWithCvsFromTag()
         throws Exception
     {
