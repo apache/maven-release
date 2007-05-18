@@ -63,6 +63,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -334,13 +335,22 @@ public abstract class AbstractRewritePomsPhase
     {
         if ( dependencies != null )
         {
+            List dependenciesAlreadyChanged = new ArrayList();
             for ( Iterator i = dependencies.iterator(); i.hasNext(); )
             {
                 Dependency dep = (Dependency) i.next();
+                String depId = ArtifactUtils.versionlessKey( dep.getGroupId(), dep.getArtifactId() );
+                if ( !dependenciesAlreadyChanged.contains( depId ) )
+                {
+                    //This check is required because updateDomVersion update all dependencies with the current groupId/artifactId
+                    //(standard dependencies and sub-dependencies like ejb-client) so we don't need to re-update them
 
-                updateDomVersion( dep.getGroupId(), dep.getArtifactId(), mappedVersions, resolvedSnapshotDependencies,
-                                  dep.getVersion(), originalVersions, "dependencies", "dependency", dependencyRoot,
-                                  projectId, properties, result, releaseDescriptor );
+                    dependenciesAlreadyChanged.add( depId );
+
+                    updateDomVersion( dep.getGroupId(), dep.getArtifactId(), mappedVersions,
+                                      resolvedSnapshotDependencies, dep.getVersion(), originalVersions, "dependencies",
+                                      "dependency", dependencyRoot, projectId, properties, result, releaseDescriptor );
+                }
             }
         }
     }
@@ -411,8 +421,8 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private Element getDependency( String groupId, String artifactId, String groupTagName, String tagName,
-                                   Element dependencyRoot )
+    private List getDependencies( String groupId, String artifactId, String groupTagName, String tagName,
+                                  Element dependencyRoot )
         throws JDOMException
     {
         XPath xpath;
@@ -428,20 +438,20 @@ public abstract class AbstractRewritePomsPhase
                 "' and artifactId='" + artifactId + "']" );
         }
 
-        Element elem = (Element) xpath.selectSingleNode( dependencyRoot );
+        List dependencies = xpath.selectNodes( dependencyRoot );
 
         //MRELEASE-147
-        if ( elem == null && groupId.indexOf( "${" ) == -1 )
+        if ( ( dependencies == null || dependencies.isEmpty() ) && groupId.indexOf( "${" ) == -1 )
         {
-            elem = getDependency( "${project.groupId}", artifactId, groupTagName, tagName, dependencyRoot );
+            dependencies = getDependencies( "${project.groupId}", artifactId, groupTagName, tagName, dependencyRoot );
 
-            if ( elem == null )
+            if ( dependencies == null || dependencies.isEmpty() )
             {
-                elem = getDependency( "${pom.groupId}", artifactId, groupTagName, tagName, dependencyRoot );
+                dependencies = getDependencies( "${pom.groupId}", artifactId, groupTagName, tagName, dependencyRoot );
             }
         }
 
-        return elem;
+        return dependencies;
     }
 
     private void updateDomVersion( String groupId, String artifactId, Map mappedVersions,
@@ -461,121 +471,128 @@ public abstract class AbstractRewritePomsPhase
             originalVersion = getOriginalResolvedSnapshotVersion( key, resolvedSnapshotDepedencies );
         }
 
-        Element dependency;
         try
         {
-            dependency = getDependency( groupId, artifactId, groupTagName, tagName, dependencyRoot );
+            List dependencies = getDependencies( groupId, artifactId, groupTagName, tagName, dependencyRoot );
+
+            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
+            {
+                Element dependency = (Element) i.next();
+                String dependencyVersion = "";
+                Element versionElement = null;
+
+                if ( dependency != null )
+                {
+                    versionElement = dependency.getChild( "version", dependencyRoot.getNamespace() );
+                    if ( versionElement != null )
+                    {
+                        dependencyVersion = versionElement.getTextTrim();
+                    }
+                }
+
+                //MRELEASE-220
+                if ( mappedVersion != null && mappedVersion.endsWith( "SNAPSHOT" ) &&
+                    !dependencyVersion.endsWith( "SNAPSHOT" ) && !releaseDescriptor.isUpdateDependencies() )
+                {
+                    return;
+                }
+
+                if ( version.equals( originalVersion ) || dependencyVersion.equals( originalVersion ) )
+                {
+                    if ( ( mappedVersion != null ) || ( resolvedSnapshotVersion != null ) )
+                    {
+                        logInfo( result, "Updating " + artifactId + " to " +
+                            ( ( mappedVersion != null ) ? mappedVersion : resolvedSnapshotVersion ) );
+
+                        // If it was inherited, nothing to do
+                        if ( dependency != null )
+                        {
+                            // avoid if in management
+                            if ( versionElement != null )
+                            {
+                                if ( mappedVersion == null )
+                                {
+                                    versionElement.setText( resolvedSnapshotVersion );
+                                    return;
+                                }
+
+                                String versionText = versionElement.getTextTrim();
+
+                                // avoid if it was not originally set to the original value (it may be an expression), unless mapped version differs
+                                if ( originalVersion.equals( versionText ) ||
+                                    !mappedVersion.equals( mappedVersions.get( projectId ) ) )
+                                {
+                                    versionElement.setText( mappedVersion );
+                                }
+                                else if ( versionText.matches( "\\$\\{project.+\\}" ) ||
+                                    versionText.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( versionText ) )
+                                {
+                                    logInfo( result,
+                                             "Ignoring artifact version update for expression: " + versionText );
+                                    //ignore... we cannot update this expression
+                                }
+                                else if ( versionText.matches( "\\$\\{.+\\}" ) && properties != null )
+                                {
+                                    //version is an expression, check for properties to update instead
+                                    String expression = versionText.substring( 2, versionText.length() - 1 );
+                                    Element property = properties.getChild( expression, properties.getNamespace() );
+                                    if ( property != null )
+                                    {
+                                        String propertyValue = property.getTextTrim();
+
+                                        if ( originalVersion.equals( propertyValue ) )
+                                        {
+                                            // change the property only if the property is the same as what's in the reactor
+                                            property.setText( mappedVersion );
+                                        }
+                                        else if ( !mappedVersion.equals( versionText ) )
+                                        {
+                                            if ( mappedVersion.matches( "\\$\\{project.+\\}" ) ||
+                                                mappedVersion.matches( "\\$\\{pom.+\\}" ) ||
+                                                "${version}".equals( mappedVersion ) )
+                                            {
+                                                logInfo( result, "Ignoring artifact version update for expression: " +
+                                                    mappedVersion );
+                                                //ignore... we cannot update this expression
+                                            }
+                                            else
+                                            {
+                                                // the value of the expression conflicts with what the user wanted to release
+                                                throw new ReleaseFailureException( "The artifact (" + key +
+                                                    ") requires a " + "different version (" + mappedVersion +
+                                                    ") than what is found (" + propertyValue +
+                                                    ") for the expression (" + expression + ") in the " + "project (" +
+                                                    projectId + ")." );
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        // the expression used to define the version of this artifact may be inherited
+                                        throw new ReleaseFailureException(
+                                            "The version could not be updated: " + versionText );
+                                    }
+                                }
+                                else
+                                {
+                                    // the version for this artifact could not be updated.
+                                    throw new ReleaseFailureException(
+                                        "The version could not be updated: " + versionText );
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        throw new ReleaseFailureException(
+                            "Version '" + version + "' for " + tagName + " '" + key + "' was not mapped" );
+                    }
+                }
+            }
         }
         catch ( JDOMException e )
         {
             throw new ReleaseExecutionException( "Unable to locate " + tagName + " to process in document", e );
-        }
-
-        String dependencyVersion = "";
-        Element versionElement = null;
-
-        if ( dependency != null )
-        {
-            versionElement = dependency.getChild( "version", dependencyRoot.getNamespace() );
-            if ( versionElement != null )
-            {
-                dependencyVersion = versionElement.getTextTrim();
-            }
-        }
-
-        //MRELEASE-220
-        if ( mappedVersion != null && mappedVersion.endsWith( "SNAPSHOT" ) &&
-            !dependencyVersion.endsWith( "SNAPSHOT" ) && !releaseDescriptor.isUpdateDependencies() )
-        {
-            return;
-        }
-
-        if ( version.equals( originalVersion ) || dependencyVersion.equals( originalVersion ) )
-        {
-            if ( ( mappedVersion != null ) || ( resolvedSnapshotVersion != null ) )
-            {
-                logInfo( result, "Updating " + artifactId + " to " +
-                    ( ( mappedVersion != null ) ? mappedVersion : resolvedSnapshotVersion ) );
-
-                // If it was inherited, nothing to do
-                if ( dependency != null )
-                {
-                    // avoid if in management
-                    if ( versionElement != null )
-                    {
-                        if ( mappedVersion == null )
-                        {
-                            versionElement.setText( resolvedSnapshotVersion );
-                            return;
-                        }
-
-                        String versionText = versionElement.getTextTrim();
-
-                        // avoid if it was not originally set to the original value (it may be an expression), unless mapped version differs
-                        if ( originalVersion.equals( versionText ) ||
-                            !mappedVersion.equals( mappedVersions.get( projectId ) ) )
-                        {
-                            versionElement.setText( mappedVersion );
-                        }
-                        else if ( versionText.matches( "\\$\\{project.+\\}" ) ||
-                            versionText.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( versionText ) )
-                        {
-                            logInfo( result, "Ignoring artifact version update for expression: " + versionText );
-                            //ignore... we cannot update this expression
-                        }
-                        else if ( versionText.matches( "\\$\\{.+\\}" ) && properties != null )
-                        {
-                            //version is an expression, check for properties to update instead
-                            String expression = versionText.substring( 2, versionText.length() - 1 );
-                            Element property = properties.getChild( expression, properties.getNamespace() );
-                            if ( property != null )
-                            {
-                                String propertyValue = property.getTextTrim();
-
-                                if ( originalVersion.equals( propertyValue ) )
-                                {
-                                    // change the property only if the property is the same as what's in the reactor
-                                    property.setText( mappedVersion );
-                                }
-                                else if ( !mappedVersion.equals( versionText ) )
-                                {
-                                    if ( mappedVersion.matches( "\\$\\{project.+\\}" ) ||
-                                        mappedVersion.matches( "\\$\\{pom.+\\}" ) ||
-                                        "${version}".equals( mappedVersion ) )
-                                    {
-                                        logInfo( result,
-                                                 "Ignoring artifact version update for expression: " + mappedVersion );
-                                        //ignore... we cannot update this expression
-                                    }
-                                    else
-                                    {
-                                        // the value of the expression conflicts with what the user wanted to release
-                                        throw new ReleaseFailureException( "The artifact (" + key + ") requires a " +
-                                            "different version (" + mappedVersion + ") than what is found (" +
-                                            propertyValue + ") for the expression (" + expression + ") in the " +
-                                            "project (" + projectId + ")." );
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // the expression used to define the version of this artifact may be inherited
-                                throw new ReleaseFailureException( "The version could not be updated: " + versionText );
-                            }
-                        }
-                        else
-                        {
-                            // the version for this artifact could not be updated.
-                            throw new ReleaseFailureException( "The version could not be updated: " + versionText );
-                        }
-                    }
-                }
-            }
-            else
-            {
-                throw new ReleaseFailureException(
-                    "Version '" + version + "' for " + tagName + " '" + key + "' was not mapped" );
-            }
         }
     }
 

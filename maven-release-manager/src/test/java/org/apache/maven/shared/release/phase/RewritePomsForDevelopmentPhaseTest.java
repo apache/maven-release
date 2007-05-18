@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -69,6 +70,28 @@ public class RewritePomsForDevelopmentPhaseTest
 
         expected = readTestProjectFile( "basic-pom/expected-pom.xml" );
         actual = readTestProjectFile( "basic-pom/pom.xml.next" );
+        assertEquals( "Check the transformed POM", expected, actual );
+    }
+
+    public void testSimulateRewriteEjbClientDeps()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "basic-pom-ejb-client-dep" );
+        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
+        config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
+        config.addDevelopmentVersion( ArtifactUtils.versionlessKey( "groupId", "artifactId1" ), NEXT_VERSION );
+        config.addReleaseVersion( ArtifactUtils.versionlessKey( "groupId", "artifactId1" ), RELEASE_VERSION );
+
+        String expected = readTestProjectFile( "basic-pom-ejb-client-dep/pom.xml" );
+
+        phase.simulate( config, null, reactorProjects );
+
+        String actual = readTestProjectFile( "basic-pom-ejb-client-dep/pom.xml" );
+        assertEquals( "Check the original POM untouched", expected, actual );
+
+        expected = readTestProjectFile( "basic-pom-ejb-client-dep/expected-pom.xml" );
+        actual = readTestProjectFile( "basic-pom-ejb-client-dep/pom.xml.next" );
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
