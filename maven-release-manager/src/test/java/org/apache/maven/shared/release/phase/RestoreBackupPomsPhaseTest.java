@@ -20,11 +20,12 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.util.FileUtils;
 
-import java.util.List;
-import java.util.Iterator;
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Edwin Punzalan
@@ -75,7 +76,9 @@ public class RestoreBackupPomsPhaseTest
     {
         List projects = getReactorProjects( getTestPath( path ) );
 
-        phase.execute( null, null, projects );
+        ReleaseDescriptor desc = new ReleaseDescriptor();
+        desc.setScmSourceUrl( "scm:svn:http://myhost/myrepo" );
+        phase.execute( desc, null, projects );
 
         testProjectIsRestored( projects );
     }
@@ -83,7 +86,7 @@ public class RestoreBackupPomsPhaseTest
     private void testProjectIsRestored( List reactorProjects )
         throws Exception
     {
-        for( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
         {
             MavenProject project = (MavenProject) projects.next();
 
