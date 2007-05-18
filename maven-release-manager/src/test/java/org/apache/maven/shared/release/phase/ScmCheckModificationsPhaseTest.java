@@ -235,8 +235,8 @@ public class ScmCheckModificationsPhaseTest
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( new String[]{"release.properties", "pom.xml",
-            "pom.xml.backup", "module/pom.xml", "pom.xml.tag", "pom.xml.next"} ) );
+        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties", "pom.xml.backup",
+            "pom.xml.tag", "pom.xml.next" } ) );
 
         phase.execute( releaseDescriptor, null, null );
 
@@ -244,6 +244,36 @@ public class ScmCheckModificationsPhaseTest
 
         // successful execution is verification enough
         assertTrue( true );
+    }
+
+    public void testModificationsToPoms()
+        throws Exception
+    {
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+
+        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "pom.xml", "module/pom.xml" } ) );
+
+        try
+        {
+            phase.execute( releaseDescriptor, null, null );
+
+            fail( "Status check should have failed" );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            assertTrue( true );
+        }
+
+        try
+        {
+            phase.simulate( releaseDescriptor, null, null );
+
+            fail( "Status check should have failed" );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            assertTrue( true );
+        }
     }
 
     public void testModificationsToIncludedFilesOnly()
@@ -281,8 +311,8 @@ public class ScmCheckModificationsPhaseTest
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( new String[]{"release.properties", "pom.xml",
-            "pom.xml.backup", "module/pom.xml", "pom.xml.tag", "pom.xml.release", "something.txt"} ) );
+        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties", "pom.xml.backup",
+            "pom.xml.tag", "pom.xml.release", "something.txt" } ) );
 
         try
         {
