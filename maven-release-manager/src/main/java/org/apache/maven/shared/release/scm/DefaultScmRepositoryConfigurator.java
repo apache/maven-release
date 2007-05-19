@@ -63,6 +63,9 @@ public class DefaultScmRepositoryConfigurator
 
         ScmProviderRepository scmRepo = repository.getProviderRepository();
 
+        //MRELEASE-76
+        scmRepo.setPersistCheckout( false );
+
         if ( repository.getProviderRepository() instanceof ScmProviderRepositoryWithHost )
         {
             ScmProviderRepositoryWithHost repositoryWithHost =
