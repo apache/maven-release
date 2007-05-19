@@ -152,7 +152,7 @@ public class CheckDependencySnapshotsPhaseTest
         }
     }
 
-    public void testSnapshotReleasePluginInteractiveAccepted()
+    public void testSnapshotReleasePluginInteractiveAcceptedForExecution()
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
@@ -168,9 +168,22 @@ public class CheckDependencySnapshotsPhaseTest
 
         phase.execute( releaseDescriptor, null, reactorProjects );
 
-        mockPrompter.reset();
+        assertTrue( true );
+    }
+
+    public void testSnapshotReleasePluginInteractiveAcceptedForSimulationtion()
+        throws Exception
+    {
+        CheckDependencySnapshotsPhase phase =
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+
+        Mock mockPrompter = new Mock( Prompter.class );
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "yes" ) );
         mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         phase.simulate( releaseDescriptor, null, reactorProjects );
 

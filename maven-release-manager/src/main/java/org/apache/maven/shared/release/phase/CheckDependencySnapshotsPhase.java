@@ -158,18 +158,28 @@ public class CheckDependencySnapshotsPhase
                     "maven-release-plugin".equals( artifact.getArtifactId() ) )
                 {
                     // It's a snapshot of the release plugin. Maybe just testing - ask
-                    // By default, we fail as for any ohter plugin
+                    // By default, we fail as for any other plugin
                     if ( releaseDescriptor.isInteractive() )
                     {
                         try
                         {
-                            prompter.showMessage(
-                                "This project relies on a SNAPSHOT of the release plugin. This may be necessary during testing." );
-                            String result = prompter.prompt( "Do you want to continue with the release?",
-                                                             Arrays.asList( new String[]{"yes", "no"} ), "no" );
+                            String result = "no";
+                            if ( !releaseDescriptor.isSnapshotReleasePluginAllowed() )
+                            {
+                                prompter.showMessage(
+                                    "This project relies on a SNAPSHOT of the release plugin. This may be necessary during testing." );
+                                result = prompter.prompt( "Do you want to continue with the release?",
+                                                          Arrays.asList( new String[]{"yes", "no"} ), "no" );
+                            }
+                            else
+                            {
+                                result = "yes";
+                            }
+
                             if ( result.toLowerCase().startsWith( "y" ) )
                             {
                                 addToFailures = false;
+                                releaseDescriptor.setSnapshotReleasePluginAllowed( true );
                             }
                         }
                         catch ( PrompterException e )

@@ -270,6 +270,15 @@
           </description>
         </field>
         <field>
+          <name>snapshotReleasePluginAllowed</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            Whether a SNAPSHOT of the release plugin is allowed.
+          </description>
+        </field>
+        <field>
           <name>additionalArguments</name>
           <version>1.0.0</version>
           <type>String</type>
