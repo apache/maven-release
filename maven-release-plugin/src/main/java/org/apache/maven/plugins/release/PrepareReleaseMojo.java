@@ -98,7 +98,7 @@ public class PrepareReleaseMojo
      * Goals to run as part of the preparation step, after transformation but before committing.
      * Space delimited.
      *
-     * @parameter expression="${preparationGoals}" default-value="clean integration-test"
+     * @parameter expression="${preparationGoals}" default-value="clean verify"
      */
     private String preparationGoals;
 
