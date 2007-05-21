@@ -19,88 +19,117 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.command.remove.RemoveScmResult;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-
-import java.util.List;
+import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 
 /**
  * Remove release POMs.
- *
+ * 
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="remove-release-poms"
  */
 public class RemoveReleasePomsPhase
-    extends AbstractReleasePhase
+    extends AbstractReleasePomsPhase
 {
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
-        throws ReleaseExecutionException
+        throws ReleaseFailureException, ReleaseExecutionException
+    {
+        return execute( releaseDescriptor, settings, reactorProjects, false );
+    }
+
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+        throws ReleaseFailureException, ReleaseExecutionException
+    {
+        return execute( releaseDescriptor, settings, reactorProjects, true );
+    }
+
+    private ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                                   boolean simulate )
+        throws ReleaseFailureException, ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
 
-        // TODO [!]: implement
-        logInfo( result, "Removing release POMs..." );
-
-/*
-        File currentReleasePomFile = null;
-
-        try
+        if ( releaseDescriptor.isGenerateReleasePoms() )
         {
-            String canonicalBasedir = trimPathForScmCalculation( basedir );
+            logInfo( result, "Removing release POMs..." );
 
-            for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
-            {
-                MavenProject project = (MavenProject) it.next();
-
-                currentReleasePomFile = new File( project.getFile().getParentFile(), RELEASE_POM );
-
-                String releasePomPath = trimPathForScmCalculation( currentReleasePomFile );
-
-                releasePomPath = releasePomPath.substring( canonicalBasedir.length() + 1 );
-
-                ScmHelper scm = getScm( basedir.getAbsolutePath() );
-                if ( !dryRun )
-                {
-                    scm.remove( "Removing for next development iteration.", releasePomPath );
-                }
-                else
-                {
-                    getLog().info( "[TESTMODE] Removing for next development iteration. " + releasePomPath );
-                }
-
-                pomFiles.remove( currentReleasePomFile );
-
-                currentReleasePomFile.delete();
-            }
+            removeReleasePoms( releaseDescriptor, settings, simulate, result, reactorProjects );
         }
-        catch ( ScmException e )
+        else
         {
-            throw new MojoExecutionException( "Cannot remove " + currentReleasePomFile + " from development HEAD.",
-                                                                      e );
+            logInfo( result, "Not removing release POMs" );
         }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Cannot remove " + currentReleasePomFile + " from development HEAD.",
-                                              e );
-        }
-
-*/
 
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    private void removeReleasePoms( ReleaseDescriptor releaseDescriptor, Settings settings, boolean simulate,
+                                    ReleaseResult result, List projects )
+        throws ReleaseFailureException, ReleaseExecutionException
     {
-        ReleaseResult result = new ReleaseResult();
+        List releasePoms = new ArrayList();
 
-        // TODO [!]: implement
+        for ( Iterator iterator = projects.iterator(); iterator.hasNext(); )
+        {
+            MavenProject project = (MavenProject) iterator.next();
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+            logInfo( result, "Removing release POM for '" + project.getName() + "'..." );
 
-        return result;
+            releasePoms.add( ReleaseUtil.getReleasePom( project ) );
+        }
+
+        removeReleasePomsFromScm( releaseDescriptor, settings, simulate, result, releasePoms );
+    }
+    
+    private void removeReleasePomsFromScm( ReleaseDescriptor releaseDescriptor, Settings settings, boolean simulate,
+                                           ReleaseResult result, List releasePoms )
+        throws ReleaseFailureException, ReleaseExecutionException
+    {
+        if ( simulate )
+        {
+            logInfo( result, "Full run would be removing " + releasePoms );
+        }
+        else
+        {
+            ScmRepository scmRepository = getScmRepository( releaseDescriptor, settings );
+            ScmProvider scmProvider = getScmProvider( scmRepository );
+
+            ScmFileSet scmFileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), releasePoms );
+
+            try
+            {
+                RemoveScmResult scmResult =
+                    scmProvider.remove( scmRepository, scmFileSet, "Removing for next development iteration." );
+
+                if ( !scmResult.isSuccess() )
+                {
+                    throw new ReleaseScmCommandException( "Cannot remove release POMs from SCM", scmResult );
+                }
+            }
+            catch ( ScmException exception )
+            {
+                throw new ReleaseExecutionException( "Cannot remove release POMs from SCM: " + exception.getMessage(),
+                                                     exception );
+            }
+        }
     }
 }

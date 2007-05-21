@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.util;
 
 import org.apache.maven.project.MavenProject;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -30,6 +31,10 @@ import java.util.List;
  */
 public class ReleaseUtil
 {
+    public static final String RELEASE_POMv4 = "release-pom.xml";
+    
+    private static final String POMv4 = "pom.xml";
+
     private ReleaseUtil()
     {
     }
@@ -48,5 +53,23 @@ public class ReleaseUtil
         }
 
         return project;
+    }
+    
+    public static File getStandardPom( MavenProject project )
+    {
+        File pom = project.getFile();
+        File releasePom = getReleasePom( project );
+        
+        if ( pom.equals( releasePom ))
+        {
+            pom = new File( pom.getParent(), POMv4 );
+        }
+        
+        return pom;
+    }
+    
+    public static File getReleasePom( MavenProject project )
+    {
+        return new File( project.getFile().getParent(), RELEASE_POMv4 );
     }
 }

@@ -177,6 +177,36 @@ public class ScmCommitPhaseTest
         }
     }
 
+    public void testCommitGenerateReleasePoms()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects();
+        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        descriptor.setScmSourceUrl( "scm-url" );
+        descriptor.setGenerateReleasePoms( true );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        descriptor.setScmReleaseLabel( "release-label" );
+
+        List files = new ArrayList();
+        files.add( rootProject.getFile() );
+        files.add( ReleaseUtil.getReleasePom( rootProject ) );
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), files );
+    
+        Mock scmProviderMock = new Mock( ScmProvider.class );
+        Constraint[] arguments = new Constraint[] { new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
+            new IsEqual( PREFIX + "release-label" ) };
+        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will(
+            new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+    
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+
+        phase.execute( descriptor, null, reactorProjects );
+
+        assertTrue( true );
+    }
+
     public void testSimulateCommit()
         throws Exception
     {

@@ -126,7 +126,7 @@ public abstract class AbstractRewritePomsPhase
         String outtro = null;
         try
         {
-            String content = FileUtils.fileRead( project.getFile() );
+            String content = FileUtils.fileRead( ReleaseUtil.getStandardPom( project ) );
             // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
             content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
             content = content.replaceAll( "(\\s{2,}|[^\\s])/>", "$1 />" );
@@ -180,15 +180,17 @@ public abstract class AbstractRewritePomsPhase
         transformDocument( project, document.getRootElement(), releaseDescriptor, reactorProjects, scmRepository,
                            result );
 
+        File pomFile = ReleaseUtil.getStandardPom( project );
+        
         if ( simulate )
         {
             File outputFile =
-                new File( project.getFile().getParentFile(), project.getFile().getName() + "." + pomSuffix );
+                new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
             writePom( outputFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro );
         }
         else
         {
-            writePom( project.getFile(), document, releaseDescriptor, project.getModelVersion(), intro, outtro,
+            writePom( pomFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro,
                       scmRepository, provider );
         }
     }
@@ -705,8 +707,9 @@ public abstract class AbstractRewritePomsPhase
             {
                 MavenProject project = (MavenProject) i.next();
 
+                File pomFile = ReleaseUtil.getStandardPom( project );
                 File file =
-                    new File( project.getFile().getParentFile(), project.getFile().getName() + "." + pomSuffix );
+                    new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
                 if ( file.exists() )
                 {
                     file.delete();

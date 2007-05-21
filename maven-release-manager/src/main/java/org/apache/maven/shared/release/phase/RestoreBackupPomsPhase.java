@@ -35,6 +35,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -127,7 +128,7 @@ public class RestoreBackupPomsPhase
 
         try
         {
-            FileUtils.copyFile( getPomBackup( project ), project.getFile() );
+            FileUtils.copyFile( getPomBackup( project ), ReleaseUtil.getStandardPom( project ) );
         }
         catch ( IOException e )
         {

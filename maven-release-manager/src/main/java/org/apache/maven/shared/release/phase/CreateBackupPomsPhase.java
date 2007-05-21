@@ -25,6 +25,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.IOException;
@@ -88,7 +89,7 @@ public class CreateBackupPomsPhase
 
         try
         {
-            FileUtils.copyFile( project.getFile(), getPomBackup( project ) );
+            FileUtils.copyFile( ReleaseUtil.getStandardPom( project ), getPomBackup( project ) );
         }
         catch ( IOException e )
         {

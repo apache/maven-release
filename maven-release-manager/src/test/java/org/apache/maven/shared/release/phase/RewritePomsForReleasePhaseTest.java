@@ -34,7 +34,7 @@ import java.util.List;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class RewritePomsForReleasePhaseTest
-    extends AbstractRewritingReleasePhaseTestCase
+    extends AbstractEditModeRewritingReleasePhaseTestCase
 {
     private static final String NEXT_VERSION = "1.0";
 
@@ -259,11 +259,7 @@ public class RewritePomsForReleasePhaseTest
             // skip subproject1 - we don't need to worry about its version mapping change, it has no deps of any kind
             if ( !"groupId".equals( project.getGroupId() ) || !"subproject1".equals( project.getArtifactId() ) )
             {
-                File actualFile = project.getFile();
-                String actual = FileUtils.fileRead( actualFile );
-                File expectedFile = new File( actualFile.getParentFile(), "expected-pom-different-version.xml" );
-                String expected = FileUtils.fileRead( expectedFile );
-                assertEquals( "Check the transformed POM", expected, actual );
+                compareFiles( project, "-different-version" );
             }
         }
     }

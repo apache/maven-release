@@ -36,6 +36,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -88,20 +89,21 @@ public class ScmCommitPhase
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
         }
 
-        List pomFiles = createPomFiles( reactorProjects );
-
         if ( releaseDescriptor.isCommitByProject() )
         {
-            for ( Iterator i = pomFiles.iterator(); i.hasNext(); )
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
-                File pomFile = (File) i.next();
-                ScmFileSet fileSet = new ScmFileSet( pomFile.getParentFile(), pomFile );
+                MavenProject project = (MavenProject) i.next();
+
+                List pomFiles = createPomFiles( releaseDescriptor, project );
+                ScmFileSet fileSet = new ScmFileSet( project.getFile().getParentFile(), pomFiles );
 
                 checkin( provider, repository, fileSet, createMessage( releaseDescriptor ) );
             }
         }
         else
         {
+            List pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), pomFiles );
 
             checkin( provider, repository, fileSet, createMessage( releaseDescriptor ) );
@@ -139,7 +141,7 @@ public class ScmCommitPhase
 
         validateConfiguration( releaseDescriptor );
 
-        Collection pomFiles = createPomFiles( reactorProjects );
+        Collection pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
         logInfo( result, "Full run would be checking in " + pomFiles.size() + " files with message: '" +
             createMessage( releaseDescriptor ) + "'" );
 
@@ -163,13 +165,27 @@ public class ScmCommitPhase
                                      new Object[]{releaseDescriptor.getScmReleaseLabel()} );
     }
 
-    private static List createPomFiles( List reactorProjects )
+    private static List createPomFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )
     {
-        List pomFiles = new ArrayList( reactorProjects.size() );
+        List pomFiles = new ArrayList();
+
+        pomFiles.add( ReleaseUtil.getStandardPom( project ) );
+
+        if ( releaseDescriptor.isGenerateReleasePoms() )
+        {
+            pomFiles.add( ReleaseUtil.getReleasePom( project ) );
+        }
+
+        return pomFiles;
+    }
+
+    private static List createPomFiles( ReleaseDescriptor releaseDescriptor, List reactorProjects )
+    {
+        List pomFiles = new ArrayList();
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
-            pomFiles.add( project.getFile() );
+            pomFiles.addAll( createPomFiles( releaseDescriptor, project ) );
         }
         return pomFiles;
     }

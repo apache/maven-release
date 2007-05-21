@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 
 import java.io.File;
 
@@ -33,7 +34,7 @@ public abstract class AbstractBackupPomsPhase
 
     protected File getPomBackup( MavenProject project )
     {
-        File pomFile = project.getFile();
+        File pomFile = ReleaseUtil.getStandardPom( project );
 
         if ( pomFile != null )
         {

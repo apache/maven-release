@@ -35,7 +35,7 @@ import java.util.List;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class RewritePomsForDevelopmentPhaseTest
-    extends AbstractRewritingReleasePhaseTestCase
+    extends AbstractEditModeRewritingReleasePhaseTestCase
 {
     private static final String NEXT_VERSION = "1.1-SNAPSHOT";
 

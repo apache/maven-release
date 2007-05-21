@@ -125,13 +125,12 @@ public abstract class AbstractReleaseTestCase
         Stack projectFiles = new Stack();
         projectFiles.push( testFile );
 
-        String url = getTestFile( "src/test/remote-repository" ).toURL().toExternalForm();
         List repos =
-            Collections.singletonList( new DefaultArtifactRepository( "central", url, new DefaultRepositoryLayout() ) );
+            Collections.singletonList( new DefaultArtifactRepository( "central", getRemoteRepositoryURL(), new DefaultRepositoryLayout() ) );
 
         Repository repository = new Repository();
         repository.setId( "central" );
-        repository.setUrl( url );
+        repository.setUrl( getRemoteRepositoryURL() );
 
         ProfileManager profileManager = new DefaultProfileManager( getContainer() );
         Profile profile = new Profile();
@@ -224,16 +223,43 @@ public abstract class AbstractReleaseTestCase
     protected boolean compareFiles( List reactorProjects )
         throws IOException
     {
+        compareFiles( reactorProjects, "" );
+
+        // TODO: return void since this is redundant
+        return true;
+    }
+
+    protected void compareFiles( List reactorProjects, String expectedFileSuffix )
+        throws IOException
+    {
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
-            File actualFile = project.getFile();
-            String actual = FileUtils.fileRead( actualFile );
-            File expectedFile = new File( actualFile.getParentFile(), "expected-pom.xml" );
-            String expected = FileUtils.fileRead( expectedFile );
-            assertEquals( "Check the transformed POM", expected, actual );
+            compareFiles( project, expectedFileSuffix );
         }
-        return true;
+    }
+
+    protected void compareFiles( MavenProject project, String expectedFileSuffix )
+        throws IOException
+    {
+        File actualFile = project.getFile();
+        File expectedFile = new File( actualFile.getParentFile(), "expected-pom" + expectedFileSuffix + ".xml" );
+
+        compareFiles( expectedFile, actualFile );
+    }
+
+    protected void compareFiles( File expectedFile, File actualFile )
+        throws IOException
+    {
+        String actual = FileUtils.fileRead( actualFile );
+        String expected = FileUtils.fileRead( expectedFile );
+        expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
+        assertEquals( "Check the transformed POM", expected, actual );
+    }
+
+    private String getRemoteRepositoryURL()
+    {
+        return "file://" + getTestFile( "src/test/remote-repository" ).getAbsolutePath().replace( '\\', '/' );
     }
 }

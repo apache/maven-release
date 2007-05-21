@@ -20,30 +20,24 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.scm.ScmException;
-import org.apache.maven.scm.command.edit.EditScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
-import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
-import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.FileUtils;
 import org.jmock.Mock;
 import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.matcher.InvokeAtLeastOnceMatcher;
 import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ThrowStub;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -143,11 +137,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         phase.execute( config, null, reactorProjects );
 
         MavenProject project = (MavenProject) getProjectsAsMap( reactorProjects ).get( "groupId:subproject1" );
-
-        String actual = FileUtils.fileRead( project.getFile() );
-        String expected =
-            FileUtils.fileRead( new File( project.getFile().getParentFile(), "expected-pom-version-changed.xml" ) );
-        assertEquals( "Check the transformed POM", expected, actual );
+        compareFiles( project, "-version-changed" );
     }
 
     protected abstract ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List reactorProjects )
@@ -383,77 +373,6 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( compareFiles( reactorProjects ) );
     }
 
-    public void testRewriteBasicPomWithEditMode()
-        throws Exception
-    {
-        List reactorProjects = createReactorProjectsFromBasicPom();
-        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
-        config.setScmUseEditMode( true );
-        mapNextVersion( config, "groupId:artifactId" );
-
-        phase.execute( config, null, reactorProjects );
-
-        assertTrue( compareFiles( reactorProjects ) );
-    }
-
-    public void testRewriteBasicPomWithEditModeFailure()
-        throws Exception
-    {
-        List reactorProjects = createReactorProjectsFromBasicPom();
-        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
-        config.setScmUseEditMode( true );
-        mapNextVersion( config, "groupId:artifactId" );
-
-        ScmManagerStub scmManager = new ScmManagerStub();
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
-
-        ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl( config.getScmSourceUrl() );
-        providerStub.setEditScmResult( new EditScmResult( "", "", "", false ) );
-
-        try
-        {
-            phase.execute( config, null, reactorProjects );
-
-            fail( "Should have thrown an exception" );
-        }
-        catch ( ReleaseScmCommandException e )
-        {
-            assertNull( "Check no other cause", e.getCause() );
-        }
-    }
-
-    public void testRewriteBasicPomWithEditModeException()
-        throws Exception
-    {
-        List reactorProjects = createReactorProjectsFromBasicPom();
-        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
-        config.setScmUseEditMode( true );
-        mapNextVersion( config, "groupId:artifactId" );
-
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new InvokeAtLeastOnceMatcher() ).method( "edit" ).will(
-            new ThrowStub( new ScmException( "..." ) ) );
-
-        ScmManagerStub scmManager = new ScmManagerStub();
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
-        scmManager.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
-
-        try
-        {
-            phase.execute( config, null, reactorProjects );
-
-            fail( "Should have thrown an exception" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            assertEquals( "Check cause", ScmException.class, e.getCause().getClass() );
-        }
-    }
-
     public void testRewriteAddSchema()
         throws Exception
     {
@@ -469,9 +388,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             phase.execute( config, null, reactorProjects );
 
-            String expected = readTestProjectFile( "basic-pom/expected-pom-with-schema.xml" );
-            String actual = readTestProjectFile( "basic-pom/pom.xml" );
-            assertEquals( "Check the transformed POM", expected, actual );
+            compareFiles( reactorProjects, "-with-schema" );
 
             copyFiles = false;
         }
@@ -578,7 +495,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         config.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
         config.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        phase.clean( null );
+        phase.clean( Collections.EMPTY_LIST );
 
         assertTrue( true );
     }
