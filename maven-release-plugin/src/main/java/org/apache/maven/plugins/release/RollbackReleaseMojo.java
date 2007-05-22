@@ -40,6 +40,8 @@ public class RollbackReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        super.execute();
+
         ReleaseDescriptor config = createReleaseDescriptor();
 
         try

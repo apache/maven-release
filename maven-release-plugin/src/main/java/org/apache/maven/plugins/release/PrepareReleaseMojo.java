@@ -112,6 +112,8 @@ public class PrepareReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        super.execute();
+
         ReleaseDescriptor config = createReleaseDescriptor();
         config.setAddSchema( addSchema );
         config.setGenerateReleasePoms( generateReleasePoms );

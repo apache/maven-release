@@ -73,6 +73,8 @@ public class PerformReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        super.execute();
+
         try
         {
             // Note that the working directory here is not the same as in the release configuration, so don't reuse that

@@ -107,6 +107,8 @@ public class BranchReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        super.execute();
+
         if ( StringUtils.isEmpty( branchName ) )
         {
             throw new MojoExecutionException( "The branch name is required." );

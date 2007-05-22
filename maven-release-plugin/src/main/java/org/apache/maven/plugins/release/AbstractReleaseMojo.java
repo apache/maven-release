@@ -21,7 +21,10 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -30,6 +33,7 @@ import org.codehaus.plexus.util.StringUtils;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Base class with shared configuration.
@@ -122,6 +126,36 @@ public abstract class AbstractReleaseMojo
      * @readonly
      */
     protected List reactorProjects;
+
+    /**
+     * List of provider implementations.
+     *
+     * @parameter
+     */
+    private Map providerImplementations;
+
+    /**
+     * The SCM manager.
+     *
+     * @component
+     */
+    private ScmManager scmManager;
+
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( providerImplementations != null )
+        {
+            for ( Iterator i = providerImplementations.keySet().iterator(); i.hasNext(); )
+            {
+                String providerType = (String) i.next();
+                String providerImplementation = (String) providerImplementations.get( providerType );
+                getLog().info( "Change the default '" + providerType + "' provider implementation to '" +
+                    providerImplementation + "'." );
+                scmManager.setScmProviderImplementation( providerType, providerImplementation );
+            }
+        }
+    }
 
     protected ReleaseDescriptor createReleaseDescriptor()
     {
