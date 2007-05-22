@@ -26,6 +26,7 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.codehaus.plexus.util.StringUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -251,14 +252,13 @@ public class RewritePomsForReleasePhase
         }
         // If there is nothing common between trunk and tags, or the relative
         // path does not exist in the url, then just return the tag.
-        if ( i == 0 || !urlPath.contains( trunkPath.substring( i ) ) )
+        if ( i == 0 || urlPath.indexOf( trunkPath.substring( i ) ) < 0 )
         {
             return tagPath;
         }
         else
         {
-            return urlPath.replace( trunkPath.substring( i ), tagPath.substring( i ) );
+            return StringUtils.replace( urlPath, trunkPath.substring( i ), tagPath.substring( i ) );
         }
-
     }
 }
