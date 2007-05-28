@@ -132,7 +132,7 @@ public class PrepareReleaseMojo
         }
         catch ( ReleaseFailureException e )
         {
-            throw new MojoFailureException( e.getMessage(), e );
+            throw new MojoFailureException( e.getMessage() );
         }
     }
 
