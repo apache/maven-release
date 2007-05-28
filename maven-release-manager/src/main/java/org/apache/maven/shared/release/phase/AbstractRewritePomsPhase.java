@@ -571,6 +571,7 @@ public abstract class AbstractRewritePomsPhase
                                     else
                                     {
                                         // the expression used to define the version of this artifact may be inherited
+                                        // TODO needs a better error message, what pom? what dependency?
                                         throw new ReleaseFailureException(
                                             "The version could not be updated: " + versionText );
                                     }
