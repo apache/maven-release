@@ -246,7 +246,7 @@ public class RewritePomsForReleasePhase
         char[] trunkPathChars = tagPath.toCharArray();
         // Find the common path between trunk and tags
         int i = 0;
-        while ( tagPathChars[i] == trunkPathChars[i] )
+        while ( ( i < tagPathChars.length ) && ( i < trunkPathChars.length ) && tagPathChars[i] == trunkPathChars[i] )
         {
             ++i;
         }
