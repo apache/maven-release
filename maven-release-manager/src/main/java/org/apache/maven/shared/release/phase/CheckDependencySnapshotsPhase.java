@@ -114,6 +114,8 @@ public class CheckDependencySnapshotsPhase
     private void checkProject( MavenProject project, Map originalVersions, ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException, ReleaseExecutionException
     {
+        Map artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
+        
         Set snapshotDependencies = new HashSet();
         Set snapshotReportDependencies = new HashSet();
         Set snapshotExtensionsDependencies = new HashSet();
@@ -121,7 +123,7 @@ public class CheckDependencySnapshotsPhase
 
         if ( project.getParentArtifact() != null )
         {
-            if ( checkArtifact( project.getParentArtifact(), originalVersions ) )
+            if ( checkArtifact( project.getParentArtifact(), originalVersions, artifactMap ) )
             {
                 snapshotDependencies.add( project.getParentArtifact() );
             }
@@ -135,7 +137,7 @@ public class CheckDependencySnapshotsPhase
             {
                 Artifact artifact = (Artifact) i.next();
 
-                if ( checkArtifact( artifact, originalVersions ) )
+                if ( checkArtifact( artifact, originalVersions, artifactMap ) )
                 {
                     snapshotDependencies.add( artifact );
                 }
@@ -150,7 +152,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, originalVersions ) )
+            if ( checkArtifact( artifact, originalVersions, artifactMap ) )
             {
                 boolean addToFailures = true;
 
@@ -200,7 +202,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, originalVersions ) )
+            if ( checkArtifact( artifact, originalVersions, artifactMap ) )
             {
                 //snapshotDependencies.add( artifact );
                 snapshotReportDependencies.add( artifact );
@@ -211,7 +213,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, originalVersions ) )
+            if ( checkArtifact( artifact, originalVersions, artifactMap ) )
             {
                 snapshotExtensionsDependencies.add( artifact );
             }
@@ -243,6 +245,19 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
+    private static boolean checkArtifact( Artifact artifact, Map originalVersions, Map artifactMapByVersionlessId )
+    {
+        String versionlessId = ArtifactUtils.versionlessKey( artifact );
+        Artifact checkArtifact = (Artifact) artifactMapByVersionlessId.get( versionlessId );
+        
+        if ( checkArtifact == null)
+        {
+            checkArtifact = artifact;
+        }
+        
+        return checkArtifact( checkArtifact, originalVersions );
+    }
+    
     private static boolean checkArtifact( Artifact artifact, Map originalVersions )
     {
         String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );

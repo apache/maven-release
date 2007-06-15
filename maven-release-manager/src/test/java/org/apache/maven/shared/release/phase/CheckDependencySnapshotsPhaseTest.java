@@ -419,6 +419,37 @@ public class CheckDependencySnapshotsPhaseTest
         }
     }
 
+    public void testRangeSnapshotDependenciesOutsideProjectOnlyNonInteractive()
+        throws Exception
+    {
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List reactorProjects = createDescriptorFromProjects( "external-range-snapshot-dependencies" );
+
+        releaseDescriptor.setInteractive( false );
+
+        try
+        {
+            phase.execute( releaseDescriptor, null, reactorProjects );
+
+            fail( "Should have failed execution" );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            assertTrue( true );
+        }
+
+        try
+        {
+            phase.simulate( releaseDescriptor, null, reactorProjects );
+
+            fail( "Should have failed execution" );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            assertTrue( true );
+        }
+    }
+    
     public void testSnapshotDependenciesOutsideProjectOnlyInteractiveWithSnapshotsResolved()
         throws Exception
     {
