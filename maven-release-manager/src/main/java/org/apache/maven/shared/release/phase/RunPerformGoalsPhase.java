@@ -53,6 +53,16 @@ public class RunPerformGoalsPhase
                 additionalArguments = "-DperformRelease=true";
             }
         }
+        
+        // ensure we don't use the release pom for the perform goals
+        if ( !StringUtils.isEmpty( additionalArguments ) )
+        {
+            additionalArguments = additionalArguments + " -f pom.xml";
+        }
+        else
+        {
+            additionalArguments = "-f pom.xml";
+        }
 
         return execute( releaseDescriptor, new File( releaseDescriptor.getCheckoutDirectory() ), additionalArguments );
     }
