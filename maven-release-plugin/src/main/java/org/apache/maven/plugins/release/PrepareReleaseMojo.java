@@ -35,6 +35,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  * @version $Id$
  * @aggregator
  * @goal prepare
+ * @requiresDependencyResolution test
  * @todo [!] check how this works with version ranges
  */
 public class PrepareReleaseMojo
