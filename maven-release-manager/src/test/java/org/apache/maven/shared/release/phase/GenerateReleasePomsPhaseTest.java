@@ -65,7 +65,7 @@ public class GenerateReleasePomsPhaseTest
         scmProviderMock = null;
     }
     
-    // TODO: fix for internal range dependencies
+    // TODO: MRELEASE-262
 //    public void testRewriteInternalRangeDependency() throws Exception
 //    {
 //        List reactorProjects = createReactorProjects( "internal-snapshot-range-dependency" );
