@@ -26,8 +26,13 @@ import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.cli.StreamConsumer;
+import org.codehaus.plexus.util.cli.StreamFeeder;
+import org.codehaus.plexus.util.cli.StreamPumper;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 /**
  * Fork Maven to executed a series of goals.
@@ -87,16 +92,16 @@ public class ForkedMavenExecutor
             cl.createArgument().setLine( additionalArguments );
         }
 
-        StreamConsumer stdOut = new TeeConsumer( System.out );
+        TeeOutputStream stdOut = new TeeOutputStream( System.out );
 
-        StreamConsumer stdErr = new TeeConsumer( System.err );
+        TeeOutputStream stdErr = new TeeOutputStream( System.err );
 
         try
         {
             relResult.appendInfo( "Executing: " + cl.toString() );
             getLogger().info( "Executing: " + cl.toString() );
-
-            int result = CommandLineUtils.executeCommandLine( cl, stdOut, stdErr );
+            
+            int result = executeCommandLine( cl, System.in, stdOut, stdErr );
 
             if ( result != 0 )
             {
@@ -125,4 +130,93 @@ public class ForkedMavenExecutor
     {
         this.commandLineFactory = commandLineFactory;
     }
+    
+    
+    
+    
+    public static int executeCommandLine( Commandline cl, InputStream systemIn, 
+                                          OutputStream systemOut, OutputStream systemErr )
+        throws CommandLineException
+    {
+        if ( cl == null )
+        {
+            throw new IllegalArgumentException( "cl cannot be null." );
+        }
+    
+        Process p = cl.execute();
+    
+        //processes.put( new Long( cl.getPid() ), p );
+    
+        RawStreamPumper inputFeeder = null;
+    
+        if ( systemIn != null )
+        {
+            inputFeeder = new RawStreamPumper( systemIn, p.getOutputStream(), true );
+        }
+    
+        RawStreamPumper outputPumper = new RawStreamPumper( p.getInputStream(), systemOut );
+        RawStreamPumper errorPumper = new RawStreamPumper( p.getErrorStream(), systemErr );
+    
+        if ( inputFeeder != null )
+        {
+            inputFeeder.start();
+        }
+    
+        outputPumper.start();
+    
+        errorPumper.start();
+    
+        try
+        {
+            int returnValue = p.waitFor();
+    
+            if ( inputFeeder != null )
+            {
+                inputFeeder.setDone();
+            }
+            outputPumper.setDone();
+            errorPumper.setDone();
+    
+            //processes.remove( new Long( cl.getPid() ) );
+    
+            return returnValue;
+        }
+        catch ( InterruptedException ex )
+        {
+            //killProcess( cl.getPid() );
+            throw new CommandLineException( "Error while executing external command, process killed.", ex );
+        } 
+        finally
+        {
+            try
+            {
+                errorPumper.closeInput();
+            } 
+            catch ( IOException e )
+            {
+                //ignore
+            }
+            try
+            {
+                outputPumper.closeInput();
+            } 
+            catch ( IOException e )
+            {
+                //ignore
+            }
+            if ( inputFeeder != null )
+            {
+                try
+                {
+                    inputFeeder.closeOutput();
+                }
+                catch ( IOException e )
+                {
+                    //ignore
+                }
+            }
+        }
+    }
+
+
 }
