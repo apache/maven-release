@@ -46,7 +46,15 @@ public class TeeOutputStream
     {
         for ( int x = 0; x < len; x++ )
         {
-            if ( b[off + x] == '\n' )
+            if ( b[off + x] == '\r' 
+                && x < (len - 1)
+                && b[off + x + 1] == '\n' )
+            {
+                x++;
+            }
+            
+            if ( b[off + x] == '\n' 
+                || b[off + x] == '\r' )
             {
                 super.write( b, off, x + 1);
                 bout.write( b, off, x + 1);
