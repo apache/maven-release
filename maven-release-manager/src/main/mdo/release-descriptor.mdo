@@ -351,6 +351,16 @@
             Whether to update branch versions to SNAPSHOT.
           </description>
         </field>
+        <field>
+          <name>allowTimestampedSnapshots</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            Should timestamped SNAPSHOT dependencies be allowed?  Default is to fail when any SNAPSHOT
+              dependency is found.
+          </description>
+        </field>
 
         <!-- Announcement Information
 

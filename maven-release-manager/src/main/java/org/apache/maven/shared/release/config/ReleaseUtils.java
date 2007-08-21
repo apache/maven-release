@@ -73,7 +73,7 @@ public class ReleaseUtils
         mergeInto.setUpdateBranchVersions( toBeMerged.isUpdateBranchVersions() );
         mergeInto.setUpdateWorkingCopyVersions( toBeMerged.isUpdateWorkingCopyVersions() );
         mergeInto.setUpdateVersionsToSnapshot( toBeMerged.isUpdateVersionsToSnapshot() );
-
+        mergeInto.setAllowTimestampedSnapshots( toBeMerged.isAllowTimestampedSnapshots() );
         mergeInto.setAutoVersionSubmodules( toBeMerged.isAutoVersionSubmodules() );
 
         // These must be overridden, as they are not stored

@@ -951,6 +951,37 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( true );
     }
 
+    public void testAllowTimestampedSnapshots()
+        throws Exception
+    {
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List reactorProjects = createDescriptorFromProjects( "external-timestamped-snapshot-dependencies" );
+
+        releaseDescriptor.setInteractive( false );
+
+        // confirm POM fails without allowTimestampedSnapshots
+        try
+        {
+            phase.execute( releaseDescriptor, null, reactorProjects );
+
+            fail( "Should have failed execution" );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            assertTrue( true );
+        }
+
+        // check whether flag allows
+        releaseDescriptor.setAllowTimestampedSnapshots(true);
+
+        phase.execute( releaseDescriptor, null, reactorProjects );
+
+        phase.simulate( releaseDescriptor, null, reactorProjects );
+
+        // successful execution is verification enough
+        assertTrue( true );
+    }
+    
     private List createDescriptorFromProjects( String path )
         throws Exception
     {

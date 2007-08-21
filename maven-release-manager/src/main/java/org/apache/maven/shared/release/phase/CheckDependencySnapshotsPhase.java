@@ -123,7 +123,7 @@ public class CheckDependencySnapshotsPhase
 
         if ( project.getParentArtifact() != null )
         {
-            if ( checkArtifact( project.getParentArtifact(), originalVersions, artifactMap ) )
+            if ( checkArtifact( project.getParentArtifact(), originalVersions, artifactMap, releaseDescriptor ) )
             {
                 snapshotDependencies.add( project.getParentArtifact() );
             }
@@ -137,7 +137,7 @@ public class CheckDependencySnapshotsPhase
             {
                 Artifact artifact = (Artifact) i.next();
 
-                if ( checkArtifact( artifact, originalVersions, artifactMap ) )
+                if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
                 {
                     snapshotDependencies.add( artifact );
                 }
@@ -152,7 +152,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, originalVersions, artifactMap ) )
+            if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
                 boolean addToFailures = true;
 
@@ -202,7 +202,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, originalVersions, artifactMap ) )
+            if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
                 //snapshotDependencies.add( artifact );
                 snapshotReportDependencies.add( artifact );
@@ -213,7 +213,7 @@ public class CheckDependencySnapshotsPhase
         {
             Artifact artifact = (Artifact) i.next();
 
-            if ( checkArtifact( artifact, originalVersions, artifactMap ) )
+            if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
                 snapshotExtensionsDependencies.add( artifact );
             }
@@ -245,7 +245,7 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private static boolean checkArtifact( Artifact artifact, Map originalVersions, Map artifactMapByVersionlessId )
+    private static boolean checkArtifact( Artifact artifact, Map originalVersions, Map artifactMapByVersionlessId, ReleaseDescriptor releaseDescriptor )
     {
         String versionlessId = ArtifactUtils.versionlessKey( artifact );
         Artifact checkArtifact = (Artifact) artifactMapByVersionlessId.get( versionlessId );
@@ -255,17 +255,25 @@ public class CheckDependencySnapshotsPhase
             checkArtifact = artifact;
         }
         
-        return checkArtifact( checkArtifact, originalVersions );
+        return checkArtifact( checkArtifact, originalVersions, releaseDescriptor );
     }
     
-    private static boolean checkArtifact( Artifact artifact, Map originalVersions )
+    private static boolean checkArtifact( Artifact artifact, Map originalVersions, ReleaseDescriptor releaseDescriptor )
     {
         String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
 
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
-        return artifact.isSnapshot() &&
+        boolean result = artifact.isSnapshot() &&
             !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
+
+        // If we have a snapshot but allowTimestampedSnapshots is true, accept the artifact if the version
+        // indicates that it is a timestamped snapshot.
+        if ( result && releaseDescriptor.isAllowTimestampedSnapshots() ) {
+            result = artifact.getVersion().contains("SNAPSHOT");
+        }
+
+        return result;
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )

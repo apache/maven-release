@@ -110,6 +110,13 @@ public class PrepareReleaseMojo
      */
     private boolean commitByProject;
 
+    /**
+     * Whether to timestamped SNAPSHOT dependencies.  Default is to fail when finding any SNAPSHOT.
+     *
+     * @parameter expression="${ignoreSnapshots}" default-value="false"
+     */
+    private boolean allowTimestampedSnapshots;
+    
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -123,6 +130,7 @@ public class PrepareReleaseMojo
         config.setCommitByProject( commitByProject );
         config.setUpdateDependencies( updateDependencies );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
+        config.setAllowTimestampedSnapshots( allowTimestampedSnapshots );
         try
         {
             releaseManager.prepare( config, settings, reactorProjects, resume, dryRun );
