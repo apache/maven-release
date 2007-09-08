@@ -269,8 +269,9 @@ public class CheckDependencySnapshotsPhase
 
         // If we have a snapshot but allowTimestampedSnapshots is true, accept the artifact if the version
         // indicates that it is a timestamped snapshot.
-        if ( result && releaseDescriptor.isAllowTimestampedSnapshots() ) {
-            result = artifact.getVersion().contains("SNAPSHOT");
+        if ( result && releaseDescriptor.isAllowTimestampedSnapshots() )
+        {
+            result = artifact.getVersion().indexOf( "SNAPSHOT" ) >= 0;
         }
 
         return result;
