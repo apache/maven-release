@@ -25,7 +25,8 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -83,7 +84,8 @@ public abstract class AbstractBackupPomsPhaseTest
     {
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        Model model = reader.read( new FileReader( pomFile ) );
+        // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+        Model model = reader.read( new InputStreamReader( new FileInputStream( pomFile ), "UTF-8" ) );
 
         MavenProject project = new MavenProject( model );
 

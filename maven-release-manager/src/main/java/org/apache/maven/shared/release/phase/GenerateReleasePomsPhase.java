@@ -48,8 +48,10 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -127,7 +129,7 @@ public class GenerateReleasePomsPhase
 
             releasePoms.add( generateReleasePom( project, releaseDescriptor, settings, reactorProjects, simulate, result ) );
         }
-        
+
         addReleasePomsToScm( releaseDescriptor, settings, reactorProjects, simulate, result, releasePoms );
     }
 
@@ -145,11 +147,12 @@ public class GenerateReleasePomsPhase
 
         File releasePomFile = ReleaseUtil.getReleasePom( project );
 
-        FileWriter fileWriter = null;
+        Writer fileWriter = null;
 
         try
         {
-            fileWriter = new FileWriter( releasePomFile );
+            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
+            fileWriter = new OutputStreamWriter( new FileOutputStream( releasePomFile ), "UTF-8" );
 
             pomWriter.write( fileWriter, releasePom );
         }
@@ -161,10 +164,10 @@ public class GenerateReleasePomsPhase
         {
             IOUtil.close( fileWriter );
         }
-        
+
         return releasePomFile;
     }
-    
+
     private void addReleasePomsToScm( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean simulate, ReleaseResult result, List releasePoms )
         throws ReleaseFailureException, ReleaseExecutionException
     {
@@ -196,7 +199,7 @@ public class GenerateReleasePomsPhase
             }
         }
     }
-    
+
     private Model createReleaseModel( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
                                       List reactorProjects, ReleaseResult result )
         throws ReleaseFailureException, ReleaseExecutionException
@@ -286,7 +289,7 @@ public class GenerateReleasePomsPhase
     {
         return releaseDescriptor.getReleaseVersions();
     }
-    
+
     private String getNextVersion( Map mappedVersions, String groupId, String artifactId, String version )
         throws ReleaseFailureException
     {
@@ -344,12 +347,12 @@ public class GenerateReleasePomsPhase
 
         return releaseScm;
     }
-    
+
     private List createReleaseDependencies( Map originalVersions, Map mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
         Set artifacts = project.getArtifacts();
-        
+
         List releaseDependencies = null;
 
         if ( artifacts != null )
@@ -358,7 +361,7 @@ public class GenerateReleasePomsPhase
             List orderedArtifacts = new ArrayList();
             orderedArtifacts.addAll( artifacts );
             Collections.sort( orderedArtifacts );
-            
+
             releaseDependencies = new ArrayList();
 
             for ( Iterator iterator = orderedArtifacts.iterator(); iterator.hasNext(); )
@@ -383,7 +386,7 @@ public class GenerateReleasePomsPhase
 
         return releaseDependencies;
     }
-    
+
     private String getReleaseVersion( Map originalVersions, Map mappedVersions, Artifact artifact )
         throws ReleaseFailureException
     {
@@ -415,7 +418,7 @@ public class GenerateReleasePomsPhase
 
         return version;
     }
-    
+
     private List createReleasePlugins( Map originalVersions, Map mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
@@ -459,7 +462,7 @@ public class GenerateReleasePomsPhase
 
         return releasePlugins;
     }
-    
+
     private List createReleaseReportPlugins( Map originalVersions, Map mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
@@ -499,7 +502,7 @@ public class GenerateReleasePomsPhase
 
         return releaseReportPlugins;
     }
-    
+
     private List createReleaseExtensions( Map originalVersions, Map mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
@@ -536,7 +539,7 @@ public class GenerateReleasePomsPhase
 
         return releaseExtensions;
     }
-    
+
     /*
      * @see org.apache.maven.shared.release.phase.AbstractReleasePhase#clean(java.util.List)
      */
@@ -553,7 +556,7 @@ public class GenerateReleasePomsPhase
             if ( releasePom.exists() )
             {
                 logInfo( result, "Deleting release POM for '" + project.getName() + "'..." );
-                
+
                 if ( !releasePom.delete() )
                 {
                     logWarn( result, "Cannot delete release POM: " + releasePom );

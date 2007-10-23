@@ -41,7 +41,6 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.jdom.Comment;
@@ -58,8 +57,10 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -117,6 +118,13 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
+    private static String readXmlFile( File file )
+        throws IOException
+    {
+        // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
+        return IOUtil.toString( new FileInputStream( file ), "UTF-8" );
+    }
+
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
                                    List reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -126,7 +134,7 @@ public abstract class AbstractRewritePomsPhase
         String outtro = null;
         try
         {
-            String content = FileUtils.fileRead( ReleaseUtil.getStandardPom( project ) );
+            String content = readXmlFile( ReleaseUtil.getStandardPom( project ) );
             // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
             content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
             content = content.replaceAll( "(\\s{2,}|[^\\s])/>", "$1 />" );
@@ -134,7 +142,7 @@ public abstract class AbstractRewritePomsPhase
             SAXBuilder builder = new SAXBuilder();
             document = builder.build( new StringReader( content ) );
 
-            // Normalise line endings. For some reason, JDOM replaces \r\n inside a comment with \n.
+            // Normalize line endings. For some reason, JDOM replaces \r\n inside a comment with \n.
             normaliseLineEndings( document );
 
             // rewrite DOM as a string to find differences, since text outside the root element is not tracked
@@ -181,7 +189,7 @@ public abstract class AbstractRewritePomsPhase
                            result );
 
         File pomFile = ReleaseUtil.getStandardPom( project );
-        
+
         if ( simulate )
         {
             File outputFile =
@@ -655,9 +663,8 @@ public abstract class AbstractRewritePomsPhase
         Writer writer = null;
         try
         {
-            // TODO: better handling of encoding. Currently the definition is not written out and is embedded in the intro if it already existed
-            // TODO: the XMLOutputter and Writer need to have their encodings aligned.
-            writer = new FileWriter( pomFile );
+            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
+            writer = new OutputStreamWriter( new FileOutputStream( pomFile ), "UTF-8" );
 
             if ( intro != null )
             {
