@@ -555,6 +555,12 @@ public abstract class AbstractRewritePomsPhase
                                             // change the property only if the property is the same as what's in the reactor
                                             property.setText( mappedVersion );
                                         }
+                                        else if ( mappedVersion.equals( propertyValue ))
+                                        {
+                                           //this property may have been updated during processing a sibling.
+                                            logInfo( result, "Ignoring artifact version update for expression: " +
+                                                     mappedVersion+" because it is already updated." );
+                                        }
                                         else if ( !mappedVersion.equals( versionText ) )
                                         {
                                             if ( mappedVersion.matches( "\\$\\{project.+\\}" ) ||

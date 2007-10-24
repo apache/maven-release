@@ -28,7 +28,7 @@
   </parent>
   <groupId>org.apache.maven.release</groupId>
   <artifactId>maven-release</artifactId>
-  <version>4-SNAPSHOT</version>
+  <version>4</version>
   <packaging>pom</packaging>
   <name>Maven Release</name>
   <issueManagement>
@@ -40,9 +40,9 @@
     <module>maven-release-plugin</module>
   </modules>
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/release/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/release/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/release/trunk</url>
+    <connection>scm:svn:https://svn.apache.org/repos/asf/maven/release/tags/maven-release-4</connection>
+    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/release/tags/maven-release-4</developerConnection>
+    <url>https://svn.apache.org/repos/asf/maven/release/tags/maven-release-4</url>
   </scm>
   <build>
     <pluginManagement>
