@@ -96,9 +96,9 @@ public class RestoreBackupPomsPhaseTest
 
             assertTrue( "Check if expected file exists.", expectedFile.exists() );
 
-            String pomContents = FileUtils.fileRead( pomFile );
+            String pomContents = readXmlFile( pomFile );
 
-            String expectedContents = FileUtils.fileRead( expectedFile );
+            String expectedContents = readXmlFile( expectedFile );
 
             assertTrue( "Check if pom and backup files are identical", pomContents.equals( expectedContents ) );
         }

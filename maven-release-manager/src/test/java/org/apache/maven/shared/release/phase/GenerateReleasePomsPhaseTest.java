@@ -35,7 +35,6 @@ import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.FileUtils;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsAnything;
@@ -83,7 +82,7 @@ public class GenerateReleasePomsPhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        compareFiles( reactorProjects );
+        comparePomFiles( reactorProjects );
     }
 
     /*
@@ -186,24 +185,24 @@ public class GenerateReleasePomsPhaseTest
 
         return config;
     }
-    
+
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#readTestProjectFile(java.lang.String)
      */
     protected String readTestProjectFile( String fileName ) throws IOException
     {
-        return FileUtils.fileRead( getTestFile( "target/test-classes/projects/generate-release-poms/" + fileName ) );
+        return readXmlFile( getTestFile( "target/test-classes/projects/generate-release-poms/" + fileName ) );
     }
 
     /*
      * @see org.apache.maven.shared.release.phase.AbstractReleaseTestCase#compareFiles(org.apache.maven.project.MavenProject, java.lang.String)
      */
-    protected void compareFiles( MavenProject project, String expectedFileSuffix ) throws IOException
+    protected void comparePomFiles( MavenProject project, String expectedFileSuffix ) throws IOException
     {
         File actualFile = ReleaseUtil.getReleasePom( project );
         File expectedFile = new File( actualFile.getParentFile(), "expected-release-pom" + expectedFileSuffix + ".xml" );
 
-        compareFiles( expectedFile, actualFile );
+        comparePomFiles( expectedFile, actualFile );
 
         // verify scm provider expectations here
         // TODO: can we move this somewhere better?

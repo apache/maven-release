@@ -46,6 +46,8 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.jmock.Mock;
 
 import java.io.File;
@@ -220,40 +222,46 @@ public abstract class AbstractReleaseTestCase
         return map;
     }
 
-    protected boolean compareFiles( List reactorProjects )
+    protected boolean comparePomFiles( List reactorProjects )
         throws IOException
     {
-        compareFiles( reactorProjects, "" );
+        comparePomFiles( reactorProjects, "" );
 
         // TODO: return void since this is redundant
         return true;
     }
 
-    protected void compareFiles( List reactorProjects, String expectedFileSuffix )
+    protected void comparePomFiles( List reactorProjects, String expectedFileSuffix )
         throws IOException
     {
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
-            compareFiles( project, expectedFileSuffix );
+            comparePomFiles( project, expectedFileSuffix );
         }
     }
 
-    protected void compareFiles( MavenProject project, String expectedFileSuffix )
+    protected void comparePomFiles( MavenProject project, String expectedFileSuffix )
         throws IOException
     {
         File actualFile = project.getFile();
         File expectedFile = new File( actualFile.getParentFile(), "expected-pom" + expectedFileSuffix + ".xml" );
 
-        compareFiles( expectedFile, actualFile );
+        comparePomFiles( expectedFile, actualFile );
     }
 
-    protected void compareFiles( File expectedFile, File actualFile )
+    protected String readXmlFile( File file )
         throws IOException
     {
-        String actual = FileUtils.fileRead( actualFile );
-        String expected = FileUtils.fileRead( expectedFile );
+        return IOUtil.toString( ReaderFactory.newXmlReader( file ) );
+    }
+
+    protected void comparePomFiles( File expectedFile, File actualFile )
+        throws IOException
+    {
+        String actual = readXmlFile( actualFile );
+        String expected = readXmlFile( expectedFile );
         expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
         assertEquals( "Check the transformed POM", expected, actual );
     }

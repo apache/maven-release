@@ -46,11 +46,10 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -151,8 +150,7 @@ public class GenerateReleasePomsPhase
 
         try
         {
-            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-            fileWriter = new OutputStreamWriter( new FileOutputStream( releasePomFile ), "UTF-8" );
+            fileWriter = WriterFactory.newXmlWriter( releasePomFile );
 
             pomWriter.write( fileWriter, releasePom );
         }

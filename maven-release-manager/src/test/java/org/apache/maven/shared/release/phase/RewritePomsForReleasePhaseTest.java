@@ -21,7 +21,6 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -57,7 +56,7 @@ public class RewritePomsForReleasePhaseTest
     protected String readTestProjectFile( String fileName )
         throws IOException
     {
-        return FileUtils.fileRead( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
+        return readXmlFile( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
     }
 
     public void testSimulateRewrite()
@@ -125,7 +124,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     protected void mapAlternateNextVersion( ReleaseDescriptor config, String projectId )
@@ -173,7 +172,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithTagBase()
@@ -187,7 +186,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithTagBaseAndVaryingScmUrls()
@@ -200,7 +199,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithCvsFromTag()
@@ -212,7 +211,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithEmptyScm()
@@ -224,7 +223,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteInterpolatedVersions()
@@ -235,7 +234,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteInterpolatedVersionsDifferentVersion()
@@ -259,7 +258,7 @@ public class RewritePomsForReleasePhaseTest
             // skip subproject1 - we don't need to worry about its version mapping change, it has no deps of any kind
             if ( !"groupId".equals( project.getGroupId() ) || !"subproject1".equals( project.getArtifactId() ) )
             {
-                compareFiles( project, "-different-version" );
+                comparePomFiles( project, "-different-version" );
             }
         }
     }
@@ -273,7 +272,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomWithParentAndProperties()
@@ -288,7 +287,7 @@ public class RewritePomsForReleasePhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )

@@ -23,7 +23,6 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -157,7 +156,7 @@ public class RewritePomsForDevelopmentPhaseTest
     protected String readTestProjectFile( String fileName )
         throws IOException
     {
-        return FileUtils.fileRead( getTestFile( "target/test-classes/projects/rewrite-for-development/" + fileName ) );
+        return readXmlFile( getTestFile( "target/test-classes/projects/rewrite-for-development/" + fileName ) );
     }
 
     protected List createReactorProjects( String path, boolean copyFiles )
@@ -246,7 +245,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithCvsFromTag()
@@ -266,7 +265,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithInheritedScm()
@@ -293,7 +292,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomWithParentAndProperties()
@@ -313,7 +312,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomDependenciesWithoutDependenciesVersionUpdate()
@@ -327,6 +326,6 @@ public class RewritePomsForDevelopmentPhaseTest
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 }

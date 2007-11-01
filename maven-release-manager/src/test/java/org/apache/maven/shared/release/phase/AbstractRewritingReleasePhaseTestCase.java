@@ -60,7 +60,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomWithParent()
@@ -71,7 +71,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomWithUnmappedParent()
@@ -112,7 +112,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     protected abstract void mapAlternateNextVersion( ReleaseDescriptor config, String projectId );
@@ -125,7 +125,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomWithChangedInheritedVersion()
@@ -137,7 +137,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         phase.execute( config, null, reactorProjects );
 
         MavenProject project = (MavenProject) getProjectsAsMap( reactorProjects ).get( "groupId:subproject1" );
-        compareFiles( project, "-version-changed" );
+        comparePomFiles( project, "-version-changed" );
     }
 
     protected abstract ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List reactorProjects )
@@ -152,7 +152,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomUnmappedDependencies()
@@ -181,7 +181,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteManagedPomDependencies()
@@ -192,7 +192,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteManagedPomUnmappedDependencies()
@@ -221,7 +221,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomUnmappedPlugins()
@@ -250,7 +250,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteManagedPomPlugins()
@@ -261,7 +261,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteManagedPomUnmappedPlugins()
@@ -290,7 +290,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomUnmappedReportPlugins()
@@ -319,7 +319,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomExtension()
@@ -330,7 +330,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomUnmappedExtension()
@@ -359,7 +359,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewritePomExtensionUndefinedVersion()
@@ -370,7 +370,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteAddSchema()
@@ -388,7 +388,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
             phase.execute( config, null, reactorProjects );
 
-            compareFiles( reactorProjects, "-with-schema" );
+            comparePomFiles( reactorProjects, "-with-schema" );
 
             copyFiles = false;
         }
@@ -575,7 +575,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     protected abstract List createReactorProjects( String path, boolean copyFiles )

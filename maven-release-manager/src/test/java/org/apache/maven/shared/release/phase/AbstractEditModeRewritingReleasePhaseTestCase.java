@@ -53,7 +53,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
 
         phase.execute( config, null, reactorProjects );
 
-        assertTrue( compareFiles( reactorProjects ) );
+        assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     public void testRewriteBasicPomWithEditModeFailure()

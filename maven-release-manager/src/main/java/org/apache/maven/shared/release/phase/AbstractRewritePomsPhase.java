@@ -42,7 +42,9 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.WriterFactory;
 import org.jdom.Comment;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -57,10 +59,7 @@ import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -121,8 +120,7 @@ public abstract class AbstractRewritePomsPhase
     private static String readXmlFile( File file )
         throws IOException
     {
-        // TODO use ReaderFactory.newXmlReader() when plexus-utils is upgraded to 1.4.5+
-        return IOUtil.toString( new FileInputStream( file ), "UTF-8" );
+        return IOUtil.toString( ReaderFactory.newXmlReader( file ) );
     }
 
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
@@ -669,8 +667,7 @@ public abstract class AbstractRewritePomsPhase
         Writer writer = null;
         try
         {
-            // TODO use WriterFactory.newXmlWriter() when plexus-utils is upgraded to 1.4.5+
-            writer = new OutputStreamWriter( new FileOutputStream( pomFile ), "UTF-8" );
+            writer = WriterFactory.newXmlWriter( pomFile );
 
             if ( intro != null )
             {

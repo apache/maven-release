@@ -20,7 +20,6 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.FileUtils;
 
 import java.util.List;
 import java.util.Iterator;
@@ -113,9 +112,9 @@ public class CreateBackupPomsPhaseTest
             {
                 assertTrue( "Check if backup file was created.", backupFile.exists() );
 
-                String pomContents = FileUtils.fileRead( pomFile );
+                String pomContents = readXmlFile( pomFile );
 
-                String backupContents = FileUtils.fileRead( backupFile );
+                String backupContents = readXmlFile( backupFile );
 
                 assertTrue( "Check if pom and backup files are identical", pomContents.equals( backupContents ) );
             }
