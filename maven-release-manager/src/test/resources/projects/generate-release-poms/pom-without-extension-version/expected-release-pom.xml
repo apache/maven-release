@@ -1,4 +1,4 @@
-<project>
+<?xml version="1.0" encoding="UTF-8"?><project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>groupId</groupId>
   <artifactId>artifactId</artifactId>
@@ -36,12 +36,15 @@
   </repositories>
   <pluginRepositories>
     <pluginRepository>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>
       <id>central</id>
       <name>Maven Plugin Repository</name>
-      <url>http://www.ibiblio.org/maven2</url>
+      <url>http://repo1.maven.org/maven2</url>
     </pluginRepository>
   </pluginRepositories>
   <reporting>

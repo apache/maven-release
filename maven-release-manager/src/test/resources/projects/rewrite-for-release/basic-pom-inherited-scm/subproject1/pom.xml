@@ -25,6 +25,7 @@
   </parent>
 
   <artifactId>subproject1</artifactId>
+  <packaging>pom</packaging>
 
   <modules>
     <module>subsubproject</module>

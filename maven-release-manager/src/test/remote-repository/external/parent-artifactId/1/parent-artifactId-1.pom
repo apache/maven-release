@@ -23,6 +23,7 @@
   <groupId>external</groupId>
   <artifactId>parent-artifactId</artifactId>
   <version>1</version>
+  <packaging>pom</packaging>
   <description>POM was created from deploy:deploy-file</description>
   <scm>
     <connection>scm:svn:file://localhost/tmp/scm-repo/trunk</connection>
