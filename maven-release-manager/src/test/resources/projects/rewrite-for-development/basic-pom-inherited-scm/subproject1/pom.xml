@@ -23,6 +23,7 @@
     <artifactId>artifactId</artifactId>
     <version>1.0</version>
   </parent>
+  <packaging>pom</packaging>
 
   <artifactId>subproject1</artifactId>
 

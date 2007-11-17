@@ -63,6 +63,18 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    public void testRewriteBasicPomWithEncoding()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "basic-pom-with-encoding" );
+        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config, null, reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
     public void testRewritePomWithParent()
         throws Exception
     {

@@ -27,6 +27,7 @@
   <groupId>groupId</groupId>
   <artifactId>artifactId</artifactId>
   <version>1.0</version>
+  <packaging>pom</packaging>
 
   <prerequisites>
     <maven>2.0.4</maven>
