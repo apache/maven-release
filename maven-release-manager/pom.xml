@@ -241,7 +241,8 @@
           <execution>
             <id>generate</id>
             <configuration>
-              <outputDirectory>${project.build.directory}/plexus</outputDirectory>
+              <outputDirectory>${plexusOutput}</outputDirectory>
+              <fileName>${componentsFileName}.tmp</fileName>
             </configuration>
             <goals>
               <goal>descriptor</goal>
@@ -253,11 +254,31 @@
               <output>${plexusOutput}/${componentsFileName}</output>
               <descriptors>
                 <descriptor>${basedir}/src/main/resources/${componentsFileName}</descriptor>
-                <descriptor>${project.build.directory}/plexus/${componentsFileName}</descriptor>
+                <descriptor>${plexusOutput}/${componentsFileName}.tmp</descriptor>
               </descriptors>
             </configuration>
             <goals>
               <goal>merge-descriptors</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.1</version>
+        <executions>
+          <execution>
+            <phase>process-resources</phase>
+            <configuration>
+              <tasks>
+                <copy todir="${project.build.outputDirectory}" overwrite="true">
+                  <fileset dir="${plexusOutput}" />
+                </copy>
+              </tasks>
+            </configuration>
+            <goals>
+              <goal>run</goal>
             </goals>
           </execution>
         </executions>
