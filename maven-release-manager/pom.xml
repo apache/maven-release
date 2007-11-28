@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.maven.release</groupId>
     <artifactId>maven-release</artifactId>
-    <version>4</version>
+    <version>5-SNAPSHOT</version>
   </parent>
   <artifactId>maven-release-manager</artifactId>
   <version>1.0-alpha-5-SNAPSHOT</version>
