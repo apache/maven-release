@@ -31,6 +31,12 @@
     <maven>2.0.1</maven>
   </prerequisites>
   <name>Maven Shared Release Manager</name>
+
+  <properties>
+    <plexusOutput>${project.build.directory}/generated-resources/plexus</plexusOutput>
+    <componentsFileName>META-INF/plexus/components.xml</componentsFileName>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -224,20 +230,22 @@
         <executions>
           <execution>
             <id>generate</id>
+            <configuration>
+              <outputDirectory>${project.build.directory}/plexus</outputDirectory>
+            </configuration>
             <goals>
               <goal>descriptor</goal>
             </goals>
           </execution>
           <execution>
             <id>merge</id>
-            <!--
             <configuration>
+              <output>${plexusOutput}/${componentsFileName}</output>
               <descriptors>
-                <descriptor>${basedir}/src/main/resources/META-INF/plexus/components.xml</descriptor>
-                <descriptor>${project.build.directory}/generated-resources/plexus/META-INF/plexus/components.xml</descriptor>
+                <descriptor>${basedir}/src/main/resources/${componentsFileName}</descriptor>
+                <descriptor>${project.build.directory}/plexus/${componentsFileName}</descriptor>
               </descriptors>
             </configuration>
-            -->
             <goals>
               <goal>merge-descriptors</goal>
             </goals>
