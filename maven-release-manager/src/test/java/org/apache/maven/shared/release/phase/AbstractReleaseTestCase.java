@@ -263,7 +263,6 @@ public abstract class AbstractReleaseTestCase
         String actual = readXmlFile( actualFile );
         String expected = readXmlFile( expectedFile );
         expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
-        expected = expected.replaceAll( "\\\r\\\n", "\n" );
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
