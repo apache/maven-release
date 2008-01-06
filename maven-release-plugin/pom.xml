@@ -86,6 +86,12 @@
           <target>1.4</target>
         </configuration>
       </plugin>
+      <plugin>
+        <artifactId>maven-site-plugin</artifactId>
+        <configuration>
+          <stagingSiteURL>scp://people.apache.org/www/maven.apache.org/plugins/${artifactId}-${version}</stagingSiteURL>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <reporting>
