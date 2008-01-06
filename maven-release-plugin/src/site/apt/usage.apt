@@ -41,7 +41,7 @@ mvn -Dusername=your_username release:prepare
 
   This example shows how to set the repository location for all tags to be created in Subversion.
   Note that it is not needed if you use the standard SVN layout, where the root project is in <<<trunk>>>, and
-  there is a <<<tags>>> directory immediately above it.
+  there is a sibling <<<tags>>> directory.
 
 -------------------
 <project>
