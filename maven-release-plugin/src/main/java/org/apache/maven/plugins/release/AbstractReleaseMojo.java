@@ -114,7 +114,7 @@ public abstract class AbstractReleaseMojo
     private String pomFileName;
 
     /**
-     * The message prefix to all scm changes
+     * The message prefix to use for all SCM changes.
      *
      * @parameter expression="${scmCommentPrefix}" default-value="[maven-release-plugin] "
      */

@@ -26,7 +26,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 
 /**
- * Rollback changes made by a previous release
+ * Rollback changes made by a previous release.
  *
  * @aggregator
  * @goal rollback

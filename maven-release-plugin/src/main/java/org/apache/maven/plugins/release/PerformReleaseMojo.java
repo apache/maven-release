@@ -28,7 +28,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import java.io.File;
 
 /**
- * Perform a release from SCM
+ * Perform a release from SCM.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
@@ -41,7 +41,11 @@ public class PerformReleaseMojo
     extends AbstractReleaseMojo
 {
     /**
-     * Comma or space separated goals to execute on deployment.
+     * A comma or space separated list of goals to execute on deployment.
+     *
+     * Default value is either <code>deploy</code> or
+     * <code>deploy site-deploy</code>, if the project has a
+     * &lt;distributionManagement&gt;/&lt;site&gt; element.
      *
      * @parameter expression="${goals}"
      */
@@ -56,7 +60,8 @@ public class PerformReleaseMojo
     private File workingDirectory;
 
     /**
-     * The SCM URL to checkout from. If omitted, the one from the release.properties file is used, followed by the URL
+     * The SCM URL to checkout from. If omitted, the one from the
+     * <code>release.properties</code> file is used, followed by the URL
      * from the current POM.
      *
      * @parameter expression="${connectionUrl}"
@@ -64,7 +69,8 @@ public class PerformReleaseMojo
     private String connectionUrl;
 
     /**
-     * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
+     * Whether to use the release profile that adds sources and javadocs to the
+     * released artifact, if appropriate.
      *
      * @parameter expression="${useReleaseProfile}" default-value="true"
      */

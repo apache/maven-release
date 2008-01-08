@@ -43,7 +43,7 @@ public class PrepareReleaseMojo
 {
 
     /**
-     * Resume a previous release attempt from the point that it was stopped.
+     * Resume a previous release attempt from the point where it was stopped.
      *
      * @parameter expression="${resume}" default-value="true"
      */
@@ -72,7 +72,7 @@ public class PrepareReleaseMojo
 
     /**
      * Whether to automatically assign submodules the parent version.  If set to false,
-     * the user will be prompted for the version of each submodules. 
+     * the user will be prompted for the version of each submodules.
      *
      * @parameter expression="${autoVersionSubmodules}" default-value="false"
      */
@@ -111,12 +111,12 @@ public class PrepareReleaseMojo
     private boolean commitByProject;
 
     /**
-     * Whether to timestamped SNAPSHOT dependencies.  Default is to fail when finding any SNAPSHOT.
+     * Whether to allow timestamped SNAPSHOT dependencies.  Default is to fail when finding any SNAPSHOT.
      *
      * @parameter expression="${ignoreSnapshots}" default-value="false"
      */
     private boolean allowTimestampedSnapshots;
-    
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
