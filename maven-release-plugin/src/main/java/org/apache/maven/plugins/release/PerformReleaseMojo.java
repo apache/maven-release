@@ -51,6 +51,14 @@ public class PerformReleaseMojo
      */
     private String goals;
 
+	/**
+     * Comma separated profiles to enable on deployment, in addition to active profiles 
+	 * for project execution.
+     *
+     * @parameter
+     */
+    private String releaseProfiles;
+	
     /**
      * The checkout directory.
      *
@@ -76,6 +84,11 @@ public class PerformReleaseMojo
      */
     private boolean useReleaseProfile;
 
+	protected String getAdditionalProfiles()
+	{
+		return releaseProfiles;
+	}
+	
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

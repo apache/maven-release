@@ -45,4 +45,25 @@ mvn release:perform
 mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
 -------
 
+  release:perform will fork a new maven instance to build the checked-out project. This new maven instance will use the 
+  same system configuration and maven profiles used by the one running the release:perform goal. 
+  
+  It is possible to
+  force some profiles to get enabled during release (for example to enable time-consummung tasks that are only relevant
+  at release-time) by setting a coma separated list of profiles names in the releaseProfiles parameter. The goals and
+  profiles required to release the project can then be configured in the POM :
+  
+-------
+  <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+			<!--
+			  During release:perform, enable the "release" profile
+			  -->
+			<releaseProfiles>release</releaseProfiles>
+			<goals>deploy assembly:assembly</goals>
+		</configuration>
+  </plugin>
+-------
+
   After the release is complete, the <<<release.properties>>> and other release files will be removed from the checkout.

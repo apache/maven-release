@@ -105,7 +105,8 @@ public abstract class AbstractReleaseMojo
      * @parameter expression="${arguments}" alias="prepareVerifyArgs"
      */
     private String arguments;
-
+		
+	
     /**
      * The file name of the POM to execute any goals against.
      *
@@ -172,36 +173,54 @@ public abstract class AbstractReleaseMojo
         descriptor.setWorkingDirectory( basedir.getAbsolutePath() );
 
         descriptor.setPomFileName( pomFileName );
+		
+		List profiles = project.getActiveProfiles();
 
-        List profiles = project.getActiveProfiles();
+		String arguments = this.arguments;
+		if ( profiles != null && !profiles.isEmpty() )
+		{
+			if ( !StringUtils.isEmpty( arguments ) )
+			{
+				arguments += " -P ";
+			}
+			else
+			{
+				arguments = "-P ";
+			}
 
-        String arguments = this.arguments;
-        if ( profiles != null && !profiles.isEmpty() )
-        {
-            if ( !StringUtils.isEmpty( arguments ) )
-            {
-                arguments += " -P ";
-            }
-            else
-            {
-                arguments = "-P ";
-            }
+			for ( Iterator it = profiles.iterator(); it.hasNext(); )
+			{
+				Profile profile = (Profile) it.next();
 
-            for ( Iterator it = profiles.iterator(); it.hasNext(); )
-            {
-                Profile profile = (Profile) it.next();
+				arguments += profile.getId();
+				if ( it.hasNext() )
+				{
+					arguments += ",";
+				}
+			}
 
-                arguments += profile.getId();
-                if ( it.hasNext() )
-                {
-                    arguments += ",";
-                }
-            }
-        }
+			String additionalProfiles = getAdditionalProfiles();
+		    if ( additionalProfiles != null )
+		    {
+			    if ( ! profiles.isEmpty() )
+				{
+				    arguments += ",";
+				}
+			    arguments += additionalProfiles;
+			}
+		}
         descriptor.setAdditionalArguments( arguments );
 
         return descriptor;
     }
+	
+	/**
+	 * @return additional profiles to enable during release
+	 */
+	protected String getAdditionalProfiles()
+	{
+		return null;
+	}		
 
     void setReleaseManager( ReleaseManager releaseManager )
     {
