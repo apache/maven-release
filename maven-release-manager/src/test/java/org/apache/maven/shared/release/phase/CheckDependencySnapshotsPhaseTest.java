@@ -25,13 +25,15 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.jmock.Mock;
+import org.jmock.core.Stub;
+import org.jmock.core.matcher.InvokeAtLeastOnceMatcher;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ReturnStub;
+import org.jmock.core.stub.StubSequence;
 import org.jmock.core.stub.ThrowStub;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Stack;
 
 /**
  * Test the dependency snapshot check phase.
@@ -116,11 +118,7 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "no" ) );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "no" ) );
+        Mock mockPrompter = createMockPrompter( "no", "no" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         try
@@ -134,11 +132,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "no" ) );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "no" ) );
+        mockPrompter = createMockPrompter( "no", "no" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         try
         {
@@ -161,9 +156,7 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "yes" ) );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
+        Mock mockPrompter = createYesMockPrompter();
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         phase.execute( releaseDescriptor, null, reactorProjects );
@@ -180,9 +173,7 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "yes" ) );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
+        Mock mockPrompter = createYesMockPrompter();
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         phase.simulate( releaseDescriptor, null, reactorProjects );
@@ -199,11 +190,7 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "donkey" ) );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "no" ) );
+        Mock mockPrompter = createMockPrompter( "donkey", "no" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         try
@@ -217,11 +204,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "donkey" ) );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will( new ReturnStub( "no" ) );
+        mockPrompter = createMockPrompter( "donkey", "no" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         try
         {
@@ -286,8 +270,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-differing-snapshot-dependencies" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -301,7 +285,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -458,20 +443,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
-        Mock mockPrompter;
-        Stack responseStack = new Stack();
 
-        responseStack.push( "yes" );
-        responseStack.push( "1" );
-        responseStack.push( "yes" );
-        responseStack.push( "1.1-SNAPSHOT" );
-        mockPrompter = createMockPrompter( "prompt", responseStack );
-
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-
+        Mock mockPrompter = createMockPrompter( "yes", "1", "yes", "1.1-SNAPSHOT" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         try
@@ -492,17 +465,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         releaseDescriptor = new ReleaseDescriptor();
 
-        responseStack.push( "yes" );
-        responseStack.push( "1" );
-        responseStack.push( "yes" );
-        responseStack.push( "1.1-SNAPSHOT" );
-        mockPrompter = createMockPrompter( "prompt", responseStack );
-
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-
+        mockPrompter = createMockPrompter( "yes", "1", "yes", "1.1-SNAPSHOT" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
         try
@@ -523,8 +486,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-dependencies" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -538,7 +501,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -588,8 +552,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "external-snapshot-report-plugins" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -603,7 +567,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -625,8 +590,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-report-plugins" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -640,7 +605,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -732,8 +698,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "external-managed-snapshot-plugin" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -747,7 +713,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -769,8 +736,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "external-snapshot-plugins" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -784,7 +751,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -806,8 +774,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-plugins" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -821,7 +789,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -843,8 +812,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -858,7 +827,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -894,8 +864,8 @@ public class CheckDependencySnapshotsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "external-snapshot-extension" );
-        Mock noPrompter = createNoMockPrompter();
 
+        Mock noPrompter = createNoMockPrompter();
         phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
@@ -909,7 +879,8 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
 
-        resetNoMockPrompter( noPrompter );
+        noPrompter = createNoMockPrompter();
+        phase.setPrompter( (Prompter) noPrompter.proxy() );
 
         try
         {
@@ -1009,36 +980,46 @@ public class CheckDependencySnapshotsPhaseTest
         return mockPrompter;
     }
 
-    private Mock resetNoMockPrompter( Mock mockPrompter )
+    private Mock createMockPrompter( String response1, String response2 )
     {
-        return resetYesNoMockPrompter( mockPrompter, false );
+        return createMockPrompter( new String[] { response1, response2 } );
     }
 
-    private Mock resetYesMockPrompter( Mock mockPrompter )
+    private Mock createMockPrompter( String response1, String response2, String response3, String response4 )
     {
-        return resetYesNoMockPrompter( mockPrompter, true );
+        return createMockPrompter( new String[] { response1, response2, response3, response4 } );
     }
 
-    private Mock resetYesNoMockPrompter( Mock mockPrompter, boolean yes )
-    {
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "showMessage" );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will(
-            new ReturnStub( ( yes ) ? "yes" : "no" ) );
-
-        return mockPrompter;
-    }
-
-    private Mock createMockPrompter( String methodName, Stack responseStack )
+    private Mock createMockPrompter( String[] responses )
     {
         Mock mockPrompter = new Mock( Prompter.class );
 
-        while ( !responseStack.empty() )
-        {
-            mockPrompter.expects( new InvokeOnceMatcher() ).method( methodName ).will(
-                new ReturnStub( responseStack.pop() ) );
-        }
+        expectsShowMessages( mockPrompter );
+        expectsPrompts( mockPrompter, responses );
 
         return mockPrompter;
+    }
+
+    private void expectsShowMessages( Mock mockPrompter )
+    {
+        mockPrompter.expects( new InvokeAtLeastOnceMatcher() ).method( "showMessage" );
+    }
+
+    private void expectsPrompts( Mock mockPrompter, String[] responses )
+    {
+        expects( mockPrompter, "prompt", responses );
+    }
+
+    private void expects( Mock mock, String methodName, String[] results )
+    {
+        Stub[] stubs = new Stub[results.length];
+
+        for ( int i = 0; i < results.length; i++ )
+        {
+            stubs[i] = new ReturnStub( results[i] );
+
+        }
+
+        mock.expects( new InvokeAtLeastOnceMatcher() ).method( methodName ).will( new StubSequence( stubs ) );
     }
 }
