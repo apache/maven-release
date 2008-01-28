@@ -164,7 +164,7 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( true );
     }
 
-    public void testSnapshotReleasePluginInteractiveAcceptedForSimulationtion()
+    public void testSnapshotReleasePluginInteractiveAcceptedForSimulation()
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
