@@ -382,44 +382,43 @@ public class CheckDependencySnapshotsPhase
     {
         Map resolvedSnapshots = new HashMap();
         Iterator iterator = snapshotSet.iterator();
-        Artifact currentArtifact;
-        String result;
-        VersionInfo version;
 
         while ( iterator.hasNext() )
         {
-            currentArtifact = (Artifact) iterator.next();
-            version = new DefaultVersionInfo( currentArtifact.getVersion() );
+            Artifact currentArtifact = (Artifact) iterator.next();
+            String versionlessKey = ArtifactUtils.versionlessKey( currentArtifact );
 
-            result = prompter.prompt( "'" + ArtifactUtils.versionlessKey( currentArtifact ) + "' set to release?",
-                                      Arrays.asList( new String[]{"yes", "no"} ), "yes" );
+            String result = prompter.prompt( "'" + versionlessKey + "' set to release?",
+                Arrays.asList( new String[] { "yes", "no" } ), "yes" );
 
             if ( result.toLowerCase().startsWith( "y" ) )
             {
-                VersionInfo nextDevelopmentVersion;
-                Map versionMap = new HashMap();
-
                 iterator.remove();
 
-                VersionInfo versionInfo = version.getNextVersion();
+                VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getVersion() );
+                VersionInfo nextVersionInfo = versionInfo.getNextVersion();
+                
                 String nextVersion;
-                if ( versionInfo != null )
+                if ( nextVersionInfo != null )
                 {
-                    nextVersion = versionInfo.getSnapshotVersionString();
+                    nextVersion = nextVersionInfo.getSnapshotVersionString();
                 }
                 else
                 {
                     nextVersion = "1.0-SNAPSHOT";
                 }
+                
                 result = prompter.prompt( "What is the next development version?",
                                           Collections.singletonList( nextVersion ), nextVersion );
 
-                nextDevelopmentVersion = new DefaultVersionInfo( result );
-                versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, version.toString() );
+                VersionInfo nextDevelopmentVersion = new DefaultVersionInfo( result );
+                
+                Map versionMap = new HashMap();
+                versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, versionInfo.toString() );
                 versionMap.put( ReleaseDescriptor.DEVELOPMENT_KEY, nextDevelopmentVersion.getSnapshotVersionString() );
-                versionMap.put( ReleaseDescriptor.RELEASE_KEY, version.getReleaseVersionString() );
+                versionMap.put( ReleaseDescriptor.RELEASE_KEY, versionInfo.getReleaseVersionString() );
 
-                resolvedSnapshots.put( ArtifactUtils.versionlessKey( currentArtifact ), versionMap );
+                resolvedSnapshots.put( versionlessKey, versionMap );
             }
         }
 
