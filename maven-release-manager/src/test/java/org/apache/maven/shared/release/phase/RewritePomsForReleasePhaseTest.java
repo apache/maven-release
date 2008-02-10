@@ -290,6 +290,22 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    // MRELEASE-305
+    public void testRewritePomWithScmOfParentEndingWithASlash()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "pom-with-scm-of-parent-ending-with-a-slash" );
+
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+
+        phase.execute( config, null, reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
+
     protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )
     {
         ReleaseDescriptor descriptor = super.createDescriptorFromProjects( reactorProjects );

@@ -111,7 +111,7 @@ public class RewritePomsForReleasePhase
             {
                 if ( rootScm.getConnection() != null && scm.getConnection().indexOf( rootScm.getConnection() ) == 0 )
                 {
-                    subDirectoryTag = scm.getConnection().substring( rootScm.getConnection().length() );
+                    subDirectoryTag = scm.getConnection().substring( getLengthOfRootScmConnectionUrl( rootScm.getConnection() ) );
                 }
                 String scmConnectionTag = tagBase;
                 if ( scmConnectionTag != null )
@@ -125,6 +125,7 @@ public class RewritePomsForReleasePhase
                 }
                 String value =
                     translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, scmConnectionTag );
+
                 if ( !value.equals( scm.getConnection() ) )
                 {
                     rewriteElement( "connection", value, scmRoot, namespace );
@@ -138,10 +139,11 @@ public class RewritePomsForReleasePhase
                     scm.getDeveloperConnection().indexOf( rootScm.getDeveloperConnection() ) == 0 )
                 {
                     subDirectoryTag =
-                        scm.getDeveloperConnection().substring( rootScm.getDeveloperConnection().length() );
+                        scm.getDeveloperConnection().substring( getLengthOfRootScmConnectionUrl( rootScm.getDeveloperConnection() ) );
                 }
                 String value =
                     translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
+
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {
                     rewriteElement( "developerConnection", value, scmRoot, namespace );
@@ -153,7 +155,7 @@ public class RewritePomsForReleasePhase
             {
                 if ( rootScm.getUrl() != null && scm.getUrl().indexOf( rootScm.getUrl() ) == 0 )
                 {
-                    subDirectoryTag = scm.getUrl().substring( rootScm.getUrl().length() );
+                    subDirectoryTag = scm.getUrl().substring( getLengthOfRootScmConnectionUrl( rootScm.getUrl() ) );
                 }
 
                 String tagScmUrl = tagBase;
@@ -259,6 +261,18 @@ public class RewritePomsForReleasePhase
         else
         {
             return StringUtils.replace( urlPath, trunkPath.substring( i ), tagPath.substring( i ) );
+        }
+    }
+
+    private int getLengthOfRootScmConnectionUrl( String rootScmConnectionUrl )
+    {
+        if( rootScmConnectionUrl.endsWith( "/" ) )
+        {
+            return rootScmConnectionUrl.length() - 1;
+        }
+        else
+        {
+            return rootScmConnectionUrl.length();
         }
     }
 }
