@@ -15,6 +15,9 @@ mkdir target
 svnadmin create --fs-type fsfs target/svnroot
 
 dir=`readlink -f ${PWD}`
+if [ -z "$dir" ]; then
+  dir=$PWD
+fi
 
 if [ "$1" == "windows" ]; then
   dir=`cygpath -m $dir`
