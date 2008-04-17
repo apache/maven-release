@@ -25,6 +25,8 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 
 /**
@@ -94,6 +96,10 @@ public class PerformReleaseMojo
     {
         super.execute();
 
+		// goals may be splitted into multiple line in configuration. 
+		// Let's build a single line command
+		goals = StringUtils.join( StringUtils.split( goals ), " " );
+		
         try
         {
             // Note that the working directory here is not the same as in the release configuration, so don't reuse that

@@ -27,6 +27,7 @@
           <settings implementation="org.apache.maven.settings.Settings"/>
           <project implementation="org.apache.maven.plugins.release.stubs.MavenProjectStub"/>
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
+		  <goals>deploy site-deploy</goals>
           <useReleaseProfile>true</useReleaseProfile>
         </configuration>
       </plugin>

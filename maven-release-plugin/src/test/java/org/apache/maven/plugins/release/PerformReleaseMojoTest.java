@@ -262,6 +262,30 @@ public class PerformReleaseMojoTest
         assertTrue( true );
     }
 
+	public void testPerformWithMultilineGoals()
+        throws Exception
+    {
+        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform-with-multiline-goals.xml" );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        File checkoutDirectory = getTestFile( "target/checkout" );
+        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        releaseDescriptor.setPerformGoals( "deploy site-deploy" );
+        Settings settings = mojo.getSettings();
+
+        Mock mock = new Mock( ReleaseManager.class );
+        Constraint[] constraints =
+            new Constraint[]{new IsEqual( releaseDescriptor ), new IsEqual( settings ), new IsNull()};
+        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
+        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
+
+        mojo.execute();
+
+        assertTrue( true );
+    }
+	
+	
     protected void setUp()
         throws Exception
     {

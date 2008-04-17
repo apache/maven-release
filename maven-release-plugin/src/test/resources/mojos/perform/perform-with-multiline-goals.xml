@@ -28,8 +28,10 @@
           <project implementation="org.apache.maven.plugins.release.stubs.MavenProjectStub"/>
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
-          <connectionUrl>scm-url</connectionUrl>
- 		  <goals>deploy site-deploy</goals>
+ 		  <goals>
+		     deploy
+			 site-deploy
+	      </goals>
         </configuration>
       </plugin>
     </plugins>
