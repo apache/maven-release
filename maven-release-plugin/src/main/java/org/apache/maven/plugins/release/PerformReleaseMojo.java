@@ -98,7 +98,10 @@ public class PerformReleaseMojo
 
 		// goals may be splitted into multiple line in configuration. 
 		// Let's build a single line command
-		goals = StringUtils.join( StringUtils.split( goals ), " " );
+		if ( goals != null ) 
+		{
+			goals = StringUtils.join( StringUtils.split( goals ), " " );
+		}
 		
         try
         {
