@@ -168,10 +168,42 @@ public class MapVersionsPhase
     {
         String nextVersion = null;
 
-        VersionInfo version = null;
+        VersionInfo currentVersionInfo = null;
+        VersionInfo releaseVersionInfo = null;
+        VersionInfo nextSnapshotVersionInfo = null;
+        
         try
         {
-            version = new DefaultVersionInfo( project.getVersion() );
+            currentVersionInfo = new DefaultVersionInfo( project.getVersion() );
+
+            // The release version defaults to currentVersionInfo.getReleaseVersionString()
+            releaseVersionInfo = currentVersionInfo;
+            
+            // Check if the user specified a release version
+            if ( releaseDescriptor.getReleaseVersions() != null )
+            {
+                String releaseVersion = ( String ) releaseDescriptor.getReleaseVersions().get( projectId );
+                if ( releaseVersion != null )
+                {
+                    releaseVersionInfo = new DefaultVersionInfo( releaseVersion );
+                }
+            }
+
+            if ( releaseVersionInfo != null )
+            {
+                nextSnapshotVersionInfo = releaseVersionInfo.getNextVersion();
+            }
+            
+            // Check if the user specified a new snapshot version
+            if ( releaseDescriptor.getDevelopmentVersions() != null )
+            {
+                String nextDevVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
+                if ( nextDevVersion != null )
+                {
+                    nextSnapshotVersionInfo = new DefaultVersionInfo( nextDevVersion );
+                }
+            }
+            
         }
         catch ( VersionParseException e )
         {
@@ -201,9 +233,9 @@ public class MapVersionsPhase
                             ArtifactUtils.isSnapshot( project.getVersion() ) ||
                                 releaseDescriptor.isUpdateVersionsToSnapshot() ) )
                         {
-                            if ( version != null )
+                            if ( currentVersionInfo != null )
                             {
-                                nextVersion = version.getSnapshotVersionString();
+                                nextVersion = currentVersionInfo.getSnapshotVersionString();
                             }
 
                             if ( releaseDescriptor.isInteractive() )
@@ -233,9 +265,9 @@ public class MapVersionsPhase
                         if ( ArtifactUtils.isSnapshot( project.getVersion() ) &&
                             releaseDescriptor.isUpdateWorkingCopyVersions() )
                         {
-                            if ( version != null )
+                            if ( currentVersionInfo != null )
                             {
-                                VersionInfo versionInfo = version.getNextVersion();
+                                VersionInfo versionInfo = currentVersionInfo.getNextVersion();
                                 if ( versionInfo != null )
                                 {
                                     nextVersion = versionInfo.getSnapshotVersionString();
@@ -268,12 +300,11 @@ public class MapVersionsPhase
                 }
                 else
                 {
-                    if ( version != null )
+                    if ( currentVersionInfo != null )
                     {
-                        VersionInfo versionInfo = version.getNextVersion();
-                        if ( versionInfo != null )
+                        if ( nextSnapshotVersionInfo != null )
                         {
-                            nextVersion = versionInfo.getSnapshotVersionString();
+                            nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
                         }
                         else
                         {
@@ -300,9 +331,9 @@ public class MapVersionsPhase
             {
                 if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
                 {
-                    if ( version != null )
+                    if ( releaseVersionInfo != null )
                     {
-                        nextVersion = version.getReleaseVersionString();
+                        nextVersion = releaseVersionInfo.getReleaseVersionString();
                     }
 
                     if ( releaseDescriptor.isInteractive() )

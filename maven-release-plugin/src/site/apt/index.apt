@@ -61,4 +61,7 @@ Maven Release Plugin
 
   * {{{examples/run-goals-before-commit.html}Run Additional Goals Before Commit}}
 
-  * {{{examples/branch.html}Create a branch}}
+  * {{{examples/branch.html}Create a Branch}}
+  
+  * {{{examples/non-interactive-release.html}Non Interactive Release}}
+  

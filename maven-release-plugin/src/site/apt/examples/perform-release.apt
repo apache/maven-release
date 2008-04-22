@@ -55,14 +55,14 @@ mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/mav
   
 -------
   <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-			<!--
-			  During release:perform, enable the "release" profile
-			  -->
-			<releaseProfiles>release</releaseProfiles>
-			<goals>deploy assembly:assembly</goals>
-		</configuration>
+    <artifactId>maven-release-plugin</artifactId>
+      <configuration>
+      <!--
+        During release:perform, enable the "release" profile
+       -->
+      <releaseProfiles>release</releaseProfiles>
+      <goals>deploy assembly:assembly</goals>
+    </configuration>
   </plugin>
 -------
 

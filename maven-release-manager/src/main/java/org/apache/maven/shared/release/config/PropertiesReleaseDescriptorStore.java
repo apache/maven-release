@@ -84,6 +84,9 @@ public class PropertiesReleaseDescriptorStore
         {
             IOUtil.close( inStream );
         }
+        
+        // Command line properties should be able to override the props in the release.properties file.
+        properties.putAll( System.getProperties() );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setCompletedPhase( properties.getProperty( "completedPhase" ) );
