@@ -203,7 +203,7 @@ public class MapVersionsPhase
                     nextSnapshotVersionInfo = new DefaultVersionInfo( nextDevVersion );
                 }
             }
-            
+             
         }
         catch ( VersionParseException e )
         {
@@ -233,9 +233,9 @@ public class MapVersionsPhase
                             ArtifactUtils.isSnapshot( project.getVersion() ) ||
                                 releaseDescriptor.isUpdateVersionsToSnapshot() ) )
                         {
-                            if ( currentVersionInfo != null )
+                            if ( releaseVersionInfo != null )
                             {
-                                nextVersion = currentVersionInfo.getSnapshotVersionString();
+                                nextVersion = releaseVersionInfo.getSnapshotVersionString();
                             }
 
                             if ( releaseDescriptor.isInteractive() )
@@ -267,10 +267,9 @@ public class MapVersionsPhase
                         {
                             if ( currentVersionInfo != null )
                             {
-                                VersionInfo versionInfo = currentVersionInfo.getNextVersion();
-                                if ( versionInfo != null )
+                                if ( nextSnapshotVersionInfo != null )
                                 {
-                                    nextVersion = versionInfo.getSnapshotVersionString();
+                                    nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
                                 }
                                 else
                                 {
