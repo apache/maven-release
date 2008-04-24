@@ -24,6 +24,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 
 /**
  * Prepare for a release in SCM.
@@ -117,6 +118,20 @@ public class PrepareReleaseMojo
      */
     private boolean allowTimestampedSnapshots;
 
+    /**
+     * Default version to use when preparing a release or a branch.
+     *
+     * @parameter expression="${releaseVersion}"
+     */
+    private String releaseVersion;
+    
+    /**
+     * Default version to use for new local working copy.
+     *
+     * @parameter expression="${developmentVersion}"
+     */
+    private String developmentVersion;
+    
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -131,6 +146,13 @@ public class PrepareReleaseMojo
         config.setUpdateDependencies( updateDependencies );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
         config.setAllowTimestampedSnapshots( allowTimestampedSnapshots );
+        config.setDefaultReleaseVersion( releaseVersion );
+        config.setDefaultDevelopmentVersion( developmentVersion );
+        
+        // Create a config containing values from the system properties (command line properties).
+        ReleaseDescriptor sysPropertiesConfig = ReleaseUtils.copyPropertiesToReleaseDescriptor( System.getProperties() );
+        mergeCommandLineConfig( config, sysPropertiesConfig );
+        
         try
         {
             releaseManager.prepare( config, settings, reactorProjects, resume, dryRun );
@@ -142,6 +164,26 @@ public class PrepareReleaseMojo
         catch ( ReleaseFailureException e )
         {
             throw new MojoFailureException( e.getMessage() );
+        }
+    }
+
+    /**
+     * This method takes some of the release configuration picked up from the command line
+     * system properties and copies it into the release config object.
+     * 
+     * @param config
+     * @param sysPropertiesConfig
+     */
+    private void mergeCommandLineConfig( ReleaseDescriptor config, ReleaseDescriptor sysPropertiesConfig )
+    {
+        // If the user specifies versions on the 
+        if ( sysPropertiesConfig.getReleaseVersions() != null )
+        {
+            config.getReleaseVersions().putAll( sysPropertiesConfig.getReleaseVersions() );
+        }
+        if ( sysPropertiesConfig.getDevelopmentVersions() != null )
+        {
+            config.getDevelopmentVersions().putAll( sysPropertiesConfig.getDevelopmentVersions() );
         }
     }
 

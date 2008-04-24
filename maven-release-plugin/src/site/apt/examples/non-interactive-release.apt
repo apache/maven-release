@@ -47,14 +47,20 @@ mvn --batch-mode release:prepare
   for the release version, the scm tag, and the next development version.  These values can also
   be set from the command line.
 
-  The scm tag name can be set using the <<<tag>>> property.
+  The scm tag name can be set using the <<<tag>>> property.  And default values for the release version
+  and new development version can be set using the properties <<<releaseVersion>>> and
+  <<<developmentVersion>>> respectively.
   
 -----------
-mvn --batch-mode -Dtag=my-proj-1.2 release:prepare
+mvn --batch-mode -Dtag=my-proj-1.2 release:prepare \
+                 -DreleaseVersion=1.2 \
+                 -DdevelopmentVersion=2.0-SNAPSHOT
 -----------
 
+* Multi-module releases
+
   Because there is the possibility that a release will include multiple release versions and 
-  snapshot versions (for a multi-module project), there is a special format for setting these 
+  snapshot versions (for a multi-module project), there is a specific format for setting these 
   values.  The property name should start with <<<project.rel>>> for release versions and 
   <<<project.dev>>> for the new development version.  These prefixes are followed by the 
   maven groupId and artifactId (separated by a colon).  So the result looks something like 
@@ -67,6 +73,11 @@ mvn --batch-mode -Dtag=my-proj-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
 
   Using this convention, multiple release versions and snapshot versions (one for each
   project module) can be specified on the command line.
+  
+  These properties can be used in combination with the <<<releaseVersion>>> and
+  <<<developmentVersion>>>.  In the case where both are used, <<<releaseVersion>>> and
+  <<<developmentVersion>>> act as defaults for modules that have not been given specific
+  values using the <<<groupId:artifactId>>> format.
   
   
 * Using a properties file

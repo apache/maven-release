@@ -361,6 +361,22 @@
               dependency is found.
           </description>
         </field>
+        <field>
+          <name>defaultReleaseVersion</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            Default version to use for the tagged release or the new branch.
+          </description>
+        </field>
+        <field>
+          <name>defaultDevelopmentVersion</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            Default version to use for new working copy.
+          </description>
+        </field>
 
         <!-- Announcement Information
 

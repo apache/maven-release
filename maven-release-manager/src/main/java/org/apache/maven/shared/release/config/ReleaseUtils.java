@@ -1,5 +1,14 @@
 package org.apache.maven.shared.release.config;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import org.apache.maven.model.Scm;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -75,7 +84,11 @@ public class ReleaseUtils
         mergeInto.setUpdateVersionsToSnapshot( toBeMerged.isUpdateVersionsToSnapshot() );
         mergeInto.setAllowTimestampedSnapshots( toBeMerged.isAllowTimestampedSnapshots() );
         mergeInto.setAutoVersionSubmodules( toBeMerged.isAutoVersionSubmodules() );
-
+        mergeInto.setDefaultReleaseVersion( mergeOverride( mergeInto.getDefaultReleaseVersion(), 
+                                                           toBeMerged.getDefaultReleaseVersion() ) );
+        mergeInto.setDefaultDevelopmentVersion( mergeOverride( mergeInto.getDefaultDevelopmentVersion(),
+                                                               toBeMerged.getDefaultDevelopmentVersion() ) );
+        
         // These must be overridden, as they are not stored
         mergeInto.setWorkingDirectory(
             mergeOverride( mergeInto.getWorkingDirectory(), toBeMerged.getWorkingDirectory() ) );
@@ -97,4 +110,124 @@ public class ReleaseUtils
     {
         return thisValue != null ? thisValue : mergeValue;
     }
+    
+    public static ReleaseDescriptor copyPropertiesToReleaseDescriptor( Properties properties )
+    {
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setCompletedPhase( properties.getProperty( "completedPhase" ) );
+        releaseDescriptor.setScmSourceUrl( properties.getProperty( "scm.url" ) );
+        releaseDescriptor.setScmUsername( properties.getProperty( "scm.username" ) );
+        releaseDescriptor.setScmPassword( properties.getProperty( "scm.password" ) );
+        releaseDescriptor.setScmPrivateKey( properties.getProperty( "scm.privateKey" ) );
+        releaseDescriptor.setScmPrivateKeyPassPhrase( properties.getProperty( "scm.passphrase" ) );
+        releaseDescriptor.setScmTagBase( properties.getProperty( "scm.tagBase" ) );
+        releaseDescriptor.setScmReleaseLabel( properties.getProperty( "scm.tag" ) );
+        releaseDescriptor.setScmCommentPrefix( properties.getProperty( "scm.commentPrefix" ) );
+        releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
+        releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
+        releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
+
+        loadResolvedDependencies( properties, releaseDescriptor );
+
+        // boolean properties are not written to the properties file because the value from the caller is always used
+
+        for ( Iterator i = properties.keySet().iterator(); i.hasNext(); )
+        {
+            String property = (String) i.next();
+            if ( property.startsWith( "project.rel." ) )
+            {
+                releaseDescriptor.mapReleaseVersion( property.substring( "project.rel.".length() ),
+                                                     properties.getProperty( property ) );
+            }
+            else if ( property.startsWith( "project.dev." ) )
+            {
+                releaseDescriptor.mapDevelopmentVersion( property.substring( "project.dev.".length() ),
+                                                         properties.getProperty( property ) );
+            }
+            else if ( property.startsWith( "project.scm." ) )
+            {
+                int index = property.lastIndexOf( '.' );
+                if ( index > "project.scm.".length() )
+                {
+                    String key = property.substring( "project.scm.".length(), index );
+
+                    if ( !releaseDescriptor.getOriginalScmInfo().containsKey( key ) )
+                    {
+                        if ( properties.getProperty( "project.scm." + key + ".empty" ) != null )
+                        {
+                            releaseDescriptor.mapOriginalScmInfo( key, null );
+                        }
+                        else
+                        {
+                            Scm scm = new Scm();
+                            scm.setConnection( properties.getProperty( "project.scm." + key + ".connection" ) );
+                            scm.setDeveloperConnection(
+                                properties.getProperty( "project.scm." + key + ".developerConnection" ) );
+                            scm.setUrl( properties.getProperty( "project.scm." + key + ".url" ) );
+                            scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
+
+                            releaseDescriptor.mapOriginalScmInfo( key, scm );
+                        }
+                    }
+                }
+            }
+        }
+        return releaseDescriptor;
+    }
+
+    private static void loadResolvedDependencies( Properties prop, ReleaseDescriptor descriptor )
+    {
+        Map resolvedDependencies = new HashMap();
+
+        Set entries = prop.entrySet();
+        Iterator iterator = entries.iterator();
+        String propertyName;
+        Entry currentEntry;
+
+        while ( iterator.hasNext() )
+        {
+            currentEntry = (Entry) iterator.next();
+            propertyName = (String) currentEntry.getKey();
+
+            if ( propertyName.startsWith( "dependency." ) )
+            {
+                Map versionMap;
+                String artifactVersionlessKey;
+                int startIndex;
+                int endIndex;
+                String versionType;
+
+                versionMap = new HashMap();
+                startIndex = propertyName.lastIndexOf( "dependency." );
+
+                if ( propertyName.indexOf( ".development" ) != -1 )
+                {
+                    endIndex = propertyName.indexOf( ".development" );
+                    versionType = ReleaseDescriptor.DEVELOPMENT_KEY;
+                }
+                else
+                {
+                    endIndex = propertyName.indexOf( ".release" );
+                    versionType = ReleaseDescriptor.RELEASE_KEY;
+                }
+
+                artifactVersionlessKey = propertyName.substring( startIndex, endIndex );
+
+                if ( resolvedDependencies.containsKey( artifactVersionlessKey ) )
+                {
+                    versionMap = (Map) resolvedDependencies.get( artifactVersionlessKey );
+                }
+                else
+                {
+                    versionMap = new HashMap();
+                    resolvedDependencies.put( artifactVersionlessKey, versionMap );
+                }
+
+                versionMap.put( versionType, currentEntry.getValue() );
+            }
+        }
+
+        descriptor.setResolvedSnapshotDependencies( resolvedDependencies );
+    }
+
 }

@@ -180,6 +180,10 @@ public class MapVersionsPhase
             releaseVersionInfo = currentVersionInfo;
             
             // Check if the user specified a release version
+            if ( releaseDescriptor.getDefaultReleaseVersion() != null )
+            {
+                releaseVersionInfo = new DefaultVersionInfo( releaseDescriptor.getDefaultReleaseVersion() );
+            }
             if ( releaseDescriptor.getReleaseVersions() != null )
             {
                 String releaseVersion = ( String ) releaseDescriptor.getReleaseVersions().get( projectId );
@@ -195,6 +199,10 @@ public class MapVersionsPhase
             }
             
             // Check if the user specified a new snapshot version
+            if ( releaseDescriptor.getDefaultDevelopmentVersion() != null )
+            {
+                nextSnapshotVersionInfo = new DefaultVersionInfo( releaseDescriptor.getDefaultDevelopmentVersion() );
+            }
             if ( releaseDescriptor.getDevelopmentVersions() != null )
             {
                 String nextDevVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
