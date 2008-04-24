@@ -89,6 +89,15 @@ public class ReleaseUtils
         mergeInto.setDefaultDevelopmentVersion( mergeOverride( mergeInto.getDefaultDevelopmentVersion(),
                                                                toBeMerged.getDefaultDevelopmentVersion() ) );
         
+        // If the user specifies versions, these should be override the existing versions 
+        if ( toBeMerged.getReleaseVersions() != null )
+        {
+            mergeInto.getReleaseVersions().putAll( toBeMerged.getReleaseVersions() );
+        }
+        if ( toBeMerged.getDevelopmentVersions() != null )
+        {
+            mergeInto.getDevelopmentVersions().putAll( toBeMerged.getDevelopmentVersions() );
+        }
         // These must be overridden, as they are not stored
         mergeInto.setWorkingDirectory(
             mergeOverride( mergeInto.getWorkingDirectory(), toBeMerged.getWorkingDirectory() ) );
