@@ -26,7 +26,7 @@ Performing a non-interactive release
 
   In some environments, it may be necessary to perform a non-interactive release.  This means that
   the release plugin will obtain the required parameters from system properties (set on the command line)
-  or from a properties file (release.properties).
+  or from a properties file (<<<release.properties>>>).
   
   To prevent the release plugin from promting the user for any information, maven should be put into 
   batch mode.

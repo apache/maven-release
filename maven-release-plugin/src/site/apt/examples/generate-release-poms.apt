@@ -27,7 +27,7 @@
 Generate Release POMs
 
   To generate poms with resolved information (e.g. version numbers) to check the values that the release plugin will use,
-  set the property <<<generateReleasePoms>>> to <<<true>>>. Resolved values will be saved in release-pom.xml
+  set the property <<<generateReleasePoms>>> to <<<true>>>. Resolved values will be saved in <<<release-pom.xml>>>.
 
 -------
 mvn release:perform -DgenerateReleasePoms=true

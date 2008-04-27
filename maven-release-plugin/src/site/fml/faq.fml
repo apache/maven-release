@@ -21,7 +21,7 @@
 <faqs id="FAQ" title="Frequently Asked Questions">
   <part id="General">
     <faq id="versioning">
-      <question>When releasing from a parent pom, won't all its modules have the same release version and dev version as
+      <question>When releasing from a parent POM, won't all its modules have the same release version and dev version as
         this parent?
       </question>
       <answer>
