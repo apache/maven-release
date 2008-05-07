@@ -111,6 +111,20 @@ public interface ReleaseManager
     ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
                                      ReleaseManagerListener listener );
 
+
+    /**
+     * Perform a release, and optionnaly cleanup.
+     *
+     * @param releaseDescriptor the configuration to use for release
+     * @param settings          the settings.xml configuration
+     * @param reactorProjects   the reactor projects
+     * @param clean             flag to clean the release after perform
+     * @throws ReleaseExecutionException if there is a problem performing the release
+     * @throws ReleaseFailureException   if there is a problem performing the release
+     */
+    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean clean )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
     /**
      * Clean a release.
      *

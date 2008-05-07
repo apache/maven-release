@@ -257,14 +257,27 @@ public class DefaultReleaseManager
     public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, null );
+        perform( releaseDescriptor, settings, reactorProjects, null, true );
+    }
+
+    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean clean )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        perform( releaseDescriptor, settings, reactorProjects, null, false );
     }
 
     public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
                          ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, listener, new ReleaseResult() );
+        perform( releaseDescriptor, settings, reactorProjects, listener, true );
+    }
+
+    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+                         ReleaseManagerListener listener, boolean clean )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        perform( releaseDescriptor, settings, reactorProjects, listener, new ReleaseResult(), clean );
     }
 
     public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
@@ -276,7 +289,7 @@ public class DefaultReleaseManager
         {
             result.setStartTime( System.currentTimeMillis() );
 
-            perform( releaseDescriptor, settings, reactorProjects, listener, result );
+            perform( releaseDescriptor, settings, reactorProjects, listener, result, true );
 
             result.setResultCode( ReleaseResult.SUCCESS );
         }
@@ -297,7 +310,7 @@ public class DefaultReleaseManager
     }
 
     private void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
-                          ReleaseManagerListener listener, ReleaseResult result )
+                          ReleaseManagerListener listener, ReleaseResult result, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         updateListener( listener, "perform", GOAL_START );
@@ -320,8 +333,11 @@ public class DefaultReleaseManager
             updateListener( listener, name, PHASE_END );
         }
 
-        //call release:clean so that resume will not be possible anymore after a perform
-        clean( releaseDescriptor, listener, reactorProjects );
+        if ( clean )
+        {
+            // call release:clean so that resume will not be possible anymore after a perform
+            clean( releaseDescriptor, listener, reactorProjects );
+        }
 
         updateListener( listener, "perform", GOAL_END );
     }

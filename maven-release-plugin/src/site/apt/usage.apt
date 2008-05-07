@@ -92,3 +92,22 @@ mvn release:clean
 ------
 mvn --batch-mode release:prepare
 ------
+
+* Use a staging repository
+
+  Sometimes it is desirable to deploy a pre-release to be approved before made publicly available. One option is to
+  create release candidates versions using the <<<release:perform>>> goal, but the final deployed artifact will NOT
+  be the exact one that has been approved as RCx.
+
+  A common solution is to use a staging repository, where a test-version is deployed with it's documentation for
+  review. If all is fine, it is then copied to the public repository. Using this strategy, the artifact that has
+  been tested IS the one that is deployed.
+
+  The <<<release:stage>>> goal uses this strategy. It replaces the <<<release:perform>>> goal and does the same
+  tasks, but requires a <<<stagingRepository>>> parameter. It will automatically re-configure the deploy and
+  site-deploy goals to use the staging strategy.
+
+  After the release is complete, the <<<release.properties>>> and other release files will NOT be removed, so that
+  you can still execute a <<<release:rollback>>> if something wrong has been detected and a new candidate must
+  be created after some fixes. You just need to use a distinct tag in SCM, or rename the one that has been created
+  if the SCM provider supports renaming tag.

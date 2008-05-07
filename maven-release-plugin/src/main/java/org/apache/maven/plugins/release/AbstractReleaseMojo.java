@@ -105,8 +105,8 @@ public abstract class AbstractReleaseMojo
      * @parameter expression="${arguments}" alias="prepareVerifyArgs"
      */
     private String arguments;
-		
-	
+
+
     /**
      * The file name of the POM to execute any goals against.
      *
@@ -173,7 +173,7 @@ public abstract class AbstractReleaseMojo
         descriptor.setWorkingDirectory( basedir.getAbsolutePath() );
 
         descriptor.setPomFileName( pomFileName );
-		
+
 		List profiles = project.getActiveProfiles();
 
 		String arguments = this.arguments;
@@ -213,14 +213,14 @@ public abstract class AbstractReleaseMojo
 
         return descriptor;
     }
-	
+
 	/**
 	 * @return additional profiles to enable during release
 	 */
 	protected String getAdditionalProfiles()
 	{
 		return null;
-	}		
+	}
 
     void setReleaseManager( ReleaseManager releaseManager )
     {
@@ -240,5 +240,21 @@ public abstract class AbstractReleaseMojo
     public List getReactorProjects()
     {
         return reactorProjects;
+    }
+
+    /**
+     * Add additional arguments
+     * @param argument
+     */
+    protected void addArgument( String argument )
+    {
+        if (this.arguments != null)
+        {
+            this.arguments += " " + argument;
+        }
+        else
+        {
+            this.arguments = argument;
+        }
     }
 }
