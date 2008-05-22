@@ -499,6 +499,18 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    public void testRewriteWhitespaceAroundCoords()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "whitespace-around-coords" );
+        ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
+        mapNextVersion( config, "groupId:subproject2" );
+
+        phase.execute( config, null, reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
     public void testCleanNoProjects()
         throws Exception
     {

@@ -267,6 +267,27 @@ public abstract class AbstractRewritePomsPhase
                       ReleaseUtil.getRootProject( reactorProjects ) );
     }
 
+    /**
+     * Updates the version information in the given <code>&lt;version&gt;</code> element.
+     * 
+     * @param versionElement The version element to update, must not be <code>null</code>.
+     * @param version The version string to set, must not be <code>null</code>.
+     */
+    private void rewriteVersion( Element versionElement, String version )
+    {
+        String leadingWhitespace = "";
+        String trailingWhitespace = "";
+        String text = versionElement.getText();
+        if ( StringUtils.isNotEmpty( text ) )
+        {
+            String trimmed = text.trim();
+            int idx = text.indexOf( trimmed );
+            leadingWhitespace = text.substring( 0, idx );
+            trailingWhitespace = text.substring( idx + trimmed.length() );
+        }
+        versionElement.setText( leadingWhitespace + version + trailingWhitespace );
+    }
+
     private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,
                                  MavenProject project, String parentVersion )
         throws ReleaseFailureException
@@ -294,7 +315,7 @@ public abstract class AbstractRewritePomsPhase
         }
         else
         {
-            versionElement.setText( version );
+            rewriteVersion( versionElement, version );
         }
     }
 
@@ -319,7 +340,7 @@ public abstract class AbstractRewritePomsPhase
             }
             else
             {
-                versionElement.setText( parentVersion );
+                rewriteVersion( versionElement, parentVersion );
             }
         }
         return parentVersion;
@@ -425,14 +446,14 @@ public abstract class AbstractRewritePomsPhase
         XPath xpath;
         if ( !StringUtils.isEmpty( dependencyRoot.getNamespaceURI() ) )
         {
-            xpath = XPath.newInstance( "./pom:" + groupTagName + "/pom:" + tagName + "[pom:groupId='" + groupId +
-                "' and pom:artifactId='" + artifactId + "']" );
+            xpath = XPath.newInstance( "./pom:" + groupTagName + "/pom:" + tagName + "[normalize-space(pom:groupId)='" + groupId +
+                "' and normalize-space(pom:artifactId)='" + artifactId + "']" );
             xpath.addNamespace( "pom", dependencyRoot.getNamespaceURI() );
         }
         else
         {
-            xpath = XPath.newInstance( "./" + groupTagName + "/" + tagName + "[groupId='" + groupId +
-                "' and artifactId='" + artifactId + "']" );
+            xpath = XPath.newInstance( "./" + groupTagName + "/" + tagName + "[normalize-space(groupId)='" + groupId +
+                "' and normalize-space(artifactId)='" + artifactId + "']" );
         }
 
         List dependencies = xpath.selectNodes( dependencyRoot );
@@ -509,7 +530,7 @@ public abstract class AbstractRewritePomsPhase
                             {
                                 if ( mappedVersion == null )
                                 {
-                                    versionElement.setText( resolvedSnapshotVersion );
+                                    rewriteVersion( versionElement, resolvedSnapshotVersion );
                                     return;
                                 }
 
@@ -519,7 +540,7 @@ public abstract class AbstractRewritePomsPhase
                                 if ( originalVersion.equals( versionText ) ||
                                     !mappedVersion.equals( mappedVersions.get( projectId ) ) )
                                 {
-                                    versionElement.setText( mappedVersion );
+                                    rewriteVersion( versionElement, mappedVersion );
                                 }
                                 else if ( versionText.matches( "\\$\\{project.+\\}" ) ||
                                     versionText.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( versionText ) )
