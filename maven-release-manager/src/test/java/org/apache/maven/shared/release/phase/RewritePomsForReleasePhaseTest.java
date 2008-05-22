@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,7 +57,7 @@ public class RewritePomsForReleasePhaseTest
     protected String readTestProjectFile( String fileName )
         throws IOException
     {
-        return readXmlFile( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
+        return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
     }
 
     public void testSimulateRewrite()

@@ -191,7 +191,7 @@ public class GenerateReleasePomsPhaseTest
      */
     protected String readTestProjectFile( String fileName ) throws IOException
     {
-        return readXmlFile( getTestFile( "target/test-classes/projects/generate-release-poms/" + fileName ) );
+        return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/generate-release-poms/" + fileName ) );
     }
 
     /*

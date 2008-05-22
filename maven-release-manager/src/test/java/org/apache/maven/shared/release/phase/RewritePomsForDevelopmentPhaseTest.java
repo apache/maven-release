@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.artifact.ArtifactUtils;
 
 import java.io.File;
@@ -156,7 +157,7 @@ public class RewritePomsForDevelopmentPhaseTest
     protected String readTestProjectFile( String fileName )
         throws IOException
     {
-        return readXmlFile( getTestFile( "target/test-classes/projects/rewrite-for-development/" + fileName ) );
+        return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/rewrite-for-development/" + fileName ) );
     }
 
     protected List createReactorProjects( String path, boolean copyFiles )

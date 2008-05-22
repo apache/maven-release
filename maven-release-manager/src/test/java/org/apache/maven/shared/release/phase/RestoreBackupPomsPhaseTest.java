@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -96,9 +97,9 @@ public class RestoreBackupPomsPhaseTest
 
             assertTrue( "Check if expected file exists.", expectedFile.exists() );
 
-            String pomContents = readXmlFile( pomFile );
+            String pomContents = ReleaseUtil.readXmlFile( pomFile );
 
-            String expectedContents = readXmlFile( expectedFile );
+            String expectedContents = ReleaseUtil.readXmlFile( expectedFile );
 
             assertTrue( "Check if pom and backup files are identical", pomContents.equals( expectedContents ) );
         }

@@ -23,11 +23,9 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -94,9 +92,4 @@ public abstract class AbstractBackupPomsPhaseTest
         return project;
     }
 
-    protected String readXmlFile( File file )
-        throws IOException
-    {
-        return IOUtil.toString( ReaderFactory.newXmlReader( file ) );
-    }
 }

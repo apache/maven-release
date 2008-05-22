@@ -44,10 +44,9 @@ import org.apache.maven.project.ProjectSorter;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.jmock.Mock;
 
 import java.io.File;
@@ -251,17 +250,11 @@ public abstract class AbstractReleaseTestCase
         comparePomFiles( expectedFile, actualFile );
     }
 
-    protected String readXmlFile( File file )
-        throws IOException
-    {
-        return IOUtil.toString( ReaderFactory.newXmlReader( file ) );
-    }
-
     protected void comparePomFiles( File expectedFile, File actualFile )
         throws IOException
     {
-        String actual = readXmlFile( actualFile );
-        String expected = readXmlFile( expectedFile );
+        String actual = ReleaseUtil.readXmlFile( actualFile );
+        String expected = ReleaseUtil.readXmlFile( expectedFile );
         expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
         assertEquals( "Check the transformed POM", expected, actual );
     }

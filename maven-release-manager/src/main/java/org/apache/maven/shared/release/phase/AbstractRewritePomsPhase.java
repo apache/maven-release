@@ -42,7 +42,6 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.jdom.Comment;
@@ -82,11 +81,6 @@ public abstract class AbstractRewritePomsPhase
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
-     * The line separator to use.
-     */
-    private static final String LS = System.getProperty( "line.separator" );
-
-    /**
      * Configuration item for the suffix to add to rewritten POMs when simulating.
      */
     private String pomSuffix;
@@ -117,12 +111,6 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private static String readXmlFile( File file )
-        throws IOException
-    {
-        return IOUtil.toString( ReaderFactory.newXmlReader( file ) );
-    }
-
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
                                    List reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -132,7 +120,7 @@ public abstract class AbstractRewritePomsPhase
         String outtro = null;
         try
         {
-            String content = readXmlFile( ReleaseUtil.getStandardPom( project ) );
+            String content = ReleaseUtil.readXmlFile( ReleaseUtil.getStandardPom( project ) );
             // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
             content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
             content = content.replaceAll( "(\\s{2,}|[^\\s])/>", "$1 />" );
@@ -140,13 +128,14 @@ public abstract class AbstractRewritePomsPhase
             SAXBuilder builder = new SAXBuilder();
             document = builder.build( new StringReader( content ) );
 
-            // Normalize line endings. For some reason, JDOM replaces \r\n inside a comment with \n.
+            // Normalize line endings to platform's style (XML processors like JDOM normalize line endings to "\n" as
+            // per section 2.11 of the XML spec)
             normaliseLineEndings( document );
 
             // rewrite DOM as a string to find differences, since text outside the root element is not tracked
             StringWriter w = new StringWriter();
             Format format = Format.getRawFormat();
-            format.setLineSeparator( LS );
+            format.setLineSeparator( ReleaseUtil.LS );
             XMLOutputter out = new XMLOutputter( format );
             out.output( document.getRootElement(), w );
 
@@ -206,7 +195,7 @@ public abstract class AbstractRewritePomsPhase
         for ( Iterator i = document.getDescendants( new ContentFilter( ContentFilter.COMMENT ) ); i.hasNext(); )
         {
             Comment c = (Comment) i.next();
-            c.setText( c.getText().replaceAll( "\n", LS ) );
+            c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ReleaseUtil.LS ) );
         }
     }
 
@@ -675,7 +664,7 @@ public abstract class AbstractRewritePomsPhase
             }
 
             Format format = Format.getRawFormat();
-            format.setLineSeparator( LS );
+            format.setLineSeparator( ReleaseUtil.LS );
             XMLOutputter out = new XMLOutputter( format );
             out.output( document.getRootElement(), writer );
 
