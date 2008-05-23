@@ -66,6 +66,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Base class for rewriting phases.
@@ -144,6 +146,31 @@ public abstract class AbstractRewritePomsPhase
             {
                 intro = content.substring( 0, index );
                 outtro = content.substring( index + w.toString().length() );
+            } else {
+                /*
+                 * NOTE: Due to whitespace, attribute reordering or entity expansion the above indexOf test can easily
+                 * fail. So let's try harder. Maybe some day, when JDOM offers a StaxBuilder and this builder employes
+                 * XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE, this whole mess can be avoided.
+                 */
+                final String SPACE = "\\s+";
+                final String XML = "<\\?(?:(?:[^\"'>]+)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*>";
+                final String INTSUB = "\\[(?:(?:[^\"'\\]]+)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*\\]";
+                final String DOCTYPE =
+                    "<!DOCTYPE(?:(?:[^\"'\\[>]+)|(?:\"[^\"]*+\")|(?:'[^\']*+')|(?:" + INTSUB + "))*>";
+                final String PI = XML;
+                final String COMMENT = "<!--(?:[^-]|(?:-[^-]))*-->";
+
+                final String INTRO =
+                    "(?:(?:" + SPACE + ")|(?:" + XML + ")|(?:" + DOCTYPE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
+                final String OUTRO = "(?:(?:" + SPACE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
+                final String POM = "(?s)(" + INTRO + ")(.*?)(" + OUTRO + ")";
+                
+                Matcher matcher = Pattern.compile( POM ).matcher( content );
+                if ( matcher.matches() )
+                {
+                    intro = matcher.group( 1 );
+                    outtro = matcher.group( matcher.groupCount() );
+                }
             }
         }
         catch ( JDOMException e )
