@@ -268,16 +268,17 @@ public abstract class AbstractRewritePomsPhase
     }
 
     /**
-     * Updates the version information in the given <code>&lt;version&gt;</code> element.
+     * Updates the text value of the given element. The primary purpose of this method is to preserve any whitespace
+     * around the original text value.
      * 
-     * @param versionElement The version element to update, must not be <code>null</code>.
-     * @param version The version string to set, must not be <code>null</code>.
+     * @param element The element to update, must not be <code>null</code>.
+     * @param value The text string to set, must not be <code>null</code>.
      */
-    private void rewriteVersion( Element versionElement, String version )
+    private void rewriteValue( Element element, String value )
     {
         String leadingWhitespace = "";
         String trailingWhitespace = "";
-        String text = versionElement.getText();
+        String text = element.getText();
         if ( StringUtils.isNotEmpty( text ) )
         {
             String trimmed = text.trim();
@@ -285,7 +286,7 @@ public abstract class AbstractRewritePomsPhase
             leadingWhitespace = text.substring( 0, idx );
             trailingWhitespace = text.substring( idx + trimmed.length() );
         }
-        versionElement.setText( leadingWhitespace + version + trailingWhitespace );
+        element.setText( leadingWhitespace + value + trailingWhitespace );
     }
 
     private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,
@@ -315,7 +316,7 @@ public abstract class AbstractRewritePomsPhase
         }
         else
         {
-            rewriteVersion( versionElement, version );
+            rewriteValue( versionElement, version );
         }
     }
 
@@ -340,7 +341,7 @@ public abstract class AbstractRewritePomsPhase
             }
             else
             {
-                rewriteVersion( versionElement, parentVersion );
+                rewriteValue( versionElement, parentVersion );
             }
         }
         return parentVersion;
@@ -530,7 +531,7 @@ public abstract class AbstractRewritePomsPhase
                             {
                                 if ( mappedVersion == null )
                                 {
-                                    rewriteVersion( versionElement, resolvedSnapshotVersion );
+                                    rewriteValue( versionElement, resolvedSnapshotVersion );
                                     return;
                                 }
 
@@ -540,7 +541,7 @@ public abstract class AbstractRewritePomsPhase
                                 if ( originalVersion.equals( versionText ) ||
                                     !mappedVersion.equals( mappedVersions.get( projectId ) ) )
                                 {
-                                    rewriteVersion( versionElement, mappedVersion );
+                                    rewriteValue( versionElement, mappedVersion );
                                 }
                                 else if ( versionText.matches( "\\$\\{project.+\\}" ) ||
                                     versionText.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( versionText ) )
@@ -561,7 +562,7 @@ public abstract class AbstractRewritePomsPhase
                                         if ( originalVersion.equals( propertyValue ) )
                                         {
                                             // change the property only if the property is the same as what's in the reactor
-                                            property.setText( mappedVersion );
+                                            rewriteValue( property, mappedVersion );
                                         }
                                         else if ( mappedVersion.equals( propertyValue ))
                                         {
@@ -775,7 +776,7 @@ public abstract class AbstractRewritePomsPhase
         {
             if ( value != null )
             {
-                tagElement.setText( value );
+                rewriteValue( tagElement, value );
             }
             else
             {
