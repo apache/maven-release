@@ -45,6 +45,7 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.jdom.Comment;
+import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -295,25 +296,42 @@ public abstract class AbstractRewritePomsPhase
     }
 
     /**
-     * Updates the text value of the given element. The primary purpose of this method is to preserve any whitespace
-     * around the original text value.
+     * Updates the text value of the given element. The primary purpose of this method is to preserve any whitespace and
+     * comments around the original text value.
      * 
      * @param element The element to update, must not be <code>null</code>.
      * @param value The text string to set, must not be <code>null</code>.
      */
     private void rewriteValue( Element element, String value )
     {
-        String leadingWhitespace = "";
-        String trailingWhitespace = "";
-        String text = element.getText();
-        if ( StringUtils.isNotEmpty( text ) )
+        Text text = null;
+        if ( element.getContent() != null )
         {
-            String trimmed = text.trim();
-            int idx = text.indexOf( trimmed );
-            leadingWhitespace = text.substring( 0, idx );
-            trailingWhitespace = text.substring( idx + trimmed.length() );
+            for ( Iterator it = element.getContent().iterator(); it.hasNext(); )
+            {
+                Content content = (Content) it.next();
+                if ( ( content instanceof Text ) && ( (Text) content ).getTextTrim().length() > 0 )
+                {
+                    text = (Text) content;
+                    break;
+                }
+            }
         }
-        element.setText( leadingWhitespace + value + trailingWhitespace );
+        if ( text == null )
+        {
+            element.addContent( value );
+        }
+        else
+        {
+            String leadingWhitespace = "";
+            String trailingWhitespace = "";
+            String chars = text.getText();
+            String trimmed = text.getTextTrim();
+            int idx = chars.indexOf( trimmed );
+            leadingWhitespace = chars.substring( 0, idx );
+            trailingWhitespace = chars.substring( idx + trimmed.length() );
+            text.setText( leadingWhitespace + value + trailingWhitespace );
+        }
     }
 
     private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,

@@ -1,0 +1,59 @@
+<!--
+  ~ Copyright 2005-2006 The Apache Software Foundation.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId><!-- comment -->groupId<!-- comment --></groupId>
+  <artifactId><!-- comment -->artifactId<!-- comment --></artifactId>
+  <version>
+    <!-- comment -->
+    1.0
+    <!-- comment -->
+  </version>
+  <packaging>pom</packaging>
+
+  <scm>
+    <connection><!-- comment -->scm:svn:file://localhost/tmp/scm-repo/tags/release-label<!-- comment --></connection>
+    <developerConnection><!-- comment -->scm:svn:file://localhost/tmp/scm-repo/tags/release-label<!-- comment --></developerConnection>
+    <url><!-- comment -->file://localhost/tmp/scm-repo/tags/release-label<!-- comment --></url>
+  </scm>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId><!-- comment -->groupId<!-- comment --></groupId>
+        <artifactId><!-- comment -->subproject1<!-- comment --></artifactId>
+        <version><!-- comment -->2.0<!-- comment --></version>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId><!-- comment -->groupId<!-- comment --></groupId>
+          <artifactId><!-- comment -->subproject1<!-- comment --></artifactId>
+          <version><!-- comment -->2.0<!-- comment --></version>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+
+  <modules>
+    <module>subproject1</module>
+  </modules>
+</project>

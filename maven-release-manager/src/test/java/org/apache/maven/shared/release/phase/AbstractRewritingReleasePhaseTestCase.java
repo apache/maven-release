@@ -535,6 +535,18 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    public void testRewriteCommentsAroundValues()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "comments-around-values" );
+        ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
+        mapNextVersion( config, "groupId:subproject2" );
+
+        phase.execute( config, null, reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
     public void testCleanNoProjects()
         throws Exception
     {
