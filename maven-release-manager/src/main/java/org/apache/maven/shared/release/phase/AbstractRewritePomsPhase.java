@@ -45,7 +45,6 @@ import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.jdom.Comment;
-import org.jdom.Content;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -309,10 +308,23 @@ public abstract class AbstractRewritePomsPhase
         {
             for ( Iterator it = element.getContent().iterator(); it.hasNext(); )
             {
-                Content content = (Content) it.next();
+                Object content = it.next();
                 if ( ( content instanceof Text ) && ( (Text) content ).getTextTrim().length() > 0 )
                 {
                     text = (Text) content;
+                    while ( it.hasNext() )
+                    {
+                        content = it.next();
+                        if ( content instanceof Text )
+                        {
+                            text.append( (Text) content );
+                            it.remove();
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                     break;
                 }
             }
@@ -323,13 +335,11 @@ public abstract class AbstractRewritePomsPhase
         }
         else
         {
-            String leadingWhitespace = "";
-            String trailingWhitespace = "";
             String chars = text.getText();
             String trimmed = text.getTextTrim();
             int idx = chars.indexOf( trimmed );
-            leadingWhitespace = chars.substring( 0, idx );
-            trailingWhitespace = chars.substring( idx + trimmed.length() );
+            String leadingWhitespace = chars.substring( 0, idx );
+            String trailingWhitespace = chars.substring( idx + trimmed.length() );
             text.setText( leadingWhitespace + value + trailingWhitespace );
         }
     }
