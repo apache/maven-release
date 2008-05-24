@@ -27,9 +27,6 @@
   </parent>
   <artifactId>maven-release-manager</artifactId>
   <version>1.0-alpha-5-SNAPSHOT</version>
-  <prerequisites>
-    <maven>2.0.1</maven>
-  </prerequisites>
   <name>Maven Shared Release Manager</name>
 
   <properties>
