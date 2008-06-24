@@ -25,6 +25,11 @@ import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
 
+/**
+ * Fork Maven using the maven-invoker shared library.
+ *
+ * @plexus.component role="org.apache.maven.shared.release.exec.MavenExecutor" role-hint="invoker"
+ */
 public class InvokerMavenExecutor
     extends AbstractMavenExecutor
 {
