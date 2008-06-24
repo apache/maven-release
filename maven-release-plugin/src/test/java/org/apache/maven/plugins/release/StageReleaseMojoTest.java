@@ -20,26 +20,20 @@ package org.apache.maven.plugins.release;
  */
 
 import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Profile;
 import org.apache.maven.model.Site;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsEqual;
+import org.jmock.core.constraint.IsInstanceOf;
 import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
-import java.util.Arrays;
 
 /**
  * Test release:perform.
@@ -62,11 +56,16 @@ public class StageReleaseMojoTest
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
         releaseDescriptor.setPerformGoals( "deploy site:stage-deploy" );
         releaseDescriptor.setAdditionalArguments( "-DaltDeploymentRepository=\"staging\"" );
-        Settings settings = mojo.getSettings();
 
         Mock mock = new Mock( ReleaseManager.class );
-        Constraint[] constraints =
-            new Constraint[]{new IsEqual( releaseDescriptor ), new IsEqual( settings ), new IsNull(), new IsEqual( Boolean.FALSE ) };
+
+        Constraint[] constraints = new Constraint[] {
+            new IsEqual( releaseDescriptor ),
+            new IsInstanceOf( ReleaseEnvironment.class ),
+            new IsNull(),
+            new IsEqual( Boolean.FALSE )
+        };
+
         mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
 

@@ -23,33 +23,33 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 
 /**
  * Abstract release POM phase.
- * 
+ *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
 public abstract class AbstractReleasePomsPhase extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     * 
+     *
      * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    protected ScmRepository getScmRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
+    protected ScmRepository getScmRepository( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         try
         {
-            return scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
+            return scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
         }
         catch ( ScmRepositoryException exception )
         {

@@ -47,10 +47,13 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.jmock.Mock;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -253,10 +256,30 @@ public abstract class AbstractReleaseTestCase
     protected void comparePomFiles( File expectedFile, File actualFile )
         throws IOException
     {
-        String actual = ReleaseUtil.readXmlFile( actualFile );
-        String expected = ReleaseUtil.readXmlFile( expectedFile );
+        String actual = read( actualFile );
+        String expected = read( expectedFile );
         expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
         assertEquals( "Check the transformed POM", expected, actual );
+    }
+
+    /**
+     * Mock-up of {@link ReleaseUtil#readXmlFile(File)}, except this one REMOVES line endings.
+     * There is something fishy about the line ending conversion in that method, and it's not the
+     * class under test in these test cases.
+     */
+    private String read( File file )
+        throws IOException
+    {
+        Reader reader = null;
+        try
+        {
+            reader = ReaderFactory.newXmlReader( file );
+            return ReleaseUtil.normalizeLineEndings( IOUtil.toString( reader ), "" );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
     }
 
     private String getRemoteRepositoryURL()

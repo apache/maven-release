@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 import java.util.List;
 
@@ -60,6 +61,28 @@ public class ReleasePhaseStub
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    {
+        ReleaseResult result = new ReleaseResult();
+
+        simulated = true;
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
+    }
+
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    {
+        ReleaseResult result = new ReleaseResult();
+
+        executed = true;
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
+    }
+
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 

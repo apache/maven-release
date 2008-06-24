@@ -124,14 +124,14 @@ public class PrepareReleaseMojo
      * @parameter expression="${releaseVersion}"
      */
     private String releaseVersion;
-    
+
     /**
      * Default version to use for new local working copy.
      *
      * @parameter expression="${developmentVersion}"
      */
     private String developmentVersion;
-    
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -148,14 +148,14 @@ public class PrepareReleaseMojo
         config.setAllowTimestampedSnapshots( allowTimestampedSnapshots );
         config.setDefaultReleaseVersion( releaseVersion );
         config.setDefaultDevelopmentVersion( developmentVersion );
-        
+
         // Create a config containing values from the system properties (command line properties).
         ReleaseDescriptor sysPropertiesConfig = ReleaseUtils.copyPropertiesToReleaseDescriptor( System.getProperties() );
         mergeCommandLineConfig( config, sysPropertiesConfig );
-        
+
         try
         {
-            releaseManager.prepare( config, settings, reactorProjects, resume, dryRun );
+            releaseManager.prepare( config, getReleaseEnvironment(), reactorProjects, resume, dryRun );
         }
         catch ( ReleaseExecutionException e )
         {
@@ -170,13 +170,13 @@ public class PrepareReleaseMojo
     /**
      * This method takes some of the release configuration picked up from the command line
      * system properties and copies it into the release config object.
-     * 
+     *
      * @param config
      * @param sysPropertiesConfig
      */
     private void mergeCommandLineConfig( ReleaseDescriptor config, ReleaseDescriptor sysPropertiesConfig )
     {
-        // If the user specifies versions, these should be override the existing versions 
+        // If the user specifies versions, these should be override the existing versions
         if ( sysPropertiesConfig.getReleaseVersions() != null )
         {
             config.getReleaseVersions().putAll( sysPropertiesConfig.getReleaseVersions() );

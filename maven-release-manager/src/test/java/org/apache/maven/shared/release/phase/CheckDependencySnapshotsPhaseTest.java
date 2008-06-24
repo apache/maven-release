@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.jmock.Mock;
@@ -57,9 +58,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "no-snapshot-dependencies" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -71,9 +72,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-snapshot-dependencies" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -88,7 +89,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -99,7 +100,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -123,7 +124,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -137,7 +138,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -159,7 +160,7 @@ public class CheckDependencySnapshotsPhaseTest
         Mock mockPrompter = createYesMockPrompter();
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -176,7 +177,7 @@ public class CheckDependencySnapshotsPhaseTest
         Mock mockPrompter = createYesMockPrompter();
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -195,7 +196,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -209,7 +210,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -236,7 +237,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -252,7 +253,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -276,7 +277,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -290,7 +291,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -306,9 +307,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-managed-snapshot-dependency" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -320,9 +321,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "unused-internal-managed-snapshot-dependency" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -334,9 +335,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "unused-external-managed-snapshot-dependency" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -352,7 +353,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -363,7 +364,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -383,7 +384,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -394,7 +395,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -414,7 +415,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -425,7 +426,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -434,7 +435,7 @@ public class CheckDependencySnapshotsPhaseTest
             assertTrue( true );
         }
     }
-    
+
     public void testSnapshotDependenciesOutsideProjectOnlyInteractiveWithSnapshotsResolved()
         throws Exception
     {
@@ -449,7 +450,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
         }
         catch ( ReleaseFailureException e )
         {
@@ -470,7 +471,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
         }
         catch ( ReleaseFailureException e )
         {
@@ -492,7 +493,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -506,7 +507,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -522,9 +523,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "no-snapshot-report-plugins" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -536,9 +537,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-snapshot-report-plugins" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -558,7 +559,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -572,7 +573,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -596,7 +597,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -610,7 +611,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -626,9 +627,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "no-snapshot-plugins" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -640,9 +641,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-snapshot-plugins" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -654,9 +655,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-managed-snapshot-plugin" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -668,9 +669,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "unused-internal-managed-snapshot-plugin" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -682,9 +683,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "unused-external-managed-snapshot-plugin" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -704,7 +705,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -718,7 +719,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -742,7 +743,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -756,7 +757,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -780,7 +781,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -794,7 +795,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -818,7 +819,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -832,7 +833,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -848,9 +849,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "external-parent/child" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -870,7 +871,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -884,7 +885,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -900,9 +901,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "internal-snapshot-extension" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -914,9 +915,9 @@ public class CheckDependencySnapshotsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List reactorProjects = createDescriptorFromProjects( "external-extension" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -933,7 +934,7 @@ public class CheckDependencySnapshotsPhaseTest
         // confirm POM fails without allowTimestampedSnapshots
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -945,14 +946,14 @@ public class CheckDependencySnapshotsPhaseTest
         // check whether flag allows
         releaseDescriptor.setAllowTimestampedSnapshots(true);
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
     }
-    
+
     private List createDescriptorFromProjects( String path )
         throws Exception
     {

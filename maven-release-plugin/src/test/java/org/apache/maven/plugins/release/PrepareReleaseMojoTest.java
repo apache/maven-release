@@ -26,9 +26,11 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsEqual;
+import org.jmock.core.constraint.IsInstanceOf;
 import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ThrowStub;
@@ -53,8 +55,15 @@ public class PrepareReleaseMojoTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( releaseDescriptor ), new IsEqual( mojo.getSettings() ),
-            new IsNull(), new IsEqual( Boolean.TRUE ), new IsEqual( Boolean.FALSE )};
+
+        Constraint[] constraints = new Constraint[] {
+            new IsEqual( releaseDescriptor ),
+            new IsInstanceOf( ReleaseEnvironment.class ),
+            new IsNull(),
+            new IsEqual( Boolean.TRUE ),
+            new IsEqual( Boolean.FALSE )
+        };
+
         mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
 
@@ -73,8 +82,15 @@ public class PrepareReleaseMojoTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( releaseDescriptor ), new IsEqual( mojo.getSettings() ),
-            new IsNull(), new IsEqual( Boolean.TRUE ), new IsEqual( Boolean.FALSE )};
+
+        Constraint[] constraints = new Constraint[] {
+            new IsEqual( releaseDescriptor ),
+            new IsInstanceOf( ReleaseEnvironment.class ),
+            new IsNull(),
+            new IsEqual( Boolean.TRUE ),
+            new IsEqual( Boolean.FALSE )
+        };
+
         mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints ).will(
             new ThrowStub( new ReleaseExecutionException( "..." ) ) );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
@@ -101,8 +117,15 @@ public class PrepareReleaseMojoTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( releaseDescriptor ), new IsEqual( mojo.getSettings() ),
-            new IsNull(), new IsEqual( Boolean.TRUE ), new IsEqual( Boolean.FALSE )};
+
+        Constraint[] constraints = new Constraint[] {
+            new IsEqual( releaseDescriptor ),
+            new IsInstanceOf( ReleaseEnvironment.class ),
+            new IsNull(),
+            new IsEqual( Boolean.TRUE ),
+            new IsEqual( Boolean.FALSE )
+        };
+
         mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints ).will(
             new ThrowStub( new ReleaseFailureException( "..." ) ) );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );

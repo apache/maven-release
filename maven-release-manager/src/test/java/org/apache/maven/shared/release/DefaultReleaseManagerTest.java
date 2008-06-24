@@ -33,6 +33,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreStub;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.phase.IsScmFileSetEquals;
 import org.apache.maven.shared.release.phase.ReleasePhase;
@@ -87,7 +88,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( null );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -110,7 +111,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -133,7 +134,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null, false, false );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, false, false );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -156,7 +157,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step3" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -179,7 +180,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "foo" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -202,7 +203,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( null );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null, true, true );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -225,7 +226,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null, true, true );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -248,7 +249,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step3" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null, true, true );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -271,7 +272,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "foo" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), null, null, true, true );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
         Map phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -293,7 +294,7 @@ public class DefaultReleaseManagerTest
 
         try
         {
-            releaseManager.prepare( new ReleaseDescriptor(), null, null );
+            releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
             fail( "Should have failed to find a phase" );
         }
         catch ( ReleaseExecutionException e )
@@ -320,7 +321,7 @@ public class DefaultReleaseManagerTest
 
         try
         {
-            releaseManager.prepare( releaseDescriptor, null, null );
+            releaseManager.prepare( releaseDescriptor, new DefaultReleaseEnvironment(), null );
             fail( "Should have failed to read configuration" );
         }
         catch ( ReleaseExecutionException e )
@@ -348,7 +349,7 @@ public class DefaultReleaseManagerTest
 
         try
         {
-            releaseManager.prepare( releaseDescriptor, null, null, false, false );
+            releaseManager.prepare( releaseDescriptor, new DefaultReleaseEnvironment(), null, false, false );
             fail( "Should have failed to read configuration" );
         }
         catch ( ReleaseExecutionException e )
@@ -412,7 +413,7 @@ public class DefaultReleaseManagerTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        releaseManager.perform( releaseDescriptor, null, null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
         assertTrue( true );
     }
@@ -445,7 +446,7 @@ public class DefaultReleaseManagerTest
 
         releaseDescriptor.setUseReleaseProfile( false );
 
-        releaseManager.perform( releaseDescriptor, null, null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
         assertTrue( true );
     }
@@ -478,7 +479,7 @@ public class DefaultReleaseManagerTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        releaseManager.perform( releaseDescriptor, null, null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
         assertTrue( true );
     }
@@ -512,7 +513,7 @@ public class DefaultReleaseManagerTest
 
         releaseDescriptor.setUseReleaseProfile( false );
 
-        releaseManager.perform( releaseDescriptor, null, null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
         assertTrue( true );
     }
@@ -547,7 +548,7 @@ public class DefaultReleaseManagerTest
         configStore.getReleaseConfiguration().setCompletedPhase( "end-release" );
         releaseManager.setConfigStore( configStore );
 
-        releaseManager.perform( releaseDescriptor, null, null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
         assertTrue( true );
     }
@@ -572,7 +573,7 @@ public class DefaultReleaseManagerTest
         {
             releaseDescriptor.setUseReleaseProfile( false );
 
-            releaseManager.perform( releaseDescriptor, null, null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
             fail( "Should have failed to read configuration" );
         }
         catch ( ReleaseExecutionException e )
@@ -599,7 +600,7 @@ public class DefaultReleaseManagerTest
         {
             releaseDescriptor.setUseReleaseProfile( false );
 
-            releaseManager.perform( releaseDescriptor, null, null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
             fail( "Should have failed to perform" );
         }
         catch ( ReleaseFailureException e )
@@ -621,7 +622,7 @@ public class DefaultReleaseManagerTest
         {
             releaseDescriptor.setUseReleaseProfile( false );
 
-            releaseManager.perform( releaseDescriptor, null, null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "perform should have failed" );
         }
@@ -653,7 +654,7 @@ public class DefaultReleaseManagerTest
         {
             releaseDescriptor.setUseReleaseProfile( false );
 
-            releaseManager.perform( releaseDescriptor, null, null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "commit should have failed" );
         }
@@ -685,7 +686,7 @@ public class DefaultReleaseManagerTest
         {
             releaseDescriptor.setUseReleaseProfile( false );
 
-            releaseManager.perform( releaseDescriptor, null, null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "commit should have failed" );
         }
@@ -714,7 +715,7 @@ public class DefaultReleaseManagerTest
 
         try
         {
-            releaseManager.perform( releaseDescriptor, null, null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "commit should have failed" );
         }
@@ -742,7 +743,7 @@ public class DefaultReleaseManagerTest
 
         try
         {
-            releaseManager.perform( releaseDescriptor, null, null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "commit should have failed" );
         }

@@ -19,12 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.Maven;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFileSet;
@@ -33,6 +27,7 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
@@ -41,9 +36,15 @@ import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ReturnStub;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Test the remove release POMs phase.
- * 
+ *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
 public class RemoveReleasePomsPhaseTest
@@ -75,11 +76,11 @@ public class RemoveReleasePomsPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         scmProviderMock.verify();
     }
-    
+
     public void testExecutePomWithModules()
         throws Exception
     {
@@ -104,11 +105,11 @@ public class RemoveReleasePomsPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         scmProviderMock.verify();
     }
-    
+
     public void testSimulateBasicPom()
         throws Exception
     {
@@ -121,7 +122,7 @@ public class RemoveReleasePomsPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.simulate( config, null, reactorProjects );
+        phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         scmProviderMock.verify();
     }

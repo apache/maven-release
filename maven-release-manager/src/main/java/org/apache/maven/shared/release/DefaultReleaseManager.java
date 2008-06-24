@@ -23,6 +23,8 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
@@ -81,20 +83,20 @@ public class DefaultReleaseManager
 
     private static final int PHASE_SKIP = 0, PHASE_START = 1, PHASE_END = 2, GOAL_START = 11, GOAL_END = 12, ERROR = 99;
 
-    public void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        prepare( releaseDescriptor, settings, reactorProjects, true, false, null );
+        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, true, false, null );
     }
 
-    public void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
+    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean resume,
                          boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        prepare( releaseDescriptor, settings, reactorProjects, resume, dryRun, null );
+        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, null );
     }
 
-    public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
+    public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                             List reactorProjects, boolean resume, boolean dryRun,
                                             ReleaseManagerListener listener )
     {
@@ -104,7 +106,7 @@ public class DefaultReleaseManager
 
         try
         {
-            prepare( releaseDescriptor, settings, reactorProjects, resume, dryRun, listener, result );
+            prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, listener, result );
 
             result.setResultCode( ReleaseResult.SUCCESS );
         }
@@ -124,14 +126,14 @@ public class DefaultReleaseManager
         return result;
     }
 
-    public void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
+    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean resume,
                          boolean dryRun, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        prepare( releaseDescriptor, settings, reactorProjects, resume, dryRun, listener, null );
+        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, listener, null );
     }
 
-    private void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean resume,
+    private void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean resume,
                           boolean dryRun, ReleaseManagerListener listener, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -187,11 +189,11 @@ public class DefaultReleaseManager
             {
                 if ( dryRun )
                 {
-                    phaseResult = phase.simulate( config, settings, reactorProjects );
+                    phaseResult = phase.simulate( config, releaseEnvironment, reactorProjects );
                 }
                 else
                 {
-                    phaseResult = phase.execute( config, settings, reactorProjects );
+                    phaseResult = phase.execute( config, releaseEnvironment, reactorProjects );
                 }
             }
             finally
@@ -219,13 +221,13 @@ public class DefaultReleaseManager
         updateListener( listener, "prepare", GOAL_END );
     }
 
-    public void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        rollback( releaseDescriptor, settings, reactorProjects, null );
+        rollback( releaseDescriptor, releaseEnvironment, reactorProjects, null );
     }
 
-    public void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+    public void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
                           ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -245,7 +247,7 @@ public class DefaultReleaseManager
             }
 
             updateListener( listener, name, PHASE_START );
-            phase.execute( releaseDescriptor, settings, reactorProjects );
+            phase.execute( releaseDescriptor, releaseEnvironment, reactorProjects );
             updateListener( listener, name, PHASE_END );
         }
 
@@ -254,33 +256,33 @@ public class DefaultReleaseManager
         updateListener( listener, "prepare", GOAL_END );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, null, true );
+        perform( releaseDescriptor, releaseEnvironment, reactorProjects, null, true );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean clean )
+    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, null, false );
+        perform( releaseDescriptor, releaseEnvironment, reactorProjects, null, false );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
                          ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, listener, true );
+        perform( releaseDescriptor, releaseEnvironment, reactorProjects, listener, true );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
                          ReleaseManagerListener listener, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, settings, reactorProjects, listener, new ReleaseResult(), clean );
+        perform( releaseDescriptor, releaseEnvironment, reactorProjects, listener, new ReleaseResult(), clean );
     }
 
-    public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
+    public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                             List reactorProjects, ReleaseManagerListener listener )
     {
         ReleaseResult result = new ReleaseResult();
@@ -289,7 +291,7 @@ public class DefaultReleaseManager
         {
             result.setStartTime( System.currentTimeMillis() );
 
-            perform( releaseDescriptor, settings, reactorProjects, listener, result, true );
+            perform( releaseDescriptor, releaseEnvironment, reactorProjects, listener, result, true );
 
             result.setResultCode( ReleaseResult.SUCCESS );
         }
@@ -309,7 +311,7 @@ public class DefaultReleaseManager
         return result;
     }
 
-    private void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+    private void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
                           ReleaseManagerListener listener, ReleaseResult result, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -329,7 +331,7 @@ public class DefaultReleaseManager
             }
 
             updateListener( listener, name, PHASE_START );
-            phase.execute( releaseDescriptor, settings, reactorProjects );
+            phase.execute( releaseDescriptor, releaseEnvironment, reactorProjects );
             updateListener( listener, name, PHASE_END );
         }
 
@@ -342,13 +344,13 @@ public class DefaultReleaseManager
         updateListener( listener, "perform", GOAL_END );
     }
 
-    public void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean dryRun )
+    public void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        branch( releaseDescriptor, settings, reactorProjects, dryRun, null );
+        branch( releaseDescriptor, releaseEnvironment, reactorProjects, dryRun, null );
     }
 
-    public void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean dryRun,
+    public void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean dryRun,
                         ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -370,11 +372,11 @@ public class DefaultReleaseManager
             updateListener( listener, name, PHASE_START );
             if ( dryRun )
             {
-                phase.simulate( releaseDescriptor, settings, reactorProjects );
+                phase.simulate( releaseDescriptor, releaseEnvironment, reactorProjects );
             }
             else
             {
-                phase.execute( releaseDescriptor, settings, reactorProjects );
+                phase.execute( releaseDescriptor, releaseEnvironment, reactorProjects );
             }
             updateListener( listener, name, PHASE_END );
         }
@@ -484,19 +486,19 @@ public class DefaultReleaseManager
 
         if ( "prepare".equals( name ) )
         {
-            phases.addAll( this.preparePhases );
+            phases.addAll( preparePhases );
         }
         else if ( "perform".equals( name ) )
         {
-            phases.addAll( this.performPhases );
+            phases.addAll( performPhases );
         }
         else if ( "rollback".equals( name ) )
         {
-            phases.addAll( this.rollbackPhases );
+            phases.addAll( rollbackPhases );
         }
         else if ( "branch".equals( name ) )
         {
-            phases.addAll( this.branchPhases );
+            phases.addAll( branchPhases );
         }
 
         return Collections.unmodifiableList( phases );
@@ -519,5 +521,114 @@ public class DefaultReleaseManager
         result.appendError( e );
 
         result.setResultCode( ReleaseResult.ERROR );
+    }
+
+    public void branch( ReleaseDescriptor releaseDescriptor,
+                        Settings settings,
+                        List reactorProjects,
+                        boolean dryRun )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        branch( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, dryRun );
+    }
+
+    public void branch( ReleaseDescriptor releaseDescriptor,
+                        Settings settings,
+                        List reactorProjects,
+                        boolean dryRun,
+                        ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        branch( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, dryRun, listener );
+    }
+
+    public void perform( ReleaseDescriptor releaseDescriptor,
+                         Settings settings,
+                         List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        perform( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );
+    }
+
+    public void perform( ReleaseDescriptor releaseDescriptor,
+                         Settings settings,
+                         List reactorProjects,
+                         ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        perform( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, listener );
+    }
+
+    public void perform( ReleaseDescriptor releaseDescriptor,
+                         Settings settings,
+                         List reactorProjects,
+                         boolean clean )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        perform( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, clean );
+    }
+
+    public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor,
+                                            Settings settings,
+                                            List reactorProjects,
+                                            ReleaseManagerListener listener )
+    {
+        return performWithResult( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, listener );
+    }
+
+    public void prepare( ReleaseDescriptor releaseDescriptor,
+                         Settings settings,
+                         List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        prepare( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );
+    }
+
+    public void prepare( ReleaseDescriptor releaseDescriptor,
+                         Settings settings,
+                         List reactorProjects,
+                         boolean resume,
+                         boolean dryRun )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        prepare( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, resume, dryRun );
+    }
+
+    public void prepare( ReleaseDescriptor releaseDescriptor,
+                         Settings settings,
+                         List reactorProjects,
+                         boolean resume,
+                         boolean dryRun,
+                         ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        prepare( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, resume, dryRun, listener );
+    }
+
+    public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor,
+                                            Settings settings,
+                                            List reactorProjects,
+                                            boolean resume,
+                                            boolean dryRun,
+                                            ReleaseManagerListener listener )
+    {
+        return prepareWithResult( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, resume, dryRun, listener );
+    }
+
+    public void rollback( ReleaseDescriptor releaseDescriptor,
+                          Settings settings,
+                          List reactorProjects,
+                          ReleaseManagerListener listener )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        rollback( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, listener );
+    }
+
+    public void rollback( ReleaseDescriptor releaseDescriptor,
+                          Settings settings,
+                          List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        rollback( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, null );
     }
 }

@@ -43,8 +43,16 @@ public class RunPerformGoalsPhaseTest
         config.setCheckoutDirectory( testFile.getAbsolutePath() );
 
         Mock mock = new Mock( MavenExecutor.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "goal1 goal2" ),
-            new IsEqual( Boolean.TRUE ), new IsEqual( "-DperformRelease=true -f pom.xml" ), new IsAnything()};
+
+        Constraint[] constraints = new Constraint[] {
+            new IsEqual( testFile ),
+            new IsEqual( "goal1 goal2" ),
+            new IsAnything(),
+            new IsEqual( Boolean.TRUE ),
+            new IsEqual( "-DperformRelease=true -f pom.xml" ),
+            new IsAnything()
+        };
+
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 

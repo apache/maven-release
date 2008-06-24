@@ -21,10 +21,10 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionInfo;
@@ -64,7 +64,7 @@ public class MapVersionsPhase
         this.prompter = prompter;
     }
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
@@ -171,14 +171,14 @@ public class MapVersionsPhase
         VersionInfo currentVersionInfo = null;
         VersionInfo releaseVersionInfo = null;
         VersionInfo nextSnapshotVersionInfo = null;
-        
+
         try
         {
             currentVersionInfo = new DefaultVersionInfo( project.getVersion() );
 
             // The release version defaults to currentVersionInfo.getReleaseVersionString()
             releaseVersionInfo = currentVersionInfo;
-            
+
             // Check if the user specified a release version
             if ( releaseDescriptor.getDefaultReleaseVersion() != null )
             {
@@ -197,7 +197,7 @@ public class MapVersionsPhase
             {
                 nextSnapshotVersionInfo = releaseVersionInfo.getNextVersion();
             }
-            
+
             // Check if the user specified a new snapshot version
             if ( releaseDescriptor.getDefaultDevelopmentVersion() != null )
             {
@@ -211,7 +211,7 @@ public class MapVersionsPhase
                     nextSnapshotVersionInfo = new DefaultVersionInfo( nextDevVersion );
                 }
             }
-             
+
         }
         catch ( VersionParseException e )
         {
@@ -372,13 +372,13 @@ public class MapVersionsPhase
         return nextVersion;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
 
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseDescriptor, settings, reactorProjects );
+        execute( releaseDescriptor, releaseEnvironment, reactorProjects );
 
         result.setResultCode( ReleaseResult.SUCCESS );
 

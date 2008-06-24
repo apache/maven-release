@@ -19,10 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -37,7 +37,7 @@ import java.util.List;
 public class RunPerformGoalsPhase
     extends AbstractRunGoalsPhase
 {
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException
     {
         String additionalArguments = releaseDescriptor.getAdditionalArguments();
@@ -53,7 +53,7 @@ public class RunPerformGoalsPhase
                 additionalArguments = "-DperformRelease=true";
             }
         }
-        
+
         // ensure we don't use the release pom for the perform goals
         if ( !StringUtils.isEmpty( additionalArguments ) )
         {
@@ -64,17 +64,17 @@ public class RunPerformGoalsPhase
             additionalArguments = "-f pom.xml";
         }
 
-        return execute( releaseDescriptor, new File( releaseDescriptor.getCheckoutDirectory() ), additionalArguments );
+        return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getCheckoutDirectory() ), additionalArguments );
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
 
         logInfo( result, "Executing perform goals" );
 
-        execute( releaseDescriptor, settings, reactorProjects );
+        execute( releaseDescriptor, releaseEnvironment, reactorProjects );
 
         return result;
     }

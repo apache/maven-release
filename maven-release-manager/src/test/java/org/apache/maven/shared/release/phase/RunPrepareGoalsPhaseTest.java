@@ -21,7 +21,9 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.codehaus.plexus.PlexusTestCase;
@@ -56,7 +58,7 @@ public class RunPrepareGoalsPhaseTest
     }
 
     public void testExecute()
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, ReleaseFailureException
     {
         File testFile = getTestFile( "target/working-directory" );
 
@@ -66,7 +68,7 @@ public class RunPrepareGoalsPhaseTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
+            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
 
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
 
@@ -89,18 +91,19 @@ public class RunPrepareGoalsPhaseTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
+            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsAnything(), new IsAnything()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
-        phase.simulate( config, null, null );
+        phase.simulate( config, new DefaultReleaseEnvironment(), null );
 
         // just needs to survive the mock
         assertTrue( true );
     }
 
     public void testExecuteException()
+        throws ReleaseFailureException
     {
         File testFile = getTestFile( "target/working-directory" );
 
@@ -110,7 +113,7 @@ public class RunPrepareGoalsPhaseTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
+            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
@@ -138,7 +141,7 @@ public class RunPrepareGoalsPhaseTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
+            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
@@ -146,7 +149,7 @@ public class RunPrepareGoalsPhaseTest
 
         try
         {
-            phase.simulate( config, null, null );
+            phase.simulate( config, new DefaultReleaseEnvironment(), null );
 
             fail( "Should have thrown an exception" );
         }

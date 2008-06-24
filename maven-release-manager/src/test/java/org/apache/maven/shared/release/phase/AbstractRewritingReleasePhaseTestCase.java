@@ -28,6 +28,7 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
@@ -58,7 +59,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -70,7 +71,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -82,7 +83,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -94,7 +95,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -105,7 +106,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "pom-with-parent" );
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -125,7 +126,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -146,7 +147,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         config.mapReleaseVersion( "groupId:artifactId", "1" );
         config.mapDevelopmentVersion( "groupId:artifactId", "1" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -159,7 +160,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "pom-with-inherited-version" );
         ReleaseDescriptor config = createConfigurationForWithParentNextVersion( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -170,7 +171,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "pom-with-inherited-version" );
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         MavenProject project = (MavenProject) getProjectsAsMap( reactorProjects ).get( "groupId:subproject1" );
         comparePomFiles( project, "-version-changed" );
@@ -186,7 +187,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
         mapNextVersion( config, "groupId:subsubproject" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -199,7 +200,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -215,7 +216,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-differing-snapshot-dependencies" );
         ReleaseDescriptor config = createDifferingVersionConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -226,7 +227,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-managed-snapshot-dependency" );
         ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -239,7 +240,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -255,7 +256,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-snapshot-plugins" );
         ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -268,7 +269,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -284,7 +285,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-differing-snapshot-plugins" );
         ReleaseDescriptor config = createDifferingVersionConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -295,7 +296,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-managed-snapshot-plugin" );
         ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -308,7 +309,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -324,7 +325,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-snapshot-report-plugins" );
         ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -337,7 +338,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -353,7 +354,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-differing-snapshot-report-plugins" );
         ReleaseDescriptor config = createDifferingVersionConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -364,7 +365,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-snapshot-extension" );
         ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -377,7 +378,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -393,7 +394,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "internal-differing-snapshot-extension" );
         ReleaseDescriptor config = createDifferingVersionConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -404,7 +405,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "pom-without-extension-version" );
         ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -422,7 +423,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
             mapNextVersion( config, "groupId:artifactId" );
             config.setAddSchema( true );
 
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             comparePomFiles( reactorProjects, "-with-schema" );
 
@@ -447,7 +448,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         configurator.setScmManager( scmManager );
         scmManager.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.simulate( config, null, reactorProjects );
+        phase.simulate( config,  new DefaultReleaseEnvironment(), reactorProjects );
 
         // Getting past mock is success
         assertTrue( true );
@@ -461,7 +462,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -487,7 +488,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -513,7 +514,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -530,7 +531,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
         mapNextVersion( config, "groupId:subproject2" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -542,7 +543,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
         mapNextVersion( config, "groupId:subproject2" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -554,7 +555,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
         mapNextVersion( config, "groupId:subproject2" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -645,7 +646,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List reactorProjects = createReactorProjects( "pom-with-namespace" );
         ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }

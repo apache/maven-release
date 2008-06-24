@@ -23,6 +23,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
@@ -62,7 +63,7 @@ public class MapVersionsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
@@ -74,7 +75,7 @@ public class MapVersionsPhaseTest
                                                                                  new IsEqual( "1.0" ) ).will(
             new ReturnStub( "2.0" ) );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
@@ -99,7 +100,7 @@ public class MapVersionsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
@@ -111,7 +112,7 @@ public class MapVersionsPhaseTest
                                                                                  new IsEqual( "1.0" ) ).will(
             new ReturnStub( "2.0" ) );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
@@ -131,7 +132,7 @@ public class MapVersionsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
                       releaseDescriptor.getReleaseVersions() );
@@ -142,7 +143,7 @@ public class MapVersionsPhaseTest
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
                       releaseDescriptor.getReleaseVersions() );
@@ -163,7 +164,7 @@ public class MapVersionsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
@@ -175,7 +176,7 @@ public class MapVersionsPhaseTest
                                                                                  new IsEqual( "1.1-SNAPSHOT" ) ).will(
             new ReturnStub( "2.0-SNAPSHOT" ) );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
@@ -195,7 +196,7 @@ public class MapVersionsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.1-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
@@ -206,7 +207,7 @@ public class MapVersionsPhaseTest
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.1-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
@@ -228,7 +229,7 @@ public class MapVersionsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -245,7 +246,7 @@ public class MapVersionsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -269,7 +270,7 @@ public class MapVersionsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
@@ -280,7 +281,7 @@ public class MapVersionsPhaseTest
 
         releaseDescriptor = new ReleaseDescriptor();
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
@@ -298,7 +299,7 @@ public class MapVersionsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -312,7 +313,7 @@ public class MapVersionsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }

@@ -20,11 +20,12 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 
-import java.util.List;
-import java.util.Iterator;
 import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author Edwin Punzalan
@@ -73,7 +74,7 @@ public class CreateBackupPomsPhaseTest
     {
         List projects = getReactorProjects( getTestPath( path ) );
 
-        phase.execute( null, null, projects );
+        phase.execute( null, new DefaultReleaseEnvironment(), projects );
 
         testProjectBackups( projects, true );
     }
@@ -83,7 +84,7 @@ public class CreateBackupPomsPhaseTest
     {
         List projects = getReactorProjects( getTestPath( path ) );
 
-        phase.simulate( null, null, projects );
+        phase.simulate( null, new DefaultReleaseEnvironment(), projects );
 
         testProjectBackups( projects, true );
     }

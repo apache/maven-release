@@ -32,11 +32,11 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
@@ -87,19 +87,19 @@ public abstract class AbstractRewritePomsPhase
      */
     private String pomSuffix;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
-        transform( releaseDescriptor, settings, reactorProjects, false, result );
+        transform( releaseDescriptor, releaseEnvironment, reactorProjects, false, result );
 
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
     }
 
-    private void transform( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+    private void transform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
                             boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -109,11 +109,11 @@ public abstract class AbstractRewritePomsPhase
 
             logInfo( result, "Transforming '" + project.getName() + "'..." );
 
-            transformProject( project, releaseDescriptor, settings, reactorProjects, simulate, result );
+            transformProject( project, releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result );
         }
     }
 
-    private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
+    private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -164,7 +164,7 @@ public abstract class AbstractRewritePomsPhase
                     "(?:(?:" + SPACE + ")|(?:" + XML + ")|(?:" + DOCTYPE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
                 final String OUTRO = "(?:(?:" + SPACE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
                 final String POM = "(?s)(" + INTRO + ")(.*?)(" + OUTRO + ")";
-                
+
                 Matcher matcher = Pattern.compile( POM ).matcher( content );
                 if ( matcher.matches() )
                 {
@@ -186,7 +186,7 @@ public abstract class AbstractRewritePomsPhase
         ScmProvider provider;
         try
         {
-            scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
+            scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
         }
@@ -297,7 +297,7 @@ public abstract class AbstractRewritePomsPhase
     /**
      * Updates the text value of the given element. The primary purpose of this method is to preserve any whitespace and
      * comments around the original text value.
-     * 
+     *
      * @param element The element to update, must not be <code>null</code>.
      * @param value The text string to set, must not be <code>null</code>.
      */
@@ -760,12 +760,12 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
-        transform( releaseDescriptor, settings, reactorProjects, true, result );
+        transform( releaseDescriptor, releaseEnvironment, reactorProjects, true, result );
 
         result.setResultCode( ReleaseResult.SUCCESS );
 

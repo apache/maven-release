@@ -32,6 +32,7 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
@@ -87,7 +88,7 @@ public class ScmTagPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.execute( descriptor, null, reactorProjects );
+        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -114,7 +115,7 @@ public class ScmTagPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.execute( descriptor, null, reactorProjects );
+        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -127,7 +128,7 @@ public class ScmTagPhaseTest
 
         try
         {
-            phase.execute( descriptor, null, reactorProjects );
+            phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
             fail( "Should have thrown an exception" );
         }
         catch ( ReleaseFailureException e )
@@ -152,7 +153,7 @@ public class ScmTagPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.simulate( descriptor, null, reactorProjects );
+        phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -165,7 +166,7 @@ public class ScmTagPhaseTest
 
         try
         {
-            phase.simulate( descriptor, null, reactorProjects );
+            phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
             fail( "Should have thrown an exception" );
         }
         catch ( ReleaseFailureException e )
@@ -191,7 +192,7 @@ public class ScmTagPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -218,7 +219,7 @@ public class ScmTagPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -243,7 +244,7 @@ public class ScmTagPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -267,7 +268,7 @@ public class ScmTagPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Commit should have failed" );
         }

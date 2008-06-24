@@ -21,9 +21,9 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
  * Rollback changes made by a previous release.
@@ -46,7 +46,7 @@ public class RollbackReleaseMojo
 
         try
         {
-            releaseManager.rollback( config, settings, reactorProjects );
+            releaseManager.rollback( config, getReleaseEnvironment(), reactorProjects );
         }
         catch ( ReleaseExecutionException e )
         {

@@ -24,11 +24,11 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
@@ -90,7 +90,7 @@ public class CheckDependencySnapshotsPhase
      */
     private ArtifactFactory artifactFactory;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -115,7 +115,7 @@ public class CheckDependencySnapshotsPhase
         throws ReleaseFailureException, ReleaseExecutionException
     {
         Map artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
-        
+
         Set snapshotDependencies = new HashSet();
         Set snapshotReportDependencies = new HashSet();
         Set snapshotExtensionsDependencies = new HashSet();
@@ -249,15 +249,15 @@ public class CheckDependencySnapshotsPhase
     {
         String versionlessId = ArtifactUtils.versionlessKey( artifact );
         Artifact checkArtifact = (Artifact) artifactMapByVersionlessId.get( versionlessId );
-        
+
         if ( checkArtifact == null)
         {
             checkArtifact = artifact;
         }
-        
+
         return checkArtifact( checkArtifact, originalVersions, releaseDescriptor );
     }
-    
+
     private static boolean checkArtifact( Artifact artifact, Map originalVersions, ReleaseDescriptor releaseDescriptor )
     {
         String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
@@ -277,11 +277,11 @@ public class CheckDependencySnapshotsPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
-        return execute( releaseDescriptor, settings, reactorProjects );
+        return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
     }
 
     public void setPrompter( Prompter prompter )
@@ -397,7 +397,7 @@ public class CheckDependencySnapshotsPhase
 
                 VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getVersion() );
                 VersionInfo nextVersionInfo = versionInfo.getNextVersion();
-                
+
                 String nextVersion;
                 if ( nextVersionInfo != null )
                 {
@@ -407,12 +407,12 @@ public class CheckDependencySnapshotsPhase
                 {
                     nextVersion = "1.0-SNAPSHOT";
                 }
-                
+
                 result = prompter.prompt( "What is the next development version?",
                                           Collections.singletonList( nextVersion ), nextVersion );
 
                 VersionInfo nextDevelopmentVersion = new DefaultVersionInfo( result );
-                
+
                 Map versionMap = new HashMap();
                 versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, versionInfo.toString() );
                 versionMap.put( ReleaseDescriptor.DEVELOPMENT_KEY, nextDevelopmentVersion.getSnapshotVersionString() );

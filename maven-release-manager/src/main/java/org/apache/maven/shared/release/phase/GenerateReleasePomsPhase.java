@@ -37,11 +37,11 @@ import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.add.AddScmResult;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
@@ -60,7 +60,7 @@ import java.util.Set;
 
 /**
  * Generate release POMs.
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="generate-release-poms"
@@ -69,15 +69,15 @@ public class GenerateReleasePomsPhase
     extends AbstractReleasePomsPhase
 {
     /**
-     * 
-     * 
+     *
+     *
      * @plexus.requirement
      */
     private PathTranslator pathTranslator;
 
     /**
      * SCM URL translators mapped by provider name.
-     * 
+     *
      * @plexus.requirement role="org.apache.maven.shared.release.scm.ScmTranslator"
      */
     private Map scmTranslators;
@@ -86,13 +86,13 @@ public class GenerateReleasePomsPhase
      * @see org.apache.maven.shared.release.phase.ReleasePhase#execute(org.apache.maven.shared.release.config.ReleaseDescriptor,
      *      org.apache.maven.settings.Settings, java.util.List)
      */
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        return execute( releaseDescriptor, settings, reactorProjects, false );
+        return execute( releaseDescriptor, releaseEnvironment, reactorProjects, false );
     }
 
-    private ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+    private ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
                                    boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -102,7 +102,7 @@ public class GenerateReleasePomsPhase
         {
             logInfo( result, "Generating release POMs..." );
 
-            generateReleasePoms( releaseDescriptor, settings, reactorProjects, simulate, result );
+            generateReleasePoms( releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result );
         }
         else
         {
@@ -114,7 +114,7 @@ public class GenerateReleasePomsPhase
         return result;
     }
 
-    private void generateReleasePoms( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+    private void generateReleasePoms( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
                                       boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -126,19 +126,19 @@ public class GenerateReleasePomsPhase
 
             logInfo( result, "Generating release POM for '" + project.getName() + "'..." );
 
-            releasePoms.add( generateReleasePom( project, releaseDescriptor, settings, reactorProjects, simulate, result ) );
+            releasePoms.add( generateReleasePom( project, releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result ) );
         }
 
-        addReleasePomsToScm( releaseDescriptor, settings, reactorProjects, simulate, result, releasePoms );
+        addReleasePomsToScm( releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result, releasePoms );
     }
 
-    private File generateReleasePom( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
+    private File generateReleasePom( MavenProject project, ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                      List reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // create release pom
 
-        Model releasePom = createReleaseModel( project, releaseDescriptor, settings, reactorProjects, result );
+        Model releasePom = createReleaseModel( project, releaseDescriptor, releaseEnvironment, reactorProjects, result );
 
         // write release pom to file
 
@@ -166,7 +166,7 @@ public class GenerateReleasePomsPhase
         return releasePomFile;
     }
 
-    private void addReleasePomsToScm( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean simulate, ReleaseResult result, List releasePoms )
+    private void addReleasePomsToScm( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean simulate, ReleaseResult result, List releasePoms )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         if ( simulate )
@@ -175,7 +175,7 @@ public class GenerateReleasePomsPhase
         }
         else
         {
-            ScmRepository scmRepository = getScmRepository( releaseDescriptor, settings );
+            ScmRepository scmRepository = getScmRepository( releaseDescriptor, releaseEnvironment );
             ScmProvider scmProvider = getScmProvider( scmRepository );
 
             MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
@@ -198,7 +198,7 @@ public class GenerateReleasePomsPhase
         }
     }
 
-    private Model createReleaseModel( MavenProject project, ReleaseDescriptor releaseDescriptor, Settings settings,
+    private Model createReleaseModel( MavenProject project, ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                       List reactorProjects, ReleaseResult result )
         throws ReleaseFailureException, ReleaseExecutionException
     {
@@ -238,7 +238,7 @@ public class GenerateReleasePomsPhase
 
         if ( scm != null )
         {
-            ScmRepository scmRepository = getScmRepository( releaseDescriptor, settings );
+            ScmRepository scmRepository = getScmRepository( releaseDescriptor, releaseEnvironment );
             ScmTranslator scmTranslator = getScmTranslator( scmRepository );
 
             if ( scmTranslator != null )
@@ -272,10 +272,10 @@ public class GenerateReleasePomsPhase
         return releaseModel;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        return execute( releaseDescriptor, settings, reactorProjects, true );
+        return execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
     protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects )

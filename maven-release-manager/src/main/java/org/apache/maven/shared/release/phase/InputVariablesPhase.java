@@ -25,10 +25,10 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
@@ -65,12 +65,12 @@ public class InputVariablesPhase
         this.prompter = prompter;
     }
 
-    protected ScmProvider getScmProvider( ReleaseDescriptor releaseDescriptor, Settings settings )
+    protected ScmProvider getScmProvider( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment )
         throws ReleaseScmRepositoryException, ReleaseExecutionException
     {
         try
         {
-            ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
+            ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
 
             return scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
@@ -85,7 +85,7 @@ public class InputVariablesPhase
         }
     }
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
@@ -110,7 +110,7 @@ public class InputVariablesPhase
             ScmProvider provider = null;
             try
             {
-                provider = getScmProvider( releaseDescriptor, settings );
+                provider = getScmProvider( releaseDescriptor, releaseEnvironment );
             }
             catch ( ReleaseScmRepositoryException e )
             {
@@ -145,13 +145,13 @@ public class InputVariablesPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
 
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseDescriptor, settings, reactorProjects );
+        execute( releaseDescriptor, releaseEnvironment, reactorProjects );
 
         result.setResultCode( ReleaseResult.SUCCESS );
 

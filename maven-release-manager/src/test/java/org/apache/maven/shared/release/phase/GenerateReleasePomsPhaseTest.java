@@ -19,13 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.Maven;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFileSet;
@@ -34,6 +27,7 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.jmock.Mock;
 import org.jmock.core.Constraint;
@@ -41,9 +35,16 @@ import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ReturnStub;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Test the generate release POMs phase.
- * 
+ *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
 public class GenerateReleasePomsPhaseTest
@@ -63,7 +64,7 @@ public class GenerateReleasePomsPhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "generate-release-poms" );
         scmProviderMock = null;
     }
-    
+
     // TODO: MRELEASE-262
 //    public void testRewriteInternalRangeDependency() throws Exception
 //    {
@@ -74,13 +75,13 @@ public class GenerateReleasePomsPhaseTest
 //
 //        compareFiles( reactorProjects );
 //    }
-    
+
     public void testRewriteExternalRangeDependency() throws Exception
     {
         List reactorProjects = createReactorProjects( "external-range-dependency" );
         ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         comparePomFiles( reactorProjects );
     }
@@ -95,7 +96,7 @@ public class GenerateReleasePomsPhaseTest
         descriptor.setGenerateReleasePoms( true );
         return descriptor;
     }
-    
+
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createReactorProjects(java.lang.String,
      *      boolean)
@@ -108,7 +109,7 @@ public class GenerateReleasePomsPhaseTest
         // TODO: can we move this somewhere better?
 
         scmProviderMock = new Mock( ScmProvider.class );
-        
+
         List releasePoms = new ArrayList();
 
         for ( Iterator iterator = reactorProjects.iterator(); iterator.hasNext(); )
@@ -117,7 +118,7 @@ public class GenerateReleasePomsPhaseTest
 
             releasePoms.add( ReleaseUtil.getReleasePom( project ) );
         }
-        
+
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), releasePoms );
 
@@ -128,10 +129,10 @@ public class GenerateReleasePomsPhaseTest
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
-        
+
         return reactorProjects;
     }
-    
+
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#mapNextVersion(org.apache.maven.shared.release.config.ReleaseDescriptor,
      *      java.lang.String)

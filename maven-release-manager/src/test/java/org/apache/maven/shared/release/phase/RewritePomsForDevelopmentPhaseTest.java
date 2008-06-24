@@ -19,11 +19,12 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.apache.maven.artifact.ArtifactUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,7 +64,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         String expected = readTestProjectFile( "basic-pom/pom.xml" );
 
-        phase.simulate( config, null, reactorProjects );
+        phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         String actual = readTestProjectFile( "basic-pom/pom.xml" );
         assertEquals( "Check the original POM untouched", expected, actual );
@@ -85,7 +86,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         String expected = readTestProjectFile( "basic-pom-ejb-client-dep/pom.xml" );
 
-        phase.simulate( config, null, reactorProjects );
+        phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         String actual = readTestProjectFile( "basic-pom-ejb-client-dep/pom.xml" );
         assertEquals( "Check the original POM untouched", expected, actual );
@@ -107,7 +108,7 @@ public class RewritePomsForDevelopmentPhaseTest
         testFile.delete();
         assertFalse( testFile.exists() );
 
-        phase.simulate( config, null, reactorProjects );
+        phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( testFile.exists() );
 
@@ -144,7 +145,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected failure" );
         }
@@ -244,7 +245,7 @@ public class RewritePomsForDevelopmentPhaseTest
         scm.setUrl( "${baseUrl}/module" );
         config.mapOriginalScmInfo( "groupId:artifactId", scm );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -264,7 +265,7 @@ public class RewritePomsForDevelopmentPhaseTest
         scm.setTag( "original-label" );
         config.mapOriginalScmInfo( "groupId:artifactId", scm );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -291,7 +292,7 @@ public class RewritePomsForDevelopmentPhaseTest
         config.mapOriginalScmInfo( "groupId:subproject1", scm );
         config.mapOriginalScmInfo( "groupId:subsubproject", null );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -311,7 +312,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         mapScm( config );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -325,7 +326,7 @@ public class RewritePomsForDevelopmentPhaseTest
         config.setUpdateDependencies( false );
         mapNextVersion( config, "groupId:subsubproject" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }

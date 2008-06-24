@@ -22,11 +22,15 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Run the integration tests for the project to verify that it builds before committing.
@@ -39,12 +43,23 @@ public abstract class AbstractRunGoalsPhase
     /**
      * Component to assist in executing Maven.
      *
-     * @plexus.requirement
+     * @plexus.requirement role="org.apache.maven.shared.release.exec.MavenExecutor"
      */
-    private MavenExecutor mavenExecutor;
+    private Map mavenExecutors;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, File workingDirectory,
+    /**
+     * @deprecated Use {@link AbstractRunGoalsPhase#execute(ReleaseDescriptor, ReleaseEnvironment, File, String)} instead.
+     */
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
+                                  File workingDirectory,
                                   String additionalArguments )
+        throws ReleaseExecutionException
+    {
+        return execute( releaseDescriptor, new DefaultReleaseEnvironment(), workingDirectory, additionalArguments );
+    }
+
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  File workingDirectory, String additionalArguments )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
@@ -56,9 +71,17 @@ public abstract class AbstractRunGoalsPhase
             {
                 logInfo( result, "Executing goals '" + goals + "'..." );
 
+                MavenExecutor mavenExecutor = (MavenExecutor) mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
+
+                if ( mavenExecutor == null )
+                {
+                    throw new ReleaseExecutionException( "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId() );
+                }
+
                 mavenExecutor.executeGoals( determineWorkingDirectory( workingDirectory,
                                                                        releaseDescriptor.getScmRelativePathProjectDirectory() ),
-                                            goals, releaseDescriptor.isInteractive(), additionalArguments, result );
+                                            goals, releaseEnvironment, releaseDescriptor.isInteractive(),
+                                            additionalArguments, result );
             }
         }
         catch ( MavenExecutorException e )
@@ -71,9 +94,22 @@ public abstract class AbstractRunGoalsPhase
         return result;
     }
 
+    /**
+     * @deprecated Use {@link AbstractRunGoalsPhase#setMavenExecutor(String, MavenExecutor)} instead.
+     */
     public void setMavenExecutor( MavenExecutor mavenExecutor )
     {
-        this.mavenExecutor = mavenExecutor;
+        setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mavenExecutor );
+    }
+
+    public void setMavenExecutor( String id, MavenExecutor executor )
+    {
+        if ( mavenExecutors == null )
+        {
+            mavenExecutors = new HashMap();
+        }
+
+        mavenExecutors.put( id, executor );
     }
 
     protected abstract String getGoals( ReleaseDescriptor releaseDescriptor );

@@ -24,7 +24,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -54,13 +53,13 @@ public class PerformReleaseMojo
     private String goals;
 
 	/**
-     * Comma separated profiles to enable on deployment, in addition to active profiles 
+     * Comma separated profiles to enable on deployment, in addition to active profiles
 	 * for project execution.
      *
      * @parameter
      */
     private String releaseProfiles;
-	
+
     /**
      * The checkout directory.
      *
@@ -90,19 +89,19 @@ public class PerformReleaseMojo
 	{
 		return releaseProfiles;
 	}
-	
+
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         super.execute();
 
-		// goals may be splitted into multiple line in configuration. 
+		// goals may be splitted into multiple line in configuration.
 		// Let's build a single line command
-		if ( goals != null ) 
+		if ( goals != null )
 		{
 			goals = StringUtils.join( StringUtils.split( goals ), " " );
 		}
-		
+
         try
         {
             // Note that the working directory here is not the same as in the release configuration, so don't reuse that
@@ -127,7 +126,7 @@ public class PerformReleaseMojo
             }
             releaseDescriptor.setPerformGoals( goals );
 
-            releaseManager.perform( releaseDescriptor, settings, reactorProjects );
+            releaseManager.perform( releaseDescriptor, getReleaseEnvironment(), reactorProjects );
         }
         catch ( ReleaseExecutionException e )
         {

@@ -23,6 +23,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
@@ -69,7 +70,7 @@ public class InputVariablesPhaseTest
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
@@ -82,7 +83,7 @@ public class InputVariablesPhaseTest
                                                                                  new IsEqual( "artifactId-1.0" ) ).will(
             new ReturnStub( "simulated-tag-value" ) );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
     }
@@ -96,7 +97,7 @@ public class InputVariablesPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -109,7 +110,7 @@ public class InputVariablesPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -133,7 +134,7 @@ public class InputVariablesPhaseTest
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
 
@@ -145,7 +146,7 @@ public class InputVariablesPhaseTest
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
     }
@@ -163,7 +164,7 @@ public class InputVariablesPhaseTest
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
@@ -174,7 +175,7 @@ public class InputVariablesPhaseTest
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
     }
@@ -191,7 +192,7 @@ public class InputVariablesPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
 
-        phase.execute( releaseDescriptor, null, reactorProjects );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
@@ -201,7 +202,7 @@ public class InputVariablesPhaseTest
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
 
-        phase.simulate( releaseDescriptor, null, reactorProjects );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
     }
@@ -222,7 +223,7 @@ public class InputVariablesPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -241,7 +242,7 @@ public class InputVariablesPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, reactorProjects );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -266,7 +267,7 @@ public class InputVariablesPhaseTest
         releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseConfiguration.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
 
-        phase.execute( releaseConfiguration, null, reactorProjects );
+        phase.execute( releaseConfiguration, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "artifactId-1_0", releaseConfiguration.getScmReleaseLabel() );
 
@@ -278,7 +279,7 @@ public class InputVariablesPhaseTest
         releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseConfiguration.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
 
-        phase.simulate( releaseConfiguration, null, reactorProjects );
+        phase.simulate( releaseConfiguration, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "Check tag", "artifactId-1_0", releaseConfiguration.getScmReleaseLabel() );
     }

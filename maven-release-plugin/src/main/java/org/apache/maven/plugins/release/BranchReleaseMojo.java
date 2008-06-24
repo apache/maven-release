@@ -127,7 +127,7 @@ public class BranchReleaseMojo
 
         try
         {
-            releaseManager.branch( config, settings, reactorProjects, dryRun );
+            releaseManager.branch( config, getReleaseEnvironment(), reactorProjects, dryRun );
         }
         catch ( ReleaseExecutionException e )
         {

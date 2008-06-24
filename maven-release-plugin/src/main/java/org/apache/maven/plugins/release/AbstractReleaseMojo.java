@@ -28,6 +28,9 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -136,11 +139,48 @@ public abstract class AbstractReleaseMojo
     private Map providerImplementations;
 
     /**
+     * The M2_HOME parameter to use for forked Maven invocations.
+     *
+     * @parameter default-value="${maven.home}"
+     */
+    protected File mavenHome;
+
+    /**
+     * The JAVA_HOME parameter to use for forked Maven invocations.
+     *
+     * @parameter default-value="${java.home}"
+     */
+    protected File javaHome;
+
+    /**
+     * The command-line local repository directory in use for this build (if specified).
+     *
+     * @parameter default-value="${maven.repo.local}"
+     */
+    protected File localRepoDirectory;
+
+    /**
+     * Role-hint of the {@link MavenExecutor} implementation to use.
+     *
+     * @parameter
+     */
+    protected String mavenExecutorId;
+
+    /**
      * The SCM manager.
      *
      * @component
      */
     private ScmManager scmManager;
+
+    protected ReleaseEnvironment getReleaseEnvironment()
+    {
+        return new DefaultReleaseEnvironment().setSettings( settings )
+                                              .setJavaHome( javaHome )
+                                              .setMavenHome( mavenHome )
+                                              .setLocalRepositoryDirectory( localRepoDirectory )
+                                              .setMavenExecutorId( mavenExecutorId );
+    }
 
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -248,13 +288,13 @@ public abstract class AbstractReleaseMojo
      */
     protected void addArgument( String argument )
     {
-        if (this.arguments != null)
+        if (arguments != null)
         {
-            this.arguments += " " + argument;
+            arguments += " " + argument;
         }
         else
         {
-            this.arguments = argument;
+            arguments = argument;
         }
     }
 }

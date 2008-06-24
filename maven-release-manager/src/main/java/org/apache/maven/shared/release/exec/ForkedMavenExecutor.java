@@ -20,14 +20,10 @@ package org.apache.maven.shared.release.exec;
  */
 
 import org.apache.maven.shared.release.ReleaseResult;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.StreamConsumer;
-import org.codehaus.plexus.util.cli.StreamFeeder;
-import org.codehaus.plexus.util.cli.StreamPumper;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,11 +34,10 @@ import java.io.OutputStream;
  * Fork Maven to executed a series of goals.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.exec.MavenExecutor"
+ * @plexus.component role="org.apache.maven.shared.release.exec.MavenExecutor" role-hint="forked-path"
  */
 public class ForkedMavenExecutor
-    extends AbstractLogEnabled
-    implements MavenExecutor
+    extends AbstractMavenExecutor
 {
     /**
      * Command line factory.
@@ -54,8 +49,13 @@ public class ForkedMavenExecutor
     /**
      * @noinspection UseOfSystemOutOrSystemErr
      */
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
-                              String pomFileName, ReleaseResult relResult )
+    public void executeGoals( File workingDirectory,
+                              String goals,
+                              ReleaseEnvironment releaseEnvironment,
+                              boolean interactive,
+                              String additionalArguments,
+                              String pomFileName,
+                              ReleaseResult relResult )
         throws MavenExecutorException
     {
         Commandline cl = commandLineFactory.createCommandLine( "mvn" );
@@ -66,7 +66,7 @@ public class ForkedMavenExecutor
 
         if ( pomFileName != null )
         {
-            cl.createArgument().setLine( "-f " + pomFileName );
+            cl.createArg().setLine( "-f " + pomFileName );
         }
 
         if ( goals != null )
@@ -76,20 +76,20 @@ public class ForkedMavenExecutor
 
             for ( int i = 0; i < tokens.length; ++i )
             {
-                cl.createArgument().setValue( tokens[i] );
+                cl.createArg().setValue( tokens[i] );
             }
         }
 
-        cl.createArgument().setValue( "--no-plugin-updates" );
+        cl.createArg().setValue( "--no-plugin-updates" );
 
         if ( !interactive )
         {
-            cl.createArgument().setValue( "--batch-mode" );
+            cl.createArg().setValue( "--batch-mode" );
         }
 
         if ( !StringUtils.isEmpty( additionalArguments ) )
         {
-            cl.createArgument().setLine( additionalArguments );
+            cl.createArg().setLine( additionalArguments );
         }
 
         TeeOutputStream stdOut = new TeeOutputStream( System.out );
@@ -100,7 +100,7 @@ public class ForkedMavenExecutor
         {
             relResult.appendInfo( "Executing: " + cl.toString() );
             getLogger().info( "Executing: " + cl.toString() );
-            
+
             int result = executeCommandLine( cl, System.in, stdOut, stdErr );
 
             if ( result != 0 )
@@ -119,7 +119,11 @@ public class ForkedMavenExecutor
         }
     }
 
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String arguments,
+    public void executeGoals( File workingDirectory,
+                              String goals,
+                              ReleaseEnvironment releaseEnvironment,
+                              boolean interactive,
+                              String arguments,
                               ReleaseResult result )
         throws MavenExecutorException
     {
@@ -130,11 +134,11 @@ public class ForkedMavenExecutor
     {
         this.commandLineFactory = commandLineFactory;
     }
-    
-    
-    
-    
-    public static int executeCommandLine( Commandline cl, InputStream systemIn, 
+
+
+
+
+    public static int executeCommandLine( Commandline cl, InputStream systemIn,
                                           OutputStream systemOut, OutputStream systemErr )
         throws CommandLineException
     {
@@ -142,56 +146,56 @@ public class ForkedMavenExecutor
         {
             throw new IllegalArgumentException( "cl cannot be null." );
         }
-    
+
         Process p = cl.execute();
-    
+
         //processes.put( new Long( cl.getPid() ), p );
-    
+
         RawStreamPumper inputFeeder = null;
-    
+
         if ( systemIn != null )
         {
             inputFeeder = new RawStreamPumper( systemIn, p.getOutputStream(), true );
         }
-    
+
         RawStreamPumper outputPumper = new RawStreamPumper( p.getInputStream(), systemOut );
         RawStreamPumper errorPumper = new RawStreamPumper( p.getErrorStream(), systemErr );
-    
+
         if ( inputFeeder != null )
         {
             inputFeeder.start();
         }
-    
+
         outputPumper.start();
-    
+
         errorPumper.start();
-    
+
         try
         {
             int returnValue = p.waitFor();
-    
+
             if ( inputFeeder != null )
             {
                 inputFeeder.setDone();
             }
             outputPumper.setDone();
             errorPumper.setDone();
-    
+
             //processes.remove( new Long( cl.getPid() ) );
-    
+
             return returnValue;
         }
         catch ( InterruptedException ex )
         {
             //killProcess( cl.getPid() );
             throw new CommandLineException( "Error while executing external command, process killed.", ex );
-        } 
+        }
         finally
         {
             try
             {
                 errorPumper.closeInput();
-            } 
+            }
             catch ( IOException e )
             {
                 //ignore
@@ -199,7 +203,7 @@ public class ForkedMavenExecutor
             try
             {
                 outputPumper.closeInput();
-            } 
+            }
             catch ( IOException e )
             {
                 //ignore

@@ -32,6 +32,7 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
@@ -84,7 +85,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, null );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -95,7 +96,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, null );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -123,7 +124,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, null );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -134,7 +135,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, null );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -160,7 +161,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, null );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -171,7 +172,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, null );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -194,7 +195,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, null );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -205,7 +206,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, null );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -222,9 +223,9 @@ public class ScmCheckModificationsPhaseTest
 
         setChangedFiles( releaseDescriptor, Collections.EMPTY_LIST );
 
-        phase.execute( releaseDescriptor, null, null );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
-        phase.simulate( releaseDescriptor, null, null );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -238,9 +239,9 @@ public class ScmCheckModificationsPhaseTest
         setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties", "pom.xml.backup",
             "pom.xml.tag", "pom.xml.next" } ) );
 
-        phase.execute( releaseDescriptor, null, null );
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
-        phase.simulate( releaseDescriptor, null, null );
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -255,7 +256,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, null );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -266,7 +267,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, null );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -285,7 +286,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, null );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -296,7 +297,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, null );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -316,7 +317,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, null );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -327,7 +328,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, null, null );
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }

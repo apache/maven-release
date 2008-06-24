@@ -24,7 +24,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -140,7 +139,7 @@ public class StageReleaseMojo
 
             releaseDescriptor.setPerformGoals( goals );
 
-            releaseManager.perform( releaseDescriptor, settings, reactorProjects, false );
+            releaseManager.perform( releaseDescriptor, getReleaseEnvironment(), reactorProjects, false );
         }
         catch ( ReleaseExecutionException e )
         {

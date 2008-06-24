@@ -32,6 +32,7 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
@@ -94,7 +95,7 @@ public class ScmCommitPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.execute( descriptor, null, reactorProjects );
+        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -127,7 +128,7 @@ public class ScmCommitPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.execute( descriptor, null, reactorProjects );
+        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -155,7 +156,7 @@ public class ScmCommitPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.execute( descriptor, null, reactorProjects );
+        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -168,7 +169,7 @@ public class ScmCommitPhaseTest
 
         try
         {
-            phase.execute( descriptor, null, reactorProjects );
+            phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
             fail( "Should have thrown an exception" );
         }
         catch ( ReleaseFailureException e )
@@ -192,17 +193,17 @@ public class ScmCommitPhaseTest
         files.add( rootProject.getFile() );
         files.add( ReleaseUtil.getReleasePom( rootProject ) );
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), files );
-    
+
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments = new Constraint[] { new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
             new IsEqual( PREFIX + "release-label" ) };
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will(
             new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
-    
+
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.execute( descriptor, null, reactorProjects );
+        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -223,7 +224,7 @@ public class ScmCommitPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        phase.simulate( descriptor, null, reactorProjects );
+        phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -236,7 +237,7 @@ public class ScmCommitPhaseTest
 
         try
         {
-            phase.simulate( descriptor, null, reactorProjects );
+            phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
             fail( "Should have thrown an exception" );
         }
         catch ( ReleaseFailureException e )
@@ -262,7 +263,7 @@ public class ScmCommitPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -289,7 +290,7 @@ public class ScmCommitPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -314,7 +315,7 @@ public class ScmCommitPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -338,7 +339,7 @@ public class ScmCommitPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, null, reactorProjects );
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Commit should have failed" );
         }

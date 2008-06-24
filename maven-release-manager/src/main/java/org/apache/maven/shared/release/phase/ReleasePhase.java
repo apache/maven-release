@@ -24,6 +24,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 import java.util.List;
 
@@ -43,10 +44,36 @@ public interface ReleasePhase
      * Execute the phase.
      *
      * @param releaseDescriptor the configuration to use
+     * @param releaseEnvironment the environmental configuration, such as Maven settings, Maven home, etc.
+     * @param reactorProjects   the reactor projects
+     * @throws ReleaseExecutionException an exception during the execution of the phase
+     * @throws ReleaseFailureException   a failure during the execution of the phase
+     */
+    ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
+    /**
+     * Simulate the phase, but don't make any changes to the project.
+     *
+     * @param releaseDescriptor the configuration to use
+     * @param releaseEnvironment the environmental configuration, such as Maven settings, Maven home, etc.
+     * @param reactorProjects   the reactor projects
+     * @throws ReleaseExecutionException an exception during the execution of the phase
+     * @throws ReleaseFailureException   a failure during the execution of the phase
+     */
+    ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
+    /**
+     * Execute the phase.
+     *
+     * @param releaseDescriptor the configuration to use
      * @param settings          the settings.xml configuration
      * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
+     *
+     * @deprecated Use {@link ReleasePhase#execute(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
      */
     ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
@@ -59,6 +86,8 @@ public interface ReleasePhase
      * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
+     *
+     * @deprecated Use {@link ReleasePhase#simulate(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
      */
     ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;

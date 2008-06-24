@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -79,7 +80,7 @@ public class RestoreBackupPomsPhaseTest
 
         ReleaseDescriptor desc = new ReleaseDescriptor();
         desc.setScmSourceUrl( "scm:svn:http://myhost/myrepo" );
-        phase.execute( desc, null, projects );
+        phase.execute( desc, new DefaultReleaseEnvironment(), projects );
 
         testProjectIsRestored( projects );
     }

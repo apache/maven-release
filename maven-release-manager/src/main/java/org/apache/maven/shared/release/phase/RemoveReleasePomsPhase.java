@@ -19,28 +19,28 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * Remove release POMs.
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="remove-release-poms"
@@ -48,19 +48,19 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 public class RemoveReleasePomsPhase
     extends AbstractReleasePomsPhase
 {
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseFailureException, ReleaseExecutionException
     {
-        return execute( releaseDescriptor, settings, reactorProjects, false );
+        return execute( releaseDescriptor, releaseEnvironment, reactorProjects, false );
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseFailureException, ReleaseExecutionException
     {
-        return execute( releaseDescriptor, settings, reactorProjects, true );
+        return execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
-    private ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects,
+    private ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
                                    boolean simulate )
         throws ReleaseFailureException, ReleaseExecutionException
     {
@@ -70,7 +70,7 @@ public class RemoveReleasePomsPhase
         {
             logInfo( result, "Removing release POMs..." );
 
-            removeReleasePoms( releaseDescriptor, settings, simulate, result, reactorProjects );
+            removeReleasePoms( releaseDescriptor, releaseEnvironment, simulate, result, reactorProjects );
         }
         else
         {
@@ -82,7 +82,7 @@ public class RemoveReleasePomsPhase
         return result;
     }
 
-    private void removeReleasePoms( ReleaseDescriptor releaseDescriptor, Settings settings, boolean simulate,
+    private void removeReleasePoms( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, boolean simulate,
                                     ReleaseResult result, List projects )
         throws ReleaseFailureException, ReleaseExecutionException
     {
@@ -97,10 +97,10 @@ public class RemoveReleasePomsPhase
             releasePoms.add( ReleaseUtil.getReleasePom( project ) );
         }
 
-        removeReleasePomsFromScm( releaseDescriptor, settings, simulate, result, releasePoms );
+        removeReleasePomsFromScm( releaseDescriptor, releaseEnvironment, simulate, result, releasePoms );
     }
-    
-    private void removeReleasePomsFromScm( ReleaseDescriptor releaseDescriptor, Settings settings, boolean simulate,
+
+    private void removeReleasePomsFromScm( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, boolean simulate,
                                            ReleaseResult result, List releasePoms )
         throws ReleaseFailureException, ReleaseExecutionException
     {
@@ -110,7 +110,7 @@ public class RemoveReleasePomsPhase
         }
         else
         {
-            ScmRepository scmRepository = getScmRepository( releaseDescriptor, settings );
+            ScmRepository scmRepository = getScmRepository( releaseDescriptor, releaseEnvironment );
             ScmProvider scmProvider = getScmProvider( scmRepository );
 
             ScmFileSet scmFileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), releasePoms );

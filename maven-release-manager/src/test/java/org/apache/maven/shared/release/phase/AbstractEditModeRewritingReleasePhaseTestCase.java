@@ -26,6 +26,7 @@ import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
@@ -51,7 +52,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         config.setScmUseEditMode( true );
         mapNextVersion( config, "groupId:artifactId" );
 
-        phase.execute( config, null, reactorProjects );
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -74,7 +75,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
@@ -104,7 +105,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
 
         try
         {
-            phase.execute( config, null, reactorProjects );
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have thrown an exception" );
         }
