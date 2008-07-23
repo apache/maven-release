@@ -154,7 +154,15 @@ public class InvokerMavenExecutor
                                String additionalArguments )
         throws MavenExecutorException
     {
-        String[] args = additionalArguments.split( " " );
+        String[] args;
+        if ( additionalArguments == null )
+        {
+            args = new String[0];
+        }
+        else
+        {
+            args = additionalArguments.split( " " );
+        }
         try
         {
             CommandLine cli = new PosixParser().parse( OPTIONS, args );
@@ -185,7 +193,7 @@ public class InvokerMavenExecutor
             {
                 req.setDebug( true );
             }
-            else if ( cli.hasOption(  ERRORS ) )
+            else if ( cli.hasOption( ERRORS ) )
             {
                 req.setShowErrors( true );
             }
@@ -212,7 +220,7 @@ public class InvokerMavenExecutor
 
                 if ( profiles != null )
                 {
-                    for ( int i=0; i < profiles.length; ++i )
+                    for ( int i = 0; i < profiles.length; ++i )
                     {
                         StringTokenizer profileTokens = new StringTokenizer( profiles[i], "," );
 
@@ -238,7 +246,10 @@ public class InvokerMavenExecutor
 
                 if ( !deactivatedProfiles.isEmpty() )
                 {
-                    getLogger().warn( "Explicit profile deactivation is not yet supported. The following profiles will NOT be deactivated: " + StringUtils.join( deactivatedProfiles.iterator(), ", " ) );
+                    getLogger().warn(
+                                      "Explicit profile deactivation is not yet supported. "
+                                          + "The following profiles will NOT be deactivated: "
+                                          + StringUtils.join( deactivatedProfiles.iterator(), ", " ) );
                 }
 
                 if ( !activatedProfiles.isEmpty() )
