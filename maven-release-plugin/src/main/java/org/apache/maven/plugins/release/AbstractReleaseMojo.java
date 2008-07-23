@@ -162,7 +162,7 @@ public abstract class AbstractReleaseMojo
     /**
      * Role-hint of the {@link MavenExecutor} implementation to use.
      *
-     * @parameter
+     * @parameter default-value="invoker"
      */
     protected String mavenExecutorId;
 
