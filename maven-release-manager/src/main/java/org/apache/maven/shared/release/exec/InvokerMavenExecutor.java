@@ -349,22 +349,14 @@ public class InvokerMavenExecutor
         {
             InvocationResult invocationResult = invoker.execute( req );
 
-            if ( invocationResult.getExitCode() == 0 )
+            if ( invocationResult.getExecutionException() != null )
             {
-                result.setResultCode( ReleaseResult.SUCCESS );
+                throw new MavenExecutorException( "Error executing Maven.", invocationResult.getExecutionException() );
             }
-            else
+            if ( invocationResult.getExitCode() != 0 )
             {
-                if ( invocationResult.getExecutionException() != null )
-                {
-                    getLogger().error( "Error executing Maven.", invocationResult.getExecutionException() );
-                }
-                else
-                {
-                    getLogger().error( "Maven invocation exited with code: " + invocationResult.getExitCode() );
-                }
-
-                result.setResultCode( ReleaseResult.ERROR );
+                throw new MavenExecutorException( "Maven execution failed, exit code: \'"
+                    + invocationResult.getExitCode() + "\'", invocationResult.getExitCode(), "", "" );
             }
         }
         catch ( MavenInvocationException e )
