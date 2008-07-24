@@ -17,6 +17,7 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -154,17 +155,9 @@ public class InvokerMavenExecutor
                                String additionalArguments )
         throws MavenExecutorException
     {
-        String[] args;
-        if ( additionalArguments == null )
-        {
-            args = new String[0];
-        }
-        else
-        {
-            args = additionalArguments.split( " " );
-        }
         try
         {
+            String[] args = CommandLineUtils.translateCommandline( additionalArguments );
             CommandLine cli = new PosixParser().parse( OPTIONS, args );
 
             if ( cli.hasOption( SET_SYSTEM_PROPERTY ) )
@@ -294,7 +287,7 @@ public class InvokerMavenExecutor
                 req.setFailureBehavior( InvocationRequest.REACTOR_FAIL_NEVER );
             }
         }
-        catch ( ParseException e )
+        catch ( Exception e )
         {
             throw new MavenExecutorException( "Failed to re-parse additional arguments for Maven invocation.", e );
         }
