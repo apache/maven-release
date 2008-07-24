@@ -3,7 +3,6 @@ package org.apache.maven.shared.release.exec;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.DefaultInvoker;
@@ -66,6 +65,8 @@ public class InvokerMavenExecutor
     private static final char CHECKSUM_FAILURE_POLICY = 'C';
 
     private static final char CHECKSUM_WARNING_POLICY = 'c';
+
+    private static final char ALTERNATE_USER_SETTINGS = 's';
 
     private static final String FAIL_FAST = "ff";
 
@@ -136,6 +137,10 @@ public class InvokerMavenExecutor
         OPTIONS.addOption( OptionBuilder.withLongOpt( "lax-checksums" )
                                         .withDescription( "Warn if checksums don't match" )
                                         .create( CHECKSUM_WARNING_POLICY ) );
+
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "settings" )
+                                        .withDescription( "Alternate path for the user settings file" ).hasArg()
+                                        .create( ALTERNATE_USER_SETTINGS ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "fail-fast" )
                                         .withDescription( "Stop at first failure in reactorized builds" )
@@ -274,6 +279,11 @@ public class InvokerMavenExecutor
                 req.setGlobalChecksumPolicy( InvocationRequest.CHECKSUM_POLICY_WARN );
             }
 
+            if ( cli.hasOption( ALTERNATE_USER_SETTINGS ) )
+            {
+                req.setUserSettingsFile( new File( cli.getOptionValue( ALTERNATE_USER_SETTINGS ) ) );
+            }
+
             if ( cli.hasOption( FAIL_AT_END ) )
             {
                 req.setFailureBehavior( InvocationRequest.REACTOR_FAIL_AT_END );
@@ -321,6 +331,7 @@ public class InvokerMavenExecutor
 
         if ( releaseEnvironment.getSettings() != null )
         {
+            // FIXME: This is effectively useless, since getFile() always returns null
             req.setUserSettingsFile( releaseEnvironment.getSettings().getRuntimeInfo().getFile() );
         }
 
