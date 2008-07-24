@@ -85,51 +85,66 @@
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-manager-plexus</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.scm</groupId>
+      <artifactId>maven-scm-provider-svn-commons</artifactId>
+      <version>1.0</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-bazaar</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-clearcase</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-cvsexe</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-cvsjava</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-hg</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-perforce</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-starteam</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-svnexe</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-synergy</artifactId>
       <version>1.0</version>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>jdom</groupId>
@@ -140,6 +155,7 @@
       <groupId>jaxen</groupId>
       <artifactId>jaxen</artifactId>
       <version>1.1-beta-8</version>
+      <scope>runtime</scope>
       <exclusions>
         <exclusion>
           <groupId>dom4j</groupId>
@@ -161,6 +177,12 @@
     </dependency>
 
     <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.2</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <version>1.0-beta-1</version>
@@ -170,6 +192,12 @@
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-test</artifactId>
       <version>1.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>jmock</groupId>
+      <artifactId>jmock</artifactId>
+      <version>1.0.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
