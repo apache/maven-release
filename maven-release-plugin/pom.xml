@@ -29,6 +29,8 @@
   <artifactId>maven-release-plugin</artifactId>
   <packaging>maven-plugin</packaging>
   <name>Maven Release Plugin</name>
+  <description>This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.</description>
+  <url>http://maven.apache.org/plugins/maven-release-plugin/</url>
   <version>2.0-beta-8-SNAPSHOT</version>
   <prerequisites>
     <maven>2.0.6</maven>
@@ -114,7 +116,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>2.4.2</version>
         <executions>
           <execution>
             <id>generated-helpmojo</id>
@@ -131,7 +133,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
-        <version>2.4.1</version>
+        <version>2.4.2</version>
       </plugin>
     </plugins>
   </reporting>
