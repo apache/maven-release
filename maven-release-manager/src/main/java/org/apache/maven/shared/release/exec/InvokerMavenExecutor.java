@@ -155,6 +155,7 @@ public class InvokerMavenExecutor
                                         .create( FAIL_NEVER ) );
     }
 
+    // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
     private void setupRequest( InvocationRequest req,
                                LoggerBridge bridge,
                                String additionalArguments )
@@ -171,8 +172,20 @@ public class InvokerMavenExecutor
                 Properties props = new Properties();
                 for ( int i = 0; i < properties.length; i++ )
                 {
-                    String[] parts = properties[i].split( "=" );
-                    props.setProperty( parts[0], parts[1] );
+                    String property = properties[i];
+                    String name, value;
+                    int sep = property.indexOf( "=" );
+                    if ( sep <= 0 )
+                    {
+                        name = property.trim();
+                        value = "true";
+                    }
+                    else
+                    {
+                        name = property.substring( 0, sep ).trim();
+                        value = property.substring( sep + 1 ).trim();
+                    }
+                    props.setProperty( name, value );
                 }
 
                 req.setProperties( props );
