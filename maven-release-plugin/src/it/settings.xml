@@ -26,7 +26,8 @@
       </activation>
       <repositories>
         <repository>
-          <id>local.central</id>
+          <!-- TODO: Change repo id to "local" once Invoker Plugin 1.3 is used (MINVOKER-43) -->
+          <id>it-repo</id>
           <url>file://@localRepository@</url>
           <releases>
             <enabled>true</enabled>
@@ -38,7 +39,8 @@
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <id>local.central</id>
+          <!-- TODO: Change repo id to "local" once Invoker Plugin 1.3 is used (MINVOKER-43) -->
+          <id>it-repo</id>
           <url>file://@localRepository@</url>
           <releases>
             <enabled>true</enabled>
