@@ -145,6 +145,7 @@
   </distributionManagement>
 
   <profiles>
+    <!-- TODO: Enable once MINVOKER-43 is released and the staging works reliably
     <profile>
       <id>integration-tests</id>
       <activation>
@@ -208,5 +209,6 @@
         </plugins>
       </build>
     </profile>
+    -->
   </profiles>
 </project>
