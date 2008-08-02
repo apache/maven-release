@@ -42,7 +42,7 @@
   <scm>
     <connection>scm:svn:http://svn.apache.org/repos/asf/maven/release/trunk</connection>
     <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/release/trunk</developerConnection>
-    <url>http://svn.apache.org/viewcvs.cgi/maven/release/trunk</url>
+    <url>http://svn.apache.org/viewvc/maven/release/trunk</url>
   </scm>
   <build>
     <pluginManagement>
