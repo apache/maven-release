@@ -26,6 +26,7 @@ import org.codehaus.plexus.util.StringUtils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -233,8 +234,8 @@ public class DefaultVersionInfo
         else
         {
             // TODO: this is a workaround for a bug in DefaultArtifactVersion - fix there - it should not consider case in comparing the qualifier
-            String thisVersion = strVersion.toLowerCase();
-            String thatVersion = that.strVersion.toLowerCase();
+            String thisVersion = strVersion.toUpperCase( Locale.ENGLISH ).toLowerCase( Locale.ENGLISH );
+            String thatVersion = that.strVersion.toUpperCase( Locale.ENGLISH ).toLowerCase( Locale.ENGLISH );
 
             result = new DefaultArtifactVersion( thisVersion ).compareTo( new DefaultArtifactVersion( thatVersion ) );
         }

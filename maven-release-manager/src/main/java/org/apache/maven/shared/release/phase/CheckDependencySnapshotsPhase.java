@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -178,7 +179,7 @@ public class CheckDependencySnapshotsPhase
                                 result = "yes";
                             }
 
-                            if ( result.toLowerCase().startsWith( "y" ) )
+                            if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
                             {
                                 addToFailures = false;
                                 releaseDescriptor.setSnapshotReleasePluginAllowed( true );
@@ -319,7 +320,7 @@ public class CheckDependencySnapshotsPhase
             String result =
                 prompter.prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( new String[]{"yes", "no"} ), "no" );
 
-            if ( result.toLowerCase().startsWith( "y" ) )
+            if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
             {
                 Set snapshotSet = new HashSet();
                 Map resolvedSnapshots = null;
@@ -327,7 +328,7 @@ public class CheckDependencySnapshotsPhase
                 result = prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT,
                                           Arrays.asList( new String[]{"0", "1", "2", "3"} ), "1" );
 
-                switch ( Integer.parseInt( result.toLowerCase() ) )
+                switch ( Integer.parseInt( result.toLowerCase( Locale.ENGLISH ) ) )
                 {
                     // all
                     case 0:
@@ -391,7 +392,7 @@ public class CheckDependencySnapshotsPhase
             String result = prompter.prompt( "'" + versionlessKey + "' set to release?",
                 Arrays.asList( new String[] { "yes", "no" } ), "yes" );
 
-            if ( result.toLowerCase().startsWith( "y" ) )
+            if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
             {
                 iterator.remove();
 
