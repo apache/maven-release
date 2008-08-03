@@ -234,6 +234,7 @@ public class DefaultVersionInfo
         else
         {
             // TODO: this is a workaround for a bug in DefaultArtifactVersion - fix there - it should not consider case in comparing the qualifier
+            // NOTE: The combination of upper-casing and lower-casing is an approximation of String.equalsIgnoreCase()
             String thisVersion = strVersion.toUpperCase( Locale.ENGLISH ).toLowerCase( Locale.ENGLISH );
             String thatVersion = that.strVersion.toUpperCase( Locale.ENGLISH ).toLowerCase( Locale.ENGLISH );
 
