@@ -19,26 +19,38 @@
   -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
   <parent>
     <groupId>org.apache.maven.release</groupId>
     <artifactId>maven-release</artifactId>
     <version>5-SNAPSHOT</version>
   </parent>
-  <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-release-plugin</artifactId>
+  <version>2.0-beta-8-SNAPSHOT</version>
   <packaging>maven-plugin</packaging>
+
   <name>Maven Release Plugin</name>
   <description>This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.</description>
   <url>http://maven.apache.org/plugins/maven-release-plugin/</url>
-  <version>2.0-beta-8-SNAPSHOT</version>
+
   <prerequisites>
     <maven>2.0.6</maven>
   </prerequisites>
+
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MRELEASE</url>
   </issueManagement>
+  <distributionManagement>
+    <site>
+      <id>apache.website</id>
+      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-release-plugin</url>
+    </site>
+  </distributionManagement>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -98,6 +110,7 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
   <build>
     <plugins>
       <plugin>
@@ -128,6 +141,7 @@
       </plugin>
     </plugins>
   </build>
+
   <reporting>
     <plugins>
       <plugin>
@@ -137,12 +151,6 @@
       </plugin>
     </plugins>
   </reporting>
-  <distributionManagement>
-    <site>
-      <id>apache.website</id>
-      <url>scp://people.apache.org/www/maven.apache.org/plugins/maven-release-plugin</url>
-    </site>
-  </distributionManagement>
 
   <profiles>
     <!-- TODO: Enable once MINVOKER-43 is released and the staging works reliably
