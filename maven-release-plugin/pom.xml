@@ -90,7 +90,7 @@
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
-      <version>1.0</version>
+      <version>${scmVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
