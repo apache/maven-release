@@ -141,7 +141,7 @@
     </dependency>    
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-commons</artifactId>
+      <artifactId>maven-scm-provider-git-commons</artifactId>
       <version>${scmVersion}</version>
       <scope>runtime</scope>
     </dependency>    
