@@ -152,13 +152,13 @@ public abstract class AbstractRewritePomsPhase
                  * fail. So let's try harder. Maybe some day, when JDOM offers a StaxBuilder and this builder employes
                  * XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE, this whole mess can be avoided.
                  */
-                final String SPACE = "\\s+";
-                final String XML = "<\\?(?:(?:[^\"'>]+)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*>";
-                final String INTSUB = "\\[(?:(?:[^\"'\\]]+)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*\\]";
+                final String SPACE = "\\s++";
+                final String XML = "<\\?(?:(?:[^\"'>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+>";
+                final String INTSUB = "\\[(?:(?:[^\"'\\]]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+\\]";
                 final String DOCTYPE =
-                    "<!DOCTYPE(?:(?:[^\"'\\[>]+)|(?:\"[^\"]*+\")|(?:'[^\']*+')|(?:" + INTSUB + "))*>";
+                    "<!DOCTYPE(?:(?:[^\"'\\[>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+')|(?:" + INTSUB + "))*+>";
                 final String PI = XML;
-                final String COMMENT = "<!--(?:[^-]|(?:-[^-]))*-->";
+                final String COMMENT = "<!--(?:[^-]|(?:-[^-]))*+-->";
 
                 final String INTRO =
                     "(?:(?:" + SPACE + ")|(?:" + XML + ")|(?:" + DOCTYPE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
