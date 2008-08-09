@@ -264,6 +264,7 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <argLine>-Xmx128m</argLine>
           <excludes>
             <!-- Disabled for now - we can't mock classes from plexus-utils in surefire -->
             <exclude>**/ForkedMavenExecutorTest.java</exclude>
