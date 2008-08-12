@@ -79,6 +79,9 @@
 
   <properties>
     <organization.logo>http://www.apache.org/images/asf_logo_wide.gif</organization.logo>
+    <empty0 />
+    <empty1 />
+    <empty2 />
   </properties>
 
   <profiles>
