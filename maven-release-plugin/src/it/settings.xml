@@ -26,11 +26,21 @@
       </activation>
       <repositories>
         <repository>
-          <!-- TODO: Change repo id to "local" once Invoker Plugin 1.3 is used (MINVOKER-43) -->
-          <id>it-repo</id>
-          <url>file://@localRepository@</url>
+          <id>local.central</id>
+          <url>file:///@localRepository@</url>
           <releases>
             <enabled>true</enabled>
+          </releases>
+          <snapshots>
+            <enabled>true</enabled>
+          </snapshots>
+        </repository>
+        <repository>
+          <id>apache.snapshots</id>
+          <name>Apache Snapshot Repository</name>
+          <url>http://people.apache.org/repo/m2-snapshot-repository</url>
+          <releases>
+            <enabled>false</enabled>
           </releases>
           <snapshots>
             <enabled>true</enabled>
@@ -39,9 +49,8 @@
       </repositories>
       <pluginRepositories>
         <pluginRepository>
-          <!-- TODO: Change repo id to "local" once Invoker Plugin 1.3 is used (MINVOKER-43) -->
-          <id>it-repo</id>
-          <url>file://@localRepository@</url>
+          <id>local.central</id>
+          <url>file:///@localRepository@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
