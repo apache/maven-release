@@ -36,7 +36,7 @@
   <name>Maven Release</name>
 
   <properties>
-    <scmVersion>1.1-SNAPSHOT</scmVersion>
+    <scmVersion>1.1</scmVersion>
   </properties>
 
   <modules>
