@@ -33,12 +33,14 @@ Maven Release Plugin
 
   * {{{clean-mojo.html}release:clean}} Clean up after a release preparation.
 
-  * {{{perform-mojo.html}release:perform}} Perform a release from SCM
-
   * {{{prepare-mojo.html}release:prepare}} Prepare for a release in SCM.
 
   * {{{rollback-mojo.html}release:rollback}} Rollback a previous release.
 
+  * {{{perform-mojo.html}release:perform}} Perform a release from SCM
+
+  * {{{stage-mojo.html}release:stage}} Perform a release from SCM into a staging folder/repository
+  
   * {{{branch-mojo.html}release:branch}} Create a branch of the current project with all versions updated.
 
 * Usage
