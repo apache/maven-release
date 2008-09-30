@@ -27,7 +27,7 @@
       <repositories>
         <repository>
           <id>local.central</id>
-          <url>file:///@localRepository@</url>
+          <url>@localRepositoryUrl@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
@@ -50,7 +50,7 @@
       <pluginRepositories>
         <pluginRepository>
           <id>local.central</id>
-          <url>file:///@localRepository@</url>
+          <url>@localRepositoryUrl@</url>
           <releases>
             <enabled>true</enabled>
           </releases>
