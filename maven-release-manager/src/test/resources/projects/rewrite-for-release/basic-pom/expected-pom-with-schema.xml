@@ -36,4 +36,6 @@
   a multi-line
   comment
   -->
+
+  <?processing-instruction attrib="value"?>
 </project>
