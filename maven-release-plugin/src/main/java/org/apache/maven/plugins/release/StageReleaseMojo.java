@@ -51,14 +51,14 @@ public class StageReleaseMojo
     /**
      * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
      * 
-     * @parameter
+     * @parameter expression="${releaseProfiles}"
      */
     private String releaseProfiles;
 
     /**
      * The checkout directory.
      * 
-     * @parameter default-value="${project.build.directory}/checkout"
+     * @parameter expression="${workingDirectory}" default-value="${project.build.directory}/checkout"
      * @required
      */
     private File workingDirectory;
