@@ -33,10 +33,15 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  * @since 2.0-beta-5
  *
  * @author Edwin Punzalan
+ * @version $Id$
  */
 public class RollbackReleaseMojo
     extends AbstractReleaseMojo
 {
+
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -57,4 +62,5 @@ public class RollbackReleaseMojo
             throw new MojoFailureException( e.getMessage() );
         }
     }
+
 }

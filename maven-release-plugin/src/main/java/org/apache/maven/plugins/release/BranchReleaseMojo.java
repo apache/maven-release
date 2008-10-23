@@ -104,6 +104,9 @@ public class BranchReleaseMojo
      */
     private boolean addSchema;
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

@@ -45,93 +45,95 @@ public class PrepareReleaseMojo
 
     /**
      * Resume a previous release attempt from the point where it was stopped.
-     *
+     * 
      * @parameter expression="${resume}" default-value="true"
      */
     private boolean resume;
 
     /**
      * Whether to generate <code>release-pom.xml</code> files that contain resolved information about the project.
-     *
+     * 
      * @parameter default-value="false" expression="${generateReleasePoms}"
      */
     private boolean generateReleasePoms;
 
     /**
      * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
-     *
+     * 
      * @parameter expression="${useEditMode}" default-value="false"
      */
     private boolean useEditMode;
 
     /**
      * Whether to update dependencies version to the next development version.
-     *
+     * 
      * @parameter expression="${updateDependencies}" default-value="true"
      */
     private boolean updateDependencies;
 
     /**
-     * Whether to automatically assign submodules the parent version.  If set to false,
-     * the user will be prompted for the version of each submodules.
-     *
+     * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
+     * version of each submodules.
+     * 
      * @parameter expression="${autoVersionSubmodules}" default-value="false"
      */
     private boolean autoVersionSubmodules;
 
     /**
-     * Dry run: don't checkin or tag anything in the scm repository, or modify the checkout.
-     * Running <code>mvn -DdryRun=true release:prepare</code> is useful in order to check that modifications to
-     * poms and scm operations (only listed on the console) are working as expected.
-     * Modified POMs are written alongside the originals without modifying them.
-     *
+     * Dry run: don't checkin or tag anything in the scm repository, or modify the checkout. Running
+     * <code>mvn -DdryRun=true release:prepare</code> is useful in order to check that modifications to poms and scm
+     * operations (only listed on the console) are working as expected. Modified POMs are written alongside the
+     * originals without modifying them.
+     * 
      * @parameter expression="${dryRun}" default-value="false"
      */
     private boolean dryRun;
 
     /**
      * Whether to add a schema to the POM if it was previously missing on release.
-     *
+     * 
      * @parameter expression="${addSchema}" default-value="true"
      */
     private boolean addSchema;
 
     /**
-     * Goals to run as part of the preparation step, after transformation but before committing.
-     * Space delimited.
-     *
+     * Goals to run as part of the preparation step, after transformation but before committing. Space delimited.
+     * 
      * @parameter expression="${preparationGoals}" default-value="clean verify"
      */
     private String preparationGoals;
 
     /**
      * Commits to do are atomic or by project.
-     *
+     * 
      * @parameter expression="${commitByProject}" default-value="false"
      */
     private boolean commitByProject;
 
     /**
-     * Whether to allow timestamped SNAPSHOT dependencies.  Default is to fail when finding any SNAPSHOT.
-     *
+     * Whether to allow timestamped SNAPSHOT dependencies. Default is to fail when finding any SNAPSHOT.
+     * 
      * @parameter expression="${ignoreSnapshots}" default-value="false"
      */
     private boolean allowTimestampedSnapshots;
 
     /**
      * Default version to use when preparing a release or a branch.
-     *
+     * 
      * @parameter expression="${releaseVersion}"
      */
     private String releaseVersion;
 
     /**
      * Default version to use for new local working copy.
-     *
+     * 
      * @parameter expression="${developmentVersion}"
      */
     private String developmentVersion;
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -150,7 +152,8 @@ public class PrepareReleaseMojo
         config.setDefaultDevelopmentVersion( developmentVersion );
 
         // Create a config containing values from the system properties (command line properties).
-        ReleaseDescriptor sysPropertiesConfig = ReleaseUtils.copyPropertiesToReleaseDescriptor( System.getProperties() );
+        ReleaseDescriptor sysPropertiesConfig
+                = ReleaseUtils.copyPropertiesToReleaseDescriptor( System.getProperties() );
         mergeCommandLineConfig( config, sysPropertiesConfig );
 
         try
@@ -168,11 +171,12 @@ public class PrepareReleaseMojo
     }
 
     /**
-     * This method takes some of the release configuration picked up from the command line
-     * system properties and copies it into the release config object.
-     *
-     * @param config
-     * @param sysPropertiesConfig
+     * This method takes some of the release configuration picked up from the command line system properties and copies
+     * it into the release config object.
+     * 
+     * @param config The release configuration to merge the system properties into, must not be <code>null</code>.
+     * @param sysPropertiesConfig The configuration from the system properties to merge in, must not be
+     *            <code>null</code>.
      */
     private void mergeCommandLineConfig( ReleaseDescriptor config, ReleaseDescriptor sysPropertiesConfig )
     {

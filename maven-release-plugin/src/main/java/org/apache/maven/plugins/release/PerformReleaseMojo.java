@@ -42,65 +42,65 @@ public class PerformReleaseMojo
     extends AbstractReleaseMojo
 {
     /**
-     * A comma or space separated list of goals to execute on deployment.
-     *
-     * Default value is either <code>deploy</code> or
-     * <code>deploy site-deploy</code>, if the project has a
-     * &lt;distributionManagement&gt;/&lt;site&gt; element.
-     *
+     * A comma or space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
+     * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
+     * 
      * @parameter expression="${goals}"
      */
     private String goals;
 
-	/**
-     * Comma separated profiles to enable on deployment, in addition to active profiles
-	 * for project execution.
-     *
+    /**
+     * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
+     * 
      * @parameter
      */
     private String releaseProfiles;
 
     /**
      * The checkout directory.
-     *
+     * 
      * @parameter default-value="${project.build.directory}/checkout"
      * @required
      */
     private File workingDirectory;
 
     /**
-     * The SCM URL to checkout from. If omitted, the one from the
-     * <code>release.properties</code> file is used, followed by the URL
-     * from the current POM.
-     *
+     * The SCM URL to checkout from. If omitted, the one from the <code>release.properties</code> file is used, followed
+     * by the URL from the current POM.
+     * 
      * @parameter expression="${connectionUrl}"
      */
     private String connectionUrl;
 
     /**
-     * Whether to use the release profile that adds sources and javadocs to the
-     * released artifact, if appropriate.
-     *
+     * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
+     * 
      * @parameter expression="${useReleaseProfile}" default-value="true"
      */
     private boolean useReleaseProfile;
 
-	protected String getAdditionalProfiles()
-	{
-		return releaseProfiles;
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected String getAdditionalProfiles()
+    {
+        return releaseProfiles;
+    }
 
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
         super.execute();
 
-		// goals may be splitted into multiple line in configuration.
-		// Let's build a single line command
-		if ( goals != null )
-		{
-			goals = StringUtils.join( StringUtils.split( goals ), " " );
-		}
+        // goals may be splitted into multiple line in configuration.
+        // Let's build a single line command
+        if ( goals != null )
+        {
+            goals = StringUtils.join( StringUtils.split( goals ), " " );
+        }
 
         try
         {
@@ -118,8 +118,8 @@ public class PerformReleaseMojo
             {
                 // set default
                 goals = "deploy";
-                if ( project.getDistributionManagement() != null &&
-                    project.getDistributionManagement().getSite() != null )
+                if ( project.getDistributionManagement() != null
+                    && project.getDistributionManagement().getSite() != null )
                 {
                     goals += " site-deploy";
                 }

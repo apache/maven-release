@@ -34,6 +34,10 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 public class CleanReleaseMojo
     extends AbstractReleaseMojo
 {
+
+    /**
+     * {@inheritDoc}
+     */
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -43,4 +47,5 @@ public class CleanReleaseMojo
         releaseDescriptor.setWorkingDirectory( basedir.getAbsolutePath() );
         releaseManager.clean( releaseDescriptor, null, reactorProjects );
     }
+
 }
