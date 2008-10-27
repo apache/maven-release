@@ -24,11 +24,11 @@
   <parent>
     <groupId>org.apache.maven.release</groupId>
     <artifactId>maven-release</artifactId>
-    <version>5-SNAPSHOT</version>
+    <version>5</version>
   </parent>
 
   <artifactId>maven-release-manager</artifactId>
-  <version>1.0-alpha-5-SNAPSHOT</version>
+  <version>1.0-alpha-5</version>
 
   <name>Maven Release Manager</name>
 
@@ -329,7 +329,7 @@
             <configuration>
               <tasks>
                 <copy todir="${project.build.outputDirectory}" overwrite="true">
-                  <fileset dir="${plexusOutput}"/>
+                  <fileset dir="${plexusOutput}" />
                 </copy>
               </tasks>
             </configuration>
