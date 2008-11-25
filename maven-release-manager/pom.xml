@@ -292,7 +292,6 @@
       <plugin>
         <groupId>org.codehaus.plexus</groupId>
         <artifactId>plexus-maven-plugin</artifactId>
-        <version>1.3.3</version>
         <executions>
           <execution>
             <id>generate</id>
@@ -300,6 +299,7 @@
               <outputDirectory>${plexusOutput}</outputDirectory>
               <fileName>${componentsFileName}.tmp</fileName>
             </configuration>
+            <phase>process-sources</phase>
             <goals>
               <goal>descriptor</goal>
             </goals>
@@ -313,6 +313,7 @@
                 <descriptor>${plexusOutput}/${componentsFileName}.tmp</descriptor>
               </descriptors>
             </configuration>
+            <phase>generate-resources</phase>
             <goals>
               <goal>merge-descriptors</goal>
             </goals>
@@ -322,7 +323,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
-        <version>1.1</version>
         <executions>
           <execution>
             <phase>process-resources</phase>
