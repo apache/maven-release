@@ -60,6 +60,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.ArrayList;
 
 /**
  * Test the default release manager.
@@ -417,6 +418,23 @@ public class DefaultReleaseManagerTest
 
         assertTrue( true );
     }
+    
+    public void testReleasePerformWithResult() 
+        throws Exception
+    {
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        File checkoutDirectory = getTestFile( "target/checkout-directory" );
+        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        
+        ReleaseResult result = new ReleaseResult();
+        
+        result = releaseManager.performWithResult( releaseDescriptor, new DefaultReleaseEnvironment(),
+                                                   new ArrayList(), null );
+        assert( result.getOutput().length() > 0 );
+    }  
 
     public void testReleasePerformNoReleaseProfile()
         throws Exception

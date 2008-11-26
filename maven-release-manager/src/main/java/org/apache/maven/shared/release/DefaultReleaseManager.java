@@ -318,6 +318,8 @@ public class DefaultReleaseManager
         updateListener( listener, "perform", GOAL_START );
 
         releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, listener );
+        
+        ReleaseResult phaseResult = null;
 
         for ( Iterator phases = performPhases.iterator(); phases.hasNext(); )
         {
@@ -331,7 +333,8 @@ public class DefaultReleaseManager
             }
 
             updateListener( listener, name, PHASE_START );
-            phase.execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+            phaseResult = phase.execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+            result.getOutputBuffer().append( phaseResult.getOutput() );
             updateListener( listener, name, PHASE_END );
         }
 
