@@ -19,6 +19,13 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
@@ -29,13 +36,6 @@ import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Implementation of the release manager.
@@ -265,7 +265,7 @@ public class DefaultReleaseManager
     public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, releaseEnvironment, reactorProjects, null, false );
+        perform( releaseDescriptor, releaseEnvironment, reactorProjects, null, clean );
     }
 
     public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
