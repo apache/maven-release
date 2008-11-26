@@ -19,15 +19,15 @@ package org.apache.maven.shared.release.util;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.ReaderFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -69,7 +69,8 @@ public class ReleaseUtil
         File pom = project.getFile();
         File releasePom = getReleasePom( project );
 
-        if ( pom.equals( releasePom ))
+        // MRELEASE-273 : pom can be null here
+        if ( pom != null && pom.equals( releasePom ) )
         {
             pom = new File( pom.getParent(), POMv4 );
         }
@@ -86,7 +87,7 @@ public class ReleaseUtil
      * Gets the string contents of the specified XML file. Note: In contrast to an XML processor, the line separators in
      * the returned string will be normalized to use the platform's native line separator. This is basically to save
      * another normalization step when writing the string contents back to an XML file.
-     *
+     * 
      * @param file The path to the XML file to read in, must not be <code>null</code>.
      * @return The string contents of the XML file.
      * @throws IOException If the file could not be opened/read.
@@ -108,12 +109,12 @@ public class ReleaseUtil
 
     /**
      * Normalizes the line separators in the specified string.
-     *
+     * 
      * @param text The string to normalize, may be <code>null</code>.
      * @param separator The line separator to use for normalization, typically "\n" or "\r\n", must not be
      *            <code>null</code>.
-     * @return The input string with normalized line separators or <code>null</code> if the string was
-     *         <code>null</code>.
+     * @return The input string with normalized line separators or <code>null</code> if the string was <code>null</code>
+     *         .
      */
     public static String normalizeLineEndings( String text, String separator )
     {

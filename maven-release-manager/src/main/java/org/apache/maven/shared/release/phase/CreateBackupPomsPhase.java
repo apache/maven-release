@@ -68,9 +68,7 @@ public class CreateBackupPomsPhase
         {
             MavenProject project = (MavenProject) projects.next();
 
-            if ( project.getFile() != null )
-                // MRELEASE-273 : don't cleanup if there's no pom
-                deletePomBackup( project );
+            deletePomBackup( project );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );
