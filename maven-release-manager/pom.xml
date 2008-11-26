@@ -32,11 +32,6 @@
 
   <name>Maven Release Manager</name>
 
-  <properties>
-    <plexusOutput>${project.build.directory}/generated-resources/plexus</plexusOutput>
-    <componentsFileName>META-INF/plexus/components.xml</componentsFileName>
-  </properties>
-
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -94,8 +89,10 @@
 
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-api</artifactId>
+      <artifactId>maven-scm-providers-standard</artifactId>
       <version>${scmVersion}</version>
+      <type>pom</type>
+      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
@@ -105,81 +102,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-accurev</artifactId>
+      <artifactId>maven-scm-api</artifactId>
       <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>    
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-bazaar</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-clearcase</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-cvsexe</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-cvsjava</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-gitexe</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency> 
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-hg</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-perforce</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-starteam</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-provider-svn-commons</artifactId>
       <version>${scmVersion}</version>
     </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-svnexe</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-synergy</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.scm</groupId>
-      <artifactId>maven-scm-provider-vss</artifactId>
-      <version>${scmVersion}</version>
-      <scope>runtime</scope>
-    </dependency>    
+
     <dependency>
       <groupId>jdom</groupId>
       <artifactId>jdom</artifactId>
