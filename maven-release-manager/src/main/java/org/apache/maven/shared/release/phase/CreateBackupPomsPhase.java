@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -28,10 +32,6 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
 /**
  * @author Edwin Punzalan
  * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="create-backup-poms"
@@ -39,12 +39,13 @@ import java.util.List;
 public class CreateBackupPomsPhase
     extends AbstractBackupPomsPhase
 {
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
-        //remove previous backups, if any
+        // remove previous backups, if any
         clean( reactorProjects );
 
         for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
@@ -67,7 +68,9 @@ public class CreateBackupPomsPhase
         {
             MavenProject project = (MavenProject) projects.next();
 
-            deletePomBackup( project );
+            if ( project.getFile() != null )
+                // MRELEASE-273 : don't cleanup if there's no pom
+                deletePomBackup( project );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );
@@ -75,7 +78,8 @@ public class CreateBackupPomsPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
@@ -84,7 +88,7 @@ public class CreateBackupPomsPhase
     private void createPomBackup( MavenProject project )
         throws ReleaseExecutionException
     {
-        //delete any existing backup first
+        // delete any existing backup first
         deletePomBackup( project );
 
         try
