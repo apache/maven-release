@@ -66,11 +66,16 @@ public class ReleaseUtil
 
     public static File getStandardPom( MavenProject project )
     {
-        File pom = project.getFile();
-        File releasePom = getReleasePom( project );
+        if ( project == null )
+            return null;
 
-        // MRELEASE-273 : pom can be null here
-        if ( pom != null && pom.equals( releasePom ) )
+        File pom = project.getFile();
+
+        if ( pom == null )
+            return null;
+
+        File releasePom = getReleasePom( project );
+        if ( pom.equals( releasePom ) )
         {
             pom = new File( pom.getParent(), POMv4 );
         }
@@ -80,7 +85,15 @@ public class ReleaseUtil
 
     public static File getReleasePom( MavenProject project )
     {
-        return new File( project.getFile().getParent(), RELEASE_POMv4 );
+        if ( project == null )
+            return null;
+
+        File pom = project.getFile();
+
+        if ( pom == null )
+            return null;
+
+        return new File( pom.getParent(), RELEASE_POMv4 );
     }
 
     /**
