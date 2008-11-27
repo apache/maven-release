@@ -785,11 +785,14 @@ public abstract class AbstractRewritePomsPhase
                 MavenProject project = (MavenProject) i.next();
 
                 File pomFile = ReleaseUtil.getStandardPom( project );
-                File file =
-                    new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
-                if ( file.exists() )
+                // MRELEASE-273 : if no pom
+                if ( pomFile != null )
                 {
-                    file.delete();
+                    File file = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
+                    if ( file.exists() )
+                    {
+                        file.delete();
+                    }
                 }
             }
         }
