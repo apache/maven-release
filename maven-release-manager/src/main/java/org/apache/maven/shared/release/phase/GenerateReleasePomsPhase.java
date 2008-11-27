@@ -19,6 +19,16 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Build;
@@ -47,16 +57,6 @@ import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Generate release POMs.
@@ -145,6 +145,10 @@ public class GenerateReleasePomsPhase
         MavenXpp3Writer pomWriter = new MavenXpp3Writer();
 
         File releasePomFile = ReleaseUtil.getReleasePom( project );
+        
+        // MRELEASE-273 : A release pom can be null
+        if ( releasePomFile == null )
+            throw new ReleaseExecutionException( "Cannot generate release POM : pom file is null" );
 
         Writer fileWriter = null;
 
@@ -551,7 +555,8 @@ public class GenerateReleasePomsPhase
 
             File releasePom = ReleaseUtil.getReleasePom( project );
 
-            if ( releasePom.exists() )
+            // MRELEASE-273 : A release pom can be null
+            if ( releasePom != null && releasePom.exists() )
             {
                 logInfo( result, "Deleting release POM for '" + project.getName() + "'..." );
 
