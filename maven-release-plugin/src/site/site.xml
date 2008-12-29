@@ -27,6 +27,12 @@ under the License.
     <version>1.1-SNAPSHOT</version>
   </skin>
   <body>
+    <breadcrumbs>
+      <!-- TODO: This breadcrumb should be removed when it has been solved in the parent -->
+      <item name="Maven" href="http://maven.apache.org/index.html" />
+      <item name="Plugins" href="http://maven.apache.org/plugins/index.html" />
+      <item name="Maven Release Plugin" href="http://maven.apache.org/plugins/maven-release-plugin/index.html" />
+    </breadcrumbs>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html"/>
