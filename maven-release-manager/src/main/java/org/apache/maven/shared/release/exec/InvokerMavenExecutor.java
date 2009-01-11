@@ -198,7 +198,8 @@ public class InvokerMavenExecutor
 
             if ( cli.hasOption( QUIET ) )
             {
-                bridge.setThreshold( Logger.LEVEL_ERROR );
+                // TODO: setQuiet() currently not supported by InvocationRequest
+                req.setDebug( false );
             }
             else if ( cli.hasOption( DEBUG ) )
             {
@@ -512,7 +513,9 @@ public class InvokerMavenExecutor
 
         public void setThreshold( int level )
         {
-            logger.setThreshold( level );
+            // NOTE:
+            // logger.setThreadhold( level )
+            // is not supported in plexus-container-default:1.0-alpha-9 as used in Maven 2.x
         }
 
         public void warn( String message,

@@ -44,12 +44,7 @@
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-container-default</artifactId>
-      <version>1.0-alpha-17</version>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-component-api</artifactId>
-      <version>1.0-alpha-17</version>
+      <version>1.0-alpha-9</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
@@ -61,8 +56,12 @@
       <version>1.0-alpha-6</version>
       <exclusions>
         <exclusion>
-          <artifactId>plexus-utils</artifactId>
           <groupId>plexus</groupId>
+          <artifactId>plexus-utils</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-api</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
