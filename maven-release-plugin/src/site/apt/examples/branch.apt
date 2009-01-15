@@ -64,7 +64,7 @@ mvn release:branch -DbranchName=my-branch -DupdateBranchVersions=true -DupdateWo
   
 
 -----------
-mvn --batch-mode release:branch -Dbranch-name=my-branch-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
+mvn --batch-mode release:branch -DbranchName=my-branch-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
      -Dproject.dev.org.myCompany:projectA=2.0-SNAPSHOT
 -----------
 
