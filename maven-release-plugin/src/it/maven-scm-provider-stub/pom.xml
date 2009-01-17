@@ -22,11 +22,13 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.its.release</groupId>
-  <artifactId>maven-scm-provider-dummy</artifactId>
+  <artifactId>maven-scm-provider-stub</artifactId>
   <version>1.0</version>
 
-  <name>Maven SCM Dummy Provider</name>
-  <description>Does nothing but telling the Release Plugin that the working copy is up-to-date.</description>
+  <name>Maven SCM Stub Provider</name>
+  <description>
+    Provides a minimal, file-based SCM provider to test the SCM operations of the Maven Release Plugin.
+  </description>
 
   <dependencies>
     <dependency>
