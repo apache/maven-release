@@ -118,6 +118,15 @@ public class PrepareReleaseMojo
     private boolean allowTimestampedSnapshots;
 
     /**
+     * Whether to allow usage of a SNAPSHOT version of the Release Plugin. This in an internal property used to support
+     * testing of the plugin itself in batch mode.
+     * 
+     * @parameter expression="${allowReleasePluginSnapshot}" default-value="false"
+     * @readonly
+     */
+    private boolean allowReleasePluginSnapshot;
+
+    /**
      * Default version to use when preparing a release or a branch.
      * 
      * @parameter expression="${releaseVersion}"
@@ -148,6 +157,7 @@ public class PrepareReleaseMojo
         config.setUpdateDependencies( updateDependencies );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
         config.setAllowTimestampedSnapshots( allowTimestampedSnapshots );
+        config.setSnapshotReleasePluginAllowed( allowReleasePluginSnapshot );
         config.setDefaultReleaseVersion( releaseVersion );
         config.setDefaultDevelopmentVersion( developmentVersion );
 

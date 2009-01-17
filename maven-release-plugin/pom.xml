@@ -176,7 +176,7 @@
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <setupIncludes>
-                <setupInclude>maven-scm-provider-dummy/pom.xml</setupInclude>
+                <setupInclude>maven-scm-provider-*/pom.xml</setupInclude>
               </setupIncludes>
               <pomExcludes>
                 <pomExclude>project/**</pomExclude>
@@ -186,6 +186,7 @@
               <settingsFile>src/it/settings.xml</settingsFile>
               <debug>true</debug>
               <properties>
+                <allowReleasePluginSnapshot>true</allowReleasePluginSnapshot>
                 <dryRun>true</dryRun>
               </properties>
               <goals>

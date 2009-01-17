@@ -83,6 +83,7 @@ public class ReleaseUtils
         mergeInto.setUpdateWorkingCopyVersions( toBeMerged.isUpdateWorkingCopyVersions() );
         mergeInto.setUpdateVersionsToSnapshot( toBeMerged.isUpdateVersionsToSnapshot() );
         mergeInto.setAllowTimestampedSnapshots( toBeMerged.isAllowTimestampedSnapshots() );
+        mergeInto.setSnapshotReleasePluginAllowed( toBeMerged.isSnapshotReleasePluginAllowed() );
         mergeInto.setAutoVersionSubmodules( toBeMerged.isAutoVersionSubmodules() );
         mergeInto.setDefaultReleaseVersion( mergeOverride( mergeInto.getDefaultReleaseVersion(), 
                                                            toBeMerged.getDefaultReleaseVersion() ) );

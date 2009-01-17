@@ -190,6 +190,10 @@ public class CheckDependencySnapshotsPhase
                             throw new ReleaseExecutionException( e.getMessage(), e );
                         }
                     }
+                    else if ( releaseDescriptor.isSnapshotReleasePluginAllowed() )
+                    {
+                        addToFailures = false;
+                    }
                 }
 
                 if ( addToFailures )
