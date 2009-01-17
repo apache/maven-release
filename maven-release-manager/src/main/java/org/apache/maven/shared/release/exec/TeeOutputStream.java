@@ -27,9 +27,10 @@ import java.io.OutputStream;
 public class TeeOutputStream 
     extends FilterOutputStream 
 {
-    ByteArrayOutputStream bout = new ByteArrayOutputStream( 1024 );
-    byte indent[];
-    
+    private ByteArrayOutputStream bout = new ByteArrayOutputStream( 1024 * 8 );
+    private byte indent[];
+    private int last = '\n';
+
     public TeeOutputStream( OutputStream out )
     {
         this( out, "    " );
@@ -40,45 +41,38 @@ public class TeeOutputStream
         super( out );
         indent = i.getBytes();
     }
-    
-    public void write( byte[] b, int off, int len ) 
+
+    public void write( byte[] b, int off, int len )
         throws IOException
     {
         for ( int x = 0; x < len; x++ )
         {
-            if ( b[off + x] == '\r' 
-                && x < (len - 1)
-                && b[off + x + 1] == '\n' )
+            int c = b[off + x];
+            if ( last == '\n' || ( last == '\r' && c != '\n' ) )
             {
-                x++;
-            }
-            
-            if ( b[off + x] == '\n' 
-                || b[off + x] == '\r' )
-            {
-                super.write( b, off, x + 1);
-                bout.write( b, off, x + 1);
-                super.write( indent );
-                bout.write( indent );
-                off += ( x + 1 );
-                len -= ( x + 1 );
+                out.write( b, off, x );
+                bout.write( b, off, x );
+                out.write( indent );
+                off += x;
+                len -= x;
                 x = 0;
             }
+            last = c;
         }
-        super.write( b, off, len );
+        out.write( b, off, len );
         bout.write( b, off, len );
     }
 
     public void write( int b )
         throws IOException
     {
-        super.write( b );
-        bout.write( b );
-        if ( b == '\n' )
+        if ( last == '\n' || ( last == '\r' && b != '\n' ) )
         {
-            super.write( indent );
-            bout.write( indent );
+            out.write( indent );
         }
+        out.write( b );
+        bout.write( b );
+        last = b;
     }
     
     public String toString() 
