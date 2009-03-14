@@ -101,13 +101,6 @@
   <build>
     <plugins>
       <plugin>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>1.4</source>
-          <target>1.4</target>
-        </configuration>
-      </plugin>
-      <plugin>
         <artifactId>maven-site-plugin</artifactId>
         <configuration>
           <stagingSiteURL>scp://people.apache.org/www/maven.apache.org/plugins/${project.artifactId}-${project.version}</stagingSiteURL>
