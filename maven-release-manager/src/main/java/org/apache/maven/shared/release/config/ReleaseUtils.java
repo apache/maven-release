@@ -1,14 +1,5 @@
 package org.apache.maven.shared.release.config;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
-import java.util.Map.Entry;
-
-import org.apache.maven.model.Scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -27,6 +18,15 @@ import org.apache.maven.model.Scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.Map.Entry;
+
+import org.apache.maven.model.Scm;
 
 /**
  * Class providing utility methods used during the release process
