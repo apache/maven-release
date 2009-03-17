@@ -98,7 +98,7 @@ public class ScmCommitPhase
                 List pomFiles = createPomFiles( releaseDescriptor, project );
                 ScmFileSet fileSet = new ScmFileSet( project.getFile().getParentFile(), pomFiles );
 
-                checkin( provider, repository, fileSet, createMessage( releaseDescriptor ) );
+                checkin( provider, repository, fileSet, releaseDescriptor );
             }
         }
         else
@@ -106,7 +106,7 @@ public class ScmCommitPhase
             List pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), pomFiles );
 
-            checkin( provider, repository, fileSet, createMessage( releaseDescriptor ) );
+            checkin( provider, repository, fileSet, releaseDescriptor );
         }
 
         relResult.setResultCode( ReleaseResult.SUCCESS );
@@ -114,11 +114,11 @@ public class ScmCommitPhase
         return relResult;
     }
 
-    private void checkin( ScmProvider provider, ScmRepository repository, ScmFileSet fileSet, String message )
+    private void checkin( ScmProvider provider, ScmRepository repository, ScmFileSet fileSet, ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseScmCommandException
     {
         CheckInScmResult result;
-
+        String message = createMessage( releaseDescriptor );
         try
         {
             result = provider.checkIn( repository, fileSet, (ScmVersion) null, message );
@@ -132,6 +132,7 @@ public class ScmCommitPhase
         {
             throw new ReleaseScmCommandException( "Unable to commit files", result );
         }
+        releaseDescriptor.setScmReleasedPomRevision( result.getScmRevision() );
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )

@@ -155,8 +155,10 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "preparationGoals", config.getPreparationGoals() );
         }
+        
+        properties.setProperty( "remoteTagging", Boolean.toString( config.isRemoteTagging() ) );
 
-        // boolean properties are not written to the properties file because the value from the caller is always used
+        // others boolean properties are not written to the properties file because the value from the caller is always used
 
         for ( Iterator i = config.getReleaseVersions().entrySet().iterator(); i.hasNext(); )
         {

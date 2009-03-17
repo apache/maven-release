@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmTagParameters;
 import org.apache.maven.scm.command.tag.TagScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -86,8 +87,16 @@ public class ScmTagPhase
             // TODO: want includes/excludes?
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) );
             String tagName = releaseDescriptor.getScmReleaseLabel();
-            result = provider.tag( repository, fileSet, tagName,
-                                   releaseDescriptor.getScmCommentPrefix() + " copy for tag " + tagName );
+            ScmTagParameters scmTagParameters = new ScmTagParameters( releaseDescriptor.getScmCommentPrefix()
+                + " copy for tag " + tagName );
+            scmTagParameters.setRemoteTagging( releaseDescriptor.isRemoteTagging() );
+            scmTagParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
+            if (getLogger().isDebugEnabled())
+            {
+                getLogger().debug( "ScmTagPhase :: scmTagParameters remotingTag " + releaseDescriptor.isRemoteTagging() );
+                getLogger().debug( "ScmTagPhase :: scmTagParameters scmRevision " + releaseDescriptor.getScmReleasedPomRevision() );
+            }
+            result = provider.tag( repository, fileSet, tagName, scmTagParameters );
         }
         catch ( ScmException e )
         {

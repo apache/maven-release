@@ -89,6 +89,7 @@ public class ReleaseUtils
                                                            toBeMerged.getDefaultReleaseVersion() ) );
         mergeInto.setDefaultDevelopmentVersion( mergeOverride( mergeInto.getDefaultDevelopmentVersion(),
                                                                toBeMerged.getDefaultDevelopmentVersion() ) );
+        mergeInto.setRemoteTagging( toBeMerged.isRemoteTagging() );
         
         // If the user specifies versions, these should be override the existing versions 
         if ( toBeMerged.getReleaseVersions() != null )
@@ -136,7 +137,10 @@ public class ReleaseUtils
         releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
         releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
         releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
-
+        String remoteTaggingStr = properties.getProperty( "remoteTagging" );
+        releaseDescriptor.setRemoteTagging( remoteTaggingStr == null ? false : Boolean.valueOf( remoteTaggingStr ).booleanValue() );
+        
+        
         loadResolvedDependencies( properties, releaseDescriptor );
 
         // boolean properties are not written to the properties file because the value from the caller is always used

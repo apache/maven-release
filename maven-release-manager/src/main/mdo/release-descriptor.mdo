@@ -377,6 +377,26 @@
             Default version to use for new working copy.
           </description>
         </field>
+        
+        <field>
+          <name>remoteTagging</name>
+          <version>1.0.0</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            NOTE : currently only implemented with svn scm. Enable a workaround to prevent issue due to svn client > 1.5.0 
+            (http://jira.codehaus.org/browse/SCM-406)
+          </description>
+        </field> 
+        <field>
+          <name>scmReleasedPomRevision</name>
+          <version>1.0.0</version>
+          <type>String</type>
+          <description>
+            NOTE : currently only implemented with svn scm. It contains the revision of the committed released pom to remotely tag
+            the source code with this revision.
+          </description>
+        </field>               
 
         <!-- Announcement Information
 

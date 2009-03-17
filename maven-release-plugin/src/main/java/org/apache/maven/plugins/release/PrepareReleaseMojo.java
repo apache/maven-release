@@ -139,7 +139,17 @@ public class PrepareReleaseMojo
      * @parameter expression="${developmentVersion}"
      */
     private String developmentVersion;
-
+    
+    /**
+     * currently only implemented with svn scm. Enable a workaround to prevent issue 
+     * due to svn client > 1.5.0 (http://jira.codehaus.org/browse/SCM-406)
+     *      
+     * 
+     * @parameter expression="${remoteTagging}" default-value="false"
+     * @since 2.0-beta-9
+     */    
+    private boolean remoteTagging;
+    
     /**
      * {@inheritDoc}
      */
@@ -160,6 +170,7 @@ public class PrepareReleaseMojo
         config.setSnapshotReleasePluginAllowed( allowReleasePluginSnapshot );
         config.setDefaultReleaseVersion( releaseVersion );
         config.setDefaultDevelopmentVersion( developmentVersion );
+        config.setRemoteTagging( remoteTagging );
 
         // Create a config containing values from the system properties (command line properties).
         ReleaseDescriptor sysPropertiesConfig
