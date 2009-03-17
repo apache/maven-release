@@ -132,7 +132,10 @@ public class ScmCommitPhase
         {
             throw new ReleaseScmCommandException( "Unable to commit files", result );
         }
-        releaseDescriptor.setScmReleasedPomRevision( result.getScmRevision() );
+        if ( releaseDescriptor.isRemoteTagging() )
+        {
+            releaseDescriptor.setScmReleasedPomRevision( result.getScmRevision() );
+        }
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
