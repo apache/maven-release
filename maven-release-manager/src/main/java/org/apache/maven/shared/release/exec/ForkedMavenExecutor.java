@@ -58,7 +58,19 @@ public class ForkedMavenExecutor
                               ReleaseResult relResult )
         throws MavenExecutorException
     {
-        Commandline cl = commandLineFactory.createCommandLine( "mvn" );
+        String mavenPath = null;
+        // if null we use the current one
+        if ( releaseEnvironment.getMavenHome() != null )
+        {
+            mavenPath = releaseEnvironment.getMavenHome().getAbsolutePath();
+        }
+        else
+        {
+            mavenPath = System.getProperty( "maven.home" );
+        }
+       
+        Commandline cl = commandLineFactory.createCommandLine( mavenPath + File.separator + "bin" + File.separator
+            + "mvn" );
 
         cl.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
