@@ -75,6 +75,8 @@ public class ForkedMavenExecutor
         cl.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
         cl.addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+        
+        cl.addEnvironment( "M2_HOME", mavenPath );
 
         if ( pomFileName != null )
         {
