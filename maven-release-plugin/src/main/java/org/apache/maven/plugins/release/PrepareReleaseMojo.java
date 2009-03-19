@@ -145,7 +145,7 @@ public class PrepareReleaseMojo
      * due to svn client > 1.5.0 (http://jira.codehaus.org/browse/SCM-406)
      *      
      * 
-     * @parameter expression="${remoteTagging}" default-value="false"
+     * @parameter expression="${remoteTagging}" default-value="true"
      * @since 2.0-beta-9
      */    
     private boolean remoteTagging;
