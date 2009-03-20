@@ -92,13 +92,25 @@ public class DefaultVersionInfo
 
     private static final String DIGIT_SEPARATOR_STRING = ".";
 
-    private static final Pattern STANDARD_PATTERN = Pattern.compile(
+    public static final Pattern STANDARD_PATTERN = Pattern.compile(
         "^((?:\\d+\\.)*\\d+)" +      // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
             "([-_])?" +                 // optional - or _  (annotation separator)
             "([a-zA-Z]*)" +             // alpha characters (looking for annotation - alpha, beta, RC, etc.)
             "([-_])?" +                 // optional - or _  (annotation revision separator)
             "(\\d*)" +                  // digits  (any digits after rc or beta is an annotation revision)
             "(?:([-_])?(.*?))?$" );      // - or _ followed everything else (build specifier)
+
+    /* *
+     * cmaki 02242009
+     * FIX for non-digit release numbers, e.g. trunk-SNAPSHOT or just SNAPSHOT
+     * This alternate pattern supports version numbers like:
+     * trunk-SNAPSHOT
+     * branchName-SNAPSHOT
+     * SNAPSHOT
+     */
+    public static final Pattern ALTERNATE_PATTERN = Pattern.compile(
+      "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)"      // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
+    );
 
     /**
      * Constructs this object and parses the supplied version string.
@@ -110,12 +122,14 @@ public class DefaultVersionInfo
     {
         strVersion = version;
 
+        // FIX for non-digit release numbers, e.g. trunk-SNAPSHOT or just SNAPSHOT
+        Matcher matcher = ALTERNATE_PATTERN.matcher( strVersion );
         // TODO: hack because it didn't support "SNAPSHOT"
-        if ( "SNAPSHOT".equals( version ) )
+        if (matcher.matches())
         {
             annotation = null;
             digits = null;
-            buildSpecifier = "SNAPSHOT";
+            buildSpecifier = version;
             buildSeparator = null;
             return;
         }
