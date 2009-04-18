@@ -201,7 +201,7 @@ public class PrepareReleaseMojo
      */
     private void mergeCommandLineConfig( ReleaseDescriptor config, ReleaseDescriptor sysPropertiesConfig )
     {
-        // If the user specifies versions, these should be override the existing versions
+        // If the user specifies versions, these should override the existing versions
         if ( sysPropertiesConfig.getReleaseVersions() != null )
         {
             config.getReleaseVersions().putAll( sysPropertiesConfig.getReleaseVersions() );
