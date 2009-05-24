@@ -168,7 +168,13 @@
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
               <setupIncludes>
                 <setupInclude>maven-scm-provider-*/pom.xml</setupInclude>
-              </setupIncludes>
+              </setupIncludes>              
+              <pomIncludes>
+                <pomInclude>forked-basic/pom.xml</pomInclude>
+                <pomInclude>invoker-basic/pom.xml</pomInclude>
+                <pomInclude>flat-multi-module/parent-project/pom.xml</pomInclude>
+                <pomInclude>regular-multi-module/pom.xml</pomInclude>
+              </pomIncludes>               
               <pomExcludes>
                 <pomExclude>project/**</pomExclude>
               </pomExcludes>

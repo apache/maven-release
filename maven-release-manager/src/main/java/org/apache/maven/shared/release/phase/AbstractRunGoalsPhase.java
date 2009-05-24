@@ -79,7 +79,7 @@ public abstract class AbstractRunGoalsPhase
                 }
 
                 mavenExecutor.executeGoals( determineWorkingDirectory( workingDirectory,
-                                                                       releaseDescriptor.getScmRelativePathProjectDirectory() ),
+                                            releaseDescriptor.getScmRelativePathProjectDirectory(), releaseDescriptor.getRootProjectPath() ),
                                             goals, releaseEnvironment, releaseDescriptor.isInteractive(),
                                             additionalArguments, result );
             }
@@ -122,17 +122,23 @@ public abstract class AbstractRunGoalsPhase
      * @param checkoutDirectory            The checkout directory as java.io.File
      * @param relativePathProjectDirectory The relative path of the project directory within the checkout
      *                                     directory or ""
+     * @param rootProjectPath TODO
      * @return The working directory
      */
-    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory )
+    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory, String rootProjectPath )
     {
+        File workingDirectory = checkoutDirectory;
+        
         if ( StringUtils.isNotEmpty( relativePathProjectDirectory ) )
         {
-            return new File( checkoutDirectory, relativePathProjectDirectory );
+            workingDirectory = new File( checkoutDirectory, relativePathProjectDirectory );
         }
-        else
+        
+        if( StringUtils.isNotEmpty( rootProjectPath ) )
         {
-            return checkoutDirectory;
+            workingDirectory = new File( workingDirectory, rootProjectPath );
         }
+        
+        return workingDirectory;
     }
 }

@@ -25,6 +25,7 @@ import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -37,12 +38,17 @@ public class ReleaseUtil
 {
     public static final String RELEASE_POMv4 = "release-pom.xml";
 
-    private static final String POMv4 = "pom.xml";
+    public static final String POMv4 = "pom.xml";
 
     /**
      * The line separator to use.
      */
     public static final String LS = System.getProperty( "line.separator" );
+    
+    /**
+     * The path separator to use.
+     */
+    public static final String FS = System.getProperty( "file.separator" );
 
     private ReleaseUtil()
     {
@@ -138,5 +144,137 @@ public class ReleaseUtil
         }
         return norm;
     }
-
+    
+    /**
+     * Determines the base working directory with regard to the longest relative path of the modules. 
+     * 
+     * @param workingDirectory The working directory of the project to be released
+     * @param modules The \<modules\> of the project to be released
+     * @return The base working directory of the project
+     */
+    public static String getBaseWorkingDirectory( String workingDirectory, List modules )
+    {        
+        int count = getLongestPathCount( modules );
+        workingDirectory = StringUtils.chomp( workingDirectory, FS );
+        
+        while( count > 0 )
+        {   
+            int lastSep = workingDirectory.lastIndexOf( FS );
+            workingDirectory = StringUtils.substring( workingDirectory, 0, lastSep );            
+            count--;
+        }
+        return workingDirectory;
+    }
+    
+    /**
+     * Determines the base scm url with regard to the longest relative path of the modules.
+     * 
+     * @param scmUrl The scm source url of the project to be released which is set in the release descriptor.
+     * @param modules The \<modules\> of the project to be released
+     * @return
+     */
+    public static String getBaseScmUrl( String scmUrl, List modules )
+    {                
+        int count = getLongestPathCount( modules );                
+        scmUrl = StringUtils.chomp( scmUrl, "/" );
+        
+        while( count > 0 )
+        {   
+            int lastSep = scmUrl.lastIndexOf( "/" );
+            scmUrl = StringUtils.substring( scmUrl, 0, lastSep );        
+            count--;
+        }
+        return scmUrl;
+    }
+    
+    /**
+     * Returns the common path of the two paths specified.
+     * 
+     * @param path1 The first path
+     * @param path2 The second path
+     * @return The common path of the two paths.
+     */
+    public static String getCommonPath( String path1, String path2 )
+    {
+        if ( path2 == null || path2.equals( "" ) )
+        {
+            return path1;
+        }
+        else
+        {
+            int indexDiff = StringUtils.indexOfDifference( path1, path2 );            
+            if( indexDiff > 0 )
+            {
+                return path1.substring( 0, indexDiff );
+            }
+            else
+            {
+                return path1;
+            }
+        }
+    }
+    
+    private static int getLongestPathCount( List modules )
+    {
+        int count = 0;
+        if( modules == null || modules.isEmpty() )
+        {
+            return 0;
+        }
+        
+        for( Iterator iter = modules.iterator(); iter.hasNext(); )
+        {
+            String module = ( String ) iter.next();
+            module = StringUtils.replace( module, "\\", "/" );
+            
+            // module is a path
+            if( module.indexOf( '/' ) != -1 )
+            {   
+                int tmp = StringUtils.countMatches( module, "/" );
+                if( tmp > count )
+                {
+                    count = tmp;
+                }
+            }                    
+        }
+        return count;
+    }
+    
+    /**
+     * Gets the path to the project root. Useful in determining whether the project has a flat structure.
+     * 
+     * @param project
+     * @return
+     */
+    public static String getRootProjectPath( MavenProject project )
+    {
+        String relPath = "";
+        
+        // module is a flat multi-module project
+        if( getLongestPathCount( project.getModules() ) > 0 )
+        {     
+            String projectBaseDir = project.getBasedir().getPath();
+            if( ReleaseUtil.FS.equals( "\\" ) )
+            {
+                projectBaseDir = StringUtils.replace( projectBaseDir, "/", "\\" );
+            }
+            else
+            {
+                projectBaseDir = StringUtils.replace( projectBaseDir, "\\", "/" );
+            }
+            
+            String projectPath = "";            
+            if( project.getScm() != null )
+            {
+                projectPath =
+                    ReleaseUtil.getCommonPath( StringUtils.reverse( StringUtils.chomp( projectBaseDir, ReleaseUtil.FS ) ),
+                                               StringUtils.reverse( StringUtils.chomp( project.getScm().getConnection(), "/" ) ) );
+            }
+            
+            
+            relPath = StringUtils.reverse( projectPath );
+        }
+        
+        return relPath;
+    }
 }

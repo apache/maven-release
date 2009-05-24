@@ -30,6 +30,7 @@ import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -261,8 +262,8 @@ public abstract class AbstractReleaseMojo
                 arguments += additionalProfiles;
             }
         }
-        descriptor.setAdditionalArguments( arguments );
-
+        descriptor.setAdditionalArguments( arguments );       
+                
         return descriptor;
     }
 

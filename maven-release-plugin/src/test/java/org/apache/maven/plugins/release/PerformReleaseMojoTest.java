@@ -79,6 +79,35 @@ public class PerformReleaseMojoTest
         assertTrue( true );
     }
 
+    public void testPerformWithFlatStructure()
+        throws Exception
+    {
+        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform-with-flat-structure.xml" );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        File checkoutDirectory = getTestFile( "target/checkout" );
+        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        releaseDescriptor.setPerformGoals( "deploy site-deploy" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project" );
+
+        Mock mock = new Mock( ReleaseManager.class );
+
+        Constraint[] constraints = new Constraint[] {
+            new IsEqual( releaseDescriptor ),
+            new IsInstanceOf( ReleaseEnvironment.class ),
+            new IsNull()
+        };
+
+        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
+        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
+
+        mojo.execute();
+        
+        assertTrue( true );
+    }
+
+    
     public void testPerformWithoutSite()
         throws Exception
     {
@@ -294,7 +323,7 @@ public class PerformReleaseMojoTest
 	public void testPerformWithMultilineGoals()
         throws Exception
     {
-        PerformReleaseMojo mojo = getMojoWithProjectSite( "perform-with-multiline-goals.xml" );
+	    PerformReleaseMojo mojo = getMojoWithProjectSite( "perform-with-multiline-goals.xml" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );

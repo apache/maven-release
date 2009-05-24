@@ -306,7 +306,17 @@ public class RewritePomsForReleasePhaseTest
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
+    
+    public void testRewritePomForFlatMultiModule()
+        throws Exception
+    {   
+        List reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project", true );
+        ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
 
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
 
     protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )
     {

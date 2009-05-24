@@ -26,6 +26,7 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -106,7 +107,7 @@ public class RewritePomsForReleasePhase
                 tagBase = "scm:svn:" + tagBase;
             }
 
-            Scm rootScm = rootProject.getScm();
+            Scm rootScm = rootProject.getScm();            
             if ( scm.getConnection() != null )
             {
                 if ( rootScm.getConnection() != null && scm.getConnection().indexOf( rootScm.getConnection() ) == 0 )
@@ -126,6 +127,8 @@ public class RewritePomsForReleasePhase
                 String value =
                     translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, scmConnectionTag );
 
+                value = addRootProjectPath( rootProject, value );
+                
                 if ( !value.equals( scm.getConnection() ) )
                 {
                     rewriteElement( "connection", value, scmRoot, namespace );
@@ -144,6 +147,8 @@ public class RewritePomsForReleasePhase
                 String value =
                     translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
 
+                value = addRootProjectPath( rootProject, value );
+                
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {
                     rewriteElement( "developerConnection", value, scmRoot, namespace );
@@ -170,6 +175,7 @@ public class RewritePomsForReleasePhase
                 }
                 // use original tag base without protocol
                 String value = translator.translateTagUrl( scm.getUrl(), tag + subDirectoryTag, tagScmUrl );
+                value = addRootProjectPath( rootProject, value );
                 if ( !value.equals( scm.getUrl() ) )
                 {
                     rewriteElement( "url", value, scmRoot, namespace );
@@ -196,6 +202,16 @@ public class RewritePomsForReleasePhase
             getLogger().debug( message );
         }
         return result;
+    }
+
+    private String addRootProjectPath( MavenProject rootProject, String value )
+    {
+        String rootProjectPath = ReleaseUtil.getRootProjectPath( rootProject );
+        if( !StringUtils.isEmpty( rootProjectPath ) )
+        {
+            value = value + rootProjectPath;
+        }
+        return value;
     }
 
     protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects )
