@@ -253,24 +253,19 @@ public class ReleaseUtil
         // module is a flat multi-module project
         if( getLongestPathCount( project.getModules() ) > 0 )
         {     
-            String projectBaseDir = project.getBasedir().getPath();
-            if( ReleaseUtil.FS.equals( "\\" ) )
-            {
-                projectBaseDir = StringUtils.replace( projectBaseDir, "/", "\\" );
-            }
-            else
-            {
-                projectBaseDir = StringUtils.replace( projectBaseDir, "\\", "/" );
-            }
+            String projectBaseDir = project.getBasedir().getPath();            
+        	projectBaseDir = StringUtils.replace( projectBaseDir, "\\", "/" );
             
             String projectPath = "";            
             if( project.getScm() != null )
             {
+            	String scmConnection = project.getScm().getConnection();
+            	scmConnection = StringUtils.replace( scmConnection, "\\", "/" );
+            	
                 projectPath =
-                    ReleaseUtil.getCommonPath( StringUtils.reverse( StringUtils.chomp( projectBaseDir, ReleaseUtil.FS ) ),
-                                               StringUtils.reverse( StringUtils.chomp( project.getScm().getConnection(), "/" ) ) );
+                    ReleaseUtil.getCommonPath( StringUtils.reverse( StringUtils.chomp( projectBaseDir, "/" ) ),
+                                               StringUtils.reverse( StringUtils.chomp( scmConnection, "/" ) ) );
             }
-            
             
             relPath = StringUtils.reverse( projectPath );
         }
