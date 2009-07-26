@@ -80,6 +80,25 @@ public class RewritePomsForReleasePhaseTest
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
+    public void testRewriteWithDashedComments()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects("basic-pom-with-dashes-in-comment");
+        ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
+        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+
+        String expected = readTestProjectFile( "basic-pom-with-dashes-in-comment/pom.xml" );
+
+        phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        String actual = readTestProjectFile( "basic-pom-with-dashes-in-comment/pom.xml" );
+        assertEquals( "Check the original POM is untouched", expected, actual );
+
+        expected = readTestProjectFile( "basic-pom-with-dashes-in-comment/expected-pom.xml" );
+        actual = readTestProjectFile( "basic-pom-with-dashes-in-comment/pom.xml.tag" );
+        assertEquals( "Check the transformed POM", expected, actual );
+    }
+
     public void testClean()
         throws Exception
     {
