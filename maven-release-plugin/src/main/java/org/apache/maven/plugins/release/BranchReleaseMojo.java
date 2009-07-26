@@ -103,6 +103,16 @@ public class BranchReleaseMojo
      * @parameter expression="${addSchema}" default-value="true"
      */
     private boolean addSchema;
+    
+    /**
+     * currently only implemented with svn scm. Enable a workaround to prevent issue 
+     * due to svn client > 1.5.0 (http://jira.codehaus.org/browse/SCM-406)
+     *      
+     * 
+     * @parameter expression="${remoteTagging}" default-value="true"
+     * @since 2.0-beta-10
+     */    
+    private boolean remoteTagging;    
 
     /**
      * {@inheritDoc}
@@ -127,6 +137,7 @@ public class BranchReleaseMojo
         config.setUpdateBranchVersions( updateBranchVersions );
         config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
         config.setUpdateVersionsToSnapshot( updateVersionsToSnapshot );
+        config.setRemoteTagging( remoteTagging );
 
         try
         {
