@@ -25,6 +25,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.util.StringUtils;
+import org.jaxen.expr.RelationalExpr;
 
 /**
  * Branch a project in SCM.
@@ -115,6 +116,22 @@ public class BranchReleaseMojo
     private boolean remoteTagging;    
 
     /**
+     * Default version to use when preparing a release or a branch.
+     * 
+     * @parameter expression="${releaseVersion}"
+     * @since 2.0-beta-10
+     */
+    private String releaseVersion;
+
+    /**
+     * Default version to use for new local working copy.
+     * 
+     * @parameter expression="${developmentVersion}"
+     * @since 2.0-beta-10
+     */
+    private String developmentVersion;
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -138,7 +155,8 @@ public class BranchReleaseMojo
         config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
         config.setUpdateVersionsToSnapshot( updateVersionsToSnapshot );
         config.setRemoteTagging( remoteTagging );
-
+        config.setDefaultReleaseVersion( releaseVersion );
+        config.setDefaultDevelopmentVersion( developmentVersion );
         try
         {
             releaseManager.branch( config, getReleaseEnvironment(), reactorProjects, dryRun );
