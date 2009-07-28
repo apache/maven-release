@@ -26,7 +26,19 @@ try
     if( contents.indexOf( expected ) != -1 )
     {
         return true;
-    }            
+    }    
+ 	expected = "module-b with label: 'module-b-1.0'";
+    
+    if( contents.indexOf( expected ) != -1 )
+    {
+        return true;
+    }    
+ 	expected = "module-a with label: 'module-a-1.0'";
+    
+    if( contents.indexOf( expected ) != -1 )
+    {
+        return true;
+    }                        
 }
 catch( Throwable t )
 {
