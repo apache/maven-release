@@ -96,17 +96,23 @@ public class CheckDependencySnapshotsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        logInfo( result, "Checking dependencies and plugins for snapshots ..." );
-
-        Map originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
-
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        if ( !releaseDescriptor.isAllowTimestampedSnapshots() )
         {
-            MavenProject project = (MavenProject) i.next();
+            logInfo( result, "Checking dependencies and plugins for snapshots ..." );
 
-            checkProject( project, originalVersions, releaseDescriptor );
+            Map originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
+
+            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            {
+                MavenProject project = (MavenProject) i.next();
+
+                checkProject( project, originalVersions, releaseDescriptor );
+            }
         }
-
+        else
+        {
+            logInfo( result, "Ignoring SNAPSHOT depenedencies and plugins ..." );
+        }
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
