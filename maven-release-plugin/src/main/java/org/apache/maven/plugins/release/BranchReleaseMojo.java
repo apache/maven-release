@@ -25,7 +25,6 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.util.StringUtils;
-import org.jaxen.expr.RelationalExpr;
 
 /**
  * Branch a project in SCM.
