@@ -41,6 +41,7 @@ public class BranchReleaseMojo
      * The branch name to use.
      *
      * @parameter expression="${branchName}"
+     * @required
      */
     private String branchName;
 
@@ -137,11 +138,6 @@ public class BranchReleaseMojo
         throws MojoExecutionException, MojoFailureException
     {
         super.execute();
-
-        if ( StringUtils.isEmpty( branchName ) )
-        {
-            throw new MojoExecutionException( "The branch name is required." );
-        }
 
         ReleaseDescriptor config = createReleaseDescriptor();
         config.setAddSchema( addSchema );
