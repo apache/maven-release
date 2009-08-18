@@ -48,6 +48,9 @@
           <phase>checkout-project-from-scm</phase>
           <phase>run-perform-goals</phase>
         </performPhases>
+        <branchPhases>
+          <phase>branch1</phase>
+        </branchPhases>
       </configuration>
     </component>
     <component>
@@ -89,6 +92,11 @@
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>step3</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.ReleasePhaseStub</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>branch1</role-hint>
       <implementation>org.apache.maven.shared.release.phase.ReleasePhaseStub</implementation>
     </component>
     <component>

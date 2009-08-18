@@ -386,6 +386,9 @@ public class DefaultReleaseManagerTest
 
         phase = (ReleasePhaseStub) phases.get( "step3" );
         assertTrue( "step3 not cleaned", phase.isCleaned() );
+
+        phase = (ReleasePhaseStub) phases.get( "branch1" );
+        assertTrue( "branch1 not cleaned", phase.isCleaned() );
     }
 
     public void testReleasePerform()

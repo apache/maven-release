@@ -25,6 +25,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.LinkedHashSet;
 
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -438,8 +440,10 @@ public class DefaultReleaseManager
         getLogger().info( "Cleaning up after release..." );
 
         configStore.delete( releaseDescriptor );
+        Set phases = new LinkedHashSet(preparePhases);
+        phases.addAll(branchPhases);
 
-        for ( Iterator i = preparePhases.iterator(); i.hasNext(); )
+        for ( Iterator i = phases.iterator(); i.hasNext(); )
         {
             String name = (String) i.next();
 
