@@ -110,8 +110,9 @@ public class ScmBranchPhase
 
         validateConfiguration( releaseDescriptor );
 
-        logInfo( result, "Full run would be branching " + releaseDescriptor.getWorkingDirectory() + " with label: '" +
-            releaseDescriptor.getScmReleaseLabel() + "'" );
+        logInfo( result, "Full run would be branching " + releaseDescriptor.getWorkingDirectory() );
+        logInfo( result, "  To SCM URL: " + releaseDescriptor.getScmBranchBase() );
+        logInfo( result, "  with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
 
         result.setResultCode( ReleaseResult.SUCCESS );
 
