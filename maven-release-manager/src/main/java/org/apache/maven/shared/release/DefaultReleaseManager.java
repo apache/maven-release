@@ -386,8 +386,10 @@ public class DefaultReleaseManager
             updateListener( listener, name, PHASE_END );
         }
 
-        //call release:clean so that resume will not be possible anymore after a perform
-        clean( releaseDescriptor, listener, reactorProjects );
+        if ( !dryRun )
+        {
+            clean( releaseDescriptor, listener, reactorProjects );
+        }
 
         updateListener( listener, "branch", GOAL_END );
     }
