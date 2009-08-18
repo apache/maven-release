@@ -141,6 +141,12 @@ public class DefaultScmRepositoryConfigurator
             {
                 svnRepo.setTagBase( tagBase );
             }
+            
+            String branchBase = releaseDescriptor.getScmBranchBase();
+            if ( !StringUtils.isEmpty( branchBase ) )
+            {
+                svnRepo.setBranchBase( branchBase );
+            }
         }
 
         return repository;

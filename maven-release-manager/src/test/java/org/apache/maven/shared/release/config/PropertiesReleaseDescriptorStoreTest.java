@@ -273,6 +273,7 @@ public class PropertiesReleaseDescriptorStoreTest
         config.setScmPrivateKey( "private-key-write" );
         config.setScmPrivateKeyPassPhrase( "passphrase-write" );
         config.setScmTagBase( "tag-base-write" );
+        config.setScmBranchBase( "branch-base-write" );
         config.setScmReleaseLabel( "tag-write" );
         config.setAdditionalArguments( "additional-args-write" );
         config.setPreparationGoals( "preparation-goals-write" );
@@ -345,6 +346,7 @@ public class PropertiesReleaseDescriptorStoreTest
         expected.setScmPrivateKey( "private-key" );
         expected.setScmPrivateKeyPassPhrase( "passphrase" );
         expected.setScmTagBase( "tagBase" );
+        expected.setScmBranchBase( "branchBase" );
         expected.setScmReleaseLabel( "tag" );
         expected.setAdditionalArguments( "additional-arguments" );
         expected.setPreparationGoals( "preparation-goals" );

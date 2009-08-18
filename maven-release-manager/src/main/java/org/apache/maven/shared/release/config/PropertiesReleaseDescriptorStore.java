@@ -135,6 +135,10 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "scm.tagBase", config.getScmTagBase() );
         }
+        if ( config.getScmBranchBase() != null )
+        {
+            properties.setProperty( "scm.branchBase", config.getScmBranchBase() );
+        }
         if ( config.getScmReleaseLabel() != null )
         {
             properties.setProperty( "scm.tag", config.getScmReleaseLabel() );

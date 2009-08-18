@@ -44,7 +44,16 @@ public class BranchReleaseMojo
      * @required
      */
     private String branchName;
-
+    
+    /**
+     * The branch base directory in SVN, you must define it if you don't use the standard svn layout (trunk/tags/branches).
+     * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/branches</code>. The URL is an SVN URL and does not
+     * include the SCM provider and protocol.
+     *
+     * @parameter expression="${branchBase}"
+     */
+    private String branchBase;
+    
     /**
      * Whether to update versions in the branch.
      *
@@ -145,6 +154,7 @@ public class BranchReleaseMojo
         config.setUpdateDependencies( updateDependencies );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
         config.setScmReleaseLabel( branchName );
+        config.setScmBranchBase( branchBase );
         config.setBranchCreation( true );
         config.setUpdateBranchVersions( updateBranchVersions );
         config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );

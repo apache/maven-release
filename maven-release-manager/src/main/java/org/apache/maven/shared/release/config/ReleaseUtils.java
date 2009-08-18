@@ -58,6 +58,7 @@ public class ReleaseUtils
         mergeInto.setScmReleaseLabel(
             mergeOverride( mergeInto.getScmReleaseLabel(), toBeMerged.getScmReleaseLabel() ) );
         mergeInto.setScmTagBase( mergeOverride( mergeInto.getScmTagBase(), toBeMerged.getScmTagBase() ) );
+        mergeInto.setScmBranchBase( mergeOverride( mergeInto.getScmBranchBase(), toBeMerged.getScmBranchBase() ) );
         mergeInto.setScmUsername( mergeOverride( mergeInto.getScmUsername(), toBeMerged.getScmUsername() ) );
         mergeInto.setScmPassword( mergeOverride( mergeInto.getScmPassword(), toBeMerged.getScmPassword() ) );
         mergeInto.setScmPrivateKey( mergeOverride( mergeInto.getScmPrivateKey(), toBeMerged.getScmPrivateKey() ) );
@@ -134,6 +135,7 @@ public class ReleaseUtils
         releaseDescriptor.setScmPrivateKey( properties.getProperty( "scm.privateKey" ) );
         releaseDescriptor.setScmPrivateKeyPassPhrase( properties.getProperty( "scm.passphrase" ) );
         releaseDescriptor.setScmTagBase( properties.getProperty( "scm.tagBase" ) );
+        releaseDescriptor.setScmBranchBase( properties.getProperty( "scm.branchBase" ) );
         releaseDescriptor.setScmReleaseLabel( properties.getProperty( "scm.tag" ) );
         releaseDescriptor.setScmCommentPrefix( properties.getProperty( "scm.commentPrefix" ) );
         releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );

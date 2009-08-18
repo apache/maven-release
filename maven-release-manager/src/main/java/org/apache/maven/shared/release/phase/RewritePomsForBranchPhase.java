@@ -97,7 +97,7 @@ public class RewritePomsForBranchPhase
         {
             Scm scm = project.getScm();
             String branchName = releaseDescriptor.getScmReleaseLabel();
-            String branchBase = releaseDescriptor.getScmTagBase();
+            String branchBase = releaseDescriptor.getScmBranchBase();
             String subDirectoryBranch = "";
 
             // TODO: svn utils should take care of prepending this
@@ -145,9 +145,9 @@ public class RewritePomsForBranchPhase
                 {
                     subDirectoryBranch = scm.getUrl().substring( rootScm.getUrl().length() );
                 }
-                // use original tag base without protocol
+                // use original branch base without protocol
                 String value = translator.translateBranchUrl( scm.getUrl(), branchName + subDirectoryBranch,
-                                                           releaseDescriptor.getScmTagBase() );
+                                                           releaseDescriptor.getScmBranchBase() );
                 if ( !value.equals( scm.getUrl() ) )
                 {
                     rewriteElement( "url", value, scmRoot, namespace );
