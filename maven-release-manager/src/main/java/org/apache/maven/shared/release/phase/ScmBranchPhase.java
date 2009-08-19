@@ -34,9 +34,11 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.scm.ScmTranslator;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Branch the SCM repository.
@@ -53,6 +55,12 @@ public class ScmBranchPhase
      * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    /**
+     * SCM URL translators mapped by provider name.  This is needed for writing out the
+     * branch URL.
+     */
+    private Map scmTranslators;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -111,7 +119,10 @@ public class ScmBranchPhase
         validateConfiguration( releaseDescriptor );
 
         logInfo( result, "Full run would be branching " + releaseDescriptor.getWorkingDirectory() );
-        logInfo( result, "  To SCM URL: " + releaseDescriptor.getScmBranchBase() );
+        if ( releaseDescriptor.getScmBranchBase() != null )
+        {
+            logInfo( result, "  To SCM URL: " + releaseDescriptor.getScmBranchBase() );
+        }
         logInfo( result, "  with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
 
         result.setResultCode( ReleaseResult.SUCCESS );
@@ -127,4 +138,5 @@ public class ScmBranchPhase
             throw new ReleaseFailureException( "A release label is required for committing" );
         }
     }
+    
 }
