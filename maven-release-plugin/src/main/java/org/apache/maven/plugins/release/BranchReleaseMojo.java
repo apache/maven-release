@@ -51,6 +51,7 @@ public class BranchReleaseMojo
      * include the SCM provider and protocol.
      *
      * @parameter expression="${branchBase}"
+     * @since 2.0-beta-10
      */
     private String branchBase;
     
