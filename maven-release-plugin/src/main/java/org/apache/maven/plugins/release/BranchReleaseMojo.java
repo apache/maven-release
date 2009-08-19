@@ -173,7 +173,6 @@ public class BranchReleaseMojo
         }
         catch ( ReleaseFailureException e )
         {
-            e.printStackTrace();
             throw new MojoFailureException( e.getMessage() );
         }
     }
