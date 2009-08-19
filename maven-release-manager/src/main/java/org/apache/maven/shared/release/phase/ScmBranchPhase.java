@@ -56,12 +56,6 @@ public class ScmBranchPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    /**
-     * SCM URL translators mapped by provider name.  This is needed for writing out the
-     * branch URL.
-     */
-    private Map scmTranslators;
-
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -138,5 +132,4 @@ public class ScmBranchPhase
             throw new ReleaseFailureException( "A release label is required for committing" );
         }
     }
-    
 }
