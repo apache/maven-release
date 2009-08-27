@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -151,6 +152,14 @@ public class PrepareReleaseMojo
     private boolean remoteTagging;
     
     /**
+     * @parameter expression="${session}"
+     * @readonly
+     * @required
+     * @since 2.0-beta-10
+     */
+    protected MavenSession session;    
+    
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -172,9 +181,9 @@ public class PrepareReleaseMojo
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setRemoteTagging( remoteTagging );
 
-        // Create a config containing values from the system properties (command line properties).
+        // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseDescriptor sysPropertiesConfig
-                = ReleaseUtils.copyPropertiesToReleaseDescriptor( System.getProperties() );
+                = ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
         mergeCommandLineConfig( config, sysPropertiesConfig );
 
         try
