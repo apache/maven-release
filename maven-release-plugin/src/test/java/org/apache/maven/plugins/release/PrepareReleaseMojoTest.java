@@ -19,6 +19,7 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -36,6 +37,7 @@ import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ThrowStub;
 
 import java.io.File;
+import java.util.Properties;
 
 /**
  * Test release:prepare.
@@ -51,7 +53,13 @@ public class PrepareReleaseMojoTest
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         mojo.setBasedir( testFile.getParentFile() );
-
+        mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
+        {
+          public Properties getExecutionProperties(){
+              return new Properties();
+          };
+        };
+        
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
@@ -78,7 +86,12 @@ public class PrepareReleaseMojoTest
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         mojo.setBasedir( testFile.getParentFile() );
-
+        mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
+        {
+          public Properties getExecutionProperties(){
+              return new Properties();
+          };
+        };
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
@@ -113,7 +126,12 @@ public class PrepareReleaseMojoTest
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         mojo.setBasedir( testFile.getParentFile() );
-
+        mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
+        {
+          public Properties getExecutionProperties(){
+              return new Properties();
+          };
+        };
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         Mock mock = new Mock( ReleaseManager.class );
