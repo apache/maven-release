@@ -45,8 +45,8 @@
         <dependencies>
           <dependency>
             <groupId>org.apache.maven.its.release</groupId>
-          	<artifactId>maven-scm-provider-dummy</artifactId>
-          	<version>1.0</version>
+            <artifactId>maven-scm-provider-dummy</artifactId>
+            <version>1.0</version>
           </dependency>
         </dependencies>
       </plugin>
