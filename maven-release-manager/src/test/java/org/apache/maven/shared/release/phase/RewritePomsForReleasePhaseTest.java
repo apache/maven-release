@@ -19,15 +19,15 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.util.ReleaseUtil;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 
 /**
  * Test the SCM modification check phase.
@@ -279,7 +279,7 @@ public class RewritePomsForReleasePhaseTest
             // skip subproject1 - we don't need to worry about its version mapping change, it has no deps of any kind
             if ( !"groupId".equals( project.getGroupId() ) || !"subproject1".equals( project.getArtifactId() ) )
             {
-                comparePomFiles( project, "-different-version" );
+                comparePomFiles( project, "-different-version", true );
             }
         }
     }
@@ -325,16 +325,30 @@ public class RewritePomsForReleasePhaseTest
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
-    
+
     public void testRewritePomForFlatMultiModule()
         throws Exception
-    {   
+    {
         List reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project", true );
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
 
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
+    // MRELEASE-383
+    public void testRewritePomWithCDATASection()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "cdata-section" );
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // compare POMS without line ending normalization
+        assertTrue( comparePomFiles( reactorProjects, false ) );
     }
 
     protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )

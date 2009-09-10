@@ -19,6 +19,17 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -50,17 +61,6 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.jmock.Mock;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
 
 /**
  * Base class for some release tests.
@@ -227,7 +227,13 @@ public abstract class AbstractReleaseTestCase
     protected boolean comparePomFiles( List reactorProjects )
         throws IOException
     {
-        comparePomFiles( reactorProjects, "" );
+        return comparePomFiles( reactorProjects, true );
+    }
+
+    protected boolean comparePomFiles( List reactorProjects, boolean normalizeLineEndings )
+        throws IOException
+    {
+        comparePomFiles( reactorProjects, "", normalizeLineEndings );
 
         // TODO: return void since this is redundant
         return true;
@@ -236,28 +242,46 @@ public abstract class AbstractReleaseTestCase
     protected void comparePomFiles( List reactorProjects, String expectedFileSuffix )
         throws IOException
     {
+        comparePomFiles( reactorProjects, expectedFileSuffix, true );
+    }
+
+    protected void comparePomFiles( List reactorProjects, String expectedFileSuffix, boolean normalizeLineEndings )
+        throws IOException
+    {
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
-            comparePomFiles( project, expectedFileSuffix );
+            comparePomFiles( project, expectedFileSuffix, normalizeLineEndings );
         }
     }
 
     protected void comparePomFiles( MavenProject project, String expectedFileSuffix )
         throws IOException
     {
+        comparePomFiles( project, expectedFileSuffix, true );
+    }
+
+    protected void comparePomFiles( MavenProject project, String expectedFileSuffix, boolean normalizeLineEndings )
+        throws IOException
+    {
         File actualFile = project.getFile();
         File expectedFile = new File( actualFile.getParentFile(), "expected-pom" + expectedFileSuffix + ".xml" );
 
-        comparePomFiles( expectedFile, actualFile );
+        comparePomFiles( expectedFile, actualFile, normalizeLineEndings );
     }
 
     protected void comparePomFiles( File expectedFile, File actualFile )
         throws IOException
     {
-        String actual = read( actualFile );
-        String expected = read( expectedFile );
+        comparePomFiles( expectedFile, actualFile, true );
+    }
+
+    protected void comparePomFiles( File expectedFile, File actualFile, boolean normalizeLineEndings )
+        throws IOException
+    {
+        String actual = read( actualFile, normalizeLineEndings );
+        String expected = read( expectedFile, normalizeLineEndings );
         expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
         assertEquals( "Check the transformed POM", expected, actual );
     }
@@ -270,11 +294,24 @@ public abstract class AbstractReleaseTestCase
     private String read( File file )
         throws IOException
     {
+        return read( file, true );
+    }
+
+    /**
+     * Mock-up of {@link ReleaseUtil#readXmlFile(File)}, except this one REMOVES line endings. There is something fishy
+     * about the line ending conversion in that method, and it's not the class under test in these test cases.
+     * 
+     * @param normalizeLineEndings TODO
+     */
+    private String read( File file, boolean normalizeLineEndings )
+        throws IOException
+    {
         Reader reader = null;
         try
         {
             reader = ReaderFactory.newXmlReader( file );
-            return ReleaseUtil.normalizeLineEndings( IOUtil.toString( reader ), "" );
+            String xml = IOUtil.toString( reader );
+            return normalizeLineEndings ? ReleaseUtil.normalizeLineEndings( xml, "" ) : xml;
         }
         finally
         {

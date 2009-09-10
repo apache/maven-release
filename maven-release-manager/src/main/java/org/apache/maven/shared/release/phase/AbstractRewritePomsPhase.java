@@ -19,6 +19,18 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Extension;
@@ -44,6 +56,7 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
+import org.jdom.CDATA;
 import org.jdom.Comment;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -56,18 +69,6 @@ import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 import org.jdom.xpath.XPath;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Base class for rewriting phases.
@@ -222,6 +223,11 @@ public abstract class AbstractRewritePomsPhase
         for ( Iterator i = document.getDescendants( new ContentFilter( ContentFilter.COMMENT ) ); i.hasNext(); )
         {
             Comment c = (Comment) i.next();
+            c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ReleaseUtil.LS ) );
+        }
+        for ( Iterator i = document.getDescendants( new ContentFilter( ContentFilter.CDATA ) ); i.hasNext(); )
+        {
+            CDATA c = (CDATA) i.next();
             c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ReleaseUtil.LS ) );
         }
     }

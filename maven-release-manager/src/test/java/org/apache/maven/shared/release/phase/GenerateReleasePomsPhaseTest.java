@@ -19,6 +19,13 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.Maven;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFileSet;
@@ -34,13 +41,6 @@ import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ReturnStub;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Test the generate release POMs phase.
@@ -198,12 +198,14 @@ public class GenerateReleasePomsPhaseTest
     /*
      * @see org.apache.maven.shared.release.phase.AbstractReleaseTestCase#compareFiles(org.apache.maven.project.MavenProject, java.lang.String)
      */
-    protected void comparePomFiles( MavenProject project, String expectedFileSuffix ) throws IOException
+    // @Override
+    protected void comparePomFiles( MavenProject project, String expectedFileSuffix, boolean normalizeLineEndings )
+        throws IOException
     {
         File actualFile = ReleaseUtil.getReleasePom( project );
         File expectedFile = new File( actualFile.getParentFile(), "expected-release-pom" + expectedFileSuffix + ".xml" );
 
-        comparePomFiles( expectedFile, actualFile );
+        comparePomFiles( expectedFile, actualFile, normalizeLineEndings );
 
         // verify scm provider expectations here
         // TODO: can we move this somewhere better?
