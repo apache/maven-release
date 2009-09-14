@@ -43,6 +43,8 @@ Maven Release Plugin
 
   * {{{./branch-mojo.html}release:branch}} Create a branch of the current project with all versions updated.
 
+  * {{{./update-versions-mojo.html}release:udpate-versions}} Update the versions in the POM(s).
+
 * Usage
 
   General instructions on how to use the Release Plugin can be found on the {{{./usage.html}usage page}}. Some more
@@ -82,5 +84,7 @@ Maven Release Plugin
   * {{{./examples/branch.html}Create a Branch}}
 
   * {{{./examples/non-interactive-release.html}Non Interactive Release}}
+
+  * {{{./examples/update-versions.html}Update POM Versions}}
 
   []

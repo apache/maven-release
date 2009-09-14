@@ -32,7 +32,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 
 /**
- * Prepare for a release in SCM.
+ * Update the POM versions for a project.
  *
  * @author Paul Gier
  * @version $Id$
