@@ -69,6 +69,11 @@ public class DefaultReleaseManager
     private List branchPhases;
 
     /**
+     * The phases to create update versions.
+     */
+    private List updateVersionsPhases;
+
+    /**
      * The available phases.
      */
     private Map releasePhases;
@@ -394,6 +399,36 @@ public class DefaultReleaseManager
         updateListener( listener, "branch", GOAL_END );
     }
 
+    public void updateVersions( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        ReleaseManagerListener listener = null;
+        
+        updateListener( listener, "updateVersions", GOAL_START );
+
+        releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, listener );
+
+        for ( Iterator phases = updateVersionsPhases.iterator(); phases.hasNext(); )
+        {
+            String name = (String) phases.next();
+
+            ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
+
+            if ( phase == null )
+            {
+                throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
+            }
+
+            updateListener( listener, name, PHASE_START );
+            phase.execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+            updateListener( listener, name, PHASE_END );
+        }
+
+        clean( releaseDescriptor, listener, reactorProjects );
+
+        updateListener( listener, "updateVersions", GOAL_END );
+    }
+
     /**
      * Determines the path of the working directory. By default, this is the
      * checkout directory. For some SCMs, the project root directory is not the
@@ -509,6 +544,11 @@ public class DefaultReleaseManager
         {
             phases.addAll( branchPhases );
         }
+        else if ( "updateVersions".equals( name ) )
+        {
+            phases.addAll( updateVersionsPhases );
+        }
+
 
         return Collections.unmodifiableList( phases );
     }

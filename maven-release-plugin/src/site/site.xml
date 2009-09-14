@@ -50,6 +50,7 @@ under the License.
       <item name="Run Additional Goals Before Commit" href="examples/run-goals-before-commit.html"/>
       <item name="Create a Branch" href="examples/branch.html"/>
       <item name="Batch Mode Release" href="examples/non-interactive-release.html"/>
+      <item name="Update POM Versions" href="examples/update-versions.html"/>
     </menu>
   </body>
 </project>

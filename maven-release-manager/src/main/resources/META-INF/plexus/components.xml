@@ -80,6 +80,12 @@
           <phase>scm-commit-release</phase>
           <phase>end-release</phase>
         </branchPhases>
+        <updateVersionsPhases>
+          <phase>check-poms</phase>
+          <phase>create-backup-poms</phase>
+          <phase>map-development-versions</phase>
+          <phase>rewrite-pom-versions</phase>
+        </updateVersionsPhases>
       </configuration>
     </component>
     <component>
@@ -195,6 +201,19 @@
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
           <field-name>scmTranslators</field-name>
+        </requirement>
+      </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>rewrite-pom-versions</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.RewritePomVersionsPhase</implementation>
+      <configuration>
+        <pomSuffix>next</pomSuffix>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
         </requirement>
       </requirements>
     </component>

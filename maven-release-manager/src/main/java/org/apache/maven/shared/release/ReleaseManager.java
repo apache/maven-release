@@ -355,4 +355,17 @@ public interface ReleaseManager
     void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects, boolean dryRun,
                  ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
+    
+    /**
+     * Update version numbers for a project
+     *
+     * @param releaseDescriptor the configuration to use for release
+     * @param releaseEnvironment settings, maven-home, java-home, etc. to use during release.
+     * @param reactorProjects   the reactor projects
+     * @throws ReleaseExecutionException if there is a problem during release rollback
+     * @throws ReleaseFailureException   if there is a problem during release rollback
+     */
+    void updateVersions( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException;
+
 }
