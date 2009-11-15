@@ -166,11 +166,23 @@ public abstract class AbstractReleaseMojo
     protected String mavenExecutorId;
 
     /**
+     * Use a local checkout instead of doing a checkout from the upstream repository.
+     * ATTENTION: This will only work with distributed SCMs which support the file:// protocol
+     * like e.g. git, jgit or hg!  
+     * 
+     * TODO: we should think about having the defaults for the various SCM providers provided via modello!
+     * 
+     * @parameter expression="${localCheckout}" default-value="false"
+     */
+    private boolean localCheckout;
+    
+    /**
      * The SCM manager.
      * 
      * @component
      */
     private ScmManager scmManager;
+    
 
     /**
      * Gets the enviroment settings configured for this release.
@@ -225,6 +237,8 @@ public abstract class AbstractReleaseMojo
         descriptor.setWorkingDirectory( basedir.getAbsolutePath() );
 
         descriptor.setPomFileName( pomFileName );
+        
+        descriptor.setLocalCheckout( localCheckout );
 
         List profiles = project.getActiveProfiles();
 

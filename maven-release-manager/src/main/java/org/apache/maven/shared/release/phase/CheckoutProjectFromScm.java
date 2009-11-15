@@ -68,6 +68,18 @@ public class CheckoutProjectFromScm
         ScmRepository repository;
         ScmProvider provider;
 
+        if ( releaseDescriptor.isLocalCheckout() )
+        {
+            // in the release phase we have to change the checkout URL
+            // to do a local checkout instead of going over the network.
+            
+            // the first step is a bit tricky, we need to know which provider! like e.g. "scm:jgit:http://"
+            // the offset of 4 is because 'scm:' has 4 characters...
+            String providerPart = releaseDescriptor.getScmSourceUrl().substring( 0, releaseDescriptor.getScmSourceUrl().indexOf( ':', 4 ) );
+            releaseDescriptor.setScmSourceUrl( providerPart + ":file://" + releaseDescriptor.getWorkingDirectory() );
+            getLogger().info( "Performing a LOCAL checkout from " + releaseDescriptor.getScmSourceUrl() );
+        }
+        
         try
         {
             repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );

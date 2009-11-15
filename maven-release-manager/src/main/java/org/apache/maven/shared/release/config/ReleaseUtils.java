@@ -93,6 +93,7 @@ public class ReleaseUtils
         mergeInto.setDefaultDevelopmentVersion( mergeOverride( mergeInto.getDefaultDevelopmentVersion(),
                                                                toBeMerged.getDefaultDevelopmentVersion() ) );
         mergeInto.setRemoteTagging( toBeMerged.isRemoteTagging() );
+        mergeInto.setLocalCheckout( toBeMerged.isLocalCheckout() );
         
         // If the user specifies versions, these should be override the existing versions 
         if ( toBeMerged.getReleaseVersions() != null )

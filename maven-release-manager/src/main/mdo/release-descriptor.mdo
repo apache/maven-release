@@ -407,6 +407,17 @@
           </description>
         </field>   
         <field>
+          <name>localCheckout</name>
+          <version>2.0.0+</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            If the scm provider should use local checkouts via file://${basedir} 
+            instead of doing a clean checkout over the network.
+            This is very helpful for releasing large projects!
+          </description>
+        </field>
+        <field>
           <name>rootProjectPath</name>
           <version>2.0.0+</version>
           <type>String</type>
