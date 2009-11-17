@@ -244,11 +244,11 @@ public class ReleaseUtil
      * Gets the path to the project root. Useful in determining whether the project has a flat structure.
      * 
      * @param project
-     * @return
+     * @return the root project path or <code>null</code>
      */
     public static String getRootProjectPath( MavenProject project )
     {
-        String relPath = "";
+        String relPath = null;
         
         // module is a flat multi-module project
         if( getLongestPathCount( project.getModules() ) > 0 )

@@ -168,9 +168,9 @@ public class ReleaseUtilTest
             }
         };
         
-        assertEquals( "", ReleaseUtil.getRootProjectPath( project ) );
+        assertNull( ReleaseUtil.getRootProjectPath( project ) );
         
         project.getScm().setConnection( "scm:svn:file://localhost/target/svnroot/regular-multi-module/trunk/" );        
-        assertEquals( "", ReleaseUtil.getRootProjectPath( project ) );
+        assertNull( ReleaseUtil.getRootProjectPath( project ) );
     }
 }

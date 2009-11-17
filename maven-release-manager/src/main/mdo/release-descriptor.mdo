@@ -574,6 +574,11 @@
         return null;
     }
 
+    boolean saveEquals( String a, String b )
+    {
+        return a != null ? a.equals( b ) : b == null;
+    }
+
     public boolean equals( Object obj )
     {
         if ( this == obj )
@@ -587,6 +592,35 @@
 
         ReleaseDescriptor that = (ReleaseDescriptor) obj;
 
+        if ( updateDependencies        != that.updateDependencies       ||
+             useReleaseProfile         != that.useReleaseProfile        ||
+             autoVersionSubmodules     != that.autoVersionSubmodules    ||  
+             snapshotReleasePluginAllowed != that.snapshotReleasePluginAllowed ||
+             commitByProject           != that.commitByProject          ||
+             branchCreation            != that.branchCreation           ||
+             updateBranchVersions      != that.updateBranchVersions     ||
+             updateWorkingCopyVersions != that.updateWorkingCopyVersions||
+             updateVersionsToSnapshot  != that.updateVersionsToSnapshot ||
+             allowTimestampedSnapshots != that.allowTimestampedSnapshots||
+             remoteTagging             != that.remoteTagging            ||
+             localCheckout             != that.localCheckout
+           )
+           {
+               return false;
+           }
+
+        if ( !saveEquals( defaultDevelopmentVersion, that.defaultDevelopmentVersion ) ||     
+             !saveEquals( scmRelativePathProjectDirectory, that.scmRelativePathProjectDirectory ) || 
+             !saveEquals( checkoutDirectory, that.checkoutDirectory ) ||
+             !saveEquals( performGoals, that.performGoals ) ||
+             !saveEquals( defaultReleaseVersion, that.defaultReleaseVersion ) ||
+             !saveEquals( scmReleasedPomRevision, that.scmReleasedPomRevision ) ||
+             !saveEquals( rootProjectPath, that.rootProjectPath )
+           )
+        {
+            return false;
+        }
+            
         if ( addSchema != that.addSchema )
         {
             return false;
@@ -603,7 +637,7 @@
         {
             return false;
         }
-        if ( completedPhase != null ? !completedPhase.equals( that.completedPhase ) : that.completedPhase != null )
+        if ( !saveEquals( completedPhase, that.completedPhase ) )
         {
             return false;
         }
@@ -635,60 +669,57 @@
                 return false;
             }
         }
-        if ( additionalArguments != null ? !additionalArguments.equals( that.additionalArguments )
-            : that.additionalArguments != null )
+        if ( !saveEquals( additionalArguments, that.additionalArguments ) )
         {
             return false;
         }
-        if ( preparationGoals != null ? !preparationGoals.equals( that.preparationGoals )
-            : that.preparationGoals != null )
+        if ( !saveEquals( preparationGoals, that.preparationGoals ) )
         {
             return false;
         }
-        if ( pomFileName != null ? !pomFileName.equals( that.pomFileName ) : that.pomFileName != null )
+        if ( !saveEquals( pomFileName, that.pomFileName ) )
         {
             return false;
         }
-        if ( scmPrivateKeyPassPhrase != null ? !scmPrivateKeyPassPhrase.equals( that.scmPrivateKeyPassPhrase ) : that.scmPrivateKeyPassPhrase != null )
+        if ( !saveEquals( scmPrivateKeyPassPhrase, that.scmPrivateKeyPassPhrase ) )
         {
             return false;
         }
-        if ( scmPassword != null ? !scmPassword.equals( that.scmPassword ) : that.scmPassword != null )
+        if ( !saveEquals( scmPassword, that.scmPassword ) )
         {
             return false;
         }
-        if ( scmPrivateKey != null ? !scmPrivateKey.equals( that.scmPrivateKey ) : that.scmPrivateKey != null )
+        if ( !saveEquals( scmPrivateKey, that.scmPrivateKey ) )
         {
             return false;
         }
-        if ( scmReleaseLabel != null ? !scmReleaseLabel.equals( that.scmReleaseLabel ) : that.scmReleaseLabel != null )
+        if ( !saveEquals( scmReleaseLabel, that.scmReleaseLabel ) )
         {
             return false;
         }
-        if ( scmTagBase != null ? !scmTagBase.equals( that.scmTagBase ) : that.scmTagBase != null )
+        if ( !saveEquals( scmTagBase, that.scmTagBase ) )
         {
             return false;
         }
-        if ( scmBranchBase != null ? !scmBranchBase.equals( that.scmBranchBase ) : that.scmBranchBase != null )
+        if ( !saveEquals( scmBranchBase, that.scmBranchBase ) )
         {
             return false;
         }
-        if ( scmSourceUrl != null ? !scmSourceUrl.equals( that.scmSourceUrl ) : that.scmSourceUrl != null )
+        if ( !saveEquals( scmSourceUrl, that.scmSourceUrl ) )
         {
             return false;
         }
-        if ( scmUsername != null ? !scmUsername.equals( that.scmUsername ) : that.scmUsername != null )
+        if ( !saveEquals( scmUsername, that.scmUsername ) )
         {
             return false;
         }
-        if ( workingDirectory != null ? !workingDirectory.equals( that.workingDirectory ) : that.workingDirectory != null )
+        if ( !saveEquals( workingDirectory, that.workingDirectory ) )
         {
             return false;
         }
 
         return true;
     }
-
     private boolean compareScmCollections( java.util.Map that )
     {
         // Must manually compare as Scm doesn't have an equals method
@@ -770,6 +801,26 @@
         result = 29 * result + ( releaseVersions != null ? releaseVersions.hashCode() : 0 );
         result = 29 * result + ( developmentVersions != null ? developmentVersions.hashCode() : 0 );
         result = 29 * result + ( originalScmInfo != null ? originalScmInfo.hashCode() : 0 );
+        result = 29 * result + ( updateDependencies ? 1 : 0 );
+        result = 29 * result + ( useReleaseProfile ? 1 : 0 );
+        result = 29 * result + ( autoVersionSubmodules ? 1 : 0 );
+        result = 29 * result + ( snapshotReleasePluginAllowed ? 1 : 0 );
+        result = 29 * result + ( commitByProject ? 1 : 0 );
+        result = 29 * result + ( branchCreation ? 1 : 0 );
+        result = 29 * result + ( updateBranchVersions ? 1 : 0 );
+        result = 29 * result + ( updateWorkingCopyVersions ? 1 : 0 );
+        result = 29 * result + ( updateVersionsToSnapshot ? 1 : 0 );
+        result = 29 * result + ( allowTimestampedSnapshots ? 1 : 0 );
+        result = 29 * result + ( remoteTagging ? 1 : 0 );
+        result = 29 * result + ( localCheckout ? 1 : 0 );
+        result = 29 * result + ( defaultDevelopmentVersion != null ? defaultDevelopmentVersion.hashCode() : 0 );
+        result = 29 * result + ( scmRelativePathProjectDirectory != null ? scmRelativePathProjectDirectory.hashCode() : 0 );
+        result = 29 * result + ( checkoutDirectory != null ? checkoutDirectory.hashCode() : 0 );
+        result = 29 * result + ( performGoals != null ? performGoals.hashCode() : 0 );
+        result = 29 * result + ( defaultReleaseVersion != null ? defaultReleaseVersion.hashCode() : 0 );
+        result = 29 * result + ( scmReleasedPomRevision != null ? scmReleasedPomRevision.hashCode() : 0 );
+        result = 29 * result + ( rootProjectPath != null ? rootProjectPath.hashCode() : 0 );
+
         return result;
     }
 ]]></code>

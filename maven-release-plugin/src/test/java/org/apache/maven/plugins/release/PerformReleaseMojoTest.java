@@ -88,7 +88,8 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );
         File checkoutDirectory = getTestFile( "target/checkout" );
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
-        releaseDescriptor.setPerformGoals( "deploy site-deploy" );
+        releaseDescriptor.setPerformGoals( "deploy" );
+        releaseDescriptor.setRootProjectPath( "/root-project" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project" );
 
         Mock mock = new Mock( ReleaseManager.class );
@@ -113,7 +114,7 @@ public class PerformReleaseMojoTest
     {
         File testFileDirectory = getTestFile( "target/test-classes/mojos/perform/" );
         PerformReleaseMojo mojo =
-            (PerformReleaseMojo) lookupMojo( "perform", new File( testFileDirectory, "perform.xml" ) );
+            (PerformReleaseMojo) lookupMojo( "perform", new File( testFileDirectory, "perform-without-site.xml" ) );
         mojo.setBasedir( testFileDirectory );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();

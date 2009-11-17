@@ -62,6 +62,8 @@ public class PrepareReleaseMojoTest
         
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
+        releaseDescriptor.setUpdateDependencies( false );
+        
         Mock mock = new Mock( ReleaseManager.class );
 
         Constraint[] constraints = new Constraint[] {
@@ -94,6 +96,8 @@ public class PrepareReleaseMojoTest
         };
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
+        releaseDescriptor.setUpdateDependencies( false );
+        
         Mock mock = new Mock( ReleaseManager.class );
 
         Constraint[] constraints = new Constraint[] {
@@ -134,6 +138,8 @@ public class PrepareReleaseMojoTest
         };
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
+        releaseDescriptor.setUpdateDependencies( false );
+        
         Mock mock = new Mock( ReleaseManager.class );
 
         Constraint[] constraints = new Constraint[] {
