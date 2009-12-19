@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.scm.ScmBranchParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.branch.BranchScmResult;
@@ -85,8 +86,13 @@ public class ScmBranchPhase
         {
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) );
             String branchName = releaseDescriptor.getScmReleaseLabel();
-            result = provider.branch( repository, fileSet, branchName,
-                                      releaseDescriptor.getScmCommentPrefix() + " copy for branch " + branchName );
+            
+            ScmBranchParameters scmBranchParameters = new ScmBranchParameters();
+            scmBranchParameters.setMessage( releaseDescriptor.getScmCommentPrefix() + " copy for branch " + branchName );
+            scmBranchParameters.setRemoteBranching( releaseDescriptor.isRemoteTagging() );
+            scmBranchParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
+            
+            result = provider.branch( repository, fileSet, branchName, scmBranchParameters);
         }
         catch ( ScmException e )
         {
