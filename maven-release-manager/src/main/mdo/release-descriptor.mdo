@@ -18,7 +18,8 @@
   ~ under the License.
   -->
 
-<model>
+<model xmlns="http://modello.codehaus.org/MODELLO/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.1.0 http://modello.codehaus.org/xsd/modello-1.1.0.xsd">
   <id>release-descriptor</id>
   <name>ReleaseDescriptor</name>
   <description>
@@ -157,7 +158,7 @@
           <name>releaseVersions</name>
           <version>1.0.0+</version>
           <type>Map</type>
-          <association stash.keyType="String">
+          <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
@@ -169,7 +170,7 @@
           <name>developmentVersions</name>
           <version>1.0.0+</version>
           <type>Map</type>
-          <association stash.keyType="String">
+          <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
@@ -181,7 +182,7 @@
           <name>resolvedSnapshotDependencies</name>
           <version>1.0.0+</version>
           <type>Map</type>
-          <association stash.keyType="String">
+          <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
@@ -211,7 +212,7 @@
           <name>originalScmInfo</name>
           <version>1.0.0+</version>
           <type>Map</type>
-          <association stash.keyType="String">
+          <association>
             <type>String</type>
             <multiplicity>*</multiplicity>
           </association>
@@ -386,17 +387,17 @@
             Default version to use for new working copy.
           </description>
         </field>
-        
+
         <field>
           <name>remoteTagging</name>
           <version>1.0.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
-            NOTE : currently only implemented with svn scm. Enable a workaround to prevent issue due to svn client > 1.5.0 
+            NOTE : currently only implemented with svn scm. Enable a workaround to prevent issue due to svn client > 1.5.0
             (http://jira.codehaus.org/browse/SCM-406)
           </description>
-        </field> 
+        </field>
         <field>
           <name>scmReleasedPomRevision</name>
           <version>1.0.0+</version>
@@ -405,14 +406,14 @@
             NOTE : currently only implemented with svn scm. It contains the revision of the committed released pom to remotely tag
             the source code with this revision.
           </description>
-        </field>   
+        </field>
         <field>
           <name>localCheckout</name>
           <version>2.0.0+</version>
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
-            If the scm provider should use local checkouts via file://${basedir} 
+            If the scm provider should use local checkouts via file://${basedir}
             instead of doing a clean checkout over the network.
             This is very helpful for releasing large projects!
           </description>
@@ -424,7 +425,7 @@
           <description>
             Path to the root project. Used during release:perform and release:stage of flat multi-module projects.
           </description>
-        </field>            
+        </field>
 
         <!-- Announcement Information
 
@@ -444,11 +445,11 @@
           <version>1.0.0+</version>
           <code><![CDATA[
     public static final String DEVELOPMENT_KEY = "dev";
-    
+
     public static final String RELEASE_KEY = "rel";
-    
+
     public static final String ORIGINAL_VERSION = "original";
-                        
+
     /**
      * Map a given snapshot dependency to a specified version from when it is released.
      *
@@ -467,7 +468,7 @@
         versionsMap.put( RELEASE_KEY, releaseVersion );
         resolvedSnapshotDependencies.put( artifactName, versionsMap );
     }
-          
+
     /**
      * Map a given project to a specified version from when it is released.
      *
@@ -594,7 +595,7 @@
 
         if ( updateDependencies        != that.updateDependencies       ||
              useReleaseProfile         != that.useReleaseProfile        ||
-             autoVersionSubmodules     != that.autoVersionSubmodules    ||  
+             autoVersionSubmodules     != that.autoVersionSubmodules    ||
              snapshotReleasePluginAllowed != that.snapshotReleasePluginAllowed ||
              commitByProject           != that.commitByProject          ||
              branchCreation            != that.branchCreation           ||
@@ -609,8 +610,8 @@
                return false;
            }
 
-        if ( !saveEquals( defaultDevelopmentVersion, that.defaultDevelopmentVersion ) ||     
-             !saveEquals( scmRelativePathProjectDirectory, that.scmRelativePathProjectDirectory ) || 
+        if ( !saveEquals( defaultDevelopmentVersion, that.defaultDevelopmentVersion ) ||
+             !saveEquals( scmRelativePathProjectDirectory, that.scmRelativePathProjectDirectory ) ||
              !saveEquals( checkoutDirectory, that.checkoutDirectory ) ||
              !saveEquals( performGoals, that.performGoals ) ||
              !saveEquals( defaultReleaseVersion, that.defaultReleaseVersion ) ||
@@ -620,7 +621,7 @@
         {
             return false;
         }
-            
+
         if ( addSchema != that.addSchema )
         {
             return false;
