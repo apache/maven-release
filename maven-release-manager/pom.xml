@@ -212,7 +212,7 @@
       <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
-        <version>1.0-alpha-22</version>
+        <version>1.1</version>
         <executions>
           <execution>
             <goals>
@@ -225,7 +225,9 @@
         <configuration>
           <version>2.0.0</version>
           <packageWithVersion>false</packageWithVersion>
-          <model>src/main/mdo/release-descriptor.mdo</model>
+          <models>
+            <model>src/main/mdo/release-descriptor.mdo</model>
+          </models>
         </configuration>
       </plugin>
       <plugin>
