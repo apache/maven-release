@@ -38,11 +38,12 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.List;
@@ -74,30 +75,30 @@ public class ScmTagPhase
 
         ScmRepository repository;
         ScmProvider provider;
-        
+
         String workingDirectory = releaseDescriptor.getWorkingDirectory();
         List modules = getModules( releaseDescriptor, workingDirectory );
         String scmSourceUrl = releaseDescriptor.getScmSourceUrl();
-        
+
      // determine if project is a flat multi-module
         if ( modules != null && !modules.isEmpty() )
         {
-            workingDirectory = ReleaseUtil.getBaseWorkingDirectory( workingDirectory, modules );            
+            workingDirectory = ReleaseUtil.getBaseWorkingDirectory( workingDirectory, modules );
             releaseDescriptor.setScmSourceUrl( ReleaseUtil.getBaseScmUrl( scmSourceUrl, modules ) );
         }
-        
+
         try
-        {   
+        {
             repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
-            
+
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
         catch ( ScmRepositoryException e )
-        {            
+        {
             throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
         }
         catch ( NoSuchScmProviderException e )
-        {   
+        {
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
         }
 
@@ -147,6 +148,7 @@ public class ScmTagPhase
 
     private List getModules( ReleaseDescriptor releaseDescriptor, String workingDirectory )
     {
+        Reader in = null;
         try
         {
             String pomFile = releaseDescriptor.getPomFileName();
@@ -158,29 +160,33 @@ public class ScmTagPhase
             String pathToRootPom = workingDirectory + ReleaseUtil.FS + pomFile;
 
             MavenXpp3Reader reader = new MavenXpp3Reader();
-            Reader in = new FileReader( new File( pathToRootPom ) );
+            in = ReaderFactory.newXmlReader( new File( pathToRootPom ) );
 
             Model model = reader.read( in );
-            
-            return model.getModules();            
+
+            return model.getModules();
         }
         catch ( FileNotFoundException e )
-        {   
+        {
             getLogger().warn( "Pom file not found : " + e.getMessage() );
             getLogger().warn( "Assuming working directory in release descriptor is the base working directory." );
 
         }
         catch ( IOException e )
-        {   
+        {
             getLogger().warn( "IO error occurred while reading pom file : " + e.getMessage() );
             getLogger().warn( "Assuming working directory in release descriptor is the base working directory." );
         }
         catch ( XmlPullParserException e )
-        {         
+        {
             getLogger().warn( "Error parsing pom file : " + e.getMessage() );
             getLogger().warn( "Assuming working directory in release descriptor is the base working directory." );
         }
-        
+        finally
+        {
+            IOUtil.close( in );
+        }
+
         return null;
     }
 
@@ -189,29 +195,29 @@ public class ScmTagPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        validateConfiguration( releaseDescriptor );        
-        
+        validateConfiguration( releaseDescriptor );
+
         String workingDirectory = releaseDescriptor.getWorkingDirectory();
         List modules = getModules( releaseDescriptor, workingDirectory );
-        String scmSourceUrl = releaseDescriptor.getScmSourceUrl();     
-        
+        String scmSourceUrl = releaseDescriptor.getScmSourceUrl();
+
      // determine if project is a flat multi-module
         if ( modules != null && !modules.isEmpty() )
         {
             workingDirectory = ReleaseUtil.getBaseWorkingDirectory( workingDirectory, modules );
             releaseDescriptor.setScmSourceUrl( ReleaseUtil.getBaseScmUrl( scmSourceUrl, modules ) );
         }
-        
+
         logInfo( result, "Full run would be tagging " + workingDirectory + " with label: '" +
             releaseDescriptor.getScmReleaseLabel() + "'" );
 
         revertToOriginalScmSourceUrl( releaseDescriptor, scmSourceUrl );
-        
+
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
     }
-    
+
     private static void validateConfiguration( ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException
     {
@@ -219,5 +225,5 @@ public class ScmTagPhase
         {
             throw new ReleaseFailureException( "A release label is required for committing" );
         }
-    }    
+    }
 }
