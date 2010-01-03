@@ -5,7 +5,8 @@
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
   ------
-  September 18, 2006
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -26,7 +27,7 @@
 
 Generate Release POMs
 
-  To generate poms with resolved information (e.g. version numbers) to check the values that the release plugin will use,
+  To generate POMs with resolved information (e.g. version numbers) to check the values that the Release Plugin will use,
   set the property <<<generateReleasePoms>>> to <<<true>>>. Resolved values will be saved in <<<release-pom.xml>>>.
 
 -------

@@ -1,11 +1,13 @@
   ------
-  Prepare a release
+  Prepare a Release
   ------
   Carlos Sanchez <carlos@apache.org>
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
+  Dennis Lundberg <dennisl@apache.org>
   ------
-  September 18, 2006
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -24,15 +26,15 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Prepare a release
+Prepare a Release
 
-  Preparing a release executes the following steps:
+  Preparing a release goes through the following steps:
 
    * Check that there are no uncommitted changes in the sources
 
    * Check that there are no SNAPSHOT dependencies
 
-   * Change the version in the poms from x-SNAPSHOT to a new version (you will be prompted for the versions to use)
+   * Change the version in the POMs from x-SNAPSHOT to a new version (you will be prompted for the versions to use)
 
    * Transform the SCM information in the POM to include the final destination of the tag
 
@@ -46,7 +48,9 @@ Prepare a release
 
    * Commit the modified POMs
 
-  To execute this step, run:
+   []
+
+  To prepare a release execute this command:
 
 -------
 mvn release:prepare
@@ -68,4 +72,11 @@ mvn release:clean release:prepare
 -------
 
   <<Note:>> If any changes have been made to your source files they might need to be reverted before you restart the
-  prepare process.  You can use <<release:rollback>> to make the plugin do it for you.
+  prepare process.  You can use <<<release:rollback>>> to make the plugin do it for you.
+
+* Multi-module projects
+
+  You will be prompted for the version number for each module of the project.
+  If you prefer that every module gets the same version as the parent POM,
+  you can set the option <<<autoVersionSubmodules>>> to <<<true>>>. Now you will
+  be asked only once for the release version and the next development version.

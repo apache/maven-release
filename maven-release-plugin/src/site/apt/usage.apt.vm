@@ -5,7 +5,8 @@
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
   ------
-  September 18, 2006
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -31,16 +32,16 @@ Usage
 * Use a different username in the SCM server than the one in the operating system
 
   Most of the SCMs are simply executed as an external command as the current user on your system. If this username is
-  not the same as the remote username, you may need to set the following option:
+  not the same as the SCM username, you may need to set the following option:
 
 ------
-mvn -Dusername=your_username release:prepare
+mvn -Dusername=your_scm_username release:prepare
 ------
 
 * Set where to tag the files in Subversion
 
   This example shows how to set the repository location for all tags to be created in Subversion.
-  Note that it is not needed if you use the standard SVN layout, where the root project is in <<<trunk>>>, and
+  Note that this is not needed if you use the standard SVN layout, where the root project is in <<<trunk>>>, and
   there is a sibling <<<tags>>> directory.
 
 -------------------
@@ -66,7 +67,7 @@ mvn -Dusername=your_username release:prepare
 
 * Do a Dry Run
 
-  Since the release plugin performs a number of operations that change the project, it may be wise to do a dry run
+  Since the Release Plugin performs a number of operations that change the project, it may be wise to do a dry run
   before a big release or on a new project. To do this, commit all of your files as if you were about to run a full
   release and run:
 
@@ -104,10 +105,10 @@ mvn --batch-mode release:prepare
   been tested IS the one that is deployed.
 
   The <<<release:stage>>> goal uses this strategy. It replaces the <<<release:perform>>> goal and does the same
-  tasks, but requires a <<<stagingRepository>>> parameter. It will automatically re-configure the deploy and
-  site-deploy goals to use the staging strategy.
+  tasks, but requires a <<<stagingRepository>>> parameter. It will automatically re-configure the <<<deploy>>> and
+  <<<site-deploy>>> goals to use the staging strategy.
 
   After the release is complete, the <<<release.properties>>> and other release files will NOT be removed, so that
-  you can still execute a <<<release:rollback>>> if something wrong has been detected and a new candidate must
+  you can still execute a <<<release:rollback>>> if some error has been detected and a new candidate must
   be created after some fixes. You just need to use a distinct tag in SCM, or rename the one that has been created
-  if the SCM provider supports renaming tag.
+  if the SCM provider supports renaming tags.

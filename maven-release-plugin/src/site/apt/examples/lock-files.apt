@@ -5,7 +5,8 @@
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
   ------
-  September 18, 2006
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -29,7 +30,7 @@
 
 Lock Files During Release
 
-  If you want to lock the files during release operation set the property <<<useEditMode>>> to <<<true>>>. The default
+  If you want to lock the files during a release operation set the property <<<useEditMode>>> to <<<true>>>. The default
   value of this property is <<<false>>>.
 
 -------

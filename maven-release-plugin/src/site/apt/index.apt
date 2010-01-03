@@ -5,7 +5,8 @@
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
   ------
-  September 18, 2006
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -37,13 +38,13 @@ Maven Release Plugin
 
   * {{{./rollback-mojo.html}release:rollback}} Rollback a previous release.
 
-  * {{{./perform-mojo.html}release:perform}} Perform a release from SCM
+  * {{{./perform-mojo.html}release:perform}} Perform a release from SCM.
 
-  * {{{./stage-mojo.html}release:stage}} Perform a release from SCM into a staging folder/repository
+  * {{{./stage-mojo.html}release:stage}} Perform a release from SCM into a staging folder/repository.
 
   * {{{./branch-mojo.html}release:branch}} Create a branch of the current project with all versions updated.
 
-  * {{{./update-versions-mojo.html}release:udpate-versions}} Update the versions in the POM(s).
+  * {{{./update-versions-mojo.html}release:update-versions}} Update the versions in the POM(s).
 
 * Usage
 
@@ -71,9 +72,11 @@ Maven Release Plugin
   you can take a look into the following examples:
 
 
-  * {{{./examples/perform-release.html}Perform Release}}
+  * {{{./examples/prepare-release.html}Prepare a Release}}
 
-  * {{{./examples/prepare-release.html}Prepare Release}}
+  * {{{./examples/perform-release.html}Perform a Release}}
+
+  * {{{./examples/rollback-release.html}Rollback a Release}}
 
   * {{{./examples/generate-release-poms.html}Generate Release POMs}}
 
@@ -83,7 +86,7 @@ Maven Release Plugin
 
   * {{{./examples/branch.html}Create a Branch}}
 
-  * {{{./examples/non-interactive-release.html}Non Interactive Release}}
+  * {{{./examples/non-interactive-release.html}Non-interactive Release}}
 
   * {{{./examples/update-versions.html}Update POM Versions}}
 

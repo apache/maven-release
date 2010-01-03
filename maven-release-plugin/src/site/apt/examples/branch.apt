@@ -1,9 +1,10 @@
   ------
-  Create a branch
+  Create a Branch
   ------
   Emmanuel Venisse <evenisse@apache.org>
   ------
-  May 16, 2007
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -22,13 +23,13 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Create a branch
+Create a Branch
 
-  Creating a branch executes the following steps:
+  Creating a branch involves the following steps:
 
    * Check that there are no uncommitted changes in the sources
 
-   * Change the version in the poms if you want to change it in the branch (you will be prompted for the versions to use)
+   * Change the version in the POMs if you want to change it in the branch (you will be prompted for the versions to use)
 
    * Transform the SCM information in the POM to include the final destination of the tag
 
@@ -40,34 +41,33 @@ Create a branch
 
    * Commit the modified POMs
 
-  To execute this step, run:
+  To create a branch execute this command:
 
 -------
 mvn release:branch -DbranchName=my-branch
 -------
 
-  By default, the pom in the new branch keeps the same version as the local working copy, and the local pom is incremented
+  By default, the POM in the new branch keeps the same version as the local working copy, and the local POM is incremented
   to the next revision. If you want to update versions in the new branch and not in the working copy, run:
 
 -------
 mvn release:branch -DbranchName=my-branch -DupdateBranchVersions=true -DupdateWorkingCopyVersions=false
 -------
 
-  <<Note:>> It can be useful if you want to create a branch from a tag
-  
-  
-* Specify versions on the command line.
+  <<Note:>> This can be useful if you want to create a branch from a tag
+
+
+* Specify versions on the command line
 
   You may want to specify the versions to use on the command line.  This can be useful for example if you are running
-  the release in non-interactive mode.  The branch goal can use the same properties used by the prepare goal for
+  the release in non-interactive mode.  The <<<branch>>> goal can use the same properties used by the <<<prepare>>> goal for
   specifying the versions to be used.
-  
+
 
 -----------
 mvn --batch-mode release:branch -DbranchName=my-branch-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
      -Dproject.dev.org.myCompany:projectA=2.0-SNAPSHOT
 -----------
 
-  In this example, the pom in the new branch will be set to the version 1.2-SNAPSHOT, and the pom in the
-  local pom will be set to the version 2.0-SNAPSHOT
-  
+  In this example, the POM in the new branch will be set to the version 1.2-SNAPSHOT, and the
+  local POM will be set to the version 2.0-SNAPSHOT.

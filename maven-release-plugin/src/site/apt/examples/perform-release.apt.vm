@@ -1,11 +1,12 @@
   ------
-  Perform a release
+  Perform a Release
   ------
   Carlos Sanchez <carlos@apache.org>
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
   ------
-  September 18, 2006
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -24,7 +25,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Perform a release
+Perform a Release
 
   Performing a release does the following:
 
@@ -32,7 +33,9 @@ Perform a release
 
    * Run the predefined Maven goals to release the project (by default, <<<deploy site-deploy>>>)
 
-  To execute this step, run:
+   []
+
+  To perform a release execute this command:
 
 -------
 mvn release:perform
@@ -45,14 +48,14 @@ mvn release:perform
 mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
 -------
 
-  release:perform will fork a new maven instance to build the checked-out project. This new maven instance will use the 
-  same system configuration and maven profiles used by the one running the release:perform goal. 
-  
+  <<<release:perform>>> will fork a new Maven instance to build the checked-out project. This new Maven instance will use the
+  same system configuration and Maven profiles used by the one running the <<<release:perform>>> goal.
+
   It is possible to
   force some profiles to get enabled during release (for example to enable time-consummung tasks that are only relevant
-  at release-time) by setting a coma separated list of profiles names in the releaseProfiles parameter. The goals and
-  profiles required to release the project can then be configured in the POM :
-  
+  at release-time) by setting a comma separated list of profiles names in the <<<releaseProfiles>>> parameter. The goals and
+  profiles required to release the project can then be configured in the POM:
+
 -------
   <plugin>
     <artifactId>maven-release-plugin</artifactId>

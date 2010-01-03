@@ -1,9 +1,10 @@
   ------
-  Performing a non-interactive release
+  Performing a Non-interactive Release
   ------
   Paul Gier
   ------
-  April 22, 2008
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -22,35 +23,35 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Performing a non-interactive release
+Performing a Non-interactive Release
 
   In some environments, it may be necessary to perform a non-interactive release.  This means that
-  the release plugin will obtain the required parameters from system properties (set on the command line)
+  the Release Plugin will obtain the required parameters from system properties (set on the command line)
   or from a properties file (<<<release.properties>>>).
-  
-  To prevent the release plugin from promting the user for any information, maven should be put into 
+
+  To prevent the Release Plugin from promting the user for any information, Maven should be put into
   batch mode.
-  
+
 -----------
 mvn -B release:prepare
------------ 
+-----------
 
   or
-  
+
 -----------
 mvn --batch-mode release:prepare
 -----------
 
 * Using system properties
 
-  Using batch mode with no other configuration will cause the release plugin to use default values
-  for the release version, the scm tag, and the next development version.  These values can also
+  Using batch mode with no other configuration will cause the Release Plugin to use default values
+  for the release version, the SCM tag, and the next development version.  These values can also
   be set from the command line.
 
-  The scm tag name can be set using the <<<tag>>> property.  And default values for the release version
+  The SCM tag name can be set using the <<<tag>>> property.  And default values for the release version
   and new development version can be set using the properties <<<releaseVersion>>> and
   <<<developmentVersion>>> respectively.
-  
+
 -----------
 mvn --batch-mode -Dtag=my-proj-1.2 release:prepare \
                  -DreleaseVersion=1.2 \
@@ -59,39 +60,39 @@ mvn --batch-mode -Dtag=my-proj-1.2 release:prepare \
 
 * Multi-module releases
 
-  Because there is the possibility that a release will include multiple release versions and 
-  snapshot versions (for a multi-module project), there is a specific format for setting these 
-  values.  The property name should start with <<<project.rel>>> for release versions and 
-  <<<project.dev>>> for the new development version.  These prefixes are followed by the 
-  maven groupId and artifactId (separated by a colon).  So the result looks something like 
+  Because there is the possibility that a release will include multiple release versions and
+  SNAPSHOT versions (for a multi-module project), there is a specific format for setting these
+  values.  The property name should start with <<<project.rel>>> for release versions and
+  <<<project.dev>>> for the new development version.  These prefixes are followed by the
+  project's groupId and artifactId (separated by a colon).  So the result looks something like
   the following example.
-  
+
 -----------
 mvn --batch-mode -Dtag=my-proj-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
      -Dproject.dev.org.myCompany:projectA=1.3-SNAPSHOT release:prepare
 -----------
 
-  Using this convention, multiple release versions and snapshot versions (one for each
+  Using this convention, multiple release versions and SNAPSHOT versions (one for each
   project module) can be specified on the command line.
-  
+
   These properties can be used in combination with the <<<releaseVersion>>> and
   <<<developmentVersion>>>.  In the case where both are used, <<<releaseVersion>>> and
   <<<developmentVersion>>> act as defaults for modules that have not been given specific
   values using the <<<groupId:artifactId>>> format.
-  
-  
+
+
 * Using a properties file
 
-  Another option is to create a properties file that contains the version information for 
+  Another option is to create a properties file that contains the version information for
   the project you would like to release.  The properties file should be called <<<release.properties>>>
-  and the release and snapshot versions follow the same conventions as they do on the 
+  and the release and SNAPSHOT versions follow the same conventions as they do on the
   command line.
-  
+
 -----------
 scm.tag=my-proj-1.2
 project.rel.org.myCompany\:projectA=1.2
 project.dev.org.myCompany\:projectA=1.3-SNAPSHOT
 -----------
-  
+
   <<Note:>> Remember to escape the colon with a backslash, otherwise the property will not be
   interpreted correctly.

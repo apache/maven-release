@@ -1,11 +1,12 @@
   ------
-  Run Goals Before Commit
+  Run Additional Goals Before Commit
   ------
   Carlos Sanchez <carlos@apache.org>
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
   ------
-  September 18, 2006
+  2010-01-03
+  ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
 ~~ or more contributor license agreements.  See the NOTICE file
@@ -24,7 +25,7 @@
 ~~ specific language governing permissions and limitations
 ~~ under the License.
 
-Run Goals Before Commit
+Run Additional Goals Before Commit
 
   To run additional goals after release preparation but before committing, specify them using the <<<preparationGoals>>>
   property.
