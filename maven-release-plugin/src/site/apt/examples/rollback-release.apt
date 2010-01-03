@@ -32,7 +32,7 @@ Rollback a Release
 
   []
 
-  When a release is rolled back, the following steps are executed:
+  When a release is rolled back, the following release phases are executed:
 
   * All project POMs are reverted back to their pre-release state locally, and also in the SCM if the previous release
   command was able to successfully make changes in the SCM to the POMs. This is done by using the backup files created during

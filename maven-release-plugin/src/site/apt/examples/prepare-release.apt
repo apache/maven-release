@@ -28,7 +28,7 @@
 
 Prepare a Release
 
-  Preparing a release goes through the following steps:
+  Preparing a release goes through the following release phases:
 
    * Check that there are no uncommitted changes in the sources
 

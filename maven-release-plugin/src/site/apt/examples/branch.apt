@@ -25,7 +25,7 @@
 
 Create a Branch
 
-  Creating a branch involves the following steps:
+  Creating a branch involves the following release phases:
 
    * Check that there are no uncommitted changes in the sources
 
@@ -40,6 +40,8 @@ Create a Branch
    * Bump the version in the POMs if you want to change it to a new value y-SNAPSHOT (these values will also be prompted for)
 
    * Commit the modified POMs
+
+   []
 
   To create a branch execute this command:
 
