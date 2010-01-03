@@ -46,6 +46,7 @@ under the License.
       <item name="Prepare a Release" href="examples/prepare-release.html"/>
       <item name="Perform a Release" href="examples/perform-release.html"/>
       <item name="Rollback a Release" href="examples/rollback-release.html"/>
+      <item name="Clean a Release" href="examples/clean-release.html"/>
       <item name="Generate Release POMs" href="examples/generate-release-poms.html"/>
       <item name="Lock Files During Release" href="examples/lock-files.html"/>
       <item name="Run Additional Goals Before Commit" href="examples/run-goals-before-commit.html"/>

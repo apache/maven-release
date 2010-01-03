@@ -78,6 +78,8 @@ Maven Release Plugin
 
   * {{{./examples/rollback-release.html}Rollback a Release}}
 
+  * {{{./examples/clean-release.html}Clean a Release}}
+
   * {{{./examples/generate-release-poms.html}Generate Release POMs}}
 
   * {{{./examples/lock-files.html}Lock Files During Release}}
