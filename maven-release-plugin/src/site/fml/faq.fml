@@ -33,5 +33,20 @@ under the License.
         <p>Maven Release Plugin will prompt for each project's version.</p>
       </answer>
     </faq>
+    <faq id="nonrecursive">
+      <question>How can I release a parent POM without releasing all it's modules?
+      </question>
+      <answer>
+        <p>You need to pass the -N flag to Maven <b>and</b> configure the Release Plugin to pass the -N flag on
+          it's forked builds with the <code>-Darguments</code> flag.</p>
+        <p>
+        Here's an example:
+        </p>
+<source>
+mvn -N -Darguments=-N release:prepare
+mvn -N -Darguments=-N release:perform
+</source>
+      </answer>
+    </faq>
   </part>
 </faqs>
