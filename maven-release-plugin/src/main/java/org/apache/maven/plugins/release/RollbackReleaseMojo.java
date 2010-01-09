@@ -27,6 +27,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
  * Rollback changes made by a previous release.
+ * For more info see <a href="/plugins/maven-release-plugin/examples/rollback-release.html">this example</a>.
  *
  * @aggregator
  * @goal rollback

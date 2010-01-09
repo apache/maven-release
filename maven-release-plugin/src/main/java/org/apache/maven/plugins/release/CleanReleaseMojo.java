@@ -25,6 +25,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
  * Clean up after a release preparation.
+ * For more info see <a href="/plugins/maven-release-plugin/examples/clean-release.html">this example</a>.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$

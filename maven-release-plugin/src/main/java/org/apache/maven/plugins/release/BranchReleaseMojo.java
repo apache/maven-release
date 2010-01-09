@@ -27,6 +27,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
  * Branch a project in SCM.
+ * For more info see <a href="/plugins/maven-release-plugin/examples/branch.html">this example</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$

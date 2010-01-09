@@ -33,6 +33,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 
 /**
  * Update the POM versions for a project.
+ * For more info see <a href="/plugins/maven-release-plugin/examples/update-versions.html">this example</a>.
  *
  * @author Paul Gier
  * @version $Id$

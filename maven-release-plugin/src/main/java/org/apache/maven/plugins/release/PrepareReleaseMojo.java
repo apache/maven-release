@@ -29,6 +29,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 
 /**
  * Prepare for a release in SCM.
+ * For more info see <a href="/plugins/maven-release-plugin/examples/prepare-release.html">this example</a>.
  *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
