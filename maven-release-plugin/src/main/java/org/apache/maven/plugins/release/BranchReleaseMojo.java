@@ -43,17 +43,17 @@ public class BranchReleaseMojo
      * @required
      */
     private String branchName;
-    
+
     /**
      * The branch base directory in SVN, you must define it if you don't use the standard svn layout (trunk/tags/branches).
      * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/branches</code>. The URL is an SVN URL and does not
      * include the SCM provider and protocol.
      *
      * @parameter expression="${branchBase}"
-     * @since 2.0-beta-10
+     * @since 2.0
      */
     private String branchBase;
-    
+
     /**
      * Whether to update versions in the branch.
      *
@@ -113,30 +113,30 @@ public class BranchReleaseMojo
      * @parameter expression="${addSchema}" default-value="true"
      */
     private boolean addSchema;
-    
+
     /**
-     * currently only implemented with svn scm. Enable a workaround to prevent issue 
+     * currently only implemented with svn scm. Enable a workaround to prevent issue
      * due to svn client > 1.5.0 (http://jira.codehaus.org/browse/SCM-406)
-     *      
-     * 
+     *
+     *
      * @parameter expression="${remoteTagging}" default-value="true"
-     * @since 2.0-beta-10
-     */    
-    private boolean remoteTagging;    
+     * @since 2.0
+     */
+    private boolean remoteTagging;
 
     /**
      * Default version to use when preparing a release or a branch.
-     * 
+     *
      * @parameter expression="${releaseVersion}"
-     * @since 2.0-beta-10
+     * @since 2.0
      */
     private String releaseVersion;
 
     /**
      * Default version to use for new local working copy.
-     * 
+     *
      * @parameter expression="${developmentVersion}"
-     * @since 2.0-beta-10
+     * @since 2.0
      */
     private String developmentVersion;
 

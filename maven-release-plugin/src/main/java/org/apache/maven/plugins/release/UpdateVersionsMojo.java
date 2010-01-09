@@ -46,33 +46,33 @@ public class UpdateVersionsMojo
     /**
      * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
      * version of each submodules.
-     * 
+     *
      * @parameter expression="${autoVersionSubmodules}" default-value="false"
      */
     private boolean autoVersionSubmodules;
 
     /**
      * Whether to add a schema to the POM if it was previously missing on release.
-     * 
+     *
      * @parameter expression="${addSchema}" default-value="true"
      */
     private boolean addSchema;
 
     /**
      * Default version to use for new local working copy.
-     * 
+     *
      * @parameter expression="${developmentVersion}"
      */
     private String developmentVersion;
-    
+
     /**
      * @parameter expression="${session}"
      * @readonly
      * @required
-     * @since 2.0-beta-10
+     * @since 2.0
      */
-    protected MavenSession session;    
-    
+    protected MavenSession session;
+
     /**
      * {@inheritDoc}
      */
@@ -80,7 +80,7 @@ public class UpdateVersionsMojo
         throws MojoExecutionException, MojoFailureException
     {
         super.execute();
-        
+
         ReleaseDescriptor config = createReleaseDescriptor();
         config.setAddSchema( addSchema );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
@@ -112,7 +112,7 @@ public class UpdateVersionsMojo
     /**
      * This method takes some of the release configuration picked up from the command line system properties and copies
      * it into the release config object.
-     * 
+     *
      * @param config The release configuration to merge the system properties into, must not be <code>null</code>.
      * @param sysPropertiesConfig The configuration from the system properties to merge in, must not be
      *            <code>null</code>.
