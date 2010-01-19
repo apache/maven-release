@@ -125,7 +125,7 @@
 
   <properties>
     <scmVersion>1.3</scmVersion>
-    <mavenPluginPluginVersion>2.5</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>2.5.1</mavenPluginPluginVersion>
   </properties>
 
   <dependencyManagement>
