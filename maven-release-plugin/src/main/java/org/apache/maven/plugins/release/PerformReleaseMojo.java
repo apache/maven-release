@@ -55,6 +55,7 @@ public class PerformReleaseMojo
      * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
      *
      * @parameter expression="${releaseProfiles}"
+     * @since 2.0-beta-8
      */
     private String releaseProfiles;
 

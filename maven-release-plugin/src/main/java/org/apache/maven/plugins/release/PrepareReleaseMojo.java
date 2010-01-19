@@ -70,6 +70,7 @@ public class PrepareReleaseMojo
      * Whether to update dependencies version to the next development version.
      *
      * @parameter expression="${updateDependencies}" default-value="true"
+     * @since 2.0-beta-5
      */
     private boolean updateDependencies;
 
@@ -78,6 +79,7 @@ public class PrepareReleaseMojo
      * version of each submodules.
      *
      * @parameter expression="${autoVersionSubmodules}" default-value="false"
+     * @since 2.0-beta-5
      */
     private boolean autoVersionSubmodules;
 
@@ -109,6 +111,7 @@ public class PrepareReleaseMojo
      * Commits to do are atomic or by project.
      *
      * @parameter expression="${commitByProject}" default-value="false"
+     * @since 2.0-beta-5
      */
     private boolean commitByProject;
 
@@ -116,6 +119,7 @@ public class PrepareReleaseMojo
      * Whether to allow timestamped SNAPSHOT dependencies. Default is to fail when finding any SNAPSHOT.
      *
      * @parameter expression="${ignoreSnapshots}" default-value="false"
+     * @since 2.0-beta-7
      */
     private boolean allowTimestampedSnapshots;
 
@@ -125,6 +129,7 @@ public class PrepareReleaseMojo
      *
      * @parameter expression="${allowReleasePluginSnapshot}" default-value="false"
      * @readonly
+     * @since 2.0-beta-9
      */
     private boolean allowReleasePluginSnapshot;
 
@@ -132,6 +137,7 @@ public class PrepareReleaseMojo
      * Default version to use when preparing a release or a branch.
      *
      * @parameter expression="${releaseVersion}"
+     * @since 2.0-beta-8
      */
     private String releaseVersion;
 
@@ -139,6 +145,7 @@ public class PrepareReleaseMojo
      * Default version to use for new local working copy.
      *
      * @parameter expression="${developmentVersion}"
+     * @since 2.0-beta-8
      */
     private String developmentVersion;
 

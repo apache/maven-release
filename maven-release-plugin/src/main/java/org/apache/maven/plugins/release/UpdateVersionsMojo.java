@@ -39,6 +39,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  * @version $Id$
  * @aggregator
  * @goal update-versions
+ * @since 2.0
  */
 public class UpdateVersionsMojo
     extends AbstractReleaseMojo
@@ -49,6 +50,7 @@ public class UpdateVersionsMojo
      * version of each submodules.
      *
      * @parameter expression="${autoVersionSubmodules}" default-value="false"
+     * @since 2.0
      */
     private boolean autoVersionSubmodules;
 
@@ -56,6 +58,7 @@ public class UpdateVersionsMojo
      * Whether to add a schema to the POM if it was previously missing on release.
      *
      * @parameter expression="${addSchema}" default-value="true"
+     * @since 2.0
      */
     private boolean addSchema;
 
@@ -63,6 +66,7 @@ public class UpdateVersionsMojo
      * Default version to use for new local working copy.
      *
      * @parameter expression="${developmentVersion}"
+     * @since 2.0
      */
     private String developmentVersion;
 

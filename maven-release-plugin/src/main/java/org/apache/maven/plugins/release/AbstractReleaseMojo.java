@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Base class with shared configuration.
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
  */
@@ -48,21 +48,21 @@ public abstract class AbstractReleaseMojo
 {
     /**
      * The SCM username to use.
-     * 
+     *
      * @parameter expression="${username}"
      */
     private String username;
 
     /**
      * The SCM password to use.
-     * 
+     *
      * @parameter expression="${password}"
      */
     private String password;
 
     /**
      * The SCM tag to use.
-     * 
+     *
      * @parameter expression="${tag}" alias="releaseLabel"
      */
     private String tag;
@@ -71,7 +71,7 @@ public abstract class AbstractReleaseMojo
      * The tag base directory in SVN, you must define it if you don't use the standard svn layout (trunk/tags/branches).
      * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/tags</code>. The URL is an SVN URL and does not
      * include the SCM provider and protocol.
-     * 
+     *
      * @parameter expression="${tagBase}"
      */
     private String tagBase;
@@ -104,22 +104,23 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Additional arguments to pass to the Maven executions, separated by spaces.
-     * 
+     *
      * @parameter expression="${arguments}" alias="prepareVerifyArgs"
      */
     private String arguments;
 
     /**
      * The file name of the POM to execute any goals against.
-     * 
+     *
      * @parameter expression="${pomFileName}"
      */
     private String pomFileName;
 
     /**
      * The message prefix to use for all SCM changes.
-     * 
+     *
      * @parameter expression="${scmCommentPrefix}" default-value="[maven-release-plugin] "
+     * @since 2.0-beta-5
      */
     private String scmCommentPrefix;
 
@@ -132,61 +133,67 @@ public abstract class AbstractReleaseMojo
 
     /**
      * List of provider implementations.
-     * 
+     *
      * @parameter
+     * @since 2.0-beta-6
      */
     private Map providerImplementations;
 
     /**
      * The M2_HOME parameter to use for forked Maven invocations.
-     * 
+     *
      * @parameter default-value="${maven.home}"
+     * @since 2.0-beta-8
      */
     protected File mavenHome;
 
     /**
      * The JAVA_HOME parameter to use for forked Maven invocations.
-     * 
+     *
      * @parameter default-value="${java.home}"
+     * @since 2.0-beta-8
      */
     protected File javaHome;
 
     /**
      * The command-line local repository directory in use for this build (if specified).
-     * 
+     *
      * @parameter default-value="${maven.repo.local}"
+     * @since 2.0-beta-8
      */
     protected File localRepoDirectory;
 
     /**
      * Role hint of the {@link org.apache.maven.shared.release.exec.MavenExecutor} implementation to use.
-     * 
+     *
      * @parameter expression="${mavenExecutorId}" default-value="invoker"
+     * @since 2.0-beta-8
      */
     protected String mavenExecutorId;
 
     /**
      * Use a local checkout instead of doing a checkout from the upstream repository.
      * ATTENTION: This will only work with distributed SCMs which support the file:// protocol
-     * like e.g. git, jgit or hg!  
-     * 
+     * like e.g. git, jgit or hg!
+     *
      * TODO: we should think about having the defaults for the various SCM providers provided via modello!
-     * 
+     *
      * @parameter expression="${localCheckout}" default-value="false"
+     * @since 2.0
      */
     private boolean localCheckout;
-    
+
     /**
      * The SCM manager.
-     * 
+     *
      * @component
      */
     private ScmManager scmManager;
-    
+
 
     /**
      * Gets the enviroment settings configured for this release.
-     * 
+     *
      * @return The release environment, never <code>null</code>.
      */
     protected ReleaseEnvironment getReleaseEnvironment()
@@ -219,7 +226,7 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Creates the release descriptor from the various goal parameters.
-     * 
+     *
      * @return The release descriptor, never <code>null</code>.
      */
     protected ReleaseDescriptor createReleaseDescriptor()
@@ -237,7 +244,7 @@ public abstract class AbstractReleaseMojo
         descriptor.setWorkingDirectory( basedir.getAbsolutePath() );
 
         descriptor.setPomFileName( pomFileName );
-        
+
         descriptor.setLocalCheckout( localCheckout );
 
         List profiles = project.getActiveProfiles();
@@ -275,14 +282,14 @@ public abstract class AbstractReleaseMojo
                 arguments += additionalProfiles;
             }
         }
-        descriptor.setAdditionalArguments( arguments );       
-                
+        descriptor.setAdditionalArguments( arguments );
+
         return descriptor;
     }
 
     /**
      * Gets the comma separated list of additional profiles for the release build.
-     * 
+     *
      * @return additional profiles to enable during release
      */
     protected String getAdditionalProfiles()
@@ -292,7 +299,7 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Sets the component used to perform release actions.
-     * 
+     *
      * @param releaseManager The release manager implementation to use, must not be <code>null</code>.
      */
     void setReleaseManager( ReleaseManager releaseManager )
@@ -302,7 +309,7 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Gets the effective settings for this build.
-     * 
+     *
      * @return The effective settings for this build, never <code>null</code>.
      */
     Settings getSettings()
@@ -312,7 +319,7 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Sets the base directory of the build.
-     * 
+     *
      * @param basedir The build's base directory, must not be <code>null</code>.
      */
     public void setBasedir( File basedir )
@@ -322,7 +329,7 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Gets the list of projects in the build reactor.
-     * 
+     *
      * @return The list of reactor project, never <code>null</code>.
      */
     public List getReactorProjects()
@@ -332,7 +339,7 @@ public abstract class AbstractReleaseMojo
 
     /**
      * Add additional arguments.
-     * 
+     *
      * @param argument The argument to add, must not be <code>null</code>.
      */
     protected void addArgument( String argument )

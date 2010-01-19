@@ -37,6 +37,7 @@ import java.io.File;
  * @aggregator
  * @requiresProject false
  * @goal stage
+ * @since 2.0-beta-8
  */
 public class StageReleaseMojo
     extends AbstractReleaseMojo
@@ -44,46 +45,52 @@ public class StageReleaseMojo
     /**
      * A comma or space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
-     * 
+     *
      * @parameter expression="${goals}"
+     * @since 2.0-beta-8
      */
     private String goals;
 
     /**
      * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
-     * 
+     *
      * @parameter expression="${releaseProfiles}"
+     * @since 2.0-beta-8
      */
     private String releaseProfiles;
 
     /**
      * The checkout directory.
-     * 
+     *
      * @parameter expression="${workingDirectory}" default-value="${project.build.directory}/checkout"
      * @required
+     * @since 2.0-beta-8
      */
     private File workingDirectory;
 
     /**
      * The SCM URL to checkout from. If omitted, the one from the <code>release.properties</code> file is used, followed
      * by the URL from the current POM.
-     * 
+     *
      * @parameter expression="${connectionUrl}"
+     * @since 2.0-beta-8
      */
     private String connectionUrl;
 
     /**
      * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
-     * 
+     *
      * @parameter expression="${useReleaseProfile}" default-value="true"
+     * @since 2.0-beta-8
      */
     private boolean useReleaseProfile;
 
     /**
      * URL of the staging repository to use.
-     * 
+     *
      * @parameter expression="${stagingRepository}"
      * @required
+     * @since 2.0-beta-8
      */
     private String stagingRepository;
 
@@ -124,7 +131,7 @@ public class StageReleaseMojo
             releaseDescriptor.setCheckoutDirectory( workingDirectory.getAbsolutePath() );
             releaseDescriptor.setUseReleaseProfile( useReleaseProfile );
             releaseDescriptor.setRootProjectPath( ReleaseUtil.getRootProjectPath( project ) );
-            
+
             if ( goals == null )
             {
                 // set default

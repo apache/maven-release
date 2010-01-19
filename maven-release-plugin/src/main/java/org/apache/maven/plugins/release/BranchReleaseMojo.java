@@ -33,6 +33,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  * @version $Id$
  * @aggregator
  * @goal branch
+ * @since 2.0-beta-6
  */
 public class BranchReleaseMojo
     extends AbstractReleaseMojo
@@ -42,6 +43,7 @@ public class BranchReleaseMojo
      *
      * @parameter expression="${branchName}"
      * @required
+     * @since 2.0-beta-6
      */
     private String branchName;
 
@@ -59,6 +61,7 @@ public class BranchReleaseMojo
      * Whether to update versions in the branch.
      *
      * @parameter expression="${updateBranchVersions}" default-value="false"
+     * @since 2.0-beta-6
      */
     private boolean updateBranchVersions;
 
@@ -66,6 +69,7 @@ public class BranchReleaseMojo
      * Whether to update versions in the working copy.
      *
      * @parameter expression="${updateWorkingCopyVersions}" default-value="true"
+     * @since 2.0-beta-6
      */
     private boolean updateWorkingCopyVersions;
 
@@ -73,6 +77,7 @@ public class BranchReleaseMojo
      * Whether to update versions to SNAPSHOT in the branch.
      *
      * @parameter expression="${updateVersionsToSnapshot}" default-value="true"
+     * @since 2.0-beta-6
      */
     private boolean updateVersionsToSnapshot;
 
@@ -80,6 +85,7 @@ public class BranchReleaseMojo
      * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
      *
      * @parameter expression="${useEditMode}" default-value="false"
+     * @since 2.0-beta-6
      */
     private boolean useEditMode;
 
@@ -87,6 +93,7 @@ public class BranchReleaseMojo
      * Whether to update dependencies version to the next development version.
      *
      * @parameter expression="${updateDependencies}" default-value="true"
+     * @since 2.0-beta-6
      */
     private boolean updateDependencies;
 
@@ -95,6 +102,7 @@ public class BranchReleaseMojo
      * the user will be prompted for the version of each submodules.
      *
      * @parameter expression="${autoVersionSubmodules}" default-value="false"
+     * @since 2.0-beta-6
      */
     private boolean autoVersionSubmodules;
 
@@ -105,6 +113,7 @@ public class BranchReleaseMojo
      * Modified POMs are written alongside the originals without modifying them.
      *
      * @parameter expression="${dryRun}" default-value="false"
+     * @since 2.0-beta-6
      */
     private boolean dryRun;
 
@@ -112,6 +121,7 @@ public class BranchReleaseMojo
      * Whether to add a schema to the POM if it was previously missing on release.
      *
      * @parameter expression="${addSchema}" default-value="true"
+     * @since 2.0-beta-6
      */
     private boolean addSchema;
 
