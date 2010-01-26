@@ -22,9 +22,9 @@ package org.apache.maven.shared.release.config;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.apache.maven.model.Scm;
 
@@ -66,8 +66,6 @@ public class ReleaseUtils
             mergeOverride( mergeInto.getScmPrivateKeyPassPhrase(), toBeMerged.getScmPrivateKeyPassPhrase() ) );
         mergeInto.setScmCommentPrefix(
             mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );        
-        mergeInto.setRootProjectPath( 
-            mergeDefault( mergeInto.getRootProjectPath(), toBeMerged.getRootProjectPath() ) );
         mergeInto.setAdditionalArguments(
             mergeOverride( mergeInto.getAdditionalArguments(), toBeMerged.getAdditionalArguments() ) );
         mergeInto.setPreparationGoals(

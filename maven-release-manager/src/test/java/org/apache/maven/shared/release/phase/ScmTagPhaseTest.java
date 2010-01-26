@@ -97,6 +97,39 @@ public class ScmTagPhaseTest
         assertTrue( true );
     }
 
+    public void testCommitMultiModuleDeepFolders()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "scm-commit/", "multimodule-with-deep-subprojects", false );
+        String sourceUrl = "http://svn.example.com/repos/project/trunk/";
+        String scmUrl = "scm:svn:" + sourceUrl;
+        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        descriptor.setScmSourceUrl( scmUrl );
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        descriptor.setScmReleaseLabel( "release-label" );
+        descriptor.setScmCommentPrefix( "[my prefix]" );
+        descriptor.setScmTagBase( "http://svn.example.com/repos/project/releases/" );
+
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+
+        Mock scmProviderMock = new Mock( ScmProvider.class );
+        SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( sourceUrl );
+        scmProviderRepository.setTagBase( "http://svn.example.com/repos/project/releases/" );
+        ScmRepository repository = new ScmRepository( "svn", scmProviderRepository );
+        Constraint[] arguments = new Constraint[]{new IsEqual( repository ), new IsScmFileSetEquals( fileSet ),
+            new IsEqual( "release-label" ),
+            new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) )};
+        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
+            new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.addScmRepositoryForUrl( scmUrl, repository );
+
+        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+    }
+
     public void testCommitForFlatMultiModule()
         throws Exception
     {

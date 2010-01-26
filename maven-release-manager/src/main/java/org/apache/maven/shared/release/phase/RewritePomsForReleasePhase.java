@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
@@ -30,9 +33,6 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Rewrite POMs for release.
@@ -49,7 +49,7 @@ public class RewritePomsForReleasePhase
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
-                                 ReleaseResult result, MavenProject rootProject )
+                                 ReleaseResult result, String commonBasedir )
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
@@ -59,7 +59,7 @@ public class RewritePomsForReleasePhase
             {
                 releaseDescriptor.mapOriginalScmInfo( projectId, project.getScm() );
 
-                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, rootProject );
+                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, commonBasedir );
             }
             else
             {
@@ -78,7 +78,7 @@ public class RewritePomsForReleasePhase
                         scmRoot.addContent( "\n  " );
 
                         if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
-                                           rootProject ) )
+                                           commonBasedir ) )
                         {
                             rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
                         }
@@ -90,7 +90,7 @@ public class RewritePomsForReleasePhase
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Element scmRoot,
                                   Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult,
-                                  MavenProject rootProject )
+                                  String commonBasedir )
     {
         ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
         boolean result = false;
@@ -99,7 +99,6 @@ public class RewritePomsForReleasePhase
             Scm scm = project.getScm();
             String tag = releaseDescriptor.getScmReleaseLabel();
             String tagBase = releaseDescriptor.getScmTagBase();
-            String subDirectoryTag = "";
 
             // TODO: svn utils should take care of prepending this
             if ( tagBase != null )
@@ -107,13 +106,18 @@ public class RewritePomsForReleasePhase
                 tagBase = "scm:svn:" + tagBase;
             }
 
-            Scm rootScm = rootProject.getScm();            
+            int count =
+                ReleaseUtil.getBaseWorkingDirectoryParentCount( commonBasedir, project.getBasedir().getAbsolutePath() );
             if ( scm.getConnection() != null )
             {
-                if ( rootScm.getConnection() != null && scm.getConnection().indexOf( rootScm.getConnection() ) == 0 )
+                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getConnection() );
+
+                String subDirectoryTag = scm.getConnection().substring( rootUrl.length() );
+                if ( !subDirectoryTag.startsWith( "/" ) )
                 {
-                    subDirectoryTag = scm.getConnection().substring( getLengthOfRootScmConnectionUrl( rootScm.getConnection() ) );
+                    subDirectoryTag = "/" + subDirectoryTag;
                 }
+
                 String scmConnectionTag = tagBase;
                 if ( scmConnectionTag != null )
                 {
@@ -127,8 +131,6 @@ public class RewritePomsForReleasePhase
                 String value =
                     translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, scmConnectionTag );
 
-                value = addRootProjectPath( rootProject, value );
-                
                 if ( !value.equals( scm.getConnection() ) )
                 {
                     rewriteElement( "connection", value, scmRoot, namespace );
@@ -138,17 +140,17 @@ public class RewritePomsForReleasePhase
 
             if ( scm.getDeveloperConnection() != null )
             {
-                if ( rootScm.getDeveloperConnection() != null &&
-                    scm.getDeveloperConnection().indexOf( rootScm.getDeveloperConnection() ) == 0 )
+                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getDeveloperConnection() );
+
+                String subDirectoryTag = scm.getDeveloperConnection().substring( rootUrl.length() );
+                if ( !subDirectoryTag.startsWith( "/" ) )
                 {
-                    subDirectoryTag =
-                        scm.getDeveloperConnection().substring( getLengthOfRootScmConnectionUrl( rootScm.getDeveloperConnection() ) );
+                    subDirectoryTag = "/" + subDirectoryTag;
                 }
+
                 String value =
                     translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
 
-                value = addRootProjectPath( rootProject, value );
-                
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {
                     rewriteElement( "developerConnection", value, scmRoot, namespace );
@@ -158,9 +160,12 @@ public class RewritePomsForReleasePhase
 
             if ( scm.getUrl() != null )
             {
-                if ( rootScm.getUrl() != null && scm.getUrl().indexOf( rootScm.getUrl() ) == 0 )
+                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getUrl() );
+
+                String subDirectoryTag = scm.getUrl().substring( rootUrl.length() );
+                if ( !subDirectoryTag.startsWith( "/" ) )
                 {
-                    subDirectoryTag = scm.getUrl().substring( getLengthOfRootScmConnectionUrl( rootScm.getUrl() ) );
+                    subDirectoryTag = "/" + subDirectoryTag;
                 }
 
                 String tagScmUrl = tagBase;
@@ -175,7 +180,6 @@ public class RewritePomsForReleasePhase
                 }
                 // use original tag base without protocol
                 String value = translator.translateTagUrl( scm.getUrl(), tag + subDirectoryTag, tagScmUrl );
-                value = addRootProjectPath( rootProject, value );
                 if ( !value.equals( scm.getUrl() ) )
                 {
                     rewriteElement( "url", value, scmRoot, namespace );
@@ -202,16 +206,6 @@ public class RewritePomsForReleasePhase
             getLogger().debug( message );
         }
         return result;
-    }
-
-    private String addRootProjectPath( MavenProject rootProject, String value )
-    {
-        String rootProjectPath = ReleaseUtil.getRootProjectPath( rootProject );
-        if( !StringUtils.isEmpty( rootProjectPath ) )
-        {
-            value = value + rootProjectPath;
-        }
-        return value;
     }
 
     protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects )
@@ -277,18 +271,6 @@ public class RewritePomsForReleasePhase
         else
         {
             return StringUtils.replace( urlPath, trunkPath.substring( i ), tagPath.substring( i ) );
-        }
-    }
-
-    private int getLengthOfRootScmConnectionUrl( String rootScmConnectionUrl )
-    {
-        if( rootScmConnectionUrl.endsWith( "/" ) )
-        {
-            return rootScmConnectionUrl.length() - 1;
-        }
-        else
-        {
-            return rootScmConnectionUrl.length();
         }
     }
 }

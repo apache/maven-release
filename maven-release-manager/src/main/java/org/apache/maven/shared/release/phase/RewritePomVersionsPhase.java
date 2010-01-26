@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -26,9 +29,6 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.jdom.Element;
 import org.jdom.Namespace;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Rewrite POMs for future development
@@ -41,7 +41,7 @@ public class RewritePomVersionsPhase
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
-                                 ReleaseResult result, MavenProject rootProject )
+                                 ReleaseResult result, String commonBasedir )
         throws ReleaseExecutionException
     {
         // We are only updating versions no mods to scm needed

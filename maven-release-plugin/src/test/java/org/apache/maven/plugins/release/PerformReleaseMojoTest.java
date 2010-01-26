@@ -19,6 +19,9 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Arrays;
+
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Site;
@@ -38,9 +41,6 @@ import org.jmock.core.constraint.IsInstanceOf;
 import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ThrowStub;
-
-import java.io.File;
-import java.util.Arrays;
 
 /**
  * Test release:perform.
@@ -89,7 +89,6 @@ public class PerformReleaseMojoTest
         File checkoutDirectory = getTestFile( "target/checkout" );
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
         releaseDescriptor.setPerformGoals( "deploy" );
-        releaseDescriptor.setRootProjectPath( "/root-project" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project" );
 
         Mock mock = new Mock( ReleaseManager.class );

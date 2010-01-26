@@ -418,14 +418,6 @@
             This is very helpful for releasing large projects!
           </description>
         </field>
-        <field>
-          <name>rootProjectPath</name>
-          <version>2.0.0+</version>
-          <type>String</type>
-          <description>
-            Path to the root project. Used during release:perform and release:stage of flat multi-module projects.
-          </description>
-        </field>
 
         <!-- Announcement Information
 
@@ -615,8 +607,7 @@
              !saveEquals( checkoutDirectory, that.checkoutDirectory ) ||
              !saveEquals( performGoals, that.performGoals ) ||
              !saveEquals( defaultReleaseVersion, that.defaultReleaseVersion ) ||
-             !saveEquals( scmReleasedPomRevision, that.scmReleasedPomRevision ) ||
-             !saveEquals( rootProjectPath, that.rootProjectPath )
+             !saveEquals( scmReleasedPomRevision, that.scmReleasedPomRevision )
            )
         {
             return false;
@@ -820,7 +811,6 @@
         result = 29 * result + ( performGoals != null ? performGoals.hashCode() : 0 );
         result = 29 * result + ( defaultReleaseVersion != null ? defaultReleaseVersion.hashCode() : 0 );
         result = 29 * result + ( scmReleasedPomRevision != null ? scmReleasedPomRevision.hashCode() : 0 );
-        result = 29 * result + ( rootProjectPath != null ? rootProjectPath.hashCode() : 0 );
 
         return result;
     }

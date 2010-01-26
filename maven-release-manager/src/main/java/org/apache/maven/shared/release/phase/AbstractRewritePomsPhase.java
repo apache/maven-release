@@ -88,7 +88,8 @@ public abstract class AbstractRewritePomsPhase
      */
     private String pomSuffix;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -100,8 +101,8 @@ public abstract class AbstractRewritePomsPhase
         return result;
     }
 
-    private void transform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
-                            boolean simulate, ReleaseResult result )
+    private void transform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                            List reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
@@ -114,8 +115,9 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List reactorProjects, boolean simulate, ReleaseResult result )
+    private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor,
+                                   ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean simulate,
+                                   ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Document document;
@@ -147,7 +149,9 @@ public abstract class AbstractRewritePomsPhase
             {
                 intro = content.substring( 0, index );
                 outtro = content.substring( index + w.toString().length() );
-            } else {
+            }
+            else
+            {
                 /*
                  * NOTE: Due to whitespace, attribute reordering or entity expansion the above indexOf test can easily
                  * fail. So let's try harder. Maybe some day, when JDOM offers a StaxBuilder and this builder employes
@@ -187,7 +191,8 @@ public abstract class AbstractRewritePomsPhase
         ScmProvider provider;
         try
         {
-            scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+            scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                               releaseEnvironment.getSettings() );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
         }
@@ -207,14 +212,13 @@ public abstract class AbstractRewritePomsPhase
 
         if ( simulate )
         {
-            File outputFile =
-                new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
+            File outputFile = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
             writePom( outputFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro );
         }
         else
         {
-            writePom( pomFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro,
-                      scmRepository, provider );
+            writePom( pomFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro, scmRepository,
+                      provider );
         }
     }
 
@@ -297,7 +301,7 @@ public abstract class AbstractRewritePomsPhase
         }
 
         transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result,
-                      ReleaseUtil.getRootProject( reactorProjects ) );
+                      ReleaseUtil.getCommonBasedir( reactorProjects ) );
     }
 
     /**
@@ -305,7 +309,7 @@ public abstract class AbstractRewritePomsPhase
      * comments around the original text value.
      *
      * @param element The element to update, must not be <code>null</code>.
-     * @param value The text string to set, must not be <code>null</code>.
+     * @param value   The text string to set, must not be <code>null</code>.
      */
     private void rewriteValue( Element element, String value )
     {
@@ -508,8 +512,9 @@ public abstract class AbstractRewritePomsPhase
         XPath xpath;
         if ( !StringUtils.isEmpty( dependencyRoot.getNamespaceURI() ) )
         {
-            xpath = XPath.newInstance( "./pom:" + groupTagName + "/pom:" + tagName + "[normalize-space(pom:groupId)='" + groupId +
-                "' and normalize-space(pom:artifactId)='" + artifactId + "']" );
+            xpath = XPath.newInstance(
+                "./pom:" + groupTagName + "/pom:" + tagName + "[normalize-space(pom:groupId)='" + groupId +
+                    "' and normalize-space(pom:artifactId)='" + artifactId + "']" );
             xpath.addNamespace( "pom", dependencyRoot.getNamespaceURI() );
         }
         else
@@ -625,11 +630,11 @@ public abstract class AbstractRewritePomsPhase
                                             // change the property only if the property is the same as what's in the reactor
                                             rewriteValue( property, mappedVersion );
                                         }
-                                        else if ( mappedVersion.equals( propertyValue ))
+                                        else if ( mappedVersion.equals( propertyValue ) )
                                         {
-                                           //this property may have been updated during processing a sibling.
+                                            //this property may have been updated during processing a sibling.
                                             logInfo( result, "Ignoring artifact version update for expression: " +
-                                                     mappedVersion+" because it is already updated." );
+                                                mappedVersion + " because it is already updated." );
                                         }
                                         else if ( !mappedVersion.equals( versionText ) )
                                         {
@@ -644,11 +649,11 @@ public abstract class AbstractRewritePomsPhase
                                             else
                                             {
                                                 // the value of the expression conflicts with what the user wanted to release
-                                                throw new ReleaseFailureException( "The artifact (" + key +
-                                                    ") requires a " + "different version (" + mappedVersion +
-                                                    ") than what is found (" + propertyValue +
-                                                    ") for the expression (" + expression + ") in the " + "project (" +
-                                                    projectId + ")." );
+                                                throw new ReleaseFailureException(
+                                                    "The artifact (" + key + ") requires a " + "different version (" +
+                                                        mappedVersion + ") than what is found (" + propertyValue +
+                                                        ") for the expression (" + expression + ") in the " +
+                                                        "project (" + projectId + ")." );
                                             }
                                         }
                                     }
@@ -766,7 +771,8 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -816,7 +822,7 @@ public abstract class AbstractRewritePomsPhase
 
     protected abstract void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                           ReleaseDescriptor releaseDescriptor, String projectId,
-                                          ScmRepository scmRepository, ReleaseResult result, MavenProject rootProject )
+                                          ScmRepository scmRepository, ReleaseResult result, String commonBasedir )
         throws ReleaseExecutionException;
 
     protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshots )

@@ -53,9 +53,15 @@ public class DefaultScmRepositoryConfigurator
     public ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
         throws ScmRepositoryException, NoSuchScmProviderException
     {
+        String url = releaseDescriptor.getScmSourceUrl();
+        return getConfiguredRepository( url, releaseDescriptor, settings );
+    }
+
+    public ScmRepository getConfiguredRepository( String url, ReleaseDescriptor releaseDescriptor, Settings settings )
+        throws ScmRepositoryException, NoSuchScmProviderException
+    {
         String username = releaseDescriptor.getScmUsername();
         String password = releaseDescriptor.getScmPassword();
-        String url = releaseDescriptor.getScmSourceUrl();
         String privateKey = releaseDescriptor.getScmPrivateKey();
         String passphrase = releaseDescriptor.getScmPrivateKeyPassPhrase();
 
@@ -141,7 +147,7 @@ public class DefaultScmRepositoryConfigurator
             {
                 svnRepo.setTagBase( tagBase );
             }
-            
+
             String branchBase = releaseDescriptor.getScmBranchBase();
             if ( !StringUtils.isEmpty( branchBase ) )
             {

@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
@@ -26,11 +29,9 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.jdom.Element;
 import org.jdom.Namespace;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * Rewrite POMs for branch.
@@ -48,7 +49,7 @@ public class RewritePomsForBranchPhase
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
-                                 ReleaseResult result, MavenProject rootProject )
+                                 ReleaseResult result, String commonBasedir )
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
@@ -58,7 +59,7 @@ public class RewritePomsForBranchPhase
             {
                 releaseDescriptor.mapOriginalScmInfo( projectId, project.getScm() );
 
-                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, rootProject );
+                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, commonBasedir );
             }
             else
             {
@@ -77,7 +78,7 @@ public class RewritePomsForBranchPhase
                         scmRoot.addContent( "\n  " );
 
                         if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
-                                           rootProject ) )
+                                           commonBasedir ) )
                         {
                             rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
                         }
@@ -89,7 +90,7 @@ public class RewritePomsForBranchPhase
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Element scmRoot,
                                   Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult,
-                                  MavenProject rootProject )
+                                  String commonBasedir )
     {
         ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
         boolean result = false;
@@ -98,7 +99,6 @@ public class RewritePomsForBranchPhase
             Scm scm = project.getScm();
             String branchName = releaseDescriptor.getScmReleaseLabel();
             String branchBase = releaseDescriptor.getScmBranchBase();
-            String subDirectoryBranch = "";
 
             // TODO: svn utils should take care of prepending this
             if ( branchBase != null )
@@ -106,13 +106,18 @@ public class RewritePomsForBranchPhase
                 branchBase = "scm:svn:" + branchBase;
             }
 
-            Scm rootScm = rootProject.getScm();
+            int count =
+                ReleaseUtil.getBaseWorkingDirectoryParentCount( commonBasedir, project.getBasedir().getAbsolutePath() );
             if ( scm.getConnection() != null )
             {
-                if ( rootScm.getConnection() != null && scm.getConnection().indexOf( rootScm.getConnection() ) == 0 )
+                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getConnection() );
+
+                String subDirectoryBranch = scm.getConnection().substring( rootUrl.length() );
+                if ( !subDirectoryBranch.startsWith( "/" ) )
                 {
-                    subDirectoryBranch = scm.getConnection().substring( rootScm.getConnection().length() );
+                    subDirectoryBranch = "/" + subDirectoryBranch;
                 }
+
                 String value =
                     translator.translateBranchUrl( scm.getConnection(), branchName + subDirectoryBranch, branchBase );
                 if ( !value.equals( scm.getConnection() ) )
@@ -124,14 +129,17 @@ public class RewritePomsForBranchPhase
 
             if ( scm.getDeveloperConnection() != null )
             {
-                if ( rootScm.getDeveloperConnection() != null &&
-                    scm.getDeveloperConnection().indexOf( rootScm.getDeveloperConnection() ) == 0 )
+                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getDeveloperConnection() );
+
+                String subDirectoryBranch = scm.getDeveloperConnection().substring( rootUrl.length() );
+                if ( !subDirectoryBranch.startsWith( "/" ) )
                 {
-                    subDirectoryBranch =
-                        scm.getDeveloperConnection().substring( rootScm.getDeveloperConnection().length() );
+                    subDirectoryBranch = "/" + subDirectoryBranch;
                 }
+
                 String value =
-                    translator.translateBranchUrl( scm.getDeveloperConnection(), branchName + subDirectoryBranch, branchBase );
+                    translator.translateBranchUrl( scm.getDeveloperConnection(), branchName + subDirectoryBranch,
+                                                   branchBase );
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {
                     rewriteElement( "developerConnection", value, scmRoot, namespace );
@@ -141,13 +149,17 @@ public class RewritePomsForBranchPhase
 
             if ( scm.getUrl() != null )
             {
-                if ( rootScm.getUrl() != null && scm.getUrl().indexOf( rootScm.getUrl() ) == 0 )
+                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getUrl() );
+
+                String subDirectoryBranch = scm.getUrl().substring( rootUrl.length() );
+                if ( !subDirectoryBranch.startsWith( "/" ) )
                 {
-                    subDirectoryBranch = scm.getUrl().substring( rootScm.getUrl().length() );
+                    subDirectoryBranch = "/" + subDirectoryBranch;
                 }
+
                 // use original branch base without protocol
                 String value = translator.translateBranchUrl( scm.getUrl(), branchName + subDirectoryBranch,
-                                                           releaseDescriptor.getScmBranchBase() );
+                                                              releaseDescriptor.getScmBranchBase() );
                 if ( !value.equals( scm.getUrl() ) )
                 {
                     rewriteElement( "url", value, scmRoot, namespace );

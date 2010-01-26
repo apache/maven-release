@@ -27,6 +27,9 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 
@@ -44,11 +47,6 @@ public class ReleaseUtil
      * The line separator to use.
      */
     public static final String LS = System.getProperty( "line.separator" );
-    
-    /**
-     * The path separator to use.
-     */
-    public static final String FS = System.getProperty( "file.separator" );
 
     private ReleaseUtil()
     {
@@ -73,12 +71,16 @@ public class ReleaseUtil
     public static File getStandardPom( MavenProject project )
     {
         if ( project == null )
+        {
             return null;
+        }
 
         File pom = project.getFile();
 
         if ( pom == null )
+        {
             return null;
+        }
 
         File releasePom = getReleasePom( project );
         if ( pom.equals( releasePom ) )
@@ -92,12 +94,16 @@ public class ReleaseUtil
     public static File getReleasePom( MavenProject project )
     {
         if ( project == null )
+        {
             return null;
+        }
 
         File pom = project.getFile();
 
         if ( pom == null )
+        {
             return null;
+        }
 
         return new File( pom.getParent(), RELEASE_POMv4 );
     }
@@ -106,7 +112,7 @@ public class ReleaseUtil
      * Gets the string contents of the specified XML file. Note: In contrast to an XML processor, the line separators in
      * the returned string will be normalized to use the platform's native line separator. This is basically to save
      * another normalization step when writing the string contents back to an XML file.
-     * 
+     *
      * @param file The path to the XML file to read in, must not be <code>null</code>.
      * @return The string contents of the XML file.
      * @throws IOException If the file could not be opened/read.
@@ -128,10 +134,10 @@ public class ReleaseUtil
 
     /**
      * Normalizes the line separators in the specified string.
-     * 
-     * @param text The string to normalize, may be <code>null</code>.
+     *
+     * @param text      The string to normalize, may be <code>null</code>.
      * @param separator The line separator to use for normalization, typically "\n" or "\r\n", must not be
-     *            <code>null</code>.
+     *                  <code>null</code>.
      * @return The input string with normalized line separators or <code>null</code> if the string was <code>null</code>
      *         .
      */
@@ -144,132 +150,87 @@ public class ReleaseUtil
         }
         return norm;
     }
-    
-    /**
-     * Determines the base working directory with regard to the longest relative path of the modules. 
-     * 
-     * @param workingDirectory The working directory of the project to be released
-     * @param modules The \<modules\> of the project to be released
-     * @return The base working directory of the project
-     */
-    public static String getBaseWorkingDirectory( String workingDirectory, List modules )
-    {        
-        int count = getLongestPathCount( modules );
-        workingDirectory = StringUtils.chomp( workingDirectory, FS );
-        
-        while( count > 0 )
-        {   
-            int lastSep = workingDirectory.lastIndexOf( FS );
-            workingDirectory = StringUtils.substring( workingDirectory, 0, lastSep );            
-            count--;
-        }
-        return workingDirectory;
-    }
-    
-    /**
-     * Determines the base scm url with regard to the longest relative path of the modules.
-     * 
-     * @param scmUrl The scm source url of the project to be released which is set in the release descriptor.
-     * @param modules The \<modules\> of the project to be released
-     * @return
-     */
-    public static String getBaseScmUrl( String scmUrl, List modules )
-    {                
-        int count = getLongestPathCount( modules );                
-        scmUrl = StringUtils.chomp( scmUrl, "/" );
-        
-        while( count > 0 )
-        {   
-            int lastSep = scmUrl.lastIndexOf( "/" );
-            scmUrl = StringUtils.substring( scmUrl, 0, lastSep );        
-            count--;
-        }
-        return scmUrl;
-    }
-    
-    /**
-     * Returns the common path of the two paths specified.
-     * 
-     * @param path1 The first path
-     * @param path2 The second path
-     * @return The common path of the two paths.
-     */
-    public static String getCommonPath( String path1, String path2 )
+
+    public static ReleaseDescriptor createBasedirAlignedReleaseDescriptor( ReleaseDescriptor releaseDescriptor,
+                                                                           List reactorProjects )
+        throws ReleaseExecutionException
     {
-        if ( path2 == null || path2.equals( "" ) )
+        String basedir = getCommonBasedir( reactorProjects );
+
+        int parentLevels =
+            getBaseWorkingDirectoryParentCount( basedir,
+                                                FileUtils.normalize( releaseDescriptor.getWorkingDirectory() ) );
+
+        String url = releaseDescriptor.getScmSourceUrl();
+        url = realignScmUrl( parentLevels, url );
+
+        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        descriptor.setWorkingDirectory( basedir );
+        descriptor.setScmSourceUrl( url );
+        return descriptor;
+    }
+
+    public static String getCommonBasedir( List reactorProjects )
+    {
+        String basedir = null;
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
-            return path1;
-        }
-        else
-        {
-            int indexDiff = StringUtils.indexOfDifference( path1, path2 );            
-            if( indexDiff > 0 )
+            MavenProject p = (MavenProject) i.next();
+
+            String dir = FileUtils.normalize( p.getBasedir().getAbsolutePath() );
+
+            if ( basedir == null )
             {
-                return path1.substring( 0, indexDiff );
+                basedir = dir;
             }
             else
             {
-                return path1;
+                basedir = StringUtils.getCommonPrefix( new String[]{dir, basedir} );
             }
-        }
-    }
-    
-    private static int getLongestPathCount( List modules )
-    {
-        int count = 0;
-        if( modules == null || modules.isEmpty() )
-        {
-            return 0;
-        }
-        
-        for( Iterator iter = modules.iterator(); iter.hasNext(); )
-        {
-            String module = ( String ) iter.next();
-            module = StringUtils.replace( module, "\\", "/" );
-            
-            // module is a path
-            if( module.indexOf( '/' ) != -1 )
-            {   
-                int tmp = StringUtils.countMatches( module, "/" );
-                if( tmp > count )
-                {
-                    count = tmp;
-                }
-            }                    
-        }
-        return count;
-    }
-    
-    /**
-     * Gets the path to the project root. Useful in determining whether the project has a flat structure.
-     * 
-     * @param project
-     * @return the root project path or <code>null</code>
-     */
-    public static String getRootProjectPath( MavenProject project )
-    {
-        String relPath = null;
-        
-        // module is a flat multi-module project
-        if( getLongestPathCount( project.getModules() ) > 0 )
-        {     
-            String projectBaseDir = project.getBasedir().getPath();            
-        	projectBaseDir = StringUtils.replace( projectBaseDir, "\\", "/" );
-            
-            String projectPath = "";            
-            if( project.getScm() != null )
+            if ( basedir.endsWith( "/" ) && basedir.length() > 1 )
             {
-            	String scmConnection = project.getScm().getConnection();
-            	scmConnection = StringUtils.replace( scmConnection, "\\", "/" );
-            	
-                projectPath =
-                    ReleaseUtil.getCommonPath( StringUtils.reverse( StringUtils.chomp( projectBaseDir, "/" ) ),
-                                               StringUtils.reverse( StringUtils.chomp( scmConnection, "/" ) ) );
+                basedir = basedir.substring( 0, basedir.length() - 1 );
             }
-            
-            relPath = StringUtils.reverse( projectPath );
         }
-        
-        return relPath;
+        return basedir;
+    }
+
+    public static int getBaseWorkingDirectoryParentCount( String basedir, String workingDirectory )
+    {
+        int num = 0;
+        if ( !workingDirectory.equals( basedir ) && workingDirectory.startsWith( basedir ) )
+        {
+            do
+            {
+                workingDirectory = new File( workingDirectory ).getParent();
+                num++;
+            }
+            while ( workingDirectory.length() > basedir.length() );
+        }
+        return num;
+    }
+
+    public static String realignScmUrl( int parentLevels, String url )
+    {
+        if ( !StringUtils.isEmpty( url ) )
+        {
+            int index = url.length();
+            String suffix = "";
+            if ( url.endsWith( "/" ) )
+            {
+                index--;
+                suffix = "/";
+            }
+            for ( int i = 0; i < parentLevels && index > 0; i++ )
+            {
+                index = url.lastIndexOf( '/', index - 1 );
+            }
+
+            if ( index > 0 )
+            {
+                url = url.substring( 0, index ) + suffix;
+            }
+        }
+        return url;
     }
 }

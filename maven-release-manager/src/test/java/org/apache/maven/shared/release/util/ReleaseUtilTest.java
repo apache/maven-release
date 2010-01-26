@@ -1,20 +1,33 @@
-/**
- * 
- */
 package org.apache.maven.shared.release.util;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
 
-import org.apache.maven.model.Scm;
+import java.io.File;
+import java.util.Arrays;
+import java.util.Collections;
+
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * Tests for ReleaseUtil methods
- * 
- * @author aheritier
  */
 public class ReleaseUtilTest
     extends PlexusTestCase
@@ -23,154 +36,105 @@ public class ReleaseUtilTest
      * MRELEASE-273 : Tests if there no pom passed as parameter
      */
     public void testProjectIsNull()
-        throws Exception
     {
         assertNull( ReleaseUtil.getReleasePom( null ) );
         assertNull( ReleaseUtil.getStandardPom( null ) );
     }
-    
-    public void testGetBaseWorkingDirectoryNoModules()
-        throws Exception
-    {
-        assertEquals( "/working/directory/flat-multi-module/project",
-                      ReleaseUtil.getBaseWorkingDirectory( "/working/directory/flat-multi-module/project", null ) );
-        
-        assertEquals( "/working/directory/flat-multi-module/project",
-                      ReleaseUtil.getBaseWorkingDirectory( "/working/directory/flat-multi-module/project", new ArrayList() ) );
-    }
-    
-    public void testGetBaseWorkingDirOfFlatMultiModule()
-        throws Exception
-    {
-        List modules = new ArrayList();
-        modules.add( "../core" );
-        modules.add( "../webapp" );
 
-        assertEquals( "/working/directory/flat-multi-module",
-                      ReleaseUtil.getBaseWorkingDirectory( "/working/directory/flat-multi-module" + ReleaseUtil.FS +
-                          "root-project", modules ) );
-        assertEquals( "/working/directory/flat-multi-module",
-                      ReleaseUtil.getBaseWorkingDirectory( "/working/directory/flat-multi-module" + ReleaseUtil.FS +
-                          "root-project" + ReleaseUtil.FS, modules ) );
+    public void testGetCommonBasedirSingleProject()
+    {
+        assertEquals( "/working/directory/flat-multi-module/project", ReleaseUtil.getCommonBasedir(
+            Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ) ) );
     }
 
-    public void testGetBaseWorkingDirectoryOfRegularMultiModule()
+    public void testGetCommonBasedirOfFlatMultiModule()
         throws Exception
     {
-        List modules = new ArrayList();
-        modules.add( "core" );
-        modules.add( "webapp" );
-
-        assertEquals( "/working/directory/flat-multi-module",
-                      ReleaseUtil.getBaseWorkingDirectory( "/working/directory/flat-multi-module", modules ) );
-        assertEquals( "/working/directory/flat-multi-module",
-                      ReleaseUtil.getBaseWorkingDirectory( "/working/directory/flat-multi-module" + ReleaseUtil.FS,
-                                                           modules ) );
+        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "/working/directory/flat-multi-module/root-project" ),
+                createProject( "/working/directory/flat-multi-module/core" ),
+                createProject( "/working/directory/flat-multi-module/webapp" )} ) ) );
     }
 
-    public void testGetBaseScmUrlNoModules()
+    public void testGetCommonBasedirOfRegularMultiModule()
+        throws Exception
+    {
+        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "/working/directory/flat-multi-module" ),
+                createProject( "/working/directory/flat-multi-module/core" ),
+                createProject( "/working/directory/flat-multi-module/webapp" )} ) ) );
+    }
+
+    public void testGetCommonBasedirOfFlatMultiModuleWithMultipleLevels()
+        throws Exception
+    {
+        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "/working/directory/flat-multi-module/root-project" ),
+                createProject( "/working/directory/flat-multi-module/core" ),
+                createProject( "/working/directory/flat-multi-module/common/utils" ),
+                createProject( "/working/directory/flat-multi-module/common/xml" ),
+                createProject( "/working/directory/flat-multi-module/webapp" )} ) ) );
+    }
+
+    public void testGetCommonBasedirOfFlatMultiModuleWithDescendingHierarchy()
+        throws Exception
+    {
+        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "/working/directory/flat-multi-module/level/1/2/3" ),
+                createProject( "/working/directory/flat-multi-module/level/1/2" ),
+                createProject( "/working/directory/flat-multi-module/level/1" ),
+                createProject( "/working/directory/flat-multi-module/level" ),
+                createProject( "/working/directory/flat-multi-module/other" )} ) ) );
+    }
+
+    public void testGetBaseScmUrlSingleLevel()
         throws Exception
     {
         assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
-                      ReleaseUtil.getBaseScmUrl( "scm:svn:http://svn.repo.com/flat-multi-module/trunk", null ) );
-        
-        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
-                      ReleaseUtil.getBaseScmUrl( "scm:svn:http://svn.repo.com/flat-multi-module/trunk", new ArrayList() ) );
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk" ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/" ) );
     }
-    
+
+    public void testGetBaseScmUrlReturnOriginal()
+        throws Exception
+    {
+        assertEquals( "no-path-elements",
+                      ReleaseUtil.realignScmUrl( 1, "no-path-elements" ) );
+        assertEquals( "no-path-elements",
+                      ReleaseUtil.realignScmUrl( 15, "no-path-elements" ) );
+    }
+
     public void testGetBaseScmUrlOfFlatMultiModule()
         throws Exception
     {
-        List modules = new ArrayList();
-        modules.add( "../core" );
-        modules.add( "../webapp" );
+        String actual =
+            ReleaseUtil.realignScmUrl( 1, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project" );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk", actual );
 
-        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
-                      ReleaseUtil.getBaseScmUrl( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project",
-                                                 modules ) );
-        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
-                      ReleaseUtil.getBaseScmUrl( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/",
-                                                 modules ) );
+        actual = ReleaseUtil.realignScmUrl( 1, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/" );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/", actual );
     }
 
-    public void testGetBaseScmUrlOfRegularMultiModule()
+    public void testGetBaseScmUrlOfFlatMultiModuleMultipleLevels()
         throws Exception
     {
-        List modules = new ArrayList();
-        modules.add( "core" );
-        modules.add( "webapp" );
+        String actual =
+            ReleaseUtil.realignScmUrl( 3, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/1/2" );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk", actual );
 
-        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
-                      ReleaseUtil.getBaseScmUrl( "scm:svn:http://svn.repo.com/flat-multi-module/trunk", modules ) );
-        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
-                      ReleaseUtil.getBaseScmUrl( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/", modules ) );
+        actual = ReleaseUtil.realignScmUrl( 3, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/1/2/" );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/", actual );
     }
-    
-    public void testGetRootProjectPathFlatStructure()
-        throws Exception
-    {   
-        MavenProject project = new MavenProject()
+
+    private static MavenProject createProject( final String basedir )
+    {
+        return new MavenProject()
         {
-            public List getModules()
-            {
-                List modules = new ArrayList();
-                modules.add( "../core" );
-                modules.add( "../webapp" );
-                modules.add( "../commons" );
-                
-                return modules;
-            }
-            
             public File getBasedir()
             {
-                return new File( "/flat-multi-module/root-project" );
-            }
-            
-            public Scm getScm()
-            {
-                Scm scm = new Scm();
-                scm.setConnection( "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project" );
-                
-                return scm;
+                return new File( basedir );
             }
         };
-        
-        assertEquals( "/root-project", ReleaseUtil.getRootProjectPath( project ) );
-    }
-    
-    public void testGetRootProjectPathRegularMultiModuleStructure()
-        throws Exception
-    {   
-        MavenProject project = new MavenProject()
-        {
-            Scm scm = new Scm();
-            
-            public List getModules()
-            {
-                List modules = new ArrayList();
-                modules.add( "core" );
-                modules.add( "webapp" );
-                modules.add( "commons" );
-                
-                return modules;
-            }
-            
-            public File getBasedir()
-            {
-                return new File( "/regular-multi-module" );
-            }
-            
-            public Scm getScm()
-            {
-                scm.setConnection( "scm:svn:file://localhost/target/svnroot/regular-multi-module/trunk" );
-                
-                return scm;
-            }
-        };
-        
-        assertNull( ReleaseUtil.getRootProjectPath( project ) );
-        
-        project.getScm().setConnection( "scm:svn:file://localhost/target/svnroot/regular-multi-module/trunk/" );        
-        assertNull( ReleaseUtil.getRootProjectPath( project ) );
     }
 }

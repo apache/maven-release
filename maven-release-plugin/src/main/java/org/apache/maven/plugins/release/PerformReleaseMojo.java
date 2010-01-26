@@ -19,15 +19,14 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
 
 /**
  * Perform a release from SCM.
@@ -116,7 +115,6 @@ public class PerformReleaseMojo
 
             releaseDescriptor.setCheckoutDirectory( workingDirectory.getAbsolutePath() );
             releaseDescriptor.setUseReleaseProfile( useReleaseProfile );
-            releaseDescriptor.setRootProjectPath( ReleaseUtil.getRootProjectPath( project ) );
 
             if ( goals == null )
             {

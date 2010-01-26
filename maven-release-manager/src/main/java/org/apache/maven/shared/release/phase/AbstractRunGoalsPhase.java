@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -27,10 +31,6 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Run the integration tests for the project to verify that it builds before committing.
@@ -50,8 +50,7 @@ public abstract class AbstractRunGoalsPhase
     /**
      * @deprecated Use {@link AbstractRunGoalsPhase#execute(ReleaseDescriptor, ReleaseEnvironment, File, String)} instead.
      */
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
-                                  File workingDirectory,
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, File workingDirectory,
                                   String additionalArguments )
         throws ReleaseExecutionException
     {
@@ -71,15 +70,17 @@ public abstract class AbstractRunGoalsPhase
             {
                 logInfo( result, "Executing goals '" + goals + "'..." );
 
-                MavenExecutor mavenExecutor = (MavenExecutor) mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
+                MavenExecutor mavenExecutor =
+                    (MavenExecutor) mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
 
                 if ( mavenExecutor == null )
                 {
-                    throw new ReleaseExecutionException( "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId() );
+                    throw new ReleaseExecutionException(
+                        "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId() );
                 }
 
                 mavenExecutor.executeGoals( determineWorkingDirectory( workingDirectory,
-                                            releaseDescriptor.getScmRelativePathProjectDirectory(), releaseDescriptor.getRootProjectPath() ),
+                                                                       releaseDescriptor.getScmRelativePathProjectDirectory() ),
                                             goals, releaseEnvironment, releaseDescriptor.isInteractive(),
                                             additionalArguments, result );
             }
@@ -122,23 +123,17 @@ public abstract class AbstractRunGoalsPhase
      * @param checkoutDirectory            The checkout directory as java.io.File
      * @param relativePathProjectDirectory The relative path of the project directory within the checkout
      *                                     directory or ""
-     * @param rootProjectPath TODO
      * @return The working directory
      */
-    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory, String rootProjectPath )
+    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory )
     {
         File workingDirectory = checkoutDirectory;
-        
+
         if ( StringUtils.isNotEmpty( relativePathProjectDirectory ) )
         {
             workingDirectory = new File( checkoutDirectory, relativePathProjectDirectory );
         }
-        
-        if( StringUtils.isNotEmpty( rootProjectPath ) )
-        {
-            workingDirectory = new File( workingDirectory, rootProjectPath );
-        }
-        
+
         return workingDirectory;
     }
 }

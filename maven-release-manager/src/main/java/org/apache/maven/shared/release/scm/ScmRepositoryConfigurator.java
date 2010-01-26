@@ -59,4 +59,17 @@ public interface ScmRepositoryConfigurator
      */
     ScmProvider getRepositoryProvider( ScmRepository repository )
         throws NoSuchScmProviderException;
+
+    /**
+     * Construct a configured SCM repository from a release configuration with an overridden base SCM URL.
+     *
+     * @param url               the SCM URL to use instead of the one from the release descriptor
+     * @param releaseDescriptor the configuration to insert into the repository
+     * @param settings          the settings.xml configuraiton
+     * @return the repository created
+     * @throws ScmRepositoryException     if it is not possible to create a suitable SCM repository
+     * @throws NoSuchScmProviderException if the requested SCM provider is not available
+     */
+    ScmRepository getConfiguredRepository( String url, ReleaseDescriptor releaseDescriptor, Settings settings )
+        throws ScmRepositoryException, NoSuchScmProviderException;
 }

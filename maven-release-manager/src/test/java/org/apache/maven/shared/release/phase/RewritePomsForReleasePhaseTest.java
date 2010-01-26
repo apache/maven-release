@@ -326,6 +326,21 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    public void testRewritePomWithDeepSubprojects()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "multimodule-with-deep-subprojects" );
+
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject2", ALTERNATIVE_NEXT_VERSION );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
     public void testRewritePomForFlatMultiModule()
         throws Exception
     {
