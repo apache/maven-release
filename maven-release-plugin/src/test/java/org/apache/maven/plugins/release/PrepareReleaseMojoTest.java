@@ -19,6 +19,9 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import java.io.File;
+import java.util.Properties;
+
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -35,9 +38,6 @@ import org.jmock.core.constraint.IsInstanceOf;
 import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ThrowStub;
-
-import java.io.File;
-import java.util.Properties;
 
 /**
  * Test release:prepare.
@@ -150,8 +150,9 @@ public class PrepareReleaseMojoTest
             new IsEqual( Boolean.FALSE )
         };
 
+        ReleaseFailureException cause = new ReleaseFailureException( "..." );
         mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints ).will(
-            new ThrowStub( new ReleaseFailureException( "..." ) ) );
+            new ThrowStub( cause ) );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
 
         try
@@ -162,7 +163,7 @@ public class PrepareReleaseMojoTest
         }
         catch ( MojoFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertEquals( "Check cause exists", cause, e.getCause() );
         }
     }
 

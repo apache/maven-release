@@ -206,8 +206,9 @@ public class PerformReleaseMojoTest
             new IsNull()
         };
 
+        ReleaseFailureException cause = new ReleaseFailureException( "..." );
         mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints ).will(
-            new ThrowStub( new ReleaseFailureException( "..." ) ) );
+            new ThrowStub( cause ) );
         mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
 
         try
@@ -218,7 +219,7 @@ public class PerformReleaseMojoTest
         }
         catch ( MojoFailureException e )
         {
-            assertNull( "Check no cause", e.getCause() );
+            assertEquals( "Check cause exists", cause, e.getCause() );
         }
     }
 

@@ -154,7 +154,7 @@ public class StageReleaseMojo
         }
         catch ( ReleaseFailureException e )
         {
-            throw new MojoFailureException( e.getMessage() );
+            throw new MojoFailureException( e.getMessage(), e );
         }
     }
 }

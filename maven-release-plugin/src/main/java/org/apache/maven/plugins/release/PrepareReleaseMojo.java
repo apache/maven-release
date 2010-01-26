@@ -204,7 +204,7 @@ public class PrepareReleaseMojo
         }
         catch ( ReleaseFailureException e )
         {
-            throw new MojoFailureException( e.getMessage() );
+            throw new MojoFailureException( e.getMessage(), e );
         }
     }
 
