@@ -19,6 +19,12 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.List;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.scm.ScmException;
@@ -41,12 +47,6 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.List;
 
 /**
  * Tag the SCM repository after committing the release.
@@ -80,7 +80,7 @@ public class ScmTagPhase
         List modules = getModules( releaseDescriptor, workingDirectory );
         String scmSourceUrl = releaseDescriptor.getScmSourceUrl();
 
-     // determine if project is a flat multi-module
+        // determine if project is a flat multi-module
         if ( modules != null && !modules.isEmpty() )
         {
             workingDirectory = ReleaseUtil.getBaseWorkingDirectory( workingDirectory, modules );

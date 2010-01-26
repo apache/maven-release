@@ -21,7 +21,7 @@
   <components>
     <component>
       <role>org.apache.maven.scm.manager.ScmManager</role>
-      <implementation>org.apache.maven.scm.manager.ScmManagerStub</implementation>
+      <implementation>org.apache.maven.shared.release.stubs.ScmManagerStub</implementation>
     </component>
     <!-- Turn off info messages -->
     <component>
