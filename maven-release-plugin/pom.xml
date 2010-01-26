@@ -39,10 +39,6 @@
     <maven>2.0.9</maven>
   </prerequisites>
 
-  <properties>
-    <mavenVersion>2.0.9</mavenVersion>
-  </properties>
-
   <issueManagement>
     <system>JIRA</system>
     <url>http://jira.codehaus.org/browse/MRELEASE</url>
