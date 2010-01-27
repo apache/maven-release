@@ -44,14 +44,14 @@ public class ReleaseUtilTest
     public void testGetCommonBasedirSingleProject()
     {
         assertEquals( "/working/directory/flat-multi-module/project", ReleaseUtil.getCommonBasedir(
-            Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ), "/" ) );
+            Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ), '/' ) );
     }
 
     public void testGetCommonBasedirSingleProjectWindows()
     {
         assertEquals( "c:\\working\\directory\\flat-multi-module\\project", ReleaseUtil.getCommonBasedir(
             Collections.singletonList( createProject( "c:\\working\\directory\\flat-multi-module\\project" ) ),
-                      "\\" ) );
+            '\\' ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModule()
@@ -60,7 +60,7 @@ public class ReleaseUtilTest
         assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "/working/directory/flat-multi-module/root-project" ),
                 createProject( "/working/directory/flat-multi-module/core" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
+                createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleWindows()
@@ -69,7 +69,7 @@ public class ReleaseUtilTest
         assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "c:\\working\\directory\\flat-multi-module\\root-project" ),
                 createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), "\\" ) );
+                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), '\\' ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIds()
@@ -78,7 +78,7 @@ public class ReleaseUtilTest
         assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "/working/directory/flat-multi-module/release-parent" ),
                 createProject( "/working/directory/flat-multi-module/release-module1" ),
-                createProject( "/working/directory/flat-multi-module/release-module2" )} ), "/" ) );
+                createProject( "/working/directory/flat-multi-module/release-module2" )} ), '/' ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIdsWindows()
@@ -87,7 +87,7 @@ public class ReleaseUtilTest
         assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "c:\\working\\directory\\flat-multi-module\\release-parent" ),
                 createProject( "c:\\working\\directory\\flat-multi-module\\release-module1" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ), "\\" ) );
+                createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ), '\\' ) );
     }
 
     public void testGetCommonBasedirOfRegularMultiModule()
@@ -96,7 +96,7 @@ public class ReleaseUtilTest
         assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "/working/directory/flat-multi-module" ),
                 createProject( "/working/directory/flat-multi-module/core" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
+                createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleWithMultipleLevels()
@@ -107,7 +107,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/core" ),
                 createProject( "/working/directory/flat-multi-module/common/utils" ),
                 createProject( "/working/directory/flat-multi-module/common/xml" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
+                createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleWithDescendingHierarchy()
@@ -118,7 +118,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/level/1/2" ),
                 createProject( "/working/directory/flat-multi-module/level/1" ),
                 createProject( "/working/directory/flat-multi-module/level" ),
-                createProject( "/working/directory/flat-multi-module/other" )} ), "/" ) );
+                createProject( "/working/directory/flat-multi-module/other" )} ), '/' ) );
     }
 
     public void testGetBaseScmUrlSingleLevel()
