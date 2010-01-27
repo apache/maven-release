@@ -47,6 +47,12 @@ public class ReleaseUtilTest
             Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ) ) );
     }
 
+    public void testGetCommonBasedirSingleProjectWindows()
+    {
+        assertEquals( "c:/working/directory/flat-multi-module/project", ReleaseUtil.getCommonBasedir(
+            Collections.singletonList( createProject( "c:\\working\\directory\\flat-multi-module\\project" ) ) ) );
+    }
+
     public void testGetCommonBasedirOfFlatMultiModule()
         throws Exception
     {
@@ -54,6 +60,33 @@ public class ReleaseUtilTest
             new MavenProject[]{createProject( "/working/directory/flat-multi-module/root-project" ),
                 createProject( "/working/directory/flat-multi-module/core" ),
                 createProject( "/working/directory/flat-multi-module/webapp" )} ) ) );
+    }
+
+    public void testGetCommonBasedirOfFlatMultiModuleWindows()
+        throws Exception
+    {
+        assertEquals( "c:/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "c:\\working\\directory\\flat-multi-module\\root-project" ),
+                createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
+                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ) ) );
+    }
+
+    public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIds()
+        throws Exception
+    {
+        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "/working/directory/flat-multi-module/release-parent" ),
+                createProject( "/working/directory/flat-multi-module/release-module1" ),
+                createProject( "/working/directory/flat-multi-module/release-module2" )} ) ) );
+    }
+
+    public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIdsWindows()
+        throws Exception
+    {
+        assertEquals( "c:/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "c:\\working/directory\\flat-multi-module\\release-parent" ),
+                createProject( "c:\\working\\directory\\flat-multi-module\\release-module1" ),
+                createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ) ) );
     }
 
     public void testGetCommonBasedirOfRegularMultiModule()

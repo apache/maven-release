@@ -177,7 +177,7 @@ public class ReleaseUtil
         {
             MavenProject p = (MavenProject) i.next();
 
-            String dir = FileUtils.normalize( p.getBasedir().getAbsolutePath() );
+            String dir = FileUtils.normalize( p.getBasedir().getPath() ).replace( '\\', '/' );
 
             if ( basedir == null )
             {
@@ -185,13 +185,29 @@ public class ReleaseUtil
             }
             else
             {
+                // always end in / so that we know what is a path and what is a partial directory name in the next call 
+                if ( !basedir.endsWith( "/" ) )
+                {
+                    basedir = basedir + "/";
+                }
+
                 basedir = StringUtils.getCommonPrefix( new String[]{dir, basedir} );
+
+                if ( !basedir.endsWith( "/" ) )
+                {
+                    basedir = basedir.substring( 0, basedir.lastIndexOf( '/' ) );
+                }
             }
+        }
+
+        if ( basedir != null )
+        {
             if ( basedir.endsWith( "/" ) && basedir.length() > 1 )
             {
                 basedir = basedir.substring( 0, basedir.length() - 1 );
             }
         }
+
         return basedir;
     }
 
