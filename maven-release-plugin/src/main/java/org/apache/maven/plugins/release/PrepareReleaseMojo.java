@@ -38,7 +38,6 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  * @version $Id$
  * @aggregator
  * @goal prepare
- * @requiresDependencyResolution test
  * @todo [!] check how this works with version ranges
  */
 public class PrepareReleaseMojo
@@ -53,7 +52,7 @@ public class PrepareReleaseMojo
     private boolean resume;
 
     /**
-     * Whether to generate <code>release-pom.xml</code> files that contain resolved information about the project.
+     * @deprecated Please use release:prepare-with-pom instead.
      *
      * @parameter default-value="false" expression="${generateReleasePoms}"
      */
@@ -173,6 +172,19 @@ public class PrepareReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( generateReleasePoms )
+        {
+            throw new MojoFailureException(
+                "Generating release POMs is no longer supported in release:prepare. Please run release:prepare-with-pom instead." );
+        }
+
+        prepareRelease( generateReleasePoms );
+    }
+
+    protected void prepareRelease( boolean generateReleasePoms )
+        throws MojoExecutionException, MojoFailureException
+    {
+        // this is here so the subclass can call it without getting the extra generateReleasePoms check in execute() above
         super.execute();
 
         ReleaseDescriptor config = createReleaseDescriptor();

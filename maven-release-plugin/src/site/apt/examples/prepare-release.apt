@@ -80,3 +80,17 @@ mvn release:clean release:prepare
   If you prefer that every module gets the same version as the parent POM,
   you can set the option <<<autoVersionSubmodules>>> to <<<true>>>. Now you will
   be asked only once for the release version and the next development version.
+
+* Generating release POMs
+
+  It is possible to generate a <<<release-pom.xml>>> file for each project that contains the fully resolved project used
+  at release time as a record for later. As of the 2.0 release, this requires calling an alternate goal:
+
+---
+mvn release:prepare-with-pom
+---
+
+  This goal is equivalent to the <<<release:prepare>>> goal, except that it requires a previous build of the project to
+  exist to properly populate the <<<release-pom.xml>>> files.
+
+

@@ -36,6 +36,9 @@ Maven Release Plugin
 
   * {{{./prepare-mojo.html}release:prepare}} Prepare for a release in SCM.
 
+  * {{{./prepare-with-pom-mojo.html}release:prepare-with-pom}} Prepare for a release in SCM, and generate release POMs
+    that record the fully resolved projects used.
+
   * {{{./rollback-mojo.html}release:rollback}} Rollback a previous release.
 
   * {{{./perform-mojo.html}release:perform}} Perform a release from SCM.
