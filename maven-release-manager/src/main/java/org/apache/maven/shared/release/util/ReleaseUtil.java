@@ -43,6 +43,8 @@ public class ReleaseUtil
 
     public static final String POMv4 = "pom.xml";
 
+    private static final String FS = File.separator;
+
     /**
      * The line separator to use.
      */
@@ -177,7 +179,7 @@ public class ReleaseUtil
         {
             MavenProject p = (MavenProject) i.next();
 
-            String dir = FileUtils.normalize( p.getBasedir().getPath() ).replace( '\\', '/' );
+            String dir = FileUtils.normalize( p.getBasedir().getPath() );
 
             if ( basedir == null )
             {
@@ -186,23 +188,23 @@ public class ReleaseUtil
             else
             {
                 // always end in / so that we know what is a path and what is a partial directory name in the next call 
-                if ( !basedir.endsWith( "/" ) )
+                if ( !basedir.endsWith( FS ) )
                 {
-                    basedir = basedir + "/";
+                    basedir = basedir + FS;
                 }
 
                 basedir = StringUtils.getCommonPrefix( new String[]{dir, basedir} );
 
-                if ( !basedir.endsWith( "/" ) )
+                if ( !basedir.endsWith( FS ) )
                 {
-                    basedir = basedir.substring( 0, basedir.lastIndexOf( '/' ) );
+                    basedir = basedir.substring( 0, basedir.lastIndexOf( FS ) );
                 }
             }
         }
 
         if ( basedir != null )
         {
-            if ( basedir.endsWith( "/" ) && basedir.length() > 1 )
+            if ( basedir.endsWith( FS ) && basedir.length() > 1 )
             {
                 basedir = basedir.substring( 0, basedir.length() - 1 );
             }
