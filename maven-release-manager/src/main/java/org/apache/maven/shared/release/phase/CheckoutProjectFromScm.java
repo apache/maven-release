@@ -19,6 +19,11 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
@@ -39,10 +44,6 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
@@ -58,7 +59,8 @@ public class CheckoutProjectFromScm
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -72,17 +74,20 @@ public class CheckoutProjectFromScm
         {
             // in the release phase we have to change the checkout URL
             // to do a local checkout instead of going over the network.
-            
+
             // the first step is a bit tricky, we need to know which provider! like e.g. "scm:jgit:http://"
             // the offset of 4 is because 'scm:' has 4 characters...
-            String providerPart = releaseDescriptor.getScmSourceUrl().substring( 0, releaseDescriptor.getScmSourceUrl().indexOf( ':', 4 ) );
+            String providerPart = releaseDescriptor.getScmSourceUrl().substring( 0,
+                                                                                 releaseDescriptor.getScmSourceUrl().indexOf(
+                                                                                     ':', 4 ) );
             releaseDescriptor.setScmSourceUrl( providerPart + ":file://" + releaseDescriptor.getWorkingDirectory() );
             getLogger().info( "Performing a LOCAL checkout from " + releaseDescriptor.getScmSourceUrl() );
         }
-        
+
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                            releaseEnvironment.getSettings() );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
@@ -101,12 +106,12 @@ public class CheckoutProjectFromScm
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
         }
 
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         // TODO: sanity check that it is not . or .. or lower
         File checkoutDirectory;
         if ( StringUtils.isEmpty( releaseDescriptor.getCheckoutDirectory() ) )
         {
-            checkoutDirectory =
-                new File( ReleaseUtil.getRootProject( reactorProjects ).getFile().getParentFile(), "target/checkout" );
+            checkoutDirectory = new File( rootProject.getFile().getParentFile(), "target/checkout" );
             releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
         }
         else
@@ -146,7 +151,18 @@ public class CheckoutProjectFromScm
             throw new ReleaseExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
         }
 
-        releaseDescriptor.setScmRelativePathProjectDirectory( scmResult.getRelativePathProjectDirectory());
+        String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();
+        if ( StringUtils.isEmpty( scmRelativePathProjectDirectory ) )
+        {
+            String basedir = ReleaseUtil.getCommonBasedir( reactorProjects );
+            String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();
+            if ( rootProjectBasedir.length() > basedir.length() )
+            {
+                scmRelativePathProjectDirectory = rootProjectBasedir.substring( basedir.length() + 1 );
+            }
+        }
+        releaseDescriptor.setScmRelativePathProjectDirectory( scmRelativePathProjectDirectory );
+
         if ( !scmResult.isSuccess() )
         {
             result.setResultCode( ReleaseResult.ERROR );
@@ -160,7 +176,8 @@ public class CheckoutProjectFromScm
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return simulate( releaseDescriptor, releaseEnvironment, reactorProjects );

@@ -19,6 +19,13 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
@@ -55,12 +62,6 @@ import org.jmock.core.constraint.IsSame;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ReturnStub;
 import org.jmock.core.stub.ThrowStub;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * Test the default release manager.
@@ -417,11 +418,18 @@ public class DefaultReleaseManagerTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
 
         assertTrue( true );
     }
-    
+
+    private static List createReactorProjects()
+    {
+        MavenProject project = new MavenProject();
+        project.setFile( getTestFile( "target/dummy-project/pom.xml" ) );
+        return Collections.singletonList( project );
+    }
+
     public void testReleasePerformWithResult() 
         throws Exception
     {
@@ -431,11 +439,9 @@ public class DefaultReleaseManagerTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
-        
-        ReleaseResult result = new ReleaseResult();
-        
-        result = releaseManager.performWithResult( releaseDescriptor, new DefaultReleaseEnvironment(),
-                                                   new ArrayList(), null );
+
+        ReleaseResult result = releaseManager.performWithResult( releaseDescriptor, new DefaultReleaseEnvironment(),
+                                                                 createReactorProjects(), null );
         assert( result.getOutput().length() > 0 );
     }  
 
@@ -467,7 +473,7 @@ public class DefaultReleaseManagerTest
 
         releaseDescriptor.setUseReleaseProfile( false );
 
-        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
 
         assertTrue( true );
     }
@@ -500,7 +506,7 @@ public class DefaultReleaseManagerTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
-        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
 
         assertTrue( true );
     }
@@ -534,7 +540,7 @@ public class DefaultReleaseManagerTest
 
         releaseDescriptor.setUseReleaseProfile( false );
 
-        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
 
         assertTrue( true );
     }
@@ -569,7 +575,7 @@ public class DefaultReleaseManagerTest
         configStore.getReleaseConfiguration().setCompletedPhase( "end-release" );
         releaseManager.setConfigStore( configStore );
 
-        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
 
         assertTrue( true );
     }
@@ -736,7 +742,7 @@ public class DefaultReleaseManagerTest
 
         try
         {
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
 
             fail( "commit should have failed" );
         }
@@ -764,7 +770,7 @@ public class DefaultReleaseManagerTest
 
         try
         {
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
 
             fail( "commit should have failed" );
         }
