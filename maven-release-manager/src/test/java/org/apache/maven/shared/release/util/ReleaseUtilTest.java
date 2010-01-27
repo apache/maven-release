@@ -49,8 +49,9 @@ public class ReleaseUtilTest
 
     public void testGetCommonBasedirSingleProjectWindows()
     {
-        assertEquals( "c:/working/directory/flat-multi-module/project", ReleaseUtil.getCommonBasedir(
-            Collections.singletonList( createProject( "c:\\working\\directory\\flat-multi-module\\project" ) ) ) );
+        assertEquals( "c:\\working\\directory\\flat-multi-module\\project", ReleaseUtil.getCommonBasedir(
+            Collections.singletonList( createProject( "c:\\working\\directory\\flat-multi-module\\project" ) ),
+                      "\\" ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModule()
@@ -65,10 +66,10 @@ public class ReleaseUtilTest
     public void testGetCommonBasedirOfFlatMultiModuleWindows()
         throws Exception
     {
-        assertEquals( "c:/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+        assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "c:\\working\\directory\\flat-multi-module\\root-project" ),
                 createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ) ) );
+                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), "\\" ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIds()
@@ -83,10 +84,10 @@ public class ReleaseUtilTest
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIdsWindows()
         throws Exception
     {
-        assertEquals( "c:/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "c:\\working/directory\\flat-multi-module\\release-parent" ),
+        assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "c:\\working\\directory\\flat-multi-module\\release-parent" ),
                 createProject( "c:\\working\\directory\\flat-multi-module\\release-module1" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ) ) );
+                createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ), "\\" ) );
     }
 
     public void testGetCommonBasedirOfRegularMultiModule()
@@ -132,10 +133,8 @@ public class ReleaseUtilTest
     public void testGetBaseScmUrlReturnOriginal()
         throws Exception
     {
-        assertEquals( "no-path-elements",
-                      ReleaseUtil.realignScmUrl( 1, "no-path-elements" ) );
-        assertEquals( "no-path-elements",
-                      ReleaseUtil.realignScmUrl( 15, "no-path-elements" ) );
+        assertEquals( "no-path-elements", ReleaseUtil.realignScmUrl( 1, "no-path-elements" ) );
+        assertEquals( "no-path-elements", ReleaseUtil.realignScmUrl( 15, "no-path-elements" ) );
     }
 
     public void testGetBaseScmUrlOfFlatMultiModule()
@@ -156,7 +155,8 @@ public class ReleaseUtilTest
             ReleaseUtil.realignScmUrl( 3, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/1/2" );
         assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk", actual );
 
-        actual = ReleaseUtil.realignScmUrl( 3, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/1/2/" );
+        actual =
+            ReleaseUtil.realignScmUrl( 3, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/1/2/" );
         assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/", actual );
     }
 

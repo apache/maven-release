@@ -174,6 +174,11 @@ public class ReleaseUtil
 
     public static String getCommonBasedir( List reactorProjects )
     {
+        return getCommonBasedir( reactorProjects, FS );
+    }
+
+    public static String getCommonBasedir( List reactorProjects, String separator )
+    {
         String basedir = null;
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
@@ -188,23 +193,23 @@ public class ReleaseUtil
             else
             {
                 // always end in / so that we know what is a path and what is a partial directory name in the next call 
-                if ( !basedir.endsWith( FS ) )
+                if ( !basedir.endsWith( separator ) )
                 {
-                    basedir = basedir + FS;
+                    basedir = basedir + separator;
                 }
 
                 basedir = StringUtils.getCommonPrefix( new String[]{dir, basedir} );
 
-                if ( !basedir.endsWith( FS ) )
+                if ( !basedir.endsWith( separator ) )
                 {
-                    basedir = basedir.substring( 0, basedir.lastIndexOf( FS ) );
+                    basedir = basedir.substring( 0, basedir.lastIndexOf( separator ) );
                 }
             }
         }
 
         if ( basedir != null )
         {
-            if ( basedir.endsWith( FS ) && basedir.length() > 1 )
+            if ( basedir.endsWith( separator ) && basedir.length() > 1 )
             {
                 basedir = basedir.substring( 0, basedir.length() - 1 );
             }
