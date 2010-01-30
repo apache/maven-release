@@ -117,6 +117,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
+        <version>${mavenPluginPluginVersion}</version>
         <executions>
           <execution>
             <id>generated-helpmojo</id>
