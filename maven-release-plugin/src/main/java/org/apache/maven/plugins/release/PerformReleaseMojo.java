@@ -43,7 +43,7 @@ public class PerformReleaseMojo
     extends AbstractReleaseMojo
 {
     /**
-     * A comma or space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
+     * A space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
      *
      * @parameter expression="${goals}"
