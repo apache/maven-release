@@ -353,13 +353,15 @@ public class RewritePomsForReleasePhaseTest
     }
 
     // MRELEASE-383
-    public void testRewritePomWithCDATASection()
+    public void testRewritePomWithCDATASectionOnWindows()
         throws Exception
     {
         List reactorProjects = createReactorProjects( "cdata-section" );
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
         mapNextVersion( config, "groupId:artifactId" );
 
+        RewritePomsForReleasePhase phase = (RewritePomsForReleasePhase) this.phase;
+        phase.setLs( "\r\n" );
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         // compare POMS without line ending normalization

@@ -122,11 +122,17 @@ public class ReleaseUtil
     public static String readXmlFile( File file )
         throws IOException
     {
+        return readXmlFile( file, LS );
+    }
+
+    public static String readXmlFile( File file, String ls )
+        throws IOException
+    {
         Reader reader = null;
         try
         {
             reader = ReaderFactory.newXmlReader( file );
-            return normalizeLineEndings( IOUtil.toString( reader ), LS );
+            return normalizeLineEndings( IOUtil.toString( reader ), ls );
         }
         finally
         {

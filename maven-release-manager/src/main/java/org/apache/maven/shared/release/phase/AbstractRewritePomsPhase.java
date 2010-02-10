@@ -88,6 +88,13 @@ public abstract class AbstractRewritePomsPhase
      */
     private String pomSuffix;
 
+    private String ls = ReleaseUtil.LS;
+
+    public void setLs( String ls )
+    {
+        this.ls = ls;
+    }
+
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -125,7 +132,7 @@ public abstract class AbstractRewritePomsPhase
         String outtro = null;
         try
         {
-            String content = ReleaseUtil.readXmlFile( ReleaseUtil.getStandardPom( project ) );
+            String content = ReleaseUtil.readXmlFile( ReleaseUtil.getStandardPom( project ), ls );
             // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
             content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
             content = content.replaceAll( "(\\s{2,}|[^\\s])/>", "$1 />" );
@@ -140,7 +147,7 @@ public abstract class AbstractRewritePomsPhase
             // rewrite DOM as a string to find differences, since text outside the root element is not tracked
             StringWriter w = new StringWriter();
             Format format = Format.getRawFormat();
-            format.setLineSeparator( ReleaseUtil.LS );
+            format.setLineSeparator( ls );
             XMLOutputter out = new XMLOutputter( format );
             out.output( document.getRootElement(), w );
 
@@ -227,12 +234,12 @@ public abstract class AbstractRewritePomsPhase
         for ( Iterator i = document.getDescendants( new ContentFilter( ContentFilter.COMMENT ) ); i.hasNext(); )
         {
             Comment c = (Comment) i.next();
-            c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ReleaseUtil.LS ) );
+            c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ls ) );
         }
         for ( Iterator i = document.getDescendants( new ContentFilter( ContentFilter.CDATA ) ); i.hasNext(); )
         {
             CDATA c = (CDATA) i.next();
-            c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ReleaseUtil.LS ) );
+            c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ls ) );
         }
     }
 
@@ -752,7 +759,7 @@ public abstract class AbstractRewritePomsPhase
             }
 
             Format format = Format.getRawFormat();
-            format.setLineSeparator( ReleaseUtil.LS );
+            format.setLineSeparator( ls );
             XMLOutputter out = new XMLOutputter( format );
             out.output( document.getRootElement(), writer );
 
