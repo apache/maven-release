@@ -124,7 +124,7 @@
   </issueManagement>
 
   <properties>
-    <scmVersion>1.3</scmVersion>
+    <scmVersion>1.4-SNAPSHOT</scmVersion>
     <mavenPluginPluginVersion>2.5.1</mavenPluginPluginVersion>
     <mavenVersion>2.0.9</mavenVersion>
   </properties>

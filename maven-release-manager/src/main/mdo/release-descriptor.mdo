@@ -407,6 +407,19 @@
             the source code with this revision.
           </description>
         </field>
+        
+        <field>
+          <name>pushChanges</name>
+          <version>2.0.0+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            Should distributed changes be pushed to the central repository?
+            For many distributed SCMs like Git, a change like a commit is only stored in your local copy of the repository.
+            Pushing the change allows your to more easily share it with other users.
+          </description>
+        </field>        
+        
         <field>
           <name>localCheckout</name>
           <version>2.0.0+</version>
@@ -596,7 +609,8 @@
              updateVersionsToSnapshot  != that.updateVersionsToSnapshot ||
              allowTimestampedSnapshots != that.allowTimestampedSnapshots||
              remoteTagging             != that.remoteTagging            ||
-             localCheckout             != that.localCheckout
+             localCheckout             != that.localCheckout            ||
+             pushChanges               != that.pushChanges
            )
            {
                return false;
@@ -805,6 +819,7 @@
         result = 29 * result + ( allowTimestampedSnapshots ? 1 : 0 );
         result = 29 * result + ( remoteTagging ? 1 : 0 );
         result = 29 * result + ( localCheckout ? 1 : 0 );
+        result = 29 * result + ( pushChanges ? 1 : 0 );
         result = 29 * result + ( defaultDevelopmentVersion != null ? defaultDevelopmentVersion.hashCode() : 0 );
         result = 29 * result + ( scmRelativePathProjectDirectory != null ? scmRelativePathProjectDirectory.hashCode() : 0 );
         result = 29 * result + ( checkoutDirectory != null ? checkoutDirectory.hashCode() : 0 );

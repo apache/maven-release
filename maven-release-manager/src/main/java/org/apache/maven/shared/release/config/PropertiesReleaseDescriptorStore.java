@@ -161,6 +161,8 @@ public class PropertiesReleaseDescriptorStore
         }
         
         properties.setProperty( "remoteTagging", Boolean.toString( config.isRemoteTagging() ) );
+        
+        properties.setProperty( "pushChanges", Boolean.toString( config.isPushChanges() ) );
 
         // others boolean properties are not written to the properties file because the value from the caller is always used
 

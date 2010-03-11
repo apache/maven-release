@@ -182,6 +182,14 @@ public abstract class AbstractReleaseMojo
      * @since 2.0
      */
     private boolean localCheckout;
+    
+    /**
+     * Implemented with git will or not push changes to the upstream repository.
+     * <code>true</code> by default to preserve backward compatibility.
+     * @parameter expression="${pushChanges}" default-value="true"
+     * @since 2.1
+     */
+    private boolean pushChanges = true;
 
     /**
      * The SCM manager.
@@ -246,6 +254,8 @@ public abstract class AbstractReleaseMojo
         descriptor.setPomFileName( pomFileName );
 
         descriptor.setLocalCheckout( localCheckout );
+        
+        descriptor.setPushChanges( pushChanges );
 
         List profiles = project.getActiveProfiles();
 

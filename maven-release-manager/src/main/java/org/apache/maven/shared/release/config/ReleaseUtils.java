@@ -92,6 +92,7 @@ public class ReleaseUtils
                                                                toBeMerged.getDefaultDevelopmentVersion() ) );
         mergeInto.setRemoteTagging( toBeMerged.isRemoteTagging() );
         mergeInto.setLocalCheckout( toBeMerged.isLocalCheckout() );
+        mergeInto.setPushChanges( toBeMerged.isPushChanges() );
         
         // If the user specifies versions, these should be override the existing versions 
         if ( toBeMerged.getReleaseVersions() != null )
@@ -142,7 +143,8 @@ public class ReleaseUtils
         releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
         String remoteTaggingStr = properties.getProperty( "remoteTagging" );
         releaseDescriptor.setRemoteTagging( remoteTaggingStr == null ? false : Boolean.valueOf( remoteTaggingStr ).booleanValue() );
-        
+        String pushChanges = properties.getProperty( "pushChanges" );
+        releaseDescriptor.setPushChanges( pushChanges == null ? true : Boolean.valueOf( pushChanges ).booleanValue() );
         
         loadResolvedDependencies( properties, releaseDescriptor );
 

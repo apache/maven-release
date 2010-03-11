@@ -70,7 +70,10 @@ public class ScmBranchPhase
         {
             repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
 
+            repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
+            
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
+            
         }
         catch ( ScmRepositoryException e )
         {
