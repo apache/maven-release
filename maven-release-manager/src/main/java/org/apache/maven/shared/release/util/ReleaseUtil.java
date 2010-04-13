@@ -185,7 +185,8 @@ public class ReleaseUtil
 
     public static String getCommonBasedir( List reactorProjects, char separator )
     {
-        String basedir = null;
+        String[] baseDirs = new String[reactorProjects.size()];
+        int idx = 0;
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject p = (MavenProject) i.next();
@@ -193,35 +194,26 @@ public class ReleaseUtil
             // we can only normalize paths with /
             String dir = FileUtils.normalize( p.getBasedir().getPath().replace( '\\', '/' ) );
 
-            if ( basedir == null )
+            // always end in / so that we know what is a path and what is a partial directory name in the next call
+            if ( !dir.endsWith( "/" ) )
             {
-                basedir = dir;
+                dir = dir + "/";
             }
-            else
-            {
-                // always end in / so that we know what is a path and what is a partial directory name in the next call 
-                if ( !basedir.endsWith( "/" ) )
-                {
-                    basedir = basedir + "/";
-                }
-
-                basedir = StringUtils.getCommonPrefix( new String[]{dir, basedir} );
-
-                if ( !basedir.endsWith( "/" ) )
-                {
-                    basedir = basedir.substring( 0, basedir.lastIndexOf( "/" ) );
-                }
-            }
+            baseDirs[idx++] = dir;
         }
 
-        if ( basedir != null )
+        String basedir = StringUtils.getCommonPrefix( baseDirs );
+
+        if ( !basedir.endsWith( "/" ) )
         {
-            if ( basedir.endsWith( "/" ) && basedir.length() > 1 )
-            {
-                basedir = basedir.substring( 0, basedir.length() - 1 );
-            }
-            basedir = basedir.replace( '/', separator );
+            basedir = basedir.substring( 0, basedir.lastIndexOf( "/" ) );
         }
+
+        if ( basedir.endsWith( "/" ) && basedir.length() > 1 )
+        {
+            basedir = basedir.substring( 0, basedir.length() - 1 );
+        }
+        basedir = basedir.replace( '/', separator );
 
         return basedir;
     }

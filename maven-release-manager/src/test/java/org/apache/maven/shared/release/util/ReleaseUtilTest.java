@@ -99,6 +99,26 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
     }
 
+    public void testGetCommonBasedirOfRegularMultiModuleParentNotBeeingFirstInReactor()
+        throws Exception
+    {
+        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{
+                createProject( "/working/directory/flat-multi-module/core" ),
+                createProject( "/working/directory/flat-multi-module" ),
+                createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
+    }
+
+    public void testGetCommonBasedirOfRegularMultiModuleWindowsPath()
+        throws Exception
+    {
+        assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{
+                createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
+                createProject( "c:\\working\\directory\\flat-multi-module" ),
+                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), '\\' ) );
+    }
+
     public void testGetCommonBasedirOfFlatMultiModuleWithMultipleLevels()
         throws Exception
     {
