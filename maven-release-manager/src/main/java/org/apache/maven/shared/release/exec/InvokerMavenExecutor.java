@@ -364,8 +364,12 @@ public class InvokerMavenExecutor
 
         if ( releaseEnvironment.getSettings() != null )
         {
-            // FIXME: This is effectively useless, since getFile() always returns null
-            req.setUserSettingsFile( releaseEnvironment.getSettings().getRuntimeInfo().getFile() );
+            // FIXME: This is effectively useless in Maven 2.x, since getFile() always returns null
+            File settingsFile = releaseEnvironment.getSettings().getRuntimeInfo().getFile();
+            if ( settingsFile != null && settingsFile.isFile() )
+            {
+                req.setUserSettingsFile( settingsFile );
+            }
         }
 
         File localRepoDir = releaseEnvironment.getLocalRepositoryDirectory();
