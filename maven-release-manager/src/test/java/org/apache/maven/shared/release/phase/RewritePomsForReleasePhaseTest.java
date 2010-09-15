@@ -374,4 +374,18 @@ public class RewritePomsForReleasePhaseTest
         descriptor.setScmReleaseLabel( "release-label" );
         return descriptor;
     }
+    
+    public void testRewritePomWithExternallyReleasedParent()
+    throws Exception
+    {
+        List reactorProjects = createReactorProjects( "pom-with-externally-released-parent" );
+    
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        config.mapResolvedSnapshotDependencies( "external:parent-artifactId", "1" , "2-SNAPSHOT" );
+        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+    
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+    
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
 }

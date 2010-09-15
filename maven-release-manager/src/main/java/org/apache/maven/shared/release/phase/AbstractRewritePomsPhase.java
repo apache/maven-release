@@ -253,7 +253,8 @@ public abstract class AbstractRewritePomsPhase
         Map resolvedSnapshotDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
         Element properties = rootElement.getChild( "properties", namespace );
 
-        String parentVersion = rewriteParent( project, rootElement, namespace, mappedVersions, originalVersions );
+        String parentVersion = rewriteParent( project, rootElement, namespace, mappedVersions, 
+                                              resolvedSnapshotDependencies, originalVersions);
 
         String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
@@ -393,7 +394,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private String rewriteParent( MavenProject project, Element rootElement, Namespace namespace, Map mappedVersions,
-                                  Map originalVersions )
+                                  Map resolvedSnapshotDependencies, Map originalVersions)
         throws ReleaseFailureException
     {
         String parentVersion = null;
@@ -404,6 +405,11 @@ public abstract class AbstractRewritePomsPhase
             MavenProject parent = project.getParent();
             String key = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
             parentVersion = (String) mappedVersions.get( key );
+            if ( parentVersion == null )
+            {
+                //MRELEASE-317
+                parentVersion = getResolvedSnapshotVersion(key, resolvedSnapshotDependencies);
+            }
             if ( parentVersion == null )
             {
                 if ( parent.getVersion().equals( originalVersions.get( key ) ) )
