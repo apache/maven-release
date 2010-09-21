@@ -21,13 +21,12 @@
 <metadata>
   <groupId>external</groupId>
   <artifactId>artifactId</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.1-SNAPSHOT</version>
   <versioning>
-    <versions>
-      <version>1.0-SNAPSHOT</version>
-      <version>1.0</version>
-      <version>1.1-SNAPSHOT</version>
-    </versions>
+    <snapshot>
+      <timestamp>20080128.141330</timestamp>
+      <buildNumber>1</buildNumber>
+    </snapshot>
     <lastUpdated>20080128141330</lastUpdated>
   </versioning>
 </metadata>

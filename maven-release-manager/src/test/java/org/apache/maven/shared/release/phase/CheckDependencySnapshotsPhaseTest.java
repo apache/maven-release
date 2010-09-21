@@ -66,6 +66,29 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( true );
     }
 
+    public void testNoSnapshotRangeDependencies()
+        throws Exception
+    {
+        CheckDependencySnapshotsPhase phase =
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List reactorProjects = createDescriptorFromProjects( "no-snapshot-range-dependencies" );
+
+        Mock mockPrompter = createMockPrompter( "yes", "1", "yes", "1.2-SNAPSHOT" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        mockPrompter = createMockPrompter( "yes", "1", "yes", "1.2-SNAPSHOT" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // successful execution is verification enough
+        assertTrue( true );
+    }
+    
     public void testSnapshotDependenciesInProjectOnly()
         throws Exception
     {
@@ -984,6 +1007,11 @@ public class CheckDependencySnapshotsPhaseTest
     private Mock createMockPrompter( String response1, String response2 )
     {
         return createMockPrompter( new String[] { response1, response2 } );
+    }
+
+    private Mock createMockPrompter( String response1, String response2, String response3 )
+    {
+        return createMockPrompter( new String[] { response1, response2, response3 } );
     }
 
     private Mock createMockPrompter( String response1, String response2, String response3, String response4 )

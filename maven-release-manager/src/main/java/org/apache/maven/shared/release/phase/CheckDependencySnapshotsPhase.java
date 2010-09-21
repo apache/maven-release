@@ -146,7 +146,7 @@ public class CheckDependencySnapshotsPhase
 
                 if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
                 {
-                    snapshotDependencies.add( artifact );
+                    snapshotDependencies.add( artifactMap.get( ArtifactUtils.versionlessKey( artifact ) ) );
                 }
             }
         }

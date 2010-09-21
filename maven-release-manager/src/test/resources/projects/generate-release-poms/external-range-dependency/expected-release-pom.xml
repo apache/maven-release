@@ -48,7 +48,7 @@
   <dependencies>
     <dependency>
       <groupId>external</groupId>
-      <artifactId>artifactId</artifactId>
+      <artifactId>artifactId-release-range</artifactId>
       <version>1.0</version>
       <scope>compile</scope>
     </dependency>
