@@ -311,6 +311,22 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    // MRELEASE-311
+    public void testRewritePomWithDependencyPropertyCoordinate()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "pom-with-property-dependency-coordinate" );
+
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1-3.4", ALTERNATIVE_NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject2", ALTERNATIVE_NEXT_VERSION );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
     // MRELEASE-305
     public void testRewritePomWithScmOfParentEndingWithASlash()
         throws Exception

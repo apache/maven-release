@@ -363,6 +363,27 @@ public class RewritePomsForDevelopmentPhaseTest
         }
     }
 
+    // MRELEASE-311
+    public void testRewritePomWithDependencyPropertyCoordinate()
+        throws Exception
+    {
+        List reactorProjects = createReactorProjects( "pom-with-property-dependency-coordinate" );
+
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1-3.4", ALTERNATIVE_RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:subproject1-3.4", ALTERNATIVE_NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject2", ALTERNATIVE_RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:subproject2", ALTERNATIVE_NEXT_VERSION );
+
+        mapScm( config );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
     public void testRewritePomDependenciesWithoutDependenciesVersionUpdate()
         throws Exception
     {
