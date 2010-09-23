@@ -122,7 +122,13 @@ public abstract class AbstractReleaseTestCase
         return map;
     }
 
-    protected List createReactorProjects( String path, String subpath, boolean copyFiles )
+    protected List createReactorProjects( String path, String subpath )
+        throws Exception
+    {
+        return createReactorProjects( path, path, subpath );
+    }
+
+    protected List createReactorProjects( String path, String targetPath, String subpath )
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/projects/" + path + subpath + "/pom.xml" );
@@ -153,10 +159,10 @@ public abstract class AbstractReleaseTestCase
             int index = filePath.indexOf( "test-classes" ) + "test-classes".length() + 1;
             filePath = filePath.substring( index );
 
-            FileUtils.copyFile( getTestFile( "src/test/resources/" + filePath ),
-                                getTestFile( "target/test-classes/" + filePath ) );
+            File newFile = getTestFile( "target/test-classes/" + filePath.replace( path, targetPath ) );
+            FileUtils.copyFile( getTestFile( "src/test/resources/" + filePath ), newFile );
 
-            MavenProject project = projectBuilder.build( file, localRepository, profileManager );
+            MavenProject project = projectBuilder.build( newFile, localRepository, profileManager );
 
             for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
             {

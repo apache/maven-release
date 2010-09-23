@@ -20,11 +20,8 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>groupId</groupId>
   <artifactId>artifactId</artifactId>
-  <version>1.1-SNAPSHOT</version>
-
-  <prerequisites>
-    <maven>2.0.4</maven>
-  </prerequisites>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>pom</packaging>
 
   <scm>
     <connection>scm:svn:file://localhost/tmp/scm-repo/trunk</connection>
@@ -32,10 +29,8 @@
     <url>file://localhost/tmp/scm-repo/trunk</url>
   </scm>
 
-  <!--
-  a multi-line
-  comment
-  -->
-
-  <?processing-instruction attrib="value"?>
+  <modules>
+    <module>subproject1</module>
+    <module>subproject2</module>
+  </modules>
 </project>

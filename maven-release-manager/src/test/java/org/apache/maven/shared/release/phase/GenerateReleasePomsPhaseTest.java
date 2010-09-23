@@ -103,7 +103,7 @@ public class GenerateReleasePomsPhaseTest
      */
     protected List createReactorProjects( String path, boolean copyFiles ) throws Exception
     {
-        List reactorProjects = createReactorProjects( "generate-release-poms/", path, copyFiles );
+        List reactorProjects = createReactorProjects( "generate-release-poms/", path );
 
         // add scm provider expectations for each project in the reactor
         // TODO: can we move this somewhere better?

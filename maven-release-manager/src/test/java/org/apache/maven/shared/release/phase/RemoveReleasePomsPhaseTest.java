@@ -130,13 +130,7 @@ public class RemoveReleasePomsPhaseTest
     private List createReactorProjects( String path )
         throws Exception
     {
-        return createReactorProjects( path, false );
-    }
-
-    private List createReactorProjects( String path, boolean copyFiles )
-        throws Exception
-    {
-        return createReactorProjects( "remove-release-poms/", path, copyFiles );
+        return createReactorProjects( "remove-release-poms/", path );
     }
 
     private ReleaseDescriptor createReleaseDescriptor()

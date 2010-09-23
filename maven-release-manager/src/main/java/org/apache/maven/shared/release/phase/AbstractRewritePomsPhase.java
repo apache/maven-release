@@ -213,7 +213,7 @@ public abstract class AbstractRewritePomsPhase
         }
 
         transformDocument( project, document.getRootElement(), releaseDescriptor, reactorProjects, scmRepository,
-                           result );
+                           result, simulate );
 
         File pomFile = ReleaseUtil.getStandardPom( project );
 
@@ -244,12 +244,13 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformDocument( MavenProject project, Element rootElement, ReleaseDescriptor releaseDescriptor,
-                                    List reactorProjects, ScmRepository scmRepository, ReleaseResult result )
+                                    List reactorProjects, ScmRepository scmRepository, ReleaseResult result,
+                                    boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Namespace namespace = rootElement.getNamespace();
         Map mappedVersions = getNextVersionMap( releaseDescriptor );
-        Map originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects );
+        Map originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects, simulate );
         Map resolvedSnapshotDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
         Element properties = rootElement.getChild( "properties", namespace );
 
@@ -829,7 +830,8 @@ public abstract class AbstractRewritePomsPhase
 
     protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshots );
 
-    protected abstract Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects );
+    protected abstract Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects,
+                                                  boolean simulate );
 
     protected abstract Map getNextVersionMap( ReleaseDescriptor releaseDescriptor );
 

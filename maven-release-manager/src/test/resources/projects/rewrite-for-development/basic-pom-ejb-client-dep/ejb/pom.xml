@@ -19,23 +19,7 @@
 <project>
   <modelVersion>4.0.0</modelVersion>
   <groupId>groupId</groupId>
-  <artifactId>artifactId</artifactId>
-  <version>1.1-SNAPSHOT</version>
-
-  <prerequisites>
-    <maven>2.0.4</maven>
-  </prerequisites>
-
-  <scm>
-    <connection>scm:svn:file://localhost/tmp/scm-repo/trunk</connection>
-    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/trunk</developerConnection>
-    <url>file://localhost/tmp/scm-repo/trunk</url>
-  </scm>
-
-  <!--
-  a multi-line
-  comment
-  -->
-
-  <?processing-instruction attrib="value"?>
+  <artifactId>artifactId1</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>ejb</packaging>
 </project>

@@ -92,9 +92,11 @@ public class RewritePomsForDevelopmentPhase
         }
     }
 
-    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects )
+    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects, boolean simulate )
     {
-        return releaseDescriptor.getReleaseVersions();
+        return simulate
+            ? releaseDescriptor.getOriginalVersions( reactorProjects )
+            : releaseDescriptor.getReleaseVersions();
     }
 
     protected Map getNextVersionMap( ReleaseDescriptor releaseDescriptor )

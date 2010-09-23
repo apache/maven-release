@@ -78,7 +78,7 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
-        List reactorProjects = createReactorProjects( "scm-commit", "/single-pom", false );
+        List reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "", descriptor.getScmRelativePathProjectDirectory() );
@@ -108,7 +108,7 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
-        List reactorProjects = createReactorProjects( "scm-commit", "/multimodule-with-deep-subprojects", false );
+        List reactorProjects = createReactorProjects( "scm-commit", "/multimodule-with-deep-subprojects" );
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "", descriptor.getScmRelativePathProjectDirectory() );
@@ -138,8 +138,7 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
-        List reactorProjects =
-            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project", false );
+        List reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "root-project", descriptor.getScmRelativePathProjectDirectory() );

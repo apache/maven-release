@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
@@ -28,6 +29,8 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -57,7 +60,7 @@ public class RewritePomsForDevelopmentPhaseTest
     public void testSimulateRewrite()
         throws Exception
     {
-        List reactorProjects = createReactorProjectsFromBasicPom();
+        List reactorProjects = createReactorProjectsWhenSimulated( "basic-pom" );
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
@@ -74,32 +77,39 @@ public class RewritePomsForDevelopmentPhaseTest
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
+    private List createReactorProjectsWhenSimulated( String name )
+        throws Exception
+    {
+        return createReactorProjects( "rewrite-for-release/", "rewrite-for-development/", name );
+    }
+
     public void testSimulateRewriteEjbClientDeps()
         throws Exception
     {
-        List reactorProjects = createReactorProjects( "basic-pom-ejb-client-dep" );
+        List reactorProjects = new LinkedList( createReactorProjects( "basic-pom-ejb-client-dep/project" ) );
+        reactorProjects.addAll( createReactorProjects( "basic-pom-ejb-client-dep/ejb" ) );
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
         config.addDevelopmentVersion( ArtifactUtils.versionlessKey( "groupId", "artifactId1" ), NEXT_VERSION );
         config.addReleaseVersion( ArtifactUtils.versionlessKey( "groupId", "artifactId1" ), RELEASE_VERSION );
 
-        String expected = readTestProjectFile( "basic-pom-ejb-client-dep/pom.xml" );
+        String expected = readTestProjectFile( "basic-pom-ejb-client-dep/project/pom.xml" );
 
         phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
 
-        String actual = readTestProjectFile( "basic-pom-ejb-client-dep/pom.xml" );
+        String actual = readTestProjectFile( "basic-pom-ejb-client-dep/project/pom.xml" );
         assertEquals( "Check the original POM untouched", expected, actual );
 
-        expected = readTestProjectFile( "basic-pom-ejb-client-dep/expected-pom.xml" );
-        actual = readTestProjectFile( "basic-pom-ejb-client-dep/pom.xml.next" );
+        expected = readTestProjectFile( "basic-pom-ejb-client-dep/project/expected-pom.xml" );
+        actual = readTestProjectFile( "basic-pom-ejb-client-dep/project/pom.xml.next" );
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
     public void testClean()
         throws Exception
     {
-        List reactorProjects = createReactorProjectsFromBasicPom();
+        List reactorProjects = createReactorProjectsWhenSimulated( "basic-pom" );
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
@@ -158,13 +168,19 @@ public class RewritePomsForDevelopmentPhaseTest
     protected String readTestProjectFile( String fileName )
         throws IOException
     {
-        return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/rewrite-for-development/" + fileName ) );
+        return readTestProjectFile( fileName, "rewrite-for-development/" );
+    }
+
+    protected String readTestProjectFile( String fileName, String subpath )
+        throws IOException
+    {
+        return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/"+ subpath + fileName ) );
     }
 
     protected List createReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
-        return createReactorProjects( "rewrite-for-development/", path, copyFiles );
+        return createReactorProjects( "rewrite-for-development/", path );
     }
 
     protected ReleaseDescriptor createDescriptorFromBasicPom( List reactorProjects )
@@ -315,6 +331,36 @@ public class RewritePomsForDevelopmentPhaseTest
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
+    public void testSimulateRewritePomWithParentAndProperties()
+        throws Exception
+    {
+        // use the original ones since simulation didn't modify them
+        List reactorProjects = createReactorProjects( "pom-with-parent-and-properties-sim" );
+
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+        config.mapReleaseVersion( "groupId:subproject2", ALTERNATIVE_RELEASE_VERSION );
+        config.mapDevelopmentVersion( "groupId:subproject2", ALTERNATIVE_NEXT_VERSION );
+
+        mapScm( config );
+
+        phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        {
+            MavenProject project = (MavenProject) i.next();
+
+            File pomFile = project.getFile();
+            File actualFile = new File( pomFile.getParentFile(), pomFile.getName() + ".next" );
+            File expectedFile = new File( actualFile.getParentFile(), "expected-pom.xml" );
+
+            comparePomFiles( expectedFile, actualFile, true );
+        }
     }
 
     public void testRewritePomDependenciesWithoutDependenciesVersionUpdate()

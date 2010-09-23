@@ -100,7 +100,7 @@ public class ScmTagPhaseTest
     public void testCommitMultiModuleDeepFolders()
         throws Exception
     {
-        List reactorProjects = createReactorProjects( "scm-commit/", "multimodule-with-deep-subprojects", false );
+        List reactorProjects = createReactorProjects( "scm-commit/", "multimodule-with-deep-subprojects" );
         String sourceUrl = "http://svn.example.com/repos/project/trunk/";
         String scmUrl = "scm:svn:" + sourceUrl;
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
@@ -134,7 +134,7 @@ public class ScmTagPhaseTest
         throws Exception
     {
         List reactorProjects =
-            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project", true );
+            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         descriptor.setScmSourceUrl( rootProject.getScm().getConnection() );
@@ -166,7 +166,7 @@ public class ScmTagPhaseTest
         throws Exception
     {
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        List reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms", false );
+        List reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms" );
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
@@ -351,7 +351,7 @@ public class ScmTagPhaseTest
     private List createReactorProjects()
         throws Exception
     {
-        return createReactorProjects( "scm-commit/", "single-pom", false );
+        return createReactorProjects( "scm-commit/", "single-pom" );
     }
 
     private static ReleaseDescriptor createReleaseDescriptor()

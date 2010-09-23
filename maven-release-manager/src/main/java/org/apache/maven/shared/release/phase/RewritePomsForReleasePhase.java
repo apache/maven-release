@@ -208,7 +208,7 @@ public class RewritePomsForReleasePhase
         return result;
     }
 
-    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects )
+    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects, boolean simulate )
     {
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }

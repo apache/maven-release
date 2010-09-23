@@ -52,7 +52,7 @@ public class RewritePomsForReleasePhaseTest
     protected List createReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
-        return createReactorProjects( "rewrite-for-release/", path, copyFiles );
+        return createReactorProjects( "rewrite-for-release/", path );
     }
 
     protected String readTestProjectFile( String fileName )
@@ -344,7 +344,7 @@ public class RewritePomsForReleasePhaseTest
     public void testRewritePomForFlatMultiModule()
         throws Exception
     {
-        List reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project", true );
+        List reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
 
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );

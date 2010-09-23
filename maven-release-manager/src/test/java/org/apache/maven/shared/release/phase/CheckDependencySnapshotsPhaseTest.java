@@ -980,7 +980,7 @@ public class CheckDependencySnapshotsPhaseTest
     private List createDescriptorFromProjects( String path )
         throws Exception
     {
-        return createReactorProjects( "check-dependencies/", path, true );
+        return createReactorProjects( "check-dependencies/", path );
     }
 
     private Mock createNoMockPrompter()
