@@ -60,6 +60,7 @@ import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.StringUtils;
 import org.jmock.Mock;
 
 /**
@@ -157,9 +158,9 @@ public abstract class AbstractReleaseTestCase
             // Recopy the test resources since they are modified in some tests
             String filePath = file.getPath();
             int index = filePath.indexOf( "test-classes" ) + "test-classes".length() + 1;
-            filePath = filePath.substring( index );
+            filePath = filePath.substring( index ).replace( '\\', '/' );
 
-            File newFile = getTestFile( "target/test-classes/" + filePath.replace( path, targetPath ) );
+            File newFile = getTestFile( "target/test-classes/" + StringUtils.replace( filePath, path, targetPath ) );
             FileUtils.copyFile( getTestFile( "src/test/resources/" + filePath ), newFile );
 
             MavenProject project = projectBuilder.build( newFile, localRepository, profileManager );
