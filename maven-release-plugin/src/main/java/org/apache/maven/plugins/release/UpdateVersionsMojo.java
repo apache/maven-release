@@ -32,8 +32,9 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 
 /**
- * Update the POM versions for a project.
- * For more info see <a href="/plugins/maven-release-plugin/examples/update-versions.html">this example</a>.
+ * Update the POM versions for a project. This performs the normal version updates of the <tt>release:prepare</tt>
+ * goal without making other modifications to the SCM such as tagging.
+ * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html">http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html</a>.
  *
  * @author Paul Gier
  * @version $Id$

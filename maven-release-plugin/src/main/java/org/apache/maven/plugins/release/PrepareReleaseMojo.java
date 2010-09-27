@@ -28,8 +28,10 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 
 /**
- * Prepare for a release in SCM.
- * For more info see <a href="/plugins/maven-release-plugin/examples/prepare-release.html">this example</a>.
+ * Prepare for a release in SCM. Steps through several phases to ensure the POM is ready to be
+ * released and then prepares SCM to eventually contain a tagged version of the release and a record
+ * in the local copy of the parameters used. This can be followed by a call to <tt>release:perform</tt>.
+ * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html">http://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html</a>.
  *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>

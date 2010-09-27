@@ -24,7 +24,6 @@ import org.apache.maven.plugin.MojoFailureException;
 
 /**
  * Prepare for a release in SCM, fully resolving dependencies for the purpose of producing a "release POM".
- * For more info see <a href="/plugins/maven-release-plugin/examples/prepare-release.html">this example</a>.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @aggregator

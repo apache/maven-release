@@ -26,8 +26,9 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
- * Rollback changes made by a previous release.
- * For more info see <a href="/plugins/maven-release-plugin/examples/rollback-release.html">this example</a>.
+ * Rollback changes made by a previous release. This requires that the previous release descriptor <tt>release.properties</tt>
+ * is still available in the local working copy.
+ * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/rollback-release.html">http://maven.apache.org/plugins/maven-release-plugin/examples/rollback-release.html</a>.
  *
  * @aggregator
  * @goal rollback
