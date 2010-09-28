@@ -963,6 +963,36 @@ public class CheckDependencySnapshotsPhaseTest
         }
     }
 
+    public void testSnapshotExternalParentAdjusted()
+        throws Exception
+    {
+        CheckDependencySnapshotsPhase phase =
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
+
+        Prompter mockPrompter = createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0-test", "1.0-test" ),
+                                                    new VersionPair( "1.0", "1.0-test" ) );
+        phase.setPrompter( mockPrompter );
+
+        try
+        {
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            fail( e.getMessage() );
+        }
+
+        // validate
+        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "groupId:parent-external" );
+
+        assertNotNull( versionsMap );
+        assertEquals( "1.0-test", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+        assertEquals( "1.0-test", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+    }
+
     public void testReleaseExternalParent()
         throws Exception
     {
