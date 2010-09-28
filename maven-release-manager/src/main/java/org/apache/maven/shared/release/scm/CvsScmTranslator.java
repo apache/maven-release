@@ -20,7 +20,7 @@ package org.apache.maven.shared.release.scm;
  */
 
 /**
- * Subversion tag translator.
+ * CVS tag translator.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @plexus.component role="org.apache.maven.shared.release.scm.ScmTranslator" role-hint="cvs"
