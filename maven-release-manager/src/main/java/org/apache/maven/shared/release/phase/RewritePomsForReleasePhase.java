@@ -96,7 +96,12 @@ public class RewritePomsForReleasePhase
         boolean result = false;
         if ( translator != null )
         {
-            Scm scm = project.getScm();
+            Scm scm = project.getOriginalModel().getScm();
+            if ( scm == null )
+            {
+                scm = project.getScm();
+            }
+            
             String tag = releaseDescriptor.getScmReleaseLabel();
             String tagBase = releaseDescriptor.getScmTagBase();
 

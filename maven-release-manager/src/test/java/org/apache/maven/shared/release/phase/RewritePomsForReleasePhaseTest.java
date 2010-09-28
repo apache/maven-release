@@ -196,6 +196,19 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    public void testRewriteBasicPomWithScmExpression()
+        throws Exception
+    {
+
+        List reactorProjects = createReactorProjects( "basic-pom-with-scm-expression" );
+        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
     public void testRewriteBasicPomWithTagBase()
         throws Exception
     {
