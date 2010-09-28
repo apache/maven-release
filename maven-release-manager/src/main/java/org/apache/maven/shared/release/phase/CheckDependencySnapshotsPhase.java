@@ -57,7 +57,7 @@ import java.util.Set;
 public class CheckDependencySnapshotsPhase
     extends AbstractReleasePhase
 {
-    public static final String RESOLVE_SNAPSHOT_MESSAGE = "There are still some remaining snapshot dependencies.";
+    public static final String RESOLVE_SNAPSHOT_MESSAGE = "There are still some remaining snapshot dependencies.\n";
 
     public static final String RESOLVE_SNAPSHOT_PROMPT = "Do you want to resolve them now?";
 
@@ -65,17 +65,6 @@ public class CheckDependencySnapshotsPhase
 
     public static final String RESOLVE_SNAPSHOT_TYPE_PROMPT =
         "specify the selection number ( 0:All 1:Project Dependencies 2:Plugins 3:Reports 4:Extensions ):";
-
-    public static final String RESOLVE_ALL_SNAPSHOT_MESSAGE = "Resolve All Snapshots.";
-
-    public static final String RESOLVE_ALL_PROJECT_DEPENDENCIES_SNAPSHOT_MESSAGE =
-        "Resolve Project Dependency Snapshots.";
-
-    public static final String RESOLVE_ALL_REPORTS_SNAPSHOT_MESSAGE = "Resolve Report Dependency Snapshots.";
-
-    public static final String RESOLVE_ALL_EXTENSIONS_SNAPSHOT_MESSAGE = "Resolve Extension Dependency Snapshots.";
-
-    public static final String RESOLVE_ALL_PLUGIN_SNAPSHOT_MESSAGE = "Resolve Plugin Dependency Snapshots.";
 
     /**
      * Component used to prompt for input.
@@ -172,11 +161,11 @@ public class CheckDependencySnapshotsPhase
                     {
                         try
                         {
-                            String result = "no";
+                            String result;
                             if ( !releaseDescriptor.isSnapshotReleasePluginAllowed() )
                             {
-                                prompter.showMessage(
-                                    "This project relies on a SNAPSHOT of the release plugin. This may be necessary during testing." );
+                                prompter.showMessage( "This project relies on a SNAPSHOT of the release plugin. " +
+                                    "This may be necessary during testing.\n" );
                                 result = prompter.prompt( "Do you want to continue with the release?",
                                                           Arrays.asList( new String[]{"yes", "no"} ), "no" );
                             }
@@ -348,7 +337,6 @@ public class CheckDependencySnapshotsPhase
                 {
                     // all
                     case 0:
-                        prompter.showMessage( RESOLVE_ALL_SNAPSHOT_MESSAGE );
                         snapshotSet.addAll( projectDependencies );
                         snapshotSet.addAll( reportDependencies );
                         snapshotSet.addAll( extensionDependencies );
@@ -358,25 +346,21 @@ public class CheckDependencySnapshotsPhase
 
                         // project dependencies
                     case 1:
-                        prompter.showMessage( RESOLVE_ALL_PROJECT_DEPENDENCIES_SNAPSHOT_MESSAGE );
                         resolvedSnapshots = processSnapshot( projectDependencies );
                         break;
 
                         // plugins
                     case 2:
-                        prompter.showMessage( RESOLVE_ALL_PLUGIN_SNAPSHOT_MESSAGE );
                         resolvedSnapshots = processSnapshot( pluginDependencies );
                         break;
 
                         // reports
                     case 3:
-                        prompter.showMessage( RESOLVE_ALL_REPORTS_SNAPSHOT_MESSAGE );
                         resolvedSnapshots = processSnapshot( reportDependencies );
                         break;
 
                         // extensions
                     case 4:
-                        prompter.showMessage( RESOLVE_ALL_EXTENSIONS_SNAPSHOT_MESSAGE );
                         resolvedSnapshots = processSnapshot( extensionDependencies );
                         break;
                 }
@@ -405,38 +389,36 @@ public class CheckDependencySnapshotsPhase
             Artifact currentArtifact = (Artifact) iterator.next();
             String versionlessKey = ArtifactUtils.versionlessKey( currentArtifact );
 
-            String result = prompter.prompt( "'" + versionlessKey + "' set to release?",
-                Arrays.asList( new String[] { "yes", "no" } ), "yes" );
+            Map versionMap = new HashMap();
+            VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getVersion() );
+            versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, versionInfo.toString() );
 
-            if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
+            prompter.showMessage(
+                "Dependency '" + versionlessKey + "' is a snapshot (" + currentArtifact.getVersion() + ")\n" );
+            String result = prompter.prompt( "Which release version should it be set to?",
+                                             versionInfo.getReleaseVersionString() );
+            versionMap.put( ReleaseDescriptor.RELEASE_KEY, result );
+
+            iterator.remove();
+
+            // by default, keep the same version for the dependency after release, unless it was previously newer
+            // th euser may opt to type in something different
+            VersionInfo nextVersionInfo = new DefaultVersionInfo( result );
+
+            String nextVersion;
+            if ( nextVersionInfo.compareTo( versionInfo ) > 0 )
             {
-                iterator.remove();
-
-                VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getVersion() );
-                VersionInfo nextVersionInfo = versionInfo.getNextVersion();
-
-                String nextVersion;
-                if ( nextVersionInfo != null )
-                {
-                    nextVersion = nextVersionInfo.getSnapshotVersionString();
-                }
-                else
-                {
-                    nextVersion = "1.0-SNAPSHOT";
-                }
-
-                result = prompter.prompt( "What is the next development version?",
-                                          Collections.singletonList( nextVersion ), nextVersion );
-
-                VersionInfo nextDevelopmentVersion = new DefaultVersionInfo( result );
-
-                Map versionMap = new HashMap();
-                versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, versionInfo.toString() );
-                versionMap.put( ReleaseDescriptor.DEVELOPMENT_KEY, nextDevelopmentVersion.getSnapshotVersionString() );
-                versionMap.put( ReleaseDescriptor.RELEASE_KEY, versionInfo.getReleaseVersionString() );
-
-                resolvedSnapshots.put( versionlessKey, versionMap );
+                nextVersion = nextVersionInfo.toString();
             }
+            else
+            {
+                nextVersion = versionInfo.toString();
+            }
+
+            result = prompter.prompt( "What version should the dependency be reset to for development?", nextVersion );
+            versionMap.put( ReleaseDescriptor.DEVELOPMENT_KEY, result );
+
+            resolvedSnapshots.put( versionlessKey, versionMap );
         }
 
         return resolvedSnapshots;
