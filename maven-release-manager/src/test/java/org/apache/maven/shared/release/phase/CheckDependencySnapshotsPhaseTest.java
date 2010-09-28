@@ -28,6 +28,7 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -551,6 +552,67 @@ public class CheckDependencySnapshotsPhaseTest
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
     }
 
+    public void testSnapshotDependenciesUpdateAllOnlyDependenciesNeeded()
+        throws Exception
+    {
+        CheckDependencySnapshotsPhase phase =
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+
+        phase.setPrompter( createMockPrompter( YES, "0", new VersionPair( "1.0", "1.0" ) ) );
+
+        try
+        {
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            fail( e.getMessage() );
+        }
+
+        // validate
+        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+
+        assertNotNull( versionsMap );
+        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+    }
+
+
+    public void testSnapshotDependenciesUpdateAll()
+        throws Exception
+    {
+        CheckDependencySnapshotsPhase phase =
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List reactorProjects = createDescriptorFromProjects( "external-snapshot-all" );
+
+        Prompter mockPrompter = createMockPrompter( YES, "0", Arrays.asList( new VersionPair( "1.0", "1.0" ),
+                                                                             new VersionPair( "1.1", "1.1" ),
+                                                                             new VersionPair( "1.2", "1.2" ),
+                                                                             new VersionPair( "1.3", "1.3" ) ) );
+        phase.setPrompter( mockPrompter );
+
+        try
+        {
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            fail( e.getMessage() );
+        }
+
+        // validate
+        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+
+        assertNotNull( versionsMap );
+        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+    }
+
     public void testSnapshotDependenciesInsideAndOutsideProject()
         throws Exception
     {
@@ -1053,14 +1115,26 @@ public class CheckDependencySnapshotsPhaseTest
     private Prompter createMockPrompter( String resolveSnapshots, String resolutionType, VersionPair resolvedVersions )
         throws PrompterException
     {
-        VersionPair defaultVersions = new VersionPair( resolvedVersions.releaseVersion,
-                                                       resolvedVersions.developmentVersion );
-
-        return createMockPrompter( resolveSnapshots, resolutionType, resolvedVersions, defaultVersions );
+        return createMockPrompter( resolveSnapshots, resolutionType, resolvedVersions, resolvedVersions );
     }
 
     private Prompter createMockPrompter( String resolveSnapshots, String resolutionType, VersionPair resolvedVersions,
                                          VersionPair defaultVersions )
+        throws PrompterException
+    {
+        return createMockPrompter( resolveSnapshots, resolutionType, Collections.singletonList( resolvedVersions ),
+                                   Collections.singletonList( defaultVersions ) );
+    }
+
+    private Prompter createMockPrompter( String resolveSnapshots, String resolutionType,
+                                         List<VersionPair> resolvedVersions )
+        throws PrompterException
+    {
+        return createMockPrompter( resolveSnapshots, resolutionType, resolvedVersions, resolvedVersions );
+    }
+
+    private Prompter createMockPrompter( String resolveSnapshots, String resolutionType,
+                                         List<VersionPair> resolvedVersions, List<VersionPair> defaultVersions )
         throws PrompterException
     {
         Prompter mockPrompter = mock( Prompter.class );
@@ -1068,12 +1142,15 @@ public class CheckDependencySnapshotsPhaseTest
         when( mockPrompter.prompt( anyString(), eq( YES_NO_ARRAY ), eq( NO ) ) ).thenReturn( resolveSnapshots );
         when( mockPrompter.prompt( anyString(), eq( CHOICE_ARRAY ), eq( DEFAULT_CHOICE ) ) ).thenReturn(
             resolutionType );
-        when( mockPrompter.prompt( "Which release version should it be set to?",
-                                   defaultVersions.releaseVersion ) ).thenReturn( resolvedVersions.releaseVersion );
-        when( mockPrompter.prompt( "What version should the dependency be reset to for development?",
-                                   defaultVersions.developmentVersion ) ).thenReturn(
-            resolvedVersions.developmentVersion );
 
+        for ( int i = 0; i < resolvedVersions.size(); i++ )
+        {
+            when( mockPrompter.prompt( "Which release version should it be set to?", defaultVersions.get(
+                i ).releaseVersion ) ).thenReturn( resolvedVersions.get( i ).releaseVersion );
+            when( mockPrompter.prompt( "What version should the dependency be reset to for development?",
+                                       defaultVersions.get( i ).developmentVersion ) ).thenReturn( resolvedVersions.get(
+                i ).developmentVersion );
+        }
         return mockPrompter;
     }
 

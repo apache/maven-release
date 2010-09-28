@@ -327,7 +327,6 @@ public class CheckDependencySnapshotsPhase
 
             if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
             {
-                Set snapshotSet = new HashSet();
                 Map resolvedSnapshots = null;
                 prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
                 result = prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT,
@@ -337,11 +336,10 @@ public class CheckDependencySnapshotsPhase
                 {
                     // all
                     case 0:
-                        snapshotSet.addAll( projectDependencies );
-                        snapshotSet.addAll( reportDependencies );
-                        snapshotSet.addAll( extensionDependencies );
-                        snapshotSet.addAll( pluginDependencies );
-                        resolvedSnapshots = processSnapshot( snapshotSet );
+                        resolvedSnapshots = processSnapshot( projectDependencies );
+                        resolvedSnapshots.putAll( processSnapshot( pluginDependencies ) );
+                        resolvedSnapshots.putAll( processSnapshot( reportDependencies ) );
+                        resolvedSnapshots.putAll( processSnapshot( extensionDependencies ) );
                         break;
 
                         // project dependencies
@@ -402,7 +400,7 @@ public class CheckDependencySnapshotsPhase
             iterator.remove();
 
             // by default, keep the same version for the dependency after release, unless it was previously newer
-            // th euser may opt to type in something different
+            // the user may opt to type in something different
             VersionInfo nextVersionInfo = new DefaultVersionInfo( result );
 
             String nextVersion;
