@@ -146,7 +146,7 @@ public class CheckDependencySnapshotsPhase
 
                 if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
                 {
-                    snapshotDependencies.add( artifactMap.get( ArtifactUtils.versionlessKey( artifact ) ) );
+                    snapshotDependencies.add( getArtifactFromMap( artifact, artifactMap ) );
                 }
             }
         }
@@ -258,6 +258,13 @@ public class CheckDependencySnapshotsPhase
 
     private static boolean checkArtifact( Artifact artifact, Map originalVersions, Map artifactMapByVersionlessId, ReleaseDescriptor releaseDescriptor )
     {
+        Artifact checkArtifact = getArtifactFromMap( artifact, artifactMapByVersionlessId );
+
+        return checkArtifact( checkArtifact, originalVersions, releaseDescriptor );
+    }
+
+    private static Artifact getArtifactFromMap( Artifact artifact, Map artifactMapByVersionlessId )
+    {
         String versionlessId = ArtifactUtils.versionlessKey( artifact );
         Artifact checkArtifact = (Artifact) artifactMapByVersionlessId.get( versionlessId );
 
@@ -265,8 +272,7 @@ public class CheckDependencySnapshotsPhase
         {
             checkArtifact = artifact;
         }
-
-        return checkArtifact( checkArtifact, originalVersions, releaseDescriptor );
+        return checkArtifact;
     }
 
     private static boolean checkArtifact( Artifact artifact, Map originalVersions, ReleaseDescriptor releaseDescriptor )
