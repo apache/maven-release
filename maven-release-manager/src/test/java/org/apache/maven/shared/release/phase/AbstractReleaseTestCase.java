@@ -19,20 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
-
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
+import org.apache.maven.artifact.manager.WagonManager;
 import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
@@ -57,11 +47,25 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.PlexusTestCase;
+import org.codehaus.plexus.context.ContextException;
+import org.codehaus.plexus.context.DefaultContext;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
 import org.jmock.Mock;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
 
 /**
  * Base class for some release tests.
@@ -77,6 +81,15 @@ public abstract class AbstractReleaseTestCase
 
     protected ReleasePhase phase;
 
+    private static final DefaultContext EMPTY_CONTEXT = new DefaultContext()
+    {
+        public Object get( Object key )
+            throws ContextException
+        {
+            return null;
+        }
+    };
+
     protected void setUp()
         throws Exception
     {
@@ -87,6 +100,16 @@ public abstract class AbstractReleaseTestCase
         ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
         String localRepoPath = getTestFile( "target/local-repository" ).getAbsolutePath().replace( '\\', '/' );
         localRepository = new DefaultArtifactRepository( "local", "file://" + localRepoPath, layout );
+    }
+
+    protected void tearDown()
+        throws Exception
+    {
+        // unhook circular references to the container that would avoid memory being cleaned up
+        ( (Contextualizable) projectBuilder ).contextualize( EMPTY_CONTEXT );
+        ( (Contextualizable) lookup( WagonManager.ROLE ) ).contextualize( EMPTY_CONTEXT );
+
+        super.tearDown();
     }
 
     private Map createManagedVersionMap( String projectId, DependencyManagement dependencyManagement,
