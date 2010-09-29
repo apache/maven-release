@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -198,6 +199,14 @@ public abstract class AbstractReleaseMojo
      */
     private ScmManager scmManager;
 
+    /**
+     * @parameter expression="${session}"
+     * @readonly
+     * @required
+     * @since 2.0
+     */
+    protected MavenSession session;
+
 
     /**
      * Gets the enviroment settings configured for this release.
@@ -361,6 +370,27 @@ public abstract class AbstractReleaseMojo
         else
         {
             arguments = argument;
+        }
+    }
+
+    /**
+     * This method takes some of the release configuration picked up from the command line system properties and copies
+     * it into the release config object.
+     *
+     * @param config The release configuration to merge the system properties into, must not be <code>null</code>.
+     * @param sysPropertiesConfig The configuration from the system properties to merge in, must not be
+     *            <code>null</code>.
+     */
+    protected void mergeCommandLineConfig( ReleaseDescriptor config, ReleaseDescriptor sysPropertiesConfig )
+    {
+        // If the user specifies versions, these should override the existing versions
+        if ( sysPropertiesConfig.getReleaseVersions() != null )
+        {
+            config.getReleaseVersions().putAll( sysPropertiesConfig.getReleaseVersions() );
+        }
+        if ( sysPropertiesConfig.getDevelopmentVersions() != null )
+        {
+            config.getDevelopmentVersions().putAll( sysPropertiesConfig.getDevelopmentVersions() );
         }
     }
 }
