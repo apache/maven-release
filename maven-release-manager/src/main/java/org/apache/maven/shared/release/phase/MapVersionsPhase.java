@@ -170,19 +170,23 @@ public class MapVersionsPhase
 
         VersionInfo currentVersionInfo = null;
         VersionInfo releaseVersionInfo = null;
+        boolean releaseVersionIsExplicit = false;
+
         VersionInfo nextSnapshotVersionInfo = null;
+        boolean nextSnapshotVersionIsExplicit = false;
 
         try
         {
             currentVersionInfo = new DefaultVersionInfo( project.getVersion() );
 
-            // The release version defaults to currentVersionInfo.getReleaseVersionString()
+            // The release/branch version defaults to currentVersionInfo (snapshot for branch, and release for tag)
             releaseVersionInfo = currentVersionInfo;
 
             // Check if the user specified a release version
             if ( releaseDescriptor.getDefaultReleaseVersion() != null )
             {
                 releaseVersionInfo = new DefaultVersionInfo( releaseDescriptor.getDefaultReleaseVersion() );
+                releaseVersionIsExplicit = true;
             }
             if ( releaseDescriptor.getReleaseVersions() != null )
             {
@@ -190,18 +194,18 @@ public class MapVersionsPhase
                 if ( releaseVersion != null )
                 {
                     releaseVersionInfo = new DefaultVersionInfo( releaseVersion );
+                    releaseVersionIsExplicit = true;
                 }
             }
 
-            if ( releaseVersionInfo != null )
-            {
-                nextSnapshotVersionInfo = releaseVersionInfo.getNextVersion();
-            }
+            // The next snapshot version defaults to the next version after the release version
+            nextSnapshotVersionInfo = releaseVersionInfo.getNextVersion();
 
             // Check if the user specified a new snapshot version
             if ( releaseDescriptor.getDefaultDevelopmentVersion() != null )
             {
                 nextSnapshotVersionInfo = new DefaultVersionInfo( releaseDescriptor.getDefaultDevelopmentVersion() );
+                nextSnapshotVersionIsExplicit = true;
             }
             if ( releaseDescriptor.getDevelopmentVersions() != null )
             {
@@ -209,6 +213,7 @@ public class MapVersionsPhase
                 if ( nextDevVersion != null )
                 {
                     nextSnapshotVersionInfo = new DefaultVersionInfo( nextDevVersion );
+                    nextSnapshotVersionIsExplicit = true;
                 }
             }
 
@@ -220,6 +225,25 @@ public class MapVersionsPhase
             {
                 logWarn( result, msg );
                 logDebug( result, e.getMessage(), e );
+
+                // set defaults for resume in interactive mode
+                if ( releaseVersionInfo == null )
+                {
+                    try
+                    {
+                        releaseVersionInfo = new DefaultVersionInfo( "1.0" );
+                    }
+                    catch ( VersionParseException e1 )
+                    {
+                        // if that happens we are in serious trouble!
+                        throw new ReleaseExecutionException( "Version 1.0 could not be parsed!", e1 );
+                    }
+                }
+
+                if ( nextSnapshotVersionInfo == null )
+                {
+                    nextSnapshotVersionInfo = releaseVersionInfo.getNextVersion();
+                }
             }
             else
             {
@@ -241,24 +265,12 @@ public class MapVersionsPhase
                             ArtifactUtils.isSnapshot( project.getVersion() ) ||
                                 releaseDescriptor.isUpdateVersionsToSnapshot() ) )
                         {
-                            if ( releaseVersionInfo != null )
-                            {
-                                nextVersion = releaseVersionInfo.getSnapshotVersionString();
-                            }
-
-                            if ( releaseDescriptor.isInteractive() )
+                            nextVersion = releaseVersionInfo.getSnapshotVersionString();
+                            if ( !releaseVersionIsExplicit && releaseDescriptor.isInteractive() )
                             {
                                 nextVersion = prompter.prompt(
                                     "What is the branch version for \"" + project.getName() + "\"? (" + projectId + ")",
                                     nextVersion );
-                            }
-                            else
-                            {
-                                Map relVersions = releaseDescriptor.getDevelopmentVersions();
-                                if ( relVersions.containsKey( projectId ) )
-                                {
-                                    nextVersion = relVersions.remove( projectId ).toString();
-                                }
                             }
                         }
                         else
@@ -273,30 +285,11 @@ public class MapVersionsPhase
                         if ( ArtifactUtils.isSnapshot( project.getVersion() ) &&
                             releaseDescriptor.isUpdateWorkingCopyVersions() )
                         {
-                            if ( currentVersionInfo != null )
-                            {
-                                if ( nextSnapshotVersionInfo != null )
-                                {
-                                    nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
-                                }
-                                else
-                                {
-                                    nextVersion = "1.0-SNAPSHOT";
-                                }
-                            }
-
-                            if ( releaseDescriptor.isInteractive() )
+                            nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
+                            if ( releaseDescriptor.isInteractive() && !nextSnapshotVersionIsExplicit )
                             {
                                 nextVersion = prompter.prompt( "What is the new working copy version for \"" +
                                     project.getName() + "\"? (" + projectId + ")", nextVersion );
-                            }
-                            else
-                            {
-                                Map devVersions = releaseDescriptor.getDevelopmentVersions();
-                                if ( devVersions.containsKey( projectId ) )
-                                {
-                                    nextVersion = devVersions.remove( projectId ).toString();
-                                }
                             }
                         }
                         else
@@ -307,30 +300,11 @@ public class MapVersionsPhase
                 }
                 else
                 {
-                    if ( currentVersionInfo != null )
-                    {
-                        if ( nextSnapshotVersionInfo != null )
-                        {
-                            nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
-                        }
-                        else
-                        {
-                            nextVersion = "1.0-SNAPSHOT";
-                        }
-                    }
-
-                    if ( releaseDescriptor.isInteractive() )
+                    nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
+                    if ( releaseDescriptor.isInteractive()  && !nextSnapshotVersionIsExplicit )
                     {
                         nextVersion = prompter.prompt( "What is the new development version for \"" +
                             project.getName() + "\"? (" + projectId + ")", nextVersion );
-                    }
-                    else
-                    {
-                        Map devVersions = releaseDescriptor.getDevelopmentVersions();
-                        if ( devVersions.containsKey( projectId ) )
-                        {
-                            nextVersion = devVersions.remove( projectId ).toString();
-                        }
                     }
                 }
             }
@@ -338,24 +312,13 @@ public class MapVersionsPhase
             {
                 if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
                 {
-                    if ( releaseVersionInfo != null )
-                    {
-                        nextVersion = releaseVersionInfo.getReleaseVersionString();
-                    }
+                    nextVersion = releaseVersionInfo.getReleaseVersionString();
 
-                    if ( releaseDescriptor.isInteractive() )
+                    if ( releaseDescriptor.isInteractive() && !releaseVersionIsExplicit )
                     {
                         nextVersion = prompter.prompt(
                             "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
                             nextVersion );
-                    }
-                    else
-                    {
-                        Map relVersions = releaseDescriptor.getReleaseVersions();
-                        if ( relVersions.containsKey( projectId ) )
-                        {
-                            nextVersion = relVersions.remove( projectId ).toString();
-                        }
                     }
                 }
                 else

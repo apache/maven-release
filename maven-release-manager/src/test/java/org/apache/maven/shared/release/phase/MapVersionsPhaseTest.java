@@ -118,6 +118,42 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getReleaseVersions() );
     }
 
+    /**
+     * MRELEASE-524: ignores commandline versions in batch mode
+     */
+    public void testMapReleaseVersionsNonInteractiveWithExplicitVersion()
+        throws Exception
+    {
+        List reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
+
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
+
+        // execute
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.addReleaseVersion( "groupId:artifactId", "2.0" );
+
+        Mock mockPrompter = new Mock( Prompter.class );
+        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
+                      releaseDescriptor.getReleaseVersions() );
+
+        // simulate
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.addReleaseVersion( "groupId:artifactId", "2.0" );
+
+        mockPrompter.reset();
+        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
+
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
+                      releaseDescriptor.getReleaseVersions() );
+    }
+
     public void testMapReleaseVersionsNonInteractive()
         throws Exception
     {
@@ -213,6 +249,43 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
+     /**
+     * MRELEASE-524: ignores commandline versions in batch mode
+     */
+    public void testMapDevVersionsNonInteractiveWithExplicitVersion()
+        throws Exception
+    {
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
+        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+
+        // execute
+        Mock mockPrompter = new Mock( Prompter.class );
+        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.addDevelopmentVersion( "groupId:artifactId", "2-SNAPSHOT" );
+
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
+
+        // simulate
+        mockPrompter.reset();
+        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
+
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.addDevelopmentVersion( "groupId:artifactId", "2-SNAPSHOT" );
+
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
+    }
+
     public void testPrompterException()
         throws Exception
     {
@@ -262,7 +335,8 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
 
         Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(), new IsNull() ).will(
+        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
+                                                                                 new IsEqual( "1.1-SNAPSHOT" ) ).will(
             new ReturnStub( "2.0-SNAPSHOT" ) );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
@@ -276,7 +350,8 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
 
         mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(), new IsNull() ).will(
+        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
+                                                                                 new IsEqual( "1.1-SNAPSHOT" ) ).will(
             new ReturnStub( "2.0-SNAPSHOT" ) );
 
         releaseDescriptor = new ReleaseDescriptor();

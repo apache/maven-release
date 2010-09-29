@@ -484,8 +484,6 @@
     {
         if (releaseVersions == null) {
             releaseVersions = new java.util.HashMap();
-        } else {
-            assert !releaseVersions.containsKey( projectId );
         }
 
         releaseVersions.put( projectId, nextVersion );
@@ -501,8 +499,6 @@
     {
         if (developmentVersions == null) {
             developmentVersions = new java.util.HashMap();
-        } else {
-            assert !developmentVersions.containsKey( projectId );
         }
 
         developmentVersions.put( projectId, nextVersion );
