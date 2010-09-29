@@ -24,6 +24,7 @@ import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmResult;
 import org.apache.maven.scm.command.Command;
+import org.apache.maven.scm.command.branch.BranchScmResult;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.command.status.StatusScmResult;
@@ -81,6 +82,13 @@ public class StubScmProvider
         throws ScmException
     {
         return (CheckOutScmResult) executeCommand( new StubCheckOutCommand(), repository, fileSet, parameters );
+    }
+
+    protected BranchScmResult branch( ScmProviderRepository repository, ScmFileSet fileSet,
+                                        CommandParameters parameters )
+        throws ScmException
+    {
+        return (BranchScmResult) executeCommand( new StubBranchCommand(), repository, fileSet, parameters );
     }
 
     protected TagScmResult tag( ScmProviderRepository repository, ScmFileSet fileSet, CommandParameters parameters )
