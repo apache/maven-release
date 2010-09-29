@@ -349,6 +349,7 @@
           <name>updateWorkingCopyVersions</name>
           <version>1.0.0+</version>
           <type>boolean</type>
+          <defaultValue>true</defaultValue>
           <description>
             Whether to update working copy POM versions.
           </description>
@@ -359,6 +360,14 @@
           <type>boolean</type>
           <description>
             Whether to update branch versions to SNAPSHOT.
+          </description>
+        </field>
+        <field>
+          <name>suppressCommitBeforeTagOrBranch</name>
+          <version>2.1.0+</version>
+          <type>boolean</type>
+          <description>
+            Whether to suppress a commit of changes to the working copy before a tag or branch is created.
           </description>
         </field>
         <field>
@@ -602,6 +611,7 @@
              branchCreation            != that.branchCreation           ||
              updateBranchVersions      != that.updateBranchVersions     ||
              updateWorkingCopyVersions != that.updateWorkingCopyVersions||
+             suppressCommitBeforeTagOrBranch   != that.suppressCommitBeforeTagOrBranch  ||
              updateVersionsToSnapshot  != that.updateVersionsToSnapshot ||
              allowTimestampedSnapshots != that.allowTimestampedSnapshots||
              remoteTagging             != that.remoteTagging            ||
@@ -811,6 +821,7 @@
         result = 29 * result + ( branchCreation ? 1 : 0 );
         result = 29 * result + ( updateBranchVersions ? 1 : 0 );
         result = 29 * result + ( updateWorkingCopyVersions ? 1 : 0 );
+        result = 29 * result + ( suppressCommitBeforeTagOrBranch ? 1 : 0 );
         result = 29 * result + ( updateVersionsToSnapshot ? 1 : 0 );
         result = 29 * result + ( allowTimestampedSnapshots ? 1 : 0 );
         result = 29 * result + ( remoteTagging ? 1 : 0 );

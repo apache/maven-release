@@ -75,6 +75,21 @@ public class BranchReleaseMojo
     private boolean updateWorkingCopyVersions;
 
     /**
+     * Whether to suppress a commit of changes to the working copy
+     * before the tag is created.
+     * <br/>
+     * <br/>This requires <code>remoteTagging</code> to be set to false.
+     * <br/>
+     * <br/><code>suppressCommitBeforeBranch</code> is useful when you want
+     * to avoid poms with released versions in all revisions of your
+     * trunk or development branch.
+     *
+     * @parameter expression="${suppressCommitBeforeBranch}" default-value="false"
+     * @since 2.1
+     */
+    private boolean suppressCommitBeforeBranch;
+
+    /**
      * Whether to update versions to SNAPSHOT in the branch.
      *
      * @parameter expression="${updateVersionsToSnapshot}" default-value="true"
@@ -174,12 +189,13 @@ public class BranchReleaseMojo
         config.setRemoteTagging( remoteTagging );
         config.setDefaultReleaseVersion( releaseVersion );
         config.setDefaultDevelopmentVersion( developmentVersion );
+        config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeBranch );
 
         // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseDescriptor sysPropertiesConfig
                 = ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
-        mergeCommandLineConfig( config, sysPropertiesConfig );
-        
+        mergeCommandLineConfig( config, sysPropertiesConfig );        
+
         try
         {
             releaseManager.branch( config, getReleaseEnvironment(), reactorProjects, dryRun );

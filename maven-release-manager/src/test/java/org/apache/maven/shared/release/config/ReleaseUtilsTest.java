@@ -42,6 +42,17 @@ public class ReleaseUtilsTest
         assertEquals( "Check merge", mergedReleaseDescriptor, mergedMergeDescriptor );
     }
 
+    public void testMergeEqualsWithUpdateWorkingCopyTrue()
+    {
+        ReleaseDescriptor mergeDescriptor = createReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        
+        ReleaseDescriptor mergedReleaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
+        ReleaseDescriptor mergedMergeDescriptor = ReleaseUtils.merge( mergeDescriptor, releaseDescriptor );
+
+        assertEquals( "Check merge", mergedReleaseDescriptor, mergedMergeDescriptor );
+    }
+
     public void testMergeConfigurationDestEmpty()
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();

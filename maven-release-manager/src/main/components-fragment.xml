@@ -151,7 +151,7 @@
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>scm-commit-release</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.ScmCommitPhase</implementation>
+      <implementation>org.apache.maven.shared.release.phase.ScmCommitPreparationPhase</implementation>
       <requirements>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
@@ -164,7 +164,7 @@
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>scm-commit-development</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.ScmCommitPhase</implementation>
+      <implementation>org.apache.maven.shared.release.phase.ScmCommitDevelopmentPhase</implementation>
       <requirements>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
@@ -172,12 +172,13 @@
       </requirements>
       <configuration>
         <messageFormat>prepare for next development iteration</messageFormat>
+        <rollbackMessageFormat>rollback changes from release preparation of {0}</rollbackMessageFormat>
       </configuration>
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>scm-commit-branch</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.ScmCommitPhase</implementation>
+      <implementation>org.apache.maven.shared.release.phase.ScmCommitPreparationPhase</implementation>
       <requirements>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
@@ -220,7 +221,7 @@
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>scm-commit-rollback</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.ScmCommitPhase</implementation>
+      <implementation>org.apache.maven.shared.release.phase.ScmCommitPreparationPhase</implementation>
       <requirements>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>

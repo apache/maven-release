@@ -151,14 +151,53 @@ public class PrepareReleaseMojo
     private String developmentVersion;
 
     /**
-     * currently only implemented with svn scm. Enable a workaround to prevent issue
-     * due to svn client > 1.5.0 (http://jira.codehaus.org/browse/SCM-406)
+     * Currently only implemented with svn scm.
      *
+     * <ul>
+     *   <li>Enables a workaround to prevent issue
+     * due to svn client > 1.5.0 (fixed in 1.6.5)
+     * (http://jira.codehaus.org/browse/SCM-406)</li>
+     *   <li>You may not want to use this in conjunction
+     * with <code>suppressCommitBeforeTag</code>, such that no poms with
+     * released versions are committed to the working
+     * copy ever.</li>
+     * </ul>
      *
      * @parameter expression="${remoteTagging}" default-value="true"
      * @since 2.0-beta-9
      */
     private boolean remoteTagging;
+
+    /**
+     * Whether to bump the working copy versions to <code>developmentVersion</code>.
+     *
+     * @parameter expression="${updateWorkingCopyVersions}" default-value="true"
+     * @since 2.1
+     */
+    private boolean updateWorkingCopyVersions;
+
+    /**
+     * Whether to suppress a commit of changes to the working copy
+     * before the tag is created.
+     * <br/>
+     * <br/>This requires <code>remoteTagging</code> to be set to false.
+     * <br/>
+     * <br/><code>suppressCommitBeforeTag</code> is useful when you want
+     * to avoid poms with released versions in all revisions of your
+     * trunk or development branch.
+     *
+     * @parameter expression="${suppressCommitBeforeTag}" default-value="false"
+     * @since 2.1
+     */
+    private boolean suppressCommitBeforeTag;
+
+    /**
+     * @parameter expression="${session}"
+     * @readonly
+     * @required
+     * @since 2.0
+     */
+    protected MavenSession session;
 
     /**
      * {@inheritDoc}
@@ -194,6 +233,8 @@ public class PrepareReleaseMojo
         config.setDefaultReleaseVersion( releaseVersion );
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setRemoteTagging( remoteTagging );
+        config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
+        config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );    
 
         // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseDescriptor sysPropertiesConfig

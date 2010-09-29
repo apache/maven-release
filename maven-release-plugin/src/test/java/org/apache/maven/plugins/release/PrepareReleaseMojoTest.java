@@ -47,11 +47,18 @@ import org.jmock.core.stub.ThrowStub;
 public class PrepareReleaseMojoTest
     extends AbstractMojoTestCase
 {
+    private void setDefaults( PrepareReleaseMojo mojo )
+        throws IllegalAccessException
+    {
+        setVariableValueToObject( mojo, "updateWorkingCopyVersions", Boolean.TRUE );
+    }
+    
     public void testPrepare()
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
@@ -87,6 +94,7 @@ public class PrepareReleaseMojoTest
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
@@ -129,6 +137,7 @@ public class PrepareReleaseMojoTest
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {

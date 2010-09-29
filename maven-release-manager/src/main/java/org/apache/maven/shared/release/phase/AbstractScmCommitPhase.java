@@ -46,29 +46,65 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Commit the project to the SCM.
+ * Holds the basic concept of committing changes to the current working copy.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @author <a href="mailto:me@lcorneliussen.de">Lars Corneliussen</a>
  */
-public class ScmCommitPhase
+public abstract class AbstractScmCommitPhase
     extends AbstractReleasePhase
 {
+    protected boolean beforeBranchOrTag = false;
+
+    protected boolean afterBranchOrTag = false;
+
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    protected ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
      * The format for the commit message.
      */
-    private String messageFormat;
+    protected String messageFormat;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
 
         validateConfiguration( releaseDescriptor );
+
+        runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, relResult, false );
+
+        relResult.setResultCode( ReleaseResult.SUCCESS );
+
+        return relResult;
+    }
+
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        ReleaseResult result = new ReleaseResult();
+
+        validateConfiguration( releaseDescriptor );
+
+        runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, result, true );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+        return result;
+    }
+
+    protected abstract void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                      List reactorProjects, ReleaseResult result, boolean simulating )
+        throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException;
+
+    protected void performCheckins( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                    List reactorProjects, String message )
+        throws ReleaseScmRepositoryException, ReleaseExecutionException, ReleaseScmCommandException
+    {
 
         getLogger().info( "Checking in modified POMs..." );
 
@@ -76,10 +112,11 @@ public class ScmCommitPhase
         ScmProvider provider;
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                            releaseEnvironment.getSettings() );
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
-            
+
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
         catch ( ScmRepositoryException e )
@@ -100,7 +137,7 @@ public class ScmCommitPhase
                 List pomFiles = createPomFiles( releaseDescriptor, project );
                 ScmFileSet fileSet = new ScmFileSet( project.getFile().getParentFile(), pomFiles );
 
-                checkin( provider, repository, fileSet, releaseDescriptor );
+                checkin( provider, repository, fileSet, releaseDescriptor, message );
             }
         }
         else
@@ -108,19 +145,15 @@ public class ScmCommitPhase
             List pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), pomFiles );
 
-            checkin( provider, repository, fileSet, releaseDescriptor );
+            checkin( provider, repository, fileSet, releaseDescriptor, message );
         }
-
-        relResult.setResultCode( ReleaseResult.SUCCESS );
-
-        return relResult;
     }
 
-    private void checkin( ScmProvider provider, ScmRepository repository, ScmFileSet fileSet, ReleaseDescriptor releaseDescriptor )
+    private void checkin( ScmProvider provider, ScmRepository repository, ScmFileSet fileSet,
+                          ReleaseDescriptor releaseDescriptor, String message )
         throws ReleaseExecutionException, ReleaseScmCommandException
     {
         CheckInScmResult result;
-        String message = createMessage( releaseDescriptor );
         try
         {
             result = provider.checkIn( repository, fileSet, (ScmVersion) null, message );
@@ -140,23 +173,14 @@ public class ScmCommitPhase
         }
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+    protected void simulateCheckins( ReleaseDescriptor releaseDescriptor, List reactorProjects, ReleaseResult result,
+                                     String message )
     {
-        ReleaseResult result = new ReleaseResult();
-
-        validateConfiguration( releaseDescriptor );
-
         Collection pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
-        logInfo( result, "Full run would be checking in " + pomFiles.size() + " files with message: '" +
-            createMessage( releaseDescriptor ) + "'" );
-
-        result.setResultCode( ReleaseResult.SUCCESS );
-
-        return result;
+        logInfo( result, "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
     }
 
-    private static void validateConfiguration( ReleaseDescriptor releaseDescriptor )
+    protected void validateConfiguration( ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException
     {
         if ( releaseDescriptor.getScmReleaseLabel() == null )
@@ -165,13 +189,13 @@ public class ScmCommitPhase
         }
     }
 
-    private String createMessage( ReleaseDescriptor releaseDescriptor )
+    protected String createMessage( ReleaseDescriptor releaseDescriptor )
     {
         return MessageFormat.format( releaseDescriptor.getScmCommentPrefix() + messageFormat,
                                      new Object[]{releaseDescriptor.getScmReleaseLabel()} );
     }
 
-    private static List createPomFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )
+    protected static List createPomFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )
     {
         List pomFiles = new ArrayList();
 
@@ -185,7 +209,7 @@ public class ScmCommitPhase
         return pomFiles;
     }
 
-    private static List createPomFiles( ReleaseDescriptor releaseDescriptor, List reactorProjects )
+    protected static List createPomFiles( ReleaseDescriptor releaseDescriptor, List reactorProjects )
     {
         List pomFiles = new ArrayList();
         for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
