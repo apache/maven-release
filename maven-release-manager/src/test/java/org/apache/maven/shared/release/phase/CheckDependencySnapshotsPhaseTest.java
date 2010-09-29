@@ -613,6 +613,52 @@ public class CheckDependencySnapshotsPhaseTest
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
     }
 
+    // MRELEASE-589
+    public void testSnapshotDependenciesOutsideMultimoduleProjectOnlyInteractiveWithSnapshotsResolved()
+        throws Exception
+    {
+        CheckDependencySnapshotsPhase phase =
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List reactorProjects = createDescriptorFromProjects( "multimodule-external-snapshot-dependencies" );
+
+        VersionPair pair = new VersionPair( "1.0", "1.1-SNAPSHOT" );
+        VersionPair defaultPair = new VersionPair( "1.0", "1.0" );
+        Prompter mockPrompter = createMockPrompter( "yes", "1", Arrays.asList( pair, pair ), Arrays.asList( defaultPair,
+                                                                                                            defaultPair ) );
+        phase.setPrompter( mockPrompter );
+
+        try
+        {
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            fail( e.getMessage() );
+        }
+
+        Map resolvedDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
+
+        assertNotNull( resolvedDependencies );
+        assertEquals( 2, resolvedDependencies.size() );
+
+        assertTrue( resolvedDependencies.containsKey( "external:artifactId" ) );
+        assertTrue( resolvedDependencies.containsKey( "external:artifactId2") );
+
+        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+
+        assertNotNull( versionsMap );
+        assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+
+        versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId2" );
+
+        assertNotNull( versionsMap );
+        assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+    }
+
     public void testSnapshotDependenciesInsideAndOutsideProject()
         throws Exception
     {
