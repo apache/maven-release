@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -72,7 +73,20 @@ public class ScmCheckModificationsPhase
     {
         ReleaseResult relResult = new ReleaseResult();
 
+        List additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
+
+        if ( additionalExcludes != null )
+        {
+            for ( int i1 = 0, additionalExcludesSize = additionalExcludes.size(); i1 < additionalExcludesSize; i1++ )
+            {
+                // fail fast if it is not a string
+                String exclude = (String) additionalExcludes.get( i1 );
+                excludedFiles.add( exclude );
+            }
+        }
+
         logInfo( relResult, "Verifying that there are no local modifications..." );
+        logInfo( relResult, "  ignoring changes on: " + StringUtils.join(excludedFiles, ", "));
 
         ScmRepository repository;
         ScmProvider provider;

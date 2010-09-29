@@ -27,6 +27,8 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 
+import java.util.Arrays;
+
 /**
  * Prepare for a release in SCM. Steps through several phases to ensure the POM is ready to be
  * released and then prepares SCM to eventually contain a tagged version of the release and a record
@@ -134,6 +136,27 @@ public class PrepareReleaseMojo
      */
     private boolean allowReleasePluginSnapshot;
 
+     /**
+     * Additional files that will skipped when checking for
+     * modifications on the working copy.
+     *
+     * Is ignored, when checkModificationExcludes is set.
+     *
+     *
+     * @parameter
+     * @since 2.1
+     */
+    private String[] checkModificationExcludes;
+
+    /**
+     * Command-line version of checkModificationExcludes
+     *
+     *
+     * @parameter expression="${checkModificationExcludeList}"
+     * @since 2.1
+     */
+    private String checkModificationExcludeList;
+
     /**
      * Default version to use when preparing a release or a branch.
      *
@@ -234,7 +257,17 @@ public class PrepareReleaseMojo
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setRemoteTagging( remoteTagging );
         config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
-        config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );    
+        config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );
+
+        if ( checkModificationExcludeList != null )
+        {
+            checkModificationExcludes = checkModificationExcludeList.replaceAll( "\\s", "" ).split( "," );
+        }
+
+        if ( checkModificationExcludes != null )
+        {
+            config.setCheckModificationExcludes( Arrays.asList( checkModificationExcludes ) );
+        }
 
         // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseDescriptor sysPropertiesConfig

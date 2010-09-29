@@ -305,6 +305,19 @@
           </description>
         </field>
         <field>
+          <name>checkModificationExcludes</name>
+          <version>2.1.0+</version>
+          <type>List</type>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>
+            In some exceptions you want to allow changes to the working copy. Changes
+            to files listed here will not make the ScmCheckModificationsPhase fail.
+          </description>
+        </field>
+        <field>
           <name>preparationGoals</name>
           <version>1.0.0+</version>
           <type>String</type>
@@ -456,7 +469,7 @@
       <!-- Code Segments -->
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>2.1.0+</version>
           <code><![CDATA[
     public static final String DEVELOPMENT_KEY = "dev";
 
@@ -653,6 +666,16 @@
         {
             return false;
         }
+        if ( ( checkModificationExcludes == null || ( checkModificationExcludes != null && checkModificationExcludes.size() == 0) ) &&
+            ( that.checkModificationExcludes == null || ( that.checkModificationExcludes != null && that.checkModificationExcludes.size() == 0) ) ) {
+            // Do nothing.  This is a Modello workaround
+        } else {
+            if ( checkModificationExcludes != null ? !checkModificationExcludes.equals( that.checkModificationExcludes )
+                : that.checkModificationExcludes != null )
+            {
+                return false;
+            }
+        }
         if ( ( developmentVersions == null || ( developmentVersions != null && developmentVersions.size() == 0) ) &&
             ( that.developmentVersions == null || ( that.developmentVersions != null && that.developmentVersions.size() == 0) ) ) {
             // Do nothing.  This is a Modello workaround
@@ -798,6 +821,7 @@
         result = 29 * result + ( additionalArguments != null ? additionalArguments.hashCode() : 0 );
         result = 29 * result + ( preparationGoals != null ? preparationGoals.hashCode() : 0 );
         result = 29 * result + ( pomFileName != null ? pomFileName.hashCode() : 0 );
+        result = 29 * result + ( checkModificationExcludes != null ? checkModificationExcludes.hashCode() : 0 );
         result = 29 * result + ( scmTagBase != null ? scmTagBase.hashCode() : 0 );
         result = 29 * result + ( scmBranchBase != null ? scmBranchBase.hashCode() : 0 );
         result = 29 * result + ( scmUsername != null ? scmUsername.hashCode() : 0 );

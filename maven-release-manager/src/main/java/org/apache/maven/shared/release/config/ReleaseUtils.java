@@ -72,6 +72,7 @@ public class ReleaseUtils
             mergeOverride( mergeInto.getPreparationGoals(), toBeMerged.getPreparationGoals() ) );
         mergeInto.setPerformGoals( mergeOverride( mergeInto.getPerformGoals(), toBeMerged.getPerformGoals() ) );
         mergeInto.setPomFileName( mergeOverride( mergeInto.getPomFileName(), toBeMerged.getPomFileName() ) );
+        mergeInto.setCheckModificationExcludes( toBeMerged.getCheckModificationExcludes() );
         mergeInto.setScmUseEditMode( toBeMerged.isScmUseEditMode() );
         mergeInto.setAddSchema( toBeMerged.isAddSchema() );
         mergeInto.setGenerateReleasePoms( toBeMerged.isGenerateReleasePoms() );
@@ -146,7 +147,7 @@ public class ReleaseUtils
         releaseDescriptor.setRemoteTagging( remoteTaggingStr == null ? false : Boolean.valueOf( remoteTaggingStr ).booleanValue() );
         String pushChanges = properties.getProperty( "pushChanges" );
         releaseDescriptor.setPushChanges( pushChanges == null ? true : Boolean.valueOf( pushChanges ).booleanValue() );
-        
+
         loadResolvedDependencies( properties, releaseDescriptor );
 
         // boolean properties are not written to the properties file because the value from the caller is always used

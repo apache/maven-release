@@ -19,12 +19,15 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
+
+import java.util.Arrays;
 
 /**
  * Branch a project in SCM, using the same steps as the <tt>release:prepare</tt> goal, creating a branch instead of a tag.
@@ -151,6 +154,27 @@ public class BranchReleaseMojo
      */
     private boolean remoteTagging;
 
+     /**
+     * Additional files that will skipped when checking for
+     * modifications on the working copy.
+     *
+     * Is ignored, when checkModificationExcludes is set.
+     *
+     *
+     * @parameter
+     * @since 2.1
+     */
+    private String[] checkModificationExcludes;
+
+    /**
+     * Command-line version of checkModificationExcludes
+     *
+     *
+     * @parameter expression="${checkModificationExcludeList}"
+     * @since 2.1
+     */
+    private String checkModificationExcludeList;
+
     /**
      * Default version to use when preparing a release or a branch.
      *
@@ -194,7 +218,17 @@ public class BranchReleaseMojo
         // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseDescriptor sysPropertiesConfig
                 = ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
-        mergeCommandLineConfig( config, sysPropertiesConfig );        
+        mergeCommandLineConfig( config, sysPropertiesConfig );
+
+        if ( checkModificationExcludeList != null )
+        {
+            checkModificationExcludes = checkModificationExcludeList.replaceAll( "\\s", "" ).split( "," );
+        }
+
+        if ( checkModificationExcludes != null )
+        {
+            config.setCheckModificationExcludes( Arrays.asList( checkModificationExcludes ) );
+        }
 
         try
         {
