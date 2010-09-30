@@ -202,7 +202,7 @@ public class ReleaseUtil
                 // Not a comprehensive solution to case-insensitive filenames, but only seem to be getting bitten by
                 // C: vs c: as the rest of the path is being returned consistently. Overall this class should rely more
                 // on the Java IO classes instead of string parsing to avoid these issues.
-                dir = dir.toLowerCase();
+                dir = dir.toLowerCase( Locale.ENGLISH );
             }
 
             // always end in / so that we know what is a path and what is a partial directory name in the next call
@@ -232,14 +232,23 @@ public class ReleaseUtil
     public static int getBaseWorkingDirectoryParentCount( String basedir, String workingDirectory )
     {
         int num = 0;
-        if ( !workingDirectory.equals( basedir ) && workingDirectory.startsWith( basedir ) )
+
+        // we can safely assume case-insensitivity as we are just backtracking, not comparing. This helps with issues
+        // on Windows with C: vs c:
+        workingDirectory = workingDirectory.toLowerCase( Locale.ENGLISH );
+        basedir = basedir.toLowerCase( Locale.ENGLISH );
+
+        File workingDirectoryFile = new File( workingDirectory );
+        File basedirFile = new File( basedir );
+
+        if ( !workingDirectoryFile.equals( basedirFile ) && workingDirectory.startsWith( basedir ) )
         {
             do
             {
-                workingDirectory = new File( workingDirectory ).getParent();
+                workingDirectoryFile = workingDirectoryFile.getParentFile();
                 num++;
             }
-            while ( workingDirectory.length() > basedir.length() );
+            while ( !workingDirectoryFile.equals( basedirFile ) );
         }
         return num;
     }

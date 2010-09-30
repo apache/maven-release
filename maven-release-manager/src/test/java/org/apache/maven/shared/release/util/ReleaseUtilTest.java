@@ -188,6 +188,41 @@ public class ReleaseUtilTest
         assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/", actual );
     }
 
+    public void testGetBaseWorkingDirectoryParentCountSameDirectory()
+    {
+        String workingDirectory = "/working/directory/maven/release";
+        String basedir = "/working/directory/maven/release";
+        assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+    }
+
+    public void testGetBaseWorkingDirectoryParentCountSubdirectory()
+    {
+        String workingDirectory = "/working/directory/maven/release";
+        String basedir = "/working/directory/maven/release/maven-release-manager";
+        assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+    }
+
+    public void testGetBaseWorkingDirectoryParentCountParentDirectory()
+    {
+        String workingDirectory = "/working/directory/maven/release/maven-release-manager";
+        String basedir = "/working/directory/maven/release";
+        assertEquals( 1, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+    }
+
+    public void testGetBaseWorkingDirectoryParentCountParentDirectoryMultiple()
+    {
+        String workingDirectory = "/working/directory/maven/release/maven-release-manager";
+        String basedir = "/working/directory";
+        assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+    }
+
+    public void testGetBaseWorkingDirectoryParentCountDifferentCase()
+    {
+        String workingDirectory = "/Working/Directory/maven/release/maven-release-manager";
+        String basedir = "/working/directory";
+        assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+    }
+
     private static MavenProject createProject( final String basedir )
     {
         return new MavenProject()
