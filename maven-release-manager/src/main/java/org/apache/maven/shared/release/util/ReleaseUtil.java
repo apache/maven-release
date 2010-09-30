@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.project.MavenProject;
@@ -193,6 +194,16 @@ public class ReleaseUtil
 
             // we can only normalize paths with /
             String dir = FileUtils.normalize( p.getBasedir().getPath().replace( '\\', '/' ) );
+            if ( separator == '\\' )
+            {
+                // windows has case insensitive filesystem
+                // normalize to lowercase for comparison
+
+                // Not a comprehensive solution to case-insensitive filenames, but only seem to be getting bitten by
+                // C: vs c: as the rest of the path is being returned consistently. Overall this class should rely more
+                // on the Java IO classes instead of string parsing to avoid these issues.
+                dir = dir.toLowerCase();
+            }
 
             // always end in / so that we know what is a path and what is a partial directory name in the next call
             if ( !dir.endsWith( "/" ) )

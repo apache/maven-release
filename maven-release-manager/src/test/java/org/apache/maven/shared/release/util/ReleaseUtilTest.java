@@ -72,6 +72,14 @@ public class ReleaseUtilTest
                 createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), '\\' ) );
     }
 
+    public void testGetCommonBasedirUppercaseLowerCaseWindows()
+        throws Exception
+    {
+        assertEquals( "c:\\working\\root", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "c:\\working\\root" ), createProject( "C:\\WoRkInG\\root\\project1" ),
+                createProject( "c:\\working\\root\\project2" )} ), '\\' ) );
+    }
+
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIds()
         throws Exception
     {
