@@ -215,6 +215,18 @@ public class PrepareReleaseMojo
     private boolean suppressCommitBeforeTag;
 
     /**
+     * Wait the specified number of second before creating the tag.
+     * <br/><code>waitBeforeTagging</code> is useful when your source repository
+     * is synced between several instances and access to it is determined by
+     * geographical location, like the SVN repository at the Apache Software
+     * Foundation.
+     *
+     * @parameter expression="${waitBeforeTagging}" default-value="0"
+     * @since 2.2
+     */
+    private int waitBeforeTagging;
+
+    /**
      * @parameter expression="${session}"
      * @readonly
      * @required
@@ -258,6 +270,7 @@ public class PrepareReleaseMojo
         config.setRemoteTagging( remoteTagging );
         config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );
+        config.setWaitBeforeTagging( waitBeforeTagging );
 
         if ( checkModificationExcludeList != null )
         {

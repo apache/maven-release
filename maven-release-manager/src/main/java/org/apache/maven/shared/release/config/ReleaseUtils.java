@@ -95,7 +95,8 @@ public class ReleaseUtils
         mergeInto.setRemoteTagging( toBeMerged.isRemoteTagging() );
         mergeInto.setLocalCheckout( toBeMerged.isLocalCheckout() );
         mergeInto.setPushChanges( toBeMerged.isPushChanges() );
-        
+        mergeInto.setWaitBeforeTagging( toBeMerged.getWaitBeforeTagging() );
+
         // If the user specifies versions, these should be override the existing versions 
         if ( toBeMerged.getReleaseVersions() != null )
         {

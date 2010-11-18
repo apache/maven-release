@@ -64,6 +64,18 @@ public class ScmTagPhase
 
         validateConfiguration( releaseDescriptor );
 
+        if ( releaseDescriptor.getWaitBeforeTagging() > 0 )
+        {
+            logInfo( relResult, "Waiting for " + releaseDescriptor.getWaitBeforeTagging() + " seconds before tagging the release." );
+            try
+            {
+                Thread.sleep( releaseDescriptor.getWaitBeforeTagging() * 1000 );
+            }
+            catch( InterruptedException e ) {
+                // Ignore
+            }
+        }
+
         logInfo( relResult, "Tagging release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
 
         ReleaseDescriptor basedirAlignedReleaseDescriptor =

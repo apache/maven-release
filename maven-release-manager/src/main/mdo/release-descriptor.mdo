@@ -384,6 +384,14 @@
           </description>
         </field>
         <field>
+          <name>waitBeforeTagging</name>
+          <version>2.2.0+</version>
+          <type>int</type>
+          <description>
+            Wait the specified number of seconds before creating a tag.
+          </description>
+        </field>
+        <field>
           <name>allowTimestampedSnapshots</name>
           <version>1.0.0+</version>
           <type>boolean</type>
