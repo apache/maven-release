@@ -326,6 +326,14 @@
           </description>
         </field>
         <field>
+          <name>completionGoals</name>
+          <version>2.2.0+</version>
+          <type>String</type>
+          <description>
+            The goals to execute in on completion of preparation for the release.
+          </description>
+        </field>
+        <field>
           <name>performGoals</name>
           <version>1.0.0+</version>
           <type>String</type>
@@ -437,7 +445,7 @@
             the source code with this revision.
           </description>
         </field>
-        
+
         <field>
           <name>pushChanges</name>
           <version>2.0.0+</version>
@@ -448,8 +456,8 @@
             For many distributed SCMs like Git, a change like a commit is only stored in your local copy of the repository.
             Pushing the change allows your to more easily share it with other users.
           </description>
-        </field>        
-        
+        </field>
+
         <field>
           <name>localCheckout</name>
           <version>2.0.0+</version>
@@ -720,6 +728,10 @@
         {
             return false;
         }
+        if ( !saveEquals( completionGoals, that.completionGoals ) )
+        {
+            return false;
+        }
         if ( !saveEquals( pomFileName, that.pomFileName ) )
         {
             return false;
@@ -828,6 +840,7 @@
         result = 29 * result + ( scmReleaseLabel != null ? scmReleaseLabel.hashCode() : 0 );
         result = 29 * result + ( additionalArguments != null ? additionalArguments.hashCode() : 0 );
         result = 29 * result + ( preparationGoals != null ? preparationGoals.hashCode() : 0 );
+        result = 29 * result + ( completionGoals != null ? completionGoals.hashCode() : 0 );
         result = 29 * result + ( pomFileName != null ? pomFileName.hashCode() : 0 );
         result = 29 * result + ( checkModificationExcludes != null ? checkModificationExcludes.hashCode() : 0 );
         result = 29 * result + ( scmTagBase != null ? scmTagBase.hashCode() : 0 );

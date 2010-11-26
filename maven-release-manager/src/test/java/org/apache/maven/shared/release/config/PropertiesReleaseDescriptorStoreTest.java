@@ -277,6 +277,7 @@ public class PropertiesReleaseDescriptorStoreTest
         config.setScmReleaseLabel( "tag-write" );
         config.setAdditionalArguments( "additional-args-write" );
         config.setPreparationGoals( "preparation-goals-write" );
+        config.setCompletionGoals( "completion-goals-write" );
         config.setPomFileName( "pom-file-name-write" );
 
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
@@ -309,6 +310,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertNull( "Expected no tag", config.getScmReleaseLabel() );
         assertNull( "Expected no additional arguments", config.getAdditionalArguments() );
         assertNull( "Expected no preparation goals", config.getPreparationGoals() );
+        assertNull( "Expected no completion goals", config.getCompletionGoals() );
         assertNull( "Expected no pom file name", config.getPomFileName() );
 
         assertNull( "Expected no workingDirectory", config.getWorkingDirectory() );
@@ -350,6 +352,7 @@ public class PropertiesReleaseDescriptorStoreTest
         expected.setScmReleaseLabel( "tag" );
         expected.setAdditionalArguments( "additional-arguments" );
         expected.setPreparationGoals( "preparation-goals" );
+        expected.setCompletionGoals( "completion-goals" );
         expected.setPomFileName( "pom-file-name" );
         expected.setWorkingDirectory( null );
         expected.setGenerateReleasePoms( false );

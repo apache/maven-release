@@ -111,6 +111,15 @@ public class PrepareReleaseMojo
     private String preparationGoals;
 
     /**
+     * Goals to run on completion of the preparation step, after transformation back to the next development version
+     * but before committing. Space delimited.
+     *
+     * @parameter expression="${completionGoals}" default-value=""
+     * @since 2.2
+     */
+    private String completionGoals;
+
+    /**
      * Commits to do are atomic or by project.
      *
      * @parameter expression="${commitByProject}" default-value="false"
@@ -260,6 +269,7 @@ public class PrepareReleaseMojo
         config.setGenerateReleasePoms( generateReleasePoms );
         config.setScmUseEditMode( useEditMode );
         config.setPreparationGoals( preparationGoals );
+        config.setCompletionGoals( completionGoals );
         config.setCommitByProject( commitByProject );
         config.setUpdateDependencies( updateDependencies );
         config.setAutoVersionSubmodules( autoVersionSubmodules );

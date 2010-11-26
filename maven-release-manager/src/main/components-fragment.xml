@@ -54,6 +54,7 @@
           <phase>scm-tag</phase>
           <phase>rewrite-poms-for-development</phase>
           <phase>remove-release-poms</phase>
+          <phase>run-completion-goals</phase>
           <phase>scm-commit-development</phase>
           <phase>end-release</phase>
         </preparePhases>

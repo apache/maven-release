@@ -65,11 +65,13 @@ public class ReleaseUtils
         mergeInto.setScmPrivateKeyPassPhrase(
             mergeOverride( mergeInto.getScmPrivateKeyPassPhrase(), toBeMerged.getScmPrivateKeyPassPhrase() ) );
         mergeInto.setScmCommentPrefix(
-            mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );        
+            mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
         mergeInto.setAdditionalArguments(
             mergeOverride( mergeInto.getAdditionalArguments(), toBeMerged.getAdditionalArguments() ) );
         mergeInto.setPreparationGoals(
             mergeOverride( mergeInto.getPreparationGoals(), toBeMerged.getPreparationGoals() ) );
+        mergeInto.setCompletionGoals(
+            mergeOverride( mergeInto.getCompletionGoals(), toBeMerged.getCompletionGoals() ) );
         mergeInto.setPerformGoals( mergeOverride( mergeInto.getPerformGoals(), toBeMerged.getPerformGoals() ) );
         mergeInto.setPomFileName( mergeOverride( mergeInto.getPomFileName(), toBeMerged.getPomFileName() ) );
         mergeInto.setCheckModificationExcludes( toBeMerged.getCheckModificationExcludes() );
@@ -88,7 +90,7 @@ public class ReleaseUtils
         mergeInto.setAllowTimestampedSnapshots( toBeMerged.isAllowTimestampedSnapshots() );
         mergeInto.setSnapshotReleasePluginAllowed( toBeMerged.isSnapshotReleasePluginAllowed() );
         mergeInto.setAutoVersionSubmodules( toBeMerged.isAutoVersionSubmodules() );
-        mergeInto.setDefaultReleaseVersion( mergeOverride( mergeInto.getDefaultReleaseVersion(), 
+        mergeInto.setDefaultReleaseVersion( mergeOverride( mergeInto.getDefaultReleaseVersion(),
                                                            toBeMerged.getDefaultReleaseVersion() ) );
         mergeInto.setDefaultDevelopmentVersion( mergeOverride( mergeInto.getDefaultDevelopmentVersion(),
                                                                toBeMerged.getDefaultDevelopmentVersion() ) );
@@ -97,7 +99,7 @@ public class ReleaseUtils
         mergeInto.setPushChanges( toBeMerged.isPushChanges() );
         mergeInto.setWaitBeforeTagging( toBeMerged.getWaitBeforeTagging() );
 
-        // If the user specifies versions, these should be override the existing versions 
+        // If the user specifies versions, these should be override the existing versions
         if ( toBeMerged.getReleaseVersions() != null )
         {
             mergeInto.getReleaseVersions().putAll( toBeMerged.getReleaseVersions() );
@@ -127,7 +129,7 @@ public class ReleaseUtils
     {
         return thisValue != null ? thisValue : mergeValue;
     }
-    
+
     public static ReleaseDescriptor copyPropertiesToReleaseDescriptor( Properties properties )
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
@@ -144,6 +146,7 @@ public class ReleaseUtils
         releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
         releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
         releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
+        releaseDescriptor.setCompletionGoals( properties.getProperty( "completionGoals" ) );
         String remoteTaggingStr = properties.getProperty( "remoteTagging" );
         releaseDescriptor.setRemoteTagging( remoteTaggingStr == null ? false : Boolean.valueOf( remoteTaggingStr ).booleanValue() );
         String pushChanges = properties.getProperty( "pushChanges" );

@@ -83,7 +83,7 @@ public class PropertiesReleaseDescriptorStore
         {
             IOUtil.close( inStream );
         }
-        
+
         ReleaseDescriptor releaseDescriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
 
         if ( mergeDescriptor != null )
@@ -159,9 +159,13 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "preparationGoals", config.getPreparationGoals() );
         }
-        
+        if ( config.getCompletionGoals() != null )
+        {
+            properties.setProperty( "completionGoals", config.getCompletionGoals() );
+        }
+
         properties.setProperty( "remoteTagging", Boolean.toString( config.isRemoteTagging() ) );
-        
+
         properties.setProperty( "pushChanges", Boolean.toString( config.isPushChanges() ) );
 
         // others boolean properties are not written to the properties file because the value from the caller is always used
