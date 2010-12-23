@@ -23,6 +23,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.util.PomFinder;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -62,6 +63,33 @@ public class RunPerformGoalsPhase
         else
         {
             additionalArguments = "-f pom.xml";
+        }
+
+        String workDir = releaseDescriptor.getWorkingDirectory();
+        if ( workDir == null)
+        {
+            workDir = System.getProperty( "user.dir" );
+        }
+
+        String pomFileName = releaseDescriptor.getPomFileName();
+        if ( pomFileName == null )
+        {
+            pomFileName = "pom.xml";
+        }
+
+        File pomFile = new File( workDir, pomFileName );
+        PomFinder pomFinder = new PomFinder( getLogger() );
+        boolean foundPom = pomFinder.parsePom( pomFile );
+
+        if ( foundPom )
+        {
+            File matchingPom = pomFinder.findMatchingPom( new File( releaseDescriptor.getCheckoutDirectory() ) );
+            if ( matchingPom != null )
+            {
+                getLogger().info( "Invoking perform goals in directory " + matchingPom.getParent() );
+                releaseDescriptor.setCheckoutDirectory( matchingPom.getParent() );
+            }
+
         }
 
         return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getCheckoutDirectory() ), additionalArguments );
