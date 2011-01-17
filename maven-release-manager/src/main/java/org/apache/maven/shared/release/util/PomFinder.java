@@ -40,12 +40,21 @@ import java.io.InputStreamReader;
  * which got parsed previously. It uses the fact that the
  * combination of any parent ids plus the ids of the current
  * pom itself is unique.</p>
+ * <p>This is e.g. needed for SCM systems which do not support
+ * sparse checkout but only can checkout the repository as whole
+ * like e.g. GIT. If the module which we are going to release is
+ * not in the parent directory, we first need to search for the
+ * 'right' sub directory in this case.
+ * subdirectory </p>
  *
  * <h3>Usage:</h3>
+ * <p>PomFinder is a statefull class. One instance of this class intended
+ * for a singular use! You need to create a new instance if you like
+ * to search for another pom.</p
  * <ol>
  *   <li>
- *     Parse a pom in a given directory with {@link #parsePom(java.io.File)}
- *     This will act as the information what to search for.
+ *     Parse an origin pom in a given directory with {@link #parsePom(java.io.File)}
+ *     This will act as the information about what to search for.
  *   </li>
  *   <li>
  *      Search for the matching pom in a given tree using
@@ -82,14 +91,9 @@ public class PomFinder
         {
             foundPomInfo = readPomInfo( originPom );
         }
-        catch ( IOException e )
+        catch ( Exception e )
         {
-            log.error( "Error while parsing pom file", e );
-            return false;
-        }
-        catch ( XmlPullParserException e )
-        {
-            log.error( "Error while parsing pom file", e );
+            log.warn( "Error while parsing pom file", e );
             return false;
         }
 
@@ -100,7 +104,8 @@ public class PomFinder
      * Search for the previously with {@link #parsePom(java.io.File)}
      * parsed pom in the given directory.
      * @param startDirectory
-     * @return the pom file which matches the previously parsed pom or <code>null</code> if nothing found
+     * @return the pom file which matches the previously parsed pom or <code>null</code>
+     *         if no matching pom file could have been found.
      */
     public File findMatchingPom( File startDirectory )
     {
@@ -130,17 +135,14 @@ public class PomFinder
             {
                 pi = readPomInfo( matchingPom );
             }
-            catch (IOException e)
+            catch (Exception e)
             {
-                log.error( "Error while parsing pom file", e);
-                return null;
+                log.warn( "Error while parsing pom file", e);
+                // do nothing, just continue with the search
+                // this might happen if a build contains unfinished pom.xml
+                // files in integration tests, etc
             }
-            catch (XmlPullParserException e)
-            {
-                log.error( "Error while parsing pom file", e);
-                return null;
-            }
-            
+
             if  ( pi == null || !pi.equals( foundPomInfo ) )
             {
                 matchingPom = null;
