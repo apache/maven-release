@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -31,10 +34,6 @@ import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Map projects to their new versions after release / into the next development cycle.
