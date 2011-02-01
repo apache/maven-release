@@ -55,12 +55,12 @@ public class ReleaseUtil
     {
     }
 
-    public static MavenProject getRootProject( List reactorProjects )
+    public static MavenProject getRootProject( List<MavenProject> reactorProjects )
     {
         MavenProject project = (MavenProject) reactorProjects.get( 0 );
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
         {
-            MavenProject currentProject = (MavenProject) i.next();
+            MavenProject currentProject = i.next();
             if ( currentProject.isExecutionRoot() )
             {
                 project = currentProject;
@@ -161,7 +161,7 @@ public class ReleaseUtil
     }
 
     public static ReleaseDescriptor createBasedirAlignedReleaseDescriptor( ReleaseDescriptor releaseDescriptor,
-                                                                           List reactorProjects )
+                                                                           List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         String basedir = getCommonBasedir( reactorProjects );
@@ -179,18 +179,18 @@ public class ReleaseUtil
         return descriptor;
     }
 
-    public static String getCommonBasedir( List reactorProjects )
+    public static String getCommonBasedir( List<MavenProject> reactorProjects )
     {
         return getCommonBasedir( reactorProjects, FS );
     }
 
-    public static String getCommonBasedir( List reactorProjects, char separator )
+    public static String getCommonBasedir( List<MavenProject> reactorProjects, char separator )
     {
         String[] baseDirs = new String[reactorProjects.size()];
         int idx = 0;
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
         {
-            MavenProject p = (MavenProject) i.next();
+            MavenProject p = i.next();
 
             // we can only normalize paths with /
             String dir = FileUtils.normalize( p.getBasedir().getPath().replace( '\\', '/' ) );

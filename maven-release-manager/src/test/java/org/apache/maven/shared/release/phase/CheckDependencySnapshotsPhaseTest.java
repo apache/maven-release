@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -44,7 +45,7 @@ public class CheckDependencySnapshotsPhaseTest
 
     private static final String YES = "yes";
 
-    private static final List YES_NO_ARRAY = Arrays.asList( YES, NO );
+    private static final List<String> YES_NO_ARRAY = Arrays.asList( YES, NO );
 
     private static final String DEFAULT_CHOICE = "1";
 
@@ -62,7 +63,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "no-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-dependencies" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -79,7 +80,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "no-snapshot-range-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-range-dependencies" );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.1", "1.2-SNAPSHOT" ) ) );
 
@@ -97,7 +98,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-dependencies" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -111,7 +112,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
         releaseDescriptor.setInteractive( false );
 
         try
@@ -144,7 +145,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         phase.setPrompter( createMockPrompterWithSnapshotReleasePlugin( NO, NO ) );
 
@@ -180,7 +181,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         phase.setPrompter( createYesMockPrompter() );
 
@@ -196,7 +197,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         phase.setPrompter( createYesMockPrompter() );
 
@@ -212,7 +213,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         phase.setPrompter( createMockPrompterWithSnapshotReleasePlugin( "donkey", NO ) );
 
@@ -248,7 +249,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
 
         Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( anyString(), eq( YES_NO_ARRAY ), eq( NO ) ) ).thenThrow( new PrompterException(
@@ -289,7 +290,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-differing-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-differing-snapshot-dependencies" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -322,7 +323,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-managed-snapshot-dependency" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-managed-snapshot-dependency" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -336,7 +337,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "unused-internal-managed-snapshot-dependency" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "unused-internal-managed-snapshot-dependency" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -350,7 +351,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "unused-external-managed-snapshot-dependency" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "unused-external-managed-snapshot-dependency" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -364,7 +365,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-managed-snapshot-dependency" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-managed-snapshot-dependency" );
 
         releaseDescriptor.setInteractive( false );
 
@@ -395,7 +396,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
 
         releaseDescriptor.setInteractive( false );
 
@@ -426,7 +427,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-range-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-range-snapshot-dependencies" );
 
         releaseDescriptor.setInteractive( false );
 
@@ -460,7 +461,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0", "1.1-SNAPSHOT" ),
                                                new VersionPair( "1.0", "1.0" ) ) );
@@ -475,6 +476,7 @@ public class CheckDependencySnapshotsPhaseTest
         }
 
         // validate
+        @SuppressWarnings("rawtypes")
         Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
@@ -502,7 +504,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "0.9", "1.0-SNAPSHOT" ),
                                                new VersionPair( "1.0", "1.0-SNAPSHOT" ) ) );
@@ -517,6 +519,7 @@ public class CheckDependencySnapshotsPhaseTest
         }
 
         // validate
+        @SuppressWarnings("rawtypes")
         Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
@@ -531,7 +534,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0", "1.0" ) ) );
 
@@ -545,6 +548,7 @@ public class CheckDependencySnapshotsPhaseTest
         }
 
         // validate
+        @SuppressWarnings("rawtypes")
         Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
@@ -559,7 +563,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
 
         phase.setPrompter( createMockPrompter( YES, "0", new VersionPair( "1.0", "1.0" ) ) );
 
@@ -573,6 +577,7 @@ public class CheckDependencySnapshotsPhaseTest
         }
 
         // validate
+        @SuppressWarnings("rawtypes")
         Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
@@ -588,7 +593,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-all" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-all" );
 
         Prompter mockPrompter = createMockPrompter( YES, "0", Arrays.asList( new VersionPair( "1.0", "1.0" ),
                                                                              new VersionPair( "1.1", "1.1" ),
@@ -606,6 +611,7 @@ public class CheckDependencySnapshotsPhaseTest
         }
 
         // validate
+        @SuppressWarnings("rawtypes")
         Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
@@ -621,7 +627,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "multimodule-external-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "multimodule-external-snapshot-dependencies" );
 
         VersionPair pair = new VersionPair( "1.0", "1.1-SNAPSHOT" );
         VersionPair defaultPair = new VersionPair( "1.0", "1.0" );
@@ -638,6 +644,7 @@ public class CheckDependencySnapshotsPhaseTest
             fail( e.getMessage() );
         }
 
+        @SuppressWarnings("rawtypes")
         Map resolvedDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
 
         assertNotNull( resolvedDependencies );
@@ -646,6 +653,7 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( resolvedDependencies.containsKey( "external:artifactId" ) );
         assertTrue( resolvedDependencies.containsKey( "external:artifactId2") );
 
+        @SuppressWarnings("rawtypes")
         Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
@@ -666,7 +674,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-dependencies" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -699,7 +707,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "no-snapshot-report-plugins" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-report-plugins" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -713,7 +721,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-snapshot-report-plugins" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-report-plugins" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -730,7 +738,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-report-plugins" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-report-plugins" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -766,7 +774,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-report-plugins" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-report-plugins" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -799,7 +807,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "no-snapshot-plugins" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-plugins" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -813,7 +821,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-snapshot-plugins" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-plugins" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -827,7 +835,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-managed-snapshot-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-managed-snapshot-plugin" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -841,7 +849,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "unused-internal-managed-snapshot-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "unused-internal-managed-snapshot-plugin" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -855,7 +863,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "unused-external-managed-snapshot-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "unused-external-managed-snapshot-plugin" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -872,7 +880,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-managed-snapshot-plugin" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-managed-snapshot-plugin" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -908,7 +916,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-plugins" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-plugins" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -944,7 +952,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-plugins" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-plugins" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -980,7 +988,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -1016,7 +1024,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
 
         Prompter mockPrompter = createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0-test", "1.0-test" ),
                                                     new VersionPair( "1.0", "1.0-test" ) );
@@ -1032,6 +1040,7 @@ public class CheckDependencySnapshotsPhaseTest
         }
 
         // validate
+        @SuppressWarnings("rawtypes")
         Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "groupId:parent-external" );
 
         assertNotNull( versionsMap );
@@ -1043,7 +1052,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-parent/child" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-parent/child" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -1060,7 +1069,7 @@ public class CheckDependencySnapshotsPhaseTest
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-snapshot-extension" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-extension" );
 
         phase.setPrompter( createNoMockPrompter() );
 
@@ -1093,7 +1102,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "internal-snapshot-extension" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-extension" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -1107,7 +1116,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-extension" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-extension" );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -1121,7 +1130,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        List reactorProjects = createDescriptorFromProjects( "external-timestamped-snapshot-dependencies" );
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-timestamped-snapshot-dependencies" );
 
         releaseDescriptor.setInteractive( false );
 
@@ -1148,7 +1157,7 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( true );
     }
 
-    private List createDescriptorFromProjects( String path )
+    private List<MavenProject> createDescriptorFromProjects( String path )
         throws Exception
     {
         return createReactorProjects( "check-dependencies/", path );

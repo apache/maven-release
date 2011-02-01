@@ -246,8 +246,8 @@ public class InvokerMavenExecutor
             if ( cli.hasOption( ACTIVATE_PROFILES ) )
             {
                 String[] profiles = cli.getOptionValues( ACTIVATE_PROFILES );
-                List activatedProfiles = new ArrayList();
-                List deactivatedProfiles = new ArrayList();
+                List<String> activatedProfiles = new ArrayList<String>();
+                List<String> deactivatedProfiles = new ArrayList<String>();
 
                 if ( profiles != null )
                 {

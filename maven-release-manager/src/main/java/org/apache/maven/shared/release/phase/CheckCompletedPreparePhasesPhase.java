@@ -19,13 +19,14 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.List;
+
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-
-import java.util.List;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -37,7 +38,7 @@ public class CheckCompletedPreparePhasesPhase
 {
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
                                   ReleaseEnvironment releaseEnvironment,
-                                  List reactorProjects )
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -74,7 +75,7 @@ public class CheckCompletedPreparePhasesPhase
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor,
                                    ReleaseEnvironment releaseEnvironment,
-                                   List reactorProjects )
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );

@@ -72,7 +72,7 @@ public class CreateBackupPomsPhaseTest
     private void runExecuteOnProjects( String path )
         throws Exception
     {
-        List projects = getReactorProjects( getTestPath( path ) );
+        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
 
         phase.execute( null, new DefaultReleaseEnvironment(), projects );
 
@@ -82,7 +82,7 @@ public class CreateBackupPomsPhaseTest
     private void runSimulateOnProjects( String path )
         throws Exception
     {
-        List projects = getReactorProjects( getTestPath( path ) );
+        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
 
         phase.simulate( null, new DefaultReleaseEnvironment(), projects );
 
@@ -92,19 +92,19 @@ public class CreateBackupPomsPhaseTest
     private void runCleanOnProjects( String path )
         throws Exception
     {
-        List projects = getReactorProjects( getTestPath( path ) );
+        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
 
         phase.clean( projects );
 
         testProjectBackups( projects, false );
     }
 
-    protected void testProjectBackups( List reactorProjects, boolean created )
+    protected void testProjectBackups( List<MavenProject> reactorProjects, boolean created )
         throws Exception
     {
-        for( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
         {
-            MavenProject project = (MavenProject) projects.next();
+            MavenProject project = projects.next();
 
             File pomFile = project.getFile();
 

@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
@@ -92,7 +93,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
@@ -115,7 +117,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
@@ -138,7 +141,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, false, false );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
@@ -161,7 +165,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
@@ -184,15 +189,16 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = phases.get( "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = phases.get( "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = phases.get( "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -207,7 +213,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
@@ -230,7 +237,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
@@ -253,7 +261,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
@@ -276,7 +285,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
@@ -377,7 +387,8 @@ public class DefaultReleaseManagerTest
 
         releaseManager.clean( releaseDescriptor, null, null );
 
-        Map phases = container.lookupMap( ReleasePhase.ROLE );
+        @SuppressWarnings("unchecked")
+        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 not cleaned", phase.isCleaned() );
@@ -413,7 +424,7 @@ public class DefaultReleaseManagerTest
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
             new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
-            new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
+            new ReturnStub( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -423,7 +434,7 @@ public class DefaultReleaseManagerTest
         assertTrue( true );
     }
 
-    private static List createReactorProjects()
+    private static List<MavenProject> createReactorProjects()
     {
         MavenProject project = new MavenProject();
         project.setFile( getTestFile( "target/dummy-project/pom.xml" ) );
@@ -466,7 +477,7 @@ public class DefaultReleaseManagerTest
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
             new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
-            new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
+            new ReturnStub( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -501,7 +512,7 @@ public class DefaultReleaseManagerTest
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
             new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
-            new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
+            new ReturnStub( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -533,7 +544,7 @@ public class DefaultReleaseManagerTest
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
             new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
-            new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
+            new ReturnStub( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -566,7 +577,7 @@ public class DefaultReleaseManagerTest
         constraints = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
             new IsInstanceOf( ScmTag.class )};
         scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( constraints ).will(
-            new ReturnStub( new CheckOutScmResult( "...", Collections.EMPTY_LIST ) ) );
+            new ReturnStub( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );

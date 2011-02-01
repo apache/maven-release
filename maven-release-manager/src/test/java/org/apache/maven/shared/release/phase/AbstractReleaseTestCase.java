@@ -112,14 +112,14 @@ public abstract class AbstractReleaseTestCase
         super.tearDown();
     }
 
-    private Map createManagedVersionMap( String projectId, DependencyManagement dependencyManagement,
+    private Map<String,Artifact> createManagedVersionMap( String projectId, DependencyManagement dependencyManagement,
                                          ArtifactFactory artifactFactory )
         throws ProjectBuildingException
     {
-        Map map;
+        Map<String,Artifact> map;
         if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
         {
-            map = new HashMap();
+            map = new HashMap<String,Artifact>();
             for ( Iterator i = dependencyManagement.getDependencies().iterator(); i.hasNext(); )
             {
                 Dependency d = (Dependency) i.next();
@@ -141,25 +141,25 @@ public abstract class AbstractReleaseTestCase
         }
         else
         {
-            map = Collections.EMPTY_MAP;
+            map = Collections.emptyMap();
         }
         return map;
     }
 
-    protected List createReactorProjects( String path, String subpath )
+    protected List<MavenProject> createReactorProjects( String path, String subpath )
         throws Exception
     {
         return createReactorProjects( path, path, subpath );
     }
 
-    protected List createReactorProjects( String path, String targetPath, String subpath )
+    protected List<MavenProject> createReactorProjects( String path, String targetPath, String subpath )
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/projects/" + path + subpath + "/pom.xml" );
-        Stack projectFiles = new Stack();
+        Stack<File> projectFiles = new Stack<File>();
         projectFiles.push( testFile );
 
-        List repos =
+        List<DefaultArtifactRepository> repos =
             Collections.singletonList( new DefaultArtifactRepository( "central", getRemoteRepositoryURL(), new DefaultRepositoryLayout() ) );
 
         Repository repository = new Repository();
@@ -173,7 +173,7 @@ public abstract class AbstractReleaseTestCase
         profileManager.addProfile( profile );
         profileManager.activateAsDefault( profile.getId() );
 
-        List reactorProjects = new ArrayList();
+        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
         while ( !projectFiles.isEmpty() )
         {
             File file = (File) projectFiles.pop();
@@ -242,10 +242,10 @@ public abstract class AbstractReleaseTestCase
         configurator.setScmManager( scmManager );
     }
 
-    protected static Map getProjectsAsMap( List reactorProjects )
+    protected static Map<String,MavenProject> getProjectsAsMap( List<MavenProject> reactorProjects )
     {
-        Map map = new HashMap();
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        Map<String,MavenProject> map = new HashMap<String,MavenProject>();
+        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = (MavenProject) i.next();
 
@@ -254,13 +254,13 @@ public abstract class AbstractReleaseTestCase
         return map;
     }
 
-    protected boolean comparePomFiles( List reactorProjects )
+    protected boolean comparePomFiles( List<MavenProject> reactorProjects )
         throws IOException
     {
         return comparePomFiles( reactorProjects, true );
     }
 
-    protected boolean comparePomFiles( List reactorProjects, boolean normalizeLineEndings )
+    protected boolean comparePomFiles( List<MavenProject> reactorProjects, boolean normalizeLineEndings )
         throws IOException
     {
         comparePomFiles( reactorProjects, "", normalizeLineEndings );
@@ -269,18 +269,18 @@ public abstract class AbstractReleaseTestCase
         return true;
     }
 
-    protected void comparePomFiles( List reactorProjects, String expectedFileSuffix )
+    protected void comparePomFiles( List<MavenProject> reactorProjects, String expectedFileSuffix )
         throws IOException
     {
         comparePomFiles( reactorProjects, expectedFileSuffix, true );
     }
 
-    protected void comparePomFiles( List reactorProjects, String expectedFileSuffix, boolean normalizeLineEndings )
+    protected void comparePomFiles( List<MavenProject> reactorProjects, String expectedFileSuffix, boolean normalizeLineEndings )
         throws IOException
     {
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
         {
-            MavenProject project = (MavenProject) i.next();
+            MavenProject project = i.next();
 
             comparePomFiles( project, expectedFileSuffix, normalizeLineEndings );
         }
@@ -314,17 +314,6 @@ public abstract class AbstractReleaseTestCase
         String expected = read( expectedFile, normalizeLineEndings );
         expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
         assertEquals( "Check the transformed POM", expected, actual );
-    }
-
-    /**
-     * Mock-up of {@link ReleaseUtil#readXmlFile(File)}, except this one REMOVES line endings.
-     * There is something fishy about the line ending conversion in that method, and it's not the
-     * class under test in these test cases.
-     */
-    private String read( File file )
-        throws IOException
-    {
-        return read( file, true );
     }
 
     /**

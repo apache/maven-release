@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -49,7 +50,7 @@ public class ReleasePhaseStub
      */
     private boolean cleaned;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -60,7 +61,7 @@ public class ReleasePhaseStub
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -71,7 +72,7 @@ public class ReleasePhaseStub
         return result;
     }
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -82,7 +83,7 @@ public class ReleasePhaseStub
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -93,7 +94,7 @@ public class ReleasePhaseStub
         return result;
     }
 
-    public ReleaseResult clean( List reactorProjects )
+    public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 

@@ -80,7 +80,7 @@ public class GenerateReleasePomsPhaseTest
 
     public void testRewriteExternalRangeDependency() throws Exception
     {
-        List reactorProjects = createReactorProjects( "external-range-dependency" );
+        List<MavenProject> reactorProjects = createReactorProjects( "external-range-dependency" );
         ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
 
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
@@ -91,7 +91,7 @@ public class GenerateReleasePomsPhaseTest
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createDescriptorFromProjects(java.util.List)
      */
-    protected ReleaseDescriptor createDescriptorFromProjects( List reactorProjects )
+    protected ReleaseDescriptor createDescriptorFromProjects( List<MavenProject> reactorProjects )
     {
         ReleaseDescriptor descriptor = super.createDescriptorFromProjects( reactorProjects );
         descriptor.setScmReleaseLabel( "release-label" );
@@ -103,20 +103,20 @@ public class GenerateReleasePomsPhaseTest
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createReactorProjects(java.lang.String,
      *      boolean)
      */
-    protected List createReactorProjects( String path, boolean copyFiles ) throws Exception
+    protected List<MavenProject> createReactorProjects( String path, boolean copyFiles ) throws Exception
     {
-        List reactorProjects = createReactorProjects( "generate-release-poms/", path );
+        List<MavenProject> reactorProjects = createReactorProjects( "generate-release-poms/", path );
 
         // add scm provider expectations for each project in the reactor
         // TODO: can we move this somewhere better?
 
         scmProviderMock = new Mock( ScmProvider.class );
 
-        List releasePoms = new ArrayList();
+        List<File> releasePoms = new ArrayList<File>();
 
-        for ( Iterator iterator = reactorProjects.iterator(); iterator.hasNext(); )
+        for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
         {
-            MavenProject project = (MavenProject) iterator.next();
+            MavenProject project = iterator.next();
 
             releasePoms.add( ReleaseUtil.getReleasePom( project ) );
         }
@@ -171,7 +171,7 @@ public class GenerateReleasePomsPhaseTest
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createConfigurationForPomWithParentAlternateNextVersion(java.util.List)
      */
-    protected ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List reactorProjects )
+    protected ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
@@ -185,7 +185,7 @@ public class GenerateReleasePomsPhaseTest
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createConfigurationForWithParentNextVersion(java.util.List)
      */
-    protected ReleaseDescriptor createConfigurationForWithParentNextVersion( List reactorProjects ) throws Exception
+    protected ReleaseDescriptor createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects ) throws Exception
     {
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
 

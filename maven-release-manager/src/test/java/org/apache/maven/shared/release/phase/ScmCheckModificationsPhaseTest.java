@@ -221,7 +221,7 @@ public class ScmCheckModificationsPhaseTest
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        setChangedFiles( releaseDescriptor, Collections.EMPTY_LIST );
+        setChangedFiles( releaseDescriptor, Collections.<String>emptyList() );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
@@ -338,7 +338,7 @@ public class ScmCheckModificationsPhaseTest
         }
     }
 
-    private void setChangedFiles( ReleaseDescriptor releaseDescriptor, List changedFiles )
+    private void setChangedFiles( ReleaseDescriptor releaseDescriptor, List<String> changedFiles )
         throws Exception
     {
         ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
@@ -348,12 +348,12 @@ public class ScmCheckModificationsPhaseTest
         providerStub.setStatusScmResult( new StatusScmResult( "", createScmFiles( changedFiles ) ) );
     }
 
-    private static List createScmFiles( List changedFiles )
+    private static List<ScmFile> createScmFiles( List<String> changedFiles )
     {
-        List files = new ArrayList( changedFiles.size() );
-        for ( Iterator i = changedFiles.iterator(); i.hasNext(); )
+        List<ScmFile> files = new ArrayList<ScmFile>( changedFiles.size() );
+        for ( Iterator<String> i = changedFiles.iterator(); i.hasNext(); )
         {
-            String fileName = (String) i.next();
+            String fileName = i.next();
             files.add( new ScmFile( fileName, ScmFileStatus.MODIFIED ) );
         }
         return files;

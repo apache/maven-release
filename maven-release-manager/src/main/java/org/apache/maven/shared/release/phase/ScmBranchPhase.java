@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmBranchParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -55,7 +56,7 @@ public class ScmBranchPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
@@ -112,7 +113,7 @@ public class ScmBranchPhase
         return relResult;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();

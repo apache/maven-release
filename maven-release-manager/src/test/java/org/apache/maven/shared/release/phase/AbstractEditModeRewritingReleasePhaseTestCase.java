@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.command.edit.EditScmResult;
 import org.apache.maven.scm.manager.ScmManagerStub;
@@ -47,7 +48,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
     public void testRewriteBasicPomWithEditMode()
         throws Exception
     {
-        List reactorProjects = createReactorProjectsFromBasicPom();
+        List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
         mapNextVersion( config, "groupId:artifactId" );
@@ -60,7 +61,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
     public void testRewriteBasicPomWithEditModeFailure()
         throws Exception
     {
-        List reactorProjects = createReactorProjectsFromBasicPom();
+        List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
         mapNextVersion( config, "groupId:artifactId" );
@@ -88,7 +89,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
     public void testRewriteBasicPomWithEditModeException()
         throws Exception
     {
-        List reactorProjects = createReactorProjectsFromBasicPom();
+        List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
         mapNextVersion( config, "groupId:artifactId" );

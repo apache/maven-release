@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -38,7 +39,7 @@ import java.util.List;
 public class RunPerformGoalsPhase
     extends AbstractRunGoalsPhase
 {
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         String additionalArguments = releaseDescriptor.getAdditionalArguments();
@@ -95,7 +96,7 @@ public class RunPerformGoalsPhase
         return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getCheckoutDirectory() ), additionalArguments );
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();

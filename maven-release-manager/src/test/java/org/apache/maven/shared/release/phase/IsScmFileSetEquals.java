@@ -19,10 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.Arrays;
+
 import org.apache.maven.scm.ScmFileSet;
 import org.jmock.core.Constraint;
-
-import java.util.Arrays;
 
 /**
  * JMock constraint to compare file sets since it has no equals method.
@@ -45,7 +45,7 @@ public class IsScmFileSetEquals
         ScmFileSet fs = (ScmFileSet) object;
 
         return fs.getBasedir().equals( fileSet.getBasedir() ) &&
-            Arrays.asList( fs.getFiles() ).equals( Arrays.asList( fileSet.getFiles() ) );
+        Arrays.asList( fs.getFiles() ).equals( Arrays.asList( fileSet.getFiles() ) );
     }
 
     public StringBuffer describeTo( StringBuffer stringBuffer )

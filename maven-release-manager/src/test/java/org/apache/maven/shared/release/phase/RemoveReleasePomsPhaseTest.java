@@ -63,7 +63,7 @@ public class RemoveReleasePomsPhaseTest
     public void testExecuteBasicPom()
         throws Exception
     {
-        List reactorProjects = createReactorProjects( "basic-pom" );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
         ReleaseDescriptor config = createReleaseDescriptor();
         MavenProject project = ReleaseUtil.getRootProject( reactorProjects );
 
@@ -92,13 +92,13 @@ public class RemoveReleasePomsPhaseTest
     public void testExecutePomWithModules()
         throws Exception
     {
-        List reactorProjects = createReactorProjects( "pom-with-modules" );
+        List<MavenProject> reactorProjects = createReactorProjects( "pom-with-modules" );
         ReleaseDescriptor config = createReleaseDescriptor();
 
-        List releasePoms = new ArrayList();
-        for ( Iterator iterator = reactorProjects.iterator(); iterator.hasNext(); )
+        List<File> releasePoms = new ArrayList<File>();
+        for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
         {
-            MavenProject project = (MavenProject) iterator.next();
+            MavenProject project = iterator.next();
             File releasePom = ReleaseUtil.getReleasePom( project );
             releasePoms.add( releasePom );
         }
@@ -125,7 +125,7 @@ public class RemoveReleasePomsPhaseTest
     public void testSimulateBasicPom()
         throws Exception
     {
-        List reactorProjects = createReactorProjects( "basic-pom" );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
         ReleaseDescriptor config = createReleaseDescriptor();
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
@@ -139,7 +139,7 @@ public class RemoveReleasePomsPhaseTest
         scmProviderMock.verify();
     }
 
-    private List createReactorProjects( String path )
+    private List<MavenProject> createReactorProjects( String path )
         throws Exception
     {
         return createReactorProjects( "remove-release-poms/", path );

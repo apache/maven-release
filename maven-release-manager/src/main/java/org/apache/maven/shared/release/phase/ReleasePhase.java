@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -49,7 +50,7 @@ public interface ReleasePhase
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
      */
-    ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -61,7 +62,7 @@ public interface ReleasePhase
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
      */
-    ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -75,7 +76,7 @@ public interface ReleasePhase
      *
      * @deprecated Use {@link ReleasePhase#execute(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
      */
-    ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -89,7 +90,7 @@ public interface ReleasePhase
      *
      * @deprecated Use {@link ReleasePhase#simulate(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
      */
-    ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List reactorProjects )
+    ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -97,5 +98,5 @@ public interface ReleasePhase
      *
      * @param reactorProjects the reactor projects
      */
-    ReleaseResult clean( List reactorProjects );
+    ReleaseResult clean( List<MavenProject> reactorProjects );
 }

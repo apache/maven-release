@@ -45,7 +45,7 @@ public class RewritePomsForReleasePhase
     /**
      * SCM URL translators mapped by provider name.
      */
-    private Map scmTranslators;
+    private Map<String,ScmTranslator> scmTranslators;
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
@@ -213,7 +213,7 @@ public class RewritePomsForReleasePhase
         return result;
     }
 
-    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects, boolean simulate )
+    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, boolean simulate )
     {
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }

@@ -96,7 +96,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List reactorProjects )
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -109,10 +109,10 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                            List reactorProjects, boolean simulate, ReleaseResult result )
+                            List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        for ( Iterator<MavenProject> it = reactorProjects.iterator(); it.hasNext(); )
         {
             MavenProject project = (MavenProject) it.next();
 
@@ -123,7 +123,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor,
-                                   ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean simulate,
+                                   ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean simulate,
                                    ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -244,7 +244,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformDocument( MavenProject project, Element rootElement, ReleaseDescriptor releaseDescriptor,
-                                    List reactorProjects, ScmRepository scmRepository, ReleaseResult result,
+                                    List<MavenProject> reactorProjects, ScmRepository scmRepository, ReleaseResult result,
                                     boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -426,15 +426,15 @@ public abstract class AbstractRewritePomsPhase
         return parentVersion;
     }
 
-    private void rewriteDependencies( List dependencies, Element dependencyRoot, Map mappedVersions,
+    private void rewriteDependencies( List<Dependency> dependencies, Element dependencyRoot, Map mappedVersions,
                                       Map resolvedSnapshotDependencies, Map originalVersions, String projectId,
                                       Element properties, ReleaseResult result, ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( dependencies != null )
         {
-            List dependenciesAlreadyChanged = new ArrayList();
-            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
+            List<String> dependenciesAlreadyChanged = new ArrayList<String>();
+            for ( Iterator<Dependency> i = dependencies.iterator(); i.hasNext(); )
             {
                 Dependency dep = (Dependency) i.next();
                 String depId = ArtifactUtils.versionlessKey( dep.getGroupId(), dep.getArtifactId() );
@@ -453,16 +453,16 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void rewritePlugins( List plugins, Element pluginRoot, Map mappedVersions, Map resolvedSnapshotDependencies,
+    private void rewritePlugins( List<Plugin> plugins, Element pluginRoot, Map mappedVersions, Map resolvedSnapshotDependencies,
                                  Map originalVersions, String projectId, Element properties, ReleaseResult result,
                                  ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( plugins != null )
         {
-            for ( Iterator i = plugins.iterator(); i.hasNext(); )
+            for ( Iterator<Plugin> i = plugins.iterator(); i.hasNext(); )
             {
-                Plugin plugin = (Plugin) i.next();
+                Plugin plugin = i.next();
 
                 // We can ignore plugins whose version is assumed, they are only written into the release pom
                 if ( plugin.getVersion() != null )
@@ -475,16 +475,16 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void rewriteExtensions( List extensions, Element extensionRoot, Map mappedVersions,
+    private void rewriteExtensions( List<Extension> extensions, Element extensionRoot, Map mappedVersions,
                                     Map resolvedSnapshotDependencies, Map originalVersions, String projectId,
                                     Element properties, ReleaseResult result, ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( extensions != null )
         {
-            for ( Iterator i = extensions.iterator(); i.hasNext(); )
+            for ( Iterator<Extension> i = extensions.iterator(); i.hasNext(); )
             {
-                Extension extension = (Extension) i.next();
+                Extension extension = i.next();
 
                 if ( extension.getVersion() != null )
                 {
@@ -497,16 +497,16 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void rewriteReportPlugins( List plugins, Element pluginRoot, Map mappedVersions,
+    private void rewriteReportPlugins( List<ReportPlugin> plugins, Element pluginRoot, Map mappedVersions,
                                        Map resolvedSnapshotDependencies, Map originalVersions, String projectId,
                                        Element properties, ReleaseResult result, ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( plugins != null )
         {
-            for ( Iterator i = plugins.iterator(); i.hasNext(); )
+            for ( Iterator<ReportPlugin> i = plugins.iterator(); i.hasNext(); )
             {
-                ReportPlugin plugin = (ReportPlugin) i.next();
+                ReportPlugin plugin = i.next();
 
                 // We can ignore plugins whose version is assumed, they are only written into the release pom
                 if ( plugin.getVersion() != null )
@@ -519,7 +519,7 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private List getDependencies( String groupId, String artifactId, String groupTagName, String tagName,
+    private List<Element> getDependencies( String groupId, String artifactId, String groupTagName, String tagName,
                                   Element dependencyRoot )
         throws JDOMException
     {
@@ -572,11 +572,11 @@ public abstract class AbstractRewritePomsPhase
 
         try
         {
-            List dependencies = getDependencies( groupId, artifactId, groupTagName, tagName, dependencyRoot );
+            List<Element> dependencies = getDependencies( groupId, artifactId, groupTagName, tagName, dependencyRoot );
 
-            for ( Iterator i = dependencies.iterator(); i.hasNext(); )
+            for ( Iterator<Element> i = dependencies.iterator(); i.hasNext(); )
             {
-                Element dependency = (Element) i.next();
+                Element dependency = i.next();
                 String dependencyVersion = "";
                 Element versionElement = null;
 
@@ -786,7 +786,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List reactorProjects )
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -798,7 +798,7 @@ public abstract class AbstractRewritePomsPhase
         return result;
     }
 
-    public ReleaseResult clean( List reactorProjects )
+    public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -806,9 +806,9 @@ public abstract class AbstractRewritePomsPhase
 
         if ( reactorProjects != null )
         {
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
             {
-                MavenProject project = (MavenProject) i.next();
+                MavenProject project = i.next();
 
                 File pomFile = ReleaseUtil.getStandardPom( project );
                 // MRELEASE-273 : if no pom
@@ -830,7 +830,7 @@ public abstract class AbstractRewritePomsPhase
 
     protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshots );
 
-    protected abstract Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects,
+    protected abstract Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
                                                   boolean simulate );
 
     protected abstract Map getNextVersionMap( ReleaseDescriptor releaseDescriptor );

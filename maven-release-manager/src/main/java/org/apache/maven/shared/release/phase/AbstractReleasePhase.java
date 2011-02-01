@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -38,7 +39,7 @@ public abstract class AbstractReleasePhase
     extends AbstractLogEnabled
     implements ReleasePhase
 {
-    public ReleaseResult clean( List reactorProjects )
+    public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         // nothing to do by default
 
@@ -47,7 +48,7 @@ public abstract class AbstractReleasePhase
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
                                   Settings settings,
-                                  List reactorProjects )
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );
@@ -55,7 +56,7 @@ public abstract class AbstractReleasePhase
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor,
                                    Settings settings,
-                                   List reactorProjects )
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return simulate( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );

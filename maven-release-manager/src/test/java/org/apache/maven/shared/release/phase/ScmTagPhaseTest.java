@@ -75,7 +75,7 @@ public class ScmTagPhaseTest
         throws Exception
     {
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
@@ -106,7 +106,7 @@ public class ScmTagPhaseTest
     public void testCommitMultiModuleDeepFolders()
         throws Exception
     {
-        List reactorProjects = createReactorProjects( "scm-commit/", "multimodule-with-deep-subprojects" );
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit/", "multimodule-with-deep-subprojects" );
         String sourceUrl = "http://svn.example.com/repos/project/trunk/";
         String scmUrl = "scm:svn:" + sourceUrl;
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
@@ -143,7 +143,7 @@ public class ScmTagPhaseTest
     public void testCommitForFlatMultiModule()
         throws Exception
     {
-        List reactorProjects =
+        List<MavenProject> reactorProjects =
             createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
@@ -180,7 +180,7 @@ public class ScmTagPhaseTest
         throws Exception
     {
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        List reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms" );
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms" );
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
@@ -212,7 +212,7 @@ public class ScmTagPhaseTest
         throws Exception
     {
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
 
         try
         {
@@ -229,7 +229,7 @@ public class ScmTagPhaseTest
         throws Exception
     {
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
@@ -250,7 +250,7 @@ public class ScmTagPhaseTest
         throws Exception
     {
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
 
         try
         {
@@ -266,7 +266,7 @@ public class ScmTagPhaseTest
     public void testNoSuchScmProviderExceptionThrown()
         throws Exception
     {
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
         Mock scmManagerMock = new Mock( ScmManager.class );
@@ -293,7 +293,7 @@ public class ScmTagPhaseTest
     public void testScmRepositoryExceptionThrown()
         throws Exception
     {
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
         Mock scmManagerMock = new Mock( ScmManager.class );
@@ -320,7 +320,7 @@ public class ScmTagPhaseTest
     public void testScmExceptionThrown()
         throws Exception
     {
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
@@ -345,7 +345,7 @@ public class ScmTagPhaseTest
     public void testScmResultFailure()
         throws Exception
     {
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
         ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
@@ -366,7 +366,7 @@ public class ScmTagPhaseTest
         }
     }
 
-    private List createReactorProjects()
+    private List<MavenProject> createReactorProjects()
         throws Exception
     {
         return createReactorProjects( "scm-commit/", "single-pom" );

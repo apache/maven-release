@@ -26,7 +26,7 @@ import java.util.List;
  */
 public interface ReleaseManagerListener
 {
-    void goalStart( String goal, List phases );
+    void goalStart( String goal, List<String> phases );
 
     void phaseStart( String name );
 

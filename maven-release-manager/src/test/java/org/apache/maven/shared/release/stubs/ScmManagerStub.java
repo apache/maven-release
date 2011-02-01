@@ -32,7 +32,7 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 public class ScmManagerStub
     extends org.apache.maven.scm.manager.ScmManagerStub
 {
-    private Map/*<String, ScmRepository>*/ scmRepositoriesForUrl = new HashMap/*<String, ScmRepository>*/();
+    private Map<String, ScmRepository> scmRepositoriesForUrl = new HashMap<String, ScmRepository>();
 
     /*@Override*/
     public ScmRepository makeScmRepository( String scmUrl )

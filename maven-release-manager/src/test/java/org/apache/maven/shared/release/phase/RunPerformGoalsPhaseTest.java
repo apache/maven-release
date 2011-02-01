@@ -1,5 +1,6 @@
 package org.apache.maven.shared.release.phase;
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -60,7 +61,7 @@ public class RunPerformGoalsPhaseTest
 
         try
         {
-            phase.execute( config, (Settings) null, (List) null );
+            phase.execute( config, (Settings) null, (List<MavenProject>) null );
 
             fail( "Should have thrown an exception" );
         }

@@ -19,16 +19,18 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Commit the changes that were done to prepare the branch or tag to the SCM.
@@ -45,7 +47,7 @@ public class ScmCommitDevelopmentPhase
     private String rollbackMessageFormat;
 
     protected void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                             List reactorProjects, ReleaseResult result, boolean simulating )
+                             List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
         throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException
     {
         // no rollback required
@@ -80,7 +82,7 @@ public class ScmCommitDevelopmentPhase
             }
             if ( simulating )
             {
-                Collection pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
+                Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
                 logInfo( result,
                          "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
             }

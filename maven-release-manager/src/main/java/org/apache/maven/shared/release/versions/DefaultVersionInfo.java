@@ -60,7 +60,7 @@ public class DefaultVersionInfo
 {
     private final String strVersion;
 
-    private final List digits;
+    private final List<String> digits;
 
     private String annotation;
 
@@ -172,7 +172,7 @@ public class DefaultVersionInfo
         }
     }
 
-    public DefaultVersionInfo( List digits, String annotation, String annotationRevision, String buildSpecifier,
+    public DefaultVersionInfo( List<String> digits, String annotation, String annotationRevision, String buildSpecifier,
                                String annotationSeparator, String annotationRevSeparator, String buildSeparator )
     {
         this.digits = digits;
@@ -204,7 +204,7 @@ public class DefaultVersionInfo
         DefaultVersionInfo version = null;
         if ( digits != null )
         {
-            List digits = new ArrayList( this.digits );
+            List<String> digits = new ArrayList<String>( this.digits );
             String annotationRevision = this.annotationRevision;
             if ( StringUtils.isNumeric( annotationRevision ) )
             {
@@ -229,7 +229,7 @@ public class DefaultVersionInfo
      * @return the comparison value
      * @throws IllegalArgumentException if the components differ between the objects or if either of the annotations can not be determined.
      */
-    public int compareTo( Object obj )
+    public int compareTo( VersionInfo obj )
     {
         DefaultVersionInfo that = (DefaultVersionInfo) obj;
 
@@ -264,7 +264,7 @@ public class DefaultVersionInfo
             return false;
         }
 
-        return compareTo( obj ) == 0;
+        return compareTo( (VersionInfo) obj ) == 0;
     }
 
     /**
@@ -369,7 +369,7 @@ public class DefaultVersionInfo
      *
      * @param digits
      */
-    protected static String joinDigitString( List digits )
+    protected static String joinDigitString( List<String> digits )
     {
         return digits != null ? StringUtils.join( digits.iterator(), DIGIT_SEPARATOR_STRING ) : null;
     }
@@ -380,7 +380,7 @@ public class DefaultVersionInfo
      *
      * @param strDigits
      */
-    private List parseDigits( String strDigits )
+    private List<String> parseDigits( String strDigits )
     {
         return Arrays.asList( StringUtils.split( strDigits, DIGIT_SEPARATOR_STRING ) );
     }
@@ -394,7 +394,7 @@ public class DefaultVersionInfo
         return StringUtils.isEmpty( s ) ? null : s;
     }
 
-    public List getDigits()
+    public List<String> getDigits()
     {
         return digits;
     }

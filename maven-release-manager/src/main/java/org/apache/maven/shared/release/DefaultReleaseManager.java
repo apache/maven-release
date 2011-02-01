@@ -23,11 +23,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.LinkedHashSet;
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
@@ -51,32 +52,32 @@ public class DefaultReleaseManager
     /**
      * The phases of release to run, and in what order.
      */
-    private List preparePhases;
+    private List<String> preparePhases;
 
     /**
      * The phases of release to run to perform.
      */
-    private List performPhases;
+    private List<String> performPhases;
 
     /**
      * The phases of release to run to rollback changes
      */
-    private List rollbackPhases;
+    private List<String> rollbackPhases;
 
     /**
      * The phases to create a branch.
      */
-    private List branchPhases;
+    private List<String> branchPhases;
 
     /**
      * The phases to create update versions.
      */
-    private List updateVersionsPhases;
+    private List<String> updateVersionsPhases;
 
     /**
      * The available phases.
      */
-    private Map releasePhases;
+    private Map<String,ReleasePhase> releasePhases;
 
     /**
      * The configuration storage.
@@ -90,13 +91,13 @@ public class DefaultReleaseManager
 
     private static final int PHASE_SKIP = 0, PHASE_START = 1, PHASE_END = 2, GOAL_START = 11, GOAL_END = 12, ERROR = 99;
 
-    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         prepare( releaseDescriptor, releaseEnvironment, reactorProjects, true, false, null );
     }
 
-    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean resume,
+    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean resume,
                          boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -104,7 +105,7 @@ public class DefaultReleaseManager
     }
 
     public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                            List reactorProjects, boolean resume, boolean dryRun,
+                                            List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
                                             ReleaseManagerListener listener )
     {
         ReleaseResult result = new ReleaseResult();
@@ -133,14 +134,14 @@ public class DefaultReleaseManager
         return result;
     }
 
-    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean resume,
+    public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean resume,
                          boolean dryRun, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, listener, null );
     }
 
-    private void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean resume,
+    private void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean resume,
                           boolean dryRun, ReleaseManagerListener listener, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -228,13 +229,13 @@ public class DefaultReleaseManager
         updateListener( listener, "prepare", GOAL_END );
     }
 
-    public void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         rollback( releaseDescriptor, releaseEnvironment, reactorProjects, null );
     }
 
-    public void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
+    public void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
                           ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -242,9 +243,9 @@ public class DefaultReleaseManager
 
         releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, null );
 
-        for ( Iterator phases = rollbackPhases.iterator(); phases.hasNext(); )
+        for ( Iterator<String> phases = rollbackPhases.iterator(); phases.hasNext(); )
         {
-            String name = (String) phases.next();
+            String name = phases.next();
 
             ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
 
@@ -263,26 +264,26 @@ public class DefaultReleaseManager
         updateListener( listener, "prepare", GOAL_END );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         perform( releaseDescriptor, releaseEnvironment, reactorProjects, null, true );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean clean )
+    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         perform( releaseDescriptor, releaseEnvironment, reactorProjects, null, clean );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
+    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
                          ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         perform( releaseDescriptor, releaseEnvironment, reactorProjects, listener, true );
     }
 
-    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
+    public void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
                          ReleaseManagerListener listener, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -290,7 +291,7 @@ public class DefaultReleaseManager
     }
 
     public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                            List reactorProjects, ReleaseManagerListener listener )
+                                            List<MavenProject> reactorProjects, ReleaseManagerListener listener )
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -318,7 +319,7 @@ public class DefaultReleaseManager
         return result;
     }
 
-    private void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects,
+    private void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
                           ReleaseManagerListener listener, ReleaseResult result, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -328,9 +329,9 @@ public class DefaultReleaseManager
         
         ReleaseResult phaseResult = null;
 
-        for ( Iterator phases = performPhases.iterator(); phases.hasNext(); )
+        for ( Iterator<String> phases = performPhases.iterator(); phases.hasNext(); )
         {
-            String name = (String) phases.next();
+            String name = phases.next();
 
             ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
 
@@ -354,13 +355,13 @@ public class DefaultReleaseManager
         updateListener( listener, "perform", GOAL_END );
     }
 
-    public void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean dryRun )
+    public void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         branch( releaseDescriptor, releaseEnvironment, reactorProjects, dryRun, null );
     }
 
-    public void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects, boolean dryRun,
+    public void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean dryRun,
                         ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -368,9 +369,9 @@ public class DefaultReleaseManager
 
         releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, listener );
 
-        for ( Iterator phases = branchPhases.iterator(); phases.hasNext(); )
+        for ( Iterator<String> phases = branchPhases.iterator(); phases.hasNext(); )
         {
-            String name = (String) phases.next();
+            String name = phases.next();
 
             ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
 
@@ -399,7 +400,7 @@ public class DefaultReleaseManager
         updateListener( listener, "branch", GOAL_END );
     }
 
-    public void updateVersions( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public void updateVersions( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseManagerListener listener = null;
@@ -408,9 +409,9 @@ public class DefaultReleaseManager
 
         releaseDescriptor = loadReleaseDescriptor( releaseDescriptor, listener );
 
-        for ( Iterator phases = updateVersionsPhases.iterator(); phases.hasNext(); )
+        for ( Iterator<String> phases = updateVersionsPhases.iterator(); phases.hasNext(); )
         {
-            String name = (String) phases.next();
+            String name = phases.next();
 
             ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
 
@@ -470,19 +471,19 @@ public class DefaultReleaseManager
         }
     }
 
-    public void clean( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener, List reactorProjects )
+    public void clean( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener, List<MavenProject> reactorProjects )
     {
         updateListener( listener, "cleanup", PHASE_START );
 
         getLogger().info( "Cleaning up after release..." );
 
         configStore.delete( releaseDescriptor );
-        Set phases = new LinkedHashSet(preparePhases);
+        Set<String> phases = new LinkedHashSet<String>(preparePhases);
         phases.addAll(branchPhases);
 
-        for ( Iterator i = phases.iterator(); i.hasNext(); )
+        for ( Iterator<String> i = phases.iterator(); i.hasNext(); )
         {
-            String name = (String) i.next();
+            String name = i.next();
 
             ReleasePhase phase = (ReleasePhase) releasePhases.get( name );
 
@@ -524,9 +525,9 @@ public class DefaultReleaseManager
         }
     }
 
-    private List getGoalPhases( String name )
+    private List<String> getGoalPhases( String name )
     {
-        List phases = new ArrayList();
+        List<String> phases = new ArrayList<String>();
 
         if ( "prepare".equals( name ) )
         {
@@ -574,7 +575,7 @@ public class DefaultReleaseManager
 
     public void branch( ReleaseDescriptor releaseDescriptor,
                         Settings settings,
-                        List reactorProjects,
+                        List<MavenProject> reactorProjects,
                         boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -583,7 +584,7 @@ public class DefaultReleaseManager
 
     public void branch( ReleaseDescriptor releaseDescriptor,
                         Settings settings,
-                        List reactorProjects,
+                        List<MavenProject> reactorProjects,
                         boolean dryRun,
                         ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -593,7 +594,7 @@ public class DefaultReleaseManager
 
     public void perform( ReleaseDescriptor releaseDescriptor,
                          Settings settings,
-                         List reactorProjects )
+                         List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         perform( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );
@@ -601,7 +602,7 @@ public class DefaultReleaseManager
 
     public void perform( ReleaseDescriptor releaseDescriptor,
                          Settings settings,
-                         List reactorProjects,
+                         List<MavenProject> reactorProjects,
                          ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -610,7 +611,7 @@ public class DefaultReleaseManager
 
     public void perform( ReleaseDescriptor releaseDescriptor,
                          Settings settings,
-                         List reactorProjects,
+                         List<MavenProject> reactorProjects,
                          boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -619,7 +620,7 @@ public class DefaultReleaseManager
 
     public ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor,
                                             Settings settings,
-                                            List reactorProjects,
+                                            List<MavenProject> reactorProjects,
                                             ReleaseManagerListener listener )
     {
         return performWithResult( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, listener );
@@ -627,7 +628,7 @@ public class DefaultReleaseManager
 
     public void prepare( ReleaseDescriptor releaseDescriptor,
                          Settings settings,
-                         List reactorProjects )
+                         List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         prepare( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );
@@ -635,7 +636,7 @@ public class DefaultReleaseManager
 
     public void prepare( ReleaseDescriptor releaseDescriptor,
                          Settings settings,
-                         List reactorProjects,
+                         List<MavenProject> reactorProjects,
                          boolean resume,
                          boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -645,7 +646,7 @@ public class DefaultReleaseManager
 
     public void prepare( ReleaseDescriptor releaseDescriptor,
                          Settings settings,
-                         List reactorProjects,
+                         List<MavenProject> reactorProjects,
                          boolean resume,
                          boolean dryRun,
                          ReleaseManagerListener listener )
@@ -656,7 +657,7 @@ public class DefaultReleaseManager
 
     public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor,
                                             Settings settings,
-                                            List reactorProjects,
+                                            List<MavenProject> reactorProjects,
                                             boolean resume,
                                             boolean dryRun,
                                             ReleaseManagerListener listener )
@@ -666,7 +667,7 @@ public class DefaultReleaseManager
 
     public void rollback( ReleaseDescriptor releaseDescriptor,
                           Settings settings,
-                          List reactorProjects,
+                          List<MavenProject> reactorProjects,
                           ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -675,7 +676,7 @@ public class DefaultReleaseManager
 
     public void rollback( ReleaseDescriptor releaseDescriptor,
                           Settings settings,
-                          List reactorProjects )
+                          List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         rollback( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, null );

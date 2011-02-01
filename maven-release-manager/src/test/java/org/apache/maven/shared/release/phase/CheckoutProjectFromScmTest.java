@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
@@ -78,7 +79,7 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
-        List reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "", descriptor.getScmRelativePathProjectDirectory() );
@@ -108,7 +109,7 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
-        List reactorProjects = createReactorProjects( "scm-commit", "/multimodule-with-deep-subprojects" );
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/multimodule-with-deep-subprojects" );
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "", descriptor.getScmRelativePathProjectDirectory() );
@@ -138,7 +139,7 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
-        List reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
+        List<MavenProject> reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "root-project", descriptor.getScmRelativePathProjectDirectory() );

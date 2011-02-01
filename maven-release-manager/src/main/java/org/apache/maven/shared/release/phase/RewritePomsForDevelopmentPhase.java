@@ -43,7 +43,7 @@ public class RewritePomsForDevelopmentPhase
     /**
      * SCM URL translators mapped by provider name.
      */
-    private Map scmTranslators;
+    private Map<String,ScmTranslator> scmTranslators;
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
@@ -64,7 +64,7 @@ public class RewritePomsForDevelopmentPhase
                         "Unable to find original SCM info for '" + project.getName() + "'" );
                 }
 
-                ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
+                ScmTranslator translator = scmTranslators.get( scmRepository.getProvider() );
                 if ( translator != null )
                 {
                     Scm scm = (Scm) originalScmInfo.get( projectId );

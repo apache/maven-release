@@ -57,14 +57,14 @@ public class RestoreBackupPomsPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
-        for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
         {
-            MavenProject project = (MavenProject) projects.next();
+            MavenProject project = projects.next();
 
             restorePomBackup( releaseDescriptor, releaseEnvironment, project );
         }
@@ -74,7 +74,7 @@ public class RestoreBackupPomsPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );

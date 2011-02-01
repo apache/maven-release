@@ -63,7 +63,7 @@ public class MapVersionsPhase
         this.prompter = prompter;
     }
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
@@ -95,9 +95,9 @@ public class MapVersionsPhase
                 releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
             }
 
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
             {
-                MavenProject subProject = (MavenProject) i.next();
+                MavenProject subProject = i.next();
                 String subProjectId =
                     ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
 
@@ -130,9 +130,9 @@ public class MapVersionsPhase
         }
         else
         {
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
             {
-                MavenProject project = (MavenProject) i.next();
+                MavenProject project = i.next();
 
                 String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
@@ -334,7 +334,7 @@ public class MapVersionsPhase
         return nextVersion;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();

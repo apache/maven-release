@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.shared.release.ReleaseResult;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.StringInputStream;
@@ -29,8 +31,6 @@ import org.jmock.core.constraint.IsEqual;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ReturnStub;
 import org.jmock.core.stub.ThrowStub;
-
-import java.io.File;
 
 /**
  * Test the forked Maven executor.

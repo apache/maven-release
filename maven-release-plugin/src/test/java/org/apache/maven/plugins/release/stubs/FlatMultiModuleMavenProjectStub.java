@@ -60,9 +60,9 @@ public class FlatMultiModuleMavenProjectStub
         return getModel().getDistributionManagement();
     }
     
-    public List getModules()
+    public List<String> getModules()
     {
-        List modules = new ArrayList();
+        List<String> modules = new ArrayList<String>();
         modules.add( "../core" );
         modules.add( "../webapp" );
         modules.add( "../commons" );

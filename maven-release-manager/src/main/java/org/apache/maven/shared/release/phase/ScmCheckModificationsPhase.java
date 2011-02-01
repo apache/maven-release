@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -65,15 +66,15 @@ public class ScmCheckModificationsPhase
      *
      * @todo proper construction of filenames, especially release properties
      */
-    private Set excludedFiles = new HashSet( Arrays.asList( new String[] { "pom.xml.backup", "pom.xml.tag",
+    private Set<String> excludedFiles = new HashSet<String>( Arrays.asList( new String[] { "pom.xml.backup", "pom.xml.tag",
         "pom.xml.next", "pom.xml.branch", "release.properties", "pom.xml.releaseBackup" } ) );
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
 
-        List additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
+        List<String> additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
 
         if ( additionalExcludes != null )
         {
@@ -123,12 +124,12 @@ public class ScmCheckModificationsPhase
             throw new ReleaseScmCommandException( "Unable to check for local modifications", result );
         }
 
-        List changedFiles = result.getChangedFiles();
+        List<ScmFile> changedFiles = result.getChangedFiles();
 
         // TODO: would be nice for SCM status command to do this for me.
-        for ( Iterator i = changedFiles.iterator(); i.hasNext(); )
+        for ( Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); )
         {
-            ScmFile f = (ScmFile) i.next();
+            ScmFile f = i.next();
 
             String fileName = f.getPath().replace( '\\', '/' );
             fileName = fileName.substring( fileName.lastIndexOf( '/' ) + 1, fileName.length() );
@@ -143,9 +144,9 @@ public class ScmCheckModificationsPhase
         {
             StringBuffer message = new StringBuffer();
 
-            for ( Iterator i = changedFiles.iterator(); i.hasNext(); )
+            for ( Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); )
             {
-                ScmFile file = (ScmFile) i.next();
+                ScmFile file = i.next();
 
                 message.append( file.toString() );
 
@@ -161,7 +162,7 @@ public class ScmCheckModificationsPhase
         return relResult;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute

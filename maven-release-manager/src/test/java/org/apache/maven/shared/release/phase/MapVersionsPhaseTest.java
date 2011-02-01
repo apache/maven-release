@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -31,14 +34,10 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.jmock.Mock;
 import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.matcher.TestFailureMatcher;
 import org.jmock.core.stub.ReturnStub;
 import org.jmock.core.stub.ThrowStub;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Test the version mapping phase.
@@ -59,7 +58,7 @@ public class MapVersionsPhaseTest
             new ReturnStub( "2.0" ) );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -96,7 +95,7 @@ public class MapVersionsPhaseTest
             new ReturnStub( "2.0" ) );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -124,7 +123,7 @@ public class MapVersionsPhaseTest
     public void testMapReleaseVersionsNonInteractiveWithExplicitVersion()
         throws Exception
     {
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
 
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
 
@@ -163,7 +162,7 @@ public class MapVersionsPhaseTest
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
@@ -196,7 +195,7 @@ public class MapVersionsPhaseTest
             new ReturnStub( "2.0-SNAPSHOT" ) );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -227,7 +226,7 @@ public class MapVersionsPhaseTest
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
@@ -256,7 +255,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         // execute
         Mock mockPrompter = new Mock( Prompter.class );
@@ -296,7 +295,7 @@ public class MapVersionsPhaseTest
             new ThrowStub( new PrompterException( "..." ) ) );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -340,7 +339,7 @@ public class MapVersionsPhaseTest
             new ReturnStub( "2.0-SNAPSHOT" ) );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -367,7 +366,7 @@ public class MapVersionsPhaseTest
     {
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );

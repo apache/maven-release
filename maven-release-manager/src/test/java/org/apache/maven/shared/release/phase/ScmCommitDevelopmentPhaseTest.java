@@ -55,7 +55,7 @@ public class ScmCommitDevelopmentPhaseTest
     private static final String ROLLBACK_PREFIX =
         "[maven-release-manager] rollback changes from release preparation of ";
 
-    private List reactorProjects;
+    private List<MavenProject> reactorProjects;
 
     private MavenProject rootProject;
 
@@ -83,7 +83,7 @@ public class ScmCommitDevelopmentPhaseTest
         throws Exception
     {
         ReleaseDescriptor descriptor = createReleaseDescriptor( rootProject );
-        List reactorProjects = createReactorProjects();
+        List<MavenProject> reactorProjects = createReactorProjects();
 
         descriptor.setRemoteTagging( false );
         descriptor.setSuppressCommitBeforeTagOrBranch( true );
@@ -150,7 +150,7 @@ public class ScmCommitDevelopmentPhaseTest
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
     }
 
-    private List createReactorProjects()
+    private List<MavenProject> createReactorProjects()
         throws Exception
     {
         return createReactorProjects( "scm-commit/", "single-pom" );

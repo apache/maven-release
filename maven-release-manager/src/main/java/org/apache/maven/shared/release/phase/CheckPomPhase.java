@@ -52,7 +52,7 @@ public class CheckPomPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -96,9 +96,9 @@ public class CheckPomPhase
 
         boolean containsSnapshotProjects = false;
 
-        for ( Iterator it = reactorProjects.iterator(); it.hasNext(); )
+        for ( Iterator<MavenProject> it = reactorProjects.iterator(); it.hasNext(); )
         {
-            MavenProject project = (MavenProject) it.next();
+            MavenProject project = it.next();
 
             if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
             {
@@ -116,7 +116,7 @@ public class CheckPomPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute

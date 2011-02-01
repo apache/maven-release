@@ -60,7 +60,7 @@ public class CheckoutProjectFromScm
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List reactorProjects )
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -177,7 +177,7 @@ public class CheckoutProjectFromScm
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List reactorProjects )
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return simulate( releaseDescriptor, releaseEnvironment, reactorProjects );

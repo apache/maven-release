@@ -64,7 +64,7 @@ public class InputVariablesPhaseTest
             new ReturnStub( "tag-value" ) );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
@@ -91,7 +91,7 @@ public class InputVariablesPhaseTest
     public void testUnmappedVersion()
         throws Exception
     {
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -127,7 +127,7 @@ public class InputVariablesPhaseTest
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
@@ -158,7 +158,7 @@ public class InputVariablesPhaseTest
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
@@ -187,7 +187,7 @@ public class InputVariablesPhaseTest
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
@@ -215,7 +215,7 @@ public class InputVariablesPhaseTest
             new ThrowStub( new PrompterException( "..." ) ) );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
@@ -260,7 +260,7 @@ public class InputVariablesPhaseTest
         mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
         phase.setPrompter( (Prompter) mockPrompter.proxy() );
 
-        List reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseConfiguration = new ReleaseDescriptor();
         releaseConfiguration.setInteractive( false );

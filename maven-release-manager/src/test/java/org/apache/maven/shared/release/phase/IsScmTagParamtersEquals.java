@@ -1,6 +1,5 @@
 package org.apache.maven.shared.release.phase;
 
-import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTagParameters;
 import org.jmock.core.Constraint;
 

@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -74,7 +75,7 @@ public class RunPrepareGoalsPhaseTest
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
-        phase.execute( config, (Settings) null, (List) null );
+        phase.execute( config, (Settings) null, (List<MavenProject>) null );
 
         // just needs to survive the mock
         assertTrue( true );
@@ -121,7 +122,7 @@ public class RunPrepareGoalsPhaseTest
 
         try
         {
-            phase.execute( config, (Settings) null, (List) null );
+            phase.execute( config, (Settings) null, (List<MavenProject>) null );
 
             fail( "Should have thrown an exception" );
         }
@@ -173,7 +174,7 @@ public class RunPrepareGoalsPhaseTest
 
         phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
 
-        phase.execute( config, (Settings) null, (List) null );
+        phase.execute( config, (Settings) null, (List<MavenProject>) null );
 
         // just needs to survive the mock
         assertTrue( true );

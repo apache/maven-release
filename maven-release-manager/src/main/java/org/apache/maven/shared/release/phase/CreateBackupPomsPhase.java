@@ -40,7 +40,7 @@ public class CreateBackupPomsPhase
     extends AbstractBackupPomsPhase
 {
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List reactorProjects )
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -48,9 +48,9 @@ public class CreateBackupPomsPhase
         // remove previous backups, if any
         clean( reactorProjects );
 
-        for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
         {
-            MavenProject project = (MavenProject) projects.next();
+            MavenProject project = projects.next();
 
             createPomBackup( project );
         }
@@ -60,11 +60,11 @@ public class CreateBackupPomsPhase
         return result;
     }
 
-    public ReleaseResult clean( List reactorProjects )
+    public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 
-        for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
         {
             MavenProject project = (MavenProject) projects.next();
 
@@ -77,7 +77,7 @@ public class CreateBackupPomsPhase
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List reactorProjects )
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );

@@ -76,7 +76,7 @@ public class RestoreBackupPomsPhaseTest
     private void runExecuteOnProjects( String path )
         throws Exception
     {
-        List projects = getReactorProjects( getTestPath( path ) );
+        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
 
         ReleaseDescriptor desc = new ReleaseDescriptor();
         desc.setScmSourceUrl( "scm:svn:http://myhost/myrepo" );
@@ -85,12 +85,12 @@ public class RestoreBackupPomsPhaseTest
         testProjectIsRestored( projects );
     }
 
-    private void testProjectIsRestored( List reactorProjects )
+    private void testProjectIsRestored( List<MavenProject> reactorProjects )
         throws Exception
     {
-        for ( Iterator projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
         {
-            MavenProject project = (MavenProject) projects.next();
+            MavenProject project = projects.next();
 
             File pomFile = project.getFile();
 

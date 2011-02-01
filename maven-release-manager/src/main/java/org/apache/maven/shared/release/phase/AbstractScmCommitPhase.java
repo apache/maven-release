@@ -69,7 +69,7 @@ public abstract class AbstractScmCommitPhase
     protected String messageFormat;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List reactorProjects )
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
@@ -84,7 +84,7 @@ public abstract class AbstractScmCommitPhase
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List reactorProjects )
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -98,11 +98,11 @@ public abstract class AbstractScmCommitPhase
     }
 
     protected abstract void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                      List reactorProjects, ReleaseResult result, boolean simulating )
+                                      List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
         throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException;
 
     protected void performCheckins( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                    List reactorProjects, String message )
+                                    List<MavenProject> reactorProjects, String message )
         throws ReleaseScmRepositoryException, ReleaseExecutionException, ReleaseScmCommandException
     {
 
@@ -130,11 +130,11 @@ public abstract class AbstractScmCommitPhase
 
         if ( releaseDescriptor.isCommitByProject() )
         {
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
             {
-                MavenProject project = (MavenProject) i.next();
+                MavenProject project = i.next();
 
-                List pomFiles = createPomFiles( releaseDescriptor, project );
+                List<File> pomFiles = createPomFiles( releaseDescriptor, project );
                 ScmFileSet fileSet = new ScmFileSet( project.getFile().getParentFile(), pomFiles );
 
                 checkin( provider, repository, fileSet, releaseDescriptor, message );
@@ -142,7 +142,7 @@ public abstract class AbstractScmCommitPhase
         }
         else
         {
-            List pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
+            List<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), pomFiles );
 
             checkin( provider, repository, fileSet, releaseDescriptor, message );
@@ -173,10 +173,10 @@ public abstract class AbstractScmCommitPhase
         }
     }
 
-    protected void simulateCheckins( ReleaseDescriptor releaseDescriptor, List reactorProjects, ReleaseResult result,
+    protected void simulateCheckins( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, ReleaseResult result,
                                      String message )
     {
-        Collection pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
+        Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
         logInfo( result, "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
     }
 
@@ -195,9 +195,9 @@ public abstract class AbstractScmCommitPhase
                                      new Object[]{releaseDescriptor.getScmReleaseLabel()} );
     }
 
-    protected static List createPomFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )
+    protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )
     {
-        List pomFiles = new ArrayList();
+        List<File> pomFiles = new ArrayList<File>();
 
         pomFiles.add( ReleaseUtil.getStandardPom( project ) );
 
@@ -209,12 +209,12 @@ public abstract class AbstractScmCommitPhase
         return pomFiles;
     }
 
-    protected static List createPomFiles( ReleaseDescriptor releaseDescriptor, List reactorProjects )
+    protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
     {
-        List pomFiles = new ArrayList();
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        List<File> pomFiles = new ArrayList<File>();
+        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
         {
-            MavenProject project = (MavenProject) i.next();
+            MavenProject project = i.next();
             pomFiles.addAll( createPomFiles( releaseDescriptor, project ) );
         }
         return pomFiles;
