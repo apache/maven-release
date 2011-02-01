@@ -19,8 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.util.Arrays;
-
 import org.apache.maven.scm.ScmFileSet;
 import org.jmock.core.Constraint;
 
@@ -45,7 +43,7 @@ public class IsScmFileSetEquals
         ScmFileSet fs = (ScmFileSet) object;
 
         return fs.getBasedir().equals( fileSet.getBasedir() ) &&
-        Arrays.asList( fs.getFiles() ).equals( Arrays.asList( fileSet.getFiles() ) );
+         fs.getFileList().equals( fileSet.getFileList() );
     }
 
     public StringBuffer describeTo( StringBuffer stringBuffer )

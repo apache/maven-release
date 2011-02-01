@@ -25,6 +25,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.codehaus.plexus.PlexusTestCase;
@@ -73,7 +74,7 @@ public class RunPrepareGoalsPhaseTest
 
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
 
-        phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
 
         phase.execute( config, (Settings) null, (List<MavenProject>) null );
 
@@ -95,7 +96,7 @@ public class RunPrepareGoalsPhaseTest
             new IsAnything(), new IsEqual( Boolean.TRUE ), new IsAnything(), new IsAnything()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
 
-        phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
 
         phase.simulate( config, new DefaultReleaseEnvironment(), null );
 
@@ -103,6 +104,7 @@ public class RunPrepareGoalsPhaseTest
         assertTrue( true );
     }
 
+    @SuppressWarnings("deprecation")
     public void testExecuteException()
         throws ReleaseFailureException
     {
@@ -146,7 +148,7 @@ public class RunPrepareGoalsPhaseTest
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
-        phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
 
         try
         {
@@ -172,7 +174,7 @@ public class RunPrepareGoalsPhaseTest
         Mock mock = new Mock( MavenExecutor.class );
         mock.expects( new TestFailureMatcher( "Shouldn't invoke executeGoals" ) ).method( "executeGoals" );
 
-        phase.setMavenExecutor( (MavenExecutor) mock.proxy() );
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
 
         phase.execute( config, (Settings) null, (List<MavenProject>) null );
 
