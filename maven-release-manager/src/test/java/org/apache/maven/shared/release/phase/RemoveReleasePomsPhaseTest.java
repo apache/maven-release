@@ -21,7 +21,9 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.Maven;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
@@ -70,9 +72,15 @@ public class RemoveReleasePomsPhaseTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments = new Constraint[] { new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsAnything() };
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "remove" ).with( arguments ).will(
-            new ReturnStub( new RemoveScmResult( "...", Collections.singletonList( Maven.RELEASE_POMv4 ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "remove" )
+            .with( arguments )
+            .will( new ReturnStub( new RemoveScmResult( "...", Collections
+                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.DELETED ) ) ) ) );
 
+        
+        
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
@@ -99,8 +107,12 @@ public class RemoveReleasePomsPhaseTest
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments = new Constraint[] { new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsAnything() };
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "remove" ).with( arguments ).will(
-            new ReturnStub( new RemoveScmResult( "...", Collections.singletonList( Maven.RELEASE_POMv4 ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "remove" )
+            .with( arguments )
+            .will( new ReturnStub( new RemoveScmResult( "...", Collections
+                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.DELETED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );

@@ -24,7 +24,9 @@ import java.util.List;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.ScmTagParameters;
 import org.apache.maven.scm.command.tag.TagScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
@@ -86,8 +88,12 @@ public class ScmTagPhaseTest
         Constraint[] arguments =
             new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" ),
                 new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
-            new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "tag" )
+            .with( arguments )
+            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                       .getFile().getPath(), ScmFileStatus.TAGGED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -120,8 +126,12 @@ public class ScmTagPhaseTest
         Constraint[] arguments = new Constraint[]{new IsEqual( repository ), new IsScmFileSetEquals( fileSet ),
             new IsEqual( "release-label" ),
             new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
-            new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "tag" )
+            .with( arguments )
+            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                       .getFile().getPath(), ScmFileStatus.TAGGED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -152,8 +162,12 @@ public class ScmTagPhaseTest
         Constraint[] arguments = new Constraint[]{new IsEqual( repository ), new IsScmFileSetEquals( fileSet ),
             new IsEqual( "release-label" ),
             new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
-            new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "tag" )
+            .with( arguments )
+            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                       .getFile().getPath(), ScmFileStatus.TAGGED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -179,8 +193,12 @@ public class ScmTagPhaseTest
         Constraint[] arguments =
             new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsEqual( "release-label" ),
                 new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "tag" ).with( arguments ).will(
-            new ReturnStub( new TagScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "tag" )
+            .with( arguments )
+            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                       .getFile().getPath(), ScmFileStatus.TAGGED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );

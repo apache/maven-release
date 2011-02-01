@@ -21,7 +21,9 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
@@ -100,9 +102,15 @@ public class ScmCommitPreparationPhaseTest
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
             new IsEqual( PREFIX + "release-label" )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will( new ReturnStub(
-            new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "checkIn" )
+            .with( arguments )
+            .will( new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                       .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) ) );
 
+        
+        
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
 
@@ -133,8 +141,12 @@ public class ScmCommitPreparationPhaseTest
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
             new IsEqual( PREFIX + "release-label" )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will( new ReturnStub(
-            new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "checkIn" )
+            .with( arguments )
+            .will( new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                       .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -161,8 +173,12 @@ public class ScmCommitPreparationPhaseTest
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
             new IsEqual( "[maven-release-manager] prepare for next development iteration" )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will( new ReturnStub(
-            new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "checkIn" )
+            .with( arguments )
+            .will( new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                       .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -208,8 +224,12 @@ public class ScmCommitPreparationPhaseTest
         Mock scmProviderMock = new Mock( ScmProvider.class );
         Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
             new IsEqual( PREFIX + "release-label" )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkIn" ).with( arguments ).will( new ReturnStub(
-            new CheckInScmResult( "...", Collections.singletonList( rootProject.getFile() ) ) ) );
+        scmProviderMock
+            .expects( new InvokeOnceMatcher() )
+            .method( "checkIn" )
+            .with( arguments )
+            .will( new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                       .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
