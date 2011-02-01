@@ -53,7 +53,7 @@ public class PomFinderTest extends PlexusTestCase
 
         File pomFile = new File( pomUrl.getFile() );
         found = pf.parsePom( pomFile );
-        assertTrue( found );
+        assertTrue("pomFile not found pomUrl " + pomUrl + ", pomFile " + pomFile.getPath() , found );
 
         {
             File foundPom = pf.findMatchingPom( pomFile.getParentFile() );
