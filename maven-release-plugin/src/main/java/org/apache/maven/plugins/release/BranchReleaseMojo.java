@@ -19,15 +19,14 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
-import org.apache.commons.lang.StringUtils;
+import java.util.Arrays;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
-
-import java.util.Arrays;
 
 /**
  * Branch a project in SCM, using the same steps as the <tt>release:prepare</tt> goal, creating a branch instead of a tag.
