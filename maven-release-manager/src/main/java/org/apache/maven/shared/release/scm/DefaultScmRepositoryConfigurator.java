@@ -32,6 +32,8 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.StringUtils;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 
 /**
  * Tool that gets a configured SCM repository from release configuration.
@@ -49,6 +51,14 @@ public class DefaultScmRepositoryConfigurator
      * @plexus.requirement
      */
     private ScmManager scmManager;
+
+    /**
+     * When this plugin requires Maven 3.0 as minimum, this component can be removed and o.a.m.s.c.SettingsDecrypter be
+     * used instead.
+     * 
+     * @plexus.requirement role-hint="mng-4384"
+     */
+    private SecDispatcher secDispatcher;
 
     public ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
         throws ScmRepositoryException, NoSuchScmProviderException
@@ -99,7 +109,7 @@ public class DefaultScmRepositoryConfigurator
 
                     if ( password == null )
                     {
-                        password = server.getPassword();
+                        password = decrypt( server.getPassword(), host );
                     }
 
                     if ( privateKey == null )
@@ -109,7 +119,7 @@ public class DefaultScmRepositoryConfigurator
 
                     if ( passphrase == null )
                     {
-                        passphrase = server.getPassphrase();
+                        passphrase = decrypt( server.getPassphrase(), host );
                     }
                 }
             }
@@ -156,6 +166,29 @@ public class DefaultScmRepositoryConfigurator
         }
 
         return repository;
+    }
+
+    private String decrypt( String str, String server )
+    {
+        try
+        {
+            return secDispatcher.decrypt( str );
+        }
+        catch ( SecDispatcherException e )
+        {
+            String msg =
+                "Failed to decrypt password/passphrase for server " + server + ", using auth token as is: "
+                    + e.getMessage();
+            if ( getLogger().isDebugEnabled() )
+            {
+                getLogger().warn( msg, e );
+            }
+            else
+            {
+                getLogger().warn( msg );
+            }
+            return str;
+        }
     }
 
     public ScmProvider getRepositoryProvider( ScmRepository repository )

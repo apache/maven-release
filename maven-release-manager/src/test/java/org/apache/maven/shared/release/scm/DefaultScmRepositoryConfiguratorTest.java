@@ -113,6 +113,30 @@ public class DefaultScmRepositoryConfiguratorTest
         assertEquals( "check passphrase", "settings-passphrase", providerRepository.getPassphrase() );
     }
 
+    public void testGetConfiguredRepositoryWithEncryptedPasswords()
+        throws ScmRepositoryException, NoSuchScmProviderException
+    {
+        Settings settings = new Settings();
+        Server server = new Server();
+        server.setId( "localhost" );
+        server.setUsername( "testuser" );
+        server.setPassword( "{Ael0S2tnXv8H3X+gHKpZAvAA25D8+gmU2w2RrGaf5v8=}" );
+        server.setPassphrase( "{7zK9P8hNVeUHbTsjiA/vnOs0zUXbND+9MBNPvdvl+x4=}" );
+        settings.addServer( server );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm:svn:svn://localhost/repo" );
+
+        ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, settings );
+
+        ScmProviderRepositoryWithHost providerRepository =
+            (ScmProviderRepositoryWithHost) repository.getProviderRepository();
+        assertEquals( "check host", "localhost", providerRepository.getHost() );
+        assertEquals( "check username", "testuser", providerRepository.getUser() );
+        assertEquals( "check password", "testpass", providerRepository.getPassword() );
+        assertEquals( "check passphrase", "testphrase", providerRepository.getPassphrase() );
+    }
+
     public void testGetConfiguredRepositoryInvalidScmUrl()
         throws Exception
     {

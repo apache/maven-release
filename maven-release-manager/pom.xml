@@ -68,6 +68,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.sonatype.plexus</groupId>
+      <artifactId>plexus-sec-dispatcher</artifactId>
+      <version>1.3</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.apache.maven</groupId>
       <artifactId>maven-model</artifactId>
       <version>${mavenVersion}</version>
@@ -223,6 +229,9 @@
             <!-- Disabled for now - we can't mock classes from plexus-utils in surefire -->
             <exclude>**/ForkedMavenExecutorTest.java</exclude>
           </excludes>
+          <systemPropertyVariables>
+            <settings.security>${project.build.testOutputDirectory}/settings-security.xml</settings.security>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>
