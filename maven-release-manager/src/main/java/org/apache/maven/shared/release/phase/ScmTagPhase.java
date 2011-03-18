@@ -119,6 +119,7 @@ public class ScmTagPhase
                     "ScmTagPhase :: scmTagParameters remotingTag " + releaseDescriptor.isRemoteTagging() );
                 getLogger().debug(
                     "ScmTagPhase :: scmTagParameters scmRevision " + releaseDescriptor.getScmReleasedPomRevision() );
+                getLogger().debug( "ScmTagPhase :: fileSet  " + fileSet );
             }
             result = provider.tag( repository, fileSet, tagName, scmTagParameters );
         }
