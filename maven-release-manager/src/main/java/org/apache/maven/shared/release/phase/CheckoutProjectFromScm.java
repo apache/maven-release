@@ -154,7 +154,16 @@ public class CheckoutProjectFromScm
         String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();
         if ( StringUtils.isEmpty( scmRelativePathProjectDirectory ) )
         {
-            String basedir = ReleaseUtil.getCommonBasedir( reactorProjects );
+            String basedir;
+            try
+            {
+                basedir = ReleaseUtil.getCommonBasedir( reactorProjects );
+            }
+            catch ( IOException e )
+            {
+            	throw new ReleaseExecutionException("Exception occurred while calculating common basedir: " + e.getMessage(), e);
+            }
+
             String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();
             if ( rootProjectBasedir.length() > basedir.length() )
             {

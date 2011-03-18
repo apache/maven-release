@@ -44,7 +44,7 @@ public class ReleaseUtil
 
     public static final String POMv4 = "pom.xml";
 
-    private static final char FS = File.separatorChar;
+    private static final String FS = File.separator;
 
     /**
      * The line separator to use.
@@ -53,6 +53,7 @@ public class ReleaseUtil
 
     private ReleaseUtil()
     {
+        // noop
     }
 
     public static MavenProject getRootProject( List<MavenProject> reactorProjects )
@@ -164,7 +165,15 @@ public class ReleaseUtil
                                                                            List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
-        String basedir = getCommonBasedir( reactorProjects );
+        String basedir;
+        try
+        {
+            basedir = getCommonBasedir( reactorProjects );
+        }
+        catch ( IOException e )
+        {
+        	throw new ReleaseExecutionException("Exception occurred while calculating common basedir: " + e.getMessage(), e);
+        }
 
         int parentLevels =
             getBaseWorkingDirectoryParentCount( basedir,
@@ -180,11 +189,13 @@ public class ReleaseUtil
     }
 
     public static String getCommonBasedir( List<MavenProject> reactorProjects )
+        throws IOException
     {
         return getCommonBasedir( reactorProjects, FS );
     }
 
-    public static String getCommonBasedir( List<MavenProject> reactorProjects, char separator )
+    public static String getCommonBasedir( List<MavenProject> reactorProjects, String separator )
+        throws IOException
     {
         String[] baseDirs = new String[reactorProjects.size()];
         int idx = 0;
@@ -192,39 +203,28 @@ public class ReleaseUtil
         {
             MavenProject p = i.next();
 
-            // we can only normalize paths with /
-            String dir = FileUtils.normalize( p.getBasedir().getPath().replace( '\\', '/' ) );
-            if ( separator == '\\' )
-            {
-                // windows has case insensitive filesystem
-                // normalize to lowercase for comparison
+            String dir = p.getBasedir().getCanonicalPath();
 
-                // Not a comprehensive solution to case-insensitive filenames, but only seem to be getting bitten by
-                // C: vs c: as the rest of the path is being returned consistently. Overall this class should rely more
-                // on the Java IO classes instead of string parsing to avoid these issues.
-                dir = dir.toLowerCase( Locale.ENGLISH );
-            }
-
-            // always end in / so that we know what is a path and what is a partial directory name in the next call
-            if ( !dir.endsWith( "/" ) )
+            // always end with separator so that we know what is a path and what is a partial directory name in the
+            // next call
+            if ( !dir.endsWith( separator ) )
             {
-                dir = dir + "/";
+                dir = dir + separator;
             }
             baseDirs[idx++] = dir;
         }
 
         String basedir = StringUtils.getCommonPrefix( baseDirs );
 
-        if ( !basedir.endsWith( "/" ) )
+        if ( !basedir.endsWith( separator ) )
         {
-            basedir = basedir.substring( 0, basedir.lastIndexOf( "/" ) );
+            basedir = basedir.substring( 0, basedir.lastIndexOf( separator ) );
         }
 
-        if ( basedir.endsWith( "/" ) && basedir.length() > 1 )
+        if ( basedir.endsWith( separator ) && basedir.length() > 1 )
         {
             basedir = basedir.substring( 0, basedir.length() - 1 );
         }
-        basedir = basedir.replace( '/', separator );
 
         return basedir;
     }

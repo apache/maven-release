@@ -309,8 +309,17 @@ public abstract class AbstractRewritePomsPhase
             }
         }
 
+        String commonBasedir;
+        try
+        {
+        	commonBasedir = ReleaseUtil.getCommonBasedir( reactorProjects );
+        }
+        catch ( IOException e )
+        {
+        	throw new ReleaseExecutionException("Exception occurred while calculating common basedir: " + e.getMessage(), e);
+        }
         transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result,
-                      ReleaseUtil.getCommonBasedir( reactorProjects ) );
+                      commonBasedir );
     }
 
     /**

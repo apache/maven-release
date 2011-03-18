@@ -41,17 +41,17 @@ public class ReleaseUtilTest
         assertNull( ReleaseUtil.getStandardPom( null ) );
     }
 
-    public void testGetCommonBasedirSingleProject()
+    public void testGetCommonBasedirSingleProject() throws Exception
     {
         assertEquals( "/working/directory/flat-multi-module/project", ReleaseUtil.getCommonBasedir(
-            Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ), '/' ) );
+            Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ), "/" ) );
     }
 
-    public void testGetCommonBasedirSingleProjectWindows()
+    public void testGetCommonBasedirSingleProjectWindows() throws Exception
     {
-        assertEquals( "c:\\working\\directory\\flat-multi-module\\project", ReleaseUtil.getCommonBasedir(
-            Collections.singletonList( createProject( "c:\\working\\directory\\flat-multi-module\\project" ) ),
-            '\\' ) );
+        assertEquals( "C:\\working\\directory\\flat-multi-module\\project", ReleaseUtil.getCommonBasedir(
+            Collections.singletonList( createProject( "C:\\working\\directory\\flat-multi-module\\project" ) ),
+            "\\" ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModule()
@@ -60,24 +60,25 @@ public class ReleaseUtilTest
         assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "/working/directory/flat-multi-module/root-project" ),
                 createProject( "/working/directory/flat-multi-module/core" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
+                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleWindows()
         throws Exception
     {
-        assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "c:\\working\\directory\\flat-multi-module\\root-project" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), '\\' ) );
+        assertEquals( "C:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "C:\\working\\directory\\flat-multi-module\\root-project" ),
+                createProject( "C:\\working\\directory\\flat-multi-module\\core" ),
+                createProject( "C:\\working\\directory\\flat-multi-module\\webapp" )} ), "\\" ) );
     }
 
     public void testGetCommonBasedirUppercaseLowerCaseWindows()
         throws Exception
     {
-        assertEquals( "c:\\working\\root", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "c:\\working\\root" ), createProject( "C:\\WoRkInG\\root\\project1" ),
-                createProject( "c:\\working\\root\\project2" )} ), '\\' ) );
+        assertEquals( "C:\\WORKING\\root", ReleaseUtil.getCommonBasedir( Arrays.asList(
+            new MavenProject[]{createProject( "c:\\WORKING\\root", "C:\\WORKING\\root" ),
+                createProject( "c:\\working\\root\\project1", "C:\\WORKING\\root\\project1" ),
+                createProject( "C:\\WORKING\\root\\project2", "C:\\WORKING\\root\\project2" )} ), "\\" ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIds()
@@ -86,7 +87,7 @@ public class ReleaseUtilTest
         assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "/working/directory/flat-multi-module/release-parent" ),
                 createProject( "/working/directory/flat-multi-module/release-module1" ),
-                createProject( "/working/directory/flat-multi-module/release-module2" )} ), '/' ) );
+                createProject( "/working/directory/flat-multi-module/release-module2" )} ), "/" ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIdsWindows()
@@ -95,7 +96,7 @@ public class ReleaseUtilTest
         assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "c:\\working\\directory\\flat-multi-module\\release-parent" ),
                 createProject( "c:\\working\\directory\\flat-multi-module\\release-module1" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ), '\\' ) );
+                createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ), "\\" ) );
     }
 
     public void testGetCommonBasedirOfRegularMultiModule()
@@ -104,7 +105,7 @@ public class ReleaseUtilTest
         assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
             new MavenProject[]{createProject( "/working/directory/flat-multi-module" ),
                 createProject( "/working/directory/flat-multi-module/core" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
+                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
     }
 
     public void testGetCommonBasedirOfRegularMultiModuleParentNotBeeingFirstInReactor()
@@ -114,7 +115,7 @@ public class ReleaseUtilTest
             new MavenProject[]{
                 createProject( "/working/directory/flat-multi-module/core" ),
                 createProject( "/working/directory/flat-multi-module" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
+                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
     }
 
     public void testGetCommonBasedirOfRegularMultiModuleWindowsPath()
@@ -124,7 +125,7 @@ public class ReleaseUtilTest
             new MavenProject[]{
                 createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
                 createProject( "c:\\working\\directory\\flat-multi-module" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), '\\' ) );
+                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), "\\" ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleWithMultipleLevels()
@@ -135,7 +136,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/core" ),
                 createProject( "/working/directory/flat-multi-module/common/utils" ),
                 createProject( "/working/directory/flat-multi-module/common/xml" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), '/' ) );
+                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
     }
 
     public void testGetCommonBasedirOfFlatMultiModuleWithDescendingHierarchy()
@@ -146,7 +147,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/level/1/2" ),
                 createProject( "/working/directory/flat-multi-module/level/1" ),
                 createProject( "/working/directory/flat-multi-module/level" ),
-                createProject( "/working/directory/flat-multi-module/other" )} ), '/' ) );
+                createProject( "/working/directory/flat-multi-module/other" )} ), "/" ) );
     }
 
     public void testGetBaseScmUrlSingleLevel()
@@ -223,13 +224,24 @@ public class ReleaseUtilTest
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
-    private static MavenProject createProject( final String basedir )
+    private static MavenProject createProject( String basedir )
+    {
+    	return createProject( basedir, basedir );
+    }
+    
+    private static MavenProject createProject( final String basedirPath, final String basedirCanonicalPath )
     {
         return new MavenProject()
         {
             public File getBasedir()
             {
-                return new File( basedir );
+                return new File( basedirPath )
+                {
+                	public String getCanonicalPath()
+                	{
+                		return basedirCanonicalPath;
+                	}
+                };
             }
         };
     }
