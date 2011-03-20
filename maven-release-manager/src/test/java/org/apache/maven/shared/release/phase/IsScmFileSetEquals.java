@@ -42,6 +42,9 @@ public class IsScmFileSetEquals
     {
         ScmFileSet fs = (ScmFileSet) object;
 
+        System.out.println( "fs.getBasedir " + fs.getBasedir() );
+        System.out.println( "fileSet.getBasedir " + fs.getBasedir() );
+        
         return fs.getBasedir().equals( fileSet.getBasedir() ) &&
          fs.getFileList().equals( fileSet.getFileList() );
     }

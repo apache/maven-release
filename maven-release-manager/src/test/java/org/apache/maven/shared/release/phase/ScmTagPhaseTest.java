@@ -134,6 +134,7 @@ public class ScmTagPhaseTest
         Constraint[] arguments = new Constraint[]{new IsEqual( repository ), new IsScmFileSetEquals( fileSet ),
             new IsEqual( "release-label" ),
             new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) )};
+        
         scmProviderMock
             .expects( new InvokeOnceMatcher() )
             .method( "tag" )
