@@ -142,7 +142,8 @@ public class CheckoutProjectFromScmTest
         List<MavenProject> reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        assertEquals( "root-project", descriptor.getScmRelativePathProjectDirectory() );
+        assertEquals( "not found root-project but " + descriptor.getScmRelativePathProjectDirectory(), "root-project",
+                      descriptor.getScmRelativePathProjectDirectory() );
     }
 
 }
