@@ -276,4 +276,10 @@ public class ReleaseUtil
         }
         return url;
     }
+    
+    public static boolean isSymlink(File file) 
+        throws IOException
+    {
+        return !file.getAbsolutePath().equals( file.getCanonicalPath() );
+    }
 }

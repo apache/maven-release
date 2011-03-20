@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +27,7 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
@@ -50,6 +52,7 @@ public class RewritePomsForReleasePhase
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
                                  ReleaseResult result, String commonBasedir )
+    throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
@@ -59,7 +62,14 @@ public class RewritePomsForReleasePhase
             {
                 releaseDescriptor.mapOriginalScmInfo( projectId, project.getScm() );
 
-                translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, commonBasedir );
+                try
+                {
+                    translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, commonBasedir );
+                }
+                catch ( IOException e )
+                {
+                    throw new ReleaseExecutionException( e.getMessage(), e );
+                }
             }
             else
             {
@@ -77,10 +87,17 @@ public class RewritePomsForReleasePhase
                         scmRoot = new Element( "scm" );
                         scmRoot.addContent( "\n  " );
 
-                        if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
-                                           commonBasedir ) )
+                        try
                         {
-                            rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
+                            if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
+                                               commonBasedir ) )
+                            {
+                                rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
+                            }
+                        }
+                        catch ( IOException e )
+                        {
+                            throw new ReleaseExecutionException(e.getMessage(), e);
                         }
                     }
                 }
@@ -90,7 +107,7 @@ public class RewritePomsForReleasePhase
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Element scmRoot,
                                   Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult,
-                                  String commonBasedir )
+                                  String commonBasedir ) throws IOException
     {
         ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
         boolean result = false;
@@ -111,8 +128,11 @@ public class RewritePomsForReleasePhase
                 tagBase = "scm:svn:" + tagBase;
             }
 
+            String workingDirectory =
+                ReleaseUtil.isSymlink( project.getBasedir() ) ? project.getBasedir().getCanonicalPath()
+                                : project.getBasedir().getAbsolutePath();
             int count =
-                ReleaseUtil.getBaseWorkingDirectoryParentCount( commonBasedir, project.getBasedir().getAbsolutePath() );
+                ReleaseUtil.getBaseWorkingDirectoryParentCount( commonBasedir, workingDirectory );
             if ( scm.getConnection() != null )
             {
                 String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getConnection() );
