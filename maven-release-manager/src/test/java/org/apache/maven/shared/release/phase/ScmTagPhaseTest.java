@@ -100,8 +100,8 @@ public class ScmTagPhaseTest
             .expects( new InvokeOnceMatcher() )
             .method( "tag" )
             .with( arguments )
-            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                       .getFile().getPath(), ScmFileStatus.TAGGED ) ) ) ) );
+            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( getPath (rootProject
+                       .getFile() ), ScmFileStatus.TAGGED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -138,8 +138,8 @@ public class ScmTagPhaseTest
             .expects( new InvokeOnceMatcher() )
             .method( "tag" )
             .with( arguments )
-            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                       .getFile().getPath(), ScmFileStatus.TAGGED ) ) ) ) );
+            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( getPath (rootProject
+                       .getFile() ), ScmFileStatus.TAGGED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -174,8 +174,8 @@ public class ScmTagPhaseTest
             .expects( new InvokeOnceMatcher() )
             .method( "tag" )
             .with( arguments )
-            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                       .getFile().getPath(), ScmFileStatus.TAGGED ) ) ) ) );
+            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( getPath (rootProject
+                       .getFile() ), ScmFileStatus.TAGGED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
@@ -205,8 +205,8 @@ public class ScmTagPhaseTest
             .expects( new InvokeOnceMatcher() )
             .method( "tag" )
             .with( arguments )
-            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                       .getFile().getPath(), ScmFileStatus.TAGGED ) ) ) ) );
+            .will( new ReturnStub( new TagScmResult( "...", Collections.singletonList( new ScmFile( getPath( rootProject
+                       .getFile() ), ScmFileStatus.TAGGED ) ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
