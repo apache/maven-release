@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
@@ -71,6 +73,12 @@ public class ScmTagPhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-tag" );
     }
 
+    private static String getPath(File file) 
+        throws IOException
+    {
+        return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();
+    }
+    
     public void testTag()
         throws Exception
     {
@@ -78,7 +86,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        descriptor.setWorkingDirectory( getPath(rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
         descriptor.setScmCommentPrefix( "[my prefix]" );
 
@@ -112,7 +120,7 @@ public class ScmTagPhaseTest
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         descriptor.setScmSourceUrl( scmUrl );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        descriptor.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
         descriptor.setScmCommentPrefix( "[my prefix]" );
         descriptor.setScmTagBase( "http://svn.example.com/repos/project/releases/" );
@@ -148,7 +156,7 @@ public class ScmTagPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         descriptor.setScmSourceUrl( rootProject.getScm().getConnection() );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        descriptor.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
         descriptor.setScmCommentPrefix( "[my prefix]" );
 
@@ -183,7 +191,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms" );
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        descriptor.setWorkingDirectory( getPath (rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
         descriptor.setScmCommentPrefix( "[my prefix]" );
 
@@ -232,7 +240,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        descriptor.setWorkingDirectory( getPath ( rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
 
         Mock scmProviderMock = new Mock( ScmProvider.class );
@@ -372,12 +380,13 @@ public class ScmTagPhaseTest
         return createReactorProjects( "scm-commit/", "single-pom" );
     }
 
-    private static ReleaseDescriptor createReleaseDescriptor()
+    private static ReleaseDescriptor createReleaseDescriptor() 
+        throws IOException
     {
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         descriptor.setScmSourceUrl( "scm-url" );
         descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        descriptor.setWorkingDirectory( getPath(getTestFile( "target/test/checkout" ) ) );
         return descriptor;
     }
 
