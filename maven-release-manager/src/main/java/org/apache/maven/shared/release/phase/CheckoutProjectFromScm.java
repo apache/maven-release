@@ -165,6 +165,18 @@ public class CheckoutProjectFromScm
             }
 
             String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();
+            try
+            {
+                // take care about symlink
+                if ( !rootProject.getBasedir().getAbsolutePath().equals( rootProject.getBasedir().getCanonicalPath() ) )
+                {
+                    rootProjectBasedir = rootProject.getBasedir().getCanonicalPath();
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new ReleaseExecutionException( e.getMessage(), e );
+            }
             if ( rootProjectBasedir.length() > basedir.length() )
             {
                 scmRelativePathProjectDirectory = rootProjectBasedir.substring( basedir.length() + 1 );
