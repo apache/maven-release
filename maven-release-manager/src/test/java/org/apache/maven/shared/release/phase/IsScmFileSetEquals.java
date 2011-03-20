@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.IOException;
+
 import org.apache.maven.scm.ScmFileSet;
 import org.jmock.core.Constraint;
 
@@ -42,13 +44,16 @@ public class IsScmFileSetEquals
     {
         ScmFileSet fs = (ScmFileSet) object;
         
-        System.out.println( "fs.getBasedir " + fs.getBasedir() );
-        System.out.println( "fileSet.getBasedir " + fs.getBasedir() );
-        System.out.println( "equals " + fs.getBasedir().equals( fileSet.getBasedir() ) );
-        
-        
-        return fs.getBasedir().equals( fileSet.getBasedir() ) &&
-         fs.getFileList().equals( fileSet.getFileList() );
+        try
+        {
+            return fs.getBasedir().getCanonicalPath().equals( fileSet.getBasedir().getCanonicalPath() )
+                && fs.getFileList().equals( fileSet.getFileList() );
+        }
+        catch ( IOException e )
+        {
+            // should not happened so RuntimeException
+            throw new RuntimeException(e.getMessage(), e);
+        }
     }
 
     public StringBuffer describeTo( StringBuffer stringBuffer )
