@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -313,7 +314,14 @@ public abstract class AbstractReleaseTestCase
         String actual = read( actualFile, normalizeLineEndings );
         String expected = read( expectedFile, normalizeLineEndings );
         expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
-        assertEquals( "Check the transformed POM", expected, actual );
+        StringBuilder sb = new StringBuilder( "Check the transformed POM" );
+        sb.append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "expected : "  ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( expected ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( "actual : "  ).append( SystemUtils.LINE_SEPARATOR );
+        sb.append( actual ).append( SystemUtils.LINE_SEPARATOR );
+        
+        assertEquals( sb.toString() , expected, actual );
     }
 
     /**
