@@ -73,7 +73,7 @@ public class ScmTagPhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-tag" );
     }
 
-    private static String getPath(File file) 
+    public static String getPath(File file) 
         throws IOException
     {
         return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();

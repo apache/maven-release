@@ -356,4 +356,10 @@ public abstract class AbstractReleaseTestCase
         }
         return "file://" + getTestFile( "src/test/remote-repository" ).getCanonicalPath().replace( '\\', '/' );
     }
+    
+    public static String getPath( File file )
+        throws IOException
+    {
+        return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();
+    }    
 }

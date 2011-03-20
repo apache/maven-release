@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.config;
  */
 
 import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
@@ -55,10 +56,10 @@ public class PropertiesReleaseDescriptorStoreTest
     }
 
     public void testReadFromFileUsingWorkingDirectory()
-        throws ReleaseDescriptorStoreException
+        throws Exception
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test-classes" ).getAbsolutePath() );
+        releaseDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath(  getTestFile( "target/test-classes" ) ) );
         ReleaseDescriptor config = store.read( releaseDescriptor );
 
         ReleaseDescriptor expected = createExcpectedReleaseConfiguration();
@@ -88,7 +89,7 @@ public class PropertiesReleaseDescriptorStoreTest
     }
 
     public void testMergeFromEmptyFile()
-        throws ReleaseDescriptorStoreException
+        throws ReleaseDescriptorStoreException, IOException
     {
         File file = getTestFile( "target/test-classes/empty-release.properties" );
 
@@ -99,7 +100,7 @@ public class PropertiesReleaseDescriptorStoreTest
     }
 
     public void testMergeFromMissingFile()
-        throws ReleaseDescriptorStoreException
+        throws ReleaseDescriptorStoreException, IOException
     {
         File file = getTestFile( "target/test-classes/no-release.properties" );
 
@@ -126,7 +127,7 @@ public class PropertiesReleaseDescriptorStoreTest
     }
 
     public void testWriteToWorkingDirectory()
-        throws ReleaseDescriptorStoreException
+        throws Exception
     {
         File file = getTestFile( "target/test-classes/new/release.properties" );
         file.delete();
@@ -134,12 +135,12 @@ public class PropertiesReleaseDescriptorStoreTest
         file.getParentFile().mkdirs();
 
         ReleaseDescriptor config = createReleaseConfigurationForWriting();
-        config.setWorkingDirectory( file.getParentFile().getAbsolutePath() );
+        config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
         store.write( config );
 
         ReleaseDescriptor rereadDescriptor = store.read( file );
-        rereadDescriptor.setWorkingDirectory( file.getParentFile().getAbsolutePath() );
+        rereadDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
         assertEquals( "compare configuration", config, rereadDescriptor );
     }
@@ -240,7 +241,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertTrue( "Check file already exists", file.exists() );
 
         ReleaseDescriptor config = createReleaseConfigurationForWriting();
-        config.setWorkingDirectory( file.getParentFile().getAbsolutePath() );
+        config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
         store.delete( config );
 
@@ -256,7 +257,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertFalse( "Check file already exists", file.exists() );
 
         ReleaseDescriptor config = createReleaseConfigurationForWriting();
-        config.setWorkingDirectory( file.getParentFile().getAbsolutePath() );
+        config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
         store.delete( config );
 
@@ -326,13 +327,14 @@ public class PropertiesReleaseDescriptorStoreTest
     }
 
     public ReleaseDescriptor createMergeConfiguration()
+        throws IOException
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setScmUsername( "username" );
         // Not setting other optional SCM settings for brevity
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test-working-directory" ).getAbsolutePath() );
+        releaseDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath( getTestFile( "target/test-working-directory" ) ) );
         // Not setting non-override setting completedPhase
 
         return releaseDescriptor;

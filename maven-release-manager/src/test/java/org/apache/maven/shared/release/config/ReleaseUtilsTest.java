@@ -21,8 +21,10 @@ package org.apache.maven.shared.release.config;
 
 import junit.framework.TestCase;
 import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * ReleaseDescriptor Tester.
@@ -32,7 +34,8 @@ import java.io.File;
 public class ReleaseUtilsTest
     extends TestCase
 {
-    public void testMergeConfigurationSourceEmpty()
+    public void testMergeConfigurationSourceEmpty() 
+        throws IOException
     {
         ReleaseDescriptor mergeDescriptor = createReleaseDescriptor();
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
@@ -42,7 +45,8 @@ public class ReleaseUtilsTest
         assertEquals( "Check merge", mergedReleaseDescriptor, mergedMergeDescriptor );
     }
 
-    public void testMergeEqualsWithUpdateWorkingCopyTrue()
+    public void testMergeEqualsWithUpdateWorkingCopyTrue() 
+        throws IOException
     {
         ReleaseDescriptor mergeDescriptor = createReleaseDescriptor();
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
@@ -53,7 +57,8 @@ public class ReleaseUtilsTest
         assertEquals( "Check merge", mergedReleaseDescriptor, mergedMergeDescriptor );
     }
 
-    public void testMergeConfigurationDestEmpty()
+    public void testMergeConfigurationDestEmpty() 
+        throws IOException
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
         ReleaseDescriptor mergedReleaseDescriptor = ReleaseUtils.merge( releaseDescriptor, new ReleaseDescriptor() );
@@ -62,12 +67,13 @@ public class ReleaseUtilsTest
         assertEquals( "Check merge", expectedDescriptor, releaseDescriptor );
     }
 
-    public void testMergeConfiguration()
+    public void testMergeConfiguration() 
+        throws IOException
     {
         File workingDirectory = new File( "." );
 
         ReleaseDescriptor mergeDescriptor =
-            createMergeDescriptor( workingDirectory.getAbsolutePath(), "completed-phase-merge" );
+            createMergeDescriptor( AbstractReleaseTestCase.getPath( workingDirectory ), "completed-phase-merge" );
 
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
@@ -77,7 +83,8 @@ public class ReleaseUtilsTest
         assertEquals( "Check merge", expected, releaseDescriptor );
     }
 
-    public void testEquals()
+    public void testEquals() 
+        throws IOException
     {
         ReleaseDescriptor originalReleaseDescriptor = createReleaseDescriptor();
         ReleaseDescriptor releaseDescriptor = copyReleaseDescriptor( originalReleaseDescriptor );
@@ -99,7 +106,8 @@ public class ReleaseUtilsTest
     }
 
     private static void doEqualsAssertions( ReleaseDescriptor releaseDescriptor,
-                                            ReleaseDescriptor originalReleaseDescriptor, String other, File otherFile )
+                                            ReleaseDescriptor originalReleaseDescriptor, String other, File otherFile ) 
+        throws IOException
     {
         ReleaseDescriptor origConfig = originalReleaseDescriptor;
         ReleaseDescriptor config = releaseDescriptor;
@@ -167,7 +175,7 @@ public class ReleaseUtilsTest
 
         if ( otherFile != null )
         {
-            config.setWorkingDirectory( otherFile.getAbsolutePath() );
+            config.setWorkingDirectory( AbstractReleaseTestCase.getPath( otherFile ) );
             assertFalse( "Check original comparison", config.equals( origConfig ) );
         }
 
@@ -229,7 +237,8 @@ public class ReleaseUtilsTest
         assertFalse( "Check original comparison", config.equals( origConfig ) );
     }
 
-    public void testHashCode()
+    public void testHashCode() 
+        throws IOException
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
@@ -271,10 +280,11 @@ public class ReleaseUtilsTest
     }
 
     private static ReleaseDescriptor createReleaseDescriptor()
+        throws IOException
     {
         File workingDirectory = new File( "." );
 
-        return createReleaseDescriptor( workingDirectory.getAbsolutePath() );
+        return createReleaseDescriptor(AbstractReleaseTestCase.getPath( workingDirectory ) );
     }
 
     private static ReleaseDescriptor createReleaseDescriptor( String workingDirectory )
