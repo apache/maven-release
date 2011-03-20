@@ -347,7 +347,13 @@ public abstract class AbstractReleaseTestCase
     }
 
     private String getRemoteRepositoryURL()
+      throws IOException
     {
-        return "file://" + getTestFile( "src/test/remote-repository" ).getAbsolutePath().replace( '\\', '/' );
+        File testFile = getTestFile( "src/test/remote-repository" );
+        if (testFile.getAbsolutePath().equals( testFile.getCanonicalPath() ) )
+        {
+            return "file://" + getTestFile( "src/test/remote-repository" ).getAbsolutePath().replace( '\\', '/' );
+        }
+        return "file://" + getTestFile( "src/test/remote-repository" ).getCanonicalPath().replace( '\\', '/' );
     }
 }
