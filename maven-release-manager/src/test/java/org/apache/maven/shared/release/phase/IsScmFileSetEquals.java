@@ -41,9 +41,11 @@ public class IsScmFileSetEquals
     public boolean eval( Object object )
     {
         ScmFileSet fs = (ScmFileSet) object;
-
+        
         System.out.println( "fs.getBasedir " + fs.getBasedir() );
         System.out.println( "fileSet.getBasedir " + fs.getBasedir() );
+        System.out.println( "equals " + fs.getBasedir().equals( fileSet.getBasedir() ) );
+        
         
         return fs.getBasedir().equals( fileSet.getBasedir() ) &&
          fs.getFileList().equals( fileSet.getFileList() );

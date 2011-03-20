@@ -167,8 +167,7 @@ public class CheckoutProjectFromScm
             String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();
             try
             {
-                // take care about symlink
-                if ( !rootProject.getBasedir().getAbsolutePath().equals( rootProject.getBasedir().getCanonicalPath() ) )
+                if ( ReleaseUtil.isSymlink( rootProject.getBasedir() ) )
                 {
                     rootProjectBasedir = rootProject.getBasedir().getCanonicalPath();
                 }

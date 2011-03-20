@@ -2,6 +2,7 @@
 atlassian-ide-plugin.xml
 *.iml
 *.iws
+.idea
 target
 .classpath
 .project
