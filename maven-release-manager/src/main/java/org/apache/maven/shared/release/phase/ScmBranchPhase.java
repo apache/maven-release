@@ -39,6 +39,7 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 
 import java.io.File;
 import java.util.List;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 
 /**
  * Branch the SCM repository.
@@ -64,12 +65,15 @@ public class ScmBranchPhase
         validateConfiguration( releaseDescriptor );
 
         logInfo( relResult, "Branching release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
+		
+        ReleaseDescriptor basedirAlignedReleaseDescriptor =
+            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
 
         ScmRepository repository;
         ScmProvider provider;
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+            repository = scmRepositoryConfigurator.getConfiguredRepository( basedirAlignedReleaseDescriptor.getScmSourceUrl(), releaseDescriptor, releaseEnvironment.getSettings() );
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
             
@@ -88,7 +92,7 @@ public class ScmBranchPhase
         BranchScmResult result;
         try
         {
-            ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) );
+            ScmFileSet fileSet = new ScmFileSet( new File(  basedirAlignedReleaseDescriptor.getWorkingDirectory() ) );
             String branchName = releaseDescriptor.getScmReleaseLabel();
             
             ScmBranchParameters scmBranchParameters = new ScmBranchParameters();

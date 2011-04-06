@@ -20,13 +20,19 @@ package org.apache.maven.plugins.release;
  */
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Iterator;
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
+
+import org.codehaus.plexus.util.FileUtils;
 
 /**
  * Branch a project in SCM, using the same steps as the <tt>release:prepare</tt> goal, creating a branch instead of a tag.
@@ -231,7 +237,7 @@ public class BranchReleaseMojo
 
         try
         {
-            releaseManager.branch( config, getReleaseEnvironment(), reactorProjects, dryRun );
+            releaseManager.branch( config, getReleaseEnvironment(), filterReactorProjects(reactorProjects), dryRun );
         }
         catch ( ReleaseExecutionException e )
         {
@@ -242,4 +248,19 @@ public class BranchReleaseMojo
             throw new MojoFailureException( e.getMessage(), e );
         }
     }
+	
+	public List filterReactorProjects(List reactorProjects) {
+		String currentDir = FileUtils.normalize( basedir.getAbsolutePath().replace( '\\', '/' ) );
+		List filteredList = new ArrayList();
+        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        {
+            MavenProject p = (MavenProject) i.next();
+			String dir = FileUtils.normalize( p.getBasedir().getAbsolutePath().replace( '\\', '/' ) );
+			if(dir.startsWith(currentDir))
+			{
+				filteredList.add(p);
+			}
+		}
+		return filteredList;
+	}
 }
