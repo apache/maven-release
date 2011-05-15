@@ -122,6 +122,10 @@
     <system>jira</system>
     <url>http://jira.codehaus.org/browse/MRELEASE</url>
   </issueManagement>
+  <ciManagement>
+    <system>Jenkins</system>
+    <url>https://builds.apache.org/hudson/job/maven-release/</url>
+  </ciManagement>
 
   <properties>
     <scmVersion>1.5</scmVersion>
