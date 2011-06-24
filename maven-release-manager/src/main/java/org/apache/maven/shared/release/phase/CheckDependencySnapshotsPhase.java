@@ -150,24 +150,28 @@ public class CheckDependencySnapshotsPhase
 
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
-                boolean addToFailures = true;
+                boolean addToFailures;
 
-                if ( "org.apache.maven.plugins".equals( artifact.getGroupId() ) &&
-                    "maven-release-plugin".equals( artifact.getArtifactId() ) )
+                if ( "org.apache.maven.plugins".equals( artifact.getGroupId() ) && "maven-release-plugin".equals(
+                    artifact.getArtifactId() ) )
                 {
                     // It's a snapshot of the release plugin. Maybe just testing - ask
                     // By default, we fail as for any other plugin
-                    if ( releaseDescriptor.isInteractive() )
+                    if ( releaseDescriptor.isSnapshotReleasePluginAllowed() )
+                    {
+                        addToFailures = false;
+                    }
+                    else if ( releaseDescriptor.isInteractive() )
                     {
                         try
                         {
                             String result;
                             if ( !releaseDescriptor.isSnapshotReleasePluginAllowed() )
                             {
-                                prompter.showMessage( "This project relies on a SNAPSHOT of the release plugin. " +
-                                    "This may be necessary during testing.\n" );
+                                prompter.showMessage( "This project relies on a SNAPSHOT of the release plugin. "
+                                                          + "This may be necessary during testing.\n" );
                                 result = prompter.prompt( "Do you want to continue with the release?",
-                                                          Arrays.asList( new String[]{"yes", "no"} ), "no" );
+                                                          Arrays.asList( new String[]{ "yes", "no" } ), "no" );
                             }
                             else
                             {
@@ -179,16 +183,24 @@ public class CheckDependencySnapshotsPhase
                                 addToFailures = false;
                                 releaseDescriptor.setSnapshotReleasePluginAllowed( true );
                             }
+                            else
+                            {
+                                addToFailures = true;
+                            }
                         }
                         catch ( PrompterException e )
                         {
                             throw new ReleaseExecutionException( e.getMessage(), e );
                         }
                     }
-                    else if ( releaseDescriptor.isSnapshotReleasePluginAllowed() )
+                    else
                     {
-                        addToFailures = false;
+                        addToFailures = true;
                     }
+                }
+                else
+                {
+                    addToFailures = true;
                 }
 
                 if ( addToFailures )

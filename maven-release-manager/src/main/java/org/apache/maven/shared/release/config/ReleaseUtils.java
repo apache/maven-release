@@ -55,10 +55,10 @@ public class ReleaseUtils
         mergeInto.setScmSourceUrl( mergeOverride( mergeInto.getScmSourceUrl(), toBeMerged.getScmSourceUrl() ) );
         mergeInto.setScmCommentPrefix(
             mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
-        mergeInto.setScmReleaseLabel(
-            mergeOverride( mergeInto.getScmReleaseLabel(), toBeMerged.getScmReleaseLabel() ) );
+        mergeInto.setScmReleaseLabel( mergeOverride( mergeInto.getScmReleaseLabel(), toBeMerged.getScmReleaseLabel() ) );
         mergeInto.setScmTagBase( mergeOverride( mergeInto.getScmTagBase(), toBeMerged.getScmTagBase() ) );
-        mergeInto.setScmTagNameFormat( mergeOverride( mergeInto.getScmTagNameFormat(), toBeMerged.getScmTagNameFormat() ) );
+        mergeInto.setScmTagNameFormat(
+            mergeOverride( mergeInto.getScmTagNameFormat(), toBeMerged.getScmTagNameFormat() ) );
         mergeInto.setScmBranchBase( mergeOverride( mergeInto.getScmBranchBase(), toBeMerged.getScmBranchBase() ) );
         mergeInto.setScmUsername( mergeOverride( mergeInto.getScmUsername(), toBeMerged.getScmUsername() ) );
         mergeInto.setScmPassword( mergeOverride( mergeInto.getScmPassword(), toBeMerged.getScmPassword() ) );
@@ -149,8 +149,14 @@ public class ReleaseUtils
         releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
         releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
         releaseDescriptor.setCompletionGoals( properties.getProperty( "completionGoals" ) );
+        String snapshotReleasePluginAllowedStr = properties.getProperty( "exec.snapshotReleasePluginAllowed" );
+        releaseDescriptor.setSnapshotReleasePluginAllowed( snapshotReleasePluginAllowedStr == null
+                                                               ? false
+                                                               : Boolean.valueOf(
+                                                                   snapshotReleasePluginAllowedStr ).booleanValue() );
         String remoteTaggingStr = properties.getProperty( "remoteTagging" );
-        releaseDescriptor.setRemoteTagging( remoteTaggingStr == null ? false : Boolean.valueOf( remoteTaggingStr ).booleanValue() );
+        releaseDescriptor.setRemoteTagging(
+            remoteTaggingStr == null ? false : Boolean.valueOf( remoteTaggingStr ).booleanValue() );
         String pushChanges = properties.getProperty( "pushChanges" );
         releaseDescriptor.setPushChanges( pushChanges == null ? true : Boolean.valueOf( pushChanges ).booleanValue() );
 

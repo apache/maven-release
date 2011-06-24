@@ -168,6 +168,8 @@ public class PropertiesReleaseDescriptorStore
             properties.setProperty( "completionGoals", config.getCompletionGoals() );
         }
 
+        properties.setProperty( "exec.snapshotReleasePluginAllowed", Boolean.toString( config.isSnapshotReleasePluginAllowed() ) );
+
         properties.setProperty( "remoteTagging", Boolean.toString( config.isRemoteTagging() ) );
 
         properties.setProperty( "pushChanges", Boolean.toString( config.isPushChanges() ) );
