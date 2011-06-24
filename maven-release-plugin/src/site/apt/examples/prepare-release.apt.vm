@@ -128,7 +128,7 @@ mvn release:prepare-with-pom
 </project>
 +-----
 
-  The tagNameFormat uses <<<@{>>> and <<<}>>> as delimiters in order to ensure that the default Maven property
+  The tagNameFormat uses <<<@\{>>> and <<<}>>> as delimiters in order to ensure that the default Maven property
   interpolation does not substitute the values before the version transformation has taken place.
 
   The following properties are supported:
