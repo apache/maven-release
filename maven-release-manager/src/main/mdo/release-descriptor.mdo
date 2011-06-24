@@ -614,7 +614,7 @@
         return null;
     }
 
-    boolean saveEquals( String a, String b )
+    boolean safeEquals( String a, String b )
     {
         return a != null ? a.equals( b ) : b == null;
     }
@@ -651,12 +651,12 @@
                return false;
            }
 
-        if ( !saveEquals( defaultDevelopmentVersion, that.defaultDevelopmentVersion ) ||
-             !saveEquals( scmRelativePathProjectDirectory, that.scmRelativePathProjectDirectory ) ||
-             !saveEquals( checkoutDirectory, that.checkoutDirectory ) ||
-             !saveEquals( performGoals, that.performGoals ) ||
-             !saveEquals( defaultReleaseVersion, that.defaultReleaseVersion ) ||
-             !saveEquals( scmReleasedPomRevision, that.scmReleasedPomRevision )
+        if ( !safeEquals( defaultDevelopmentVersion, that.defaultDevelopmentVersion ) ||
+             !safeEquals( scmRelativePathProjectDirectory, that.scmRelativePathProjectDirectory ) ||
+             !safeEquals( checkoutDirectory, that.checkoutDirectory ) ||
+             !safeEquals( performGoals, that.performGoals ) ||
+             !safeEquals( defaultReleaseVersion, that.defaultReleaseVersion ) ||
+             !safeEquals( scmReleasedPomRevision, that.scmReleasedPomRevision )
            )
         {
             return false;
@@ -678,7 +678,7 @@
         {
             return false;
         }
-        if ( !saveEquals( completedPhase, that.completedPhase ) )
+        if ( !safeEquals( completedPhase, that.completedPhase ) )
         {
             return false;
         }
@@ -720,55 +720,55 @@
                 return false;
             }
         }
-        if ( !saveEquals( additionalArguments, that.additionalArguments ) )
+        if ( !safeEquals( additionalArguments, that.additionalArguments ) )
         {
             return false;
         }
-        if ( !saveEquals( preparationGoals, that.preparationGoals ) )
+        if ( !safeEquals( preparationGoals, that.preparationGoals ) )
         {
             return false;
         }
-        if ( !saveEquals( completionGoals, that.completionGoals ) )
+        if ( !safeEquals( completionGoals, that.completionGoals ) )
         {
             return false;
         }
-        if ( !saveEquals( pomFileName, that.pomFileName ) )
+        if ( !safeEquals( pomFileName, that.pomFileName ) )
         {
             return false;
         }
-        if ( !saveEquals( scmPrivateKeyPassPhrase, that.scmPrivateKeyPassPhrase ) )
+        if ( !safeEquals( scmPrivateKeyPassPhrase, that.scmPrivateKeyPassPhrase ) )
         {
             return false;
         }
-        if ( !saveEquals( scmPassword, that.scmPassword ) )
+        if ( !safeEquals( scmPassword, that.scmPassword ) )
         {
             return false;
         }
-        if ( !saveEquals( scmPrivateKey, that.scmPrivateKey ) )
+        if ( !safeEquals( scmPrivateKey, that.scmPrivateKey ) )
         {
             return false;
         }
-        if ( !saveEquals( scmReleaseLabel, that.scmReleaseLabel ) )
+        if ( !safeEquals( scmReleaseLabel, that.scmReleaseLabel ) )
         {
             return false;
         }
-        if ( !saveEquals( scmTagBase, that.scmTagBase ) )
+        if ( !safeEquals( scmTagBase, that.scmTagBase ) )
         {
             return false;
         }
-        if ( !saveEquals( scmBranchBase, that.scmBranchBase ) )
+        if ( !safeEquals( scmBranchBase, that.scmBranchBase ) )
         {
             return false;
         }
-        if ( !saveEquals( scmSourceUrl, that.scmSourceUrl ) )
+        if ( !safeEquals( scmSourceUrl, that.scmSourceUrl ) )
         {
             return false;
         }
-        if ( !saveEquals( scmUsername, that.scmUsername ) )
+        if ( !safeEquals( scmUsername, that.scmUsername ) )
         {
             return false;
         }
-        if ( !saveEquals( workingDirectory, that.workingDirectory ) )
+        if ( !safeEquals( workingDirectory, that.workingDirectory ) )
         {
             return false;
         }
