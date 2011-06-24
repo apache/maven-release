@@ -77,7 +77,8 @@ public class InputVariablesPhase
     {
         try
         {
-            ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+            ScmRepository repository =
+                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
 
             return scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
@@ -92,7 +93,8 @@ public class InputVariablesPhase
         }
     }
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
@@ -156,8 +158,9 @@ public class InputVariablesPhase
             {
                 try
                 {
-                    tag = prompter.prompt( "What is SCM release tag or label for \"" + project.getName() + "\"? (" +
-                        project.getGroupId() + ":" + project.getArtifactId() + ")", defaultTag );
+                    tag =
+                        prompter.prompt( "What is SCM release tag or label for \"" + project.getName() + "\"? ("
+                            + project.getGroupId() + ":" + project.getArtifactId() + ")", defaultTag );
                 }
                 catch ( PrompterException e )
                 {
@@ -177,7 +180,8 @@ public class InputVariablesPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();

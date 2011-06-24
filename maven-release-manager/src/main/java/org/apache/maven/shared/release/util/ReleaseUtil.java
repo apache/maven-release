@@ -172,7 +172,8 @@ public class ReleaseUtil
         }
         catch ( IOException e )
         {
-        	throw new ReleaseExecutionException("Exception occurred while calculating common basedir: " + e.getMessage(), e);
+            throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
+                + e.getMessage(), e );
         }
 
         int parentLevels =
@@ -277,7 +278,7 @@ public class ReleaseUtil
         return url;
     }
     
-    public static boolean isSymlink(File file) 
+    public static boolean isSymlink( File file )
         throws IOException
     {
         return !file.getAbsolutePath().equals( file.getCanonicalPath() );

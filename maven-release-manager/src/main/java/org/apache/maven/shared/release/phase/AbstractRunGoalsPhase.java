@@ -45,7 +45,7 @@ public abstract class AbstractRunGoalsPhase
      *
      * @plexus.requirement role="org.apache.maven.shared.release.exec.MavenExecutor"
      */
-    private Map<String,MavenExecutor> mavenExecutors;
+    private Map<String, MavenExecutor> mavenExecutors;
 
     /**
      * @deprecated Use {@link AbstractRunGoalsPhase#execute(ReleaseDescriptor, ReleaseEnvironment, File, String)} instead.
@@ -70,8 +70,7 @@ public abstract class AbstractRunGoalsPhase
             {
                 logInfo( result, "Executing goals '" + goals + "'..." );
 
-                MavenExecutor mavenExecutor =
-                    (MavenExecutor) mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
+                MavenExecutor mavenExecutor = mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
 
                 if ( mavenExecutor == null )
                 {
@@ -107,7 +106,7 @@ public abstract class AbstractRunGoalsPhase
     {
         if ( mavenExecutors == null )
         {
-            mavenExecutors = new HashMap<String,MavenExecutor>();
+            mavenExecutors = new HashMap<String, MavenExecutor>();
         }
 
         mavenExecutors.put( id, executor );

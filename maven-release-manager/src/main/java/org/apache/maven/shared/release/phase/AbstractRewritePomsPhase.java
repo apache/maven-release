@@ -112,10 +112,8 @@ public abstract class AbstractRewritePomsPhase
                             List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        for ( Iterator<MavenProject> it = reactorProjects.iterator(); it.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = (MavenProject) it.next();
-
             logInfo( result, "Transforming '" + project.getName() + "'..." );
 
             transformProject( project, releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result );
@@ -123,8 +121,8 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor,
-                                   ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean simulate,
-                                   ReleaseResult result )
+                                   ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
+                                   boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Document document;
@@ -316,7 +314,8 @@ public abstract class AbstractRewritePomsPhase
         }
         catch ( IOException e )
         {
-        	throw new ReleaseExecutionException("Exception occurred while calculating common basedir: " + e.getMessage(), e);
+            throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
+                + e.getMessage(), e );
         }
         transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result,
                       commonBasedir );
@@ -535,18 +534,19 @@ public abstract class AbstractRewritePomsPhase
         XPath xpath;
         if ( !StringUtils.isEmpty( dependencyRoot.getNamespaceURI() ) )
         {
-            xpath = XPath.newInstance(
-                "./pom:" + groupTagName + "/pom:" + tagName + "[normalize-space(pom:groupId)='" + groupId +
-                    "' and normalize-space(pom:artifactId)='" + artifactId + "']" );
+            xpath =
+                XPath.newInstance( "./pom:" + groupTagName + "/pom:" + tagName + "[normalize-space(pom:groupId)='"
+                    + groupId + "' and normalize-space(pom:artifactId)='" + artifactId + "']" );
             xpath.addNamespace( "pom", dependencyRoot.getNamespaceURI() );
         }
         else
         {
-            xpath = XPath.newInstance( "./" + groupTagName + "/" + tagName + "[normalize-space(groupId)='" + groupId +
-                "' and normalize-space(artifactId)='" + artifactId + "']" );
+            xpath =
+                XPath.newInstance( "./" + groupTagName + "/" + tagName + "[normalize-space(groupId)='" + groupId
+                    + "' and normalize-space(artifactId)='" + artifactId + "']" );
         }
 
-        List dependencies = xpath.selectNodes( dependencyRoot );
+        List<Element> dependencies = xpath.selectNodes( dependencyRoot );
 
         //MRELEASE-147
         if ( ( dependencies == null || dependencies.isEmpty() ) && groupId.indexOf( "${" ) == -1 )
@@ -563,29 +563,28 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void updateDomVersion( String groupId, String artifactId, Map mappedVersions,
-                                   Map resolvedSnapshotDepedencies, String version, Map originalVersions,
+                                   Map resolvedSnapshotDependencies, String version, Map originalVersions,
                                    String groupTagName, String tagName, Element dependencyRoot, String projectId,
                                    Element properties, ReleaseResult result, ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         String key = ArtifactUtils.versionlessKey( groupId, artifactId );
         String mappedVersion = (String) mappedVersions.get( key );
-        String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDepedencies );
+        String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
         Object originalVersion = originalVersions.get( key );
 
         // workaround
         if ( originalVersion == null )
         {
-            originalVersion = getOriginalResolvedSnapshotVersion( key, resolvedSnapshotDepedencies );
+            originalVersion = getOriginalResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
         }
 
         try
         {
             List<Element> dependencies = getDependencies( groupId, artifactId, groupTagName, tagName, dependencyRoot );
 
-            for ( Iterator<Element> i = dependencies.iterator(); i.hasNext(); )
+            for ( Element dependency : dependencies )
             {
-                Element dependency = i.next();
                 String dependencyVersion = "";
                 Element versionElement = null;
 
@@ -599,8 +598,8 @@ public abstract class AbstractRewritePomsPhase
                 }
 
                 //MRELEASE-220
-                if ( mappedVersion != null && mappedVersion.endsWith( "SNAPSHOT" ) &&
-                    !dependencyVersion.endsWith( "SNAPSHOT" ) && !releaseDescriptor.isUpdateDependencies() )
+                if ( mappedVersion != null && mappedVersion.endsWith( "SNAPSHOT" )
+                    && !dependencyVersion.endsWith( "SNAPSHOT" ) && !releaseDescriptor.isUpdateDependencies() )
                 {
                     return;
                 }
@@ -609,8 +608,8 @@ public abstract class AbstractRewritePomsPhase
                 {
                     if ( ( mappedVersion != null ) || ( resolvedSnapshotVersion != null ) )
                     {
-                        logInfo( result, "Updating " + artifactId + " to " +
-                            ( ( mappedVersion != null ) ? mappedVersion : resolvedSnapshotVersion ) );
+                        logInfo( result, "Updating " + artifactId + " to "
+                            + ( ( mappedVersion != null ) ? mappedVersion : resolvedSnapshotVersion ) );
 
                         // If it was inherited, nothing to do
                         if ( dependency != null )
@@ -656,14 +655,14 @@ public abstract class AbstractRewritePomsPhase
                                         else if ( mappedVersion.equals( propertyValue ) )
                                         {
                                             //this property may have been updated during processing a sibling.
-                                            logInfo( result, "Ignoring artifact version update for expression: " +
-                                                mappedVersion + " because it is already updated." );
+                                            logInfo( result, "Ignoring artifact version update for expression: "
+                                                + mappedVersion + " because it is already updated." );
                                         }
                                         else if ( !mappedVersion.equals( versionText ) )
                                         {
-                                            if ( mappedVersion.matches( "\\$\\{project.+\\}" ) ||
-                                                mappedVersion.matches( "\\$\\{pom.+\\}" ) ||
-                                                "${version}".equals( mappedVersion ) )
+                                            if ( mappedVersion.matches( "\\$\\{project.+\\}" )
+                                                || mappedVersion.matches( "\\$\\{pom.+\\}" )
+                                                || "${version}".equals( mappedVersion ) )
                                             {
                                                 logInfo( result, "Ignoring artifact version update for expression: " +
                                                     mappedVersion );
@@ -672,11 +671,11 @@ public abstract class AbstractRewritePomsPhase
                                             else
                                             {
                                                 // the value of the expression conflicts with what the user wanted to release
-                                                throw new ReleaseFailureException(
-                                                    "The artifact (" + key + ") requires a " + "different version (" +
-                                                        mappedVersion + ") than what is found (" + propertyValue +
-                                                        ") for the expression (" + expression + ") in the " +
-                                                        "project (" + projectId + ")." );
+                                                throw new ReleaseFailureException( "The artifact (" + key
+                                                    + ") requires a " + "different version (" + mappedVersion
+                                                    + ") than what is found (" + propertyValue
+                                                    + ") for the expression (" + expression + ") in the " + "project ("
+                                                    + projectId + ")." );
                                             }
                                         }
                                     }

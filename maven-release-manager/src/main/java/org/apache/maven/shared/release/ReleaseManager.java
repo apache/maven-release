@@ -47,7 +47,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -75,8 +76,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean resume,
-                  boolean dryRun )
+    void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                  List<MavenProject> reactorProjects, boolean resume, boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -92,8 +93,8 @@ public interface ReleaseManager
      *
      * @deprecated Use {@link ReleaseManager#prepare(ReleaseDescriptor, ReleaseEnvironment, List, boolean, boolean)} instead.
      */
-    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects, boolean resume,
-                  boolean dryRun )
+    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
+                  boolean resume, boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -108,8 +109,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean resume,
-                  boolean dryRun, ReleaseManagerListener listener )
+    void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                  List<MavenProject> reactorProjects, boolean resume, boolean dryRun, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -126,18 +127,20 @@ public interface ReleaseManager
      *
      * @deprecated Use {@link ReleaseManager#prepare(ReleaseDescriptor, ReleaseEnvironment, List, boolean, boolean, ReleaseManagerListener)} instead.
      */
-    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects, boolean resume,
-                  boolean dryRun, ReleaseManagerListener listener )
+    void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
+                  boolean resume, boolean dryRun, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
-    ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
-                                     boolean resume, boolean dryRun, ReleaseManagerListener listener );
+    ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                     List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
+                                     ReleaseManagerListener listener );
 
     /**
      * @deprecated Use {@link ReleaseManager#prepareWithResult(ReleaseDescriptor, ReleaseEnvironment, List, boolean, boolean, ReleaseManagerListener)} instead.
      */
-    ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
-                                     boolean resume, boolean dryRun, ReleaseManagerListener listener );
+    ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
+                                     List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
+                                     ReleaseManagerListener listener );
 
     /**
      * Perform a release.
@@ -148,7 +151,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -175,8 +179,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
-                  ReleaseManagerListener listener )
+    void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                  List<MavenProject> reactorProjects, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -195,15 +199,14 @@ public interface ReleaseManager
                   ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
-    ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
-                                     ReleaseManagerListener listener );
+    ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                     List<MavenProject> reactorProjects, ReleaseManagerListener listener );
 
     /**
      * @deprecated Use {@link ReleaseManager#performWithResult(ReleaseDescriptor, ReleaseEnvironment, List, ReleaseManagerListener)} instead.
      */
-    ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
-                                     ReleaseManagerListener listener );
-
+    ReleaseResult performWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
+                                     List<MavenProject> reactorProjects, ReleaseManagerListener listener );
 
     /**
      * Perform a release, and optionnaly cleanup.
@@ -215,7 +218,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem performing the release
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
-    void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean clean )
+    void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                  List<MavenProject> reactorProjects, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -230,7 +234,8 @@ public interface ReleaseManager
      *
      * @deprecated Use {@link ReleaseManager#perform(ReleaseDescriptor, ReleaseEnvironment, List, boolean)} instead.
      */
-    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects, boolean clean )
+    void perform( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
+                  boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -250,7 +255,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem during release rollback
      * @throws ReleaseFailureException   if there is a problem during release rollback
      */
-    void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -277,8 +283,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem during release rollback
      * @throws ReleaseFailureException   if there is a problem during release rollback
      */
-    void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
-                   ReleaseManagerListener listener )
+    void rollback( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                   List<MavenProject> reactorProjects, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -307,7 +313,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem during release rollback
      * @throws ReleaseFailureException   if there is a problem during release rollback
      */
-    void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean dryRun )
+    void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                 List<MavenProject> reactorProjects, boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -322,7 +329,8 @@ public interface ReleaseManager
      *
      * @deprecated Use {@link ReleaseManager#branch(ReleaseDescriptor, ReleaseEnvironment, List, boolean)} instead.
      */
-    void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects, boolean dryRun )
+    void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
+                 boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -336,8 +344,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem during release rollback
      * @throws ReleaseFailureException   if there is a problem during release rollback
      */
-    void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean dryRun,
-                 ReleaseManagerListener listener )
+    void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                 List<MavenProject> reactorProjects, boolean dryRun, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -353,8 +361,8 @@ public interface ReleaseManager
      *
      * @deprecated Use {@link ReleaseManager#branch(ReleaseDescriptor, ReleaseEnvironment, List, boolean, ReleaseManagerListener)} instead.
      */
-    void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects, boolean dryRun,
-                 ReleaseManagerListener listener )
+    void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
+                 boolean dryRun, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
     
     /**
@@ -366,7 +374,8 @@ public interface ReleaseManager
      * @throws ReleaseExecutionException if there is a problem during release rollback
      * @throws ReleaseFailureException   if there is a problem during release rollback
      */
-    void updateVersions( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    void updateVersions( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                         List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
 }

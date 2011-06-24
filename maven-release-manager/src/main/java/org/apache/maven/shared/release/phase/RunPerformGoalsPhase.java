@@ -39,7 +39,8 @@ import java.util.List;
 public class RunPerformGoalsPhase
     extends AbstractRunGoalsPhase
 {
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         String additionalArguments = releaseDescriptor.getAdditionalArguments();
@@ -67,7 +68,7 @@ public class RunPerformGoalsPhase
         }
 
         String workDir = releaseDescriptor.getWorkingDirectory();
-        if ( workDir == null)
+        if ( workDir == null )
         {
             workDir = System.getProperty( "user.dir" );
         }
@@ -93,10 +94,12 @@ public class RunPerformGoalsPhase
 
         }
 
-        return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getCheckoutDirectory() ), additionalArguments );
+        return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getCheckoutDirectory() ),
+                        additionalArguments );
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();

@@ -37,20 +37,22 @@ import java.util.List;
 public class RunPrepareGoalsPhase
     extends AbstractRunGoalsPhase
 {
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getWorkingDirectory() ),
                         releaseDescriptor.getAdditionalArguments() );
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
 
-        logInfo( result, "Executing preparation goals - since this is simulation mode it is running against the " +
-            "original project, not the rewritten ones" );
+        logInfo( result, "Executing preparation goals - since this is simulation mode it is running against the "
+            + "original project, not the rewritten ones" );
 
         execute( releaseDescriptor, releaseEnvironment, reactorProjects );
 

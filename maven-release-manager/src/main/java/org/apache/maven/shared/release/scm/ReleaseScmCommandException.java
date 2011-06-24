@@ -32,7 +32,7 @@ public class ReleaseScmCommandException
 {
     public ReleaseScmCommandException( String message, ScmResult result )
     {
-        super( message + "\nProvider message:\n" + result.getProviderMessage() + "\nCommand output:\n" +
-            result.getCommandOutput() );
+        super( message + "\nProvider message:\n" + result.getProviderMessage() + "\nCommand output:\n"
+            + result.getCommandOutput() );
     }
 }

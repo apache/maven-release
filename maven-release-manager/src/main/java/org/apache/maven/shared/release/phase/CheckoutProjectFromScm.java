@@ -77,9 +77,8 @@ public class CheckoutProjectFromScm
 
             // the first step is a bit tricky, we need to know which provider! like e.g. "scm:jgit:http://"
             // the offset of 4 is because 'scm:' has 4 characters...
-            String providerPart = releaseDescriptor.getScmSourceUrl().substring( 0,
-                                                                                 releaseDescriptor.getScmSourceUrl().indexOf(
-                                                                                     ':', 4 ) );
+            String providerPart =
+                releaseDescriptor.getScmSourceUrl().substring( 0, releaseDescriptor.getScmSourceUrl().indexOf( ':', 4 ) );
             releaseDescriptor.setScmSourceUrl( providerPart + ":file://" + releaseDescriptor.getWorkingDirectory() );
             getLogger().info( "Performing a LOCAL checkout from " + releaseDescriptor.getScmSourceUrl() );
         }
@@ -161,7 +160,8 @@ public class CheckoutProjectFromScm
             }
             catch ( IOException e )
             {
-            	throw new ReleaseExecutionException("Exception occurred while calculating common basedir: " + e.getMessage(), e);
+                throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
+                    + e.getMessage(), e );
             }
 
             String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();

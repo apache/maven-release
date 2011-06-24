@@ -42,30 +42,31 @@ public class RawStreamPumper
         this.out = out;
         this.poll = poll;
     }
+
     public RawStreamPumper( InputStream in , OutputStream out )
     {
         this.in = in;
         this.out = out;
         this.poll = false;
     }
-    
+
     public void setDone()
     {
         done = true;
     }
-    
+
     public void closeInput() 
-        throws IOException 
+        throws IOException
     {
         in.close();
     }
-    
-    public void closeOutput() 
-        throws IOException 
+
+    public void closeOutput()
+        throws IOException
     {
         out.close();
     }
-    
+
     public void run()
     {
         try
@@ -77,19 +78,19 @@ public class RawStreamPumper
                     if ( in.available() > 0 )
                     {
                         int i = in.read( buffer );
-                        if (i != -1) 
+                        if ( i != -1 )
                         {
                             out.write( buffer, 0, i );
                             out.flush();
-                        } 
+                        }
                         else
                         {
                             done = true;
                         }
-                    } 
+                    }
                     else
                     {
-                        Thread.sleep( 1 );  
+                        Thread.sleep( 1 );
                     }
                 }
             }
@@ -98,17 +99,17 @@ public class RawStreamPumper
                 int i = in.read( buffer );
                 while ( i != -1 && !done )
                 {
-                    if ( i != -1 ) 
+                    if ( i != -1 )
                     {
                         out.write( buffer, 0, i );
                         out.flush();
-                    } 
+                    }
                     else
                     {
                         done = true;
                     }
                     i = in.read( buffer );
-                }                
+                }
             }
         }
         catch ( Throwable e )

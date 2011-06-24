@@ -63,7 +63,8 @@ public class MapVersionsPhase
         this.prompter = prompter;
     }
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
@@ -259,10 +260,9 @@ public class MapVersionsPhase
                 {
                     if ( convertToBranch )
                     {
-                        //branch modification
-                        if ( releaseDescriptor.isUpdateBranchVersions() && (
-                            ArtifactUtils.isSnapshot( project.getVersion() ) ||
-                                releaseDescriptor.isUpdateVersionsToSnapshot() ) )
+                        // branch modification
+                        if ( releaseDescriptor.isUpdateBranchVersions()
+                            && ( ArtifactUtils.isSnapshot( project.getVersion() ) || releaseDescriptor.isUpdateVersionsToSnapshot() ) )
                         {
                             nextVersion = releaseVersionInfo.getSnapshotVersionString();
                             if ( !releaseVersionIsExplicit && releaseDescriptor.isInteractive() )
@@ -280,15 +280,16 @@ public class MapVersionsPhase
                     }
                     else
                     {
-                        //working copy modification
-                        if ( ArtifactUtils.isSnapshot( project.getVersion() ) &&
-                            releaseDescriptor.isUpdateWorkingCopyVersions() )
+                        // working copy modification
+                        if ( ArtifactUtils.isSnapshot( project.getVersion() )
+                            && releaseDescriptor.isUpdateWorkingCopyVersions() )
                         {
                             nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
                             if ( releaseDescriptor.isInteractive() && !nextSnapshotVersionIsExplicit )
                             {
-                                nextVersion = prompter.prompt( "What is the new working copy version for \"" +
-                                    project.getName() + "\"? (" + projectId + ")", nextVersion );
+                                nextVersion =
+                                    prompter.prompt( "What is the new working copy version for \"" + project.getName()
+                                        + "\"? (" + projectId + ")", nextVersion );
                             }
                         }
                         else
@@ -302,8 +303,9 @@ public class MapVersionsPhase
                     nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
                     if ( releaseDescriptor.isInteractive()  && !nextSnapshotVersionIsExplicit )
                     {
-                        nextVersion = prompter.prompt( "What is the new development version for \"" +
-                            project.getName() + "\"? (" + projectId + ")", nextVersion );
+                        nextVersion =
+                            prompter.prompt( "What is the new development version for \"" + project.getName() + "\"? ("
+                                + projectId + ")", nextVersion );
                     }
                 }
             }
@@ -334,7 +336,8 @@ public class MapVersionsPhase
         return nextVersion;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();

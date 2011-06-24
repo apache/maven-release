@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import java.io.File;
 import java.util.List;
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTagParameters;
@@ -57,7 +58,7 @@ public class ScmTagPhase
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List reactorProjects )
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
@@ -66,12 +67,14 @@ public class ScmTagPhase
 
         if ( releaseDescriptor.getWaitBeforeTagging() > 0 )
         {
-            logInfo( relResult, "Waiting for " + releaseDescriptor.getWaitBeforeTagging() + " seconds before tagging the release." );
+            logInfo( relResult, "Waiting for " + releaseDescriptor.getWaitBeforeTagging()
+                + " seconds before tagging the release." );
             try
             {
                 Thread.sleep( releaseDescriptor.getWaitBeforeTagging() * 1000 );
             }
-            catch( InterruptedException e ) {
+            catch ( InterruptedException e )
+            {
                 // Ignore
             }
         }
@@ -139,7 +142,7 @@ public class ScmTagPhase
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List reactorProjects )
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -152,13 +155,13 @@ public class ScmTagPhase
         if ( releaseDescriptor.isRemoteTagging() )
         {
             logInfo( result,
-                     "Full run would be tagging working copy " + basedirAlignedReleaseDescriptor.getWorkingDirectory() +
-                         " with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
+                     "Full run would be tagging working copy " + basedirAlignedReleaseDescriptor.getWorkingDirectory()
+                         + " with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
         }
         else
         {
-            logInfo( result, "Full run would be tagging remotely " + basedirAlignedReleaseDescriptor.getScmSourceUrl() +
-                " with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
+            logInfo( result, "Full run would be tagging remotely " + basedirAlignedReleaseDescriptor.getScmSourceUrl()
+                + " with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );

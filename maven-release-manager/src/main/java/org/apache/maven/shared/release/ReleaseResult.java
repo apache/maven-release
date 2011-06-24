@@ -37,7 +37,7 @@ public class ReleaseResult
 
     private long endTime;
 
-    private final String LS = System.getProperty( "line.separator" );
+    private final static String LS = System.getProperty( "line.separator" );
 
     public void appendInfo( String message )
     {

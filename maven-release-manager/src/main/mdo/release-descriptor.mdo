@@ -18,8 +18,8 @@
   ~ under the License.
   -->
 
-<model xmlns="http://modello.codehaus.org/MODELLO/1.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.1.0 http://modello.codehaus.org/xsd/modello-1.1.0.xsd">
+<model xmlns="http://modello.codehaus.org/MODELLO/1.4.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://modello.codehaus.org/MODELLO/1.4.0 http://modello.codehaus.org/xsd/modello-1.4.0.xsd">
   <id>release-descriptor</id>
   <name>ReleaseDescriptor</name>
   <description>
@@ -511,9 +511,12 @@
      */
     public void mapResolvedSnapshotDependencies( String artifactName, String releaseVersion, String developmentVersion )
     {
-        if (resolvedSnapshotDependencies == null) {
+        if ( resolvedSnapshotDependencies == null )
+        {
             resolvedSnapshotDependencies = new java.util.HashMap();
-        } else {
+        }
+        else
+        {
             assert !resolvedSnapshotDependencies.containsKey( artifactName );
         }
 
@@ -532,7 +535,8 @@
      */
     public void mapReleaseVersion( String projectId, String nextVersion )
     {
-        if (releaseVersions == null) {
+        if ( releaseVersions == null )
+        {
             releaseVersions = new java.util.HashMap();
         }
 
@@ -547,7 +551,8 @@
      */
     public void mapDevelopmentVersion( String projectId, String nextVersion )
     {
-        if (developmentVersions == null) {
+        if ( developmentVersions == null )
+        {
             developmentVersions = new java.util.HashMap();
         }
 
@@ -562,9 +567,12 @@
      */
     public void mapOriginalScmInfo( String projectId, org.apache.maven.model.Scm scm )
     {
-        if (originalScmInfo == null) {
+        if ( originalScmInfo == null )
+        {
             originalScmInfo = new java.util.HashMap();
-        } else {
+        }
+        else
+        {
             assert !originalScmInfo.containsKey( projectId );
         }
 
@@ -591,8 +599,8 @@
             for ( java.util.Iterator i = reactorProjects.iterator(); i.hasNext(); )
             {
                 org.apache.maven.project.MavenProject project = (org.apache.maven.project.MavenProject) i.next();
-                originalVersions.put( org.apache.maven.artifact.ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
-                                      project.getVersion() );
+                originalVersions.put( org.apache.maven.artifact.ArtifactUtils.versionlessKey( project.getGroupId(),
+                                      project.getArtifactId() ), project.getVersion() );
             }
         }
         return originalVersions;
@@ -695,9 +703,12 @@
             return false;
         }
         if ( ( checkModificationExcludes == null || ( checkModificationExcludes != null && checkModificationExcludes.size() == 0) ) &&
-            ( that.checkModificationExcludes == null || ( that.checkModificationExcludes != null && that.checkModificationExcludes.size() == 0) ) ) {
+            ( that.checkModificationExcludes == null || ( that.checkModificationExcludes != null && that.checkModificationExcludes.size() == 0) ) )
+        {
             // Do nothing.  This is a Modello workaround
-        } else {
+        }
+        else
+        {
             if ( checkModificationExcludes != null ? !checkModificationExcludes.equals( that.checkModificationExcludes )
                 : that.checkModificationExcludes != null )
             {
@@ -705,9 +716,12 @@
             }
         }
         if ( ( developmentVersions == null || ( developmentVersions != null && developmentVersions.size() == 0) ) &&
-            ( that.developmentVersions == null || ( that.developmentVersions != null && that.developmentVersions.size() == 0) ) ) {
+            ( that.developmentVersions == null || ( that.developmentVersions != null && that.developmentVersions.size() == 0) ) )
+        {
             // Do nothing.  This is a Modello workaround
-        } else {
+        }
+        else
+        {
             if ( developmentVersions != null ? !developmentVersions.equals( that.developmentVersions )
                 : that.developmentVersions != null )
             {
@@ -715,18 +729,24 @@
             }
         }
         if ( ( originalScmInfo == null || (originalScmInfo != null && originalScmInfo.size() == 0 ) ) &&
-            ( that.originalScmInfo == null || ( that.originalScmInfo != null && that.originalScmInfo.size() == 0 ) ) ) {
+            ( that.originalScmInfo == null || ( that.originalScmInfo != null && that.originalScmInfo.size() == 0 ) ) )
+        {
             // Do nothing.  This is a Modello workaround
-        } else {
+        }
+        else
+        {
             if ( originalScmInfo != null ? !compareScmCollections( that.originalScmInfo ) : that.originalScmInfo != null )
             {
                 return false;
             }
         }
         if ( ( releaseVersions == null || ( releaseVersions != null && releaseVersions.size() == 0 ) ) &&
-            ( that.releaseVersions == null || ( that.releaseVersions != null && that.releaseVersions.size() == 0 ) ) ) {
+            ( that.releaseVersions == null || ( that.releaseVersions != null && that.releaseVersions.size() == 0 ) ) )
+        {
             // Do nothing.  This is a Modello workaround
-        } else {
+        }
+        else
+        {
             if ( releaseVersions != null ? !releaseVersions.equals( that.releaseVersions ) : that.releaseVersions != null )
             {
                 return false;
@@ -791,14 +811,17 @@
 
         return true;
     }
+
     private boolean compareScmCollections( java.util.Map that )
     {
         // Must manually compare as Scm doesn't have an equals method
-        if (that == null && originalScmInfo == null) {
+        if ( that == null && originalScmInfo == null )
+        {
             return true;
         }
 
-        if ( ( that == null && originalScmInfo != null ) || ( that != null && originalScmInfo == null ) ) {
+        if ( ( that == null && originalScmInfo != null ) || ( that != null && originalScmInfo == null ) )
+        {
             return false;
         }
 

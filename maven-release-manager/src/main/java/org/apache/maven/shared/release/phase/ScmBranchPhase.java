@@ -56,7 +56,8 @@ public class ScmBranchPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
@@ -69,7 +70,8 @@ public class ScmBranchPhase
         ScmProvider provider;
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+            repository =
+                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
             
@@ -96,7 +98,7 @@ public class ScmBranchPhase
             scmBranchParameters.setRemoteBranching( releaseDescriptor.isRemoteTagging() );
             scmBranchParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
             
-            result = provider.branch( repository, fileSet, branchName, scmBranchParameters);
+            result = provider.branch( repository, fileSet, branchName, scmBranchParameters );
         }
         catch ( ScmException e )
         {
@@ -113,7 +115,8 @@ public class ScmBranchPhase
         return relResult;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();

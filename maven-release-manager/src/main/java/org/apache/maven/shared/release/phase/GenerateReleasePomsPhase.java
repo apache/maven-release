@@ -80,20 +80,21 @@ public class GenerateReleasePomsPhase
      *
      * @plexus.requirement role="org.apache.maven.shared.release.scm.ScmTranslator"
      */
-    private Map<String,ScmTranslator> scmTranslators;
+    private Map<String, ScmTranslator> scmTranslators;
 
     /*
      * @see org.apache.maven.shared.release.phase.ReleasePhase#execute(org.apache.maven.shared.release.config.ReleaseDescriptor,
      *      org.apache.maven.settings.Settings, java.util.List)
      */
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects, false );
     }
 
-    private ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
-                                   boolean simulate )
+    private ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -114,26 +115,26 @@ public class GenerateReleasePomsPhase
         return result;
     }
 
-    private void generateReleasePoms( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
-                                      boolean simulate, ReleaseResult result )
+    private void generateReleasePoms( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                      List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         List<File> releasePoms = new ArrayList<File>();
 
-        for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = iterator.next();
-
             logInfo( result, "Generating release POM for '" + project.getName() + "'..." );
 
-            releasePoms.add( generateReleasePom( project, releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result ) );
+            releasePoms.add( generateReleasePom( project, releaseDescriptor, releaseEnvironment, reactorProjects,
+                                                 simulate, result ) );
         }
 
         addReleasePomsToScm( releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result, releasePoms );
     }
 
-    private File generateReleasePom( MavenProject project, ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                     List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
+    private File generateReleasePom( MavenProject project, ReleaseDescriptor releaseDescriptor,
+                                     ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
+                                     boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // create release pom
@@ -148,7 +149,9 @@ public class GenerateReleasePomsPhase
         
         // MRELEASE-273 : A release pom can be null
         if ( releasePomFile == null )
+        {
             throw new ReleaseExecutionException( "Cannot generate release POM : pom file is null" );
+        }
 
         Writer fileWriter = null;
 
@@ -170,7 +173,9 @@ public class GenerateReleasePomsPhase
         return releasePomFile;
     }
 
-    private void addReleasePomsToScm( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result, List<File> releasePoms )
+    private void addReleasePomsToScm( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                      List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result,
+                                      List<File> releasePoms )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         if ( simulate )
@@ -202,8 +207,9 @@ public class GenerateReleasePomsPhase
         }
     }
 
-    private Model createReleaseModel( MavenProject project, ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                      List<MavenProject> reactorProjects, ReleaseResult result )
+    private Model createReleaseModel( MavenProject project, ReleaseDescriptor releaseDescriptor,
+                                      ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
+                                      ReleaseResult result )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         Map originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects );
@@ -221,7 +227,8 @@ public class GenerateReleasePomsPhase
 
         // update project version
         String projectVersion = releaseModel.getVersion();
-        String releaseVersion = getNextVersion( mappedVersions, project.getGroupId(), project.getArtifactId(), projectVersion );
+        String releaseVersion =
+            getNextVersion( mappedVersions, project.getGroupId(), project.getArtifactId(), projectVersion );
         releaseModel.setVersion( releaseVersion );
 
         // update final name if implicit
@@ -266,17 +273,20 @@ public class GenerateReleasePomsPhase
         releaseModel.getBuild().setPlugins( createReleasePlugins( originalVersions, mappedVersions, releaseProject ) );
 
         // rewrite reports
-        releaseModel.getReporting().setPlugins( createReleaseReportPlugins( originalVersions, mappedVersions, releaseProject ) );
+        releaseModel.getReporting().setPlugins( createReleaseReportPlugins( originalVersions, mappedVersions,
+                                                                            releaseProject ) );
 
         // rewrite extensions
-        releaseModel.getBuild().setExtensions( createReleaseExtensions( originalVersions, mappedVersions, releaseProject ) );
+        releaseModel.getBuild().setExtensions( createReleaseExtensions( originalVersions, mappedVersions,
+                                                                        releaseProject ) );
 
         pathTranslator.unalignFromBaseDirectory( releaseProject.getModel(), project.getFile().getParentFile() );
 
         return releaseModel;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
@@ -465,7 +475,8 @@ public class GenerateReleasePomsPhase
         return releasePlugins;
     }
 
-    private List<ReportPlugin> createReleaseReportPlugins( Map originalVersions, Map mappedVersions, MavenProject project )
+    private List<ReportPlugin> createReleaseReportPlugins( Map originalVersions, Map mappedVersions,
+                                                           MavenProject project )
         throws ReleaseFailureException
     {
         List<ReportPlugin> releaseReportPlugins = null;
@@ -549,10 +560,8 @@ public class GenerateReleasePomsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = iterator.next();
-
             File releasePom = ReleaseUtil.getReleasePom( project );
 
             // MRELEASE-273 : A release pom can be null

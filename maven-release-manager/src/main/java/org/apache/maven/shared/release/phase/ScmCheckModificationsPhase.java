@@ -66,10 +66,11 @@ public class ScmCheckModificationsPhase
      *
      * @todo proper construction of filenames, especially release properties
      */
-    private Set<String> excludedFiles = new HashSet<String>( Arrays.asList( new String[] { "pom.xml.backup", "pom.xml.tag",
-        "pom.xml.next", "pom.xml.branch", "release.properties", "pom.xml.releaseBackup" } ) );
+    private Set<String> excludedFiles = new HashSet<String>( Arrays.asList( new String[] { "pom.xml.backup",
+        "pom.xml.tag", "pom.xml.next", "pom.xml.branch", "release.properties", "pom.xml.releaseBackup" } ) );
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
@@ -80,20 +81,19 @@ public class ScmCheckModificationsPhase
         {
             for ( int i1 = 0, additionalExcludesSize = additionalExcludes.size(); i1 < additionalExcludesSize; i1++ )
             {
-                // fail fast if it is not a string
-                String exclude = (String) additionalExcludes.get( i1 );
-                excludedFiles.add( exclude );
+                excludedFiles.add( additionalExcludes.get( i1 ) );
             }
         }
 
         logInfo( relResult, "Verifying that there are no local modifications..." );
-        logInfo( relResult, "  ignoring changes on: " + StringUtils.join(excludedFiles, ", "));
+        logInfo( relResult, "  ignoring changes on: " + StringUtils.join( excludedFiles, ", " ) );
 
         ScmRepository repository;
         ScmProvider provider;
         try
         {
-            repository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+            repository =
+                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
@@ -162,7 +162,8 @@ public class ScmCheckModificationsPhase
         return relResult;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute

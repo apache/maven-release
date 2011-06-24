@@ -43,7 +43,7 @@ public class RewritePomsForDevelopmentPhase
     /**
      * SCM URL translators mapped by provider name.
      */
-    private Map<String,ScmTranslator> scmTranslators;
+    private Map<String, ScmTranslator> scmTranslators;
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,

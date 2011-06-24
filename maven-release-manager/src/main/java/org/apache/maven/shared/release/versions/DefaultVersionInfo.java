@@ -93,12 +93,12 @@ public class DefaultVersionInfo
     private static final String DIGIT_SEPARATOR_STRING = ".";
 
     public static final Pattern STANDARD_PATTERN = Pattern.compile(
-        "^((?:\\d+\\.)*\\d+)" +      // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
-            "([-_])?" +                 // optional - or _  (annotation separator)
-            "([a-zA-Z]*)" +             // alpha characters (looking for annotation - alpha, beta, RC, etc.)
-            "([-_])?" +                 // optional - or _  (annotation revision separator)
-            "(\\d*)" +                  // digits  (any digits after rc or beta is an annotation revision)
-            "(?:([-_])?(.*?))?$" );      // - or _ followed everything else (build specifier)
+        "^((?:\\d+\\.)*\\d+)"      // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
+        + "([-_])?"                // optional - or _  (annotation separator)
+        + "([a-zA-Z]*)"            // alpha characters (looking for annotation - alpha, beta, RC, etc.)
+        + "([-_])?"                // optional - or _  (annotation revision separator)
+        + "(\\d*)"                 // digits  (any digits after rc or beta is an annotation revision)
+        + "(?:([-_])?(.*?))?$" );  // - or _ followed everything else (build specifier)
 
     /* *
      * cmaki 02242009
@@ -109,7 +109,7 @@ public class DefaultVersionInfo
      * SNAPSHOT
      */
     public static final Pattern ALTERNATE_PATTERN = Pattern.compile(
-      "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)"      // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
+        "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)"      // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
     );
 
     /**
@@ -125,7 +125,7 @@ public class DefaultVersionInfo
         // FIX for non-digit release numbers, e.g. trunk-SNAPSHOT or just SNAPSHOT
         Matcher matcher = ALTERNATE_PATTERN.matcher( strVersion );
         // TODO: hack because it didn't support "SNAPSHOT"
-        if (matcher.matches())
+        if ( matcher.matches() )
         {
             annotation = null;
             digits = null;
@@ -143,8 +143,8 @@ public class DefaultVersionInfo
                 annotationSeparator = m.group( ANNOTATION_SEPARATOR_INDEX );
                 annotation = nullIfEmpty( m.group( ANNOTATION_INDEX ) );
 
-                if ( StringUtils.isNotEmpty( m.group( ANNOTATION_REV_SEPARATOR_INDEX ) ) &&
-                    StringUtils.isEmpty( m.group( ANNOTATION_REVISION_INDEX ) ) )
+                if ( StringUtils.isNotEmpty( m.group( ANNOTATION_REV_SEPARATOR_INDEX ) )
+                    && StringUtils.isEmpty( m.group( ANNOTATION_REVISION_INDEX ) ) )
                 {
                     // The build separator was picked up as the annotation revision separator
                     buildSeparator = m.group( ANNOTATION_REV_SEPARATOR_INDEX );
@@ -235,13 +235,13 @@ public class DefaultVersionInfo
 
         int result;
         // TODO: this is a workaround for a bug in DefaultArtifactVersion - fix there - 1.01 < 1.01.01
-        if ( strVersion.startsWith( that.strVersion ) && !strVersion.equals( that.strVersion ) &&
-            strVersion.charAt( that.strVersion.length() ) != '-' )
+        if ( strVersion.startsWith( that.strVersion ) && !strVersion.equals( that.strVersion )
+            && strVersion.charAt( that.strVersion.length() ) != '-' )
         {
             result = 1;
         }
-        else if ( that.strVersion.startsWith( strVersion ) && !strVersion.equals( that.strVersion ) &&
-            that.strVersion.charAt( strVersion.length() ) != '-' )
+        else if ( that.strVersion.startsWith( strVersion ) && !strVersion.equals( that.strVersion )
+            && that.strVersion.charAt( strVersion.length() ) != '-' )
         {
             result = -1;
         }

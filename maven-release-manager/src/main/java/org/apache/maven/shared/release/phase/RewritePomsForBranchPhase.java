@@ -47,7 +47,7 @@ public class RewritePomsForBranchPhase
     /**
      * SCM URL translators mapped by provider name.
      */
-    private Map<String,ScmTranslator> scmTranslators;
+    private Map<String, ScmTranslator> scmTranslators;
 
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
@@ -68,7 +68,7 @@ public class RewritePomsForBranchPhase
                 }
                 catch ( IOException e )
                 {
-                    throw new ReleaseExecutionException(e.getMessage(), e);
+                    throw new ReleaseExecutionException( e.getMessage(), e );
                 }
             }
             else
@@ -97,7 +97,7 @@ public class RewritePomsForBranchPhase
                         }
                         catch ( IOException e )
                         {
-                            throw new ReleaseExecutionException(e.getMessage(), e);
+                            throw new ReleaseExecutionException( e.getMessage(), e );
                         }
                     }
                 }
@@ -110,7 +110,7 @@ public class RewritePomsForBranchPhase
                                   String commonBasedir ) 
     throws IOException
     {
-        ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
+        ScmTranslator translator = scmTranslators.get( scmRepository.getProvider() );
         boolean result = false;
         if ( translator != null )
         {
@@ -226,7 +226,7 @@ public class RewritePomsForBranchPhase
 
         if ( versionsMap != null )
         {
-            return (String) ( versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+            return (String) versionsMap.get( ReleaseDescriptor.RELEASE_KEY );
         }
         else
         {

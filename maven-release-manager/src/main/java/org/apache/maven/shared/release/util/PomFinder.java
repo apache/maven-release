@@ -31,8 +31,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-
-
 /**
  * <p>This utility class helps with finding a maven pom file
  * which got parsed previously. It uses the fact that the
@@ -68,7 +66,7 @@ public class PomFinder
     private Logger log;
     private PomInfo foundPomInfo;
 
-    public PomFinder(Logger log)
+    public PomFinder( Logger log )
     {
         this.log = log;
     }
@@ -78,11 +76,11 @@ public class PomFinder
      * @param originPom the pom File which should be used as blueprint for the search
      * @return <code>true</code> if a pom got parsed successfully, <code>false</code> otherwise
      */
-    public boolean parsePom(File originPom)
+    public boolean parsePom( File originPom )
     {
         if ( !originPom.exists() )
         {
-          return false;
+            return false;
         }
 
         try
@@ -133,9 +131,9 @@ public class PomFinder
             {
                 pi = readPomInfo( matchingPom );
             }
-            catch (Exception e)
+            catch ( Exception e )
             {
-                log.warn( "Error while parsing pom file", e);
+                log.warn( "Error while parsing pom file", e );
                 // do nothing, just continue with the search
                 // this might happen if a build contains unfinished pom.xml
                 // files in integration tests, etc
@@ -170,7 +168,6 @@ public class PomFinder
                 }
             }
         }
-
 
         return matchingPom;
     }
@@ -286,7 +283,7 @@ public class PomFinder
             this.parentGroupId = parentGroupId;
         }
 
-        public boolean equals(Object o)
+        public boolean equals( Object o )
         {
             if ( this == o )
             {
@@ -300,7 +297,7 @@ public class PomFinder
 
             PomInfo pomInfo = (PomInfo) o;
 
-            if ( artifactId != null ? !artifactId.equals( pomInfo.artifactId ) : pomInfo.artifactId != null)
+            if ( artifactId != null ? !artifactId.equals( pomInfo.artifactId ) : pomInfo.artifactId != null )
             {
                 return false;
             }
@@ -323,9 +320,9 @@ public class PomFinder
         public int hashCode()
         {
             int result = artifactId != null ? artifactId.hashCode() : 0;
-            result = 31 * result + (groupId != null ? groupId.hashCode() : 0);
-            result = 31 * result + (parentArtifactId != null ? parentArtifactId.hashCode() : 0);
-            result = 31 * result + (parentGroupId != null ? parentGroupId.hashCode() : 0);
+            result = 31 * result + ( groupId != null ? groupId.hashCode() : 0 );
+            result = 31 * result + ( parentArtifactId != null ? parentArtifactId.hashCode() : 0 );
+            result = 31 * result + ( parentGroupId != null ? parentGroupId.hashCode() : 0 );
             return result;
         }
     }
