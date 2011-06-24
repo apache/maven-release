@@ -1,0 +1,20 @@
+ ------
+ Maven Release
+ ------
+ Hervé Boutemy
+ ------
+ 2011-06-24
+ ------
+
+Maven Release
+
+ Maven Release provides tooling to release a project with Maven, saving a lot of repetitive, manual work.
+
+ It consists of following modules:
+*----------------------------------------------------------+----------------+
+|| Module                                                  || Description   ||
+*----------------------------------------------------------+----------------+
+| {{{./maven-release-plugin/}maven-release-plugin}}        | core classes,
+*----------------------------------------------------------+----------------+
+| {{{/plugins/maven-release-plugin/}maven-release-plugin}} | release plugin to use from Maven.
+*----------------------------------------------------------+----------------+
