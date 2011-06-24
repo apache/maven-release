@@ -11,6 +11,7 @@ Maven Release
  Maven Release provides tooling to release a project with Maven, saving a lot of repetitive, manual work.
 
  It consists of following modules:
+
 *----------------------------------------------------------+----------------+
 || Module                                                  || Description   ||
 *----------------------------------------------------------+----------------+
