@@ -143,6 +143,10 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "scm.tag", config.getScmReleaseLabel() );
         }
+        if ( config.getScmTagNameFormat() != null )
+        {
+            properties.setProperty( "scm.tagNameFormat", config.getScmTagNameFormat() );
+        }
         if ( config.getScmCommentPrefix() != null )
         {
             properties.setProperty( "scm.commentPrefix", config.getScmCommentPrefix() );

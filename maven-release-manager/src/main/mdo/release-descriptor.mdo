@@ -470,6 +470,18 @@
           </description>
         </field>
 
+        <field>
+          <name>scmTagNameFormat</name>
+          <version>2.2.0+</version>
+          <type>String</type>
+          <defaultValue>@{project.artifactId}-@{project.version}</defaultValue>
+          <description>
+            Specifies the format for generating a tag name. Property expansion is
+            used with the optional prefix of project, where properties are delimited
+            with @{ and }
+          </description>
+        </field>
+
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.
@@ -769,6 +781,10 @@
             return false;
         }
         if ( !safeEquals( workingDirectory, that.workingDirectory ) )
+        {
+            return false;
+        }
+        if ( !safeEquals( scmTagNameFormat, that.scmTagNameFormat ) )
         {
             return false;
         }

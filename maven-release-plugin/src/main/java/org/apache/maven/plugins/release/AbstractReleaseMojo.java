@@ -69,6 +69,21 @@ public abstract class AbstractReleaseMojo
     private String tag;
 
     /**
+     * Format to use when generating the tag name if none is specified. Property interpolation is performed on the
+     * tag, but in order to ensure that the interpolation occurs during release, you must use <code>@{...}</code>
+     * to reference the properties rather than <code>${...}</code>. The following properties are available:
+     * <ul>
+     *     <li><code>groupId</code> or <code>project.groupId</code> - The groupId of the root project.
+     *     <li><code>artifactId</code> or <code>project.artifactId</code> - The artifactId of the root project.
+     *     <li><code>version</code> or <code>project.version</code> - The release version of the root project.
+     * </ul>
+     *
+     * @parameter expression="${tagNameFormat}" default-value="@{project.artifactId}-@{project.version}"
+     * @since 2.2.0
+     */
+    private String tagNameFormat;
+
+    /**
      * The tag base directory in SVN, you must define it if you don't use the standard svn layout (trunk/tags/branches).
      * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/tags</code>. The URL is an SVN URL and does not
      * include the SCM provider and protocol.
@@ -254,6 +269,7 @@ public abstract class AbstractReleaseMojo
 
         descriptor.setScmPassword( password );
         descriptor.setScmReleaseLabel( tag );
+        descriptor.setScmTagNameFormat( tagNameFormat );
         descriptor.setScmTagBase( tagBase );
         descriptor.setScmUsername( username );
         descriptor.setScmCommentPrefix( scmCommentPrefix );

@@ -284,6 +284,38 @@ public class InputVariablesPhaseTest
         assertEquals( "Check tag", "artifactId-1_0", releaseConfiguration.getScmReleaseLabel() );
     }
 
+    //MRELEASE-159
+    public void testCustomTagFormat()
+        throws Exception
+    {
+        Mock mockPrompter = new Mock( Prompter.class );
+        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
+        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
+
+        mockPrompter.reset();
+        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
+
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        releaseDescriptor.setScmTagNameFormat( "simulated-@{artifactId}-@{version}" );
+
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertEquals( "Check tag", "simulated-artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
+    }
+
     private static MavenProject createProject( String artifactId, String version )
     {
         Model model = new Model();

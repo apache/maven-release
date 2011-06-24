@@ -93,4 +93,52 @@ mvn release:prepare-with-pom
   This goal is equivalent to the <<<release:prepare>>> goal, except that it requires a previous build of the project to
   exist to properly populate the <<<release-pom.xml>>> files.
 
+* Overriding the default tag name format
 
+  By default, if you do not specify a tag name, a default tag name of <<<artifactId>>>-<<<version>>> will be
+  suggested (and if running non-interactively used).
+
+  You can specify the exact tag name to use from the command line by passing the <<<tag>>> property, but if you
+  want to have the tag name generated, but just change the default pattern, you can use the <<<tagNameFormat>>>
+  configuration option.
+
+  For example to have the tag name default to the version number prefixed with a <<<v>>> you could configure
+  your pom like so:
+
++-----
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <tagNameFormat>v@{project.version}</tagNameFormat>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
++-----
+
+  The tagNameFormat uses <<<@{>>> and <<<}>>> as delimiters in order to ensure that the default Maven property
+  interpolation does not substitute the values before the version transformation has taken place.
+
+  The following properties are supported:
+
+    * <<<project.groupId>>> which corresponds to the project's groupId.
+
+    * <<<project.artifactId>>> which corresponds to the project's artifactId.
+
+    * <<<project.version>>> which corresponds to the project's release version.
+
+    []
+
+  The <<<project.>>> prefix is optional and may be omitted.
