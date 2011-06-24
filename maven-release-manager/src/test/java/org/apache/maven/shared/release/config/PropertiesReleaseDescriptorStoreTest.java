@@ -50,7 +50,7 @@ public class PropertiesReleaseDescriptorStoreTest
 
         ReleaseDescriptor config = store.read( file );
 
-        ReleaseDescriptor expected = createExcpectedReleaseConfiguration();
+        ReleaseDescriptor expected = createExpectedReleaseConfiguration();
 
         assertEquals( "check matches", expected, config );
     }
@@ -62,7 +62,7 @@ public class PropertiesReleaseDescriptorStoreTest
         releaseDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath(  getTestFile( "target/test-classes" ) ) );
         ReleaseDescriptor config = store.read( releaseDescriptor );
 
-        ReleaseDescriptor expected = createExcpectedReleaseConfiguration();
+        ReleaseDescriptor expected = createExpectedReleaseConfiguration();
         expected.setWorkingDirectory( releaseDescriptor.getWorkingDirectory() );
 
         assertEquals( "check matches", expected, config );
@@ -340,7 +340,7 @@ public class PropertiesReleaseDescriptorStoreTest
         return releaseDescriptor;
     }
 
-    private ReleaseDescriptor createExcpectedReleaseConfiguration()
+    private ReleaseDescriptor createExpectedReleaseConfiguration()
     {
         ReleaseDescriptor expected = new ReleaseDescriptor();
         expected.setCompletedPhase( "step1" );
