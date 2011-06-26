@@ -217,9 +217,10 @@ public class ReleaseUtil
 
         String basedir = StringUtils.getCommonPrefix( baseDirs );
 
-        if ( !basedir.endsWith( separator ) )
+        int separatorPos = basedir.lastIndexOf( separator );
+        if ( !basedir.endsWith( separator ) && separatorPos >= 0 )
         {
-            basedir = basedir.substring( 0, basedir.lastIndexOf( separator ) );
+            basedir = basedir.substring( 0, separatorPos );
         }
 
         if ( basedir.endsWith( separator ) && basedir.length() > 1 )
