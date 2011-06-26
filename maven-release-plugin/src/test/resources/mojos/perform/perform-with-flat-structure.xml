@@ -29,7 +29,7 @@
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
           <connectionUrl>scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project</connectionUrl>
- 		  <goals>deploy</goals> 		  
+          <goals>deploy</goals>
         </configuration>
       </plugin>
     </plugins>

@@ -474,7 +474,6 @@
           <name>scmTagNameFormat</name>
           <version>2.2.0+</version>
           <type>String</type>
-          <defaultValue>@{project.artifactId}-@{project.version}</defaultValue>
           <description>
             Specifies the format for generating a tag name. Property expansion is
             used with the optional prefix of project, where properties are delimited

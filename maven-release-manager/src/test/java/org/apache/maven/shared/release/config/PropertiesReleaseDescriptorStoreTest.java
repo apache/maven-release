@@ -350,6 +350,7 @@ public class PropertiesReleaseDescriptorStoreTest
         expected.setScmPrivateKey( "private-key" );
         expected.setScmPrivateKeyPassPhrase( "passphrase" );
         expected.setScmTagBase( "tagBase" );
+        expected.setScmTagNameFormat( "expectedTagNameFormat" );
         expected.setScmBranchBase( "branchBase" );
         expected.setScmReleaseLabel( "tag" );
         expected.setAdditionalArguments( "additional-arguments" );
