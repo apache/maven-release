@@ -144,12 +144,9 @@ public class ScmCheckModificationsPhase
         {
             StringBuffer message = new StringBuffer();
 
-            for ( Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); )
+            for ( ScmFile file : changedFiles )
             {
-                ScmFile file = i.next();
-
                 message.append( file.toString() );
-
                 message.append( "\n" );
             }
 

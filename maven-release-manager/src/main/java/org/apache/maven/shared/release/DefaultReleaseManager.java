@@ -76,7 +76,7 @@ public class DefaultReleaseManager
     /**
      * The available phases.
      */
-    private Map<String,ReleasePhase> releasePhases;
+    private Map<String, ReleasePhase> releasePhases;
 
     /**
      * The configuration storage.

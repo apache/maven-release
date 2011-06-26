@@ -253,7 +253,7 @@ public abstract class AbstractRewritePomsPhase
         Element properties = rootElement.getChild( "properties", namespace );
 
         String parentVersion = rewriteParent( project, rootElement, namespace, mappedVersions, 
-                                              resolvedSnapshotDependencies, originalVersions);
+                                              resolvedSnapshotDependencies, originalVersions );
 
         String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
@@ -403,7 +403,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private String rewriteParent( MavenProject project, Element rootElement, Namespace namespace, Map mappedVersions,
-                                  Map resolvedSnapshotDependencies, Map originalVersions)
+                                  Map resolvedSnapshotDependencies, Map originalVersions )
         throws ReleaseFailureException
     {
         String parentVersion = null;
@@ -417,7 +417,7 @@ public abstract class AbstractRewritePomsPhase
             if ( parentVersion == null )
             {
                 //MRELEASE-317
-                parentVersion = getResolvedSnapshotVersion(key, resolvedSnapshotDependencies);
+                parentVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
             }
             if ( parentVersion == null )
             {
@@ -626,13 +626,13 @@ public abstract class AbstractRewritePomsPhase
                                 String versionText = versionElement.getTextTrim();
 
                                 // avoid if it was not originally set to the original value (it may be an expression), unless mapped version differs
-                                if ( originalVersion.equals( versionText ) ||
-                                    !mappedVersion.equals( mappedVersions.get( projectId ) ) )
+                                if ( originalVersion.equals( versionText )
+                                    || !mappedVersion.equals( mappedVersions.get( projectId ) ) )
                                 {
                                     rewriteValue( versionElement, mappedVersion );
                                 }
-                                else if ( versionText.matches( "\\$\\{project.+\\}" ) ||
-                                    versionText.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( versionText ) )
+                                else if ( versionText.matches( "\\$\\{project.+\\}" )
+                                    || versionText.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( versionText ) )
                                 {
                                     logInfo( result,
                                              "Ignoring artifact version update for expression: " + versionText );
@@ -664,8 +664,8 @@ public abstract class AbstractRewritePomsPhase
                                                 || mappedVersion.matches( "\\$\\{pom.+\\}" )
                                                 || "${version}".equals( mappedVersion ) )
                                             {
-                                                logInfo( result, "Ignoring artifact version update for expression: " +
-                                                    mappedVersion );
+                                                logInfo( result, "Ignoring artifact version update for expression: "
+                                                    + mappedVersion );
                                                 //ignore... we cannot update this expression
                                             }
                                             else
@@ -750,8 +750,8 @@ public abstract class AbstractRewritePomsPhase
 
             if ( rootElement.getAttribute( "schemaLocation", xsiNamespace ) == null )
             {
-                rootElement.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion +
-                    " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
+                rootElement.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion
+                    + " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
             }
 
             // the empty namespace is considered equal to the POM namespace, so match them up to avoid extra xmlns=""

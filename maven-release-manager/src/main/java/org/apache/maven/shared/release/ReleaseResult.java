@@ -27,7 +27,7 @@ import java.io.PrintStream;
  */
 public class ReleaseResult
 {
-    public static final int UNDEFINED = -1, SUCCESS = 0, ERROR = 1;
+    public final static int UNDEFINED = -1, SUCCESS = 0, ERROR = 1;
 
     private StringBuffer stdOut = new StringBuffer();
 

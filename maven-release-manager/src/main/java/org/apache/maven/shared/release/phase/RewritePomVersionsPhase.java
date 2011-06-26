@@ -47,7 +47,8 @@ public class RewritePomVersionsPhase
         // We are only updating versions no mods to scm needed
     }
 
-    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, boolean simulate )
+    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
+                                         boolean simulate )
     {
         return releaseDescriptor.getReleaseVersions();
     }

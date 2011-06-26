@@ -116,7 +116,7 @@ public class PomFinder
             return null;
         }
 
-        if ( foundPomInfo == null)
+        if ( foundPomInfo == null )
         {
             log.error( "Please run parsePom first!" );
             return null;
@@ -305,7 +305,8 @@ public class PomFinder
             {
                 return false;
             }
-            if ( parentArtifactId != null ? !parentArtifactId.equals( pomInfo.parentArtifactId ) : pomInfo.parentArtifactId != null )
+            if ( parentArtifactId != null ? !parentArtifactId.equals( pomInfo.parentArtifactId )
+                            : pomInfo.parentArtifactId != null )
             {
                 return false;
             }

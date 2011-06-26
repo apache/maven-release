@@ -40,7 +40,6 @@ import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -57,15 +56,14 @@ public class RestoreBackupPomsPhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
-        for ( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = projects.next();
-
             restorePomBackup( releaseDescriptor, releaseEnvironment, project );
         }
 
@@ -74,13 +72,15 @@ public class RestoreBackupPomsPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
     }
 
-    protected void restorePomBackup( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, MavenProject project )
+    protected void restorePomBackup( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                     MavenProject project )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         File pomBackup = getPomBackup( project );
@@ -97,7 +97,9 @@ public class RestoreBackupPomsPhase
             ScmProvider provider;
             try
             {
-                scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+                scmRepository =
+                    scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                       releaseEnvironment.getSettings() );
 
                 provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
             }
