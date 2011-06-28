@@ -15,7 +15,7 @@ Maven Release
 *----------------------------------------------------------+----------------+
 || Module                                                  || Description   ||
 *----------------------------------------------------------+----------------+
-| {{{./maven-release-plugin/}maven-release-plugin}}        | core classes,
+| {{{./maven-release-manager/}maven-release-manager}}      | core classes,
 *----------------------------------------------------------+----------------+
 | {{{/plugins/maven-release-plugin/}maven-release-plugin}} | release plugin to use from Maven.
 *----------------------------------------------------------+----------------+
