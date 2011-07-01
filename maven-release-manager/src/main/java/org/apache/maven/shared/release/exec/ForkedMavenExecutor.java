@@ -86,7 +86,9 @@ public class ForkedMavenExecutor
         if ( goals != null )
         {
             // accept both space and comma, so the old way still work
-            String[] tokens = StringUtils.split( goals, ", " );
+            // also accept line separators, so that goal lists can be spread
+            // across multiple lines in the POM.
+            String[] tokens = StringUtils.split( goals, ", \n\r" );
 
             for ( int i = 0; i < tokens.length; ++i )
             {
