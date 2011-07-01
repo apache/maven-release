@@ -48,5 +48,14 @@ mvn -N -Darguments=-N release:perform
 </source>
       </answer>
     </faq>
+    <faq id="inheritScm">
+      <question>Why is release:prepare failing when trying to tag with "svn: Path '...' does not exist in revision ..."</question>
+      <answer>
+        <p>If the pom.xml has no scm-section but inherits one from its parent, the prepare will fail when trying to tag.
+           The message will be something like:</p>
+        <pre>svn: Path '...' does not exist in revision ...</pre>
+        <p>To fix it, roll-back the release, add the <code>scm</code> section to the pom.xml, commit and retry the release.</p>
+      </answer>
+    </faq>
   </part>
 </faqs>
