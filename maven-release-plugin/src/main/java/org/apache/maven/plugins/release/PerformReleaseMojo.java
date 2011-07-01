@@ -29,7 +29,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Perform a release from SCM, either from a specified tag, or the tag representing the previous release in
+§ * Perform a release from SCM, either from a specified tag, or the tag representing the previous release in
  * the working copy created by <tt>release:prepare</tt>.
  * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html">http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html</a>.
  *
