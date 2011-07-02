@@ -34,14 +34,12 @@ under the License.
       </answer>
     </faq>
     <faq id="nonrecursive">
-      <question>How can I release a parent POM without releasing all it's modules?
+      <question>How can I release a parent POM without releasing all its modules?
       </question>
       <answer>
-        <p>You need to pass the -N flag to Maven <b>and</b> configure the Release Plugin to pass the -N flag on
-          it's forked builds with the <code>-Darguments</code> flag.</p>
-        <p>
-        Here's an example:
-        </p>
+        <p>You need to pass the <code>-N</code> flag to Maven <b>and</b> configure the Release Plugin to pass the
+          <code>-N</code> flag on its forked builds with the <code>-Darguments</code> flag.</p>
+        <p>Here's an example:</p>
 <source>
 mvn -N -Darguments=-N release:prepare
 mvn -N -Darguments=-N release:perform
@@ -49,12 +47,13 @@ mvn -N -Darguments=-N release:perform
       </answer>
     </faq>
     <faq id="inheritScm">
-      <question>Why is release:prepare failing when trying to tag with "svn: Path '...' does not exist in revision ..."</question>
+      <question>Why is <code>release:prepare</code> failing when trying to tag with
+        <code>"svn: Path '...' does not exist in revision ..."</code></question>
       <answer>
-        <p>If the pom.xml has no scm-section but inherits one from its parent, the prepare will fail when trying to tag.
-           The message will be something like:</p>
+        <p>If the <code>pom.xml</code> has no scm-section but inherits one from its parent, the prepare goal will fail
+         when trying to tag. The message will be something like:</p>
         <pre>svn: Path '...' does not exist in revision ...</pre>
-        <p>To fix it, roll-back the release, add the <code>scm</code> section to the pom.xml, commit and retry the release.</p>
+        <p>To fix it, roll-back the release, add the <code>scm</code> section to the <code>pom.xml</code>, commit and retry the release.</p>
       </answer>
     </faq>
   </part>
