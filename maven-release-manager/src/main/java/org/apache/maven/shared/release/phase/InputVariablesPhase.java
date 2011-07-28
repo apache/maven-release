@@ -123,7 +123,7 @@ public class InputVariablesPhase
                 Properties values = new Properties();
                 values.setProperty( "artifactId", project.getArtifactId() );
                 values.setProperty( "groupId", project.getGroupId() );
-                values.setProperty( "version", project.getVersion() );
+                values.setProperty( "version", releaseVersion );
                 interpolator.addValueSource( new PrefixedPropertiesValueSource( possiblePrefixes, values, true ) );
                 RecursionInterceptor recursionInterceptor = new PrefixAwareRecursionInterceptor( possiblePrefixes );
                 try
