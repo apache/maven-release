@@ -206,6 +206,7 @@
           <defaultValue>true</defaultValue>
           <description>
             Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
+            If set to true, this will set the property "performRelease" to true.
           </description>
         </field>
         <field>
