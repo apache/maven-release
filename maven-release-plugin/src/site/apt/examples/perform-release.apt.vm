@@ -5,7 +5,7 @@
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
   ------
-  2010-01-03
+  2011-09-23
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -35,14 +35,14 @@ Perform a Release
 
    []
 
-  To perform a release execute this command:
+  To perform a release, execute this command:
 
 -------
 mvn release:perform
 -------
 
   This relies on <<<release.properties>>> being present from a previous release preparation. If this is not the case,
-  you need to give the goal the name of the URL and optional tag to perform the release from. For example:
+  you need to give the goal the URL and an optional tag to perform the release from. For example:
 
 -------
 mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
@@ -52,7 +52,7 @@ mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/mav
   same system configuration and Maven profiles used by the one running the <<<release:perform>>> goal.
 
   It is possible to
-  force some profiles to get enabled during release (for example to enable time-consummung tasks that are only relevant
+  force some profiles to get enabled during release (for example to enable time-consuming tasks that are only relevant
   at release-time) by setting a comma separated list of profiles names in the <<<releaseProfiles>>> parameter. The goals and
   profiles required to release the project can then be configured in the POM:
 
