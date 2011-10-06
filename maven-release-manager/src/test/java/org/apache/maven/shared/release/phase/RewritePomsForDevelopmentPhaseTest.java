@@ -316,8 +316,28 @@ public class RewritePomsForDevelopmentPhaseTest
     public void testRewritePomWithParentAndProperties()
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjects( "pom-with-parent-and-properties" );
+        performTestRewritePomWithParentAndProperties( "pom-with-parent-and-properties" );
+    }
 
+    //MRELEASE-454
+    public void testRewritePomWithParentAndPropertiesInDependencyManagement()
+        throws Exception
+    {
+        performTestRewritePomWithParentAndProperties( "pom-with-parent-and-properties-in-dependency-management" );
+    }
+
+    //MRELEASE-454
+    public void testRewritePomWithParentAndPropertiesInDependencyManagementImport()
+        throws Exception
+    {
+        performTestRewritePomWithParentAndProperties( "pom-with-parent-and-properties-in-dependency-management-import" );
+    }
+
+    private void performTestRewritePomWithParentAndProperties( String path )
+        throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( path );
+  
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );

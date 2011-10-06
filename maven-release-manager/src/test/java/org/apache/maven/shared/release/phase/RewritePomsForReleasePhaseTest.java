@@ -274,7 +274,6 @@ public class RewritePomsForReleasePhaseTest
     public void testRewriteInterpolatedVersionsDifferentVersion()
         throws Exception
     {
-
         List<MavenProject> reactorProjects = createReactorProjects( "interpolated-versions" );
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
 
@@ -417,4 +416,29 @@ public class RewritePomsForReleasePhaseTest
     
         assertTrue( comparePomFiles( reactorProjects ) );
     }
+
+    // MRELEASE-454
+    public void testRewritePomWithImportedDependencyManagementInReactor()
+        throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "imported-dependency-management-in-reactor" );
+        ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
+    public void testRewritePomWithDifferentVersionsAcrossModules()
+        throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "modules-with-different-versions" );
+        ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
+        config.mapReleaseVersion( "groupId:subproject2", ALTERNATIVE_NEXT_VERSION );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
 }

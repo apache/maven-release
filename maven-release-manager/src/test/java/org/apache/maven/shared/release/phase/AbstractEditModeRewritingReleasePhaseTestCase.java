@@ -26,6 +26,7 @@ import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
@@ -115,4 +116,63 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
             assertEquals( "Check cause", ScmException.class, e.getCause().getClass() );
         }
     }
+
+    public void testRewritePomPluginDependencies()
+        throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "internal-snapshot-plugin-deps" );
+        ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
+    public void testRewritePomUnmappedPluginDependencies()
+        throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "internal-snapshot-plugin-deps" );
+        ReleaseDescriptor config = createUnmappedConfiguration( reactorProjects );
+
+        try
+        {
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            assertTrue( true );
+        }
+    }
+
+    public void testRewritePomProfile()
+        throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "internal-snapshot-profile" );
+        ReleaseDescriptor config = createDefaultConfiguration( reactorProjects );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
+    public void testRewritePomUnmappedProfile()
+        throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "internal-snapshot-profile" );
+        ReleaseDescriptor config = createUnmappedConfiguration( reactorProjects );
+
+        try
+        {
+            phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+            fail( "Should have thrown an exception" );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            assertTrue( true );
+        }
+    }
+
 }

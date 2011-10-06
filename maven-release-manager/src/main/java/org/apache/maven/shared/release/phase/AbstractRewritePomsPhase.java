@@ -25,6 +25,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -32,10 +35,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Extension;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -53,8 +53,13 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
+import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
+import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.jdom.CDATA;
 import org.jdom.Comment;
@@ -68,7 +73,6 @@ import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
-import org.jdom.xpath.XPath;
 
 /**
  * Base class for rewriting phases.
@@ -247,9 +251,10 @@ public abstract class AbstractRewritePomsPhase
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Namespace namespace = rootElement.getNamespace();
-        Map mappedVersions = getNextVersionMap( releaseDescriptor );
-        Map originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects, simulate );
+        Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
+        Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects, simulate );
         Map resolvedSnapshotDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
+        Model model = project.getModel();
         Element properties = rootElement.getChild( "properties", namespace );
 
         String parentVersion = rewriteParent( project, rootElement, namespace, mappedVersions, 
@@ -259,52 +264,41 @@ public abstract class AbstractRewritePomsPhase
 
         rewriteVersion( rootElement, namespace, mappedVersions, projectId, project, parentVersion );
 
-        rewriteDependencies( project.getDependencies(), rootElement, mappedVersions, resolvedSnapshotDependencies,
-                             originalVersions, projectId, properties, result, releaseDescriptor );
+        List<Element> roots = new ArrayList<Element>();
+        roots.add( rootElement );
+        roots.addAll( getChildren( rootElement, "profiles", "profile" ) );
 
-        if ( project.getDependencyManagement() != null )
+        for ( Element root : roots )
         {
-            Element dependencyRoot = rootElement.getChild( "dependencyManagement", namespace );
-            if ( dependencyRoot != null )
-            {
-                rewriteDependencies( project.getDependencyManagement().getDependencies(), dependencyRoot,
-                                     mappedVersions, resolvedSnapshotDependencies, originalVersions, projectId,
-                                     properties, result, releaseDescriptor );
-            }
-        }
+            rewriteArtifactVersions( getChildren( root, "dependencies", "dependency" ), mappedVersions,
+                                    resolvedSnapshotDependencies, originalVersions, model, properties, result,
+                                    releaseDescriptor );
 
-        if ( project.getBuild() != null )
-        {
-            Element buildRoot = rootElement.getChild( "build", namespace );
-            if ( buildRoot != null )
+            rewriteArtifactVersions( getChildren( root, "dependencyManagement", "dependencies", "dependency" ),
+                                    mappedVersions, resolvedSnapshotDependencies, originalVersions, model, properties,
+                                    result, releaseDescriptor );
+
+            rewriteArtifactVersions( getChildren( root, "build", "extensions", "extension" ), mappedVersions,
+                                    resolvedSnapshotDependencies, originalVersions, model, properties, result,
+                                    releaseDescriptor );
+
+            List<Element> pluginElements = new ArrayList<Element>();
+            pluginElements.addAll( getChildren( root, "build", "plugins", "plugin" ) );
+            pluginElements.addAll( getChildren( root, "build", "pluginManagement", "plugins", "plugin" ) );
+
+            rewriteArtifactVersions( pluginElements, mappedVersions, resolvedSnapshotDependencies, originalVersions,
+                                    model, properties, result, releaseDescriptor );
+
+            for ( Element pluginElement : pluginElements )
             {
-                rewritePlugins( project.getBuildPlugins(), buildRoot, mappedVersions, resolvedSnapshotDependencies,
-                                originalVersions, projectId, properties, result, releaseDescriptor );
-                if ( project.getPluginManagement() != null )
-                {
-                    Element pluginsRoot = buildRoot.getChild( "pluginManagement", namespace );
-                    if ( pluginsRoot != null )
-                    {
-                        rewritePlugins( project.getPluginManagement().getPlugins(), pluginsRoot, mappedVersions,
-                                        resolvedSnapshotDependencies, originalVersions, projectId, properties, result,
+                rewriteArtifactVersions( getChildren( pluginElement, "dependencies", "dependency" ), mappedVersions,
+                                        resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                         releaseDescriptor );
-                    }
-                }
-                rewriteExtensions( project.getBuildExtensions(), buildRoot, mappedVersions,
-                                   resolvedSnapshotDependencies, originalVersions, projectId, properties, result,
-                                   releaseDescriptor );
             }
-        }
 
-        if ( project.getReporting() != null )
-        {
-            Element pluginsRoot = rootElement.getChild( "reporting", namespace );
-            if ( pluginsRoot != null )
-            {
-                rewriteReportPlugins( project.getReportPlugins(), pluginsRoot, mappedVersions,
-                                      resolvedSnapshotDependencies, originalVersions, projectId, properties, result,
-                                      releaseDescriptor );
-            }
+            rewriteArtifactVersions( getChildren( root, "reporting", "plugins", "plugin" ), mappedVersions,
+                                    resolvedSnapshotDependencies, originalVersions, model, properties, result,
+                                    releaseDescriptor );
         }
 
         String commonBasedir;
@@ -319,6 +313,21 @@ public abstract class AbstractRewritePomsPhase
         }
         transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result,
                       commonBasedir );
+    }
+
+    @SuppressWarnings( "unchecked" )
+    private List<Element> getChildren( Element root, String... names )
+    {
+        Element parent = root;
+        for ( int i = 0; i < names.length - 1 && parent != null; i++ )
+        {
+            parent = parent.getChild( names[i], parent.getNamespace() );
+        }
+        if ( parent == null )
+        {
+            return Collections.emptyList();
+        }
+        return parent.getChildren( names[names.length - 1], parent.getNamespace() );
     }
 
     /**
@@ -434,280 +443,178 @@ public abstract class AbstractRewritePomsPhase
         return parentVersion;
     }
 
-    private void rewriteDependencies( List<Dependency> dependencies, Element dependencyRoot, Map mappedVersions,
-                                      Map resolvedSnapshotDependencies, Map originalVersions, String projectId,
-                                      Element properties, ReleaseResult result, ReleaseDescriptor releaseDescriptor )
+    private void rewriteArtifactVersions( Collection<Element> elements, Map<String, String> mappedVersions,
+                                          Map resolvedSnapshotDependencies, Map<String, String> originalVersions,
+                                          Model projectModel, Element properties, ReleaseResult result,
+                                          ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        if ( dependencies != null )
+        if ( elements == null )
         {
-            List<String> dependenciesAlreadyChanged = new ArrayList<String>();
-            for ( Iterator<Dependency> i = dependencies.iterator(); i.hasNext(); )
+            return;
+        }
+        String projectId = ArtifactUtils.versionlessKey( projectModel.getGroupId(), projectModel.getArtifactId() );
+        for ( Element element : elements )
+        {
+            Element versionElement = element.getChild( "version", element.getNamespace() );
+            if ( versionElement == null )
             {
-                Dependency dep = (Dependency) i.next();
-                String depId = ArtifactUtils.versionlessKey( dep.getGroupId(), dep.getArtifactId() );
-                if ( !dependenciesAlreadyChanged.contains( depId ) )
+                // managed dependency or unversioned plugin
+                continue;
+            }
+            String rawVersion = versionElement.getTextTrim();
+
+            Element groupIdElement = element.getChild( "groupId", element.getNamespace() );
+            if ( groupIdElement == null )
+            {
+                if ( "plugin".equals( element.getName() ) )
                 {
-                    //This check is required because updateDomVersion update all dependencies with the current groupId/artifactId
-                    //(standard dependencies and sub-dependencies like ejb-client) so we don't need to re-update them
-
-                    dependenciesAlreadyChanged.add( depId );
-
-                    updateDomVersion( dep.getGroupId(), dep.getArtifactId(), mappedVersions,
-                                      resolvedSnapshotDependencies, dep.getVersion(), originalVersions, "dependencies",
-                                      "dependency", dependencyRoot, projectId, properties, result, releaseDescriptor );
+                    groupIdElement = new Element( "groupId", element.getNamespace() );
+                    groupIdElement.setText( "org.apache.maven.plugins" );
+                }
+                else
+                {
+                    // incomplete dependency
+                    continue;
                 }
             }
-        }
-    }
+            String groupId = interpolate( groupIdElement.getTextTrim(), projectModel );
 
-    private void rewritePlugins( List<Plugin> plugins, Element pluginRoot, Map mappedVersions, Map resolvedSnapshotDependencies,
-                                 Map originalVersions, String projectId, Element properties, ReleaseResult result,
-                                 ReleaseDescriptor releaseDescriptor )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        if ( plugins != null )
-        {
-            for ( Iterator<Plugin> i = plugins.iterator(); i.hasNext(); )
+            Element artifactIdElement = element.getChild( "artifactId", element.getNamespace() );
+            if ( artifactIdElement == null )
             {
-                Plugin plugin = i.next();
+                // incomplete element
+                continue;
+            }
+            String artifactId = interpolate( artifactIdElement.getTextTrim(), projectModel);
 
-                // We can ignore plugins whose version is assumed, they are only written into the release pom
-                if ( plugin.getVersion() != null )
+            String key = ArtifactUtils.versionlessKey( groupId, artifactId );
+            String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
+            String mappedVersion = mappedVersions.get( key );
+            String originalVersion = originalVersions.get( key );
+            if ( originalVersion == null )
+            {
+                originalVersion = getOriginalResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
+            }
+
+            // MRELEASE-220
+            if ( mappedVersion != null && mappedVersion.endsWith( "SNAPSHOT" ) && !rawVersion.endsWith( "SNAPSHOT" )
+                && !releaseDescriptor.isUpdateDependencies() )
+            {
+                continue;
+            }
+
+            if ( mappedVersion != null )
+            {
+                if ( rawVersion.equals( originalVersion ) )
                 {
-                    updateDomVersion( plugin.getGroupId(), plugin.getArtifactId(), mappedVersions,
-                                      resolvedSnapshotDependencies, plugin.getVersion(), originalVersions, "plugins",
-                                      "plugin", pluginRoot, projectId, properties, result, releaseDescriptor );
+                    logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
+                    rewriteValue( versionElement, mappedVersion );
                 }
-            }
-        }
-    }
-
-    private void rewriteExtensions( List<Extension> extensions, Element extensionRoot, Map mappedVersions,
-                                    Map resolvedSnapshotDependencies, Map originalVersions, String projectId,
-                                    Element properties, ReleaseResult result, ReleaseDescriptor releaseDescriptor )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        if ( extensions != null )
-        {
-            for ( Iterator<Extension> i = extensions.iterator(); i.hasNext(); )
-            {
-                Extension extension = i.next();
-
-                if ( extension.getVersion() != null )
+                else if ( rawVersion.matches( "\\$\\{.+\\}" ) )
                 {
-                    updateDomVersion( extension.getGroupId(), extension.getArtifactId(), mappedVersions,
-                                      resolvedSnapshotDependencies, extension.getVersion(), originalVersions,
-                                      "extensions", "extension", extensionRoot, projectId, properties, result,
-                                      releaseDescriptor );
-                }
-            }
-        }
-    }
+                    String expression = rawVersion.substring( 2, rawVersion.length() - 1 );
 
-    private void rewriteReportPlugins( List<ReportPlugin> plugins, Element pluginRoot, Map mappedVersions,
-                                       Map resolvedSnapshotDependencies, Map originalVersions, String projectId,
-                                       Element properties, ReleaseResult result, ReleaseDescriptor releaseDescriptor )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        if ( plugins != null )
-        {
-            for ( Iterator<ReportPlugin> i = plugins.iterator(); i.hasNext(); )
-            {
-                ReportPlugin plugin = i.next();
-
-                // We can ignore plugins whose version is assumed, they are only written into the release pom
-                if ( plugin.getVersion() != null )
-                {
-                    updateDomVersion( plugin.getGroupId(), plugin.getArtifactId(), mappedVersions,
-                                      resolvedSnapshotDependencies, plugin.getVersion(), originalVersions, "plugins",
-                                      "plugin", pluginRoot, projectId, properties, result, releaseDescriptor );
-                }
-            }
-        }
-    }
-
-    private List<Element> getDependencies( String groupId, String artifactId, String groupTagName, String tagName,
-                                  Element dependencyRoot )
-        throws JDOMException
-    {
-        XPath xpath;
-        if ( !StringUtils.isEmpty( dependencyRoot.getNamespaceURI() ) )
-        {
-            xpath =
-                XPath.newInstance( "./pom:" + groupTagName + "/pom:" + tagName + "[normalize-space(pom:groupId)='"
-                    + groupId + "' and normalize-space(pom:artifactId)='" + artifactId + "']" );
-            xpath.addNamespace( "pom", dependencyRoot.getNamespaceURI() );
-        }
-        else
-        {
-            xpath =
-                XPath.newInstance( "./" + groupTagName + "/" + tagName + "[normalize-space(groupId)='" + groupId
-                    + "' and normalize-space(artifactId)='" + artifactId + "']" );
-        }
-
-        List<Element> dependencies = xpath.selectNodes( dependencyRoot );
-
-        //MRELEASE-147
-        if ( ( dependencies == null || dependencies.isEmpty() ) && groupId.indexOf( "${" ) == -1 )
-        {
-            dependencies = getDependencies( "${project.groupId}", artifactId, groupTagName, tagName, dependencyRoot );
-
-            if ( dependencies == null || dependencies.isEmpty() )
-            {
-                dependencies = getDependencies( "${pom.groupId}", artifactId, groupTagName, tagName, dependencyRoot );
-            }
-        }
-
-        return dependencies;
-    }
-
-    private void updateDomVersion( String groupId, String artifactId, Map mappedVersions,
-                                   Map resolvedSnapshotDependencies, String version, Map originalVersions,
-                                   String groupTagName, String tagName, Element dependencyRoot, String projectId,
-                                   Element properties, ReleaseResult result, ReleaseDescriptor releaseDescriptor )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        String key = ArtifactUtils.versionlessKey( groupId, artifactId );
-        String mappedVersion = (String) mappedVersions.get( key );
-        String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
-        Object originalVersion = originalVersions.get( key );
-
-        // workaround
-        if ( originalVersion == null )
-        {
-            originalVersion = getOriginalResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
-        }
-
-        try
-        {
-            List<Element> dependencies = getDependencies( groupId, artifactId, groupTagName, tagName, dependencyRoot );
-
-            for ( Element dependency : dependencies )
-            {
-                String dependencyVersion = "";
-                Element versionElement = null;
-
-                if ( dependency != null )
-                {
-                    versionElement = dependency.getChild( "version", dependencyRoot.getNamespace() );
-                    if ( versionElement != null )
+                    if ( expression.startsWith( "project." ) || expression.startsWith( "pom." )
+                        || "version".equals( expression ) )
                     {
-                        dependencyVersion = versionElement.getTextTrim();
-                    }
-                }
-
-                //MRELEASE-220
-                if ( mappedVersion != null && mappedVersion.endsWith( "SNAPSHOT" )
-                    && !dependencyVersion.endsWith( "SNAPSHOT" ) && !releaseDescriptor.isUpdateDependencies() )
-                {
-                    return;
-                }
-
-                if ( version.equals( originalVersion ) || dependencyVersion.equals( originalVersion ) )
-                {
-                    if ( ( mappedVersion != null ) || ( resolvedSnapshotVersion != null ) )
-                    {
-                        logInfo( result, "Updating " + artifactId + " to "
-                            + ( ( mappedVersion != null ) ? mappedVersion : resolvedSnapshotVersion ) );
-
-                        // If it was inherited, nothing to do
-                        if ( dependency != null )
+                        if ( !mappedVersion.equals( mappedVersions.get( projectId ) ) )
                         {
-                            // avoid if in management
-                            if ( versionElement != null )
+                            logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
+                            rewriteValue( versionElement, mappedVersion );
+                        }
+                        else
+                        {
+                            logInfo( result, "  Ignoring artifact version update for expression " + rawVersion );
+                        }
+                    }
+                    else if ( properties != null )
+                    {
+                        // version is an expression, check for properties to update instead
+                        Element property = properties.getChild( expression, properties.getNamespace() );
+                        if ( property != null )
+                        {
+                            String propertyValue = property.getTextTrim();
+
+                            if ( propertyValue.equals( originalVersion ) )
                             {
-                                if ( mappedVersion == null )
+                                logInfo( result, "  Updating " + rawVersion + " to " + mappedVersion );
+                                // change the property only if the property is the same as what's in the reactor
+                                rewriteValue( property, mappedVersion );
+                            }
+                            else if ( mappedVersion.equals( propertyValue ) )
+                            {
+                                // this property may have been updated during processing a sibling.
+                                logInfo( result, "  Ignoring artifact version update for expression " + rawVersion
+                                    + " because it is already updated" );
+                            }
+                            else if ( !mappedVersion.equals( rawVersion ) )
+                            {
+                                if ( mappedVersion.matches( "\\$\\{project.+\\}" )
+                                    || mappedVersion.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( mappedVersion ) )
                                 {
-                                    rewriteValue( versionElement, resolvedSnapshotVersion );
-                                    return;
-                                }
-
-                                String versionText = versionElement.getTextTrim();
-
-                                // avoid if it was not originally set to the original value (it may be an expression), unless mapped version differs
-                                if ( originalVersion.equals( versionText )
-                                    || !mappedVersion.equals( mappedVersions.get( projectId ) ) )
-                                {
-                                    rewriteValue( versionElement, mappedVersion );
-                                }
-                                else if ( versionText.matches( "\\$\\{project.+\\}" )
-                                    || versionText.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( versionText ) )
-                                {
-                                    logInfo( result,
-                                             "Ignoring artifact version update for expression: " + versionText );
-                                    //ignore... we cannot update this expression
-                                }
-                                else if ( versionText.matches( "\\$\\{.+\\}" ) && properties != null )
-                                {
-                                    //version is an expression, check for properties to update instead
-                                    String expression = versionText.substring( 2, versionText.length() - 1 );
-                                    Element property = properties.getChild( expression, properties.getNamespace() );
-                                    if ( property != null )
-                                    {
-                                        String propertyValue = property.getTextTrim();
-
-                                        if ( originalVersion.equals( propertyValue ) )
-                                        {
-                                            // change the property only if the property is the same as what's in the reactor
-                                            rewriteValue( property, mappedVersion );
-                                        }
-                                        else if ( mappedVersion.equals( propertyValue ) )
-                                        {
-                                            //this property may have been updated during processing a sibling.
-                                            logInfo( result, "Ignoring artifact version update for expression: "
-                                                + mappedVersion + " because it is already updated." );
-                                        }
-                                        else if ( !mappedVersion.equals( versionText ) )
-                                        {
-                                            if ( mappedVersion.matches( "\\$\\{project.+\\}" )
-                                                || mappedVersion.matches( "\\$\\{pom.+\\}" )
-                                                || "${version}".equals( mappedVersion ) )
-                                            {
-                                                logInfo( result, "Ignoring artifact version update for expression: "
-                                                    + mappedVersion );
-                                                //ignore... we cannot update this expression
-                                            }
-                                            else
-                                            {
-                                                // the value of the expression conflicts with what the user wanted to release
-                                                throw new ReleaseFailureException( "The artifact (" + key
-                                                    + ") requires a " + "different version (" + mappedVersion
-                                                    + ") than what is found (" + propertyValue
-                                                    + ") for the expression (" + expression + ") in the " + "project ("
-                                                    + projectId + ")." );
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // the expression used to define the version of this artifact may be inherited
-                                        // TODO needs a better error message, what pom? what dependency?
-                                        throw new ReleaseFailureException(
-                                            "The version could not be updated: " + versionText );
-                                    }
+                                    logInfo( result, "  Ignoring artifact version update for expression "
+                                        + mappedVersion );
+                                    // ignore... we cannot update this expression
                                 }
                                 else
                                 {
-                                    // the version for this artifact could not be updated.
-                                    throw new ReleaseFailureException(
-                                        "The version could not be updated: " + versionText );
+                                    // the value of the expression conflicts with what the user wanted to release
+                                    throw new ReleaseFailureException( "The artifact (" + key + ") requires a "
+                                        + "different version (" + mappedVersion + ") than what is found ("
+                                        + propertyValue + ") for the expression (" + expression + ") in the "
+                                        + "project (" + projectId + ")." );
                                 }
                             }
                         }
-                    }
-                    else
-                    {
-                        throw new ReleaseFailureException(
-                            "Version '" + version + "' for " + tagName + " '" + key + "' was not mapped" );
+                        else
+                        {
+                            // the expression used to define the version of this artifact may be inherited
+                            // TODO needs a better error message, what pom? what dependency?
+                            throw new ReleaseFailureException( "The version could not be updated: " + rawVersion );
+                        }
                     }
                 }
+                else
+                {
+                    // different/previous version not related to current release
+                }
+            }
+            else if ( resolvedSnapshotVersion != null )
+            {
+                logInfo( result, "  Updating " + artifactId + " to " + resolvedSnapshotVersion );
+
+                rewriteValue( versionElement, resolvedSnapshotVersion );
+            }
+            else
+            {
+                // artifact not related to current release
             }
         }
-        catch ( JDOMException e )
+    }
+
+    private String interpolate( String value, Model model )
+        throws ReleaseExecutionException
+    {
+        if ( value != null && value.contains( "${" ) )
         {
-            throw new ReleaseExecutionException( "Unable to locate " + tagName + " to process in document", e );
+            StringSearchInterpolator interpolator = new StringSearchInterpolator();
+            List<String> pomPrefixes = Arrays.asList( "pom.", "project." );
+            interpolator.addValueSource( new PrefixedObjectValueSource( pomPrefixes, model, false ) );
+            interpolator.addValueSource( new MapBasedValueSource( model.getProperties() ) );
+            interpolator.addValueSource( new ObjectBasedValueSource( model ) );
+            try
+            {
+                value = interpolator.interpolate( value, new PrefixAwareRecursionInterceptor( pomPrefixes ) );
+            }
+            catch ( InterpolationException e )
+            {
+                throw new ReleaseExecutionException(
+                                                     "Failed to interpolate " + value + " for project " + model.getId(),
+                                                     e );
+            }
         }
+        return value;
     }
 
     private void writePom( File pomFile, Document document, ReleaseDescriptor releaseDescriptor, String modelVersion,

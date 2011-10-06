@@ -573,7 +573,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( true );
     }
 
-    private ReleaseDescriptor createUnmappedConfiguration( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptor createUnmappedConfiguration( List<MavenProject> reactorProjects )
         throws Exception
     {
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );

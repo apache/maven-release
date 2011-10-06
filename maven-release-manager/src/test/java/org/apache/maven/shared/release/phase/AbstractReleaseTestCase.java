@@ -314,7 +314,7 @@ public abstract class AbstractReleaseTestCase
         String actual = read( actualFile, normalizeLineEndings );
         String expected = read( expectedFile, normalizeLineEndings );
         expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
-        StringBuilder sb = new StringBuilder( "Check the transformed POM" );
+        StringBuilder sb = new StringBuilder( "Check the transformed POM " + actualFile );
         sb.append( SystemUtils.LINE_SEPARATOR );
         sb.append( "expected : "  ).append( SystemUtils.LINE_SEPARATOR );
         sb.append( expected ).append( SystemUtils.LINE_SEPARATOR );
