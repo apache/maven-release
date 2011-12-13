@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.exec;
 
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -106,12 +107,14 @@ public class ForkedMavenExecutor
 
             if ( settingsFile != null )
             {
-                cl.createArg().setLine( "-s " + settingsFile.getAbsolutePath() );
+                cl.createArg().setValue( "-s");
+                cl.createArg().setFile( settingsFile );
             }
 
             if ( pomFileName != null )
             {
-                cl.createArg().setLine( "-f " + pomFileName );
+                cl.createArg().setValue( "-f" );
+                cl.createArg().setValue( pomFileName );
             }
 
             if ( goals != null )
@@ -178,7 +181,7 @@ public class ForkedMavenExecutor
                               boolean interactive, String arguments, ReleaseResult result )
         throws MavenExecutorException
     {
-        executeGoals( workingDirectory, goals, interactive, arguments, null, result );
+        executeGoals( workingDirectory, goals, releaseEnvironment, interactive, arguments, null, result );
     }
 
     public void setCommandLineFactory( CommandLineFactory commandLineFactory )
