@@ -39,7 +39,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <version>@project.version@</version>
         <configuration>
-          <arguments>-Dflag -Dfoo=bar -s "@project.build.directory@/it/interpolated-settings.xml" -D "maven.repo.local=@project.build.directory@/local-repo"</arguments>
+          <arguments>-Dflag -Dfoo=bar -D "maven.repo.local=@project.build.directory@/local-repo"</arguments>
           <mavenExecutorId>forked-path</mavenExecutorId>
         </configuration>
         <dependencies>
