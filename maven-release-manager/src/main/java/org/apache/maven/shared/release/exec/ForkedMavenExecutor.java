@@ -19,13 +19,16 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -49,12 +52,8 @@ public class ForkedMavenExecutor
     /**
      * @noinspection UseOfSystemOutOrSystemErr
      */
-    public void executeGoals( File workingDirectory,
-                              String goals,
-                              ReleaseEnvironment releaseEnvironment,
-                              boolean interactive,
-                              String additionalArguments,
-                              String pomFileName,
+    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
+                              boolean interactive, String additionalArguments, String pomFileName,
                               ReleaseResult relResult )
         throws MavenExecutorException
     {
@@ -68,79 +67,115 @@ public class ForkedMavenExecutor
         {
             mavenPath = System.getProperty( "maven.home" );
         }
-       
-        Commandline cl = commandLineFactory.createCommandLine( mavenPath + File.separator + "bin" + File.separator
-            + "mvn" );
 
-        cl.setWorkingDirectory( workingDirectory.getAbsolutePath() );
-
-        cl.addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
-        
-        cl.addEnvironment( "M2_HOME", mavenPath );
-
-        if ( pomFileName != null )
+        File settingsFile = null;
+        if ( releaseEnvironment.getSettings() != null )
         {
-            cl.createArg().setLine( "-f " + pomFileName );
-        }
-
-        if ( goals != null )
-        {
-            // accept both space and comma, so the old way still work
-            // also accept line separators, so that goal lists can be spread
-            // across multiple lines in the POM.
-            String[] tokens = StringUtils.split( goals, ", \n\r" );
-
-            for ( int i = 0; i < tokens.length; ++i )
+            // Have to serialize to a file as if Maven is embedded, there may not actually be a settings.xml on disk
+            try
             {
-                cl.createArg().setValue( tokens[i] );
+                settingsFile = File.createTempFile( "release-settings", ".xml" );
+                SettingsXpp3Writer writer = new SettingsXpp3Writer();
+                FileWriter fileWriter = null;
+                try
+                {
+                    fileWriter = new FileWriter( settingsFile );
+                    writer.write( fileWriter, releaseEnvironment.getSettings() );
+                }
+                finally
+                {
+                    IOUtil.close( fileWriter );
+                }
+            }
+            catch ( IOException e )
+            {
+                throw new MavenExecutorException( "Could not create temporary file for release settings.xml", e );
             }
         }
-
-        cl.createArg().setValue( "--no-plugin-updates" );
-
-        if ( !interactive )
-        {
-            cl.createArg().setValue( "--batch-mode" );
-        }
-
-        if ( !StringUtils.isEmpty( additionalArguments ) )
-        {
-            cl.createArg().setLine( additionalArguments );
-        }
-
-        TeeOutputStream stdOut = new TeeOutputStream( System.out );
-
-        TeeOutputStream stdErr = new TeeOutputStream( System.err );
-
         try
         {
-            relResult.appendInfo( "Executing: " + cl.toString() );
-            getLogger().info( "Executing: " + cl.toString() );
 
-            int result = executeCommandLine( cl, System.in, stdOut, stdErr );
+            Commandline cl =
+                commandLineFactory.createCommandLine( mavenPath + File.separator + "bin" + File.separator + "mvn" );
 
-            if ( result != 0 )
+            cl.setWorkingDirectory( workingDirectory.getAbsolutePath() );
+
+            cl.addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+
+            cl.addEnvironment( "M2_HOME", mavenPath );
+
+            if ( settingsFile != null )
             {
-                throw new MavenExecutorException( "Maven execution failed, exit code: \'" + result + "\'", result,
-                                                  stdOut.toString(), stdErr.toString() );
+                cl.createArg().setLine( "-s " + settingsFile.getAbsolutePath() );
             }
-        }
-        catch ( CommandLineException e )
-        {
-            throw new MavenExecutorException( "Can't run goal " + goals, stdOut.toString(), stdErr.toString(), e );
+
+            if ( pomFileName != null )
+            {
+                cl.createArg().setLine( "-f " + pomFileName );
+            }
+
+            if ( goals != null )
+            {
+                // accept both space and comma, so the old way still work
+                // also accept line separators, so that goal lists can be spread
+                // across multiple lines in the POM.
+                String[] tokens = StringUtils.split( goals, ", \n\r" );
+
+                for ( int i = 0; i < tokens.length; ++i )
+                {
+                    cl.createArg().setValue( tokens[i] );
+                }
+            }
+
+            cl.createArg().setValue( "--no-plugin-updates" );
+
+            if ( !interactive )
+            {
+                cl.createArg().setValue( "--batch-mode" );
+            }
+
+            if ( !StringUtils.isEmpty( additionalArguments ) )
+            {
+                cl.createArg().setLine( additionalArguments );
+            }
+
+            TeeOutputStream stdOut = new TeeOutputStream( System.out );
+
+            TeeOutputStream stdErr = new TeeOutputStream( System.err );
+
+            try
+            {
+                relResult.appendInfo( "Executing: " + cl.toString() );
+                getLogger().info( "Executing: " + cl.toString() );
+
+                int result = executeCommandLine( cl, System.in, stdOut, stdErr );
+
+                if ( result != 0 )
+                {
+                    throw new MavenExecutorException( "Maven execution failed, exit code: \'" + result + "\'", result,
+                                                      stdOut.toString(), stdErr.toString() );
+                }
+            }
+            catch ( CommandLineException e )
+            {
+                throw new MavenExecutorException( "Can't run goal " + goals, stdOut.toString(), stdErr.toString(), e );
+            }
+            finally
+            {
+                relResult.appendOutput( stdOut.toString() );
+            }
         }
         finally
         {
-            relResult.appendOutput( stdOut.toString() );
+            if ( settingsFile != null && settingsFile.exists() && !settingsFile.delete() )
+            {
+                settingsFile.deleteOnExit();
+            }
         }
     }
 
-    public void executeGoals( File workingDirectory,
-                              String goals,
-                              ReleaseEnvironment releaseEnvironment,
-                              boolean interactive,
-                              String arguments,
-                              ReleaseResult result )
+    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
+                              boolean interactive, String arguments, ReleaseResult result )
         throws MavenExecutorException
     {
         executeGoals( workingDirectory, goals, interactive, arguments, null, result );
@@ -152,10 +187,8 @@ public class ForkedMavenExecutor
     }
 
 
-
-
-    public static int executeCommandLine( Commandline cl, InputStream systemIn,
-                                          OutputStream systemOut, OutputStream systemErr )
+    public static int executeCommandLine( Commandline cl, InputStream systemIn, OutputStream systemOut,
+                                          OutputStream systemErr )
         throws CommandLineException
     {
         if ( cl == null )
