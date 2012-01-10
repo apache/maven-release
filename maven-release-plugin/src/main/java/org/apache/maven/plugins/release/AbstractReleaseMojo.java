@@ -153,7 +153,7 @@ public abstract class AbstractReleaseMojo
      * @parameter
      * @since 2.0-beta-6
      */
-    private Map providerImplementations;
+    private Map<String, String> providerImplementations;
 
     /**
      * The M2_HOME parameter to use for forked Maven invocations.
@@ -245,10 +245,9 @@ public abstract class AbstractReleaseMojo
     {
         if ( providerImplementations != null )
         {
-            for ( Iterator i = providerImplementations.keySet().iterator(); i.hasNext(); )
+            for ( String providerType : providerImplementations.keySet() )
             {
-                String providerType = (String) i.next();
-                String providerImplementation = (String) providerImplementations.get( providerType );
+                String providerImplementation = providerImplementations.get( providerType );
                 getLog().info( "Change the default '" + providerType + "' provider implementation to '"
                     + providerImplementation + "'." );
                 scmManager.setScmProviderImplementation( providerType, providerImplementation );
@@ -282,7 +281,8 @@ public abstract class AbstractReleaseMojo
         
         descriptor.setPushChanges( pushChanges );
 
-        List profiles = project.getActiveProfiles();
+        @SuppressWarnings("unchecked")
+		List<Profile> profiles = project.getActiveProfiles();
 
         String arguments = this.arguments;
         if ( profiles != null && !profiles.isEmpty() )
@@ -296,9 +296,9 @@ public abstract class AbstractReleaseMojo
                 arguments = "-P ";
             }
 
-            for ( Iterator it = profiles.iterator(); it.hasNext(); )
+            for ( Iterator<Profile> it = profiles.iterator(); it.hasNext(); )
             {
-                Profile profile = (Profile) it.next();
+                Profile profile = it.next();
 
                 arguments += profile.getId();
                 if ( it.hasNext() )
