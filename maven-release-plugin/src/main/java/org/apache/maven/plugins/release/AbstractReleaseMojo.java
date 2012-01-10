@@ -145,7 +145,7 @@ public abstract class AbstractReleaseMojo
      * @required
      * @readonly
      */
-    protected List reactorProjects;
+    protected List<MavenProject> reactorProjects;
 
     /**
      * List of provider implementations.
@@ -367,7 +367,7 @@ public abstract class AbstractReleaseMojo
      *
      * @return The list of reactor project, never <code>null</code>.
      */
-    public List getReactorProjects()
+    public List<MavenProject> getReactorProjects()
     {
         return reactorProjects;
     }

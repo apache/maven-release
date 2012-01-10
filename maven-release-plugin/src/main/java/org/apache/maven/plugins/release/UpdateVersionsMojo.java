@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
+import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -92,7 +93,7 @@ public class UpdateVersionsMojo
         config.setAutoVersionSubmodules( autoVersionSubmodules );
         config.setDefaultDevelopmentVersion( developmentVersion );
 
-        Map originalScmInfo = new HashMap();
+        Map<String, Scm> originalScmInfo = new HashMap<String, Scm>();
         originalScmInfo.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ), project.getScm() );
         config.setOriginalScmInfo( originalScmInfo );
 
