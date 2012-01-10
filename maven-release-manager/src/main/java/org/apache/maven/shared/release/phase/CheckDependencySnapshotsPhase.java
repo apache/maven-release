@@ -91,10 +91,8 @@ public class CheckDependencySnapshotsPhase
 
             Map originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
 
-            for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            for ( MavenProject project : reactorProjects )
             {
-                MavenProject project = (MavenProject) i.next();
-
                 checkProject( project, originalVersions, releaseDescriptor );
             }
         }
@@ -110,12 +108,13 @@ public class CheckDependencySnapshotsPhase
     private void checkProject( MavenProject project, Map originalVersions, ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException, ReleaseExecutionException
     {
-        Map artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
+        @SuppressWarnings("unchecked")
+		Map<String, Artifact> artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
 
-        Set snapshotDependencies = new HashSet();
-        Set snapshotReportDependencies = new HashSet();
-        Set snapshotExtensionsDependencies = new HashSet();
-        Set snapshotPluginDependencies = new HashSet();
+        Set<Artifact> snapshotDependencies = new HashSet<Artifact>();
+        Set<Artifact> snapshotReportDependencies = new HashSet<Artifact>();
+        Set<Artifact> snapshotExtensionsDependencies = new HashSet<Artifact>();
+        Set<Artifact> snapshotPluginDependencies = new HashSet<Artifact>();
 
         if ( project.getParentArtifact() != null )
         {
@@ -127,12 +126,11 @@ public class CheckDependencySnapshotsPhase
 
         try
         {
-            Set dependencyArtifacts = project.createArtifacts( artifactFactory, null, null );
+            @SuppressWarnings("unchecked")
+			Set<Artifact> dependencyArtifacts = project.createArtifacts( artifactFactory, null, null );
 
-            for ( Iterator i = dependencyArtifacts.iterator(); i.hasNext(); )
+            for ( Artifact artifact : dependencyArtifacts )
             {
-                Artifact artifact = (Artifact) i.next();
-
                 if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
                 {
                     snapshotDependencies.add( getArtifactFromMap( artifact, artifactMap ) );
@@ -144,10 +142,11 @@ public class CheckDependencySnapshotsPhase
             throw new ReleaseExecutionException( "Failed to create dependency artifacts", e );
         }
 
-        for ( Iterator i = project.getPluginArtifacts().iterator(); i.hasNext(); )
+        @SuppressWarnings("unchecked")
+		Set<Artifact> pluginArtifacts = project.getPluginArtifacts();
+        
+        for ( Artifact artifact : pluginArtifacts )
         {
-            Artifact artifact = (Artifact) i.next();
-
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
                 boolean addToFailures;
@@ -210,10 +209,11 @@ public class CheckDependencySnapshotsPhase
             }
         }
 
-        for ( Iterator i = project.getReportArtifacts().iterator(); i.hasNext(); )
+        @SuppressWarnings("unchecked")
+		Set<Artifact> reportArtifacts = project.getReportArtifacts();
+		
+        for ( Artifact artifact  : reportArtifacts )
         {
-            Artifact artifact = (Artifact) i.next();
-
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
                 //snapshotDependencies.add( artifact );
@@ -221,10 +221,11 @@ public class CheckDependencySnapshotsPhase
             }
         }
 
-        for ( Iterator i = project.getExtensionArtifacts().iterator(); i.hasNext(); )
+        @SuppressWarnings("unchecked")
+		Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
+		
+        for ( Artifact artifact : extensionArtifacts )
         {
-            Artifact artifact = (Artifact) i.next();
-
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
                 snapshotExtensionsDependencies.add( artifact );
@@ -257,17 +258,17 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private static boolean checkArtifact( Artifact artifact, Map originalVersions, Map artifactMapByVersionlessId, ReleaseDescriptor releaseDescriptor )
+    private static boolean checkArtifact( Artifact artifact, Map originalVersions, Map<String, Artifact> artifactMapByVersionlessId, ReleaseDescriptor releaseDescriptor )
     {
         Artifact checkArtifact = getArtifactFromMap( artifact, artifactMapByVersionlessId );
 
         return checkArtifact( checkArtifact, originalVersions, releaseDescriptor );
     }
 
-    private static Artifact getArtifactFromMap( Artifact artifact, Map artifactMapByVersionlessId )
+    private static Artifact getArtifactFromMap( Artifact artifact, Map<String, Artifact> artifactMapByVersionlessId )
     {
         String versionlessId = ArtifactUtils.versionlessKey( artifact );
-        Artifact checkArtifact = (Artifact) artifactMapByVersionlessId.get( versionlessId );
+        Artifact checkArtifact = artifactMapByVersionlessId.get( versionlessId );
 
         if ( checkArtifact == null)
         {
@@ -307,16 +308,14 @@ public class CheckDependencySnapshotsPhase
         this.prompter = prompter;
     }
 
-    private StringBuffer printSnapshotDependencies( Set snapshotsSet, StringBuffer message )
+    private StringBuffer printSnapshotDependencies( Set<Artifact> snapshotsSet, StringBuffer message )
     {
-        List snapshotsList = new ArrayList( snapshotsSet );
+        List<Artifact> snapshotsList = new ArrayList<Artifact>( snapshotsSet );
 
         Collections.sort( snapshotsList );
 
-        for ( Iterator i = snapshotsList.iterator(); i.hasNext(); )
+        for ( Artifact artifact : snapshotsList )
         {
-            Artifact artifact = (Artifact) i.next();
-
             message.append( "    " );
 
             message.append( artifact );
@@ -327,8 +326,8 @@ public class CheckDependencySnapshotsPhase
         return message;
     }
 
-    private void resolveSnapshots( Set projectDependencies, Set reportDependencies, Set extensionDependencies,
-                                   Set pluginDependencies, ReleaseDescriptor releaseDescriptor )
+    private void resolveSnapshots( Set<Artifact> projectDependencies, Set<Artifact> reportDependencies, Set<Artifact> extensionDependencies,
+                                   Set<Artifact> pluginDependencies, ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException
     {
         try
@@ -339,7 +338,7 @@ public class CheckDependencySnapshotsPhase
 
             if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
             {
-                Map resolvedSnapshots = null;
+				Map<String, Map<String, String>> resolvedSnapshots = null;
                 prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
                 result = prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT,
                                           Arrays.asList( new String[]{"0", "1", "2", "3"} ), "1" );
@@ -395,18 +394,18 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private Map processSnapshot( Set snapshotSet )
+    private Map<String, Map<String, String>> processSnapshot( Set<Artifact> snapshotSet )
         throws PrompterException, VersionParseException
     {
-        Map resolvedSnapshots = new HashMap();
-        Iterator iterator = snapshotSet.iterator();
+		Map<String, Map<String, String>> resolvedSnapshots = new HashMap<String, Map<String, String>>();
+        Iterator<Artifact> iterator = snapshotSet.iterator();
 
         while ( iterator.hasNext() )
         {
-            Artifact currentArtifact = (Artifact) iterator.next();
+            Artifact currentArtifact = iterator.next();
             String versionlessKey = ArtifactUtils.versionlessKey( currentArtifact );
 
-            Map versionMap = new HashMap();
+            Map<String, String> versionMap = new HashMap<String, String>();
             VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getVersion() );
             versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, versionInfo.toString() );
 
