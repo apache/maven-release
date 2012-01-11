@@ -47,18 +47,18 @@ public class RewritePomVersionsPhase
         // We are only updating versions no mods to scm needed
     }
 
-    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
+    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
                                          boolean simulate )
     {
         return releaseDescriptor.getReleaseVersions();
     }
 
-    protected Map getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getDevelopmentVersions();
     }
 
-    protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshotsMap )
+    protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshotsMap )
     {
         // Only update the pom version, not the dependency versions
         return null;

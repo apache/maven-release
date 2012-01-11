@@ -56,7 +56,7 @@ public class RewritePomsForDevelopmentPhase
             Element scmRoot = rootElement.getChild( "scm", namespace );
             if ( scmRoot != null )
             {
-                Map originalScmInfo = releaseDescriptor.getOriginalScmInfo();
+                Map<String, Scm> originalScmInfo = releaseDescriptor.getOriginalScmInfo();
                 // check containsKey, not == null, as we store null as a value
                 if ( !originalScmInfo.containsKey( projectId ) )
                 {
@@ -67,7 +67,7 @@ public class RewritePomsForDevelopmentPhase
                 ScmTranslator translator = scmTranslators.get( scmRepository.getProvider() );
                 if ( translator != null )
                 {
-                    Scm scm = (Scm) originalScmInfo.get( projectId );
+                    Scm scm = originalScmInfo.get( projectId );
 
                     if ( scm != null )
                     {
@@ -92,21 +92,21 @@ public class RewritePomsForDevelopmentPhase
         }
     }
 
-    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects, boolean simulate )
+    protected Map<String,String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, boolean simulate )
     {
         return simulate
             ? releaseDescriptor.getOriginalVersions( reactorProjects )
             : releaseDescriptor.getReleaseVersions();
     }
 
-    protected Map getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    protected Map<String,String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getDevelopmentVersions();
     }
 
-    protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshotsMap )
+	protected String getResolvedSnapshotVersion(String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshotsMap )
     {
-        Map versionsMap = (Map) resolvedSnapshotsMap.get( artifactVersionlessKey );
+        Map<String, String> versionsMap = resolvedSnapshotsMap.get( artifactVersionlessKey );
 
         if ( versionsMap != null )
         {

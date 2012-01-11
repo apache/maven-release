@@ -212,8 +212,8 @@ public class GenerateReleasePomsPhase
                                       ReleaseResult result )
         throws ReleaseFailureException, ReleaseExecutionException
     {
-        Map originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects );
-        Map mappedVersions = getNextVersionMap( releaseDescriptor );
+        Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects );
+        Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
 
         MavenProject releaseProject = new MavenProject( project );
         Model releaseModel = releaseProject.getModel();
@@ -292,12 +292,12 @@ public class GenerateReleasePomsPhase
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
-    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
+    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
     {
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
-    protected Map getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getReleaseVersions();
     }
@@ -360,26 +360,24 @@ public class GenerateReleasePomsPhase
         return releaseScm;
     }
 
-    private List<Dependency> createReleaseDependencies( Map originalVersions, Map mappedVersions, MavenProject project )
+    private List<Dependency> createReleaseDependencies( Map<String, String> originalVersions, Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
-        Set artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getArtifacts();
 
         List<Dependency> releaseDependencies = null;
 
         if ( artifacts != null )
         {
             // make dependency order deterministic for tests (related to MNG-1412)
-            List orderedArtifacts = new ArrayList();
+            List<Artifact> orderedArtifacts = new ArrayList<Artifact>();
             orderedArtifacts.addAll( artifacts );
             Collections.sort( orderedArtifacts );
 
             releaseDependencies = new ArrayList<Dependency>();
 
-            for ( Iterator iterator = orderedArtifacts.iterator(); iterator.hasNext(); )
+            for ( Artifact artifact : orderedArtifacts )
             {
-                Artifact artifact = (Artifact) iterator.next();
-
                 Dependency releaseDependency = new Dependency();
 
                 releaseDependency.setGroupId( artifact.getGroupId() );
@@ -399,13 +397,13 @@ public class GenerateReleasePomsPhase
         return releaseDependencies;
     }
 
-    private String getReleaseVersion( Map originalVersions, Map mappedVersions, Artifact artifact )
+    private String getReleaseVersion( Map<String, String> originalVersions, Map<String, String> mappedVersions, Artifact artifact )
         throws ReleaseFailureException
     {
         String key = ArtifactUtils.versionlessKey( artifact );
 
-        String originalVersion = (String) originalVersions.get( key );
-        String mappedVersion = (String) mappedVersions.get( key );
+        String originalVersion = originalVersions.get( key );
+        String mappedVersion = mappedVersions.get( key );
 
         String version = artifact.getVersion();
 
@@ -431,7 +429,7 @@ public class GenerateReleasePomsPhase
         return version;
     }
 
-    private List<Plugin> createReleasePlugins( Map originalVersions, Map mappedVersions, MavenProject project )
+    private List<Plugin> createReleasePlugins( Map<String, String> originalVersions, Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
         List<Plugin> releasePlugins = null;
@@ -441,19 +439,20 @@ public class GenerateReleasePomsPhase
 
         if ( build != null )
         {
-            List plugins = build.getPlugins();
+            @SuppressWarnings("unchecked")
+			List<Plugin> plugins = build.getPlugins();
 
             if ( plugins != null )
             {
-                Map artifactsById = project.getPluginArtifactMap();
+                @SuppressWarnings("unchecked")
+				Map<String, Artifact> artifactsById = project.getPluginArtifactMap();
 
                 releasePlugins = new ArrayList<Plugin>();
 
-                for ( Iterator iterator = plugins.iterator(); iterator.hasNext(); )
+                for ( Plugin plugin : plugins )
                 {
-                    Plugin plugin = (Plugin) iterator.next();
                     String id = ArtifactUtils.versionlessKey( plugin.getGroupId(), plugin.getArtifactId() );
-                    Artifact artifact = (Artifact) artifactsById.get( id );
+                    Artifact artifact = artifactsById.get( id );
                     String version = getReleaseVersion( originalVersions, mappedVersions, artifact );
 
                     Plugin releasePlugin = new Plugin();
@@ -475,7 +474,7 @@ public class GenerateReleasePomsPhase
         return releasePlugins;
     }
 
-    private List<ReportPlugin> createReleaseReportPlugins( Map originalVersions, Map mappedVersions,
+    private List<ReportPlugin> createReleaseReportPlugins( Map<String, String> originalVersions, Map<String, String> mappedVersions,
                                                            MavenProject project )
         throws ReleaseFailureException
     {
@@ -485,19 +484,18 @@ public class GenerateReleasePomsPhase
 
         if ( reporting != null )
         {
-            List reportPlugins = reporting.getPlugins();
+            List<ReportPlugin> reportPlugins = reporting.getPlugins();
 
             if ( reportPlugins != null )
             {
-                Map artifactsById = project.getReportArtifactMap();
+                Map<String, Artifact> artifactsById = project.getReportArtifactMap();
 
                 releaseReportPlugins = new ArrayList<ReportPlugin>();
 
-                for ( Iterator iterator = reportPlugins.iterator(); iterator.hasNext(); )
+                for ( ReportPlugin reportPlugin : reportPlugins )
                 {
-                    ReportPlugin reportPlugin = (ReportPlugin) iterator.next();
                     String id = ArtifactUtils.versionlessKey( reportPlugin.getGroupId(), reportPlugin.getArtifactId() );
-                    Artifact artifact = (Artifact) artifactsById.get( id );
+                    Artifact artifact = artifactsById.get( id );
                     String version = getReleaseVersion( originalVersions, mappedVersions, artifact );
 
                     ReportPlugin releaseReportPlugin = new ReportPlugin();
@@ -516,7 +514,7 @@ public class GenerateReleasePomsPhase
         return releaseReportPlugins;
     }
 
-    private List<Extension> createReleaseExtensions( Map originalVersions, Map mappedVersions, MavenProject project )
+    private List<Extension> createReleaseExtensions( Map<String, String> originalVersions, Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
         List<Extension> releaseExtensions = null;
@@ -526,16 +524,14 @@ public class GenerateReleasePomsPhase
 
         if ( build != null )
         {
-            List extensions = build.getExtensions();
+            List<Extension> extensions = build.getExtensions();
 
             if ( extensions != null )
             {
                 releaseExtensions = new ArrayList<Extension>();
 
-                for ( Iterator iterator = extensions.iterator(); iterator.hasNext(); )
+                for ( Extension extension : extensions )
                 {
-                    Extension extension = (Extension) iterator.next();
-
                     String id = ArtifactUtils.versionlessKey( extension.getGroupId(), extension.getArtifactId() );
                     Artifact artifact = (Artifact) project.getExtensionArtifactMap().get( id );
                     String version = getReleaseVersion( originalVersions, mappedVersions, artifact );

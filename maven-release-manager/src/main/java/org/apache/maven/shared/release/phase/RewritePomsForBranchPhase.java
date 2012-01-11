@@ -210,23 +210,23 @@ public class RewritePomsForBranchPhase
         return result;
     }
 
-    protected Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List reactorProjects, boolean simulate )
+    protected Map<String,String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, boolean simulate )
     {
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
-    protected Map getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor)
     {
         return releaseDescriptor.getReleaseVersions();
     }
 
-    protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshotsMap )
+    protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String,String>> resolvedSnapshotsMap )
     {
-        Map versionsMap = (Map) resolvedSnapshotsMap.get( artifactVersionlessKey );
+        Map<String, String> versionsMap = resolvedSnapshotsMap.get( artifactVersionlessKey );
 
         if ( versionsMap != null )
         {
-            return (String) versionsMap.get( ReleaseDescriptor.RELEASE_KEY );
+            return versionsMap.get( ReleaseDescriptor.RELEASE_KEY );
         }
         else
         {

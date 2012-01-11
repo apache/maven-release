@@ -380,12 +380,12 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void rewriteVersion( Element rootElement, Namespace namespace, Map mappedVersions, String projectId,
+    private void rewriteVersion( Element rootElement, Namespace namespace, Map<String, String> mappedVersions, String projectId,
                                  MavenProject project, String parentVersion )
         throws ReleaseFailureException
     {
         Element versionElement = rootElement.getChild( "version", namespace );
-        String version = (String) mappedVersions.get( projectId );
+        String version = mappedVersions.get( projectId );
         if ( version == null )
         {
             throw new ReleaseFailureException( "Version for '" + project.getName() + "' was not mapped" );
@@ -743,12 +743,12 @@ public abstract class AbstractRewritePomsPhase
         return result;
     }
 
-    protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshots );
+    protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String,String>> resolvedSnapshots );
 
-    protected abstract Map getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
+    protected abstract Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
                                                   boolean simulate );
 
-    protected abstract Map getNextVersionMap( ReleaseDescriptor releaseDescriptor );
+    protected abstract Map<String,String> getNextVersionMap( ReleaseDescriptor releaseDescriptor );
 
     protected abstract void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                           ReleaseDescriptor releaseDescriptor, String projectId,
