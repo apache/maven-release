@@ -175,7 +175,7 @@
             <multiplicity>*</multiplicity>
           </association>
           <description>
-            A map of projects to versions to use when moving the given projects back into devlopment after release.
+            A map of projects to versions to use when moving the given projects back into development after release.
           </description>
         </field>
         <field>
@@ -267,7 +267,7 @@
           <version>1.0.0+</version>
           <type>boolean</type>
           <description>
-            Whether to use the parent pom version for submodule verstions.
+            Whether to use the parent pom version for submodule versions.
           </description>
         </field>
         <field>
