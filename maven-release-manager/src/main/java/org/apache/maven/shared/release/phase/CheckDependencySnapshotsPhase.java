@@ -89,7 +89,8 @@ public class CheckDependencySnapshotsPhase
         {
             logInfo( result, "Checking dependencies and plugins for snapshots ..." );
 
-            Map originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
+            @SuppressWarnings("unchecked")
+			Map<String, String> originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
 
             for ( MavenProject project : reactorProjects )
             {
@@ -105,7 +106,7 @@ public class CheckDependencySnapshotsPhase
         return result;
     }
 
-    private void checkProject( MavenProject project, Map originalVersions, ReleaseDescriptor releaseDescriptor )
+    private void checkProject( MavenProject project, Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         @SuppressWarnings("unchecked")
@@ -258,7 +259,7 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private static boolean checkArtifact( Artifact artifact, Map originalVersions, Map<String, Artifact> artifactMapByVersionlessId, ReleaseDescriptor releaseDescriptor )
+    private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions, Map<String, Artifact> artifactMapByVersionlessId, ReleaseDescriptor releaseDescriptor )
     {
         Artifact checkArtifact = getArtifactFromMap( artifact, artifactMapByVersionlessId );
 
@@ -277,7 +278,7 @@ public class CheckDependencySnapshotsPhase
         return checkArtifact;
     }
 
-    private static boolean checkArtifact( Artifact artifact, Map originalVersions, ReleaseDescriptor releaseDescriptor )
+    private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor )
     {
         String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
 

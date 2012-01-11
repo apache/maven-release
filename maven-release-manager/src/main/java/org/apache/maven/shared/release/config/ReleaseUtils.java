@@ -210,27 +210,27 @@ public class ReleaseUtils
 
     private static void loadResolvedDependencies( Properties prop, ReleaseDescriptor descriptor )
     {
-        Map resolvedDependencies = new HashMap();
+        Map<String, Map<String, String>> resolvedDependencies = new HashMap<String, Map<String, String>>();
 
         Set entries = prop.entrySet();
-        Iterator iterator = entries.iterator();
+        Iterator<Entry<String, String>> iterator = entries.iterator();
         String propertyName;
-        Entry currentEntry;
+        Entry<String, String> currentEntry;
 
         while ( iterator.hasNext() )
         {
-            currentEntry = (Entry) iterator.next();
+            currentEntry = iterator.next();
             propertyName = (String) currentEntry.getKey();
 
             if ( propertyName.startsWith( "dependency." ) )
             {
-                Map versionMap;
+                Map<String, String> versionMap;
                 String artifactVersionlessKey;
                 int startIndex;
                 int endIndex;
                 String versionType;
 
-                versionMap = new HashMap();
+                versionMap = new HashMap<String, String>();
                 startIndex = propertyName.lastIndexOf( "dependency." );
 
                 if ( propertyName.indexOf( ".development" ) != -1 )
@@ -248,11 +248,11 @@ public class ReleaseUtils
 
                 if ( resolvedDependencies.containsKey( artifactVersionlessKey ) )
                 {
-                    versionMap = (Map) resolvedDependencies.get( artifactVersionlessKey );
+                    versionMap = resolvedDependencies.get( artifactVersionlessKey );
                 }
                 else
                 {
-                    versionMap = new HashMap();
+                    versionMap = new HashMap<String, String>();
                     resolvedDependencies.put( artifactVersionlessKey, versionMap );
                 }
 

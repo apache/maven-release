@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -302,14 +301,14 @@ public class GenerateReleasePomsPhase
         return releaseDescriptor.getReleaseVersions();
     }
 
-    private String getNextVersion( Map mappedVersions, String groupId, String artifactId, String version )
+    private String getNextVersion( Map<String, String> mappedVersions, String groupId, String artifactId, String version )
         throws ReleaseFailureException
     {
         // TODO: share with RewritePomsForReleasePhase.rewriteVersion
 
         String id = ArtifactUtils.versionlessKey( groupId, artifactId );
 
-        String nextVersion = (String) mappedVersions.get( id );
+        String nextVersion = mappedVersions.get( id );
 
         if ( nextVersion == null )
         {
@@ -363,7 +362,8 @@ public class GenerateReleasePomsPhase
     private List<Dependency> createReleaseDependencies( Map<String, String> originalVersions, Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
-        Set<Artifact> artifacts = project.getArtifacts();
+        @SuppressWarnings("unchecked")
+		Set<Artifact> artifacts = project.getArtifacts();
 
         List<Dependency> releaseDependencies = null;
 
@@ -484,11 +484,13 @@ public class GenerateReleasePomsPhase
 
         if ( reporting != null )
         {
-            List<ReportPlugin> reportPlugins = reporting.getPlugins();
+            @SuppressWarnings("unchecked")
+			List<ReportPlugin> reportPlugins = reporting.getPlugins();
 
             if ( reportPlugins != null )
             {
-                Map<String, Artifact> artifactsById = project.getReportArtifactMap();
+                @SuppressWarnings("unchecked")
+				Map<String, Artifact> artifactsById = project.getReportArtifactMap();
 
                 releaseReportPlugins = new ArrayList<ReportPlugin>();
 
@@ -524,7 +526,8 @@ public class GenerateReleasePomsPhase
 
         if ( build != null )
         {
-            List<Extension> extensions = build.getExtensions();
+            @SuppressWarnings("unchecked")
+			List<Extension> extensions = build.getExtensions();
 
             if ( extensions != null )
             {

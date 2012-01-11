@@ -210,12 +210,14 @@ public class RewritePomsForBranchPhase
         return result;
     }
 
-    protected Map<String,String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, boolean simulate )
+    @SuppressWarnings("unchecked")
+	protected Map<String,String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, boolean simulate )
     {
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
-    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor)
+    @SuppressWarnings("unchecked")
+	protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor)
     {
         return releaseDescriptor.getReleaseVersions();
     }

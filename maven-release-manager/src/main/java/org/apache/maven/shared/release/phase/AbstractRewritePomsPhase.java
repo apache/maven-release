@@ -253,7 +253,8 @@ public abstract class AbstractRewritePomsPhase
         Namespace namespace = rootElement.getNamespace();
         Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
         Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects, simulate );
-        Map resolvedSnapshotDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
+        @SuppressWarnings("unchecked")
+		Map<String, Map<String, String>> resolvedSnapshotDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
         Model model = project.getModel();
         Element properties = rootElement.getChild( "properties", namespace );
 
@@ -411,8 +412,8 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private String rewriteParent( MavenProject project, Element rootElement, Namespace namespace, Map mappedVersions,
-                                  Map resolvedSnapshotDependencies, Map originalVersions )
+    private String rewriteParent( MavenProject project, Element rootElement, Namespace namespace, Map<String, String> mappedVersions,
+                                  Map<String, Map<String, String>> resolvedSnapshotDependencies, Map<String, String> originalVersions )
         throws ReleaseFailureException
     {
         String parentVersion = null;
@@ -422,7 +423,7 @@ public abstract class AbstractRewritePomsPhase
             Element versionElement = parentElement.getChild( "version", namespace );
             MavenProject parent = project.getParent();
             String key = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
-            parentVersion = (String) mappedVersions.get( key );
+            parentVersion = mappedVersions.get( key );
             if ( parentVersion == null )
             {
                 //MRELEASE-317
@@ -444,7 +445,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void rewriteArtifactVersions( Collection<Element> elements, Map<String, String> mappedVersions,
-                                          Map resolvedSnapshotDependencies, Map<String, String> originalVersions,
+                                          Map<String, Map<String, String>> resolvedSnapshotDependencies, Map<String, String> originalVersions,
                                           Model projectModel, Element properties, ReleaseResult result,
                                           ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -755,13 +756,13 @@ public abstract class AbstractRewritePomsPhase
                                           ScmRepository scmRepository, ReleaseResult result, String commonBasedir )
         throws ReleaseExecutionException;
 
-    protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey, Map resolvedSnapshots )
+    protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshots )
     {
-        Map versionsMap = (Map) resolvedSnapshots.get( artifactVersionlessKey );
+        Map<String, String> versionsMap = resolvedSnapshots.get( artifactVersionlessKey );
 
         if ( versionsMap != null )
         {
-            return (String) ( versionsMap.get( ReleaseDescriptor.ORIGINAL_VERSION ) );
+            return versionsMap.get( ReleaseDescriptor.ORIGINAL_VERSION );
         }
         else
         {
