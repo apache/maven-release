@@ -245,12 +245,11 @@ public abstract class AbstractReleaseMojo
     {
         if ( providerImplementations != null )
         {
-            for ( String providerType : providerImplementations.keySet() )
+            for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
             {
-                String providerImplementation = providerImplementations.get( providerType );
-                getLog().info( "Change the default '" + providerType + "' provider implementation to '"
-                    + providerImplementation + "'." );
-                scmManager.setScmProviderImplementation( providerType, providerImplementation );
+                getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
+                    + providerEntry.getValue() + "'." );
+                scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
             }
         }
     }
