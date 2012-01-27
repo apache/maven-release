@@ -19,6 +19,17 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Stack;
+
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -55,18 +66,14 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
+import org.custommonkey.xmlunit.Diff;
+import org.custommonkey.xmlunit.Difference;
+import org.custommonkey.xmlunit.DifferenceListener;
+import org.custommonkey.xmlunit.XMLAssert;
+import org.custommonkey.xmlunit.XMLUnit;
 import org.jmock.Mock;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * Base class for some release tests.
@@ -311,38 +318,55 @@ public abstract class AbstractReleaseTestCase
     protected void comparePomFiles( File expectedFile, File actualFile, boolean normalizeLineEndings )
         throws IOException
     {
-        String actual = read( actualFile, normalizeLineEndings );
-        String expected = read( expectedFile, normalizeLineEndings );
-        expected = expected.replaceAll( "\\$\\{remoterepo\\}", getRemoteRepositoryURL() );
-        StringBuilder sb = new StringBuilder( "Check the transformed POM " + actualFile );
-        sb.append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "expected : "  ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( expected ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( "actual : "  ).append( SystemUtils.LINE_SEPARATOR );
-        sb.append( actual ).append( SystemUtils.LINE_SEPARATOR );
-        
-        assertEquals( sb.toString() , expected, actual );
-    }
-
-    /**
-     * Mock-up of {@link ReleaseUtil#readXmlFile(File)}, except this one REMOVES line endings. There is something fishy
-     * about the line ending conversion in that method, and it's not the class under test in these test cases.
-     * 
-     * @param normalizeLineEndings TODO
-     */
-    private String read( File file, boolean normalizeLineEndings )
-        throws IOException
-    {
-        Reader reader = null;
+        Reader expected = null;
+        Reader actual = null;
         try
         {
-            reader = ReaderFactory.newXmlReader( file );
-            String xml = IOUtil.toString( reader );
-            return normalizeLineEndings ? ReleaseUtil.normalizeLineEndings( xml, "" ) : xml;
+            expected = ReaderFactory.newXmlReader( expectedFile );
+            actual = ReaderFactory.newXmlReader( actualFile );
+            
+            StringBuffer sb = new StringBuffer( "Check the transformed POM " + actualFile );
+            sb.append( SystemUtils.LINE_SEPARATOR );
+            
+            final String remoteRepositoryURL = getRemoteRepositoryURL();
+
+            XMLUnit.setNormalizeWhitespace( true );
+            
+            Diff diff = XMLUnit.compareXML( expected, actual );
+            
+            diff.overrideDifferenceListener( new DifferenceListener()
+            {
+                
+                public void skippedComparison( Node arg0, Node arg1 )
+                {
+                    //do nothing
+                }
+                
+                public int differenceFound( Difference difference )
+                {
+                    if( "${remoterepo}".equals( difference.getControlNodeDetail().getValue() ) &&
+                                    remoteRepositoryURL.equals( difference.getTestNodeDetail().getValue() ) )
+                    {
+                        return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
+                    }
+                    else 
+                    {
+                        return DifferenceListener.RETURN_ACCEPT_DIFFERENCE;
+                    }
+                }
+            });
+            diff.appendMessage( sb );
+            
+            XMLAssert.assertXMLIdentical( diff, true );
         }
-        finally
+        catch ( SAXException e )
         {
-            IOUtil.close( reader );
+            fail( e.getMessage() );
+        }
+        finally 
+        {
+            IOUtil.close( expected );
+            IOUtil.close( actual );
         }
     }
 
