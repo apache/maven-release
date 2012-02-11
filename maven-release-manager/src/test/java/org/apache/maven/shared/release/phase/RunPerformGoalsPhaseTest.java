@@ -12,6 +12,7 @@ import org.jmock.Mock;
 import org.jmock.core.Constraint;
 import org.jmock.core.constraint.IsAnything;
 import org.jmock.core.constraint.IsEqual;
+import org.jmock.core.constraint.IsNull;
 import org.jmock.core.matcher.InvokeOnceMatcher;
 import org.jmock.core.stub.ThrowStub;
 
@@ -52,6 +53,7 @@ public class RunPerformGoalsPhaseTest
             new IsAnything(),
             new IsEqual( Boolean.TRUE ),
             new IsEqual( "-DperformRelease=true -f pom.xml" ),
+            new IsNull(),
             new IsAnything()
         };
 

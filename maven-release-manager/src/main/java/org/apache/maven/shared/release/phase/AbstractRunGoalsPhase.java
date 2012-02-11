@@ -81,7 +81,7 @@ public abstract class AbstractRunGoalsPhase
                 mavenExecutor.executeGoals( determineWorkingDirectory( workingDirectory,
                                                                        releaseDescriptor.getScmRelativePathProjectDirectory() ),
                                             goals, releaseEnvironment, releaseDescriptor.isInteractive(),
-                                            additionalArguments, result );
+                                            additionalArguments, releaseDescriptor.getPomFileName(), result );
             }
         }
         catch ( MavenExecutorException e )

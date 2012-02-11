@@ -197,7 +197,7 @@
                     <setupInclude>setup/maven-scm-provider-*/pom.xml</setupInclude>
                   </setupIncludes>
                   <pomIncludes>
-                    <pomInclude>projects/prepare/*/pom.xml</pomInclude>
+                    <pomInclude>projects/prepare/*/*pom.xml</pomInclude>
                     <pomInclude>projects/prepare/flat-multi-module/parent-project/pom.xml</pomInclude>
                   </pomIncludes>
                   <goals>

@@ -70,7 +70,7 @@ public class RunCompleteGoalsPhaseTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
+            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsNull(), new IsAnything()};
 
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
 
@@ -93,7 +93,7 @@ public class RunCompleteGoalsPhaseTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsAnything(), new IsAnything()};
+            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsAnything(), new IsNull(), new IsAnything()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
 
         phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
@@ -115,7 +115,7 @@ public class RunCompleteGoalsPhaseTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
+            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsNull(), new IsAnything()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
@@ -143,7 +143,7 @@ public class RunCompleteGoalsPhaseTest
 
         Mock mock = new Mock( MavenExecutor.class );
         Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsAnything()};
+            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsNull(), new IsAnything()};
         mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
             new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
 
