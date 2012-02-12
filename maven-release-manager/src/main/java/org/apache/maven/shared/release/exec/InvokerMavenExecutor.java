@@ -96,6 +96,8 @@ public class InvokerMavenExecutor
     private static final String FAIL_AT_END = "fae";
 
     private static final String FAIL_NEVER = "fn";
+    
+    private static final String ALTERNATE_POM_FILE = "f";
 
     static
     {
@@ -158,6 +160,9 @@ public class InvokerMavenExecutor
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "fail-never" ).withDescription(
             "NEVER fail the build, regardless of project result" ).create( FAIL_NEVER ) );
+        
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "file" ).withDescription( 
+            "Force the use of an alternate POM file." ).hasArg().create( ALTERNATE_POM_FILE ) );
     }
 
     // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
@@ -311,6 +316,17 @@ public class InvokerMavenExecutor
             if ( cli.hasOption( FAIL_NEVER ) )
             {
                 req.setFailureBehavior( InvocationRequest.REACTOR_FAIL_NEVER );
+            }
+            if ( cli.hasOption( ALTERNATE_POM_FILE ) )
+            {
+                if ( req.getPomFileName() != null )
+                {
+                    getLogger().info( "pomFileName is already set, ignoring the -f argument" );
+                }
+                else
+                {
+                    req.setPomFileName( cli.getOptionValue( ALTERNATE_POM_FILE ) );
+                }
             }
         }
         catch ( Exception e )
