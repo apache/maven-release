@@ -328,7 +328,7 @@ public class MapVersionsPhaseTest
         }
     }
 
-    public void testInvalidVersionInteractive()
+    public void testAdjustVersionInteractive()
         throws Exception
     {
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
@@ -361,7 +361,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
-    public void testInvalidVersionNonInteractive()
+    public void testAdjustVersionNonInteractive()
         throws Exception
     {
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
