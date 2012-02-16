@@ -89,7 +89,9 @@ public class RunPerformGoalsPhase
             if ( matchingPom != null )
             {
                 getLogger().info( "Invoking perform goals in directory " + matchingPom.getParent() );
-                releaseDescriptor.setCheckoutDirectory( matchingPom.getParent() );
+                // the directory of the POM in a flat project layout is not
+                // the same directory as the SCM checkout directory!
+                // releaseDescriptor.setCheckoutDirectory( matchingPom.getParent() );
             }
 
         }
