@@ -61,15 +61,9 @@ public class CheckoutProjectFromScm
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseResult result = new ReleaseResult();
-
-        logInfo( result, "Checking out the project to perform the release ..." );
-
-        ScmRepository repository;
-        ScmProvider provider;
-
+        ReleaseResult releaseResult = null;
 
         if ( releaseDescriptor.isLocalCheckout() )
         {
@@ -78,15 +72,83 @@ public class CheckoutProjectFromScm
 
             // the first step is a bit tricky, we need to know which provider! like e.g. "scm:jgit:http://"
             // the offset of 4 is because 'scm:' has 4 characters...
-            String providerPart =
-                releaseDescriptor.getScmSourceUrl().substring( 0, releaseDescriptor.getScmSourceUrl().indexOf( ':', 4 ) );
+            String providerPart = releaseDescriptor.getScmSourceUrl()
+                    .substring(0, releaseDescriptor.getScmSourceUrl().indexOf(':', 4));
 
-            //X TODO: also check the information from releaseDescriptor.getScmRelativePathProjectDirectory()
-            //X TODO: in case our toplevel git directory has no pom.
+            String scmPath = releaseDescriptor.getWorkingDirectory();
 
-            releaseDescriptor.setScmSourceUrl( providerPart + ":file://" + releaseDescriptor.getWorkingDirectory() );
-            getLogger().info( "Performing a LOCAL checkout from " + releaseDescriptor.getScmSourceUrl() );
+            // now we iteratively try to checkout.
+            // if the local checkout fails, then we might be in a subdirectory
+            // and need to walk a few directories up.
+            do
+            {
+                try
+                {
+                    String scmUrl = providerPart + ":file://" + scmPath;
+                    releaseDescriptor.setScmSourceUrl( scmUrl );
+                    getLogger().info( "Performing a LOCAL checkout from " + releaseDescriptor.getScmSourceUrl() );
+
+                    releaseResult = performCheckout( releaseDescriptor, releaseEnvironment, reactorProjects );
+                }
+                catch ( ScmException scmEx)
+                {
+                    // the checkout from _this_ directory failed
+                    releaseResult = null;
+                }
+
+                if ( releaseResult == null || releaseResult.getResultCode() == ReleaseResult.ERROR )
+                {
+                    // this means that there is no SCM repo in this directory
+                    // thus we try to step one directory up
+                    releaseResult = null;
+
+                    // remove last sub-directory path
+                    int lastSlashPos = scmPath.lastIndexOf( "/" );
+                    if ( lastSlashPos > 0 )
+                    {
+                        scmPath = scmPath.substring( 0, lastSlashPos );
+                    }
+                    else
+                    {
+                        throw new ReleaseExecutionException( "could not perform a local checkout" );
+                    }
+                }
+            }
+            while ( releaseResult == null );
         }
+        else
+        {
+            // when there is no localCheckout, then we just do a standard SCM checkout.
+            try
+            {
+                releaseResult =  performCheckout( releaseDescriptor, releaseEnvironment, reactorProjects );
+            }
+            catch ( ScmException e )
+            {
+                releaseResult = new ReleaseResult();
+                releaseResult.setResultCode( ReleaseResult.ERROR );
+                logError( releaseResult, e.getMessage() );
+
+                throw new ReleaseExecutionException( "An error is occurred in the checkout process: "
+                                                     + e.getMessage(), e );
+            }
+
+        }
+
+        return releaseResult;
+    }
+
+
+    public ReleaseResult performCheckout( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException, ScmException
+    {
+        ReleaseResult result = new ReleaseResult();
+
+        logInfo( result, "Checking out the project to perform the release ..." );
+
+        ScmRepository repository;
+        ScmProvider provider;
 
         try
         {
@@ -142,17 +204,14 @@ public class CheckoutProjectFromScm
 
         CheckOutScmResult scmResult;
 
-        try
-        {
-            scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ),
-                                           new ScmTag( releaseDescriptor.getScmReleaseLabel() ) );
-        }
-        catch ( ScmException e )
-        {
-            result.setResultCode( ReleaseResult.ERROR );
-            logError( result, e.getMessage() );
+        scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ),
+                                       new ScmTag( releaseDescriptor.getScmReleaseLabel() ) );
 
-            throw new ReleaseExecutionException( "An error is occurred in the checkout process: " + e.getMessage(), e );
+        if ( releaseDescriptor.isLocalCheckout() && !scmResult.isSuccess() )
+        {
+            // this is not beautiful but needed to indicate that the execute() method
+            // should continue in the parent directory
+            return null;
         }
 
         String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();

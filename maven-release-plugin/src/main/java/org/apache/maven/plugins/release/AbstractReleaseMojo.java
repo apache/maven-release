@@ -281,7 +281,7 @@ public abstract class AbstractReleaseMojo
         descriptor.setPushChanges( pushChanges );
 
         @SuppressWarnings("unchecked")
-		List<Profile> profiles = project.getActiveProfiles();
+        List<Profile> profiles = project.getActiveProfiles();
 
         String arguments = this.arguments;
         if ( profiles != null && !profiles.isEmpty() )
