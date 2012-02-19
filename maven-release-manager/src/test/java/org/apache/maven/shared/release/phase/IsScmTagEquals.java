@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.scm.ScmTag;
 import org.jmock.core.Constraint;
+import org.mockito.ArgumentMatcher;
 
 /**
  * JMock constraint to compare tags since it has no equals method.
@@ -28,7 +29,7 @@ import org.jmock.core.Constraint;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @todo add an equals() method
  */
-public class IsScmTagEquals
+public class IsScmTagEquals extends ArgumentMatcher<ScmTag>
     implements Constraint
 {
     private final ScmTag tag;
@@ -40,7 +41,13 @@ public class IsScmTagEquals
 
     public boolean eval( Object object )
     {
-        ScmTag tag = (ScmTag) object;
+        return matches( object );
+    }
+
+    @Override
+    public boolean matches( Object argument )
+    {
+        ScmTag tag = (ScmTag) argument;
 
         return tag.getName().equals( this.tag.getName() );
     }

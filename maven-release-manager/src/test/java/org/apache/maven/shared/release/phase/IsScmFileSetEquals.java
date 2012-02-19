@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import org.apache.maven.scm.ScmFileSet;
 import org.jmock.core.Constraint;
+import org.mockito.ArgumentMatcher;
 
 /**
  * JMock constraint to compare file sets since it has no equals method.
@@ -30,7 +31,7 @@ import org.jmock.core.Constraint;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @todo add an equals() method
  */
-public class IsScmFileSetEquals
+public class IsScmFileSetEquals extends ArgumentMatcher<ScmFileSet>
     implements Constraint
 {
     private final ScmFileSet fileSet;
@@ -42,7 +43,13 @@ public class IsScmFileSetEquals
 
     public boolean eval( Object object )
     {
-        ScmFileSet fs = (ScmFileSet) object;
+        return matches( object );
+    }
+    
+    @Override
+    public boolean matches( Object argument )
+    {
+        ScmFileSet fs = (ScmFileSet) argument;
         
         try
         {
