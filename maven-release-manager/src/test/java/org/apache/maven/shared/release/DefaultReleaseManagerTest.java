@@ -18,6 +18,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+import static org.mockito.Mockito.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +37,7 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
@@ -318,19 +320,19 @@ public class DefaultReleaseManagerTest
     public void testReleaseConfigurationStoreReadFailure()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        Mock configStoreMock = new Mock( ReleaseDescriptorStore.class );
-        configStoreMock.expects( new InvokeOnceMatcher() ).method( "read" ).with(
-            new IsSame( releaseDescriptor ) ).will(
-            new ThrowStub( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) ) );
+        ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
+        when( configStoreMock.read( releaseDescriptor ) ).thenThrow( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) );
 
-        releaseManager.setConfigStore( (ReleaseDescriptorStore) configStoreMock.proxy() );
+        releaseManager.setConfigStore( configStoreMock );
 
+        // execute
         try
         {
             releaseManager.prepare( releaseDescriptor, new DefaultReleaseEnvironment(), null );
@@ -341,24 +343,28 @@ public class DefaultReleaseManagerTest
             // good
             assertEquals( "check cause", ReleaseDescriptorStoreException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( configStoreMock ).read( releaseDescriptor );
+        verifyNoMoreInteractions( configStoreMock );
     }
 
     public void testReleaseConfigurationStoreWriteFailure()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        Mock configStoreMock = new Mock( ReleaseDescriptorStore.class );
-        configStoreMock.expects( new InvokeOnceMatcher() ).method( "write" ).with(
-            new IsSame( releaseDescriptor ) ).will(
-            new ThrowStub( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) ) );
+        ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
+        doThrow( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) ).when( configStoreMock ).write( releaseDescriptor );
 
-        releaseManager.setConfigStore( (ReleaseDescriptorStore) configStoreMock.proxy() );
+        releaseManager.setConfigStore( configStoreMock );
 
+        // execute
         try
         {
             releaseManager.prepare( releaseDescriptor, new DefaultReleaseEnvironment(), null, false, false );
@@ -369,24 +375,30 @@ public class DefaultReleaseManagerTest
             // good
             assertEquals( "check cause", ReleaseDescriptorStoreException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( configStoreMock ).write( releaseDescriptor ) ;
+        verifyNoMoreInteractions( configStoreMock );
     }
 
     public void testReleaseConfigurationStoreClean()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        Mock configStoreMock = new Mock( ReleaseDescriptorStore.class );
-        configStoreMock.expects( new InvokeOnceMatcher() ).method( "delete" );
+        ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
 
-        releaseManager.setConfigStore( (ReleaseDescriptorStore) configStoreMock.proxy() );
+        releaseManager.setConfigStore( configStoreMock );
 
+        // execute
         releaseManager.clean( releaseDescriptor, null, null );
 
+        // verify
         @SuppressWarnings("unchecked")
         Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
 
@@ -401,6 +413,9 @@ public class DefaultReleaseManagerTest
 
         phase = (ReleasePhaseStub) phases.get( "branch1" );
         assertTrue( "branch1 not cleaned", phase.isCleaned() );
+        
+        verify( configStoreMock ).delete( releaseDescriptor );
+        verifyNoMoreInteractions( configStoreMock );
     }
 
     public void testReleasePerform()
@@ -594,19 +609,19 @@ public class DefaultReleaseManagerTest
     public void testReleaseConfigurationStoreReadFailureOnPerform()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        Mock configStoreMock = new Mock( ReleaseDescriptorStore.class );
-        configStoreMock.expects( new InvokeOnceMatcher() ).method( "read" ).with(
-            new IsSame( releaseDescriptor ) ).will(
-            new ThrowStub( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) ) );
+        ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
+        when( configStoreMock.read( releaseDescriptor ) ).thenThrow( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) );
 
-        releaseManager.setConfigStore( (ReleaseDescriptorStore) configStoreMock.proxy() );
+        releaseManager.setConfigStore( configStoreMock );
 
+        // execute
         try
         {
             releaseDescriptor.setUseReleaseProfile( false );
@@ -619,6 +634,10 @@ public class DefaultReleaseManagerTest
             // good
             assertEquals( "check cause", ReleaseDescriptorStoreException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( configStoreMock ).read( releaseDescriptor );
+        verifyNoMoreInteractions( configStoreMock );
     }
 
     public void testReleasePerformWithIncompletePrepare()
@@ -673,21 +692,21 @@ public class DefaultReleaseManagerTest
     public void testNoSuchScmProviderExceptionThrown()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        Mock scmManagerMock = new Mock( ScmManager.class );
-        scmManagerMock.expects( new InvokeOnceMatcher() ).method( "makeScmRepository" ).with(
-            new IsEqual( "scm-url" ) ).will( new ThrowStub( new NoSuchScmProviderException( "..." ) ) );
+        ScmManager scmManagerMock = mock( ScmManager.class );
+        when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
 
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
         DefaultScmRepositoryConfigurator configurator =
             (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
+        configurator.setScmManager( scmManagerMock );
 
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
+        // execute
         try
         {
             releaseDescriptor.setUseReleaseProfile( false );
@@ -700,26 +719,30 @@ public class DefaultReleaseManagerTest
         {
             assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( scmManagerMock ).makeScmRepository( "scm-url" );
+        verifyNoMoreInteractions( scmManagerMock );
     }
 
     public void testScmRepositoryExceptionThrown()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        Mock scmManagerMock = new Mock( ScmManager.class );
-        scmManagerMock.expects( new InvokeOnceMatcher() ).method( "makeScmRepository" ).with(
-            new IsEqual( "scm-url" ) ).will( new ThrowStub( new ScmRepositoryException( "..." ) ) );
+        ScmManager scmManagerMock = mock( ScmManager.class );
+        when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new ScmRepositoryException( "..." ) );
 
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
         DefaultScmRepositoryConfigurator configurator =
             (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
+        configurator.setScmManager( scmManagerMock );
 
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
+        // execute
         try
         {
             releaseDescriptor.setUseReleaseProfile( false );
@@ -732,11 +755,16 @@ public class DefaultReleaseManagerTest
         {
             assertNull( "Check no additional cause", e.getCause() );
         }
+        
+        // verify
+        verify( scmManagerMock ).makeScmRepository( "scm-url" );
+        verifyNoMoreInteractions( scmManagerMock );
     }
 
     public void testScmExceptionThrown()
         throws Exception
     {
+        // prepare
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
@@ -744,13 +772,13 @@ public class DefaultReleaseManagerTest
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).will(
-            new ThrowStub( new ScmException( "..." ) ) );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkOut( any( ScmRepository.class ), any( ScmFileSet.class ), any ( ScmTag.class ) ) ).thenThrow( new ScmException( "..." ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
 
+        // execute
         try
         {
             releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
@@ -761,6 +789,10 @@ public class DefaultReleaseManagerTest
         {
             assertEquals( "check cause", ScmException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify(  scmProviderMock ).checkOut( any( ScmRepository.class ), any( ScmFileSet.class ), any ( ScmTag.class ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     public void testScmResultFailure()
