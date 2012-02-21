@@ -19,6 +19,13 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.util.List;
 
@@ -33,11 +40,6 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.stub.ReturnStub;
 
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
@@ -58,6 +60,7 @@ public class CheckoutProjectFromScmTest
     public void testExecuteStandard()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         File checkoutDirectory = getTestFile( "target/checkout-test/standard" );
         descriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
@@ -66,28 +69,35 @@ public class CheckoutProjectFromScmTest
         String scmUrl = "scm:svn:" + sourceUrl;
         descriptor.setScmSourceUrl( scmUrl );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
         SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( sourceUrl );
         ScmRepository repository = new ScmRepository( "svn", scmProviderRepository );
-        Constraint[] arguments =
-            new Constraint[]{new IsEqual( repository ), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-                new IsScmTagEquals( new ScmTag( "release-label" ) )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( arguments ).will(
-            new ReturnStub( new CheckOutScmResult( "", null ) ) );
+        when( scmProviderMock.checkOut( eq( repository), 
+                                        argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ), 
+                                        argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ) ) ).thenReturn( new CheckOutScmResult( "", null ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
         List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
+        
+        // execute
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // prepare
         assertEquals( "", descriptor.getScmRelativePathProjectDirectory() );
+        
+        verify( scmProviderMock ).checkOut( eq( repository), 
+                                            argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ), 
+                                            argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     public void testExecuteMultiModuleWithDeepSubprojects()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         File checkoutDirectory = getTestFile( "target/checkout-test/multimodule-with-deep-subprojects" );
         descriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
@@ -96,28 +106,35 @@ public class CheckoutProjectFromScmTest
         String scmUrl = "scm:svn:" + sourceUrl;
         descriptor.setScmSourceUrl( scmUrl );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
         SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( sourceUrl );
         ScmRepository repository = new ScmRepository( "svn", scmProviderRepository );
-        Constraint[] arguments =
-            new Constraint[]{new IsEqual( repository ), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-                new IsScmTagEquals( new ScmTag( "release-label" ) )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( arguments ).will(
-            new ReturnStub( new CheckOutScmResult( "", null ) ) );
+        when( scmProviderMock.checkOut( eq( repository ), 
+                                        argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                        argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ) ) ).thenReturn( new CheckOutScmResult( "", null ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
         List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/multimodule-with-deep-subprojects" );
+        
+        // execute
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "", descriptor.getScmRelativePathProjectDirectory() );
+        
+        verify( scmProviderMock ).checkOut( eq( repository ), 
+                                            argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                            argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     public void testExecuteFlatMultiModule()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         File checkoutDirectory = getTestFile( "target/checkout-test/flat-multi-module" );
         descriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
@@ -126,24 +143,30 @@ public class CheckoutProjectFromScmTest
         String scmUrl = "scm:svn:" + sourceUrl;
         descriptor.setScmSourceUrl( scmUrl );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
         SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( sourceUrl );
         ScmRepository repository = new ScmRepository( "svn", scmProviderRepository );
-        Constraint[] arguments =
-            new Constraint[]{new IsEqual( repository ), new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ),
-                new IsScmTagEquals( new ScmTag( "release-label" ) )};
-        scmProviderMock.expects( new InvokeOnceMatcher() ).method( "checkOut" ).with( arguments ).will(
-            new ReturnStub( new CheckOutScmResult( "", null ) ) );
+        when( scmProviderMock.checkOut( eq( repository ), 
+                                        argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                        argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ) ) ).thenReturn( new CheckOutScmResult( "", null ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
         List<MavenProject> reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
+        
+        // execute
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "not found root-project but " + descriptor.getScmRelativePathProjectDirectory(), "root-project",
                       descriptor.getScmRelativePathProjectDirectory() );
+        
+        verify( scmProviderMock ).checkOut( eq( repository ), 
+                                            argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                            argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
 }
