@@ -19,6 +19,16 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
@@ -33,16 +43,6 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.jmock.Mock;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.matcher.InvokeAtLeastOnceMatcher;
-import org.jmock.core.matcher.TestFailureMatcher;
-import org.jmock.core.stub.ThrowStub;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Base class with tests for rewriting POMs.
@@ -434,26 +434,25 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     public void testSimulateRewriteEditModeSkipped()
         throws Exception
     {
+        // prepare
         List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
         mapNextVersion( config, "groupId:artifactId" );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new TestFailureMatcher( "edit should not be called" ) ).method( "edit" );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
 
         ScmManagerStub scmManager = new ScmManagerStub();
         DefaultScmRepositoryConfigurator configurator =
             (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
         configurator.setScmManager( scmManager );
-        scmManager.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        scmManager.setScmProvider( scmProviderMock );
 
+        // execute
         phase.simulate( config,  new DefaultReleaseEnvironment(), reactorProjects );
 
-        // Getting past mock is success
-        assertTrue( true );
-        
-        scmProviderMock.verify();
+        // verify
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     public void testRewriteUnmappedPom()
@@ -477,19 +476,18 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     public void testRewriteBasicPomWithScmRepoException()
         throws Exception
     {
+        // prepare
         List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
         mapNextVersion( config, "groupId:artifactId" );
 
-        Mock scmManagerMock = new Mock( ScmManager.class );
-        scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
-            new IsEqual( config.getScmSourceUrl() ) ).will( new ThrowStub( new ScmRepositoryException( "..." ) ) );
+        ScmManager scmManagerMock = mock( ScmManager.class );
+        when( scmManagerMock.makeScmRepository( config.getScmSourceUrl() ) ).thenThrow( new ScmRepositoryException( "..." ) );
 
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
         DefaultScmRepositoryConfigurator configurator =
             (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
+        configurator.setScmManager( scmManagerMock );
 
         try
         {
@@ -502,26 +500,27 @@ public abstract class AbstractRewritingReleasePhaseTestCase
             assertNull( "Check no additional cause", e.getCause() );
         }
         
-        scmManagerMock.verify();
+        verify( scmManagerMock ).makeScmRepository( config.getScmSourceUrl() );
+        verifyNoMoreInteractions( scmManagerMock );
     }
 
     public void testRewriteBasicPomWithNoSuchProviderException()
         throws Exception
     {
+        // prepare
         List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
         mapNextVersion( config, "groupId:artifactId" );
 
-        Mock scmManagerMock = new Mock( ScmManager.class );
-        scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
-            new IsEqual( config.getScmSourceUrl() ) ).will( new ThrowStub( new NoSuchScmProviderException( "..." ) ) );
+        ScmManager scmManagerMock = mock( ScmManager.class );
+        when( scmManagerMock.makeScmRepository( config.getScmSourceUrl() ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
 
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
         DefaultScmRepositoryConfigurator configurator =
             (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
+        configurator.setScmManager( scmManagerMock );
 
+        // execute
         try
         {
             phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
@@ -533,7 +532,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
             assertEquals( "Check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
         
-        scmManagerMock.verify();
+        // verify
+        verify( scmManagerMock ).makeScmRepository( config.getScmSourceUrl() );
+        verifyNoMoreInteractions( scmManagerMock );
     }
 
     public void testRewriteWhitespaceAroundValues()
