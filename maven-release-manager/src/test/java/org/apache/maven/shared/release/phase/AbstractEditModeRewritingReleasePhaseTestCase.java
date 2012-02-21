@@ -19,12 +19,22 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
+import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.edit.EditScmResult;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -32,11 +42,6 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.jmock.Mock;
-import org.jmock.core.matcher.InvokeAtLeastOnceMatcher;
-import org.jmock.core.stub.ThrowStub;
-
-import java.util.List;
 
 /**
  * Base class with tests for rewriting POMs with edit mode.
@@ -90,21 +95,22 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
     public void testRewriteBasicPomWithEditModeException()
         throws Exception
     {
+        // prepare
         List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
         mapNextVersion( config, "groupId:artifactId" );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new InvokeAtLeastOnceMatcher() ).method( "edit" ).will(
-            new ThrowStub( new ScmException( "..." ) ) );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.edit( isA( ScmRepository.class ), isA( ScmFileSet.class) ) ).thenThrow( new ScmException( "..." ) );
 
         ScmManagerStub scmManager = new ScmManagerStub();
         DefaultScmRepositoryConfigurator configurator =
             (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
         configurator.setScmManager( scmManager );
-        scmManager.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        scmManager.setScmProvider( scmProviderMock );
 
+        // execute
         try
         {
             phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
@@ -115,6 +121,9 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         {
             assertEquals( "Check cause", ScmException.class, e.getCause().getClass() );
         }
+        // verify
+        verify( scmProviderMock ).edit( isA( ScmRepository.class ), isA( ScmFileSet.class ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     public void testRewritePomPluginDependencies()
