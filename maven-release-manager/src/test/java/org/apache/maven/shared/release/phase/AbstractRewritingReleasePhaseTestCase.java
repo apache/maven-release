@@ -452,6 +452,8 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         // Getting past mock is success
         assertTrue( true );
+        
+        scmProviderMock.verify();
     }
 
     public void testRewriteUnmappedPom()
@@ -484,7 +486,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
             new IsEqual( config.getScmSourceUrl() ) ).will( new ThrowStub( new ScmRepositoryException( "..." ) ) );
 
-        setMockScmManager( scmManagerMock );
+        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
 
         try
         {
@@ -496,6 +501,8 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         {
             assertNull( "Check no additional cause", e.getCause() );
         }
+        
+        scmManagerMock.verify();
     }
 
     public void testRewriteBasicPomWithNoSuchProviderException()
@@ -510,7 +517,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
             new IsEqual( config.getScmSourceUrl() ) ).will( new ThrowStub( new NoSuchScmProviderException( "..." ) ) );
 
-        setMockScmManager( scmManagerMock );
+        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
+        DefaultScmRepositoryConfigurator configurator =
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        configurator.setScmManager( scmManager );
 
         try
         {
@@ -522,6 +532,8 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         {
             assertEquals( "Check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
+        
+        scmManagerMock.verify();
     }
 
     public void testRewriteWhitespaceAroundValues()

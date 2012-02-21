@@ -241,15 +241,6 @@ public abstract class AbstractReleaseTestCase
         return reactorProjects;
     }
 
-    protected void setMockScmManager( Mock scmManagerMock )
-        throws Exception
-    {
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
-    }
-
     protected static Map<String,MavenProject> getProjectsAsMap( List<MavenProject> reactorProjects )
     {
         Map<String,MavenProject> map = new HashMap<String,MavenProject>();
