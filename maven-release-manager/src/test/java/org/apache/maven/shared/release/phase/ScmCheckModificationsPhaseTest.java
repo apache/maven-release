@@ -19,8 +19,23 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
+import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
@@ -28,6 +43,7 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -38,16 +54,6 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
-import org.jmock.Mock;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.matcher.InvokeAtLeastOnceMatcher;
-import org.jmock.core.stub.ThrowStub;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Test the SCM modification check phase.
@@ -70,19 +76,19 @@ public class ScmCheckModificationsPhaseTest
     public void testNoSuchScmProviderExceptionThrown()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        Mock scmManagerMock = new Mock( ScmManager.class );
-        scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
-            new IsEqual( "scm-url" ) ).will( new ThrowStub( new NoSuchScmProviderException( "..." ) ) );
+        ScmManager scmManagerMock = mock( ScmManager.class );
+        when( scmManagerMock.makeScmRepository( eq( "scm-url" ) ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
 
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
         DefaultScmRepositoryConfigurator configurator =
             (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
+        configurator.setScmManager( scmManagerMock );
 
+        // execute
         try
         {
             phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
@@ -104,24 +110,28 @@ public class ScmCheckModificationsPhaseTest
         {
             assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( scmManagerMock, times( 2 ) ).makeScmRepository( eq( "scm-url" ) );
+        verifyNoMoreInteractions( scmManagerMock );
     }
 
     public void testScmRepositoryExceptionThrown()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        Mock scmManagerMock = new Mock( ScmManager.class );
-        scmManagerMock.expects( new InvokeAtLeastOnceMatcher() ).method( "makeScmRepository" ).with(
-            new IsEqual( "scm-url" ) ).will( new ThrowStub( new ScmRepositoryException( "..." ) ) );
+        ScmManager scmManagerMock = mock( ScmManager.class );
+        when( scmManagerMock.makeScmRepository( eq( "scm-url" ) ) ).thenThrow( new ScmRepositoryException( "..." ) );
 
-        ScmManager scmManager = (ScmManager) scmManagerMock.proxy();
         DefaultScmRepositoryConfigurator configurator =
             (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManager );
+        configurator.setScmManager( scmManagerMock );
 
+        // execute
         try
         {
             phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
@@ -143,22 +153,27 @@ public class ScmCheckModificationsPhaseTest
         {
             assertNull( "Check no additional cause", e.getCause() );
         }
+        
+        // verify
+        verify( scmManagerMock, times( 2 ) ).makeScmRepository( eq( "scm-url" ) );
+        verifyNoMoreInteractions( scmManagerMock );
     }
 
     public void testScmExceptionThrown()
         throws Exception
     {
+        // prepare
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new InvokeAtLeastOnceMatcher() ).method( "status" ).will(
-            new ThrowStub( new ScmException( "..." ) ) );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.status( isA( ScmRepository.class ), isA( ScmFileSet.class ) ) ).thenThrow( new ScmException( "..." ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
 
+        // execute
         try
         {
             phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
@@ -180,6 +195,10 @@ public class ScmCheckModificationsPhaseTest
         {
             assertEquals( "check cause", ScmException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( scmProviderMock, times( 2 ) ).status( isA( ScmRepository.class ), isA( ScmFileSet.class ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     public void testScmResultFailure()
