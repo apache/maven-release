@@ -19,6 +19,19 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.Maven;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
@@ -28,21 +41,10 @@ import org.apache.maven.scm.command.remove.RemoveScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsAnything;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.matcher.TestFailureMatcher;
-import org.jmock.core.stub.ReturnStub;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Test the remove release POMs phase.
@@ -63,6 +65,7 @@ public class RemoveReleasePomsPhaseTest
     public void testExecuteBasicPom()
         throws Exception
     {
+        // prepare
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
         ReleaseDescriptor config = createReleaseDescriptor();
         MavenProject project = ReleaseUtil.getRootProject( reactorProjects );
@@ -70,28 +73,29 @@ public class RemoveReleasePomsPhaseTest
         File releasePom = ReleaseUtil.getReleasePom( project );
         ScmFileSet fileSet = new ScmFileSet( new File( config.getWorkingDirectory() ), releasePom );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        Constraint[] arguments = new Constraint[] { new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsAnything() };
-        scmProviderMock
-            .expects( new InvokeOnceMatcher() )
-            .method( "remove" )
-            .with( arguments )
-            .will( new ReturnStub( new RemoveScmResult( "...", Collections
-                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.DELETED ) ) ) ) );
-
-        
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.remove( isA( ScmRepository.class ),
+                                      argThat( new IsScmFileSetEquals( fileSet ) ),
+                                      isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...", Collections
+                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.DELETED ) ) ) );
         
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
 
+        // execute
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
-        scmProviderMock.verify();
+        //verify
+        verify( scmProviderMock ).remove( isA( ScmRepository.class ),
+                                          argThat( new IsScmFileSetEquals( fileSet ) ),
+                                          isA( String.class ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     public void testExecutePomWithModules()
         throws Exception
     {
+        // prepare
         List<MavenProject> reactorProjects = createReactorProjects( "pom-with-modules" );
         ReleaseDescriptor config = createReleaseDescriptor();
 
@@ -105,38 +109,42 @@ public class RemoveReleasePomsPhaseTest
 
         ScmFileSet fileSet = new ScmFileSet( new File( config.getWorkingDirectory() ), releasePoms );
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        Constraint[] arguments = new Constraint[] { new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsAnything() };
-        scmProviderMock
-            .expects( new InvokeOnceMatcher() )
-            .method( "remove" )
-            .with( arguments )
-            .will( new ReturnStub( new RemoveScmResult( "...", Collections
-                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.DELETED ) ) ) ) );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.remove( isA( ScmRepository.class ),
+                                      argThat( new IsScmFileSetEquals( fileSet ) ),
+                                      isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...", Collections
+                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.DELETED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
 
+        // execute
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
-        scmProviderMock.verify();
+        // verify
+        verify( scmProviderMock ).remove( isA( ScmRepository.class ),
+                                          argThat( new IsScmFileSetEquals( fileSet ) ),
+                                          isA( String.class ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     public void testSimulateBasicPom()
         throws Exception
     {
+        // prepare
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
         ReleaseDescriptor config = createReleaseDescriptor();
 
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new TestFailureMatcher( "Shouldn't have called remove" ) ).method( "remove" );
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
 
+        // execute
         phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
 
-        scmProviderMock.verify();
+        // never invoke scmProviderMock
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     private List<MavenProject> createReactorProjects( String path )
