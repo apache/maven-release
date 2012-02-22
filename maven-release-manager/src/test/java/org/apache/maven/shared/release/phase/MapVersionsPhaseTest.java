@@ -19,6 +19,14 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -31,13 +39,6 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.jmock.Mock;
-import org.jmock.core.constraint.IsAnything;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.matcher.TestFailureMatcher;
-import org.jmock.core.stub.ReturnStub;
-import org.jmock.core.stub.ThrowStub;
 
 /**
  * Test the version mapping phase.
@@ -50,34 +51,35 @@ public class MapVersionsPhaseTest
     public void testMapReleaseVersionsInteractive()
         throws Exception
     {
+        // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "1.0" ) ).will(
-            new ReturnStub( "2.0" ) );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        when( mockPrompter.prompt( isA( String.class ), eq( "1.0" ) ) ).thenReturn( "2.0" );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
 
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "1.0" ) ).will(
-            new ReturnStub( "2.0" ) );
-
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
+        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.0" ) );
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     /**
@@ -87,34 +89,36 @@ public class MapVersionsPhaseTest
     public void testMapReleaseVersionsInteractiveWithSnaphotVersion()
         throws Exception
     {
+        // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "1.0" ) ).will(
-            new ReturnStub( "2.0" ) );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        when( mockPrompter.prompt( isA( String.class ), eq( "1.0" ) ) ).thenReturn( "2.0" );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
 
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "1.0" ) ).will(
-            new ReturnStub( "2.0" ) );
-
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
+        
+        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.0" ) );
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     /**
@@ -123,129 +127,143 @@ public class MapVersionsPhaseTest
     public void testMapReleaseVersionsNonInteractiveWithExplicitVersion()
         throws Exception
     {
+        // prepare
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
 
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
 
-        // execute
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.addReleaseVersion( "groupId:artifactId", "2.0" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
 
-        // simulate
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.addReleaseVersion( "groupId:artifactId", "2.0" );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
+        
+        // never invoke mockprompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testMapReleaseVersionsNonInteractive()
         throws Exception
     {
+        // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
                       releaseDescriptor.getReleaseVersions() );
-
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
 
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
                       releaseDescriptor.getReleaseVersions() );
+
+        // never invoke mockprompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testMapDevVersionsInteractive()
         throws Exception
     {
+        // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "1.1-SNAPSHOT" ) ).will(
-            new ReturnStub( "2.0-SNAPSHOT" ) );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        when( mockPrompter.prompt( isA( String.class ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
 
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "1.1-SNAPSHOT" ) ).will(
-            new ReturnStub( "2.0-SNAPSHOT" ) );
-
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
+        
+        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.1-SNAPSHOT" ) );
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testMapDevVersionsNonInteractive()
         throws Exception
     {
+        // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.1-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
 
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.1-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
+        
+        // never invoke mockprompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
      /**
@@ -254,51 +272,55 @@ public class MapVersionsPhaseTest
     public void testMapDevVersionsNonInteractiveWithExplicitVersion()
         throws Exception
     {
+        // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        // execute
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.addDevelopmentVersion( "groupId:artifactId", "2-SNAPSHOT" );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
 
-        // simulate
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.addDevelopmentVersion( "groupId:artifactId", "2-SNAPSHOT" );
 
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
+        
+        // never invoke mockprompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testPrompterException()
         throws Exception
     {
+        // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will(
-            new ThrowStub( new PrompterException( "..." ) ) );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        when( mockPrompter.prompt( isA( String.class ),  isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
+        // execute
         try
         {
             phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -310,12 +332,10 @@ public class MapVersionsPhaseTest
             assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
         }
 
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will(
-            new ThrowStub( new PrompterException( "..." ) ) );
-
+        // execute
         try
         {
             phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -326,39 +346,44 @@ public class MapVersionsPhaseTest
         {
             assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
         }
+        
+        //verify
+        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ),  isA( String.class ) );
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testAdjustVersionInteractive()
         throws Exception
     {
+        // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
 
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "1.1-SNAPSHOT" ) ).will(
-            new ReturnStub( "2.0-SNAPSHOT" ) );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        Prompter mockPrompter = mock( Prompter.class );
+        when( mockPrompter.prompt( isA( String.class ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "1.1-SNAPSHOT" ) ).will(
-            new ReturnStub( "2.0-SNAPSHOT" ) );
-
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
 
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
+        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.1-SNAPSHOT" ) );
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testAdjustVersionNonInteractive()
