@@ -1,23 +1,44 @@
 package org.apache.maven.shared.release.phase;
 
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.io.File;
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.codehaus.plexus.PlexusTestCase;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsAnything;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsNull;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.stub.ThrowStub;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -39,29 +60,26 @@ public class RunPerformGoalsPhaseTest
     public void testExecuteException()
         throws Exception
     {
+        // prepare
         File testFile = getTestFile( "target/checkout-directory" );
 
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setPerformGoals( "goal1 goal2" );
         config.setCheckoutDirectory( testFile.getAbsolutePath() );
 
-        Mock mock = new Mock( MavenExecutor.class );
+        MavenExecutor mock = mock( MavenExecutor.class );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( testFile ),
-            new IsEqual( "goal1 goal2" ),
-            new IsAnything(),
-            new IsEqual( Boolean.TRUE ),
-            new IsEqual( "-DperformRelease=true -f pom.xml" ),
-            new IsNull(),
-            new IsAnything()
-        };
+        doThrow( new MavenExecutorException( "...", new Exception() ) ).when( mock ).executeGoals( eq( testFile ),
+                                                                                                   eq( "goal1 goal2" ),
+                                                                                                   isA( ReleaseEnvironment.class ),
+                                                                                                   eq( true ),
+                                                                                                   eq( "-DperformRelease=true -f pom.xml" ),
+                                                                                                   isNull( String.class ),
+                                                                                                   isA( ReleaseResult.class ) );
 
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
-            new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
 
-        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
-
+        // execute
         try
         {
             phase.execute( config, (Settings) null, (List<MavenProject>) null );
@@ -72,6 +90,16 @@ public class RunPerformGoalsPhaseTest
         {
             assertEquals( "Check cause", MavenExecutorException.class, e.getCause().getClass() );
         }
+        
+        //verify
+        verify( mock ).executeGoals( eq( testFile ),
+                                     eq( "goal1 goal2" ),
+                                     isA( ReleaseEnvironment.class ),
+                                     eq( true ),
+                                     eq( "-DperformRelease=true -f pom.xml" ),
+                                     isNull( String.class ),
+                                     isA( ReleaseResult.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
 }
