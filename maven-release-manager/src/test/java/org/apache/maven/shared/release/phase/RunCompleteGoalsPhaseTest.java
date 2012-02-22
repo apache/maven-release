@@ -19,6 +19,14 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import java.io.File;
 import java.util.List;
 
@@ -26,20 +34,13 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.codehaus.plexus.PlexusTestCase;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsAnything;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsNull;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.matcher.TestFailureMatcher;
-import org.jmock.core.stub.ThrowStub;
 
 /**
  * Test the simple test running phase.
@@ -60,67 +61,82 @@ public class RunCompleteGoalsPhaseTest
     }
 
     public void testExecute()
-        throws ReleaseExecutionException, ReleaseFailureException
+        throws ReleaseExecutionException, ReleaseFailureException, MavenExecutorException
     {
+        // prepare
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setCompletionGoals( "clean integration-test" );
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
-        Mock mock = new Mock( MavenExecutor.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsNull(), new IsAnything()};
+        MavenExecutor mock = mock( MavenExecutor.class );
 
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
 
-        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
-
+        // execute
         phase.execute( config, (Settings) null, (List<MavenProject>) null );
 
-        // just needs to survive the mock
-        assertTrue( true );
+        // verify
+        verify( mock ).executeGoals( eq( testFile ),
+                                     eq( "clean integration-test" ),
+                                     isA( ReleaseEnvironment.class ),
+                                     eq( true ),
+                                     isNull( String.class ),
+                                     isNull( String.class ),
+                                     isA( ReleaseResult.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
     public void testSimulate()
-        throws ReleaseExecutionException
+        throws ReleaseExecutionException, MavenExecutorException
     {
+        // prepare
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setCompletionGoals( "clean integration-test" );
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
-        Mock mock = new Mock( MavenExecutor.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsAnything(), new IsNull(), new IsAnything()};
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints );
+        MavenExecutor mock = mock( MavenExecutor.class );
 
-        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
+        phase.setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
 
+        // execute
         phase.simulate( config, new DefaultReleaseEnvironment(), null );
 
-        // just needs to survive the mock
-        assertTrue( true );
+        // verify
+        verify( mock ).executeGoals( eq( testFile ),
+                                     eq( "clean integration-test" ),
+                                     isA( ReleaseEnvironment.class ),
+                                     eq( true ),
+                                     isNull( String.class ),
+                                     isNull( String.class ), isA( ReleaseResult.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
     public void testExecuteException()
-        throws ReleaseFailureException
+        throws ReleaseFailureException, MavenExecutorException
     {
+        // prepare
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setCompletionGoals( "clean integration-test" );
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
-        Mock mock = new Mock( MavenExecutor.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsNull(), new IsAnything()};
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
-            new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
+        MavenExecutor mock = mock( MavenExecutor.class );
+        doThrow( new MavenExecutorException( "...", new Exception() ) ).when( mock ).executeGoals( eq( testFile ),
+                                 eq( "clean integration-test" ),
+                                 isA( ReleaseEnvironment.class ),
+                                 eq( true ),
+                                 isNull( String.class ),
+                                 isNull( String.class ),
+                                 isA( ReleaseResult.class ) );
 
-        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
 
+        // execute
         try
         {
             phase.execute( config, (Settings) null, (List<MavenProject>) null );
@@ -131,24 +147,40 @@ public class RunCompleteGoalsPhaseTest
         {
             assertEquals( "Check cause", MavenExecutorException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( mock ).executeGoals( eq( testFile ),
+                                     eq( "clean integration-test" ),
+                                     isA( ReleaseEnvironment.class ),
+                                     eq( true ),
+                                     isNull( String.class ),
+                                     isNull( String.class ),
+                                     isA( ReleaseResult.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
-    public void testSimulateException()
+    public void testSimulateException() throws MavenExecutorException
     {
+        // prepare
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setCompletionGoals( "clean integration-test" );
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
-        Mock mock = new Mock( MavenExecutor.class );
-        Constraint[] constraints = new Constraint[]{new IsEqual( testFile ), new IsEqual( "clean integration-test" ),
-            new IsAnything(), new IsEqual( Boolean.TRUE ), new IsNull(), new IsNull(), new IsAnything()};
-        mock.expects( new InvokeOnceMatcher() ).method( "executeGoals" ).with( constraints ).will(
-            new ThrowStub( new MavenExecutorException( "...", new Exception() ) ) );
+        MavenExecutor mock = mock( MavenExecutor.class );
+        doThrow( new MavenExecutorException( "...", new Exception() ) ).when( mock ).executeGoals( eq( testFile ),
+                                                                                                   eq( "clean integration-test" ),
+                                                                                                   isA( ReleaseEnvironment.class ),
+                                                                                                   eq( true ),
+                                                                                                   isNull( String.class ),
+                                                                                                   isNull( String.class ),
+                                                                                                   isA( ReleaseResult.class ) );
 
-        phase.setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
 
+        phase.setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+
+        // execute
         try
         {
             phase.simulate( config, new DefaultReleaseEnvironment(), null );
@@ -159,25 +191,37 @@ public class RunCompleteGoalsPhaseTest
         {
             assertEquals( "Check cause", MavenExecutorException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( mock ).executeGoals( eq( testFile ),
+                                     eq( "clean integration-test" ),
+                                     isA( ReleaseEnvironment.class ),
+                                     eq( true ),
+                                     isNull( String.class ),
+                                     isNull( String.class ),
+                                     isA( ReleaseResult.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
     public void testEmptyGoals()
         throws Exception
     {
+        // prepare
         File testFile = getTestFile( "target/working-directory" );
 
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setCompletionGoals( "" );
         config.setWorkingDirectory( testFile.getAbsolutePath() );
 
-        Mock mock = new Mock( MavenExecutor.class );
-        mock.expects( new TestFailureMatcher( "Shouldn't invoke executeGoals" ) ).method( "executeGoals" );
+        MavenExecutor mock = mock( MavenExecutor.class );
 
-        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, (MavenExecutor) mock.proxy() );
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
 
+        // execute
         phase.execute( config, (Settings) null, (List<MavenProject>) null );
 
-        // just needs to survive the mock
-        assertTrue( true );
+        // verify
+        // never invoke mock
+        verifyNoMoreInteractions( mock );
     }
 }
