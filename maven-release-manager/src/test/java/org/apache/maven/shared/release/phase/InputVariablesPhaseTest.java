@@ -19,6 +19,17 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -27,16 +38,6 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.jmock.Mock;
-import org.jmock.core.constraint.IsAnything;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.matcher.TestFailureMatcher;
-import org.jmock.core.stub.ReturnStub;
-import org.jmock.core.stub.ThrowStub;
-
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Test the variable input phase.
@@ -58,11 +59,10 @@ public class InputVariablesPhaseTest
     public void testInputVariablesInteractive()
         throws Exception
     {
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "artifactId-1.0" ) ).will(
-            new ReturnStub( "tag-value" ) );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        when( mockPrompter.prompt( isA( String.class ), eq( "artifactId-1.0" ) ) ).thenReturn( "tag-value", "simulated-tag-value" );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -70,22 +70,25 @@ public class InputVariablesPhaseTest
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).with( new IsAnything(),
-                                                                                 new IsEqual( "artifactId-1.0" ) ).will(
-            new ReturnStub( "simulated-tag-value" ) );
-
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        //verify
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
+        
+        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "artifactId-1.0" ) );
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testUnmappedVersion()
@@ -123,9 +126,9 @@ public class InputVariablesPhaseTest
     public void testInputVariablesNonInteractive()
         throws Exception
     {
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -134,29 +137,34 @@ public class InputVariablesPhaseTest
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
+        
+        // never use prompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testInputVariablesNonInteractiveConfigured()
         throws Exception
     {
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -164,56 +172,66 @@ public class InputVariablesPhaseTest
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
 
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
+        
+        // never use prompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testInputVariablesInteractiveConfigured()
         throws Exception
     {
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
 
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
+        
+        // never use prompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     public void testPrompterException()
         throws Exception
     {
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will(
-            new ThrowStub( new PrompterException( "..." ) ) );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        when( mockPrompter.prompt( isA( String.class ), isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -221,6 +239,7 @@ public class InputVariablesPhaseTest
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
+        // execute
         try
         {
             phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -232,14 +251,12 @@ public class InputVariablesPhaseTest
             assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
         }
 
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new InvokeOnceMatcher() ).method( "prompt" ).will(
-            new ThrowStub( new PrompterException( "..." ) ) );
-
+        // execute
         try
         {
             phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -250,15 +267,19 @@ public class InputVariablesPhaseTest
         {
             assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
         }
+        
+        //verify
+        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), isA( String.class ) );
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     //MRELEASE-110
     public void testCvsTag()
         throws Exception
     {
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -267,30 +288,35 @@ public class InputVariablesPhaseTest
         releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseConfiguration.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
 
+        // execute
         phase.execute( releaseConfiguration, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "artifactId-1_0", releaseConfiguration.getScmReleaseLabel() );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // prepare
         releaseConfiguration = new ReleaseDescriptor();
         releaseConfiguration.setInteractive( false );
         releaseConfiguration.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseConfiguration.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
 
+        // execute
         phase.simulate( releaseConfiguration, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "artifactId-1_0", releaseConfiguration.getScmReleaseLabel() );
+        
+        // never use prompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     //MRELEASE-159
     public void testCustomTagFormat()
         throws Exception
     {
-        Mock mockPrompter = new Mock( Prompter.class );
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-        phase.setPrompter( (Prompter) mockPrompter.proxy() );
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
@@ -298,22 +324,27 @@ public class InputVariablesPhaseTest
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
+        // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
 
-        mockPrompter.reset();
-        mockPrompter.expects( new TestFailureMatcher( "prompter should not be called" ) ).method( "prompt" );
-
+        // prepare
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
         releaseDescriptor.setScmTagNameFormat( "simulated-@{artifactId}-@{version}" );
 
+        // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        // verify
         assertEquals( "Check tag", "simulated-artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
+        
+        // never use prompter
+        verifyNoMoreInteractions( mockPrompter );
     }
 
     private static MavenProject createProject( String artifactId, String version )
