@@ -54,9 +54,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectSorter;
-import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
-import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.context.ContextException;
@@ -71,7 +68,6 @@ import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.jmock.Mock;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 

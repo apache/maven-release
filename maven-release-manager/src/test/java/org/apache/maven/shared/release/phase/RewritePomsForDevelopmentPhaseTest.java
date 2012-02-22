@@ -147,7 +147,7 @@ public class RewritePomsForDevelopmentPhaseTest
     public void testRewriteBasicPomUnmappedScm()
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom", true );
+        List<MavenProject> reactorProjects = prepareReactorProjects( "basic-pom", true );
 
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
 
@@ -161,7 +161,7 @@ public class RewritePomsForDevelopmentPhaseTest
         }
         catch ( ReleaseExecutionException e )
         {
-            assertTrue( true );
+            verifyReactorProjects( "basic-pom", true );
         }
     }
 
@@ -177,7 +177,7 @@ public class RewritePomsForDevelopmentPhaseTest
         return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/"+ subpath + fileName ) );
     }
 
-    protected List<MavenProject> createReactorProjects( String path, boolean copyFiles )
+    protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
         return createReactorProjects( "rewrite-for-development/", path );

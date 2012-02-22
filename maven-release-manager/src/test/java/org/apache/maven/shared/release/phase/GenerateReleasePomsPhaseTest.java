@@ -19,6 +19,13 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,14 +42,10 @@ import org.apache.maven.scm.command.add.AddScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsAnything;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.stub.ReturnStub;
 
 /**
  * Test the generate release POMs phase.
@@ -56,7 +59,7 @@ public class GenerateReleasePomsPhaseTest
 
     private static final String ALTERNATIVE_NEXT_VERSION = "2.0";
 
-    private Mock scmProviderMock;
+    private ScmProvider scmProviderMock;
 
     protected void setUp()
         throws Exception
@@ -103,14 +106,11 @@ public class GenerateReleasePomsPhaseTest
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createReactorProjects(java.lang.String,
      *      boolean)
      */
-    protected List<MavenProject> createReactorProjects( String path, boolean copyFiles ) throws Exception
+    protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles ) throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "generate-release-poms/", path );
 
-        // add scm provider expectations for each project in the reactor
-        // TODO: can we move this somewhere better?
-
-        scmProviderMock = new Mock( ScmProvider.class );
+        scmProviderMock = mock( ScmProvider.class );
 
         List<File> releasePoms = new ArrayList<File>();
 
@@ -124,21 +124,38 @@ public class GenerateReleasePomsPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), releasePoms );
 
-        Constraint[] arguments = new Constraint[] { new IsAnything(), new IsScmFileSetEquals( fileSet ) };
-
-        scmProviderMock
-            .expects( new InvokeOnceMatcher() )
-            .method( "add" )
-            .with( arguments )
-            .will( new ReturnStub( new AddScmResult( "...", Collections
-                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.ADDED ) ) ) ) );
-
+        when( scmProviderMock.add( isA( ScmRepository.class ), 
+                                   argThat( new IsScmFileSetEquals( fileSet ) ) ) ).
+                                       thenReturn( new AddScmResult( "...", 
+                                                                     Collections.singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.ADDED ) ) ) );
         
         
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
 
         return reactorProjects;
+    }
+    
+    @Override
+    protected void verifyReactorProjects( String path, boolean copyFiles ) throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "generate-release-poms/", path );
+        
+        List<File> releasePoms = new ArrayList<File>();
+
+        for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
+        {
+            MavenProject project = iterator.next();
+
+            releasePoms.add( ReleaseUtil.getReleasePom( project ) );
+        }
+        
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), releasePoms );
+        
+        verify( scmProviderMock ).add( isA( ScmRepository.class ), 
+                                       argThat( new IsScmFileSetEquals( fileSet ) ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     /*
@@ -214,13 +231,5 @@ public class GenerateReleasePomsPhaseTest
         File expectedFile = new File( actualFile.getParentFile(), "expected-release-pom" + expectedFileSuffix + ".xml" );
 
         comparePomFiles( expectedFile, actualFile, normalizeLineEndings );
-
-        // verify scm provider expectations here
-        // TODO: can we move this somewhere better?
-
-        if ( scmProviderMock != null )
-        {
-            scmProviderMock.verify();
-        }
     }
 }

@@ -49,7 +49,7 @@ public class RewritePomsForReleasePhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "rewrite-poms-for-release" );
     }
 
-    protected List<MavenProject> createReactorProjects( String path, boolean copyFiles )
+    protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
         return createReactorProjects( "rewrite-for-release/", path );

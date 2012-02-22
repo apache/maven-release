@@ -418,7 +418,8 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         // Run a second time to check they are not duplicated
         for ( int i = 0; i < 2; i++ )
         {
-            List<MavenProject> reactorProjects = createReactorProjects( "basic-pom", copyFiles );
+            String path = "basic-pom";
+            List<MavenProject> reactorProjects = prepareReactorProjects( path, copyFiles );
             ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
             mapNextVersion( config, "groupId:artifactId" );
             config.setAddSchema( true );
@@ -428,6 +429,8 @@ public abstract class AbstractRewritingReleasePhaseTestCase
             comparePomFiles( reactorProjects, "-with-schema" );
 
             copyFiles = false;
+            
+            verifyReactorProjects( path, copyFiles );
         }
     }
 
@@ -601,7 +604,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     protected List<MavenProject> createReactorProjects( String path )
         throws Exception
     {
-        return createReactorProjects( path, true );
+        return prepareReactorProjects( path, true );
     }
 
     protected ReleaseDescriptor createDefaultConfiguration( List<MavenProject> reactorProjects )
@@ -664,8 +667,12 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
-    protected abstract List<MavenProject> createReactorProjects( String path, boolean copyFiles )
+    protected abstract List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception;
+    
+    protected void verifyReactorProjects( String path, boolean copyFiles ) throws Exception
+    {
+    }
 
     protected ReleaseDescriptor createDescriptorFromProjects( List<MavenProject> reactorProjects )
     {
