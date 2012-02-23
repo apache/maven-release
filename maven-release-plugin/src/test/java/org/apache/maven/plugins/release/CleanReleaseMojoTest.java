@@ -19,17 +19,17 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.io.File;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.jmock.Mock;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsNull;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-
-import java.io.File;
 
 /**
  * Test release:clean.
@@ -57,16 +57,18 @@ public class CleanReleaseMojoTest
     public void testClean()
         throws MojoFailureException, MojoExecutionException
     {
+        // prepare
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         descriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
-        Mock mock = new Mock( ReleaseManager.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "clean" ).with( new IsEqual( descriptor ), new IsNull(),
-                                                                        new IsEqual( mojo.getReactorProjects() ) );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
+        // execute
         mojo.execute();
 
-        assertTrue( true );
+        // verify
+        verify( mock ).clean( descriptor, null, mojo.getReactorProjects() );
+        verifyNoMoreInteractions( mock );
     }
 }

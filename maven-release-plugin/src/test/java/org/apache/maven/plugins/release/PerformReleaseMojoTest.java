@@ -19,8 +19,17 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import java.io.File;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Profile;
@@ -34,13 +43,6 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsInstanceOf;
-import org.jmock.core.constraint.IsNull;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.stub.ThrowStub;
 
 /**
  * Test release:perform.
@@ -52,6 +54,7 @@ public class PerformReleaseMojoTest
 {
     private File workingDirectory;
 
+    @SuppressWarnings( "unchecked" )
     public void testPerform()
         throws Exception
     {
@@ -63,22 +66,18 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
         releaseDescriptor.setPerformGoals( "deploy site-deploy" );
 
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         mojo.execute();
-
-        assertTrue( true );
+        
+        // verify
+        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
+    @SuppressWarnings( "unchecked" )
     public void testPerformWithFlatStructure()
         throws Exception
     {
@@ -91,23 +90,19 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setPerformGoals( "deploy" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project" );
 
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         mojo.execute();
         
-        assertTrue( true );
+        // verify
+        verify( mock ).perform( eq(releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
     
+    @SuppressWarnings( "unchecked" )
     public void testPerformWithoutSite()
         throws Exception
     {
@@ -122,20 +117,15 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
         releaseDescriptor.setPerformGoals( "deploy" );
 
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         mojo.execute();
 
-        assertTrue( true );
+        // verify
+        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
     private PerformReleaseMojo getMojoWithProjectSite( String fileName )
@@ -152,6 +142,7 @@ public class PerformReleaseMojoTest
         return mojo;
     }
 
+    @SuppressWarnings( "unchecked" )
     public void testPerformWithExecutionException()
         throws Exception
     {
@@ -163,18 +154,13 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
         releaseDescriptor.setPerformGoals( "deploy site-deploy" );
 
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        doThrow( new ReleaseExecutionException( "..." ) ).when( mock ).perform( eq( releaseDescriptor ),
+                                                                                isA( ReleaseEnvironment.class ),
+                                                                                isNull( List.class ) );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints ).will(
-            new ThrowStub( new ReleaseExecutionException( "..." ) ) );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         try
         {
             mojo.execute();
@@ -185,8 +171,15 @@ public class PerformReleaseMojoTest
         {
             assertEquals( "Check cause", ReleaseExecutionException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( mock ).perform( eq( releaseDescriptor ),
+                                isA( ReleaseEnvironment.class ),
+                                isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
+    @SuppressWarnings( "unchecked" )
     public void testPerformWithExecutionFailure()
         throws Exception
     {
@@ -198,19 +191,15 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
         releaseDescriptor.setPerformGoals( "deploy site-deploy" );
 
-        Mock mock = new Mock( ReleaseManager.class );
-
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
+        ReleaseManager mock = mock( ReleaseManager.class );
         ReleaseFailureException cause = new ReleaseFailureException( "..." );
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints ).will(
-            new ThrowStub( cause ) );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
+        doThrow( cause ).when( mock ).perform( eq( releaseDescriptor ),
+                                               isA( ReleaseEnvironment.class ),
+                                               isNull( List.class ) );
 
+        mojo.setReleaseManager( mock );
+
+        // execute
         try
         {
             mojo.execute();
@@ -221,8 +210,15 @@ public class PerformReleaseMojoTest
         {
             assertEquals( "Check cause exists", cause, e.getCause() );
         }
+        
+        // verify
+        verify( mock ).perform( eq( releaseDescriptor ),
+                                isA( ReleaseEnvironment.class ),
+                                isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
+    @SuppressWarnings( "unchecked" )
     public void testPerformWithScm()
         throws Exception
     {
@@ -235,22 +231,18 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setPerformGoals( "deploy site-deploy" );
         releaseDescriptor.setScmSourceUrl( "scm-url" );
 
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         mojo.execute();
-
-        assertTrue( true );
+        
+        // verify
+        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
+    @SuppressWarnings( "unchecked" )
     public void testPerformWithProfiles()
         throws Exception
     {
@@ -270,22 +262,18 @@ public class PerformReleaseMojoTest
         profile2.setId( "2prof" );
         project.setActiveProfiles( Arrays.asList( new Profile[]{profile1, profile2} ) );
 
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         mojo.execute();
 
-        assertTrue( true );
+        // verify
+        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
+    @SuppressWarnings( "unchecked" )
     public void testPerformWithProfilesAndArguments()
         throws Exception
     {
@@ -305,23 +293,19 @@ public class PerformReleaseMojoTest
         profile2.setId( "2prof" );
         project.setActiveProfiles( Arrays.asList( new Profile[]{profile1, profile2} ) );
 
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         mojo.execute();
 
-        assertTrue( true );
+        // verify
+        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
-	public void testPerformWithMultilineGoals()
+	@SuppressWarnings( "unchecked" )
+    public void testPerformWithMultilineGoals()
         throws Exception
     {
 	    PerformReleaseMojo mojo = getMojoWithProjectSite( "perform-with-multiline-goals.xml" );
@@ -332,20 +316,15 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
         releaseDescriptor.setPerformGoals( "deploy site-deploy" );
 
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull()
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         mojo.execute();
 
-        assertTrue( true );
+        // verify
+        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        verifyNoMoreInteractions( mock );
     }
 
 
