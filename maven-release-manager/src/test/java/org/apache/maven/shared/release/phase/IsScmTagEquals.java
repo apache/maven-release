@@ -20,7 +20,6 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.scm.ScmTag;
-import org.jmock.core.Constraint;
 import org.mockito.ArgumentMatcher;
 
 /**
@@ -30,7 +29,6 @@ import org.mockito.ArgumentMatcher;
  * @todo add an equals() method
  */
 public class IsScmTagEquals extends ArgumentMatcher<ScmTag>
-    implements Constraint
 {
     private final ScmTag tag;
 
@@ -39,21 +37,11 @@ public class IsScmTagEquals extends ArgumentMatcher<ScmTag>
         this.tag = tag;
     }
 
-    public boolean eval( Object object )
-    {
-        return matches( object );
-    }
-
     @Override
     public boolean matches( Object argument )
     {
         ScmTag tag = (ScmTag) argument;
 
         return tag.getName().equals( this.tag.getName() );
-    }
-
-    public StringBuffer describeTo( StringBuffer stringBuffer )
-    {
-        return stringBuffer.append( tag.toString() );
     }
 }

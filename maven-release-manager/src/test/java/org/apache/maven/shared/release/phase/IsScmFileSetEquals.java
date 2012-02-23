@@ -22,7 +22,6 @@ package org.apache.maven.shared.release.phase;
 import java.io.IOException;
 
 import org.apache.maven.scm.ScmFileSet;
-import org.jmock.core.Constraint;
 import org.mockito.ArgumentMatcher;
 
 /**
@@ -32,7 +31,6 @@ import org.mockito.ArgumentMatcher;
  * @todo add an equals() method
  */
 public class IsScmFileSetEquals extends ArgumentMatcher<ScmFileSet>
-    implements Constraint
 {
     private final ScmFileSet fileSet;
 
@@ -41,11 +39,6 @@ public class IsScmFileSetEquals extends ArgumentMatcher<ScmFileSet>
         this.fileSet = fileSet;
     }
 
-    public boolean eval( Object object )
-    {
-        return matches( object );
-    }
-    
     @Override
     public boolean matches( Object argument )
     {
@@ -61,10 +54,5 @@ public class IsScmFileSetEquals extends ArgumentMatcher<ScmFileSet>
             // should not happened so RuntimeException
             throw new RuntimeException(e.getMessage(), e);
         }
-    }
-
-    public StringBuffer describeTo( StringBuffer stringBuffer )
-    {
-        return stringBuffer.append( fileSet.toString() );
     }
 }

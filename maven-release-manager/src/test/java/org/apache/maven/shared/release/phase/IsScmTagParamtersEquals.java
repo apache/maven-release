@@ -1,9 +1,5 @@
 package org.apache.maven.shared.release.phase;
 
-import org.apache.maven.scm.ScmTagParameters;
-import org.jmock.core.Constraint;
-import org.mockito.ArgumentMatcher;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,25 +19,19 @@ import org.mockito.ArgumentMatcher;
  * under the License.
  */
 
+import org.apache.maven.scm.ScmTagParameters;
+import org.mockito.ArgumentMatcher;
+
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  */
 public class IsScmTagParamtersEquals extends ArgumentMatcher<ScmTagParameters>
-    implements Constraint
 {
     private final ScmTagParameters scmTagParameters;
 
     public IsScmTagParamtersEquals( ScmTagParameters scmTagParameters )
     {
         this.scmTagParameters = scmTagParameters;
-    }
-    
-    /** 
-     * @see org.jmock.core.Constraint#eval(java.lang.Object)
-     */
-    public boolean eval( Object o )
-    {
-        return matches( o );
     }
 
     @Override
@@ -51,14 +41,4 @@ public class IsScmTagParamtersEquals extends ArgumentMatcher<ScmTagParameters>
         return stp.getMessage().equals( this.scmTagParameters.getMessage() )
             && stp.isRemoteTagging() == this.scmTagParameters.isRemoteTagging();
     }
-
-    /** 
-     * @see org.jmock.core.SelfDescribing#describeTo(java.lang.StringBuffer)
-     */
-    public StringBuffer describeTo( StringBuffer buffer )
-    {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
 }
