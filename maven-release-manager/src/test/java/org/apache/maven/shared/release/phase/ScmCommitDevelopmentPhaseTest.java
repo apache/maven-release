@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.mockito.Mockito.*;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -26,21 +28,15 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
+import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsAnything;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsNull;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.matcher.TestFailureMatcher;
-import org.jmock.core.stub.ReturnStub;
 
 /**
  * Test the SCM development commit phase.
@@ -60,6 +56,8 @@ public class ScmCommitDevelopmentPhaseTest
     private MavenProject rootProject;
 
     private ReleaseDescriptor descriptor;
+    
+    private ScmProvider scmProviderMock;
 
     protected void setUp()
         throws Exception
@@ -71,7 +69,6 @@ public class ScmCommitDevelopmentPhaseTest
         reactorProjects = createReactorProjects();
         rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor = createReleaseDescriptor( rootProject );
-
     }
 
     public void testIsCorrectImplementation()
@@ -89,11 +86,11 @@ public class ScmCommitDevelopmentPhaseTest
         descriptor.setSuppressCommitBeforeTagOrBranch( true );
         descriptor.setUpdateWorkingCopyVersions( false );
 
-        validateNoCheckin();
+        prepareNoCheckin();
 
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        assertTrue( true );
+        verifyNoCheckin();
     }
 
     public void testCommitsNextVersions()
@@ -101,11 +98,11 @@ public class ScmCommitDevelopmentPhaseTest
     {
         descriptor.setUpdateWorkingCopyVersions( true );
 
-        validateCheckin( COMMIT_MESSAGE );
+        prepareCheckin( COMMIT_MESSAGE );
 
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        assertTrue( true );
+        verifyCheckin( COMMIT_MESSAGE );
     }
 
     public void testCommitsRollbackPrepare()
@@ -113,41 +110,50 @@ public class ScmCommitDevelopmentPhaseTest
     {
         descriptor.setUpdateWorkingCopyVersions( false );
 
-        validateCheckin( ROLLBACK_PREFIX + descriptor.getScmReleaseLabel() );
+        String message = ROLLBACK_PREFIX + descriptor.getScmReleaseLabel();
+        
+        prepareCheckin( message );
 
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        assertTrue( true );
+        verifyCheckin( message );
     }
 
-    private void validateCheckin( String message )
+    private void prepareCheckin( String message )
         throws Exception
     {
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        Constraint[] arguments = new Constraint[]{new IsAnything(), new IsScmFileSetEquals( fileSet ), new IsNull(),
-            new IsEqual( message )};
-        scmProviderMock
-            .expects( new InvokeOnceMatcher() )
-            .method( "checkIn" )
-            .with( arguments )
-            .will( new ReturnStub( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                       .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) ) );
-
-        
-        
+        scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ),
+                                       argThat( new IsScmFileSetEquals( fileSet ) ),
+                                       isNull( ScmVersion.class ),
+                                       eq( message ) ) ).thenReturn( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
+                                                                                                                                          .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) );
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
+    }
+    
+    private void verifyCheckin( String message ) throws Exception
+    {
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ),
+                                           argThat( new IsScmFileSetEquals( fileSet ) ),
+                                           isNull( ScmVersion.class ),
+                                           eq( message ) );
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
-    private void validateNoCheckin()
+    private void prepareNoCheckin()
         throws Exception
     {
-        Mock scmProviderMock = new Mock( ScmProvider.class );
-        scmProviderMock.expects( new TestFailureMatcher( "Shouldn't have called checkIn" ) ).method( "checkIn" );
-
+        scmProviderMock = mock( ScmProvider.class );
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
-        stub.setScmProvider( (ScmProvider) scmProviderMock.proxy() );
+        stub.setScmProvider( scmProviderMock );
+    }
+    
+    private void verifyNoCheckin()
+    {
+        verifyNoMoreInteractions( scmProviderMock );
     }
 
     private List<MavenProject> createReactorProjects()
@@ -164,5 +170,4 @@ public class ScmCommitDevelopmentPhaseTest
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         return descriptor;
     }
-
 }
