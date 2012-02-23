@@ -19,6 +19,16 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
+import java.io.File;
+import java.util.List;
+
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
@@ -26,14 +36,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsInstanceOf;
-import org.jmock.core.constraint.IsNull;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-
-import java.io.File;
 
 /**
  * Test release:perform.
@@ -45,6 +47,7 @@ public class StageReleaseMojoTest
 {
     private File workingDirectory;
 
+    @SuppressWarnings( "unchecked" )
     public void testStage()
         throws Exception
     {
@@ -57,21 +60,13 @@ public class StageReleaseMojoTest
         releaseDescriptor.setPerformGoals( "deploy site:stage-deploy" );
         releaseDescriptor.setAdditionalArguments( "-DaltDeploymentRepository=\"staging\"" );
 
-        Mock mock = new Mock( ReleaseManager.class );
-
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull(),
-            new IsEqual( Boolean.FALSE )
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "perform" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
         mojo.execute();
 
-        assertTrue( true );
+        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ), eq( false ) );
+        verifyNoMoreInteractions( mock );
     }
 
     private StageReleaseMojo getMojoWithProjectSite( String fileName )

@@ -19,7 +19,16 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+
 import java.io.File;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.execution.MavenSession;
@@ -31,13 +40,6 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.jmock.Mock;
-import org.jmock.core.Constraint;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.constraint.IsInstanceOf;
-import org.jmock.core.constraint.IsNull;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.stub.ThrowStub;
 
 /**
  * Test release:prepare.
@@ -53,6 +55,7 @@ public class PrepareReleaseMojoTest
         setVariableValueToObject( mojo, "updateWorkingCopyVersions", Boolean.TRUE );
     }
     
+    @SuppressWarnings( "unchecked" )
     public void testPrepare()
         throws Exception
     {
@@ -71,24 +74,18 @@ public class PrepareReleaseMojoTest
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         releaseDescriptor.setUpdateDependencies( false );
         
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull(),
-            new IsEqual( Boolean.TRUE ),
-            new IsEqual( Boolean.FALSE )
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        // execute
         mojo.execute();
 
+        // verify
+        verify( mock ).prepare( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class), eq( true ), eq( false ) );
         assertTrue( true );
     }
 
+    @SuppressWarnings( "unchecked" )
     public void testPrepareWithExecutionException()
         throws Exception
     {
@@ -106,20 +103,15 @@ public class PrepareReleaseMojoTest
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         releaseDescriptor.setUpdateDependencies( false );
         
-        Mock mock = new Mock( ReleaseManager.class );
+        ReleaseManager mock = mock( ReleaseManager.class );
+        doThrow( new ReleaseExecutionException( "..." ) ).when( mock ).prepare( eq( releaseDescriptor ), 
+                                                                                isA( ReleaseEnvironment.class ), 
+                                                                                isNull( List.class), 
+                                                                                eq( true ), 
+                                                                                eq( false ) );
+        mojo.setReleaseManager( mock );
 
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull(),
-            new IsEqual( Boolean.TRUE ),
-            new IsEqual( Boolean.FALSE )
-        };
-
-        mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints ).will(
-            new ThrowStub( new ReleaseExecutionException( "..." ) ) );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
-
+        //execute
         try
         {
             mojo.execute();
@@ -130,8 +122,17 @@ public class PrepareReleaseMojoTest
         {
             assertEquals( "Check cause", ReleaseExecutionException.class, e.getCause().getClass() );
         }
+        
+        // verify
+        verify( mock ).prepare( eq( releaseDescriptor ), 
+                                isA( ReleaseEnvironment.class ), 
+                                isNull( List.class), 
+                                eq( true ), 
+                                eq( false ) );
+        verifyNoMoreInteractions( mock );
     }
 
+    @SuppressWarnings( "unchecked" )
     public void testPrepareWithExecutionFailure()
         throws Exception
     {
@@ -149,21 +150,16 @@ public class PrepareReleaseMojoTest
         releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         releaseDescriptor.setUpdateDependencies( false );
         
-        Mock mock = new Mock( ReleaseManager.class );
-
-        Constraint[] constraints = new Constraint[] {
-            new IsEqual( releaseDescriptor ),
-            new IsInstanceOf( ReleaseEnvironment.class ),
-            new IsNull(),
-            new IsEqual( Boolean.TRUE ),
-            new IsEqual( Boolean.FALSE )
-        };
-
+        ReleaseManager mock = mock( ReleaseManager.class );
         ReleaseFailureException cause = new ReleaseFailureException( "..." );
-        mock.expects( new InvokeOnceMatcher() ).method( "prepare" ).with( constraints ).will(
-            new ThrowStub( cause ) );
-        mojo.setReleaseManager( (ReleaseManager) mock.proxy() );
+        doThrow( cause ).when( mock ).prepare( eq( releaseDescriptor ), 
+                                               isA( ReleaseEnvironment.class ), 
+                                               isNull( List.class), 
+                                               eq( true ), 
+                                               eq( false ) );
+        mojo.setReleaseManager( mock );
 
+        // execute
         try
         {
             mojo.execute();
@@ -174,6 +170,13 @@ public class PrepareReleaseMojoTest
         {
             assertEquals( "Check cause exists", cause, e.getCause() );
         }
+        // verify
+        verify( mock ).prepare( eq( releaseDescriptor ), 
+                                isA( ReleaseEnvironment.class ), 
+                                isNull( List.class), 
+                                eq( true ), 
+                                eq( false ) );
+        verifyNoMoreInteractions( mock );
     }
 
 /*
