@@ -19,18 +19,25 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import static org.mockito.Matchers.endsWith;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 import java.io.File;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import org.apache.maven.shared.release.ReleaseResult;
 import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.util.StringInputStream;
+import org.codehaus.plexus.util.cli.Arg;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.jmock.cglib.Mock;
-import org.jmock.core.constraint.IsEqual;
-import org.jmock.core.matcher.InvokeOnceMatcher;
-import org.jmock.core.stub.ReturnStub;
-import org.jmock.core.stub.ThrowStub;
 
 /**
  * Test the forked Maven executor.
@@ -51,98 +58,163 @@ public class ForkedMavenExecutorTest
     }
 
     public void testExecution()
-        throws MavenExecutorException
+        throws Exception
     {
+        // prepare
         File workingDirectory = getTestFile( "target/working-directory" );
+        Process mockProcess = mock( Process.class );
+        when( mockProcess.getInputStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getErrorStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getOutputStream() ).thenReturn( mock( OutputStream.class ) );
+        when( mockProcess.waitFor() ).thenReturn( 0 );
 
-        Process process = createMockProcess( 0 );
+        Commandline commandLineMock = mock( Commandline.class );
+        when( commandLineMock.execute() ).thenReturn( mockProcess );
 
-        Mock commandLineMock = createMockCommandLine( workingDirectory, process );
-        expectDefaultArguments( commandLineMock );
+        Arg valueArgument = mock( Arg.class );
+        when( commandLineMock.createArg() ).thenReturn( valueArgument );
+        
+        CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
+        when( commandLineFactoryMock.createCommandLine( isA( String.class ) /*"mvn"*/ ) ).thenReturn( commandLineMock );
 
-        Mock mock = new Mock( CommandLineFactory.class );
+        executor.setCommandLineFactory( commandLineFactoryMock );
 
-        mock.expects( new InvokeOnceMatcher() ).method( "createCommandLine" ).with( new IsEqual( "mvn" ) ).will(
-            new ReturnStub( commandLineMock.proxy() ) );
-
-        executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
-
+        // execute
         executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
 
-        assertTrue( true );
+        // verify
+        verify( mockProcess ).getInputStream();
+        verify( mockProcess ).getErrorStream();
+        verify( mockProcess ).getOutputStream();
+        verify( mockProcess ).waitFor();
+        verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
+        verify( commandLineMock ).execute();
+        verify( commandLineMock, times( 4 ) ).createArg();
+        verify( valueArgument ).setValue( "clean" );
+        verify( valueArgument ).setValue( "integration-test" );
+        verify( valueArgument ).setValue( "--no-plugin-updates" );
+        verify( valueArgument ).setValue( "--batch-mode" );
+        verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
+        
+        verifyNoMoreInteractions( mockProcess, commandLineFactoryMock, commandLineMock, valueArgument );
     }
 
     public void testExecutionWithCustomPomFile()
-        throws MavenExecutorException
+        throws Exception
     {
         File workingDirectory = getTestFile( "target/working-directory" );
+        Process mockProcess = mock( Process.class );
+        when( mockProcess.getInputStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getErrorStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getOutputStream() ).thenReturn( mock( OutputStream.class ) );
+        when( mockProcess.waitFor() ).thenReturn( 0 );
+        
+        Commandline commandLineMock = mock( Commandline.class );
+        when( commandLineMock.execute() ).thenReturn( mockProcess );
+        
+        Arg argMock = mock( Arg.class );
+        when( commandLineMock.createArg() ).thenReturn( argMock );
+        
+        CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
+        when( commandLineFactoryMock.createCommandLine( isA( String.class ) /* "mvn" */ ) ).thenReturn( commandLineMock );
 
-        Process process = createMockProcess( 0 );
+        executor.setCommandLineFactory( commandLineFactoryMock );
 
-        Mock commandLineMock = createMockCommandLine( workingDirectory, process );
-        expectDefaultArguments( commandLineMock );
-
-        String arguments = "-f my-pom.xml";
-        commandLineMock.expects( new InvokeOnceMatcher() ).method( "createArgument" ).will(
-            new ReturnStub( createArgumentLineMock( arguments ) ) );
-
-        Mock mock = new Mock( CommandLineFactory.class );
-
-        mock.expects( new InvokeOnceMatcher() ).method( "createCommandLine" ).with( new IsEqual( "mvn" ) ).will(
-            new ReturnStub( commandLineMock.proxy() ) );
-
-        executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
-
+        // execute
         executor.executeGoals( workingDirectory, "clean integration-test", false, null, "my-pom.xml",
                                new ReleaseResult() );
-
-        assertTrue( true );
+        // verify
+        verify( mockProcess ).getInputStream();
+        verify( mockProcess ).getErrorStream();
+        verify( mockProcess ).getOutputStream();
+        verify( mockProcess ).waitFor();
+        verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
+        verify( commandLineMock ).execute();
+        verify( commandLineMock, times( 6 ) ).createArg();
+        verify( argMock ).setValue( "clean" );
+        verify( argMock ).setValue( "integration-test" );
+        verify( argMock ).setValue( "-f" );
+        verify( argMock ).setValue( "my-pom.xml" );
+        verify( argMock ).setValue( "--no-plugin-updates" );
+        verify( argMock ).setValue( "--batch-mode" );
+        verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
+        
+        verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
     public void testExecutionWithArguments()
-        throws MavenExecutorException
+        throws Exception
     {
         File workingDirectory = getTestFile( "target/working-directory" );
+        Process mockProcess = mock( Process.class );
+        when( mockProcess.getInputStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getErrorStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getOutputStream() ).thenReturn( mock( OutputStream.class ) );
+        when( mockProcess.waitFor() ).thenReturn( 0 );
 
-        Process process = createMockProcess( 0 );
+        Commandline commandLineMock = mock( Commandline.class );
+        when( commandLineMock.execute() ).thenReturn( mockProcess );
+        
+        Arg argMock = mock( Arg.class );
+        when( commandLineMock.createArg() ).thenReturn( argMock );
 
-        Mock commandLineMock = createMockCommandLine( workingDirectory, process );
+        CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
+        when( commandLineFactoryMock.createCommandLine( endsWith( "mvn" ) ) ).thenReturn( commandLineMock );
+
+        executor.setCommandLineFactory( commandLineFactoryMock );
+
+        // execute
         String arguments = "-DperformRelease=true -Dmaven.test.skip=true";
-        commandLineMock.expects( new InvokeOnceMatcher() ).method( "createArgument" ).will(
-            new ReturnStub( createArgumentLineMock( arguments ) ) );
+        executor.executeGoals( workingDirectory, "clean integration-test", false, arguments, new ReleaseResult() );
 
-        expectDefaultArguments( commandLineMock );
-
-        Mock mock = new Mock( CommandLineFactory.class );
-
-        mock.expects( new InvokeOnceMatcher() ).method( "createCommandLine" ).with( new IsEqual( "mvn" ) ).will(
-            new ReturnStub( commandLineMock.proxy() ) );
-
-        executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
-
-        executor.executeGoals( workingDirectory, "clean integration-test", false, arguments, null );
-
-        assertTrue( true );
+        // verify
+        verify( mockProcess ).getInputStream();
+        verify( mockProcess ).getErrorStream();
+        verify( mockProcess ).getOutputStream();
+        verify( mockProcess ).waitFor();
+        verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
+        verify( commandLineMock ).execute();
+        verify( commandLineMock, times( 5 ) ).createArg();
+        verify( argMock ).setValue( "clean" );
+        verify( argMock ).setValue( "integration-test" );
+        verify( argMock ).setValue( "--no-plugin-updates" );
+        verify( argMock ).setValue( "--batch-mode" );
+        verify( argMock ).setLine( "-DperformRelease=true -Dmaven.test.skip=true" );
+        verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
+        
+        verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
     public void testExecutionWithNonZeroExitCode()
-        throws MavenExecutorException
+        throws Exception
     {
+        // prepare
         File workingDirectory = getTestFile( "target/working-directory" );
+        Process mockProcess = mock( Process.class );
+        when( mockProcess.getInputStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getErrorStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getOutputStream() ).thenReturn( mock( OutputStream.class ) );
+        when( mockProcess.waitFor() ).thenReturn( 1 );
+        when( mockProcess.exitValue() ).thenReturn( 1 ); // why was this here in the original test?
 
-        Process process = createMockProcess( 1 );
+        Commandline commandLineMock = mock( Commandline.class );
+        when( commandLineMock.execute() ).thenReturn( mockProcess );
+        
+        Arg argMock = mock( Arg.class );
+        when( commandLineMock.createArg() ).thenReturn( argMock );
+        
+        CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
+        when( commandLineFactoryMock.createCommandLine( endsWith( "mvn" ) ) ).thenReturn( commandLineMock );
 
-        Mock commandLineMock = createMockCommandLine( workingDirectory, process );
+        executor.setCommandLineFactory( commandLineFactoryMock );
 
-        expectDefaultArguments( commandLineMock );
-
-        Mock mock = new Mock( CommandLineFactory.class );
-
-        mock.expects( new InvokeOnceMatcher() ).method( "createCommandLine" ).with( new IsEqual( "mvn" ) ).will(
-            new ReturnStub( commandLineMock.proxy() ) );
-
-        executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
-
+        // execute
         try
         {
             executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
@@ -153,30 +225,45 @@ public class ForkedMavenExecutorTest
         {
             assertEquals( "Check exit code", 1, e.getExitCode() );
         }
+        
+        // verify
+        verify( mockProcess ).getInputStream();
+        verify( mockProcess ).getErrorStream();
+        verify( mockProcess ).getOutputStream();
+        verify( mockProcess ).waitFor();
+//        verify( mockProcess ).exitValue();
+        verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
+        verify( commandLineMock ).execute();
+        verify( commandLineMock, times( 4 ) ).createArg();
+        verify( argMock ).setValue( "clean" );
+        verify( argMock ).setValue( "integration-test" );
+        verify( argMock ).setValue( "--no-plugin-updates" );
+        verify( argMock ).setValue( "--batch-mode" );
+        verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
+        
+        verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
     public void testExecutionWithCommandLineException()
-        throws MavenExecutorException
+        throws Exception
     {
+        // prepare
         File workingDirectory = getTestFile( "target/working-directory" );
 
-        Mock commandLineMock = new Mock( Commandline.class );
-        commandLineMock.expects( new InvokeOnceMatcher() ).method( "setWorkingDirectory" ).with(
-            new IsEqual( workingDirectory.getAbsolutePath() ) );
-        commandLineMock.expects( new InvokeOnceMatcher() ).method( "addEnvironment" ).with(
-            new IsEqual( "MAVEN_TERMINATE_CMD" ), new IsEqual( "on" ) );
-        commandLineMock.expects( new InvokeOnceMatcher() ).method( "execute" ).will(
-            new ThrowStub( new CommandLineException( "..." ) ) );
+        Commandline commandLineMock = mock( Commandline.class );
+        when( commandLineMock.execute() ).thenThrow( new CommandLineException( "..." ) );
 
-        expectDefaultArguments( commandLineMock );
+        Arg argMock = mock( Arg.class );
+        when ( commandLineMock.createArg() ).thenReturn( argMock );
+        
+        CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
+        when( commandLineFactoryMock.createCommandLine( endsWith( "mvn" ) ) ).thenReturn( commandLineMock );
+        
+        executor.setCommandLineFactory( commandLineFactoryMock );
 
-        Mock mock = new Mock( CommandLineFactory.class );
-
-        mock.expects( new InvokeOnceMatcher() ).method( "createCommandLine" ).with( new IsEqual( "mvn" ) ).will(
-            new ReturnStub( commandLineMock.proxy() ) );
-
-        executor.setCommandLineFactory( (CommandLineFactory) mock.proxy() );
-
+        // execute
         try
         {
             executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
@@ -187,58 +274,19 @@ public class ForkedMavenExecutorTest
         {
             assertEquals( "Check cause", CommandLineException.class, e.getCause().getClass() );
         }
-    }
 
-    private static void expectDefaultArguments( Mock commandLineMock )
-    {
-        String[] args = new String[]{"clean", "integration-test", "--no-plugin-updates", "--batch-mode"};
-        for ( int i = args.length - 1; i >= 0; i-- )
-        {
-            commandLineMock.expects( new InvokeOnceMatcher() ).method( "createArgument" ).will(
-                new ReturnStub( createArgumentValueMock( args[i] ) ) );
-        }
-    }
-
-    private static Mock createMockCommandLine( File workingDirectory, Process process )
-    {
-        Mock commandLineMock = new Mock( Commandline.class );
-        commandLineMock.expects( new InvokeOnceMatcher() ).method( "setWorkingDirectory" ).with(
-            new IsEqual( workingDirectory.getAbsolutePath() ) );
-        commandLineMock.expects( new InvokeOnceMatcher() ).method( "addEnvironment" ).with(
-            new IsEqual( "MAVEN_TERMINATE_CMD" ), new IsEqual( "on" ) );
-        commandLineMock.expects( new InvokeOnceMatcher() ).method( "execute" ).will( new ReturnStub( process ) );
-
-        return commandLineMock;
-    }
-
-    private static Commandline.Argument createArgumentValueMock( String value )
-    {
-        Mock mock = new Mock( Commandline.Argument.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "setValue" ).with( new IsEqual( value ) );
-        return (Commandline.Argument) mock.proxy();
-    }
-
-    private static Commandline.Argument createArgumentLineMock( String value )
-    {
-        Mock mock = new Mock( Commandline.Argument.class );
-        mock.expects( new InvokeOnceMatcher() ).method( "setLine" ).with( new IsEqual( value ) );
-        return (Commandline.Argument) mock.proxy();
-    }
-
-    private static Process createMockProcess( int exitCode )
-    {
-        Mock mockProcess = new Mock( Process.class );
-        mockProcess.expects( new InvokeOnceMatcher() ).method( "getInputStream" ).will(
-            new ReturnStub( new StringInputStream( "" ) ) );
-        mockProcess.expects( new InvokeOnceMatcher() ).method( "getErrorStream" ).will(
-            new ReturnStub( new StringInputStream( "" ) ) );
-        mockProcess.expects( new InvokeOnceMatcher() ).method( "waitFor" ).will(
-            new ReturnStub( new Integer( exitCode ) ) );
-        if ( exitCode != 0 )
-        {
-            mockProcess.expects( new InvokeOnceMatcher() ).method( "exitValue" ).will(
-                new ReturnStub( new Integer( exitCode ) ) );
-        }
-        return (Process) mockProcess.proxy();
+        // verify
+        verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
+        verify( commandLineMock ).execute();
+        verify( commandLineMock, times( 4 ) ).createArg();
+        verify( argMock ).setValue( "clean" );
+        verify( argMock ).setValue( "integration-test" );
+        verify( argMock ).setValue( "--no-plugin-updates" );
+        verify( argMock ).setValue( "--batch-mode" );
+        verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
+        
+        verifyNoMoreInteractions( commandLineMock, argMock, commandLineFactoryMock );
     }
 }
