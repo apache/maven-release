@@ -54,7 +54,7 @@ public class ForkedMavenExecutorTest
     {
         super.setUp();
 
-        executor = (ForkedMavenExecutor) lookup( MavenExecutor.ROLE );
+        executor = (ForkedMavenExecutor) lookup( MavenExecutor.ROLE, "forked-path" );
     }
 
     public void testExecution()
