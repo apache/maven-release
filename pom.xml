@@ -156,11 +156,6 @@
         <artifactId>mockito-core</artifactId>
         <version>1.9.0</version>
       </dependency>
-      <dependency>
-        <groupId>jmock</groupId>
-        <artifactId>jmock</artifactId>
-        <version>1.0.1</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 

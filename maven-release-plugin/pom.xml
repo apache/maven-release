@@ -100,11 +100,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>jmock</groupId>
-      <artifactId>jmock</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.shared</groupId>
       <artifactId>maven-plugin-testing-harness</artifactId>
       <scope>test</scope>
