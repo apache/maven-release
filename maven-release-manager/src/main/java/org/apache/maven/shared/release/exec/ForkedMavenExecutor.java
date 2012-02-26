@@ -19,20 +19,19 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
-import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
-import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.cli.CommandLineException;
-import org.codehaus.plexus.util.cli.Commandline;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
+import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
+import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.Commandline;
 
 /**
  * Fork Maven to executed a series of goals.
