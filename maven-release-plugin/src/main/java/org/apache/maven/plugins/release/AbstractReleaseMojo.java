@@ -148,15 +148,17 @@ public abstract class AbstractReleaseMojo
     protected List<MavenProject> reactorProjects;
 
     /**
-     * List of provider implementations.
+     * Add a new or overwrite the default implementation per provider. 
+     * The key is the scm prefix and the value is the role hint of the {@link org.apache.maven.scm.provider.ScmProvider}.
      *
      * @parameter
      * @since 2.0-beta-6
+     * @see ScmManager#setScmProviderImplementation(String, String)
      */
     private Map<String, String> providerImplementations;
 
     /**
-     * The M2_HOME parameter to use for forked Maven invocations.
+     * The {@code M2_HOME} parameter to use for forked Maven invocations.
      *
      * @parameter default-value="${maven.home}"
      * @since 2.0-beta-8
@@ -164,7 +166,7 @@ public abstract class AbstractReleaseMojo
     protected File mavenHome;
 
     /**
-     * The JAVA_HOME parameter to use for forked Maven invocations.
+     * The {@code JAVA_HOME} parameter to use for forked Maven invocations.
      *
      * @parameter default-value="${java.home}"
      * @since 2.0-beta-8
