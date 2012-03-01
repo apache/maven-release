@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><project>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <groupId>groupId</groupId>
   <artifactId>subproject2</artifactId>
@@ -9,22 +11,23 @@
     <url>file://localhost/tmp/scm-repo/tags/release-label</url>
   </scm>
   <build>
-    <sourceDirectory>src/main/java</sourceDirectory>
+    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
     <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
-    <testSourceDirectory>src/test/java</testSourceDirectory>
-    <outputDirectory>target/classes</outputDirectory>
-    <testOutputDirectory>target/test-classes</testOutputDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
+    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+    <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
     <resources>
       <resource>
-        <directory>src/main/resources</directory>
+        <directory>${project.basedir}/src/main/resources</directory>
       </resource>
     </resources>
     <testResources>
       <testResource>
-        <directory>src/test/resources</directory>
+        <directory>${project.basedir}/src/test/resources</directory>
       </testResource>
     </testResources>
-    <directory>target</directory>
+    <directory>${project.basedir}/target</directory>
+    <finalName>${project.artifactId}-${project.version}</finalName>
     <plugins>
       <plugin>
         <groupId>groupId</groupId>
@@ -61,6 +64,7 @@
     </dependency>
   </dependencies>
   <reporting>
+    <excludeDefaults>false</excludeDefaults>
     <outputDirectory>target/site</outputDirectory>
   </reporting>
 </project>
