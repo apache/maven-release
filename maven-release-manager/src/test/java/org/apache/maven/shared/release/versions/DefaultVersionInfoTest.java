@@ -137,6 +137,9 @@ public class DefaultVersionInfoTest
         checkNextVersion( "1.009", "1.010" );
 
         checkNextVersion( "1.99", "1.100" );
+        
+        //MRELEASE-623 SNAPSHOT is case-insensitive
+        checkNextVersion( "2.2-SNAPshot", "2.3-SNAPshot" );
     }
 
     public void testNextAnnotationRevision()
@@ -240,7 +243,24 @@ public class DefaultVersionInfoTest
         assertTrue( new DefaultVersionInfo( "1.01-beta-04-SNAPSHOT" ).isSnapshot() );
         assertTrue( new DefaultVersionInfo( "1.01-beta-04-20051112.134500-1" ).isSnapshot() );
         assertFalse( new DefaultVersionInfo( "1.01-beta-04_20051112.134500-1" ).isSnapshot() );
+        
     }
+    
+    //MRELEASE-623 SNAPSHOT is case-insensitive
+    public void testCaseInsensitiveSnapshot() throws VersionParseException
+    {
+        DefaultVersionInfo currentVersionInfo = new DefaultVersionInfo( "2.2-SNAPshot" ); 
+        assertTrue( currentVersionInfo.isSnapshot()  );
+        assertEquals( "2.2", currentVersionInfo.getReleaseVersionString() );
+        VersionInfo nextVersionInfo = currentVersionInfo.getNextVersion();
+        assertEquals( "2.3-SNAPSHOT", nextVersionInfo.getSnapshotVersionString() );
+    }
+
+//    Ignore, new DefaultVersionInfo( "LATEST") throws VersionParseException
+//    public void testLatest() throws VersionParseException
+//    {
+//        assertTrue( new DefaultVersionInfo( "LATEST") .isSnapshot() );
+//    }
 
     private static void checkGetReleaseVersion( String strVersion, String expected )
         throws Exception

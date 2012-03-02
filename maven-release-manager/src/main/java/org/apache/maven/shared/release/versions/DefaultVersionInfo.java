@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.versions;
  */
 
 import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -187,16 +188,7 @@ public class DefaultVersionInfo
 
     public boolean isSnapshot()
     {
-        // TODO: ripped from Artifact. Should be in ArtifactVersion -> move.
-        Matcher m = Artifact.VERSION_FILE_PATTERN.matcher( strVersion );
-        if ( m.matches() )
-        {
-            return true;
-        }
-        else
-        {
-            return strVersion.endsWith( Artifact.SNAPSHOT_VERSION ) || strVersion.equals( Artifact.LATEST_VERSION );
-        }
+        return ArtifactUtils.isSnapshot( strVersion );
     }
 
     public VersionInfo getNextVersion()
@@ -311,7 +303,8 @@ public class DefaultVersionInfo
         {
             baseVersion = m.group( 1 );
         }
-        else if ( baseVersion.endsWith( "-" + Artifact.SNAPSHOT_VERSION ) )
+        // MRELEASE-623 SNAPSHOT is case-insensitive
+        else if ( StringUtils.right( baseVersion, 9 ).equalsIgnoreCase( "-" + Artifact.SNAPSHOT_VERSION ) )
         {
             baseVersion = baseVersion.substring( 0, baseVersion.length() - Artifact.SNAPSHOT_VERSION.length() - 1 );
         }
