@@ -36,7 +36,7 @@
   <url>http://maven.apache.org/plugins/maven-release-plugin/</url>
 
   <prerequisites>
-    <maven>2.0.9</maven>
+    <maven>${mavenVersion}</maven>
   </prerequisites>
 
   <issueManagement>
