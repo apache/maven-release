@@ -96,6 +96,16 @@ public interface ReleaseManager
     void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
                   boolean resume, boolean dryRun )
         throws ReleaseExecutionException, ReleaseFailureException;
+    
+    /**
+     * Prepare a release.
+     * 
+     * @param prepareRequest             all prepare arguments
+     * @throws ReleaseExecutionException if there is a problem performing the release
+     * @throws ReleaseFailureException   if there is a problem performing the release
+     * @since 2.3
+     */
+    void prepare( ReleasePrepareRequest prepareRequest ) throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Prepare a release.
@@ -209,7 +219,7 @@ public interface ReleaseManager
                                      List<MavenProject> reactorProjects, ReleaseManagerListener listener );
 
     /**
-     * Perform a release, and optionnaly cleanup.
+     * Perform a release, and optionally cleanup.
      *
      * @param releaseDescriptor the configuration to use for release
      * @param releaseEnvironment settings, maven-home, java-home, etc. to use during release.
@@ -221,9 +231,20 @@ public interface ReleaseManager
     void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                   List<MavenProject> reactorProjects, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException;
+    
+    /**
+     * Perform a release
+     * 
+     * @param performRequest   all perform arguments
+     * @throws ReleaseExecutionException if there is a problem performing the release
+     * @throws ReleaseFailureException   if there is a problem performing the release
+     * @since 2.3
+     */
+    void perform( ReleasePerformRequest performRequest )
+        throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
-     * Perform a release, and optionnaly cleanup.
+     * Perform a release, and optionally cleanup.
      *
      * @param releaseDescriptor the configuration to use for release
      * @param settings          the settings.xml configuration
@@ -245,6 +266,14 @@ public interface ReleaseManager
      * @param reactorProjects   the reactor projects
      */
     void clean( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener, List<MavenProject> reactorProjects );
+    
+    /**
+     * Clean a release.
+     * 
+     * @param cleanRequest all clean arguments
+     * @since 2.3
+     */
+    void clean( ReleaseCleanRequest cleanRequest );
 
     /**
      * Rollback changes made by the previous release
@@ -302,7 +331,18 @@ public interface ReleaseManager
     void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
                    ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
-
+    
+    /**
+     * Rollback changes made by the previous release
+     * 
+     * @param rollbackRequest            all rollback arguments
+     * @throws ReleaseExecutionException if there is a problem during release rollback
+     * @throws ReleaseFailureException   if there is a problem during release rollback
+     * @since 2.3
+     */
+    void rollback( ReleaseRollbackRequest rollbackRequest )
+        throws ReleaseExecutionException, ReleaseFailureException;
+    
     /**
      * Branch a project
      *
@@ -310,8 +350,8 @@ public interface ReleaseManager
      * @param releaseEnvironment settings, maven-home, java-home, etc. to use during release.
      * @param reactorProjects   the reactor projects
      * @param dryRun            do not commit any changes to the file system or SCM
-     * @throws ReleaseExecutionException if there is a problem during release rollback
-     * @throws ReleaseFailureException   if there is a problem during release rollback
+     * @throws ReleaseExecutionException if there is a problem during release branch
+     * @throws ReleaseFailureException   if there is a problem during release branch
      */
     void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                  List<MavenProject> reactorProjects, boolean dryRun )
@@ -324,8 +364,8 @@ public interface ReleaseManager
      * @param settings          the settings.xml configuration
      * @param reactorProjects   the reactor projects
      * @param dryRun            do not commit any changes to the file system or SCM
-     * @throws ReleaseExecutionException if there is a problem during release rollback
-     * @throws ReleaseFailureException   if there is a problem during release rollback
+     * @throws ReleaseExecutionException if there is a problem during release branch
+     * @throws ReleaseFailureException   if there is a problem during release branch
      *
      * @deprecated Use {@link ReleaseManager#branch(ReleaseDescriptor, ReleaseEnvironment, List, boolean)} instead.
      */
@@ -341,8 +381,8 @@ public interface ReleaseManager
      * @param reactorProjects   the reactor projects
      * @param dryRun            do not commit any changes to the file system or SCM
      * @param listener          the listener
-     * @throws ReleaseExecutionException if there is a problem during release rollback
-     * @throws ReleaseFailureException   if there is a problem during release rollback
+     * @throws ReleaseExecutionException if there is a problem during release branch
+     * @throws ReleaseFailureException   if there is a problem during release branch
      */
     void branch( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                  List<MavenProject> reactorProjects, boolean dryRun, ReleaseManagerListener listener )
@@ -356,8 +396,8 @@ public interface ReleaseManager
      * @param reactorProjects   the reactor projects
      * @param dryRun            do not commit any changes to the file system or SCM
      * @param listener          the listener
-     * @throws ReleaseExecutionException if there is a problem during release rollback
-     * @throws ReleaseFailureException   if there is a problem during release rollback
+     * @throws ReleaseExecutionException if there is a problem during release branch
+     * @throws ReleaseFailureException   if there is a problem during release branch
      *
      * @deprecated Use {@link ReleaseManager#branch(ReleaseDescriptor, ReleaseEnvironment, List, boolean, ReleaseManagerListener)} instead.
      */
@@ -366,16 +406,36 @@ public interface ReleaseManager
         throws ReleaseExecutionException, ReleaseFailureException;
     
     /**
+     * Branch a project
+     * 
+     * @param branchRequest              all branch arguments
+     * @throws ReleaseExecutionException if there is a problem during release branch
+     * @throws ReleaseFailureException   if there is a problem during release branch
+     * @since 2.3
+     */
+    void branch( ReleaseBranchRequest branchRequest ) throws ReleaseExecutionException, ReleaseFailureException;
+    
+    /**
      * Update version numbers for a project
      *
      * @param releaseDescriptor the configuration to use for release
      * @param releaseEnvironment settings, maven-home, java-home, etc. to use during release.
      * @param reactorProjects   the reactor projects
-     * @throws ReleaseExecutionException if there is a problem during release rollback
-     * @throws ReleaseFailureException   if there is a problem during release rollback
+     * @throws ReleaseExecutionException if there is a problem during update versions
+     * @throws ReleaseFailureException   if there is a problem during update versions
      */
     void updateVersions( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                          List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
+    /**
+     * Update version numbers for a project
+     * 
+     * @param updateVersionsRequest      all update versions arguments
+     * @throws ReleaseExecutionException if there is a problem during update versions
+     * @throws ReleaseFailureException   if there is a problem during update versions
+     * @since 2.3
+     */
+    void updateVersions( ReleaseUpdateVersionsRequest updateVersionsRequest )
+        throws ReleaseExecutionException, ReleaseFailureException;
 }
