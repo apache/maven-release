@@ -59,6 +59,7 @@ public class CheckoutProjectFromScm
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
+    /** {@inheritDoc}  */
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
             throws ReleaseExecutionException, ReleaseFailureException
@@ -139,7 +140,7 @@ public class CheckoutProjectFromScm
     }
 
 
-    public ReleaseResult performCheckout( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+    private ReleaseResult performCheckout( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException, ScmException
     {
@@ -260,10 +261,16 @@ public class CheckoutProjectFromScm
         return result;
     }
 
+    /** {@inheritDoc}  */
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        return simulate( releaseDescriptor, releaseEnvironment, reactorProjects );
+        ReleaseResult result = new ReleaseResult();
+        
+        logInfo( result, "The project would be checked out to perform the release ..." );
+        
+        result.setResultCode( ReleaseResult.SUCCESS );
+        return result;
     }
 }
