@@ -43,6 +43,13 @@ public class RunPerformGoalsPhase
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
+        return runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, false );
+    }
+    
+    private ReleaseResult runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects, boolean simulate )
+        throws ReleaseExecutionException
+    {
         String additionalArguments = releaseDescriptor.getAdditionalArguments();
 
         if ( releaseDescriptor.isUseReleaseProfile() )
@@ -82,10 +89,20 @@ public class RunPerformGoalsPhase
         File pomFile = new File( workDir, pomFileName );
         PomFinder pomFinder = new PomFinder( getLogger() );
         boolean foundPom = pomFinder.parsePom( pomFile );
+        
+        File workDirectory;
+        if( simulate )
+        {
+            workDirectory = new File( releaseDescriptor.getWorkingDirectory() );
+        }
+        else
+        {
+            workDirectory = new File( releaseDescriptor.getCheckoutDirectory() );
+        }
 
         if ( foundPom )
         {
-            File matchingPom = pomFinder.findMatchingPom( new File( releaseDescriptor.getCheckoutDirectory() ) );
+            File matchingPom = pomFinder.findMatchingPom( workDirectory );
             if ( matchingPom != null )
             {
                 getLogger().info( "Invoking perform goals in directory " + matchingPom.getParent() );
@@ -96,8 +113,7 @@ public class RunPerformGoalsPhase
 
         }
 
-        return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getCheckoutDirectory() ),
-                        additionalArguments );
+        return execute( releaseDescriptor, releaseEnvironment, workDirectory, additionalArguments );
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
@@ -106,9 +122,10 @@ public class RunPerformGoalsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        logInfo( result, "Executing perform goals" );
+        logInfo( result, "Executing perform goals  - since this is simulation mode it is running against the "
+            + "original project, not the rewritten ones" );
 
-        execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+        runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, true );
 
         return result;
     }
