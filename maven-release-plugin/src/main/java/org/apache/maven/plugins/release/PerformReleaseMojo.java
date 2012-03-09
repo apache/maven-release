@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -91,6 +92,14 @@ public class PerformReleaseMojo
     {
         return releaseProfiles;
     }
+    
+    /**
+     * Dry run: don't checkout anything from the scm repository, or modify the checkout.
+     * The goals (by default at least {@code deploy}) will be executed against the <strong>current</strong> project.
+     *
+     * @parameter expression="${dryRun}" default-value="false"
+     */
+    private boolean dryRun;
 
     /**
      * {@inheritDoc}
@@ -130,8 +139,14 @@ public class PerformReleaseMojo
                 }
             }
             releaseDescriptor.setPerformGoals( goals );
+            
+            ReleasePerformRequest performRequest  = new ReleasePerformRequest();
+            performRequest.setReleaseDescriptor( releaseDescriptor );
+            performRequest.setReleaseEnvironment( getReleaseEnvironment() );
+            performRequest.setReactorProjects( reactorProjects );
+            performRequest.setDryRun( dryRun );
 
-            releaseManager.perform( releaseDescriptor, getReleaseEnvironment(), reactorProjects );
+            releaseManager.perform( performRequest );
         }
         catch ( ReleaseExecutionException e )
         {

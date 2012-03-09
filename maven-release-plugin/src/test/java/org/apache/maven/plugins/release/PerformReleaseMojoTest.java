@@ -19,9 +19,7 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
-import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -29,7 +27,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Profile;
@@ -41,8 +38,9 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
+import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Test release:perform.
@@ -54,7 +52,6 @@ public class PerformReleaseMojoTest
 {
     private File workingDirectory;
 
-    @SuppressWarnings( "unchecked" )
     public void testPerform()
         throws Exception
     {
@@ -68,16 +65,20 @@ public class PerformReleaseMojoTest
 
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
-
+        
         // execute
         mojo.execute();
         
         // verify
-        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
         verifyNoMoreInteractions( mock );
     }
 
-    @SuppressWarnings( "unchecked" )
     public void testPerformWithFlatStructure()
         throws Exception
     {
@@ -97,12 +98,16 @@ public class PerformReleaseMojoTest
         mojo.execute();
         
         // verify
-        verify( mock ).perform( eq(releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
         verifyNoMoreInteractions( mock );
     }
 
     
-    @SuppressWarnings( "unchecked" )
     public void testPerformWithoutSite()
         throws Exception
     {
@@ -124,7 +129,12 @@ public class PerformReleaseMojoTest
         mojo.execute();
 
         // verify
-        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
         verifyNoMoreInteractions( mock );
     }
 
@@ -142,7 +152,6 @@ public class PerformReleaseMojoTest
         return mojo;
     }
 
-    @SuppressWarnings( "unchecked" )
     public void testPerformWithExecutionException()
         throws Exception
     {
@@ -155,9 +164,7 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setPerformGoals( "deploy site-deploy" );
 
         ReleaseManager mock = mock( ReleaseManager.class );
-        doThrow( new ReleaseExecutionException( "..." ) ).when( mock ).perform( eq( releaseDescriptor ),
-                                                                                isA( ReleaseEnvironment.class ),
-                                                                                isNull( List.class ) );
+        doThrow( new ReleaseExecutionException( "..." ) ).when( mock ).perform( isA( ReleasePerformRequest.class ) );
         mojo.setReleaseManager( mock );
 
         // execute
@@ -173,13 +180,16 @@ public class PerformReleaseMojoTest
         }
         
         // verify
-        verify( mock ).perform( eq( releaseDescriptor ),
-                                isA( ReleaseEnvironment.class ),
-                                isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+
         verifyNoMoreInteractions( mock );
     }
 
-    @SuppressWarnings( "unchecked" )
     public void testPerformWithExecutionFailure()
         throws Exception
     {
@@ -193,9 +203,7 @@ public class PerformReleaseMojoTest
 
         ReleaseManager mock = mock( ReleaseManager.class );
         ReleaseFailureException cause = new ReleaseFailureException( "..." );
-        doThrow( cause ).when( mock ).perform( eq( releaseDescriptor ),
-                                               isA( ReleaseEnvironment.class ),
-                                               isNull( List.class ) );
+        doThrow( cause ).when( mock ).perform( isA( ReleasePerformRequest.class ) );
 
         mojo.setReleaseManager( mock );
 
@@ -212,13 +220,16 @@ public class PerformReleaseMojoTest
         }
         
         // verify
-        verify( mock ).perform( eq( releaseDescriptor ),
-                                isA( ReleaseEnvironment.class ),
-                                isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+
         verifyNoMoreInteractions( mock );
     }
 
-    @SuppressWarnings( "unchecked" )
     public void testPerformWithScm()
         throws Exception
     {
@@ -238,11 +249,16 @@ public class PerformReleaseMojoTest
         mojo.execute();
         
         // verify
-        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+
         verifyNoMoreInteractions( mock );
     }
 
-    @SuppressWarnings( "unchecked" )
     public void testPerformWithProfiles()
         throws Exception
     {
@@ -269,11 +285,16 @@ public class PerformReleaseMojoTest
         mojo.execute();
 
         // verify
-        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+
         verifyNoMoreInteractions( mock );
     }
 
-    @SuppressWarnings( "unchecked" )
     public void testPerformWithProfilesAndArguments()
         throws Exception
     {
@@ -300,11 +321,16 @@ public class PerformReleaseMojoTest
         mojo.execute();
 
         // verify
-        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+
         verifyNoMoreInteractions( mock );
     }
 
-	@SuppressWarnings( "unchecked" )
     public void testPerformWithMultilineGoals()
         throws Exception
     {
@@ -323,7 +349,13 @@ public class PerformReleaseMojoTest
         mojo.execute();
 
         // verify
-        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ) );
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment()  );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+
         verifyNoMoreInteractions( mock );
     }
 

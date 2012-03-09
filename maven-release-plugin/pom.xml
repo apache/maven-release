@@ -194,7 +194,7 @@
                 <id>integration-test-prepare</id>
                 <configuration>
                   <setupIncludes>
-                    <setupInclude>setup/maven-scm-provider-*/pom.xml</setupInclude>
+                    <setupInclude>setup/*/pom.xml</setupInclude>
                   </setupIncludes>
                   <pomIncludes>
                     <pomInclude>projects/prepare/*/*pom.xml</pomInclude>
@@ -224,7 +224,23 @@
                   </goals>
                 </configuration>
                 <goals>
-                  <goal>install</goal>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>integration-test-perform</id>
+                <configuration>
+                  <pomIncludes>
+                    <pomInclude>projects/perform/*/pom.xml</pomInclude>
+                  </pomIncludes>
+                  <goals>
+                    <goal>clean</goal>
+                    <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal>
+                    <goal>${project.groupId}:${project.artifactId}:${project.version}:prepare</goal>
+                    <goal>${project.groupId}:${project.artifactId}:${project.version}:perform</goal>
+                  </goals>
+                </configuration>
+                <goals>
                   <goal>run</goal>
                 </goals>
               </execution>
