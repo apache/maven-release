@@ -82,45 +82,52 @@ public class DefaultScmRepositoryConfigurator
         //MRELEASE-76
         scmRepo.setPersistCheckout( false );
 
-        if ( repository.getProviderRepository() instanceof ScmProviderRepositoryWithHost )
+        if ( settings != null )
         {
-            ScmProviderRepositoryWithHost repositoryWithHost =
-                (ScmProviderRepositoryWithHost) repository.getProviderRepository();
-            String host = repositoryWithHost.getHost();
-
-            int port = repositoryWithHost.getPort();
-
-            if ( port > 0 )
+            Server server = null;
+            
+            if( releaseDescriptor.getScmId() != null )
             {
-                host += ":" + port;
+                server = settings.getServer( releaseDescriptor.getScmId() );
             }
 
-            if ( settings != null )
+            if ( server == null && repository.getProviderRepository() instanceof ScmProviderRepositoryWithHost )
             {
-                // TODO: this is a bit dodgy - id is not host, but since we don't have a <host> field we make an assumption
-                Server server = settings.getServer( host );
-
-                if ( server != null )
+                ScmProviderRepositoryWithHost repositoryWithHost =
+                    (ScmProviderRepositoryWithHost) repository.getProviderRepository();
+                String host = repositoryWithHost.getHost();
+    
+                int port = repositoryWithHost.getPort();
+    
+                if ( port > 0 )
                 {
-                    if ( username == null )
-                    {
-                        username = server.getUsername();
-                    }
+                    host += ":" + port;
+                }
+                
+                // TODO: this is a bit dodgy - id is not host, but since we don't have a <host> field we make an assumption
+                server = settings.getServer( host );
+            }
 
-                    if ( password == null )
-                    {
-                        password = decrypt( server.getPassword(), host );
-                    }
+            if ( server != null )
+            {
+                if ( username == null )
+                {
+                    username = server.getUsername();
+                }
 
-                    if ( privateKey == null )
-                    {
-                        privateKey = server.getPrivateKey();
-                    }
+                if ( password == null )
+                {
+                    password = decrypt( server.getPassword(), server.getId() );
+                }
 
-                    if ( passphrase == null )
-                    {
-                        passphrase = decrypt( server.getPassphrase(), host );
-                    }
+                if ( privateKey == null )
+                {
+                    privateKey = server.getPrivateKey();
+                }
+
+                if ( passphrase == null )
+                {
+                    passphrase = decrypt( server.getPassphrase(), server.getId() );
                 }
             }
         }

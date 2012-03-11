@@ -105,6 +105,14 @@
           </description>
         </field>
         <field>
+          <name>scmId</name>
+          <version>2.3.0+</version>
+          <type>String</type>
+          <description>
+            The id can be used to get the credentials by the server-id from the settings.xml
+          </description>
+        </field>
+        <field>
           <name>scmUsername</name>
           <version>1.0.0+</version>
           <type>String</type>
@@ -792,6 +800,10 @@
         {
             return false;
         }
+        if ( !safeEquals( scmId, that.scmId ) )
+        {
+            return false;
+        }
         if ( !safeEquals( scmSourceUrl, that.scmSourceUrl ) )
         {
             return false;
@@ -849,7 +861,7 @@
             {
                 return true;
             }
-
+            
             if ( thisScm.getConnection() != null ? !thisScm.getConnection().equals( thatScm.getConnection() )
                 : thatScm.getConnection() != null )
             {
@@ -867,6 +879,16 @@
             if ( thisScm.getTag() != null ? !thisScm.getTag().equals( thatScm.getTag() ) : thatScm.getTag() != null )
             {
                 return false;
+            }
+            
+            if( thisScm instanceof org.apache.maven.shared.release.scm.IdentifiedScm && thatScm instanceof org.apache.maven.shared.release.scm.IdentifiedScm )
+            {
+            	org.apache.maven.shared.release.scm.IdentifiedScm thisIdentifiedScm = (org.apache.maven.shared.release.scm.IdentifiedScm) thisScm;
+            	org.apache.maven.shared.release.scm.IdentifiedScm thatIdentifiedScm = (org.apache.maven.shared.release.scm.IdentifiedScm) thatScm;
+            	if ( thisIdentifiedScm.getId() != null ? !thisIdentifiedScm.getId().equals( thatIdentifiedScm.getId() ) : thatIdentifiedScm.getId() != null )
+            	{
+                	return false;
+            	}
             }
         }
 
@@ -886,6 +908,7 @@
         result = 29 * result + ( scmBranchBase != null ? scmBranchBase.hashCode() : 0 );
         result = 29 * result + ( scmUsername != null ? scmUsername.hashCode() : 0 );
         result = 29 * result + ( scmPassword != null ? scmPassword.hashCode() : 0 );
+        result = 29 * result + ( scmId != null ? scmId.hashCode() : 0 );
         result = 29 * result + ( scmSourceUrl != null ? scmSourceUrl.hashCode() : 0 );
         result = 29 * result + ( scmPrivateKey != null ? scmPrivateKey.hashCode() : 0 );
         result = 29 * result + ( scmPrivateKeyPassPhrase != null ? scmPrivateKeyPassPhrase.hashCode() : 0 );

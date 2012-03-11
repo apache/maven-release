@@ -19,8 +19,8 @@ package org.apache.maven.shared.release.config;
  * under the License.
  */
 
-import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
+import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.PlexusTestCase;
 
 import java.io.File;
@@ -177,7 +177,8 @@ public class PropertiesReleaseDescriptorStoreTest
         config.mapReleaseVersion( "group.id:artifact.id", "1.1" );
         config.mapDevelopmentVersion( "group.id:artifact.id", "1.2-SNAPSHOT" );
 
-        Scm scm = new Scm();
+        IdentifiedScm scm = new IdentifiedScm();
+        scm.setId( "id" );
         scm.setConnection( "connection" );
         scm.setDeveloperConnection( "devConnection" );
         scm.setTag( "tag" );
@@ -269,6 +270,7 @@ public class PropertiesReleaseDescriptorStoreTest
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setCompletedPhase( "completed-phase-write" );
         config.setScmSourceUrl( "url-write" );
+        config.setScmId( "id-write" );
         config.setScmUsername( "username-write" );
         config.setScmPassword( "password-write" );
         config.setScmPrivateKey( "private-key-write" );
@@ -284,14 +286,15 @@ public class PropertiesReleaseDescriptorStoreTest
         config.mapReleaseVersion( "groupId:artifactId", "1.0" );
         config.mapDevelopmentVersion( "groupId:artifactId", "1.1-SNAPSHOT" );
 
-        Scm scm = new Scm();
+        IdentifiedScm scm = new IdentifiedScm();
+        scm.setId( "id-write" );
         scm.setConnection( "connection-write" );
         scm.setDeveloperConnection( "developerConnection-write" );
         scm.setUrl( "url-write" );
         scm.setTag( "tag-write" );
         config.mapOriginalScmInfo( "groupId:artifactId", scm );
 
-        scm = new Scm();
+        scm = new IdentifiedScm();
         scm.setConnection( "connection-write" );
         // omit optional elements
         config.mapOriginalScmInfo( "groupId:subproject1", scm );
@@ -302,6 +305,7 @@ public class PropertiesReleaseDescriptorStoreTest
     private static void assertDefaultReleaseConfiguration( ReleaseDescriptor config )
     {
         assertNull( "Expected no completedPhase", config.getCompletedPhase() );
+        assertNull( "Expected no id", config.getScmId() );
         assertNull( "Expected no url", config.getScmSourceUrl() );
         assertNull( "Expected no username", config.getScmUsername() );
         assertNull( "Expected no password", config.getScmPassword() );
@@ -344,6 +348,7 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         ReleaseDescriptor expected = new ReleaseDescriptor();
         expected.setCompletedPhase( "step1" );
+        expected.setScmId( "scm-id" );
         expected.setScmSourceUrl( "scm-url" );
         expected.setScmUsername( "username" );
         expected.setScmPassword( "password" );
@@ -366,13 +371,15 @@ public class PropertiesReleaseDescriptorStoreTest
         expected.mapReleaseVersion( "groupId:artifactId2", "3.0" );
         expected.mapDevelopmentVersion( "groupId:artifactId1", "2.1-SNAPSHOT" );
         expected.mapDevelopmentVersion( "groupId:artifactId2", "3.0.1-SNAPSHOT" );
-        Scm scm = new Scm();
+        IdentifiedScm scm = new IdentifiedScm();
+        scm.setId( "id" );
         scm.setConnection( "connection" );
         scm.setDeveloperConnection( "developerConnection" );
         scm.setUrl( "url" );
         scm.setTag( "tag" );
         expected.mapOriginalScmInfo( "groupId:artifactId1", scm );
-        scm = new Scm();
+        scm = new IdentifiedScm();
+        scm.setId( null );
         scm.setConnection( "connection2" );
         scm.setUrl( "url2" );
         scm.setTag( null );

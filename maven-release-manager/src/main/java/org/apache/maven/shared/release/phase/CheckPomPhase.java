@@ -79,6 +79,9 @@ public class CheckPomPhase
                     "Missing required setting: scm connection or developerConnection must be specified." );
             }
 
+            // As long as Scm.getId() does not exist, read it as a property
+            releaseDescriptor.setScmId( rootProject.getProperties().getProperty( "project.scm.id" ) );
+
             try
             {
                 scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );

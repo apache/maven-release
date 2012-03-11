@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.config;
  */
 
 import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.IOUtil;
 
@@ -115,6 +116,10 @@ public class PropertiesReleaseDescriptorStore
         Properties properties = new Properties();
         properties.setProperty( "completedPhase", config.getCompletedPhase() );
         properties.setProperty( "scm.url", config.getScmSourceUrl() );
+        if ( config.getScmId() != null )
+        {
+            properties.setProperty( "scm.id", config.getScmId() );
+        }
         if ( config.getScmUsername() != null )
         {
             properties.setProperty( "scm.username", config.getScmUsername() );
@@ -212,6 +217,14 @@ public class PropertiesReleaseDescriptorStore
                 if ( scm.getTag() != null )
                 {
                     properties.setProperty( prefix + ".tag", scm.getTag() );
+                }
+                if ( scm instanceof IdentifiedScm )
+                {
+                    IdentifiedScm identifiedScm = (IdentifiedScm) scm;
+                    if( identifiedScm.getId() != null )
+                    {
+                        properties.setProperty( prefix + ".id", identifiedScm.getId() );
+                    }
                 }
             }
             else

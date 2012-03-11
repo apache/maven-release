@@ -26,7 +26,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.scm.IdentifiedScm;
 
 /**
  * Class providing utility methods used during the release process
@@ -52,6 +52,7 @@ public class ReleaseUtils
     public static ReleaseDescriptor merge( ReleaseDescriptor mergeInto, ReleaseDescriptor toBeMerged )
     {
         // Overridden if configured from the caller
+        mergeInto.setScmId( mergeOverride( mergeInto.getScmId(), toBeMerged.getScmId() ) );
         mergeInto.setScmSourceUrl( mergeOverride( mergeInto.getScmSourceUrl(), toBeMerged.getScmSourceUrl() ) );
         mergeInto.setScmCommentPrefix(
             mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
@@ -135,6 +136,7 @@ public class ReleaseUtils
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setCompletedPhase( properties.getProperty( "completedPhase" ) );
+        releaseDescriptor.setScmId( properties.getProperty( "scm.id" ) );
         releaseDescriptor.setScmSourceUrl( properties.getProperty( "scm.url" ) );
         releaseDescriptor.setScmUsername( properties.getProperty( "scm.username" ) );
         releaseDescriptor.setScmPassword( properties.getProperty( "scm.password" ) );
@@ -192,12 +194,13 @@ public class ReleaseUtils
                         }
                         else
                         {
-                            Scm scm = new Scm();
+                            IdentifiedScm scm = new IdentifiedScm();
                             scm.setConnection( properties.getProperty( "project.scm." + key + ".connection" ) );
                             scm.setDeveloperConnection(
                                 properties.getProperty( "project.scm." + key + ".developerConnection" ) );
                             scm.setUrl( properties.getProperty( "project.scm." + key + ".url" ) );
                             scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
+                            scm.setId( properties.getProperty( "project.scm." + key + ".id" ) );
 
                             releaseDescriptor.mapOriginalScmInfo( key, scm );
                         }
