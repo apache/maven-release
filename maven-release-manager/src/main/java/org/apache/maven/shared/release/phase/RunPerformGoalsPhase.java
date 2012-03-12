@@ -122,10 +122,9 @@ public class RunPerformGoalsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        logInfo( result, "Executing perform goals  - since this is simulation mode it is running against the "
-            + "original project, not the rewritten ones" );
+        logInfo( result, "Executing perform goals  - since this is simulation mode these goals are skipped." );
 
-        runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, true );
+        //runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, true );
 
         return result;
     }
