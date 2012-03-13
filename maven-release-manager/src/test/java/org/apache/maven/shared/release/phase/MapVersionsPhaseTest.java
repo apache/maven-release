@@ -83,6 +83,45 @@ public class MapVersionsPhaseTest
         verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ), eq( "1.0" ) );
         verifyNoMoreInteractions( mockPrompter );
     }
+    
+    // MRELEASE-403: Release plugin ignores given version number
+    public void testMapReleaseVersionsInteractiveAddZeroIncremental()
+        throws Exception
+    {
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
+        MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
+
+        Prompter mockPrompter = mock( Prompter.class );
+        when(
+              mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+                                   eq( "1.0" ) ) ).thenReturn( "1.0.0" );
+        phase.setPrompter( mockPrompter );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( project );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+
+        // execute
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0.0" ),
+                      releaseDescriptor.getReleaseVersions() );
+
+        // prepare
+        releaseDescriptor = new ReleaseDescriptor();
+
+        // execute
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0.0" ),
+                      releaseDescriptor.getReleaseVersions() );
+        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName()
+                                                       + "\"?" ), eq( "1.0" ) );
+        verifyNoMoreInteractions( mockPrompter );
+    }
 
     /**
      * Test to release "SNAPSHOT" version
