@@ -46,6 +46,24 @@ mvn -N -Darguments=-N release:perform
 </source>
       </answer>
     </faq>
+    <faq id="credentials">
+      <question>How can I hide my username and password?</question>
+      <answer>
+        <p>Add a server-entry to your <code>settings.xml</code>, where you define your credentials (see <a href="http://maven.apache.org/settings.html#Servers">settings.xml#servers</a> for more details). 
+      	Since you can't set an id for the <code>scm</code> in your <code>pom.xml</code>, you should add a property pointing to the server-id.
+      	</p>
+<source>
+<![CDATA[
+  <project>
+   ...
+    <properties>
+      <project.scm.id>my-scm-server<project.scm.id>
+    </properties>
+  </project>
+]]>
+</source>
+      </answer>
+    </faq>
     <faq id="inheritScm">
       <question>Why is <code>release:prepare</code> failing when trying to tag with
         <code>"svn: Path '...' does not exist in revision ..."</code></question>
