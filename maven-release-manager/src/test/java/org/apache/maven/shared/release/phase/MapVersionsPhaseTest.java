@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.startsWith;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -53,12 +54,13 @@ public class MapVersionsPhaseTest
     {
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
+        MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
         Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ), eq( "1.0" ) ) ).thenReturn( "2.0" );
+        when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ), eq( "1.0" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( project );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -78,7 +80,7 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
-        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.0" ) );
+        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ), eq( "1.0" ) );
         verifyNoMoreInteractions( mockPrompter );
     }
 
@@ -91,12 +93,13 @@ public class MapVersionsPhaseTest
     {
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
+        MavenProject project = createProject( "artifactId", "SNAPSHOT" );
 
         Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ), eq( "1.0" ) ) ).thenReturn( "2.0" );
+        when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ), eq( "1.0" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( project );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -117,7 +120,7 @@ public class MapVersionsPhaseTest
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
         
-        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.0" ) );
+        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ), eq( "1.0" ) );
         verifyNoMoreInteractions( mockPrompter );
     }
 
@@ -200,12 +203,13 @@ public class MapVersionsPhaseTest
     {
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
+        MavenProject project = createProject( "artifactId", "1.0" );
 
         Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( project );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -226,7 +230,7 @@ public class MapVersionsPhaseTest
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
         
-        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.1-SNAPSHOT" ) );
+        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for \"" + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) );
         verifyNoMoreInteractions( mockPrompter );
     }
 
@@ -357,12 +361,13 @@ public class MapVersionsPhaseTest
     {
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
+        MavenProject project = createProject( "artifactId", "foo" );
 
         Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList( project );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
@@ -382,7 +387,7 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
-        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.1-SNAPSHOT" ) );
+        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for \"" + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) );
         verifyNoMoreInteractions( mockPrompter );
     }
 
