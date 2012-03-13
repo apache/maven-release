@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -49,6 +50,7 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
@@ -807,5 +809,24 @@ public abstract class AbstractRewritePomsPhase
             }
         }
         return tagElement;
+    }
+ 
+    protected Scm buildScm( MavenProject project )
+    {
+        IdentifiedScm scm;
+        if( project.getScm() == null )
+        {
+            scm = null;
+        }
+        else
+        {
+            scm = new IdentifiedScm();
+            scm.setConnection( project.getScm().getConnection() );
+            scm.setDeveloperConnection( project.getScm().getDeveloperConnection() );
+            scm.setTag( project.getScm().getTag() );
+            scm.setUrl( project.getScm().getUrl() );
+            scm.setId( project.getProperties().getProperty( "project.scm.id" ) );
+        }
+        return scm;
     }
 }

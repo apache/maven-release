@@ -60,7 +60,8 @@ public class RewritePomsForBranchPhase
             Element scmRoot = rootElement.getChild( "scm", namespace );
             if ( scmRoot != null )
             {
-                releaseDescriptor.mapOriginalScmInfo( projectId, project.getScm() );
+                Scm scm = buildScm( project );
+                releaseDescriptor.mapOriginalScmInfo( projectId, scm );
 
                 try
                 {
