@@ -439,7 +439,6 @@ public class GenerateReleasePomsPhase
 
         if ( build != null )
         {
-            @SuppressWarnings("unchecked")
 			List<Plugin> plugins = build.getPlugins();
 
             if ( plugins != null )
@@ -484,7 +483,6 @@ public class GenerateReleasePomsPhase
 
         if ( reporting != null )
         {
-            @SuppressWarnings("unchecked")
 			List<ReportPlugin> reportPlugins = reporting.getPlugins();
 
             if ( reportPlugins != null )
@@ -526,7 +524,6 @@ public class GenerateReleasePomsPhase
 
         if ( build != null )
         {
-            @SuppressWarnings("unchecked")
 			List<Extension> extensions = build.getExtensions();
 
             if ( extensions != null )
