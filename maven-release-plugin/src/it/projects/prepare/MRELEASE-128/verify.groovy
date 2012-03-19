@@ -18,13 +18,22 @@
  * under the License.
  */
 
+File pomXml = new File( basedir, 'pom.xml' )
+assert pomXml.exists()
+assert 1 == pomXml.getText().count("<connection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/trunk/</connection>")
+assert 1 == pomXml.getText().count("<developerConnection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/trunk/</developerConnection>")
+
 File pomXmlTag = new File( basedir, 'pom.xml.tag' )
 assert pomXmlTag.exists()
-assert 1 == pomXmlTag.getText().count("<connection>scm:dummy|${scm.custom.path}/nul</connection>")
-assert 1 == pomXmlTag.getText().count("<developerConnection>scm:dummy|${scm.custom.path}/nul</developerConnection>")
-
+assert 1 == pomXmlTag.getText().count("<connection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/tags/mrelease-128-1.0</connection>")
+assert 1 == pomXmlTag.getText().count("<developerConnection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/tags/mrelease-128-1.0</developerConnection>")
 
 File pomXmlNext = new File( basedir, 'pom.xml.next' )
 assert pomXmlNext.exists()
-assert 1 == pomXmlNext.getText().count("<connection>scm:dummy|${scm.custom.path}/nul</connection>")
-assert 1 == pomXmlNext.getText().count("<developerConnection>scm:dummy|${scm.custom.path}/nul</developerConnection>")
+assert 1 == pomXmlNext.getText().count("<connection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/trunk/</connection>")
+assert 1 == pomXmlNext.getText().count("<developerConnection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/trunk/</developerConnection>")
+
+File pomXmlReleaseBackup = new File( basedir, 'pom.xml.releaseBackup' )
+assert pomXmlReleaseBackup.exists()
+assert 1 == pomXmlReleaseBackup.getText().count("<connection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/trunk/</connection>")
+assert 1 == pomXmlReleaseBackup.getText().count("<developerConnection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/trunk/</developerConnection>")

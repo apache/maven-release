@@ -162,9 +162,6 @@
           <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
           <settingsFile>src/it/settings.xml</settingsFile>
           <debug>true</debug>
-          <pomExcludes>
-            <pomExclude>**/MRELEASE-128/pom.xml</pomExclude> <!-- @todo fix -->
-          </pomExcludes>
           <properties>
             <allowReleasePluginSnapshot>true</allowReleasePluginSnapshot>
             <dryRun>true</dryRun>

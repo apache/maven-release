@@ -814,17 +814,17 @@ public abstract class AbstractRewritePomsPhase
     protected Scm buildScm( MavenProject project )
     {
         IdentifiedScm scm;
-        if( project.getScm() == null )
+        if( project.getOriginalModel().getScm() == null )
         {
             scm = null;
         }
         else
         {
             scm = new IdentifiedScm();
-            scm.setConnection( project.getScm().getConnection() );
-            scm.setDeveloperConnection( project.getScm().getDeveloperConnection() );
-            scm.setTag( project.getScm().getTag() );
-            scm.setUrl( project.getScm().getUrl() );
+            scm.setConnection( project.getOriginalModel().getScm().getConnection() );
+            scm.setDeveloperConnection( project.getOriginalModel().getScm().getDeveloperConnection() );
+            scm.setTag( project.getOriginalModel().getScm().getTag() );
+            scm.setUrl( project.getOriginalModel().getScm().getUrl() );
             scm.setId( project.getProperties().getProperty( "project.scm.id" ) );
         }
         return scm;
