@@ -43,7 +43,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 import java.util.StringTokenizer;
@@ -335,7 +334,8 @@ public class InvokerMavenExecutor
         }
     }
 
-    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
+    @Override
+    public void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String additionalArguments, String pomFileName,
                               ReleaseResult result )
         throws MavenExecutorException
@@ -391,11 +391,7 @@ public class InvokerMavenExecutor
 
             setupRequest( req, bridge, additionalArguments );
 
-            if ( goals.trim().length() > 0 )
-            {
-                String[] rawGoals = goals.split( " " );
-                req.setGoals( Arrays.asList( rawGoals ) );
-            }
+            req.setGoals( goals );
 
             try
             {

@@ -24,6 +24,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -52,7 +53,8 @@ public class ForkedMavenExecutor
     /**
      * @noinspection UseOfSystemOutOrSystemErr
      */
-    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
+    @Override
+    public void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String additionalArguments, String pomFileName,
                               ReleaseResult relResult )
         throws MavenExecutorException
@@ -116,17 +118,9 @@ public class ForkedMavenExecutor
                 cl.createArg().setValue( pomFileName );
             }
 
-            if ( goals != null )
+            for ( String goal : goals )
             {
-                // accept both space and comma, so the old way still work
-                // also accept line separators, so that goal lists can be spread
-                // across multiple lines in the POM.
-                String[] tokens = StringUtils.split( goals, ", \n\r" );
-
-                for ( int i = 0; i < tokens.length; ++i )
-                {
-                    cl.createArg().setValue( tokens[i] );
-                }
+                cl.createArg().setValue( goal );
             }
 
             cl.createArg().setValue( "--no-plugin-updates" );

@@ -24,8 +24,11 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class AbstractMavenExecutor
     implements MavenExecutor, LogEnabled
@@ -67,6 +70,32 @@ public abstract class AbstractMavenExecutor
     {
         executeGoals( workingDirectory, goals, releaseEnvironment, interactive, arguments, null, result );
     }
+    
+    /** {@inheritDoc} */
+    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
+                              boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )
+        throws MavenExecutorException
+    {
+        List<String> goalsList = new ArrayList<String>();
+        if ( goals != null )
+        {
+            // accept both space and comma, so the old way still work
+            // also accept line separators, so that goal lists can be spread
+            // across multiple lines in the POM.
+            String[] tokens = StringUtils.split( goals, ", \n\r\t" );
+
+            for ( int i = 0; i < tokens.length; ++i )
+            {
+                goalsList.add( tokens[i] );
+            }
+        }
+        executeGoals( workingDirectory, goalsList, releaseEnvironment, interactive, additionalArguments, pomFileName, result );
+    }
+    
+    protected abstract void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
+                              boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )
+        throws MavenExecutorException;
+
 
     protected final Logger getLogger()
     {
