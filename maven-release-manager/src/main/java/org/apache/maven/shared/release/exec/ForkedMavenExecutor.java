@@ -176,13 +176,6 @@ public class ForkedMavenExecutor
         }
     }
 
-    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String arguments, ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executeGoals( workingDirectory, goals, releaseEnvironment, interactive, arguments, null, result );
-    }
-
     public void setCommandLineFactory( CommandLineFactory commandLineFactory )
     {
         this.commandLineFactory = commandLineFactory;

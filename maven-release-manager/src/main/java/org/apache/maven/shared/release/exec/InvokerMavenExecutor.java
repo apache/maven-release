@@ -427,13 +427,6 @@ public class InvokerMavenExecutor
         }
     }
 
-    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String additionalArguments, ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executeGoals( workingDirectory, goals, releaseEnvironment, interactive, additionalArguments, null, result );
-    }
-
     private static final class Handler
         implements InvocationOutputHandler
     {

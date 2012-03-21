@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.exec;
 
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 
@@ -36,6 +37,7 @@ public abstract class AbstractMavenExecutor
     {
     }
 
+    /** {@inheritDoc} */
     public void executeGoals( File workingDirectory,
                               String goals,
                               boolean interactive,
@@ -47,6 +49,7 @@ public abstract class AbstractMavenExecutor
         executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments, pomFileName, result );
     }
 
+    /** {@inheritDoc} */
     public void executeGoals( File workingDirectory,
                               String goals,
                               boolean interactive,
@@ -57,14 +60,22 @@ public abstract class AbstractMavenExecutor
         executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments, result );
     }
 
+    /** {@inheritDoc} */
+    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
+                              boolean interactive, String arguments, ReleaseResult result )
+        throws MavenExecutorException
+    {
+        executeGoals( workingDirectory, goals, releaseEnvironment, interactive, arguments, null, result );
+    }
+
     protected final Logger getLogger()
     {
         return logger;
     }
 
+    /** {@inheritDoc} */
     public void enableLogging( Logger logger )
     {
         this.logger = logger;
     }
-
 }
