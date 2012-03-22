@@ -94,7 +94,7 @@ public class AbstractMavenExecutorTest
         reset( executor );
     }
 
-    private class AbstractMavenExecutorSpy
+    protected class AbstractMavenExecutorSpy
         extends AbstractMavenExecutor
     {
 
