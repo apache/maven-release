@@ -113,7 +113,7 @@ public class RewritePomsForDevelopmentPhase
 
         if ( versionsMap != null )
         {
-            return (String) ( versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+            return versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY );
         }
         else
         {

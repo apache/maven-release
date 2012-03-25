@@ -235,12 +235,12 @@ public abstract class AbstractRewritePomsPhase
 
     private void normaliseLineEndings( Document document )
     {
-        for ( Iterator i = document.getDescendants( new ContentFilter( ContentFilter.COMMENT ) ); i.hasNext(); )
+        for ( Iterator<?> i = document.getDescendants( new ContentFilter( ContentFilter.COMMENT ) ); i.hasNext(); )
         {
             Comment c = (Comment) i.next();
             c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ls ) );
         }
-        for ( Iterator i = document.getDescendants( new ContentFilter( ContentFilter.CDATA ) ); i.hasNext(); )
+        for ( Iterator<?> i = document.getDescendants( new ContentFilter( ContentFilter.CDATA ) ); i.hasNext(); )
         {
             CDATA c = (CDATA) i.next();
             c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ls ) );
@@ -345,7 +345,7 @@ public abstract class AbstractRewritePomsPhase
         Text text = null;
         if ( element.getContent() != null )
         {
-            for ( Iterator it = element.getContent().iterator(); it.hasNext(); )
+            for ( Iterator<?> it = element.getContent().iterator(); it.hasNext(); )
             {
                 Object content = it.next();
                 if ( ( content instanceof Text ) && ( (Text) content ).getTextTrim().length() > 0 )
@@ -666,7 +666,7 @@ public abstract class AbstractRewritePomsPhase
 
             // the empty namespace is considered equal to the POM namespace, so match them up to avoid extra xmlns=""
             ElementFilter elementFilter = new ElementFilter( Namespace.getNamespace( "" ) );
-            for ( Iterator i = rootElement.getDescendants( elementFilter ); i.hasNext(); )
+            for ( Iterator<?> i = rootElement.getDescendants( elementFilter ); i.hasNext(); )
             {
                 Element e = (Element) i.next();
                 e.setNamespace( pomNamespace );
@@ -724,10 +724,8 @@ public abstract class AbstractRewritePomsPhase
 
         if ( reactorProjects != null )
         {
-            for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+            for ( MavenProject project : reactorProjects )
             {
-                MavenProject project = i.next();
-
                 File pomFile = ReleaseUtil.getStandardPom( project );
                 // MRELEASE-273 : if no pom
                 if ( pomFile != null )

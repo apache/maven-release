@@ -42,7 +42,6 @@ import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -130,10 +129,8 @@ public abstract class AbstractScmCommitPhase
 
         if ( releaseDescriptor.isCommitByProject() )
         {
-            for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+            for ( MavenProject project : reactorProjects )
             {
-                MavenProject project = i.next();
-
                 List<File> pomFiles = createPomFiles( releaseDescriptor, project );
                 ScmFileSet fileSet = new ScmFileSet( project.getFile().getParentFile(), pomFiles );
 
@@ -212,9 +209,8 @@ public abstract class AbstractScmCommitPhase
     protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
     {
         List<File> pomFiles = new ArrayList<File>();
-        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = i.next();
             pomFiles.addAll( createPomFiles( releaseDescriptor, project ) );
         }
         return pomFiles;

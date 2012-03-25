@@ -33,7 +33,6 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -99,10 +98,8 @@ public class CheckPomPhase
 
         boolean containsSnapshotProjects = false;
 
-        for ( Iterator<MavenProject> it = reactorProjects.iterator(); it.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = it.next();
-
             if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
             {
                 containsSnapshotProjects = true;

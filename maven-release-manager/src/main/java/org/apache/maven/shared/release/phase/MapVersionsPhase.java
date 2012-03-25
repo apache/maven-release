@@ -19,7 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.artifact.ArtifactUtils;
@@ -96,9 +95,8 @@ public class MapVersionsPhase
                 releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
             }
 
-            for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+            for ( MavenProject subProject : reactorProjects )
             {
-                MavenProject subProject = i.next();
                 String subProjectId =
                     ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
 
@@ -131,10 +129,8 @@ public class MapVersionsPhase
         }
         else
         {
-            for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+            for ( MavenProject project : reactorProjects )
             {
-                MavenProject project = i.next();
-
                 String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
                 String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );

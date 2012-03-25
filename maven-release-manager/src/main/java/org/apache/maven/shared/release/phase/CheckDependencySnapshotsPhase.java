@@ -213,7 +213,7 @@ public class CheckDependencySnapshotsPhase
         @SuppressWarnings("unchecked")
 		Set<Artifact> reportArtifacts = project.getReportArtifacts();
 
-        for ( Artifact artifact  : reportArtifacts )
+        for ( Artifact artifact : reportArtifacts )
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
@@ -284,8 +284,8 @@ public class CheckDependencySnapshotsPhase
 
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
-        boolean result = artifact.isSnapshot() &&
-            !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
+        boolean result =
+            artifact.isSnapshot() && !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
 
         // If we have a snapshot but allowTimestampedSnapshots is true, accept the artifact if the version
         // indicates that it is a timestamped snapshot.

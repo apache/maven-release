@@ -145,7 +145,7 @@ public class GenerateReleasePomsPhase
         MavenXpp3Writer pomWriter = new MavenXpp3Writer();
 
         File releasePomFile = ReleaseUtil.getReleasePom( project );
-        
+
         // MRELEASE-273 : A release pom can be null
         if ( releasePomFile == null )
         {

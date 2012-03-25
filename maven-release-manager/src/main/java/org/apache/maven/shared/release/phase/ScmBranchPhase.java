@@ -74,7 +74,7 @@ public class ScmBranchPhase
                 scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
-            
+
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
             
         }
@@ -92,12 +92,12 @@ public class ScmBranchPhase
         {
             ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) );
             String branchName = releaseDescriptor.getScmReleaseLabel();
-            
+
             ScmBranchParameters scmBranchParameters = new ScmBranchParameters();
             scmBranchParameters.setMessage( releaseDescriptor.getScmCommentPrefix() + " copy for branch " + branchName );
             scmBranchParameters.setRemoteBranching( releaseDescriptor.isRemoteTagging() );
             scmBranchParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
-            
+
             result = provider.branch( repository, fileSet, branchName, scmBranchParameters );
         }
         catch ( ScmException e )

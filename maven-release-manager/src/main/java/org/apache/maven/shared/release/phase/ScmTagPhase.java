@@ -92,7 +92,7 @@ public class ScmTagPhase
                 scmRepositoryConfigurator.getConfiguredRepository( basedirAlignedReleaseDescriptor.getScmSourceUrl(),
                                                                    releaseDescriptor,
                                                                    releaseEnvironment.getSettings() );
-            
+
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );

@@ -20,7 +20,6 @@ package org.apache.maven.shared.release.phase;
  */
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
@@ -48,10 +47,8 @@ public class CreateBackupPomsPhase
         // remove previous backups, if any
         clean( reactorProjects );
 
-        for ( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = projects.next();
-
             createPomBackup( project );
         }
 
@@ -64,10 +61,8 @@ public class CreateBackupPomsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        for ( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = (MavenProject) projects.next();
-
             deletePomBackup( project );
         }
 

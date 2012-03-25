@@ -74,7 +74,7 @@ public class CheckoutProjectFromScm
             // the first step is a bit tricky, we need to know which provider! like e.g. "scm:jgit:http://"
             // the offset of 4 is because 'scm:' has 4 characters...
             String providerPart = releaseDescriptor.getScmSourceUrl()
-                    .substring(0, releaseDescriptor.getScmSourceUrl().indexOf(':', 4));
+                    .substring( 0, releaseDescriptor.getScmSourceUrl().indexOf( ':', 4 ) );
 
             String scmPath = releaseDescriptor.getWorkingDirectory();
 

@@ -119,7 +119,7 @@ public class RewritePomsForReleasePhase
             {
                 scm = project.getScm();
             }
-            
+
             String tag = releaseDescriptor.getScmReleaseLabel();
             String tagBase = releaseDescriptor.getScmTagBase();
 
@@ -252,7 +252,7 @@ public class RewritePomsForReleasePhase
 
         if ( versionsMap != null )
         {
-            return (String) ( versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+            return versionsMap.get( ReleaseDescriptor.RELEASE_KEY );
         }
         else
         {

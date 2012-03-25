@@ -124,7 +124,7 @@ public class RewritePomsForBranchPhase
             {
                 branchBase = "scm:svn:" + branchBase;
             }
-            
+
             String workingDirectory =
                 ReleaseUtil.isSymlink( project.getBasedir() ) ? project.getBasedir().getCanonicalPath()
                                 : project.getBasedir().getAbsolutePath();

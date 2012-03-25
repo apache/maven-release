@@ -45,7 +45,7 @@ public class RunPerformGoalsPhase
     {
         return runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, false );
     }
-    
+
     private ReleaseResult runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects, boolean simulate )
         throws ReleaseExecutionException
@@ -89,9 +89,9 @@ public class RunPerformGoalsPhase
         File pomFile = new File( workDir, pomFileName );
         PomFinder pomFinder = new PomFinder( getLogger() );
         boolean foundPom = pomFinder.parsePom( pomFile );
-        
+
         File workDirectory;
-        if( simulate )
+        if ( simulate )
         {
             workDirectory = new File( releaseDescriptor.getWorkingDirectory() );
         }
@@ -110,7 +110,6 @@ public class RunPerformGoalsPhase
                 // the same directory as the SCM checkout directory!
                 // releaseDescriptor.setCheckoutDirectory( matchingPom.getParent() );
             }
-
         }
 
         return execute( releaseDescriptor, releaseEnvironment, workDirectory, additionalArguments );
