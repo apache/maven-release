@@ -814,7 +814,7 @@ public abstract class AbstractRewritePomsPhase
     protected Scm buildScm( MavenProject project )
     {
         IdentifiedScm scm;
-        if( project.getOriginalModel().getScm() == null )
+        if ( project.getOriginalModel().getScm() == null )
         {
             scm = null;
         }

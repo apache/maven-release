@@ -267,9 +267,9 @@ public class CheckoutProjectFromScm
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
-        
+
         logInfo( result, "The project would be checked out to perform the release ..." );
-        
+
         result.setResultCode( ReleaseResult.SUCCESS );
         return result;
     }

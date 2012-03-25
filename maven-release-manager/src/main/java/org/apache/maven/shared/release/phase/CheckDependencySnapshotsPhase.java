@@ -145,7 +145,7 @@ public class CheckDependencySnapshotsPhase
 
         @SuppressWarnings("unchecked")
 		Set<Artifact> pluginArtifacts = project.getPluginArtifacts();
-        
+
         for ( Artifact artifact : pluginArtifacts )
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
@@ -212,7 +212,7 @@ public class CheckDependencySnapshotsPhase
 
         @SuppressWarnings("unchecked")
 		Set<Artifact> reportArtifacts = project.getReportArtifacts();
-		
+
         for ( Artifact artifact  : reportArtifacts )
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
@@ -224,7 +224,7 @@ public class CheckDependencySnapshotsPhase
 
         @SuppressWarnings("unchecked")
 		Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
-		
+
         for ( Artifact artifact : extensionArtifacts )
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
