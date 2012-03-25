@@ -231,7 +231,7 @@ public interface ReleaseManager
     void perform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                   List<MavenProject> reactorProjects, boolean clean )
         throws ReleaseExecutionException, ReleaseFailureException;
-    
+
     /**
      * Perform a release
      * 
@@ -266,7 +266,7 @@ public interface ReleaseManager
      * @param reactorProjects   the reactor projects
      */
     void clean( ReleaseDescriptor releaseDescriptor, ReleaseManagerListener listener, List<MavenProject> reactorProjects );
-    
+
     /**
      * Clean a release.
      * 
@@ -331,7 +331,7 @@ public interface ReleaseManager
     void rollback( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
                    ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
-    
+
     /**
      * Rollback changes made by the previous release
      * 
@@ -342,7 +342,7 @@ public interface ReleaseManager
      */
     void rollback( ReleaseRollbackRequest rollbackRequest )
         throws ReleaseExecutionException, ReleaseFailureException;
-    
+
     /**
      * Branch a project
      *
@@ -404,7 +404,7 @@ public interface ReleaseManager
     void branch( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
                  boolean dryRun, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
-    
+
     /**
      * Branch a project
      * 
@@ -414,7 +414,7 @@ public interface ReleaseManager
      * @since 2.3
      */
     void branch( ReleaseBranchRequest branchRequest ) throws ReleaseExecutionException, ReleaseFailureException;
-    
+
     /**
      * Update version numbers for a project
      *

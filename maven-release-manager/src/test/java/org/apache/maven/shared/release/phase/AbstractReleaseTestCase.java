@@ -331,7 +331,7 @@ public abstract class AbstractReleaseTestCase
                 
                 public int differenceFound( Difference difference )
                 {
-                    if( "${remoterepo}".equals( difference.getControlNodeDetail().getValue() ) &&
+                    if ( "${remoterepo}".equals( difference.getControlNodeDetail().getValue() ) &&
                                     remoteRepositoryURL.equals( difference.getTestNodeDetail().getValue() ) )
                     {
                         return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;

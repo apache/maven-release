@@ -85,8 +85,8 @@ public class DefaultScmRepositoryConfigurator
         if ( settings != null )
         {
             Server server = null;
-            
-            if( releaseDescriptor.getScmId() != null )
+
+            if ( releaseDescriptor.getScmId() != null )
             {
                 server = settings.getServer( releaseDescriptor.getScmId() );
             }
@@ -96,14 +96,14 @@ public class DefaultScmRepositoryConfigurator
                 ScmProviderRepositoryWithHost repositoryWithHost =
                     (ScmProviderRepositoryWithHost) repository.getProviderRepository();
                 String host = repositoryWithHost.getHost();
-    
+
                 int port = repositoryWithHost.getPort();
-    
+
                 if ( port > 0 )
                 {
                     host += ":" + port;
                 }
-                
+
                 // TODO: this is a bit dodgy - id is not host, but since we don't have a <host> field we make an assumption
                 server = settings.getServer( host );
             }

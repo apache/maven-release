@@ -881,7 +881,7 @@
                 return false;
             }
             
-            if( thisScm instanceof org.apache.maven.shared.release.scm.IdentifiedScm && thatScm instanceof org.apache.maven.shared.release.scm.IdentifiedScm )
+            if ( thisScm instanceof org.apache.maven.shared.release.scm.IdentifiedScm && thatScm instanceof org.apache.maven.shared.release.scm.IdentifiedScm )
             {
             	org.apache.maven.shared.release.scm.IdentifiedScm thisIdentifiedScm = (org.apache.maven.shared.release.scm.IdentifiedScm) thisScm;
             	org.apache.maven.shared.release.scm.IdentifiedScm thatIdentifiedScm = (org.apache.maven.shared.release.scm.IdentifiedScm) thatScm;

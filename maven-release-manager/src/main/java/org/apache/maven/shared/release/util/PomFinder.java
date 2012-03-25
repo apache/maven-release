@@ -155,13 +155,13 @@ public class PomFinder
             for ( int i = 0; i < childFiles.length; i++ )
             {
                 String childFile = childFiles[ i ];
-                
+
                 File subDir = new File( startDirectory, childFile );
                 if ( subDir.isDirectory() && !subDir.isHidden() )
                 {
                     matchingPom = findMatchingPom( subDir );
                 }
-                
+
                 if ( matchingPom != null )
                 {
                     break;
@@ -185,7 +185,7 @@ public class PomFinder
         {
             return null;
         }
-        
+
         PomInfo pomInfo = null;
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
@@ -198,10 +198,7 @@ public class PomFinder
         }
         finally
         {
-            if ( xmlReader != null )
-            {
-                IOUtil.close( xmlReader );
-            }
+            IOUtil.close( xmlReader );
         }
         if ( model != null )
         {

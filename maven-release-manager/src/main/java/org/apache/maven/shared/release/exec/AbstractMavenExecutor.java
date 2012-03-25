@@ -41,22 +41,15 @@ public abstract class AbstractMavenExecutor
     }
 
     /** {@inheritDoc} */
-    public void executeGoals( File workingDirectory,
-                              String goals,
-                              boolean interactive,
-                              String additionalArguments,
-                              String pomFileName,
-                              ReleaseResult result )
+    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
+                              String pomFileName, ReleaseResult result )
         throws MavenExecutorException
     {
         executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments, pomFileName, result );
     }
 
     /** {@inheritDoc} */
-    public void executeGoals( File workingDirectory,
-                              String goals,
-                              boolean interactive,
-                              String additionalArguments,
+    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
                               ReleaseResult result )
         throws MavenExecutorException
     {
@@ -70,7 +63,7 @@ public abstract class AbstractMavenExecutor
     {
         executeGoals( workingDirectory, goals, releaseEnvironment, interactive, arguments, null, result );
     }
-    
+
     /** {@inheritDoc} */
     public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )
@@ -91,7 +84,7 @@ public abstract class AbstractMavenExecutor
         }
         executeGoals( workingDirectory, goalsList, releaseEnvironment, interactive, additionalArguments, pomFileName, result );
     }
-    
+
     protected abstract void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )
         throws MavenExecutorException;

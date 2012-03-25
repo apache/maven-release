@@ -26,7 +26,8 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
  * @author Robert Scholte
  * @since 2.3
  */
-public class ReleaseUpdateVersionsRequest extends AbstractReleaseRequest
+public class ReleaseUpdateVersionsRequest
+    extends AbstractReleaseRequest
 {
     private ReleaseEnvironment releaseEnvironment;
 

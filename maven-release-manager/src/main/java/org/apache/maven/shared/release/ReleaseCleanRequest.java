@@ -24,6 +24,7 @@ package org.apache.maven.shared.release;
  * @author Robert Scholte
  * @since 2.3
  */
-public class ReleaseCleanRequest extends AbstractReleaseRequest
+public class ReleaseCleanRequest
+    extends AbstractReleaseRequest
 {
 }

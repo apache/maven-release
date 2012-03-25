@@ -22,7 +22,6 @@ package org.apache.maven.shared.release.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,10 +57,9 @@ public class ReleaseUtil
 
     public static MavenProject getRootProject( List<MavenProject> reactorProjects )
     {
-        MavenProject project = (MavenProject) reactorProjects.get( 0 );
-        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+        MavenProject project = reactorProjects.get( 0 );
+        for ( MavenProject currentProject : reactorProjects )
         {
-            MavenProject currentProject = i.next();
             if ( currentProject.isExecutionRoot() )
             {
                 project = currentProject;
@@ -200,10 +198,8 @@ public class ReleaseUtil
     {
         String[] baseDirs = new String[reactorProjects.size()];
         int idx = 0;
-        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+        for ( MavenProject p : reactorProjects )
         {
-            MavenProject p = i.next();
-
             String dir = p.getBasedir().getCanonicalPath();
 
             // always end with separator so that we know what is a path and what is a partial directory name in the
@@ -278,7 +274,7 @@ public class ReleaseUtil
         }
         return url;
     }
-    
+
     public static boolean isSymlink( File file )
         throws IOException
     {

@@ -166,7 +166,7 @@ public class ReleaseUtils
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
-        for ( Iterator i = properties.keySet().iterator(); i.hasNext(); )
+        for ( Iterator<?> i = properties.keySet().iterator(); i.hasNext(); )
         {
             String property = (String) i.next();
             if ( property.startsWith( "project.rel." ) )

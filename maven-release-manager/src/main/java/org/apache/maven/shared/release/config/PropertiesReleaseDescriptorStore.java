@@ -183,21 +183,21 @@ public class PropertiesReleaseDescriptorStore
         // others boolean properties are not written to the properties file because the value from the caller is always
         // used
 
-        for ( Iterator i = config.getReleaseVersions().entrySet().iterator(); i.hasNext(); )
+        for ( Iterator<?> i = config.getReleaseVersions().entrySet().iterator(); i.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry) i.next();
+            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
             properties.setProperty( "project.rel." + entry.getKey(), (String) entry.getValue() );
         }
 
-        for ( Iterator i = config.getDevelopmentVersions().entrySet().iterator(); i.hasNext(); )
+        for ( Iterator<?> i = config.getDevelopmentVersions().entrySet().iterator(); i.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry) i.next();
+            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
             properties.setProperty( "project.dev." + entry.getKey(), (String) entry.getValue() );
         }
 
-        for ( Iterator i = config.getOriginalScmInfo().entrySet().iterator(); i.hasNext(); )
+        for ( Iterator<?> i = config.getOriginalScmInfo().entrySet().iterator(); i.hasNext(); )
         {
-            Map.Entry entry = (Map.Entry) i.next();
+            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
             Scm scm = (Scm) entry.getValue();
             String prefix = "project.scm." + entry.getKey();
             if ( scm != null )
@@ -221,7 +221,7 @@ public class PropertiesReleaseDescriptorStore
                 if ( scm instanceof IdentifiedScm )
                 {
                     IdentifiedScm identifiedScm = (IdentifiedScm) scm;
-                    if( identifiedScm.getId() != null )
+                    if ( identifiedScm.getId() != null )
                     {
                         properties.setProperty( prefix + ".id", identifiedScm.getId() );
                     }
@@ -259,17 +259,17 @@ public class PropertiesReleaseDescriptorStore
 
     }
 
-    private void processResolvedDependencies( Properties prop, Map resolvedDependencies )
+    private void processResolvedDependencies( Properties prop, Map<?, ?> resolvedDependencies )
     {
-        Set entries = resolvedDependencies.entrySet();
-        Iterator iterator = entries.iterator();
-        Entry currentEntry;
+        Set<?> entries = resolvedDependencies.entrySet();
+        Iterator<?> iterator = entries.iterator();
+        Entry<?, ?> currentEntry;
 
         while ( iterator.hasNext() )
         {
-            currentEntry = (Entry) iterator.next();
+            currentEntry = (Entry<?, ?>) iterator.next();
 
-            Map versionMap = (Map) currentEntry.getValue();
+            Map<?, ?> versionMap = (Map<?, ?>) currentEntry.getValue();
 
             prop.setProperty( "dependency." + currentEntry.getKey() + ".release",
                               (String) versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );

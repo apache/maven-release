@@ -29,7 +29,8 @@ import org.apache.maven.model.Scm;
  * 
  * @since 2.3
  */
-public class IdentifiedScm extends Scm
+public class IdentifiedScm
+    extends Scm
 {
     
     private String id;

@@ -21,7 +21,6 @@ package org.apache.maven.shared.release.scm;
 
 import org.apache.maven.shared.release.ReleaseFailureException;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -32,23 +31,21 @@ import java.util.List;
 public class ReleaseScmRepositoryException
     extends ReleaseFailureException
 {
-    public ReleaseScmRepositoryException( String message, List validationMessages )
+    public ReleaseScmRepositoryException( String message, List<String> validationMessages )
     {
         super( message + listValidationMessages( validationMessages ) );
     }
 
-    private static String listValidationMessages( List messages )
+    private static String listValidationMessages( List<String> messages )
     {
         StringBuffer buffer = new StringBuffer();
 
         if ( messages != null )
         {
-            Iterator iter = messages.iterator();
-
-            while ( iter.hasNext() )
+            for ( String message : messages )
             {
                 buffer.append( "\n  - " );
-                buffer.append( iter.next().toString() );
+                buffer.append( message );
             }
         }
 

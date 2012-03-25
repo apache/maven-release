@@ -26,14 +26,15 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
  * @author Robert Scholte
  * @since 2.3
  */
-public class ReleasePrepareRequest extends AbstractReleaseRequest
+public class ReleasePrepareRequest
+    extends AbstractReleaseRequest
 {
     // using Boolean to detect if has been set explicitly
     private Boolean dryRun;
-    
+
     // using Boolean to detect if has been set explicitly
     private Boolean resume;
-    
+
     private ReleaseEnvironment releaseEnvironment;
 
     /**
@@ -51,7 +52,7 @@ public class ReleasePrepareRequest extends AbstractReleaseRequest
     {
         this.dryRun = dryRun;
     }
-    
+
     /**
      * @return the resume
      */

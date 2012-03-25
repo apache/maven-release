@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
  * <b>Digits is the only required piece of the version string, and must contain at lease one "." period.</b>
  * <p/>
  * Implementation details:<br>
- * The separators "_" and "-" between components are also optional (though they are usually reccommended).<br>
+ * The separators "_" and "-" between components are also optional (though they are usually recommended).<br>
  * Example:<br>
  * <code>log4j-1.2.9-beta-9-SNAPSHOT == log4j1.2.9beta9SNAPSHOT == log4j_1.2.9_beta_9_SNAPSHOT</code>
  * <p/>

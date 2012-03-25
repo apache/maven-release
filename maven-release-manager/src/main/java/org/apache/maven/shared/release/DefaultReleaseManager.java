@@ -165,7 +165,7 @@ public class DefaultReleaseManager
         prepareRequest.setResume( resume );
         prepareRequest.setDryRun( dryRun );
         prepareRequest.setReleaseManagerListener( listener );
-        
+
         prepare( prepareRequest, result );
     }
     
@@ -384,7 +384,7 @@ public class DefaultReleaseManager
         performRequest.setReactorProjects( reactorProjects );
         performRequest.setReleaseManagerListener( listener );
         performRequest.setClean( clean );
-        
+
         perform( performRequest, result );
     }    
     
@@ -395,7 +395,7 @@ public class DefaultReleaseManager
 
         ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( performRequest.getReleaseDescriptor(),
                                                                      performRequest.getReleaseManagerListener() );
-        
+
         for ( String name : performPhases )
         {
             ReleasePhase phase = releasePhases.get( name );
@@ -406,11 +406,11 @@ public class DefaultReleaseManager
             }
 
             updateListener( performRequest.getReleaseManagerListener(), name, PHASE_START );
-            
+
             ReleaseResult phaseResult = null;
             try
             {
-                if( BooleanUtils.isTrue( performRequest.getDryRun() ) )
+                if ( BooleanUtils.isTrue( performRequest.getDryRun() ) )
                 {
                     phaseResult = phase.simulate( releaseDescriptor,
                                                  performRequest.getReleaseEnvironment(),
@@ -430,10 +430,10 @@ public class DefaultReleaseManager
                     result.getOutputBuffer().append( phaseResult.getOutput() );
                 }
             }
-            
+
             updateListener( performRequest.getReleaseManagerListener(), name, PHASE_END );
         }
-        
+
         if ( BooleanUtils.isTrue( performRequest.getClean() ) )
         {
             // call release:clean so that resume will not be possible anymore after a perform
@@ -462,7 +462,7 @@ public class DefaultReleaseManager
         branchRequest.setReactorProjects( reactorProjects );
         branchRequest.setDryRun( dryRun );
         branchRequest.setReleaseManagerListener( listener );
-        
+
         branch( branchRequest );
     }
     
@@ -487,7 +487,7 @@ public class DefaultReleaseManager
             }
 
             updateListener( branchRequest.getReleaseManagerListener(), name, PHASE_START );
-            
+
             if ( dryRun )
             {
                 phase.simulate( releaseDescriptor,
@@ -521,7 +521,6 @@ public class DefaultReleaseManager
         updateVersionsRequest.setReleaseDescriptor( releaseDescriptor );
         updateVersionsRequest.setReleaseEnvironment( releaseEnvironment );
         updateVersionsRequest.setReactorProjects( reactorProjects );
-        
     }
     
     /** {@inheritDoc} */
@@ -602,7 +601,7 @@ public class DefaultReleaseManager
         cleanRequest.setReleaseDescriptor( releaseDescriptor );
         cleanRequest.setReleaseManagerListener( listener );
         cleanRequest.setReactorProjects( reactorProjects );
-        
+
         clean( cleanRequest );
     }
 
