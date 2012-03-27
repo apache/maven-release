@@ -29,7 +29,7 @@ Performing a Non-interactive Release
   the Release Plugin will obtain the required parameters from system properties (set on the command line)
   or from a properties file (<<<release.properties>>>).
 
-  To prevent the Release Plugin from promting the user for any information, Maven should be put into
+  To prevent the Release Plugin from prompting the user for any information, Maven should be put into
   batch mode.
 
 -----------
