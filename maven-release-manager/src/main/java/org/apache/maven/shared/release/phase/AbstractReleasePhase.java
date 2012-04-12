@@ -80,12 +80,18 @@ public abstract class AbstractReleasePhase
         getLogger().error( message );
     }
 
+    protected void logDebug( ReleaseResult result, String message )
+    {
+        result.appendDebug( message );
+        getLogger().debug( message );
+    }
+
     protected void logDebug( ReleaseResult result, String message, Exception e )
     {
         result.appendDebug( message, e );
         getLogger().debug( message, e );
     }
-
+    
     protected ReleaseResult getReleaseResultSuccess()
     {
         ReleaseResult result = new ReleaseResult();
