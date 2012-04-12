@@ -47,6 +47,7 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
@@ -264,6 +265,22 @@ public class ScmCheckModificationsPhaseTest
 
         // successful execution is verification enough
         assertTrue( true );
+    }
+    
+    // MRELEASE-645: Allow File/Directory Patterns for the checkModificationExcludes Option
+    public void testModificationsToCustomExcludedFilesOnly()
+        throws Exception
+    {
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        
+        releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "**/keep.me" ) );
+    
+        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties", "pom.xml.backup",
+            "pom.xml.tag", "pom.xml.next", "keep.me", "src/app/keep.me", "config\\keep.me" } ) );
+    
+        assertEquals( ReleaseResult.SUCCESS, phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+    
+        assertEquals( ReleaseResult.SUCCESS, phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
     }
 
     public void testModificationsToPoms()

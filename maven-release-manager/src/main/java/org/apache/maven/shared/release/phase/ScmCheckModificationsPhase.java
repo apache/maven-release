@@ -36,6 +36,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.codehaus.plexus.util.SelectorUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -47,7 +48,7 @@ import java.util.Set;
 
 /**
  * See if there are any local modifications to the files before proceeding with SCM operations and the release.
- *
+ * 
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="scm-check-modifications"
  */
@@ -56,18 +57,20 @@ public class ScmCheckModificationsPhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     *
+     * 
      * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
-     * The files to exclude from the status check.
-     *
+     * The filepatterns to exclude from the status check.
+     * 
      * @todo proper construction of filenames, especially release properties
      */
-    private Set<String> excludedFiles = new HashSet<String>( Arrays.asList( new String[] { "pom.xml.backup",
-        "pom.xml.tag", "pom.xml.next", "pom.xml.branch", "release.properties", "pom.xml.releaseBackup" } ) );
+    private Set<String> exclusionPatterns = new HashSet<String>( Arrays.asList( new String[] {
+        "**" + File.separator + "pom.xml.backup", "**" + File.separator + "pom.xml.tag",
+        "**" + File.separator + "pom.xml.next", "**" + File.separator + "pom.xml.branch",
+        "**" + File.separator + "release.properties", "**" + File.separator + "pom.xml.releaseBackup" } ) );
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
@@ -79,14 +82,15 @@ public class ScmCheckModificationsPhase
 
         if ( additionalExcludes != null )
         {
-            for ( int i1 = 0, additionalExcludesSize = additionalExcludes.size(); i1 < additionalExcludesSize; i1++ )
+            // SelectorUtils expects OS-specific paths and patterns
+            for( String additionalExclude : additionalExcludes )
             {
-                excludedFiles.add( additionalExcludes.get( i1 ) );
+                exclusionPatterns.add( additionalExclude.replace( "\\", File.separator ).replace( "/", File.separator ) );
             }
         }
 
         logInfo( relResult, "Verifying that there are no local modifications..." );
-        logInfo( relResult, "  ignoring changes on: " + StringUtils.join( excludedFiles.toArray(), ", " ) );
+        logInfo( relResult, "  ignoring changes on: " + StringUtils.join( exclusionPatterns.toArray(), ", " ) );
 
         ScmRepository repository;
         ScmProvider provider;
@@ -99,8 +103,8 @@ public class ScmCheckModificationsPhase
         }
         catch ( ScmRepositoryException e )
         {
-            throw new ReleaseScmRepositoryException(
-                e.getMessage() + " for URL: " + releaseDescriptor.getScmSourceUrl(), e.getValidationMessages() );
+            throw new ReleaseScmRepositoryException( e.getMessage() + " for URL: "
+                + releaseDescriptor.getScmSourceUrl(), e.getValidationMessages() );
         }
         catch ( NoSuchScmProviderException e )
         {
@@ -131,12 +135,16 @@ public class ScmCheckModificationsPhase
         {
             ScmFile f = i.next();
 
-            String fileName = f.getPath().replace( '\\', '/' );
-            fileName = fileName.substring( fileName.lastIndexOf( '/' ) + 1, fileName.length() );
+            // SelectorUtils expects File.separator, don't standardize!
+            String fileName = f.getPath().replace( "\\", File.separator ).replace( "/", File.separator );
 
-            if ( excludedFiles.contains( fileName ) )
+            for( String exclusionPattern : exclusionPatterns )
             {
-                i.remove();
+                if ( SelectorUtils.matchPath( exclusionPattern, fileName ) )
+                {
+                    logDebug( relResult, "Ignoring changed file: " + fileName );
+                    i.remove();
+                }
             }
         }
 
@@ -150,8 +158,8 @@ public class ScmCheckModificationsPhase
                 message.append( "\n" );
             }
 
-            throw new ReleaseFailureException(
-                "Cannot prepare the release because you have local modifications : \n" + message );
+            throw new ReleaseFailureException( "Cannot prepare the release because you have local modifications : \n"
+                + message );
         }
 
         relResult.setResultCode( ReleaseResult.SUCCESS );
