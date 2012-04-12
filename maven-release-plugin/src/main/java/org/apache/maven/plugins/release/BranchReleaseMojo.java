@@ -154,11 +154,10 @@ public class BranchReleaseMojo
     private boolean remoteTagging;
 
      /**
-     * Additional files that will skipped when checking for
+     * A list of additional exclude filters that will be skipped when checking for
      * modifications on the working copy.
      *
      * Is ignored, when checkModificationExcludes is set.
-     *
      *
      * @parameter
      * @since 2.1
@@ -166,8 +165,7 @@ public class BranchReleaseMojo
     private String[] checkModificationExcludes;
 
     /**
-     * Command-line version of checkModificationExcludes
-     *
+     * Command-line version of checkModificationExcludes.
      *
      * @parameter expression="${checkModificationExcludeList}"
      * @since 2.1
