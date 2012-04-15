@@ -78,7 +78,7 @@
           <phase>scm-commit-branch</phase>
           <phase>scm-branch</phase>
           <phase>rewrite-poms-for-development</phase>
-          <phase>scm-commit-release</phase>
+          <phase>scm-commit-development</phase>
           <phase>end-release</phase>
         </branchPhases>
         <updateVersionsPhases>
