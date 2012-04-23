@@ -97,14 +97,14 @@ public abstract class AbstractReleaseMojo
      * @required
      * @readonly
      */
-    protected File basedir;
+    private File basedir;
 
     /**
      * @parameter expression="${settings}"
      * @required
      * @readonly
      */
-    protected Settings settings;
+    private Settings settings;
 
     /**
      * @parameter expression="${project}"
@@ -145,7 +145,7 @@ public abstract class AbstractReleaseMojo
      * @required
      * @readonly
      */
-    protected List<MavenProject> reactorProjects;
+    private List<MavenProject> reactorProjects;
 
     /**
      * Add a new or overwrite the default implementation per provider. 
@@ -171,7 +171,7 @@ public abstract class AbstractReleaseMojo
      * @parameter default-value="${java.home}"
      * @since 2.0-beta-8
      */
-    protected File javaHome;
+    private File javaHome;
 
     /**
      * The command-line local repository directory in use for this build (if specified).
@@ -179,7 +179,7 @@ public abstract class AbstractReleaseMojo
      * @parameter default-value="${maven.repo.local}"
      * @since 2.0-beta-8
      */
-    protected File localRepoDirectory;
+    private File localRepoDirectory;
 
     /**
      * Role hint of the {@link org.apache.maven.shared.release.exec.MavenExecutor} implementation to use.
@@ -187,7 +187,7 @@ public abstract class AbstractReleaseMojo
      * @parameter expression="${mavenExecutorId}" default-value="invoker"
      * @since 2.0-beta-8
      */
-    protected String mavenExecutorId;
+    private String mavenExecutorId;
 
     /**
      * Use a local checkout instead of doing a checkout from the upstream repository.
@@ -351,6 +351,11 @@ public abstract class AbstractReleaseMojo
     Settings getSettings()
     {
         return settings;
+    }
+    
+    protected final File getBasedir()
+    {
+        return basedir;
     }
 
     /**

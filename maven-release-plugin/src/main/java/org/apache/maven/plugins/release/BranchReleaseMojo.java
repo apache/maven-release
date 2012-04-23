@@ -229,7 +229,7 @@ public class BranchReleaseMojo
 
         try
         {
-            releaseManager.branch( config, getReleaseEnvironment(), reactorProjects, dryRun );
+            releaseManager.branch( config, getReleaseEnvironment(), getReactorProjects(), dryRun );
         }
         catch ( ReleaseExecutionException e )
         {

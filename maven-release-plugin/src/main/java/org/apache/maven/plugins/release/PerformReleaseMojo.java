@@ -143,7 +143,7 @@ public class PerformReleaseMojo
             ReleasePerformRequest performRequest  = new ReleasePerformRequest();
             performRequest.setReleaseDescriptor( releaseDescriptor );
             performRequest.setReleaseEnvironment( getReleaseEnvironment() );
-            performRequest.setReactorProjects( reactorProjects );
+            performRequest.setReactorProjects( getReactorProjects() );
             performRequest.setDryRun( dryRun );
 
             releaseManager.perform( performRequest );

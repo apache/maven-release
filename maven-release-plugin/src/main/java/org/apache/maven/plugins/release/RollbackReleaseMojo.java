@@ -53,7 +53,7 @@ public class RollbackReleaseMojo
 
         try
         {
-            releaseManager.rollback( config, getReleaseEnvironment(), reactorProjects );
+            releaseManager.rollback( config, getReleaseEnvironment(), getReactorProjects() );
         }
         catch ( ReleaseExecutionException e )
         {
