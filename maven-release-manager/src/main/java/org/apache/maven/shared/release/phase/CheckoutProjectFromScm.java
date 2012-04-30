@@ -85,7 +85,13 @@ public class CheckoutProjectFromScm
             {
                 try
                 {
-                    String scmUrl = providerPart + ":file://" + scmPath;
+                    if ( scmPath.startsWith("/") )
+                    {
+                        // cut off the first '/'
+                        scmPath = scmPath.substring( 1 );
+                    }
+
+                    String scmUrl = providerPart + ":file:///" + scmPath;
                     releaseDescriptor.setScmSourceUrl( scmUrl );
                     getLogger().info( "Performing a LOCAL checkout from " + releaseDescriptor.getScmSourceUrl() );
 
@@ -104,7 +110,7 @@ public class CheckoutProjectFromScm
                     releaseResult = null;
 
                     // remove last sub-directory path
-                    int lastSlashPos = scmPath.lastIndexOf( "/" );
+                    int lastSlashPos = scmPath.lastIndexOf( File.separator );
                     if ( lastSlashPos > 0 )
                     {
                         scmPath = scmPath.substring( 0, lastSlashPos );
