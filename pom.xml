@@ -129,7 +129,7 @@
   </ciManagement>
 
   <properties>
-    <scmVersion>1.6</scmVersion>
+    <scmVersion>1.7</scmVersion>
     <mavenPluginPluginVersion>2.8</mavenPluginPluginVersion>
     <mavenVersion>2.2.1</mavenVersion>
   </properties>
