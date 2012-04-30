@@ -88,7 +88,12 @@ public class RunPerformGoalsPhase
 
         File pomFile = new File( workDir, pomFileName );
         PomFinder pomFinder = new PomFinder( getLogger() );
-        boolean foundPom = pomFinder.parsePom( pomFile );
+        boolean foundPom = false;
+
+        if ( StringUtils.isEmpty( releaseDescriptor.getScmRelativePathProjectDirectory() ) )
+        {
+            foundPom = pomFinder.parsePom( pomFile );
+        }
 
         File workDirectory;
         if ( simulate )
@@ -106,9 +111,11 @@ public class RunPerformGoalsPhase
             if ( matchingPom != null )
             {
                 getLogger().info( "Invoking perform goals in directory " + matchingPom.getParent() );
-                // the directory of the POM in a flat project layout is not
+                // The directory of the POM in a flat project layout is not
                 // the same directory as the SCM checkout directory!
-                // releaseDescriptor.setCheckoutDirectory( matchingPom.getParent() );
+                // The same is true for a sparse checkout in e.g. GIT
+                // the project to build could be in target/checkout/some/dir/
+                workDirectory = matchingPom.getParentFile();
             }
         }
 
