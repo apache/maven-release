@@ -89,8 +89,8 @@ public class CheckDependencySnapshotsPhase
         {
             logInfo( result, "Checking dependencies and plugins for snapshots ..." );
 
-            @SuppressWarnings("unchecked")
-			Map<String, String> originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
+            @SuppressWarnings( "unchecked" )
+            Map<String, String> originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
 
             for ( MavenProject project : reactorProjects )
             {
@@ -109,8 +109,8 @@ public class CheckDependencySnapshotsPhase
     private void checkProject( MavenProject project, Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException, ReleaseExecutionException
     {
-        @SuppressWarnings("unchecked")
-		Map<String, Artifact> artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
+        @SuppressWarnings( "unchecked" )
+        Map<String, Artifact> artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
 
         Set<Artifact> snapshotDependencies = new HashSet<Artifact>();
         Set<Artifact> snapshotReportDependencies = new HashSet<Artifact>();
@@ -127,8 +127,8 @@ public class CheckDependencySnapshotsPhase
 
         try
         {
-            @SuppressWarnings("unchecked")
-			Set<Artifact> dependencyArtifacts = project.createArtifacts( artifactFactory, null, null );
+            @SuppressWarnings( "unchecked" )
+            Set<Artifact> dependencyArtifacts = project.createArtifacts( artifactFactory, null, null );
 
             for ( Artifact artifact : dependencyArtifacts )
             {
@@ -143,8 +143,8 @@ public class CheckDependencySnapshotsPhase
             throw new ReleaseExecutionException( "Failed to create dependency artifacts", e );
         }
 
-        @SuppressWarnings("unchecked")
-		Set<Artifact> pluginArtifacts = project.getPluginArtifacts();
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> pluginArtifacts = project.getPluginArtifacts();
 
         for ( Artifact artifact : pluginArtifacts )
         {
@@ -210,8 +210,8 @@ public class CheckDependencySnapshotsPhase
             }
         }
 
-        @SuppressWarnings("unchecked")
-		Set<Artifact> reportArtifacts = project.getReportArtifacts();
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> reportArtifacts = project.getReportArtifacts();
 
         for ( Artifact artifact : reportArtifacts )
         {
@@ -222,8 +222,8 @@ public class CheckDependencySnapshotsPhase
             }
         }
 
-        @SuppressWarnings("unchecked")
-		Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
 
         for ( Artifact artifact : extensionArtifacts )
         {
@@ -233,8 +233,8 @@ public class CheckDependencySnapshotsPhase
             }
         }
 
-        if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty() ||
-            !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
+        if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
+                        || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
         {
             if ( releaseDescriptor.isInteractive() )
             {
@@ -242,8 +242,8 @@ public class CheckDependencySnapshotsPhase
                                   snapshotPluginDependencies, releaseDescriptor );
             }
 
-            if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty() ||
-                !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
+            if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
+                            || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
             {
                 StringBuffer message = new StringBuffer();
 
@@ -271,7 +271,7 @@ public class CheckDependencySnapshotsPhase
         String versionlessId = ArtifactUtils.versionlessKey( artifact );
         Artifact checkArtifact = artifactMapByVersionlessId.get( versionlessId );
 
-        if ( checkArtifact == null)
+        if ( checkArtifact == null )
         {
             checkArtifact = artifact;
         }
@@ -339,7 +339,7 @@ public class CheckDependencySnapshotsPhase
 
             if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
             {
-				Map<String, Map<String, String>> resolvedSnapshots = null;
+                Map<String, Map<String, String>> resolvedSnapshots = null;
                 prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
                 result = prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT,
                                           Arrays.asList( new String[]{"0", "1", "2", "3"} ), "1" );
@@ -398,7 +398,7 @@ public class CheckDependencySnapshotsPhase
     private Map<String, Map<String, String>> processSnapshot( Set<Artifact> snapshotSet )
         throws PrompterException, VersionParseException
     {
-		Map<String, Map<String, String>> resolvedSnapshots = new HashMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> resolvedSnapshots = new HashMap<String, Map<String, String>>();
         Iterator<Artifact> iterator = snapshotSet.iterator();
 
         while ( iterator.hasNext() )

@@ -56,8 +56,8 @@ public class RewritePomsForDevelopmentPhase
             Element scmRoot = rootElement.getChild( "scm", namespace );
             if ( scmRoot != null )
             {
-                @SuppressWarnings("unchecked")
-				Map<String, Scm> originalScmInfo = releaseDescriptor.getOriginalScmInfo();
+                @SuppressWarnings( "unchecked" )
+                Map<String, Scm> originalScmInfo = releaseDescriptor.getOriginalScmInfo();
                 // check containsKey, not == null, as we store null as a value
                 if ( !originalScmInfo.containsKey( projectId ) )
                 {
@@ -93,21 +93,23 @@ public class RewritePomsForDevelopmentPhase
         }
     }
 
-    @SuppressWarnings("unchecked")
-	protected Map<String,String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, boolean simulate )
+    @SuppressWarnings( "unchecked" )
+    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
+                                                         List<MavenProject> reactorProjects, boolean simulate )
     {
         return simulate
             ? releaseDescriptor.getOriginalVersions( reactorProjects )
             : releaseDescriptor.getReleaseVersions();
     }
 
-    @SuppressWarnings("unchecked")
-	protected Map<String,String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    @SuppressWarnings( "unchecked" )
+    protected Map<String,String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getDevelopmentVersions();
     }
 
-	protected String getResolvedSnapshotVersion(String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshotsMap )
+    protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
+                                                 Map<String, Map<String, String>> resolvedSnapshotsMap )
     {
         Map<String, String> versionsMap = resolvedSnapshotsMap.get( artifactVersionlessKey );
 

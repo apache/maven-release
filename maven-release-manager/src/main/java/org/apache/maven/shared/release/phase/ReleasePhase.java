@@ -49,6 +49,7 @@ public interface ReleasePhase
      * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
+     * @return the release result
      */
     ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
@@ -61,6 +62,7 @@ public interface ReleasePhase
      * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
+     * @return the release result
      */
     ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
@@ -73,6 +75,7 @@ public interface ReleasePhase
      * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
+     * @return the release result
      *
      * @deprecated Use {@link ReleasePhase#execute(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
      */
@@ -87,6 +90,7 @@ public interface ReleasePhase
      * @param reactorProjects   the reactor projects
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
+     * @return the release result
      *
      * @deprecated Use {@link ReleasePhase#simulate(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
      */
@@ -97,6 +101,7 @@ public interface ReleasePhase
      * Clean up after a phase if it leaves any additional files in the checkout.
      *
      * @param reactorProjects the reactor projects
+     * @return the release result
      */
     ReleaseResult clean( List<MavenProject> reactorProjects );
 }

@@ -85,7 +85,7 @@ public class CheckoutProjectFromScm
             {
                 try
                 {
-                    if ( scmPath.startsWith("/") )
+                    if ( scmPath.startsWith( "/" ) )
                     {
                         // cut off the first '/'
                         scmPath = scmPath.substring( 1 );
@@ -97,7 +97,7 @@ public class CheckoutProjectFromScm
 
                     releaseResult = performCheckout( releaseDescriptor, releaseEnvironment, reactorProjects );
                 }
-                catch ( ScmException scmEx)
+                catch ( ScmException scmEx )
                 {
                     // the checkout from _this_ directory failed
                     releaseResult = null;

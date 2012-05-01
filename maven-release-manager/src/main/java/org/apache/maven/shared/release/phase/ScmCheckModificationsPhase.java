@@ -83,7 +83,7 @@ public class ScmCheckModificationsPhase
         if ( additionalExcludes != null )
         {
             // SelectorUtils expects OS-specific paths and patterns
-            for( String additionalExclude : additionalExcludes )
+            for ( String additionalExclude : additionalExcludes )
             {
                 exclusionPatterns.add( additionalExclude.replace( "\\", File.separator ).replace( "/", File.separator ) );
             }
@@ -138,7 +138,7 @@ public class ScmCheckModificationsPhase
             // SelectorUtils expects File.separator, don't standardize!
             String fileName = f.getPath().replace( "\\", File.separator ).replace( "/", File.separator );
 
-            for( String exclusionPattern : exclusionPatterns )
+            for ( String exclusionPattern : exclusionPatterns )
             {
                 if ( SelectorUtils.matchPath( exclusionPattern, fileName ) )
                 {

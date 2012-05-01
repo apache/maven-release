@@ -291,11 +291,14 @@ public class GenerateReleasePomsPhase
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
-    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
+    @SuppressWarnings( "unchecked" )
+    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
+                                                         List<MavenProject> reactorProjects )
     {
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
+    @SuppressWarnings( "unchecked" )
     protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getReleaseVersions();
@@ -359,11 +362,12 @@ public class GenerateReleasePomsPhase
         return releaseScm;
     }
 
-    private List<Dependency> createReleaseDependencies( Map<String, String> originalVersions, Map<String, String> mappedVersions, MavenProject project )
+    private List<Dependency> createReleaseDependencies( Map<String, String> originalVersions,
+                                                        Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
-        @SuppressWarnings("unchecked")
-		Set<Artifact> artifacts = project.getArtifacts();
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> artifacts = project.getArtifacts();
 
         List<Dependency> releaseDependencies = null;
 
@@ -439,12 +443,12 @@ public class GenerateReleasePomsPhase
 
         if ( build != null )
         {
-			List<Plugin> plugins = build.getPlugins();
+            List<Plugin> plugins = build.getPlugins();
 
             if ( plugins != null )
             {
-                @SuppressWarnings("unchecked")
-				Map<String, Artifact> artifactsById = project.getPluginArtifactMap();
+                @SuppressWarnings( "unchecked" )
+                Map<String, Artifact> artifactsById = project.getPluginArtifactMap();
 
                 releasePlugins = new ArrayList<Plugin>();
 
@@ -483,12 +487,12 @@ public class GenerateReleasePomsPhase
 
         if ( reporting != null )
         {
-			List<ReportPlugin> reportPlugins = reporting.getPlugins();
+            List<ReportPlugin> reportPlugins = reporting.getPlugins();
 
             if ( reportPlugins != null )
             {
-                @SuppressWarnings("unchecked")
-				Map<String, Artifact> artifactsById = project.getReportArtifactMap();
+                @SuppressWarnings( "unchecked" )
+                Map<String, Artifact> artifactsById = project.getReportArtifactMap();
 
                 releaseReportPlugins = new ArrayList<ReportPlugin>();
 
@@ -524,7 +528,7 @@ public class GenerateReleasePomsPhase
 
         if ( build != null )
         {
-			List<Extension> extensions = build.getExtensions();
+            List<Extension> extensions = build.getExtensions();
 
             if ( extensions != null )
             {

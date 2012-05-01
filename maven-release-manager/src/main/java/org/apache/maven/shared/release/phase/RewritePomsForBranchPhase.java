@@ -211,19 +211,21 @@ public class RewritePomsForBranchPhase
         return result;
     }
 
-    @SuppressWarnings("unchecked")
-	protected Map<String,String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, boolean simulate )
+    @SuppressWarnings( "unchecked" )
+    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
+                                                         List<MavenProject> reactorProjects, boolean simulate )
     {
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
-    @SuppressWarnings("unchecked")
-	protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor)
+    @SuppressWarnings( "unchecked" )
+    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getReleaseVersions();
     }
 
-    protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String,String>> resolvedSnapshotsMap )
+    protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
+                                                 Map<String, Map<String, String>> resolvedSnapshotsMap )
     {
         Map<String, String> versionsMap = resolvedSnapshotsMap.get( artifactVersionlessKey );
 

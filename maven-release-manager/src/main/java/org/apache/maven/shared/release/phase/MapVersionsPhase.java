@@ -158,7 +158,9 @@ public class MapVersionsPhase
         return result;
     }
 
-    private String getNextVersion( MavenProject project, String projectId, ReleaseDescriptor releaseDescriptor,
+    private String getNextVersion( MavenProject project, 
+                                   String projectId, 
+                                   ReleaseDescriptor releaseDescriptor,
                                    ReleaseResult result )
         throws ReleaseExecutionException
     {
