@@ -45,6 +45,7 @@ public interface MavenExecutor
      * @param interactive         whether to execute in interactive mode, or the default batch mode
      * @param additionalArguments additional arguments to pass to the Maven command
      * @param pomFileName         the file name of the POM to execute on
+     * @param result              holds all results of the execution
      * @throws MavenExecutorException if an error occurred executing Maven
      */
     void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
@@ -59,6 +60,7 @@ public interface MavenExecutor
      * @param releaseEnvironment  the environmental settings, maven-home, etc used for this release
      * @param interactive         whether to execute in interactive mode, or the default batch mode
      * @param additionalArguments additional arguments to pass to the Maven command
+     * @param result              holds all results of the execution
      * @throws MavenExecutorException if an error occurred executing Maven
      */
     void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
@@ -73,6 +75,7 @@ public interface MavenExecutor
      * @param interactive         whether to execute in interactive mode, or the default batch mode
      * @param additionalArguments additional arguments to pass to the Maven command
      * @param pomFileName         the file name of the POM to execute on
+     * @param result              holds all results of the execution
      * @throws MavenExecutorException if an error occurred executing Maven
      *
      * @deprecated Use {@link MavenExecutor#executeGoals(File, String, ReleaseEnvironment, boolean, String, String, ReleaseResult)} instead
@@ -88,6 +91,7 @@ public interface MavenExecutor
      * @param goals               the goals to run (space delimited)
      * @param interactive         whether to execute in interactive mode, or the default batch mode
      * @param additionalArguments additional arguments to pass to the Maven command
+     * @param result              holds all results of the execution
      * @throws MavenExecutorException if an error occurred executing Maven
      *
      * @deprecated Use {@link MavenExecutor#executeGoals(File, String, ReleaseEnvironment, boolean, String, ReleaseResult)} instead

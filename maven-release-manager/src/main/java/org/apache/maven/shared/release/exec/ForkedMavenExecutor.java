@@ -108,7 +108,7 @@ public class ForkedMavenExecutor
 
             if ( settingsFile != null )
             {
-                cl.createArg().setValue( "-s");
+                cl.createArg().setValue( "-s" );
                 cl.createArg().setFile( settingsFile );
             }
 

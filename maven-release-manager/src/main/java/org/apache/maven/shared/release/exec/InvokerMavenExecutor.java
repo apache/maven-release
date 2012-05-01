@@ -165,7 +165,9 @@ public class InvokerMavenExecutor
     }
 
     // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
-    private void setupRequest( InvocationRequest req, LoggerBridge bridge, String additionalArguments )
+    private void setupRequest( InvocationRequest req,
+                               LoggerBridge bridge,
+                               String additionalArguments )
         throws MavenExecutorException
     {
         try

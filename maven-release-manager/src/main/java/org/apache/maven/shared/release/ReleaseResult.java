@@ -27,7 +27,7 @@ import java.io.PrintStream;
  */
 public class ReleaseResult
 {
-    public final static int UNDEFINED = -1, SUCCESS = 0, ERROR = 1;
+    public static final int UNDEFINED = -1, SUCCESS = 0, ERROR = 1;
 
     private StringBuffer stdOut = new StringBuffer();
 
@@ -37,7 +37,7 @@ public class ReleaseResult
 
     private long endTime;
 
-    private final static String LS = System.getProperty( "line.separator" );
+    private static final String LS = System.getProperty( "line.separator" );
 
     public void appendInfo( String message )
     {

@@ -177,7 +177,8 @@ public class DefaultReleaseManager
         ReleaseDescriptor config;
         if ( BooleanUtils.isNotFalse( prepareRequest.getResume() ) )
         {
-            config = loadReleaseDescriptor( prepareRequest.getReleaseDescriptor(), prepareRequest.getReleaseManagerListener() );
+            config = loadReleaseDescriptor( prepareRequest.getReleaseDescriptor(),
+                                            prepareRequest.getReleaseManagerListener() );
         }
         else
         {
@@ -226,13 +227,13 @@ public class DefaultReleaseManager
                 {
                     phaseResult = phase.simulate( config,
                                                   prepareRequest.getReleaseEnvironment(),
-                                                  prepareRequest.getReactorProjects());
+                                                  prepareRequest.getReactorProjects() );
                 }
                 else
                 {
                     phaseResult = phase.execute( config,
                                                  prepareRequest.getReleaseEnvironment(),
-                                                 prepareRequest.getReactorProjects());
+                                                 prepareRequest.getReactorProjects() );
                 }
             }
             finally
@@ -529,7 +530,8 @@ public class DefaultReleaseManager
     {
         updateListener( updateVersionsRequest.getReleaseManagerListener(), "updateVersions", GOAL_START );
 
-        ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( updateVersionsRequest.getReleaseDescriptor(), updateVersionsRequest.getReleaseManagerListener() );
+        ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( updateVersionsRequest.getReleaseDescriptor(), 
+                                                                     updateVersionsRequest.getReleaseManagerListener() );
 
         for ( String name : updateVersionsPhases )
         {
@@ -547,7 +549,9 @@ public class DefaultReleaseManager
             updateListener( updateVersionsRequest.getReleaseManagerListener(), name, PHASE_END );
         }
 
-        clean( releaseDescriptor, updateVersionsRequest.getReleaseManagerListener(), updateVersionsRequest.getReactorProjects() );
+        clean( releaseDescriptor, 
+               updateVersionsRequest.getReleaseManagerListener(),
+               updateVersionsRequest.getReactorProjects() );
 
         updateListener( updateVersionsRequest.getReleaseManagerListener(), "updateVersions", GOAL_END );
     }
