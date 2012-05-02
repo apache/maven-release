@@ -73,14 +73,6 @@ public class UpdateVersionsMojo
     private String developmentVersion;
 
     /**
-     * @parameter expression="${session}"
-     * @readonly
-     * @required
-     * @since 2.0
-     */
-    protected MavenSession session;
-
-    /**
      * {@inheritDoc}
      */
     public void execute()

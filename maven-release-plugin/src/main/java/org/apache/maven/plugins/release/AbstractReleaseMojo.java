@@ -93,21 +93,21 @@ public abstract class AbstractReleaseMojo
     private String tagBase;
 
     /**
-     * @parameter expression="${basedir}"
+     * @parameter default-value="${basedir}"
      * @required
      * @readonly
      */
     private File basedir;
 
     /**
-     * @parameter expression="${settings}"
+     * @parameter default-value="${settings}"
      * @required
      * @readonly
      */
     private Settings settings;
 
     /**
-     * @parameter expression="${project}"
+     * @parameter default-value="${project}"
      * @required
      * @readonly
      */
@@ -141,7 +141,7 @@ public abstract class AbstractReleaseMojo
     private String scmCommentPrefix;
 
     /**
-     * @parameter expression="${reactorProjects}"
+     * @parameter default-value="${reactorProjects}"
      * @required
      * @readonly
      */
@@ -217,7 +217,7 @@ public abstract class AbstractReleaseMojo
     private ScmManager scmManager;
 
     /**
-     * @parameter expression="${session}"
+     * @parameter default-value="${session}"
      * @readonly
      * @required
      * @since 2.0

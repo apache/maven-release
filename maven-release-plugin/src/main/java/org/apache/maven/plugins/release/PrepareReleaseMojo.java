@@ -19,7 +19,6 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -232,14 +231,6 @@ public class PrepareReleaseMojo
      * @since 2.2
      */
     private int waitBeforeTagging;
-
-    /**
-     * @parameter expression="${session}"
-     * @readonly
-     * @required
-     * @since 2.0
-     */
-    protected MavenSession session;
 
     /**
      * {@inheritDoc}
