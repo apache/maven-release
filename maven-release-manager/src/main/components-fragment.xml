@@ -84,6 +84,7 @@
         <updateVersionsPhases>
           <phase>check-poms</phase>
           <phase>create-backup-poms</phase>
+          <phase>map-release-versions</phase>
           <phase>map-development-versions</phase>
           <phase>rewrite-pom-versions</phase>
         </updateVersionsPhases>

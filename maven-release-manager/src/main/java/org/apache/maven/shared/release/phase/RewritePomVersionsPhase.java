@@ -51,13 +51,17 @@ public class RewritePomVersionsPhase
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
                                          boolean simulate )
     {
-        return releaseDescriptor.getReleaseVersions();
+        return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
     @SuppressWarnings( "unchecked" )
     protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
-        return releaseDescriptor.getDevelopmentVersions();
+        if (releaseDescriptor.getDefaultReleaseVersion() != null) {
+            return releaseDescriptor.getReleaseVersions();
+        } else {
+            return releaseDescriptor.getDevelopmentVersions();
+        }
     }
 
     protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshotsMap )

@@ -73,6 +73,14 @@ public class UpdateVersionsMojo
     private String developmentVersion;
 
     /**
+     * Default version to use when preparing a release or a branch.
+     *
+     * @parameter expression="${releaseVersion}"
+     * @since 2.0-beta-8
+     */
+    private String releaseVersion;
+
+    /**
      * @parameter expression="${session}"
      * @readonly
      * @required
@@ -92,6 +100,7 @@ public class UpdateVersionsMojo
         config.setAddSchema( addSchema );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
         config.setDefaultDevelopmentVersion( developmentVersion );
+        config.setDefaultReleaseVersion( releaseVersion );
 
         Map<String, Scm> originalScmInfo = new HashMap<String, Scm>();
         originalScmInfo.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ), project.getScm() );
