@@ -307,7 +307,7 @@ public abstract class AbstractRewritePomsPhase
         String commonBasedir;
         try
         {
-        	commonBasedir = ReleaseUtil.getCommonBasedir( reactorProjects );
+            commonBasedir = ReleaseUtil.getCommonBasedir( reactorProjects );
         }
         catch ( IOException e )
         {

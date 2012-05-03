@@ -110,7 +110,7 @@ public class RewritePomsForReleasePhase
                                   Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult,
                                   String commonBasedir ) throws IOException
     {
-        ScmTranslator translator = (ScmTranslator) scmTranslators.get( scmRepository.getProvider() );
+        ScmTranslator translator = scmTranslators.get( scmRepository.getProvider() );
         boolean result = false;
         if ( translator != null )
         {
