@@ -373,6 +373,19 @@ public class ScmCheckModificationsPhaseTest
             assertTrue( true );
         }
     }
+    
+    public void testModificationsToAdditionalExcludedFiles()
+        throws Exception
+    {
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "something.*" ) );
+
+        setChangedFiles( releaseDescriptor, Collections.singletonList( "something.txt" ) );
+
+        assertEquals( ReleaseResult.SUCCESS,  phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+        
+        assertEquals( ReleaseResult.SUCCESS,  phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+    }
 
     private void setChangedFiles( ReleaseDescriptor releaseDescriptor, List<String> changedFiles )
         throws Exception
