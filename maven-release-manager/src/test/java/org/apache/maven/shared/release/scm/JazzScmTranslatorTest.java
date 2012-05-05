@@ -36,16 +36,15 @@ public class JazzScmTranslatorTest
         assertNull( scmTranslator.resolveTag( "project-1.0" ) );
     }
 
-    //@todo define expected results
-//    public void testTranslateTagUrl()
-//    {
-//        assertEquals( , scmTranslator.translateTagUrl( "url", "tag", null )  );
-//        assertEquals( , scmTranslator.translateTagUrl( "url", "tag", "tagBase" )  );
-//    }
-//
-//    public void testTranslateBranchUrl()
-//    {
-//        assertEquals( , scmTranslator.translateBranchUrl( "url", "branchName", null )  );
-//        assertEquals( , scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
-//    }
+    public void testTranslateTagUrl()
+    {
+        assertEquals( "url:tag", scmTranslator.translateTagUrl( "url:module", "tag", null ) );
+        assertEquals( "url:tag", scmTranslator.translateTagUrl( "url:module", "tag", "tagBase" ) );
+    }
+
+    public void testTranslateBranchUrl()
+    {
+        assertEquals( "url:branchName", scmTranslator.translateBranchUrl( "url:module", "branchName", null ) );
+        assertEquals( "url:branchName", scmTranslator.translateBranchUrl( "url:module", "branchName", "tagBase" ) );
+    }
 }
