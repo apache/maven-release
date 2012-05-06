@@ -150,7 +150,7 @@ public class ScmCheckModificationsPhase
 
         if ( !changedFiles.isEmpty() )
         {
-            StringBuffer message = new StringBuffer();
+            StringBuilder message = new StringBuilder();
 
             for ( ScmFile file : changedFiles )
             {

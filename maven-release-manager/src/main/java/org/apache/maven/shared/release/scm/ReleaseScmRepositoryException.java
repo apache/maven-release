@@ -38,7 +38,7 @@ public class ReleaseScmRepositoryException
 
     private static String listValidationMessages( List<String> messages )
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         if ( messages != null )
         {

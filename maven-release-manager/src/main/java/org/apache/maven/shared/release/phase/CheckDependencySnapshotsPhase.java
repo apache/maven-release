@@ -245,7 +245,7 @@ public class CheckDependencySnapshotsPhase
             if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
                             || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
             {
-                StringBuffer message = new StringBuffer();
+                StringBuilder message = new StringBuilder();
 
                 printSnapshotDependencies( snapshotDependencies, message );
                 printSnapshotDependencies( snapshotReportDependencies, message );
@@ -309,7 +309,7 @@ public class CheckDependencySnapshotsPhase
         this.prompter = prompter;
     }
 
-    private StringBuffer printSnapshotDependencies( Set<Artifact> snapshotsSet, StringBuffer message )
+    private StringBuilder printSnapshotDependencies( Set<Artifact> snapshotsSet, StringBuilder message )
     {
         List<Artifact> snapshotsList = new ArrayList<Artifact>( snapshotsSet );
 

@@ -29,7 +29,7 @@ public class ReleaseResult
 {
     public static final int UNDEFINED = -1, SUCCESS = 0, ERROR = 1;
 
-    private StringBuffer stdOut = new StringBuffer();
+    private StringBuilder stdOut = new StringBuilder();
 
     private int resultCode = UNDEFINED;
 
@@ -133,8 +133,9 @@ public class ReleaseResult
         return byteStream.toString();
     }
 
+    @Deprecated
     public StringBuffer getOutputBuffer()
     {
-        return stdOut;
+        return new StringBuffer( stdOut );
     }
 }

@@ -240,7 +240,7 @@ public class DefaultReleaseManager
             {
                 if ( result != null && phaseResult != null )
                 {
-                    result.getOutputBuffer().append( phaseResult.getOutput() );
+                    result.appendOutput(  phaseResult.getOutput() );
                 }
             }
 
@@ -428,7 +428,7 @@ public class DefaultReleaseManager
             {
                 if ( result != null && phaseResult != null )
                 {
-                    result.getOutputBuffer().append( phaseResult.getOutput() );
+                    result.appendOutput( phaseResult.getOutput() );
                 }
             }
 

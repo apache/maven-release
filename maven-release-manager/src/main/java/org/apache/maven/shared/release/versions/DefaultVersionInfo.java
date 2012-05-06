@@ -322,7 +322,7 @@ public class DefaultVersionInfo
 
     protected static String getVersionString( DefaultVersionInfo info, String buildSpecifier, String buildSeparator )
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if ( info.digits != null )
         {
