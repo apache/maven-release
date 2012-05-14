@@ -63,15 +63,22 @@ public class RunPerformGoalsPhase
                 additionalArguments = "-DperformRelease=true";
             }
         }
+        
+        String pomFileName = releaseDescriptor.getPomFileName();
+        if ( pomFileName == null )
+        {
+            pomFileName = "pom.xml";
+        }
 
         // ensure we don't use the release pom for the perform goals
+        // ^^ paranoia? A MavenExecutor has already access to this. Probably worth refactoring. 
         if ( !StringUtils.isEmpty( additionalArguments ) )
         {
-            additionalArguments = additionalArguments + " -f pom.xml";
+            additionalArguments = additionalArguments + " -f " + pomFileName;
         }
         else
         {
-            additionalArguments = "-f pom.xml";
+            additionalArguments = "-f " + pomFileName;
         }
 
         String workDir = releaseDescriptor.getWorkingDirectory();
@@ -80,11 +87,6 @@ public class RunPerformGoalsPhase
             workDir = System.getProperty( "user.dir" );
         }
 
-        String pomFileName = releaseDescriptor.getPomFileName();
-        if ( pomFileName == null )
-        {
-            pomFileName = "pom.xml";
-        }
 
         File pomFile = new File( workDir, pomFileName );
         PomFinder pomFinder = new PomFinder( getLogger() );

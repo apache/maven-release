@@ -102,4 +102,29 @@ public class RunPerformGoalsPhaseTest
         verifyNoMoreInteractions( mock );
     }
 
+    public void testCustomPomFile() throws Exception
+    {
+        //prepare
+        File testFile = getTestFile( "target/checkout-directory" );
+        ReleaseDescriptor config = new ReleaseDescriptor();
+        config.setPerformGoals( "goal1 goal2" );
+        config.setPomFileName( "pom1.xml" );
+        config.setCheckoutDirectory( testFile.getAbsolutePath() );
+        
+        MavenExecutor mock = mock( MavenExecutor.class );
+        
+        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+        
+        phase.execute( config, (Settings) null, (List<MavenProject>) null );
+        
+        verify( mock ).executeGoals( eq( testFile ),
+                                     eq( "goal1 goal2" ),
+                                     isA( ReleaseEnvironment.class ),
+                                     eq( true ),
+                                     eq( "-DperformRelease=true -f pom1.xml" ),
+                                     eq( "pom1.xml" ),
+                                     isA( ReleaseResult.class ) );
+        
+        verifyNoMoreInteractions( mock );
+    }
 }
