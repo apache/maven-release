@@ -291,7 +291,6 @@ public class GenerateReleasePomsPhase
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
-    @SuppressWarnings( "unchecked" )
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
                                                          List<MavenProject> reactorProjects )
     {

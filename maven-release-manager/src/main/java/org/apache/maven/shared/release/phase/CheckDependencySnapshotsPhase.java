@@ -89,7 +89,6 @@ public class CheckDependencySnapshotsPhase
         {
             logInfo( result, "Checking dependencies and plugins for snapshots ..." );
 
-            @SuppressWarnings( "unchecked" )
             Map<String, String> originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
 
             for ( MavenProject project : reactorProjects )

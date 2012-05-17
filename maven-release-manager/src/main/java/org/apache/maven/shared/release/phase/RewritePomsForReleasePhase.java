@@ -234,7 +234,6 @@ public class RewritePomsForReleasePhase
         return result;
     }
 
-    @SuppressWarnings( "unchecked" )
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
                                                          List<MavenProject> reactorProjects, boolean simulate )
     {
