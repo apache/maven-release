@@ -599,14 +599,13 @@
      *
      * @return the map of project IDs to versions.
      */
-    public synchronized java.util.Map getOriginalVersions( java.util.List reactorProjects )
+    public synchronized java.util.Map<String, String> getOriginalVersions( java.util.List<org.apache.maven.project.MavenProject> reactorProjects )
     {
         if ( originalVersions == null )
         {
             originalVersions = new java.util.HashMap();
-            for ( java.util.Iterator i = reactorProjects.iterator(); i.hasNext(); )
+            for ( org.apache.maven.project.MavenProject project : reactorProjects )
             {
-                org.apache.maven.project.MavenProject project = (org.apache.maven.project.MavenProject) i.next();
                 originalVersions.put( org.apache.maven.artifact.ArtifactUtils.versionlessKey( project.getGroupId(),
                                       project.getArtifactId() ), project.getVersion() );
             }
