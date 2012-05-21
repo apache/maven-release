@@ -47,4 +47,9 @@ public class ClearCaseScmTranslatorTest
         assertEquals( "url", scmTranslator.translateBranchUrl( "url", "branchName", null )  );
         assertEquals( "url", scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
     }
+    
+    public void testGetRelativePath()
+    {
+        assertEquals( "a/b/c", "a/b/c" );
+    }
 }

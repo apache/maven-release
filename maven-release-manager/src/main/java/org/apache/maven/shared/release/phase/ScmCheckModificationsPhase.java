@@ -36,6 +36,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.codehaus.plexus.util.SelectorUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -44,6 +45,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -61,6 +63,13 @@ public class ScmCheckModificationsPhase
      * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    
+    /**
+     * SCM URL translators mapped by provider name.
+     *
+     * @plexus.requirement role="org.apache.maven.shared.release.scm.ScmTranslator"
+     */
+    private Map<String, ScmTranslator> scmTranslators;
 
     /**
      * The filepatterns to exclude from the status check.
@@ -130,20 +139,35 @@ public class ScmCheckModificationsPhase
 
         List<ScmFile> changedFiles = result.getChangedFiles();
 
-        // TODO: would be nice for SCM status command to do this for me.
-        for ( Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); )
+        if ( !changedFiles.isEmpty() )
         {
-            ScmFile f = i.next();
-
-            // SelectorUtils expects File.separator, don't standardize!
-            String fileName = f.getPath().replace( "\\", File.separator ).replace( "/", File.separator );
-
-            for ( String exclusionPattern : exclusionPatterns )
+            ScmTranslator scmTranslator = scmTranslators.get( repository );
+            
+            // TODO: would be nice for SCM status command to do this for me.
+            for ( Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); )
             {
-                if ( SelectorUtils.matchPath( exclusionPattern, fileName ) )
+                ScmFile f = i.next();
+
+                String path;
+                if ( scmTranslator != null )
                 {
-                    logDebug( relResult, "Ignoring changed file: " + fileName );
-                    i.remove();
+                    path = scmTranslator.toRelativePath( f.getPath() );
+                }
+                else
+                {
+                    path = f.getPath();
+                }
+
+                // SelectorUtils expects File.separator, don't standardize!
+                String fileName = path.replace( "\\", File.separator ).replace( "/", File.separator );
+
+                for ( String exclusionPattern : exclusionPatterns )
+                {
+                    if ( SelectorUtils.matchPath( exclusionPattern, fileName ) )
+                    {
+                        logDebug( relResult, "Ignoring changed file: " + fileName );
+                        i.remove();
+                    }
                 }
             }
         }

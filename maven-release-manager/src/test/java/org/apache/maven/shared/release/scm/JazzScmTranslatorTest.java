@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 public class JazzScmTranslatorTest
@@ -46,5 +48,13 @@ public class JazzScmTranslatorTest
     {
         assertEquals( "url:branchName", scmTranslator.translateBranchUrl( "url:module", "branchName", null ) );
         assertEquals( "url:branchName", scmTranslator.translateBranchUrl( "url:module", "branchName", "tagBase" ) );
+    }
+    
+    public void testGetRelativePath()
+    {
+        assertEquals( "BogusTest" + File.separator + "release.properties", scmTranslator.toRelativePath( "BogusTest/release.properties" ) );
+        assertEquals( "BogusTest" + File.separator + "release.properties", scmTranslator.toRelativePath( "/BogusTest/release.properties" ) );
+        assertEquals( "BogusTest" + File.separator + "release.properties", scmTranslator.toRelativePath( "BogusTest\\release.properties" ) );
+        assertEquals( "BogusTest" + File.separator + "release.properties", scmTranslator.toRelativePath( "\\BogusTest\\release.properties" ) );
     }
 }

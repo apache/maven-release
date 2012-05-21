@@ -22,7 +22,8 @@ package org.apache.maven.shared.release.scm;
 /**
  * @plexus.component role="org.apache.maven.shared.release.scm.ScmTranslator" role-hint="hg"
  */
-public class HgScmTranslator implements ScmTranslator
+public class HgScmTranslator
+    implements ScmTranslator
 {
 
     /** {@inheritDoc} */
@@ -41,5 +42,11 @@ public class HgScmTranslator implements ScmTranslator
     public String resolveTag( String tag )
     {
         return tag;
+    }
+    
+    /** {@inheritDoc} */
+    public String toRelativePath( String path )
+    {
+        return path;
     }
 }

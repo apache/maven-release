@@ -32,19 +32,36 @@ import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
 public class SubversionScmTranslator
     implements ScmTranslator
 {
+    /**
+     * {@inheritDoc}
+     */
     public String translateBranchUrl( String url, String branchName, String branchBase )
     {
         return SvnTagBranchUtils.resolveUrl( url, branchBase, SvnTagBranchUtils.SVN_BRANCHES,
                                              new ScmBranch( branchName ) );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, new ScmTag( tag ) );
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String resolveTag( String tag )
     {
         return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toRelativePath( String path )
+    {
+        return path;
     }
 }

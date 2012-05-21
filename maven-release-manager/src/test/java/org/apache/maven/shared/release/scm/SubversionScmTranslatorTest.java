@@ -48,4 +48,9 @@ public class SubversionScmTranslatorTest
         assertEquals( "url/branches/branchName", scmTranslator.translateBranchUrl( "url", "branchName", null )  );
         assertEquals( "tagBase/branchName", scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
     }
+    
+    public void testGetRelativePath()
+    {
+        assertEquals( "a/b/c", "a/b/c" );
+    }
 }

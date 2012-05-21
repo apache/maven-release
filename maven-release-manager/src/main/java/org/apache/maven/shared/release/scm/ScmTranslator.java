@@ -59,4 +59,13 @@ public interface ScmTranslator
      * @return the tag to use, or <code>null</code> if the provider does not use tags
      */
     String resolveTag( String tag );
+    
+    /**
+     * Translates an ScmFile path to a path relative to the working directory.
+     * 
+     * @param path
+     * @return the relative path with OS specific File separator
+     * @since 2.3.1
+     */
+    String toRelativePath( String path );
 }

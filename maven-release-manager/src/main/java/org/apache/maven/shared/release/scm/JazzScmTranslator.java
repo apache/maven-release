@@ -1,5 +1,7 @@
 package org.apache.maven.shared.release.scm;
 
+import java.io.File;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -75,5 +77,22 @@ public class JazzScmTranslator
     {
         // project.scm.tag is not required, so return null.
         return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public String toRelativePath( String path )
+    {
+        String relativePath;
+        if ( path.startsWith( "\\" ) || path.startsWith( "/" ) )
+        {
+            relativePath = path.substring( 1 );
+        }
+        else
+        {
+            relativePath = path;
+        }
+        return relativePath.replace( "\\", File.separator ).replace( "/", File.separator );
     }
 }

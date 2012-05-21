@@ -28,16 +28,25 @@ package org.apache.maven.shared.release.scm;
 public class CvsScmTranslator
     implements ScmTranslator
 {
+    /**
+     * {@inheritDoc}
+     */
     public String translateBranchUrl( String url, String branchName, String branchBase )
     {
         return url;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         return url;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public String resolveTag( String tag )
     {
         if ( !"HEAD".equals( tag ) )
@@ -48,5 +57,13 @@ public class CvsScmTranslator
         {
             return null;
         }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public String toRelativePath( String path )
+    {
+        return path;
     }
 }
