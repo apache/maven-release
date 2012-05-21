@@ -706,6 +706,38 @@ public class DefaultReleaseManagerTest
             assertTrue( true );
         }
     }
+    
+    // MRELEASE-758: release:perform no longer removes release.properties
+    public void testPerformWithDefaultClean()
+        throws Exception
+    {
+        // prepare
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setDryRun( true );
+        
+        ReleaseManagerListener managerListener = mock( ReleaseManagerListener.class );
+        performRequest.setReleaseManagerListener( managerListener );
+        
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
+        performRequest.setReleaseDescriptor( releaseDescriptor );
+        
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        
+        // test
+        releaseManager.perform( performRequest );
+
+        // verify
+        verify( managerListener ).phaseStart( "verify-release-configuration" );
+        verify( managerListener ).phaseStart( "verify-completed-prepare-phases" );
+        verify( managerListener ).phaseStart( "checkout-project-from-scm" );
+        verify( managerListener ).phaseStart( "run-perform-goals" );
+        verify( managerListener ).phaseStart( "cleanup" );
+        verify( managerListener, times( 5 ) ).phaseEnd();
+        
+        // don't call 'verifyNoMoreInteractions( managerListener )', it's a long list
+    }
 
     public void testNoScmUrlPerform()
         throws Exception

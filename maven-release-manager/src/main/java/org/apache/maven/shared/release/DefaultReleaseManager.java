@@ -435,7 +435,7 @@ public class DefaultReleaseManager
             updateListener( performRequest.getReleaseManagerListener(), name, PHASE_END );
         }
 
-        if ( BooleanUtils.isTrue( performRequest.getClean() ) )
+        if ( BooleanUtils.isNotFalse( performRequest.getClean() ) )
         {
             // call release:clean so that resume will not be possible anymore after a perform
             clean( releaseDescriptor, performRequest.getReleaseManagerListener(), performRequest.getReactorProjects() );
