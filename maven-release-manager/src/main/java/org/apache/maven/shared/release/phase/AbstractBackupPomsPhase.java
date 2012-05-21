@@ -30,7 +30,7 @@ import java.io.File;
 public abstract class AbstractBackupPomsPhase
     extends AbstractReleasePhase
 {
-    private final String backupPrefix = ".releaseBackup";
+    private final String backupSuffix = ".releaseBackup";
 
     protected File getPomBackup( MavenProject project )
     {
@@ -38,7 +38,7 @@ public abstract class AbstractBackupPomsPhase
 
         if ( pomFile != null )
         {
-            return new File( pomFile.getAbsolutePath() + backupPrefix );
+            return new File( pomFile.getAbsolutePath() + backupSuffix );
         }
         else
         {
