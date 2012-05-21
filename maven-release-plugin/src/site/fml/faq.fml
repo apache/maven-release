@@ -64,6 +64,14 @@ mvn -N -Darguments=-N release:perform
 </source>
       </answer>
     </faq>
+    <faq id="scmCommentPrefix"> <!-- MRELEASE-156 -->
+      <question>How can I customize the comment prefix of a commit during release preparation?</question>
+      <answer>By default the plugin will prefix the comment with <pre>[maven-release-plugin] </pre>.
+        You can change this by adding <pre>-DscmCommentPrefix=#42</pre> to the Maven command.
+        If you need to end this with a linebreak, add <pre>ALT 10</pre>(=Line Feed) and/or <pre>ALT 13</pre> (=Carriage Return) depending on the operating system.
+        If the comment prefix contains whitespace characters, surround the argument with quotes. 
+      </answer>
+    </faq>
     <faq id="inheritScm">
       <question>Why is <code>release:prepare</code> failing when trying to tag with
         <code>"svn: Path '...' does not exist in revision ..."</code></question>
