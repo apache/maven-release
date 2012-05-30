@@ -708,6 +708,7 @@ public class DefaultReleaseManagerTest
     }
     
     // MRELEASE-758: release:perform no longer removes release.properties
+    @SuppressWarnings( "unchecked" )
     public void testPerformWithDefaultClean()
         throws Exception
     {
@@ -736,7 +737,11 @@ public class DefaultReleaseManagerTest
         verify( managerListener ).phaseStart( "cleanup" );
         verify( managerListener, times( 5 ) ).phaseEnd();
         
-        // don't call 'verifyNoMoreInteractions( managerListener )', it's a long list
+        // not part of actual test, but required to confirm 'no more interactions'
+        verify( managerListener ).goalStart( anyString(), any( List.class ) );
+        verify( managerListener ).goalEnd();
+        
+        verifyNoMoreInteractions( managerListener );
     }
 
     public void testNoScmUrlPerform()
