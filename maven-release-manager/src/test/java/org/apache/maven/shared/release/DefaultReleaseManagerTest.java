@@ -56,6 +56,7 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
+import org.codehaus.plexus.util.ReflectionUtils;
 
 /**
  * Test the default release manager.
@@ -923,5 +924,27 @@ public class DefaultReleaseManagerTest
             "project" ) );
 
         FileUtils.forceDelete( checkoutDir );
+    }
+    
+    // MRELEASE-765
+    @SuppressWarnings( "unchecked" )
+    public void testUpdateVersionsCall()
+        throws Exception
+    {
+        DefaultReleaseManager defaultReleaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+
+        ReleasePhase updateVersionsPhase1 = mock( ReleasePhase.class );
+        ReflectionUtils.setVariableValueInObject( defaultReleaseManager, "updateVersionsPhases",
+                                                  Collections.singletonList( "updateVersionsPhase1" ) );
+        Map<String, ReleasePhase> releasePhases =
+            (Map<String, ReleasePhase>) ReflectionUtils.getValueIncludingSuperclasses( "releasePhases",
+                                                                                       defaultReleaseManager );
+        releasePhases.put( "updateVersionsPhase1", updateVersionsPhase1 );
+
+        defaultReleaseManager.updateVersions( configStore.getReleaseConfiguration(), null, null );
+
+        verify( updateVersionsPhase1 ).execute( any( ReleaseDescriptor.class ), any( ReleaseEnvironment.class ),
+                                                any( List.class ) );
+        verifyNoMoreInteractions( updateVersionsPhase1 );
     }
 }

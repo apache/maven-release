@@ -522,6 +522,8 @@ public class DefaultReleaseManager
         updateVersionsRequest.setReleaseDescriptor( releaseDescriptor );
         updateVersionsRequest.setReleaseEnvironment( releaseEnvironment );
         updateVersionsRequest.setReactorProjects( reactorProjects );
+
+        updateVersions( updateVersionsRequest );
     }
     
     /** {@inheritDoc} */
