@@ -274,6 +274,13 @@ public class DefaultReleaseManager
                           List<MavenProject> reactorProjects, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        ReleaseRollbackRequest rollbackRequest = new ReleaseRollbackRequest();
+        rollbackRequest.setReleaseDescriptor( releaseDescriptor );
+        rollbackRequest.setReleaseEnvironment( releaseEnvironment );
+        rollbackRequest.setReactorProjects( reactorProjects );
+        rollbackRequest.setReleaseManagerListener( listener );
+
+        rollback( rollbackRequest );
     }
     
     /** {@inheritDoc} */

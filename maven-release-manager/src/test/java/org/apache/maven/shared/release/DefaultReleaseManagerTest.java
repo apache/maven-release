@@ -925,7 +925,30 @@ public class DefaultReleaseManagerTest
 
         FileUtils.forceDelete( checkoutDir );
     }
-    
+
+    // MRELEASE-761
+    @SuppressWarnings( "unchecked" )
+    public void testRollbackCall()
+        throws Exception
+    {
+        DefaultReleaseManager defaultReleaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+
+        ReleasePhase rollbackPhase1 = mock( ReleasePhase.class );
+        ReflectionUtils.setVariableValueInObject( defaultReleaseManager, "rollbackPhases",
+                                                  Collections.singletonList( "rollbackPhase1" ) );
+        Map<String, ReleasePhase> releasePhases =
+            (Map<String, ReleasePhase>) ReflectionUtils.getValueIncludingSuperclasses( "releasePhases",
+                                                                                       defaultReleaseManager );
+        releasePhases.put( "rollbackPhase1", rollbackPhase1 );
+
+        defaultReleaseManager.rollback( configStore.getReleaseConfiguration(), (ReleaseEnvironment) null, null );
+
+        verify( rollbackPhase1 ).execute( any( ReleaseDescriptor.class ), any( ReleaseEnvironment.class ),
+                                                any( List.class ) );
+        verifyNoMoreInteractions( rollbackPhase1 );
+    }
+
+
     // MRELEASE-765
     @SuppressWarnings( "unchecked" )
     public void testUpdateVersionsCall()
