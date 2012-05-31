@@ -305,6 +305,10 @@ public class MapVersionsPhase
                             prompter.prompt( "What is the new development version for \"" + project.getName() + "\"? ("
                                 + projectId + ")", nextVersion );
                     }
+                    else if ( !releaseDescriptor.isUpdateWorkingCopyVersions() )
+                    {
+                        nextVersion = project.getVersion();
+                    }
                 }
             }
             else
