@@ -115,6 +115,10 @@ public class PropertiesReleaseDescriptorStore
     {
         Properties properties = new Properties();
         properties.setProperty( "completedPhase", config.getCompletedPhase() );
+        if ( config.isCommitByProject() ) //default is false
+        {
+            properties.setProperty( "commitByProject", "true" );
+        }
         properties.setProperty( "scm.url", config.getScmSourceUrl() );
         if ( config.getScmId() != null )
         {

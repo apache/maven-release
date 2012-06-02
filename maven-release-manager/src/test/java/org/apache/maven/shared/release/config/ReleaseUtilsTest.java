@@ -137,10 +137,14 @@ public class ReleaseUtilsTest
         assertFalse( "Check original comparison", config.equals( origConfig ) );
         config.setInteractive( origConfig.isInteractive() );
 
+        config.setCommitByProject( !origConfig.isCommitByProject() );
+        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        config.setCommitByProject( origConfig.isCommitByProject() );
+
         config.setCompletedPhase( other );
         assertFalse( "Check original comparison", config.equals( origConfig ) );
         config.setCompletedPhase( origConfig.getCompletedPhase() );
-
+        
         config.setScmPrivateKeyPassPhrase( other );
         assertFalse( "Check original comparison", config.equals( origConfig ) );
         config.setScmPrivateKeyPassPhrase( origConfig.getScmPrivateKeyPassPhrase() );

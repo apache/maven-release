@@ -269,6 +269,7 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setCompletedPhase( "completed-phase-write" );
+        config.setCommitByProject( true );
         config.setScmSourceUrl( "url-write" );
         config.setScmId( "id-write" );
         config.setScmUsername( "username-write" );
@@ -305,6 +306,7 @@ public class PropertiesReleaseDescriptorStoreTest
     private static void assertDefaultReleaseConfiguration( ReleaseDescriptor config )
     {
         assertNull( "Expected no completedPhase", config.getCompletedPhase() );
+        assertFalse( "Expected no commitPerProject", config.isCommitByProject() );
         assertNull( "Expected no id", config.getScmId() );
         assertNull( "Expected no url", config.getScmSourceUrl() );
         assertNull( "Expected no username", config.getScmUsername() );
@@ -348,6 +350,7 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         ReleaseDescriptor expected = new ReleaseDescriptor();
         expected.setCompletedPhase( "step1" );
+        expected.setCommitByProject( true );
         expected.setScmId( "scm-id" );
         expected.setScmSourceUrl( "scm-url" );
         expected.setScmUsername( "username" );

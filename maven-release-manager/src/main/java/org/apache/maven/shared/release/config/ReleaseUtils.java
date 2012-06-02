@@ -82,7 +82,8 @@ public class ReleaseUtils
         mergeInto.setGenerateReleasePoms( toBeMerged.isGenerateReleasePoms() );
         mergeInto.setInteractive( toBeMerged.isInteractive() );
         mergeInto.setUpdateDependencies( toBeMerged.isUpdateDependencies() );
-        mergeInto.setCommitByProject( toBeMerged.isCommitByProject() );
+        mergeInto.setCommitByProject( mergeOverride( mergeInto.isCommitByProject(), toBeMerged.isCommitByProject(),
+                                                     false ) );
         mergeInto.setUseReleaseProfile( toBeMerged.isUseReleaseProfile() );
         mergeInto.setBranchCreation( toBeMerged.isBranchCreation() );
         mergeInto.setUpdateBranchVersions( toBeMerged.isUpdateBranchVersions() );
@@ -131,11 +132,17 @@ public class ReleaseUtils
     {
         return thisValue != null ? thisValue : mergeValue;
     }
+    
+    private static boolean mergeOverride( boolean thisValue, boolean mergeValue, boolean defaultValue )
+    {
+        return mergeValue != defaultValue ? mergeValue : thisValue;
+    }
 
     public static ReleaseDescriptor copyPropertiesToReleaseDescriptor( Properties properties )
     {
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setCompletedPhase( properties.getProperty( "completedPhase" ) );
+        releaseDescriptor.setCommitByProject( Boolean.parseBoolean( properties.getProperty( "commitByProject" ) ) );
         releaseDescriptor.setScmId( properties.getProperty( "scm.id" ) );
         releaseDescriptor.setScmSourceUrl( properties.getProperty( "scm.url" ) );
         releaseDescriptor.setScmUsername( properties.getProperty( "scm.username" ) );
