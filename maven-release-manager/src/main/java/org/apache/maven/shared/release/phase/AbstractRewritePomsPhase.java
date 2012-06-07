@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
@@ -501,8 +502,8 @@ public abstract class AbstractRewritePomsPhase
             }
 
             // MRELEASE-220
-            if ( mappedVersion != null && mappedVersion.endsWith( "SNAPSHOT" ) && !rawVersion.endsWith( "SNAPSHOT" )
-                && !releaseDescriptor.isUpdateDependencies() )
+            if ( mappedVersion != null && mappedVersion.endsWith( Artifact.SNAPSHOT_VERSION )
+                && !rawVersion.endsWith( Artifact.SNAPSHOT_VERSION ) && !releaseDescriptor.isUpdateDependencies() )
             {
                 continue;
             }

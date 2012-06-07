@@ -237,7 +237,7 @@ public class GenerateReleasePomsPhase
         {
             releaseModel.getBuild().setFinalName( null );
         }
-        else if ( finalName.indexOf( "SNAPSHOT" ) != -1 )
+        else if ( finalName.indexOf( Artifact.SNAPSHOT_VERSION ) != -1 )
         {
             throw new ReleaseFailureException( "Cannot reliably adjust the finalName of project: "
                             + releaseProject.getId() );
