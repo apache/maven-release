@@ -290,7 +290,7 @@ public class CheckDependencySnapshotsPhase
         // indicates that it is a timestamped snapshot.
         if ( result && releaseDescriptor.isAllowTimestampedSnapshots() )
         {
-            result = artifact.getVersion().indexOf( "SNAPSHOT" ) >= 0;
+            result = artifact.getVersion().indexOf( Artifact.SNAPSHOT_VERSION ) >= 0;
         }
 
         return result;
