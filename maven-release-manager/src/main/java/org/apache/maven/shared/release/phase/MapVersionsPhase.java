@@ -298,14 +298,17 @@ public class MapVersionsPhase
                 }
                 else
                 {
-                    nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
-                    if ( releaseDescriptor.isInteractive()  && !nextSnapshotVersionIsExplicit )
+                    if( releaseDescriptor.isUpdateWorkingCopyVersions() )
                     {
-                        nextVersion =
-                            prompter.prompt( "What is the new development version for \"" + project.getName() + "\"? ("
-                                + projectId + ")", nextVersion );
+                        nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
+                        if ( releaseDescriptor.isInteractive()  && !nextSnapshotVersionIsExplicit )
+                        {
+                            nextVersion =
+                                prompter.prompt( "What is the new development version for \"" + project.getName() + "\"? ("
+                                    + projectId + ")", nextVersion );
+                        }
                     }
-                    else if ( !releaseDescriptor.isUpdateWorkingCopyVersions() )
+                    else
                     {
                         nextVersion = project.getVersion();
                     }

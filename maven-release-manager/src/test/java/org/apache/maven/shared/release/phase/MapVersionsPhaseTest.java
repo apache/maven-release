@@ -273,6 +273,45 @@ public class MapVersionsPhaseTest
         verifyNoMoreInteractions( mockPrompter );
     }
 
+    /**
+     * MRELEASE-760: updateWorkingCopyVersions=false still bumps up pom versions to next development version
+     */
+    public void testMapDevVersionsInteractiveDoNotUpdateWorkingCopy()
+        throws Exception
+    {
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
+        MavenProject project = createProject( "artifactId", "1.0" );
+
+        Prompter mockPrompter = mock( Prompter.class );
+        phase.setPrompter( mockPrompter );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( project );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+
+        // execute
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
+                      releaseDescriptor.getDevelopmentVersions() );
+
+        // prepare
+        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+
+        // execute
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
+                      releaseDescriptor.getDevelopmentVersions() );
+        
+        verifyNoMoreInteractions( mockPrompter );
+    }
+
     public void testMapDevVersionsNonInteractive()
         throws Exception
     {

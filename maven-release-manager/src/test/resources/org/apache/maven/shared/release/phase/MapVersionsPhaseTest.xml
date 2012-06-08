@@ -35,6 +35,15 @@
         <convertToSnapshot>false</convertToSnapshot>
       </configuration>
     </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>test-map-branch-versions</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.MapVersionsPhase</implementation>
+      <configuration>
+        <convertToSnapshot>true</convertToSnapshot>
+        <convertToBranch>true</convertToBranch>
+      </configuration>
+    </component>
     <!-- Turn off info messages -->
     <component>
       <role>org.codehaus.plexus.logging.LoggerManager</role>
