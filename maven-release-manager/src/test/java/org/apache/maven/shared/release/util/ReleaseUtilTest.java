@@ -23,14 +23,15 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
+import junit.framework.TestCase;
+
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusTestCase;
 
 /**
  * Tests for ReleaseUtil methods
  */
 public class ReleaseUtilTest
-    extends PlexusTestCase
+    extends TestCase
 {
     /**
      * MRELEASE-273 : Tests if there no pom passed as parameter
