@@ -19,10 +19,10 @@ package org.apache.maven.shared.release.versions;
  * under the License.
  */
 
-import org.codehaus.plexus.PlexusTestCase;
+import junit.framework.TestCase;
 
 public class DefaultVersionInfoTest
-    extends PlexusTestCase
+    extends TestCase
 {
     public void testParse()
         throws Exception
