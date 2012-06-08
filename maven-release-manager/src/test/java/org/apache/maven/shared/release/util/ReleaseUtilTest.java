@@ -250,6 +250,9 @@ public class ReleaseUtilTest
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
+    /**
+     * MRELEASE-663
+     */
     @Test
     public void testGetWindowsRootBaseWorkingDirectoryParentCountDifferentCase()
     {
