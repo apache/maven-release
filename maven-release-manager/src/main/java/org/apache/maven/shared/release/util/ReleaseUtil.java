@@ -236,8 +236,11 @@ public class ReleaseUtil
         workingDirectory = workingDirectory.toLowerCase( Locale.ENGLISH );
         basedir = basedir.toLowerCase( Locale.ENGLISH );
 
-        File workingDirectoryFile = new File( workingDirectory );
-        File basedirFile = new File( basedir );
+        // MRELEASE-663
+        // For Windows is does matter if basedir ends with a file-separator or not to be able to compare.
+        // Using the parent of a dummy file makes it possible to compare them OS-independent
+        File workingDirectoryFile = new File( workingDirectory, ".tmp" ).getParentFile();
+        File basedirFile = new File( basedir, ".tmp" ).getParentFile();
 
         if ( !workingDirectoryFile.equals( basedirFile ) && workingDirectory.startsWith( basedir ) )
         {

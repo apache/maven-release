@@ -224,6 +224,16 @@ public class ReleaseUtilTest
         String basedir = "/working/directory";
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
+    
+    public void testGetWindowsRootBaseWorkingDirectoryParentCountDifferentCase()
+    {
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:", "C:\\working\\directory" ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:", "C:\\working\\directory\\" ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:\\", "C:\\working\\directory" ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:\\", "C:\\working\\directory\\" ) );
+        
+    }
+
 
     private static MavenProject createProject( String basedir )
     {
