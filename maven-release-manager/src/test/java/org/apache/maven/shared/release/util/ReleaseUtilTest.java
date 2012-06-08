@@ -19,35 +19,41 @@ package org.apache.maven.shared.release.util;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assume.*;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
-import junit.framework.TestCase;
-
 import org.apache.maven.project.MavenProject;
+import org.codehaus.plexus.util.Os;
+import org.junit.Test;
 
 /**
  * Tests for ReleaseUtil methods
  */
 public class ReleaseUtilTest
-    extends TestCase
 {
     /**
      * MRELEASE-273 : Tests if there no pom passed as parameter
      */
+    @Test
     public void testProjectIsNull()
     {
         assertNull( ReleaseUtil.getReleasePom( null ) );
         assertNull( ReleaseUtil.getStandardPom( null ) );
     }
 
+    @Test
     public void testGetCommonBasedirSingleProject() throws Exception
     {
         assertEquals( "/working/directory/flat-multi-module/project", ReleaseUtil.getCommonBasedir(
             Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ), "/" ) );
     }
 
+    @Test
     public void testGetCommonBasedirSingleProjectWindows() throws Exception
     {
         assertEquals( "C:\\working\\directory\\flat-multi-module\\project", ReleaseUtil.getCommonBasedir(
@@ -55,6 +61,7 @@ public class ReleaseUtilTest
             "\\" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfFlatMultiModule()
         throws Exception
     {
@@ -64,6 +71,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfFlatMultiModuleWindows()
         throws Exception
     {
@@ -73,6 +81,7 @@ public class ReleaseUtilTest
                 createProject( "C:\\working\\directory\\flat-multi-module\\webapp" )} ), "\\" ) );
     }
 
+    @Test
     public void testGetCommonBasedirUppercaseLowerCaseWindows()
         throws Exception
     {
@@ -82,6 +91,7 @@ public class ReleaseUtilTest
                 createProject( "C:\\WORKING\\root\\project2", "C:\\WORKING\\root\\project2" )} ), "\\" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIds()
         throws Exception
     {
@@ -91,6 +101,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/release-module2" )} ), "/" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIdsWindows()
         throws Exception
     {
@@ -100,6 +111,7 @@ public class ReleaseUtilTest
                 createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ), "\\" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfRegularMultiModule()
         throws Exception
     {
@@ -109,6 +121,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfRegularMultiModuleParentNotBeeingFirstInReactor()
         throws Exception
     {
@@ -119,6 +132,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfRegularMultiModuleWindowsPath()
         throws Exception
     {
@@ -129,6 +143,7 @@ public class ReleaseUtilTest
                 createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), "\\" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfFlatMultiModuleWithMultipleLevels()
         throws Exception
     {
@@ -140,6 +155,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
     }
 
+    @Test
     public void testGetCommonBasedirOfFlatMultiModuleWithDescendingHierarchy()
         throws Exception
     {
@@ -151,6 +167,7 @@ public class ReleaseUtilTest
                 createProject( "/working/directory/flat-multi-module/other" )} ), "/" ) );
     }
 
+    @Test
     public void testGetBaseScmUrlSingleLevel()
         throws Exception
     {
@@ -160,6 +177,7 @@ public class ReleaseUtilTest
                       ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/" ) );
     }
 
+    @Test
     public void testGetBaseScmUrlReturnOriginal()
         throws Exception
     {
@@ -167,6 +185,7 @@ public class ReleaseUtilTest
         assertEquals( "no-path-elements", ReleaseUtil.realignScmUrl( 15, "no-path-elements" ) );
     }
 
+    @Test
     public void testGetBaseScmUrlOfFlatMultiModule()
         throws Exception
     {
@@ -178,6 +197,7 @@ public class ReleaseUtilTest
         assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/", actual );
     }
 
+    @Test
     public void testGetBaseScmUrlOfFlatMultiModuleMultipleLevels()
         throws Exception
     {
@@ -190,6 +210,7 @@ public class ReleaseUtilTest
         assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/", actual );
     }
 
+    @Test
     public void testGetBaseWorkingDirectoryParentCountSameDirectory()
     {
         String workingDirectory = "/working/directory/maven/release";
@@ -197,6 +218,7 @@ public class ReleaseUtilTest
         assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
+    @Test
     public void testGetBaseWorkingDirectoryParentCountSubdirectory()
     {
         String workingDirectory = "/working/directory/maven/release";
@@ -204,6 +226,7 @@ public class ReleaseUtilTest
         assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
+    @Test
     public void testGetBaseWorkingDirectoryParentCountParentDirectory()
     {
         String workingDirectory = "/working/directory/maven/release/maven-release-manager";
@@ -211,6 +234,7 @@ public class ReleaseUtilTest
         assertEquals( 1, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
+    @Test
     public void testGetBaseWorkingDirectoryParentCountParentDirectoryMultiple()
     {
         String workingDirectory = "/working/directory/maven/release/maven-release-manager";
@@ -218,22 +242,24 @@ public class ReleaseUtilTest
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
+    @Test
     public void testGetBaseWorkingDirectoryParentCountDifferentCase()
     {
         String workingDirectory = "/Working/Directory/maven/release/maven-release-manager";
         String basedir = "/working/directory";
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
-    
+
+    @Test
     public void testGetWindowsRootBaseWorkingDirectoryParentCountDifferentCase()
     {
+        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) );
+
         assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:", "C:\\working\\directory" ) );
         assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:", "C:\\working\\directory\\" ) );
         assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:\\", "C:\\working\\directory" ) );
         assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:\\", "C:\\working\\directory\\" ) );
-        
     }
-
 
     private static MavenProject createProject( String basedir )
     {
