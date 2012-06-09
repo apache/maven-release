@@ -39,7 +39,7 @@ public class JazzScmTranslator
         // "scm:jazz:[username[;password]@]http[s]://server_name[:port]/jazzPath:repositoryWorkspace"
         // Eg:
         // scm:jazz:Deb;Deb@https://rtc:9444/jazz:BogusRepositoryWorkspace
-        int i = url.lastIndexOf( ":" );
+        int i = url.lastIndexOf( ':' );
         url = url.substring( 0, i + 1 );
         if ( branchName != null && branchName.endsWith( "/" ) )
         {
@@ -59,7 +59,7 @@ public class JazzScmTranslator
         // "scm:jazz:[username[;password]@]http[s]://server_name[:port]/jazzPath:repositoryWorkspace"
         // Eg:
         // scm:jazz:Deb;Deb@https://rtc:9444/jazz:BogusRepositoryWorkspace
-        int i = url.lastIndexOf( ":" );
+        int i = url.lastIndexOf( ':' );
         url = url.substring( 0, i + 1 );
         if ( tag != null && tag.endsWith( "/" ) )
         {
