@@ -71,7 +71,7 @@ public class ScmTagPhase
                 + " seconds before tagging the release." );
             try
             {
-                Thread.sleep( releaseDescriptor.getWaitBeforeTagging() * 1000 );
+                Thread.sleep( 1000L * releaseDescriptor.getWaitBeforeTagging() );
             }
             catch ( InterruptedException e )
             {
