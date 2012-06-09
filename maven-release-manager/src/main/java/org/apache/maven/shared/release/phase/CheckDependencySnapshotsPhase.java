@@ -374,14 +374,7 @@ public class CheckDependencySnapshotsPhase
                         break;
                 }
 
-                if ( releaseDescriptor.getResolvedSnapshotDependencies() != null )
-                {
-                    releaseDescriptor.getResolvedSnapshotDependencies().putAll( resolvedSnapshots );
-                }
-                else
-                {
-                    releaseDescriptor.setResolvedSnapshotDependencies( resolvedSnapshots );
-                }
+                releaseDescriptor.getResolvedSnapshotDependencies().putAll( resolvedSnapshots );
             }
         }
         catch ( PrompterException e )
