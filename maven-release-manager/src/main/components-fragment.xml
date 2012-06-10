@@ -69,9 +69,9 @@
           <phase>remove-scm-tag</phase>
         </rollbackPhases>
         <branchPhases>
-          <phase>create-backup-poms</phase>
           <phase>check-poms</phase>
           <phase>scm-check-modifications</phase>
+          <phase>create-backup-poms</phase>
           <phase>map-branch-versions</phase>
           <phase>map-development-versions</phase>
           <phase>rewrite-poms-for-branch</phase>
