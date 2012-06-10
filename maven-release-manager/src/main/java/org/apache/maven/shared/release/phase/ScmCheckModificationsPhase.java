@@ -141,7 +141,7 @@ public class ScmCheckModificationsPhase
 
         if ( !changedFiles.isEmpty() )
         {
-            ScmTranslator scmTranslator = scmTranslators.get( repository );
+            ScmTranslator scmTranslator = scmTranslators.get( repository.getProvider() );
             
             // TODO: would be nice for SCM status command to do this for me.
             for ( Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); )
