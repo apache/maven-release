@@ -262,12 +262,13 @@ public class MapVersionsPhase
                         if ( releaseDescriptor.isUpdateBranchVersions()
                             && ( ArtifactUtils.isSnapshot( project.getVersion() ) || releaseDescriptor.isUpdateVersionsToSnapshot() ) )
                         {
-                            nextVersion = releaseVersionInfo.getSnapshotVersionString();
+                            String suggestedVersion = releaseVersionInfo.getSnapshotVersionString();
+                            
                             if ( !releaseVersionIsExplicit && releaseDescriptor.isInteractive() )
                             {
                                 nextVersion = prompter.prompt(
                                     "What is the branch version for \"" + project.getName() + "\"? (" + projectId + ")",
-                                    nextVersion );
+                                    suggestedVersion );
                             }
                         }
                         else
@@ -282,12 +283,13 @@ public class MapVersionsPhase
                         if ( ArtifactUtils.isSnapshot( project.getVersion() )
                             && releaseDescriptor.isUpdateWorkingCopyVersions() )
                         {
-                            nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
+                            String suggestedVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
+                            
                             if ( releaseDescriptor.isInteractive() && !nextSnapshotVersionIsExplicit )
                             {
                                 nextVersion =
                                     prompter.prompt( "What is the new working copy version for \"" + project.getName()
-                                        + "\"? (" + projectId + ")", nextVersion );
+                                        + "\"? (" + projectId + ")", suggestedVersion );
                             }
                         }
                         else
@@ -300,12 +302,13 @@ public class MapVersionsPhase
                 {
                     if( releaseDescriptor.isUpdateWorkingCopyVersions() )
                     {
-                        nextVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
+                        String suggestedVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
+                        
                         if ( releaseDescriptor.isInteractive()  && !nextSnapshotVersionIsExplicit )
                         {
                             nextVersion =
                                 prompter.prompt( "What is the new development version for \"" + project.getName() + "\"? ("
-                                    + projectId + ")", nextVersion );
+                                    + projectId + ")", suggestedVersion );
                         }
                     }
                     else
@@ -318,13 +321,13 @@ public class MapVersionsPhase
             {
                 if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
                 {
-                    nextVersion = releaseVersionInfo.getReleaseVersionString();
+                    String suggestedVersion = releaseVersionInfo.getReleaseVersionString();
 
                     if ( releaseDescriptor.isInteractive() && !releaseVersionIsExplicit )
                     {
                         nextVersion = prompter.prompt(
                             "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
-                            nextVersion );
+                            suggestedVersion );
                     }
                 }
                 else
