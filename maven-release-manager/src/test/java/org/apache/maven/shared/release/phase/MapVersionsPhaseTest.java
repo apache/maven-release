@@ -22,7 +22,6 @@ package org.apache.maven.shared.release.phase;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.startsWith;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -40,6 +39,8 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 /**
  * Test the version mapping phase.
@@ -49,6 +50,14 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
 public class MapVersionsPhaseTest
     extends PlexusTestCase
 {
+    @Mock
+    private Prompter mockPrompter;
+    
+    public void setUp() throws Exception {
+        super.setUp();
+        MockitoAnnotations.initMocks(this);
+    }
+    
     public void testMapReleaseVersionsInteractive()
         throws Exception
     {
@@ -56,7 +65,6 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ), eq( "1.0" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
@@ -92,7 +100,6 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         when(
               mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
                                    eq( "1.0" ) ) ).thenReturn( "1.0.0" );
@@ -134,7 +141,6 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
         MavenProject project = createProject( "artifactId", "SNAPSHOT" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ), eq( "1.0" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
@@ -177,7 +183,6 @@ public class MapVersionsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.addReleaseVersion( "groupId:artifactId", "2.0" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         phase.setPrompter( mockPrompter );
 
         // execute
@@ -208,7 +213,6 @@ public class MapVersionsPhaseTest
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
@@ -244,7 +248,6 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
         MavenProject project = createProject( "artifactId", "1.0" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
@@ -283,7 +286,6 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
         MavenProject project = createProject( "artifactId", "1.0" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
@@ -318,7 +320,6 @@ public class MapVersionsPhaseTest
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
@@ -358,7 +359,6 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        Prompter mockPrompter = mock( Prompter.class );
         phase.setPrompter( mockPrompter );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
@@ -394,7 +394,6 @@ public class MapVersionsPhaseTest
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( isA( String.class ),  isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
         phase.setPrompter( mockPrompter );
 
@@ -441,7 +440,6 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
         MavenProject project = createProject( "artifactId", "foo" );
 
-        Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
