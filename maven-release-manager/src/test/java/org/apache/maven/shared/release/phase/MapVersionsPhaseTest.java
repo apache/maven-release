@@ -576,13 +576,14 @@ public class MapVersionsPhaseTest
         
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setAutoVersionSubmodules( true );
+        releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setInteractive( false );
         
         //test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
         
         //verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ), releaseDescriptor.getDevelopmentVersions() );
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
     
@@ -595,13 +596,14 @@ public class MapVersionsPhaseTest
         
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setAutoVersionSubmodules( true );
+        releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setInteractive( false );
         
         //test
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
         
         //verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ), releaseDescriptor.getDevelopmentVersions() );
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
    }
 
