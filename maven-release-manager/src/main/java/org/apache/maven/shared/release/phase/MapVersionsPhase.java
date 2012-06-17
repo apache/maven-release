@@ -270,6 +270,10 @@ public class MapVersionsPhase
                                     "What is the branch version for \"" + project.getName() + "\"? (" + projectId + ")",
                                     suggestedVersion );
                             }
+                            else
+                            {
+                                nextVersion = suggestedVersion;
+                            }
                         }
                         else
                         {
@@ -291,6 +295,10 @@ public class MapVersionsPhase
                                     prompter.prompt( "What is the new working copy version for \"" + project.getName()
                                         + "\"? (" + projectId + ")", suggestedVersion );
                             }
+                            else
+                            {
+                                nextVersion = suggestedVersion;
+                            }
                         }
                         else
                         {
@@ -310,6 +318,10 @@ public class MapVersionsPhase
                                 prompter.prompt( "What is the new development version for \"" + project.getName() + "\"? ("
                                     + projectId + ")", suggestedVersion );
                         }
+                        else
+                        {
+                            nextVersion = suggestedVersion;
+                        }
                     }
                     else
                     {
@@ -328,6 +340,10 @@ public class MapVersionsPhase
                         nextVersion = prompter.prompt(
                             "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
                             suggestedVersion );
+                    }
+                    else
+                    {
+                        nextVersion = suggestedVersion;
                     }
                 }
                 else
