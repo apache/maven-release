@@ -27,8 +27,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
@@ -889,6 +892,53 @@ public class MapVersionsPhaseTest
         assertEquals( "Check release versions",  Collections.singletonMap( "groupId:artifactId", "1.2" ), releaseDescriptor.getReleaseVersions() );
         assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
+    
+    public void testExecuteMultiModuleAutoVersionSubmodules__MapDevelopment() throws Exception
+    {
+        //verify
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
+        
+        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),  createProject( "module1", "2.0" ) );
+        
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setAutoVersionSubmodules( true );
+        releaseDescriptor.setInteractive( false );
+        
+        //test
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        
+        //verify
+        Map<String, String> developmentVersions = new HashMap<String, String>();
+        developmentVersions.put( "groupId:artifactId", "1.3-SNAPSHOT" );
+        developmentVersions.put( "groupId:module1", "2.0" );
+        assertEquals( "Check development versions", developmentVersions, releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check release versions", 0, releaseDescriptor.getReleaseVersions().size() );
+    }
+    
+    public void testSimulateMultiModuleAutoVersionSubmodules__MapDevelopment() throws Exception
+    {
+        //verify
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
+        
+        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),  createProject( "module1", "2.0" ) );
+        
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setAutoVersionSubmodules( true );
+        releaseDescriptor.setInteractive( false );
+        
+        //test
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        
+        //verify
+        Map<String, String> developmentVersions = new HashMap<String, String>();
+        developmentVersions.put( "groupId:artifactId", "1.3-SNAPSHOT" );
+        developmentVersions.put( "groupId:module1", "2.0" );
+        assertEquals( "Check development versions", developmentVersions, releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check release versions", 0, releaseDescriptor.getReleaseVersions().size() );
+    }
+
     
     private static MavenProject createProject( String artifactId, String version )
     {
