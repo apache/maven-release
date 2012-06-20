@@ -186,14 +186,12 @@ public class MapVersionsPhase
                 releaseVersionInfo = new DefaultVersionInfo( releaseDescriptor.getDefaultReleaseVersion() );
                 releaseVersionIsExplicit = true;
             }
-            if ( releaseDescriptor.getReleaseVersions() != null )
+
+            String releaseVersion = ( String ) releaseDescriptor.getReleaseVersions().get( projectId );
+            if ( releaseVersion != null )
             {
-                String releaseVersion = ( String ) releaseDescriptor.getReleaseVersions().get( projectId );
-                if ( releaseVersion != null )
-                {
-                    releaseVersionInfo = new DefaultVersionInfo( releaseVersion );
-                    releaseVersionIsExplicit = true;
-                }
+                releaseVersionInfo = new DefaultVersionInfo( releaseVersion );
+                releaseVersionIsExplicit = true;
             }
 
             // The next snapshot version defaults to the next version after the release version
@@ -205,14 +203,12 @@ public class MapVersionsPhase
                 nextSnapshotVersionInfo = new DefaultVersionInfo( releaseDescriptor.getDefaultDevelopmentVersion() );
                 nextSnapshotVersionIsExplicit = true;
             }
-            if ( releaseDescriptor.getDevelopmentVersions() != null )
+
+            String nextDevVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
+            if ( nextDevVersion != null )
             {
-                String nextDevVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
-                if ( nextDevVersion != null )
-                {
-                    nextSnapshotVersionInfo = new DefaultVersionInfo( nextDevVersion );
-                    nextSnapshotVersionIsExplicit = true;
-                }
+                nextSnapshotVersionInfo = new DefaultVersionInfo( nextDevVersion );
+                nextSnapshotVersionIsExplicit = true;
             }
 
         }
