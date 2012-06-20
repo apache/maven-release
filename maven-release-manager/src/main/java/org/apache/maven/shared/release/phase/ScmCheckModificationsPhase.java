@@ -167,6 +167,7 @@ public class ScmCheckModificationsPhase
                     {
                         logDebug( relResult, "Ignoring changed file: " + fileName );
                         i.remove();
+                        break;
                     }
                 }
             }

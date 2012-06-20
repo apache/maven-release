@@ -387,6 +387,20 @@ public class ScmCheckModificationsPhaseTest
         assertEquals( ReleaseResult.SUCCESS,  phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
     }
 
+    // MRELEASE-775
+    public void testMultipleExclusionPatternMatch() throws Exception
+    {
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        
+        releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "release.properties" ) );
+    
+        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties" } ) );
+    
+        assertEquals( ReleaseResult.SUCCESS, phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+    
+        assertEquals( ReleaseResult.SUCCESS, phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+    }
+
     private void setChangedFiles( ReleaseDescriptor releaseDescriptor, List<String> changedFiles )
         throws Exception
     {
