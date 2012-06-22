@@ -893,6 +893,48 @@ public class MapVersionsPhaseTest
         assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
     
+    public void testExecuteSnapshotBranchCreation_UpdateBranchVersions_MapBranch() throws Exception
+    {
+        //prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-branch-versions" );
+        
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setBranchCreation( true );
+        releaseDescriptor.setUpdateBranchVersions( true );
+        
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
+        
+        //test
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        
+        //verify
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+    }
+    
+    public void testSimulateSnapshotBranchCreation_UpdateBranchVersions_MapBranch() throws Exception
+    {
+        //prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-branch-versions" );
+        
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setBranchCreation( true );
+        releaseDescriptor.setUpdateBranchVersions( true );
+        
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
+        
+        //test
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        
+        //verify
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+    }
+    
     public void testExecuteMultiModuleAutoVersionSubmodules__MapDevelopment() throws Exception
     {
         //verify
