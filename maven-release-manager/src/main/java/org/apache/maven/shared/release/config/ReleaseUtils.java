@@ -230,27 +230,26 @@ public class ReleaseUtils
         while ( iterator.hasNext() )
         {
             currentEntry = iterator.next();
-            propertyName = (String) currentEntry.getKey();
+            propertyName = currentEntry.getKey();
 
             if ( propertyName.startsWith( "dependency." ) )
             {
                 Map<String, String> versionMap;
                 String artifactVersionlessKey;
-                int startIndex;
+                int startIndex = "dependency.".length();
                 int endIndex;
                 String versionType;
 
                 versionMap = new HashMap<String, String>();
-                startIndex = propertyName.lastIndexOf( "dependency." );
 
                 if ( propertyName.indexOf( ".development" ) != -1 )
                 {
-                    endIndex = propertyName.indexOf( ".development" );
+                    endIndex = propertyName.lastIndexOf( ".development" );
                     versionType = ReleaseDescriptor.DEVELOPMENT_KEY;
                 }
                 else
                 {
-                    endIndex = propertyName.indexOf( ".release" );
+                    endIndex = propertyName.lastIndexOf( ".release" );
                     versionType = ReleaseDescriptor.RELEASE_KEY;
                 }
 

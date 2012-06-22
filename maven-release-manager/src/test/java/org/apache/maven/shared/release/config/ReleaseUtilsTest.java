@@ -20,11 +20,15 @@ package org.apache.maven.shared.release.config;
  */
 
 import junit.framework.TestCase;
+
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * ReleaseDescriptor Tester.
@@ -248,6 +252,36 @@ public class ReleaseUtilsTest
 
         assertEquals( "Check hash code", releaseDescriptor.hashCode(),
                       createReleaseDescriptor( releaseDescriptor.getWorkingDirectory() ).hashCode() );
+    }
+
+    public void testLoadResolvedDependencies()
+    {
+        Properties properties = new Properties();
+        String dependencyKey = ArtifactUtils.versionlessKey( "com.groupId", "artifactId" );
+        properties.put( "dependency." + dependencyKey  + ".release", "1.3" );
+        properties.put( "dependency." + dependencyKey + ".development", "1.3-SNAPSHOT" );
+        ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
+        
+        Map<String, String> versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( dependencyKey );
+        assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+        assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
+    }
+
+    // MRELEASE-750
+    public void testArtifactIdEndswithDependency()
+    {
+        Properties properties = new Properties();
+        String relDependencyKey = ArtifactUtils.versionlessKey( "com.release.magic", "dependency" );
+        properties.put( "dependency." + relDependencyKey  + ".release", "1.3" );
+        String devDependencyKey = ArtifactUtils.versionlessKey( "com.development.magic", "dependency" );
+        properties.put( "dependency." + devDependencyKey + ".development", "1.3-SNAPSHOT" );
+        ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
+        
+        Map<String, String> versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( relDependencyKey );
+        assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+        
+        versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( devDependencyKey );
+        assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
     }
 
     private static ReleaseDescriptor copyReleaseDescriptor( ReleaseDescriptor originalReleaseDescriptor )
