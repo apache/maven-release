@@ -36,6 +36,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 
 import java.io.File;
 import java.util.List;
@@ -61,19 +62,22 @@ public class ScmBranchPhase
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
-
+	ReleaseDescriptor basedirAlignedReleaseDescriptor = 
+            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
         validateConfiguration( releaseDescriptor );
 
-        logInfo( relResult, "Branching release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
+        logInfo( relResult, "Branching release with the label " + basedirAlignedReleaseDescriptor.getScmReleaseLabel() + "..." );
 
         ScmRepository repository;
         ScmProvider provider;
         try
         {
             repository =
-                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+                scmRepositoryConfigurator.getConfiguredRepository( basedirAlignedReleaseDescriptor.getScmSourceUrl(),
+                                                                   releaseDescriptor,
+                                                                   releaseEnvironment.getSettings() );
 
-            repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
+            repository.getProviderRepository().setPushChanges(releaseDescriptor.isPushChanges() );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
             
@@ -90,7 +94,7 @@ public class ScmBranchPhase
         BranchScmResult result;
         try
         {
-            ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) );
+            ScmFileSet fileSet = new ScmFileSet( new File( basedirAlignedReleaseDescriptor.getWorkingDirectory() ) );
             String branchName = releaseDescriptor.getScmReleaseLabel();
 
             ScmBranchParameters scmBranchParameters = new ScmBranchParameters();
@@ -122,8 +126,10 @@ public class ScmBranchPhase
         ReleaseResult result = new ReleaseResult();
 
         validateConfiguration( releaseDescriptor );
+	ReleaseDescriptor basedirAlignedReleaseDescriptor =
+            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
 
-        logInfo( result, "Full run would be branching " + releaseDescriptor.getWorkingDirectory() );
+        logInfo( result, "Full run would be branching " + basedirAlignedReleaseDescriptor.getWorkingDirectory() );
         if ( releaseDescriptor.getScmBranchBase() != null )
         {
             logInfo( result, "  To SCM URL: " + releaseDescriptor.getScmBranchBase() );

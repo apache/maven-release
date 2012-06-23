@@ -25,11 +25,11 @@ import org.mockito.ArgumentMatcher;
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  */
-public class IsScmTagParamtersEquals extends ArgumentMatcher<ScmTagParameters>
+public class IsScmTagParametersEquals extends ArgumentMatcher<ScmTagParameters>
 {
     private final ScmTagParameters scmTagParameters;
 
-    public IsScmTagParamtersEquals( ScmTagParameters scmTagParameters )
+    public IsScmTagParametersEquals( ScmTagParameters scmTagParameters )
     {
         this.scmTagParameters = scmTagParameters;
     }

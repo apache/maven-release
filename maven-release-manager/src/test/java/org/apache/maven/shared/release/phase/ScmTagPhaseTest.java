@@ -97,7 +97,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( isA( ScmRepository.class ),
                                    argThat( new IsScmFileSetEquals( fileSet ) ),
                                    eq( "release-label" ), 
-                                   argThat( new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).
+                                   argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).
                                    thenReturn( new TagScmResult( "...", 
                                                                  Collections.singletonList( new ScmFile( getPath (rootProject
                                                                                                                   .getFile() ), ScmFileStatus.TAGGED ) ) ) );
@@ -111,7 +111,7 @@ public class ScmTagPhaseTest
         verify( scmProviderMock ).tag( isA( ScmRepository.class ),
                                        argThat( new IsScmFileSetEquals( fileSet ) ),
                                        eq( "release-label" ), 
-                                       argThat( new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
+                                       argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
@@ -139,7 +139,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( eq( repository ),
                                    argThat(new IsScmFileSetEquals( fileSet ) ), 
                                    eq( "release-label" ),
-                                   argThat(new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).
+                                   argThat(new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).
                                        thenReturn(  new TagScmResult( "...", Collections.singletonList( new ScmFile( getPath (rootProject
                                                                                                                               .getFile() ), ScmFileStatus.TAGGED ) ) ) ) ;
 
@@ -154,7 +154,7 @@ public class ScmTagPhaseTest
         verify( scmProviderMock ).tag( eq( repository ),
                                        argThat(new IsScmFileSetEquals( fileSet ) ), 
                                        eq( "release-label" ),
-                                       argThat(new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
+                                       argThat(new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
         verifyNoMoreInteractions( scmProviderMock ); 
     }
 
@@ -181,7 +181,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( eq( repository ),
                                    argThat( new IsScmFileSetEquals( fileSet ) ),
                                    eq( "release-label" ),
-                                   argThat( new IsScmTagParamtersEquals( new ScmTagParameters(
+                                   argThat( new IsScmTagParametersEquals( new ScmTagParameters(
                                            "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult(
                                                 "...",
                                                 Collections.singletonList( new ScmFile(
@@ -199,7 +199,7 @@ public class ScmTagPhaseTest
         verify( scmProviderMock ).tag( eq( repository ),
                                        argThat( new IsScmFileSetEquals( fileSet ) ),
                                        eq( "release-label" ),
-                                       argThat( new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
+                                       argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
@@ -221,7 +221,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( isA( ScmRepository.class ),
                                    argThat( new IsScmFileSetEquals( fileSet ) ),
                                    eq( "release-label" ),
-                                   argThat( new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult( "...", Collections.singletonList( new ScmFile( getPath( rootProject
+                                   argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult( "...", Collections.singletonList( new ScmFile( getPath( rootProject
                        .getFile() ), ScmFileStatus.TAGGED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
@@ -234,7 +234,7 @@ public class ScmTagPhaseTest
         verify( scmProviderMock ).tag( isA( ScmRepository.class ),
                                        argThat( new IsScmFileSetEquals( fileSet ) ),
                                        eq( "release-label" ),
-                                       argThat( new IsScmTagParamtersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
+                                       argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
