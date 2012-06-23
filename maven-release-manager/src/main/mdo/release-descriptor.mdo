@@ -100,7 +100,7 @@
           <version>1.0.0+</version>
           <type>String</type>
           <description>
-            tag name: the identifier for the tag.
+            tag or branch name: the identifier for the tag/branch.
             Example: maven-release-plugin-2.0
           </description>
         </field>
