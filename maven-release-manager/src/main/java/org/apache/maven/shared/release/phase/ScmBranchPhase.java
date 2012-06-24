@@ -43,7 +43,7 @@ import java.util.List;
 
 /**
  * Branch the SCM repository.
- *
+ * 
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="scm-branch"
  */
@@ -52,7 +52,7 @@ public class ScmBranchPhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     *
+     * 
      * @plexus.requirement
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
@@ -62,11 +62,14 @@ public class ScmBranchPhase
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
-	ReleaseDescriptor basedirAlignedReleaseDescriptor = 
-            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+
         validateConfiguration( releaseDescriptor );
 
-        logInfo( relResult, "Branching release with the label " + basedirAlignedReleaseDescriptor.getScmReleaseLabel() + "..." );
+        ReleaseDescriptor basedirAlignedReleaseDescriptor =
+            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+
+        logInfo( relResult, "Branching release with the label " + basedirAlignedReleaseDescriptor.getScmReleaseLabel()
+            + "..." );
 
         ScmRepository repository;
         ScmProvider provider;
@@ -74,13 +77,12 @@ public class ScmBranchPhase
         {
             repository =
                 scmRepositoryConfigurator.getConfiguredRepository( basedirAlignedReleaseDescriptor.getScmSourceUrl(),
-                                                                   releaseDescriptor,
-                                                                   releaseEnvironment.getSettings() );
+                                                                   releaseDescriptor, releaseEnvironment.getSettings() );
 
-            repository.getProviderRepository().setPushChanges(releaseDescriptor.isPushChanges() );
+            repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
-            
+
         }
         catch ( ScmRepositoryException e )
         {
@@ -126,7 +128,7 @@ public class ScmBranchPhase
         ReleaseResult result = new ReleaseResult();
 
         validateConfiguration( releaseDescriptor );
-	ReleaseDescriptor basedirAlignedReleaseDescriptor =
+        ReleaseDescriptor basedirAlignedReleaseDescriptor =
             ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
 
         logInfo( result, "Full run would be branching " + basedirAlignedReleaseDescriptor.getWorkingDirectory() );
