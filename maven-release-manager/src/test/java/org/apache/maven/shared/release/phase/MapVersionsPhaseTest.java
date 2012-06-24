@@ -1057,7 +1057,7 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
     }
     
-    public void testExecuteSnapshotBranchCreation_UpdateWorkingCopyVersions_MapBranch() throws Exception
+    public void testExecuteSnapshotBranchCreation_UpdateWorkingCopyVersions_MapDevelopment() throws Exception
     {
         //prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
@@ -1078,7 +1078,7 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the new working copy version for" ), eq( "1.3-SNAPSHOT" ) );
     }
     
-    public void testSimulateSnapshotBranchCreation_UpdateWorkingCopyVersions_MapBranch() throws Exception
+    public void testSimulateSnapshotBranchCreation_UpdateWorkingCopyVersions_MapDevelopment() throws Exception
     {
         //prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
