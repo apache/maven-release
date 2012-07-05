@@ -23,6 +23,8 @@ import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -34,20 +36,19 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
- * @aggregator
- * @goal branch
  * @since 2.0-beta-6
  */
+@Mojo( name = "branch", aggregator = true )
 public class BranchReleaseMojo
     extends AbstractReleaseMojo
 {
     /**
      * The branch name to use.
      *
-     * @parameter expression="${branchName}"
      * @required
      * @since 2.0-beta-6
      */
+    @Parameter( property = "branchName", required = true )
     private String branchName;
 
     /**
@@ -55,25 +56,25 @@ public class BranchReleaseMojo
      * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/branches</code>. The URL is an SVN URL and does not
      * include the SCM provider and protocol.
      *
-     * @parameter expression="${branchBase}"
      * @since 2.0
      */
+    @Parameter( property = "branchBase" )
     private String branchBase;
 
     /**
      * Whether to update versions in the branch.
      *
-     * @parameter expression="${updateBranchVersions}" default-value="false"
      * @since 2.0-beta-6
      */
+    @Parameter( defaultValue = "false", property = "updateBranchVersions" )
     private boolean updateBranchVersions;
 
     /**
      * Whether to update versions in the working copy.
      *
-     * @parameter expression="${updateWorkingCopyVersions}" default-value="true"
      * @since 2.0-beta-6
      */
+    @Parameter( defaultValue = "true", property = "updateWorkingCopyVersions" )
     private boolean updateWorkingCopyVersions;
 
     /**
@@ -86,42 +87,42 @@ public class BranchReleaseMojo
      * to avoid poms with released versions in all revisions of your
      * trunk or development branch.
      *
-     * @parameter expression="${suppressCommitBeforeBranch}" default-value="false"
      * @since 2.1
      */
+    @Parameter( defaultValue = "false", property = "suppressCommitBeforeBranch" )
     private boolean suppressCommitBeforeBranch;
 
     /**
      * Whether to update versions to SNAPSHOT in the branch.
      *
-     * @parameter expression="${updateVersionsToSnapshot}" default-value="true"
      * @since 2.0-beta-6
      */
+    @Parameter( defaultValue = "true", property = "updateVersionsToSnapshot" )
     private boolean updateVersionsToSnapshot;
 
     /**
      * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
      *
-     * @parameter expression="${useEditMode}" default-value="false"
      * @since 2.0-beta-6
      */
+    @Parameter( defaultValue = "false", property = "useEditMode" )
     private boolean useEditMode;
 
     /**
      * Whether to update dependencies version to the next development version.
      *
-     * @parameter expression="${updateDependencies}" default-value="true"
      * @since 2.0-beta-6
      */
+    @Parameter( defaultValue = "true", property = "updateDependencies" )
     private boolean updateDependencies;
 
     /**
      * Whether to automatically assign submodules the parent version.  If set to false,
      * the user will be prompted for the version of each submodules.
      *
-     * @parameter expression="${autoVersionSubmodules}" default-value="false"
      * @since 2.0-beta-6
      */
+    @Parameter( defaultValue = "false", property = "autoVersionSubmodules" )
     private boolean autoVersionSubmodules;
 
     /**
@@ -130,27 +131,26 @@ public class BranchReleaseMojo
      * poms and scm operations (only listed on the console) are working as expected.
      * Modified POMs are written alongside the originals without modifying them.
      *
-     * @parameter expression="${dryRun}" default-value="false"
      * @since 2.0-beta-6
      */
+    @Parameter( defaultValue = "false", property = "dryRun" )
     private boolean dryRun;
 
     /**
      * Whether to add a schema to the POM if it was previously missing on release.
      *
-     * @parameter expression="${addSchema}" default-value="true"
      * @since 2.0-beta-6
      */
+    @Parameter( defaultValue = "true", property = "addSchema" )
     private boolean addSchema;
 
     /**
      * currently only implemented with svn scm. Enable a workaround to prevent issue
      * due to svn client > 1.5.0 (http://jira.codehaus.org/browse/SCM-406)
      *
-     *
-     * @parameter expression="${remoteTagging}" default-value="true"
      * @since 2.0
      */
+    @Parameter( defaultValue = "true", property = "remoteTagging" )
     private boolean remoteTagging;
 
      /**
@@ -159,33 +159,33 @@ public class BranchReleaseMojo
      *
      * Is ignored, when checkModificationExcludes is set.
      *
-     * @parameter
      * @since 2.1
      */
+    @Parameter
     private String[] checkModificationExcludes;
 
     /**
      * Command-line version of checkModificationExcludes.
      *
-     * @parameter expression="${checkModificationExcludeList}"
      * @since 2.1
      */
+    @Parameter( property = "checkModificationExcludeList" )
     private String checkModificationExcludeList;
 
     /**
      * Default version to use when preparing a release or a branch.
      *
-     * @parameter expression="${releaseVersion}"
      * @since 2.0
      */
+    @Parameter( property = "releaseVersion" )
     private String releaseVersion;
 
     /**
      * Default version to use for new local working copy.
      *
-     * @parameter expression="${developmentVersion}"
      * @since 2.0
      */
+    @Parameter( property = "developmentVersion" )
     private String developmentVersion;
 
     /**

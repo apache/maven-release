@@ -23,6 +23,8 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -33,11 +35,9 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @version $Id$
- * @aggregator
- * @requiresProject false
- * @goal stage
  * @since 2.0-beta-8
  */
+@Mojo( name = "stage", aggregator = true, requiresProject = false )
 public class StageReleaseMojo
     extends AbstractReleaseMojo
 {
@@ -45,52 +45,50 @@ public class StageReleaseMojo
      * A comma or space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
      *
-     * @parameter expression="${goals}"
      * @since 2.0-beta-8
      */
+    @Parameter( property="goals" )
     private String goals;
 
     /**
      * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
      *
-     * @parameter expression="${releaseProfiles}"
      * @since 2.0-beta-8
      */
+    @Parameter( property="releaseProfiles" )
     private String releaseProfiles;
 
     /**
      * The checkout directory.
      *
-     * @parameter expression="${workingDirectory}" default-value="${project.build.directory}/checkout"
-     * @required
      * @since 2.0-beta-8
      */
+    @Parameter( defaultValue="${project.build.directory}/checkout", property="workingDirectory", required = true )
     private File workingDirectory;
 
     /**
      * The SCM URL to checkout from. If omitted, the one from the <code>release.properties</code> file is used, followed
      * by the URL from the current POM.
      *
-     * @parameter expression="${connectionUrl}"
      * @since 2.0-beta-8
      */
+    @Parameter( property="connectionUrl" )
     private String connectionUrl;
 
     /**
      * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
-     *
-     * @parameter expression="${useReleaseProfile}" default-value="true"
+     * 
      * @since 2.0-beta-8
      */
+    @Parameter( defaultValue="true", property="useReleaseProfile" )
     private boolean useReleaseProfile;
 
     /**
      * URL of the staging repository to use.
      *
-     * @parameter expression="${stagingRepository}"
-     * @required
      * @since 2.0-beta-8
      */
+    @Parameter( property="stagingRepository", required = true )
     private String stagingRepository;
 
     /**

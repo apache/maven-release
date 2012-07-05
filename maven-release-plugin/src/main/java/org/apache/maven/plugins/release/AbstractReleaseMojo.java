@@ -29,6 +29,8 @@ import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.settings.Settings;
@@ -49,23 +51,20 @@ public abstract class AbstractReleaseMojo
 {
     /**
      * The SCM username to use.
-     *
-     * @parameter expression="${username}"
      */
+    @Parameter( property = "username" )
     private String username;
 
     /**
      * The SCM password to use.
-     *
-     * @parameter expression="${password}"
      */
+    @Parameter( property = "password" )
     private String password;
 
     /**
      * The SCM tag to use.
-     *
-     * @parameter expression="${tag}" alias="releaseLabel"
      */
+    @Parameter( alias = "releaseLabel", property = "tag" )
     private String tag;
 
     /**
@@ -78,115 +77,104 @@ public abstract class AbstractReleaseMojo
      *     <li><code>version</code> or <code>project.version</code> - The release version of the root project.
      * </ul>
      *
-     * @parameter expression="${tagNameFormat}" default-value="@{project.artifactId}-@{project.version}"
      * @since 2.2.0
      */
+    @Parameter( defaultValue = "@{project.artifactId}-@{project.version}", property = "tagNameFormat" )
     private String tagNameFormat;
 
     /**
      * The tag base directory in SVN, you must define it if you don't use the standard svn layout (trunk/tags/branches).
      * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/tags</code>. The URL is an SVN URL and does not
      * include the SCM provider and protocol.
-     *
-     * @parameter expression="${tagBase}"
      */
+    @Parameter( property = "tagBase" )
     private String tagBase;
 
     /**
-     * @parameter default-value="${basedir}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${basedir}", readonly = true, required = true )
     private File basedir;
 
     /**
-     * @parameter default-value="${settings}"
-     * @required
-     * @readonly
      */
+    @Component
     private Settings settings;
 
     /**
-     * @parameter default-value="${project}"
-     * @required
-     * @readonly
      */
+    @Component
     protected MavenProject project;
 
     /**
-     * @component
      */
+    @Component
     protected ReleaseManager releaseManager;
 
     /**
      * Additional arguments to pass to the Maven executions, separated by spaces.
-     *
-     * @parameter expression="${arguments}" alias="prepareVerifyArgs"
      */
+    @Parameter( alias = "prepareVerifyArgs", property = "arguments" )
     private String arguments;
 
     /**
      * The file name of the POM to execute any goals against.
-     *
-     * @parameter expression="${pomFileName}"
      */
+    @Parameter( property = "pomFileName" )
     private String pomFileName;
 
     /**
      * The message prefix to use for all SCM changes.
      *
-     * @parameter expression="${scmCommentPrefix}" default-value="[maven-release-plugin] "
      * @since 2.0-beta-5
      */
+    @Parameter( defaultValue = "[maven-release-plugin] ", property = "scmCommentPrefix" )
     private String scmCommentPrefix;
 
     /**
-     * @parameter default-value="${reactorProjects}"
-     * @required
-     * @readonly
      */
+    @Parameter( defaultValue = "${reactorProjects}", readonly = true, required = true )
     private List<MavenProject> reactorProjects;
 
     /**
      * Add a new or overwrite the default implementation per provider. 
      * The key is the scm prefix and the value is the role hint of the {@link org.apache.maven.scm.provider.ScmProvider}.
      *
-     * @parameter
      * @since 2.0-beta-6
      * @see ScmManager#setScmProviderImplementation(String, String)
      */
+    @Parameter
     private Map<String, String> providerImplementations;
 
     /**
      * The {@code M2_HOME} parameter to use for forked Maven invocations.
      *
-     * @parameter default-value="${maven.home}"
      * @since 2.0-beta-8
      */
+    @Parameter( defaultValue = "${maven.home}" )
     protected File mavenHome;
 
     /**
      * The {@code JAVA_HOME} parameter to use for forked Maven invocations.
      *
-     * @parameter default-value="${java.home}"
      * @since 2.0-beta-8
      */
+    @Parameter( defaultValue = "${java.home}" )
     private File javaHome;
 
     /**
      * The command-line local repository directory in use for this build (if specified).
      *
-     * @parameter default-value="${maven.repo.local}"
      * @since 2.0-beta-8
      */
+    @Parameter ( defaultValue = "${maven.repo.local}" )
     private File localRepoDirectory;
 
     /**
      * Role hint of the {@link org.apache.maven.shared.release.exec.MavenExecutor} implementation to use.
      *
-     * @parameter expression="${mavenExecutorId}" default-value="invoker"
      * @since 2.0-beta-8
      */
+    @Parameter( defaultValue = "invoker", property = "mavenExecutorId" )
     private String mavenExecutorId;
 
     /**
@@ -196,34 +184,30 @@ public abstract class AbstractReleaseMojo
      *
      * TODO: we should think about having the defaults for the various SCM providers provided via modello!
      *
-     * @parameter expression="${localCheckout}" default-value="false"
      * @since 2.0
      */
+    @Parameter( defaultValue = "false", property = "localCheckout" )
     private boolean localCheckout;
     
     /**
      * Implemented with git will or not push changes to the upstream repository.
      * <code>true</code> by default to preserve backward compatibility.
-     * @parameter expression="${pushChanges}" default-value="true"
      * @since 2.1
      */
+    @Parameter( defaultValue = "true", property = "pushChanges" )
     private boolean pushChanges = true;
 
     /**
      * The SCM manager.
-     *
-     * @component
      */
+    @Component
     private ScmManager scmManager;
 
     /**
-     * @parameter default-value="${session}"
-     * @readonly
-     * @required
      * @since 2.0
      */
+    @Component
     protected MavenSession session;
-
 
     /**
      * Gets the enviroment settings configured for this release.

@@ -21,24 +21,24 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Prepare for a release in SCM, fully resolving dependencies for the purpose of producing a "release POM".
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @aggregator
- * @goal prepare-with-pom
- * @requiresDependencyResolution test
  * @since 2.0
  */
+@Mojo( name="prepare-with-pom", aggregator = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class PrepareWithPomReleaseMojo
     extends PrepareReleaseMojo
 {
     /**
      * Whether to generate <code>release-pom.xml</code> files that contain resolved information about the project.
-     *
-     * @parameter default-value="true" expression="${generateReleasePoms}"
      */
+    @Parameter( defaultValue = "true", property = "generateReleasePoms" )
     private boolean generateReleasePoms;
 
     public void execute()

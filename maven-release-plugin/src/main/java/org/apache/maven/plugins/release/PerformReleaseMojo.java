@@ -23,6 +23,8 @@ import java.io.File;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePerformRequest;
@@ -37,53 +39,53 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
- * @aggregator
- * @requiresProject false
- * @goal perform
  */
+@Mojo( name = "perform", aggregator = true, requiresProject = false )
 public class PerformReleaseMojo
     extends AbstractReleaseMojo
 {
     /**
      * A space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
-     *
-     * @parameter expression="${goals}"
      */
+    @Parameter( property = "goals" )
     private String goals;
 
     /**
      * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
      *
-     * @parameter expression="${releaseProfiles}"
      * @since 2.0-beta-8
      */
+    @Parameter( property = "releaseProfiles" )
     private String releaseProfiles;
 
     /**
      * The checkout directory.
-     *
-     * @parameter expression="${workingDirectory}" default-value="${project.build.directory}/checkout"
-     * @required
      */
+    @Parameter( defaultValue = "${project.build.directory}/checkout", property = "workingDirectory", required = true )
     private File workingDirectory;
 
     /**
      * The SCM URL to checkout from. If omitted, the one from the <code>release.properties</code> file is used, followed
      * by the URL from the current POM.
-     *
-     * @parameter expression="${connectionUrl}"
      */
+    @Parameter( property = "connectionUrl" )
     private String connectionUrl;
 
     /**
      * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
      * If set to true, the release plugin sets the property "performRelease" to true, which activates the profile
      * "release-profile", which is inherited from the super pom.
-     *
-     * @parameter expression="${useReleaseProfile}" default-value="true"
      */
+    @Parameter( defaultValue = "true", property = "useReleaseProfile" )
     private boolean useReleaseProfile;
+
+    /**
+     * Dry run: don't checkout anything from the scm repository, or modify the checkout.
+     * The goals (by default at least {@code deploy}) will be executed against the <strong>current</strong> project.
+     */
+    @Parameter( defaultValue = "false", property = "dryRun" )
+    private boolean dryRun;
 
     /**
      * {@inheritDoc}
@@ -93,14 +95,6 @@ public class PerformReleaseMojo
         return releaseProfiles;
     }
     
-    /**
-     * Dry run: don't checkout anything from the scm repository, or modify the checkout.
-     * The goals (by default at least {@code deploy}) will be executed against the <strong>current</strong> project.
-     *
-     * @parameter expression="${dryRun}" default-value="false"
-     */
-    private boolean dryRun;
-
     /**
      * {@inheritDoc}
      */

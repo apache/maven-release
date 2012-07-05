@@ -26,6 +26,8 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -38,10 +40,9 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  *
  * @author Paul Gier
  * @version $Id$
- * @aggregator
- * @goal update-versions
  * @since 2.0
  */
+@Mojo( name="update-versions", aggregator = true )
 public class UpdateVersionsMojo
     extends AbstractReleaseMojo
 {
@@ -50,25 +51,25 @@ public class UpdateVersionsMojo
      * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
      * version of each submodules.
      *
-     * @parameter expression="${autoVersionSubmodules}" default-value="false"
      * @since 2.0
      */
+    @Parameter( defaultValue="false", property="autoVersionSubmodules" ) 
     private boolean autoVersionSubmodules;
 
     /**
      * Whether to add a schema to the POM if it was previously missing on release.
-     *
-     * @parameter expression="${addSchema}" default-value="true"
+     * 
      * @since 2.0
      */
+    @Parameter(  defaultValue="true", property="addSchema" )
     private boolean addSchema;
 
     /**
      * Default version to use for new local working copy.
      *
-     * @parameter expression="${developmentVersion}"
      * @since 2.0
      */
+    @Parameter( property="developmentVersion" )
     private String developmentVersion;
 
     /**
