@@ -1146,6 +1146,58 @@ public class MapVersionsPhaseTest
         // verify
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
     }
+    
+    public void testExecuteReleaseBranchCreation_UpdateBranchVersions_MapBranch()
+        throws Exception
+    {
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-branch-versions" );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setBranchCreation( true );
+        releaseDescriptor.setUpdateBranchVersions( true );
+
+        // test
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        /*
+         * "By default, the POM in the new branch keeps the same version as the local working copy, and the local POM is incremented to the next revision."
+         * This is true for trunk, but when branching from a tag I would expect the next SNAPSHOT version. For now keep
+         * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
+         */
+        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
+                      releaseDescriptor.getReleaseVersions() );
+        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+    }
+
+    public void testSimulateReleaseBranchCreation_UpdateBranchVersions_MapBranch()
+        throws Exception
+    {
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-branch-versions" );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setBranchCreation( true );
+        releaseDescriptor.setUpdateBranchVersions( true );
+
+        // test
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        /*
+         * "By default, the POM in the new branch keeps the same version as the local working copy, and the local POM is incremented to the next revision."
+         * This is true for trunk, but when branching from a tag I would expect the next SNAPSHOT version. For now keep
+         * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
+         */
+        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
+                      releaseDescriptor.getReleaseVersions() );
+        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+    }
 
     public void testExecuteSnapshotBranchCreation_UpdateWorkingCopyVersions_MapDevelopment()
         throws Exception
