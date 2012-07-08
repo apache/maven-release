@@ -1147,6 +1147,106 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
     }
     
+    public void testExecuteReleaseBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
+        throws Exception
+    {
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-branch-versions" );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setBranchCreation( true );
+        releaseDescriptor.setUpdateBranchVersions( true );
+        releaseDescriptor.setUpdateVersionsToSnapshot( true );
+
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
+
+        // test
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        // @TODO FIX: this should have been 1.3-SNAPSHOT, not a step back
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
+                      releaseDescriptor.getReleaseVersions() );
+        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+    }
+
+    public void testSimulateReleaseBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
+        throws Exception
+    {
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-branch-versions" );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setBranchCreation( true );
+        releaseDescriptor.setUpdateBranchVersions( true );
+        releaseDescriptor.setUpdateVersionsToSnapshot( true );
+
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
+
+        // test
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        // @TODO FIX: this should have been 1.3-SNAPSHOT, not a step back
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
+                      releaseDescriptor.getReleaseVersions() );
+        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+    }
+
+    public void testExecuteSnapshotBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
+        throws Exception
+    {
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-branch-versions" );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setBranchCreation( true );
+        releaseDescriptor.setUpdateBranchVersions( true );
+        releaseDescriptor.setUpdateVersionsToSnapshot( true );
+
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
+
+        // test
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+    }
+
+    public void testSimulateSnapshotBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
+        throws Exception
+    {
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-branch-versions" );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setBranchCreation( true );
+        releaseDescriptor.setUpdateBranchVersions( true );
+        releaseDescriptor.setUpdateVersionsToSnapshot( true );
+
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
+
+        // test
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+    }
+    
     public void testExecuteReleaseBranchCreation_MapBranch()
         throws Exception
     {
