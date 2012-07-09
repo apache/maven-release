@@ -35,6 +35,7 @@ import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Extension;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Plugin;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
@@ -220,7 +221,7 @@ public class GenerateReleasePomsPhase
         // the release POM should reflect bits of these which were injected at build time...
         // we don't need these polluting the POM.
         releaseModel.setParent( null );
-        releaseModel.setProfiles( Collections.EMPTY_LIST );
+        releaseModel.setProfiles( Collections.<Profile>emptyList() );
         releaseModel.setDependencyManagement( null );
         releaseProject.getBuild().setPluginManagement( null );
 
