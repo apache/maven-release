@@ -19,7 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
@@ -42,6 +45,8 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
 public class MapVersionsPhase
     extends AbstractReleasePhase
 {
+    private ResourceBundle resourceBundle = ResourceBundle.getBundle( "release-messages", Locale.ENGLISH, MapVersionsPhase.class.getClassLoader() );
+    
     /**
      * Whether to convert to a snapshot or a release.
      */
@@ -262,9 +267,10 @@ public class MapVersionsPhase
                             
                             if ( !releaseVersionIsExplicit && releaseDescriptor.isInteractive() )
                             {
-                                nextVersion = prompter.prompt(
-                                    "What is the branch version for \"" + project.getName() + "\"? (" + projectId + ")",
-                                    suggestedVersion );
+                                String message =
+                                    MessageFormat.format( resourceBundle.getString( "mapversion.prompt.branch" ),
+                                                          project.getName(), projectId );
+                                nextVersion = prompter.prompt( message, suggestedVersion );
                             }
                             else
                             {
@@ -287,9 +293,10 @@ public class MapVersionsPhase
                             
                             if ( releaseDescriptor.isInteractive() && !nextSnapshotVersionIsExplicit )
                             {
-                                nextVersion =
-                                    prompter.prompt( "What is the new working copy version for \"" + project.getName()
-                                        + "\"? (" + projectId + ")", suggestedVersion );
+                                String message =
+                                    MessageFormat.format( resourceBundle.getString( "mapversion.prompt.workingcopy" ),
+                                                          project.getName(), projectId );
+                                nextVersion = prompter.prompt( message, suggestedVersion );
                             }
                             else
                             {
@@ -310,9 +317,10 @@ public class MapVersionsPhase
                         
                         if ( releaseDescriptor.isInteractive()  && !nextSnapshotVersionIsExplicit )
                         {
-                            nextVersion =
-                                prompter.prompt( "What is the new development version for \"" + project.getName() + "\"? ("
-                                    + projectId + ")", suggestedVersion );
+                            String message =
+                                MessageFormat.format( resourceBundle.getString( "mapversion.prompt.development" ),
+                                                      project.getName(), projectId );
+                            nextVersion = prompter.prompt( message, suggestedVersion );
                         }
                         else
                         {
@@ -333,9 +341,10 @@ public class MapVersionsPhase
 
                     if ( releaseDescriptor.isInteractive() && !releaseVersionIsExplicit )
                     {
-                        nextVersion = prompter.prompt(
-                            "What is the release version for \"" + project.getName() + "\"? (" + projectId + ")",
-                            suggestedVersion );
+                        String message =
+                            MessageFormat.format( resourceBundle.getString( "mapversion.prompt.release" ),
+                                                  project.getName(), projectId );
+                        nextVersion = prompter.prompt( message, suggestedVersion );
                     }
                     else
                     {
