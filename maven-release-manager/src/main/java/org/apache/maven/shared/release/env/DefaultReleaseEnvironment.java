@@ -19,9 +19,10 @@ package org.apache.maven.shared.release.env;
  * under the License.
  */
 
-import org.apache.maven.settings.Settings;
-
 import java.io.File;
+import java.util.Locale;
+
+import org.apache.maven.settings.Settings;
 
 public class DefaultReleaseEnvironment
     implements ReleaseEnvironment
@@ -36,6 +37,8 @@ public class DefaultReleaseEnvironment
     private Settings settings;
 
     private String mavenExecutorId = DEFAULT_MAVEN_EXECUTOR_ID;
+    
+    private Locale locale;
 
     public File getMavenHome()
     {
@@ -99,4 +102,14 @@ public class DefaultReleaseEnvironment
         return this;
     }
 
+    public Locale getLocale()
+    {
+        return locale;
+    }
+    
+    public ReleaseEnvironment setLocale( Locale locale )
+    {
+        this.locale = locale;
+        return this;
+    }
 }

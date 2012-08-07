@@ -19,9 +19,10 @@ package org.apache.maven.shared.release.env;
  * under the License.
  */
 
-import org.apache.maven.settings.Settings;
-
 import java.io.File;
+import java.util.Locale;
+
+import org.apache.maven.settings.Settings;
 
 public interface ReleaseEnvironment
 {
@@ -47,5 +48,19 @@ public interface ReleaseEnvironment
     File getJavaHome();
 
     ReleaseEnvironment setJavaHome( File javaHome );
+    
+    /**
+     * 
+     * @return the locale
+     * @since 2.4
+     */
+    Locale getLocale();
+    
+    /**
+     * @param locale
+     * @return the locale
+     * @since 2.4
+     */
+    ReleaseEnvironment setLocale( Locale locale );
 
 }
