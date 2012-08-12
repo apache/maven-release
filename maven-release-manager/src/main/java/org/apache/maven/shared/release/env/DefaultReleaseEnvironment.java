@@ -38,7 +38,7 @@ public class DefaultReleaseEnvironment
 
     private String mavenExecutorId = DEFAULT_MAVEN_EXECUTOR_ID;
     
-    private Locale locale;
+    private Locale locale = Locale.ENGLISH;
 
     public File getMavenHome()
     {
