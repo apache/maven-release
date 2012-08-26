@@ -21,7 +21,6 @@ package org.apache.maven.shared.release.phase;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.ArtifactUtils;
@@ -32,20 +31,40 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
-import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 
 /**
  * Map projects to their new versions after release / into the next development cycle.
+ * 
+ * The map-phases per goal are:
+ * <dl>
+ *  <dt>release:prepare</dt><dd>map-release-versions + map-development-versions; RD.isBranchCreation() = false</dd>
+ *  <dt>release:branch</dt><dd>map-branch-versions + map-development-versions; RD.isBranchCreation() = true</dd>
+ *  <dt>release:update-versions</dt><dd>map-development-versions; RD.isBranchCreation() = false</dd>
+ * </dl>
+ * 
+ * <p>
+ * <table>
+ *   <tr>
+ *     <th>MapVersionsPhase field</th><th>map-release-versions</th><th>map-branch-versions</th><th>map-development-versions</th>
+ *   </tr>
+ *   <tr>
+ *     <td>convertToSnapshot</td>     <td>false</td>               <td>true</td>               <td>true</td>
+ *   </tr>
+ *   <tr>
+ *     <td>convertToBranch</td>       <td>false</td>               <td>true</td>               <td>false</td>
+ *   </tr>
+ * </table>
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
+ * @author Robert Scholte
  */
 public class MapVersionsPhase
     extends AbstractReleasePhase
 {
-    private ResourceBundle resourceBundle = ResourceBundle.getBundle( "release-messages", Locale.ENGLISH, MapVersionsPhase.class.getClassLoader() );
+    private ResourceBundle resourceBundle;
     
     /**
      * Whether to convert to a snapshot or a release.
@@ -72,6 +91,8 @@ public class MapVersionsPhase
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
+        
+        resourceBundle = getResourceBundle( releaseEnvironment.getLocale() );
 
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
 
@@ -82,7 +103,7 @@ public class MapVersionsPhase
 
             String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-            String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );
+            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, result );
 
             if ( convertToSnapshot )
             {
@@ -138,7 +159,7 @@ public class MapVersionsPhase
             {
                 String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-                String nextVersion = getNextVersion( project, projectId, releaseDescriptor, result );
+                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, result );
 
                 if ( convertToSnapshot )
                 {
@@ -163,197 +184,119 @@ public class MapVersionsPhase
         return result;
     }
 
-    private String getNextVersion( MavenProject project, 
+    private String resolveNextVersion( MavenProject project, 
                                    String projectId, 
                                    ReleaseDescriptor releaseDescriptor,
                                    ReleaseResult result )
         throws ReleaseExecutionException
     {
-        String nextVersion = null;
-
-        VersionInfo currentVersionInfo = null;
-        VersionInfo releaseVersionInfo = null;
-        boolean releaseVersionIsExplicit = false;
-
-        VersionInfo nextSnapshotVersionInfo = null;
-        boolean nextSnapshotVersionIsExplicit = false;
-
+        String nextVersion;
+        if ( convertToBranch )
+        {
+            // no branch modification
+            if( !( releaseDescriptor.isUpdateBranchVersions()
+                          && ( ArtifactUtils.isSnapshot( project.getVersion() ) || releaseDescriptor.isUpdateVersionsToSnapshot() ) ) )
+            {
+                return project.getVersion();
+            }
+            
+            nextVersion = getReleaseVersion( projectId, releaseDescriptor );
+        }
+        else if ( !convertToSnapshot ) // map-release-version
+        {
+            nextVersion = getReleaseVersion( projectId, releaseDescriptor );
+        }
+        else if ( releaseDescriptor.isBranchCreation() )
+        {
+            // no working copy modification
+            if( !( ArtifactUtils.isSnapshot( project.getVersion() )
+                          && releaseDescriptor.isUpdateWorkingCopyVersions() ) )
+            {
+                return project.getVersion();
+            }
+            
+            nextVersion = releaseDescriptor.getDefaultDevelopmentVersion();
+            if ( nextVersion == null )
+            {
+                nextVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
+            }
+        }
+        else
+        {
+            // no working copy modification
+            if( !( releaseDescriptor.isUpdateWorkingCopyVersions() ) )
+            {
+                return project.getVersion();
+            }
+            
+            nextVersion = releaseDescriptor.getDefaultDevelopmentVersion();
+            if ( nextVersion == null )
+            {
+                nextVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
+            }
+        }
+        
+        String suggestedVersion = null;
+        String messageKey = null;
         try
         {
-            currentVersionInfo = new DefaultVersionInfo( project.getVersion() );
-
-            // The release/branch version defaults to currentVersionInfo (snapshot for branch, and release for tag)
-            releaseVersionInfo = currentVersionInfo;
-
-            // Check if the user specified a release version
-            if ( releaseDescriptor.getDefaultReleaseVersion() != null )
+            while( nextVersion == null || ArtifactUtils.isSnapshot( nextVersion ) != convertToSnapshot )
             {
-                releaseVersionInfo = new DefaultVersionInfo( releaseDescriptor.getDefaultReleaseVersion() );
-                releaseVersionIsExplicit = true;
-            }
-
-            String releaseVersion = ( String ) releaseDescriptor.getReleaseVersions().get( projectId );
-            if ( releaseVersion != null )
-            {
-                releaseVersionInfo = new DefaultVersionInfo( releaseVersion );
-                releaseVersionIsExplicit = true;
-            }
-
-            // The next snapshot version defaults to the next version after the release version
-            nextSnapshotVersionInfo = releaseVersionInfo.getNextVersion();
-
-            // Check if the user specified a new snapshot version
-            if ( releaseDescriptor.getDefaultDevelopmentVersion() != null )
-            {
-                nextSnapshotVersionInfo = new DefaultVersionInfo( releaseDescriptor.getDefaultDevelopmentVersion() );
-                nextSnapshotVersionIsExplicit = true;
-            }
-
-            String nextDevVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
-            if ( nextDevVersion != null )
-            {
-                nextSnapshotVersionInfo = new DefaultVersionInfo( nextDevVersion );
-                nextSnapshotVersionIsExplicit = true;
-            }
-
-        }
-        catch ( VersionParseException e )
-        {
-            String msg = "Error parsing version, cannot determine next version: " + e.getMessage();
-            if ( releaseDescriptor.isInteractive() )
-            {
-                logWarn( result, msg );
-                logDebug( result, e.getMessage(), e );
-
-                // set defaults for resume in interactive mode
-                if ( releaseVersionInfo == null )
+                if ( suggestedVersion == null )
                 {
+                    DefaultVersionInfo versionInfo;
                     try
                     {
-                        releaseVersionInfo = new DefaultVersionInfo( "1.0" );
-                    }
-                    catch ( VersionParseException e1 )
-                    {
-                        // if that happens we are in serious trouble!
-                        throw new ReleaseExecutionException( "Version 1.0 could not be parsed!", e1 );
-                    }
-                }
-
-                if ( nextSnapshotVersionInfo == null )
-                {
-                    nextSnapshotVersionInfo = releaseVersionInfo.getNextVersion();
-                }
-            }
-            else
-            {
-                // cannot proceed without a next value in batch mode
-                throw new ReleaseExecutionException( msg, e );
-            }
-        }
-
-        try
-        {
-            if ( convertToSnapshot )
-            {
-                if ( releaseDescriptor.isBranchCreation() )
-                {
-                    if ( convertToBranch )
-                    {
-                        // branch modification
-                        if ( releaseDescriptor.isUpdateBranchVersions()
-                            && ( ArtifactUtils.isSnapshot( project.getVersion() ) || releaseDescriptor.isUpdateVersionsToSnapshot() ) )
+                        String baseVersion = null;
+                        if( convertToSnapshot )
                         {
-                            String suggestedVersion = releaseVersionInfo.getSnapshotVersionString();
-                            
-                            if ( !releaseVersionIsExplicit && releaseDescriptor.isInteractive() )
+                            baseVersion = getReleaseVersion( projectId, releaseDescriptor );
+                        }
+                        // unspecified and unmapped version, so use project version 
+                        if( baseVersion == null )
+                        {
+                            baseVersion = project.getVersion();
+                        }
+                        versionInfo = new DefaultVersionInfo( baseVersion );
+                    }
+                    catch ( VersionParseException e )
+                    {
+                        if( releaseDescriptor.isInteractive() )
+                        {
+                            try
                             {
-                                String message =
-                                    MessageFormat.format( resourceBundle.getString( "mapversion.prompt.branch" ),
-                                                          project.getName(), projectId );
-                                nextVersion = prompter.prompt( message, suggestedVersion );
+                                versionInfo = new DefaultVersionInfo( "1.0" );
                             }
-                            else
+                            catch ( VersionParseException e1 )
                             {
-                                nextVersion = suggestedVersion;
+                                // if that happens we are in serious trouble!
+                                throw new ReleaseExecutionException( "Version 1.0 could not be parsed!", e1 );
                             }
                         }
                         else
                         {
-                            nextVersion = project.getVersion();
+                            throw new ReleaseExecutionException( "Error parsing version, cannot determine next version: " + e.getMessage(), e );
                         }
-
                     }
-                    else
+                    suggestedVersion =
+                        convertToSnapshot ? versionInfo.getNextVersion().getSnapshotVersionString()
+                                        : versionInfo.getReleaseVersionString(); 
+                }
+                
+                if( releaseDescriptor.isInteractive() )
+                {
+                    if( messageKey == null )
                     {
-                        // working copy modification
-                        if ( ArtifactUtils.isSnapshot( project.getVersion() )
-                            && releaseDescriptor.isUpdateWorkingCopyVersions() )
-                        {
-                            String suggestedVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
-                            
-                            if ( releaseDescriptor.isInteractive() && !nextSnapshotVersionIsExplicit )
-                            {
-                                String message =
-                                    MessageFormat.format( resourceBundle.getString( "mapversion.prompt.workingcopy" ),
-                                                          project.getName(), projectId );
-                                nextVersion = prompter.prompt( message, suggestedVersion );
-                            }
-                            else
-                            {
-                                nextVersion = suggestedVersion;
-                            }
-                        }
-                        else
-                        {
-                            nextVersion = project.getVersion();
-                        }
+                        messageKey = getMapversionPromptKey( releaseDescriptor );
                     }
+                    String message =
+                        MessageFormat.format( resourceBundle.getString( messageKey ),
+                                              project.getName(), projectId );
+                    nextVersion = prompter.prompt( message, suggestedVersion );
                 }
                 else
                 {
-                    if( releaseDescriptor.isUpdateWorkingCopyVersions() )
-                    {
-                        String suggestedVersion = nextSnapshotVersionInfo.getSnapshotVersionString();
-                        
-                        if ( releaseDescriptor.isInteractive()  && !nextSnapshotVersionIsExplicit )
-                        {
-                            String message =
-                                MessageFormat.format( resourceBundle.getString( "mapversion.prompt.development" ),
-                                                      project.getName(), projectId );
-                            nextVersion = prompter.prompt( message, suggestedVersion );
-                        }
-                        else
-                        {
-                            nextVersion = suggestedVersion;
-                        }
-                    }
-                    else
-                    {
-                        nextVersion = project.getVersion();
-                    }
-                }
-            }
-            else
-            {
-                if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
-                {
-                    String suggestedVersion = releaseVersionInfo.getReleaseVersionString();
-
-                    if ( releaseDescriptor.isInteractive() && !releaseVersionIsExplicit )
-                    {
-                        String message =
-                            MessageFormat.format( resourceBundle.getString( "mapversion.prompt.release" ),
-                                                  project.getName(), projectId );
-                        nextVersion = prompter.prompt( message, suggestedVersion );
-                    }
-                    else
-                    {
-                        nextVersion = suggestedVersion;
-                    }
-                }
-                else
-                {
-                    nextVersion = project.getVersion();
+                    nextVersion = suggestedVersion;
                 }
             }
         }
@@ -361,8 +304,43 @@ public class MapVersionsPhase
         {
             throw new ReleaseExecutionException( "Error reading version from input handler: " + e.getMessage(), e );
         }
-
         return nextVersion;
+    }
+
+    private String getReleaseVersion( String projectId, ReleaseDescriptor releaseDescriptor )
+    {
+        String nextVersion = releaseDescriptor.getDefaultReleaseVersion();
+        if ( nextVersion == null )
+        {
+            nextVersion = ( String ) releaseDescriptor.getReleaseVersions().get( projectId );
+        }
+        return nextVersion;
+    }
+    
+
+    private String getMapversionPromptKey( ReleaseDescriptor releaseDescriptor )
+    {
+        String messageKey;
+        if ( convertToBranch )
+        {
+            messageKey = "mapversion.prompt.branch";
+        }
+        else if ( convertToSnapshot )
+        {
+            if ( releaseDescriptor.isBranchCreation() )
+            {
+                messageKey = "mapversion.prompt.workingcopy";
+            }
+            else
+            {
+                messageKey = "mapversion.prompt.development";
+            }
+        }
+        else
+        {
+            messageKey = "mapversion.prompt.release";
+        }
+        return messageKey;
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,

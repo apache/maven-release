@@ -1150,7 +1150,10 @@ public class MapVersionsPhaseTest
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
         assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
@@ -1172,7 +1175,10 @@ public class MapVersionsPhaseTest
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
         assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
@@ -1279,14 +1285,19 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setUpdateBranchVersions( true );
 
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+		// updateBranchVersions is set to true, so suggest the next snapshot version
+		// org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+		// org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+		// org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+		// org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
     }
 
     public void testSimulateSnapshotBranchCreation_UpdateBranchVersions_MapBranch()
@@ -1301,14 +1312,19 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setUpdateBranchVersions( true );
 
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+		// updateBranchVersions is set to true, so suggest the next snapshot version
+		// org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+		// org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+		// org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+		// org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
     }
     
     public void testExecuteReleaseBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
@@ -1324,15 +1340,19 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setUpdateBranchVersions( true );
         releaseDescriptor.setUpdateVersionsToSnapshot( true );
 
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
+		// updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        // @TODO FIX: this should have been 1.3-SNAPSHOT, not a step back
-        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
         assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
@@ -1351,15 +1371,19 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setUpdateBranchVersions( true );
         releaseDescriptor.setUpdateVersionsToSnapshot( true );
 
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
+		// updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        // @TODO FIX: this should have been 1.3-SNAPSHOT, not a step back
-        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
         assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
@@ -1378,14 +1402,19 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setUpdateBranchVersions( true );
         releaseDescriptor.setUpdateVersionsToSnapshot( true );
 
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+		// updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
     }
 
     public void testSimulateSnapshotBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
@@ -1401,14 +1430,19 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setUpdateBranchVersions( true );
         releaseDescriptor.setUpdateVersionsToSnapshot( true );
 
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+		// updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.2-SNAPSHOT" ) );
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
     }
     
     public void testExecuteReleaseBranchCreation_MapBranch()
@@ -1511,10 +1545,12 @@ public class MapVersionsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setBranchCreation( true );
-
-        // test
+        // org.apache.maven.release:maven-release-manager:(,2.4) > true
+        // org.apache.maven.release:maven-release-manager:[2.4,) > false
+        releaseDescriptor.setInteractive( false );
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
+        
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
         assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ), releaseDescriptor.getDevelopmentVersions() );
@@ -1530,6 +1566,9 @@ public class MapVersionsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setBranchCreation( true );
+        // org.apache.maven.release:maven-release-manager:(,2.4) > true
+        // org.apache.maven.release:maven-release-manager:[2.4,) > false
+        releaseDescriptor.setInteractive( false );
 
         // test
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -1630,16 +1669,14 @@ public class MapVersionsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setUpdateBranchVersions( true );
-
+        // org.apache.maven.release:maven-release-manager:(,2.4) > true
+        // org.apache.maven.release:maven-release-manager:[2.4,) > false
+        releaseDescriptor.setInteractive( false );
+        
         // test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        /*
-         * "By default, the POM in the new branch keeps the same version as the local working copy, and the local POM is incremented to the next revision."
-         * This is true for trunk, but when branching from a tag I would expect the next SNAPSHOT version. For now keep
-         * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
-         */
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
         assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
@@ -1656,16 +1693,14 @@ public class MapVersionsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setUpdateBranchVersions( true );
-
+        // org.apache.maven.release:maven-release-manager:(,2.4) > true
+        // org.apache.maven.release:maven-release-manager:[2.4,) > false
+        releaseDescriptor.setInteractive( false );
+        
         // test
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        /*
-         * "By default, the POM in the new branch keeps the same version as the local working copy, and the local POM is incremented to the next revision."
-         * This is true for trunk, but when branching from a tag I would expect the next SNAPSHOT version. For now keep
-         * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
-         */
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
         assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
