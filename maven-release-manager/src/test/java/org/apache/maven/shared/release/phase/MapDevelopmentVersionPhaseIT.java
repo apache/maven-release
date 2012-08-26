@@ -27,6 +27,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.PlexusTestCase;
 
@@ -66,7 +67,7 @@ public class MapDevelopmentVersionPhaseIT
         releaseDescriptor.setUpdateWorkingCopyVersions( false );
         
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
-        mapVersionsPhase.execute( releaseDescriptor, (ReleaseEnvironment) null, reactorProjects );
+        mapVersionsPhase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
         
         assertEquals( "1.0", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
