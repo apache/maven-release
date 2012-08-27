@@ -1891,6 +1891,30 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
+    
+    // MRELEASE-511
+    public void testUnusualVersions1() throws Exception
+    {
+        MapVersionsPhase mapReleasephase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-release-versions" );
+        MapVersionsPhase mapDevelopmentphase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
+        
+        List<MavenProject> reactorProjects =
+            Collections.singletonList( createProject( "artifactId", "MYB_200909-SNAPSHOT" ) );
+        
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setDefaultReleaseVersion( "PPX" );
+        releaseDescriptor.setDefaultDevelopmentVersion( "MYB_200909-SNAPSHOT" );
+        
+        // test
+        mapReleasephase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        mapDevelopmentphase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        
+        // verify
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "MYB_200909-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "PPX" ), 
+                      releaseDescriptor.getReleaseVersions() );
+    }
 
     private static MavenProject createProject( String artifactId, String version )
     {
