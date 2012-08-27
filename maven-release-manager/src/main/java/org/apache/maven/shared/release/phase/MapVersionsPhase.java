@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -190,7 +191,7 @@ public class MapVersionsPhase
                                    ReleaseResult result )
         throws ReleaseExecutionException
     {
-        String nextVersion;
+        String defaultVersion;
         if ( convertToBranch )
         {
             // no branch modification
@@ -200,11 +201,11 @@ public class MapVersionsPhase
                 return project.getVersion();
             }
             
-            nextVersion = getReleaseVersion( projectId, releaseDescriptor );
+            defaultVersion = getReleaseVersion( projectId, releaseDescriptor );
         }
         else if ( !convertToSnapshot ) // map-release-version
         {
-            nextVersion = getReleaseVersion( projectId, releaseDescriptor );
+            defaultVersion = getReleaseVersion( projectId, releaseDescriptor );
         }
         else if ( releaseDescriptor.isBranchCreation() )
         {
@@ -215,10 +216,10 @@ public class MapVersionsPhase
                 return project.getVersion();
             }
             
-            nextVersion = releaseDescriptor.getDefaultDevelopmentVersion();
-            if ( nextVersion == null )
+            defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
+            if ( defaultVersion == null )
             {
-                nextVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
+                defaultVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
             }
         }
         else
@@ -229,14 +230,16 @@ public class MapVersionsPhase
                 return project.getVersion();
             }
             
-            nextVersion = releaseDescriptor.getDefaultDevelopmentVersion();
-            if ( nextVersion == null )
+            defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
+            if ( defaultVersion == null )
             {
-                nextVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
+                defaultVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
             }
         }
+        //@todo validate default version, maybe with DefaultArtifactVersion
         
         String suggestedVersion = null;
+        String nextVersion = defaultVersion;
         String messageKey = null;
         try
         {
@@ -293,6 +296,8 @@ public class MapVersionsPhase
                         MessageFormat.format( resourceBundle.getString( messageKey ),
                                               project.getName(), projectId );
                     nextVersion = prompter.prompt( message, suggestedVersion );
+                    
+                  //@todo validate next version, maybe with DefaultArtifactVersion
                 }
                 else
                 {
