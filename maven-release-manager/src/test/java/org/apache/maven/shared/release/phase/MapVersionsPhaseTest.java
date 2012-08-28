@@ -1916,6 +1916,28 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getReleaseVersions() );
     }
 
+    // MRELEASE-269
+    public void testContinuousSnapshotCheck() throws Exception
+    {
+     // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, "test-map-development-versions" );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+
+        when( mockPrompter.prompt( startsWith( "What is the new development version for " ), eq( "1.12-SNAPSHOT" ) ) )
+            .thenReturn( "2.0" ) // wrong, expected SNAPSHOT
+            .thenReturn( "2.0-SNAPSHOT" );
+        phase.setPrompter( mockPrompter );
+
+        // test
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for " ), eq( "1.12-SNAPSHOT" ) );
+    }
+    
     private static MavenProject createProject( String artifactId, String version )
     {
         Model model = new Model();
