@@ -43,7 +43,7 @@ public abstract class AbstractReleasePhase
 {
     protected ResourceBundle getResourceBundle( Locale locale )
     {
-        return ResourceBundle.getBundle( "release-messages", locale, this.getClass().getClassLoader() );
+        return ResourceBundle.getBundle( "release-messages", locale, AbstractReleasePhase.class.getClassLoader() );
     }
     
     public ReleaseResult clean( List<MavenProject> reactorProjects )
