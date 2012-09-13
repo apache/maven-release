@@ -256,8 +256,8 @@ public class ScmCheckModificationsPhaseTest
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties", "pom.xml.backup",
-            "pom.xml.tag", "pom.xml.next" } ) );
+        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties", "pom.xml.backup",
+            "pom.xml.tag", "pom.xml.next" ) );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
@@ -275,8 +275,8 @@ public class ScmCheckModificationsPhaseTest
         
         releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "**/keep.me" ) );
     
-        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties", "pom.xml.backup",
-            "pom.xml.tag", "pom.xml.next", "keep.me", "src/app/keep.me", "config\\keep.me" } ) );
+        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties", "pom.xml.backup",
+            "pom.xml.tag", "pom.xml.next", "keep.me", "src/app/keep.me", "config\\keep.me" ) );
     
         assertEquals( ReleaseResult.SUCCESS, phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
     
@@ -288,7 +288,7 @@ public class ScmCheckModificationsPhaseTest
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "pom.xml", "module/pom.xml" } ) );
+        setChangedFiles( releaseDescriptor, Arrays.asList( "pom.xml", "module/pom.xml" ) );
 
         try
         {
@@ -348,8 +348,8 @@ public class ScmCheckModificationsPhaseTest
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties", "pom.xml.backup",
-            "pom.xml.tag", "pom.xml.release", "something.txt" } ) );
+        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties", "pom.xml.backup",
+            "pom.xml.tag", "pom.xml.release", "something.txt" ) );
 
         try
         {
@@ -394,7 +394,7 @@ public class ScmCheckModificationsPhaseTest
         
         releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "release.properties" ) );
     
-        setChangedFiles( releaseDescriptor, Arrays.asList( new String[] { "release.properties" } ) );
+        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties" ) );
     
         assertEquals( ReleaseResult.SUCCESS, phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
     

@@ -53,42 +53,42 @@ public class AbstractMavenExecutorTest
 
         executor.executeGoals( null, " clean verify ", true, null, null );
         verify( executor ).executeGoals( isNull( File.class ),
-                                         eq( Arrays.asList( new String[] { "clean", "verify" } ) ),
+                                         eq( Arrays.asList( "clean", "verify" ) ),
                                          isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
                                          isNull( String.class ), isNull( ReleaseResult.class ) );
         reset( executor );
 
         executor.executeGoals( null, ",clean,verify,", true, null, null );
         verify( executor ).executeGoals( isNull( File.class ),
-                                         eq( Arrays.asList( new String[] { "clean", "verify" } ) ),
+                                         eq( Arrays.asList( "clean", "verify" ) ),
                                          isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
                                          isNull( String.class ), isNull( ReleaseResult.class ) );
         reset( executor );
 
         executor.executeGoals( null, "\nclean\nverify\n", true, null, null );
         verify( executor ).executeGoals( isNull( File.class ),
-                                         eq( Arrays.asList( new String[] { "clean", "verify" } ) ),
+                                         eq( Arrays.asList( "clean", "verify" ) ),
                                          isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
                                          isNull( String.class ), isNull( ReleaseResult.class ) );
         reset( executor );
 
         executor.executeGoals( null, "\rclean\rverify\r", true, null, null );
         verify( executor ).executeGoals( isNull( File.class ),
-                                         eq( Arrays.asList( new String[] { "clean", "verify" } ) ),
+                                         eq( Arrays.asList( "clean", "verify" ) ),
                                          isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
                                          isNull( String.class ), isNull( ReleaseResult.class ) );
         reset( executor );
 
         executor.executeGoals( null, "\r\nclean\r\nverify\r\n", true, null, null );
         verify( executor ).executeGoals( isNull( File.class ),
-                                         eq( Arrays.asList( new String[] { "clean", "verify" } ) ),
+                                         eq( Arrays.asList( "clean", "verify" ) ),
                                          isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
                                          isNull( String.class ), isNull( ReleaseResult.class ) );
         reset( executor );
 
         executor.executeGoals( null, "\tclean\tverify\t", true, null, null );
         verify( executor ).executeGoals( isNull( File.class ),
-                                         eq( Arrays.asList( new String[] { "clean", "verify" } ) ),
+                                         eq( Arrays.asList( "clean", "verify" ) ),
                                          isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
                                          isNull( String.class ), isNull( ReleaseResult.class ) );
         reset( executor );

@@ -79,6 +79,12 @@ public class CheckDependencySnapshotsPhase
      * @plexus.requirement
      */
     private ArtifactFactory artifactFactory;
+    
+    private Set<Artifact> snapshotDependencies = new HashSet<Artifact>();
+    private Set<Artifact> snapshotReportDependencies = new HashSet<Artifact>();
+    private Set<Artifact> snapshotExtensionsDependencies = new HashSet<Artifact>();
+    private Set<Artifact> snapshotPluginDependencies = new HashSet<Artifact>();
+
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -110,11 +116,6 @@ public class CheckDependencySnapshotsPhase
     {
         @SuppressWarnings( "unchecked" )
         Map<String, Artifact> artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
-
-        Set<Artifact> snapshotDependencies = new HashSet<Artifact>();
-        Set<Artifact> snapshotReportDependencies = new HashSet<Artifact>();
-        Set<Artifact> snapshotExtensionsDependencies = new HashSet<Artifact>();
-        Set<Artifact> snapshotPluginDependencies = new HashSet<Artifact>();
 
         if ( project.getParentArtifact() != null )
         {
@@ -170,7 +171,7 @@ public class CheckDependencySnapshotsPhase
                                 prompter.showMessage( "This project relies on a SNAPSHOT of the release plugin. "
                                                           + "This may be necessary during testing.\n" );
                                 result = prompter.prompt( "Do you want to continue with the release?",
-                                                          Arrays.asList( new String[]{ "yes", "no" } ), "no" );
+                                                          Arrays.asList( "yes", "no" ), "no" );
                             }
                             else
                             {
@@ -334,14 +335,14 @@ public class CheckDependencySnapshotsPhase
         {
             prompter.showMessage( RESOLVE_SNAPSHOT_MESSAGE );
             String result =
-                prompter.prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( new String[]{"yes", "no"} ), "no" );
+                prompter.prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( "yes", "no" ), "no" );
 
             if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
             {
                 Map<String, Map<String, String>> resolvedSnapshots = null;
                 prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
                 result = prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT,
-                                          Arrays.asList( new String[]{"0", "1", "2", "3"} ), "1" );
+                                          Arrays.asList( "0", "1", "2", "3" ), "1" );
 
                 switch ( Integer.parseInt( result.toLowerCase( Locale.ENGLISH ) ) )
                 {

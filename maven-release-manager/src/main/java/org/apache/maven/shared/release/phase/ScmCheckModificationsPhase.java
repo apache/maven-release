@@ -76,10 +76,10 @@ public class ScmCheckModificationsPhase
      * 
      * @todo proper construction of filenames, especially release properties
      */
-    private Set<String> exclusionPatterns = new HashSet<String>( Arrays.asList( new String[] {
+    private Set<String> exclusionPatterns = new HashSet<String>( Arrays.asList(
         "**" + File.separator + "pom.xml.backup", "**" + File.separator + "pom.xml.tag",
         "**" + File.separator + "pom.xml.next", "**" + File.separator + "pom.xml.branch",
-        "**" + File.separator + "release.properties", "**" + File.separator + "pom.xml.releaseBackup" } ) );
+        "**" + File.separator + "release.properties", "**" + File.separator + "pom.xml.releaseBackup" ) );
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
