@@ -129,23 +129,59 @@ public class CheckDependencySnapshotsPhase
         {
             @SuppressWarnings( "unchecked" )
             Set<Artifact> dependencyArtifacts = project.createArtifacts( artifactFactory, null, null );
-
-            for ( Artifact artifact : dependencyArtifacts )
-            {
-                if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
-                {
-                    snapshotDependencies.add( getArtifactFromMap( artifact, artifactMap ) );
-                }
-            }
+            checkDependencies( originalVersions, releaseDescriptor, artifactMap, dependencyArtifacts );
         }
         catch ( InvalidDependencyVersionException e )
         {
             throw new ReleaseExecutionException( "Failed to create dependency artifacts", e );
         }
+        //@todo check dependencyManagement
 
         @SuppressWarnings( "unchecked" )
         Set<Artifact> pluginArtifacts = project.getPluginArtifacts();
+        checkPlugins( originalVersions, releaseDescriptor, artifactMap, pluginArtifacts );
+        //@todo check pluginManagement
 
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> reportArtifacts = project.getReportArtifacts();
+        checkReports( originalVersions, releaseDescriptor, artifactMap, reportArtifacts );
+
+        @SuppressWarnings( "unchecked" )
+        Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
+        checkExtensions( originalVersions, releaseDescriptor, artifactMap, extensionArtifacts );
+        
+        //@todo check profiles
+
+        if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
+                        || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
+        {
+            if ( releaseDescriptor.isInteractive() )
+            {
+                resolveSnapshots( snapshotDependencies, snapshotReportDependencies, snapshotExtensionsDependencies,
+                                  snapshotPluginDependencies, releaseDescriptor );
+            }
+
+            if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
+                            || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
+            {
+                StringBuilder message = new StringBuilder();
+
+                printSnapshotDependencies( snapshotDependencies, message );
+                printSnapshotDependencies( snapshotReportDependencies, message );
+                printSnapshotDependencies( snapshotExtensionsDependencies, message );
+                printSnapshotDependencies( snapshotPluginDependencies, message );
+                message.append( "in project '" + project.getName() + "' (" + project.getId() + ")" );
+
+                throw new ReleaseFailureException(
+                    "Can't release project due to non released dependencies :\n" + message );
+            }
+        }
+    }
+
+    private void checkPlugins( Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor,
+                               Map<String, Artifact> artifactMap, Set<Artifact> pluginArtifacts )
+        throws ReleaseExecutionException
+    {
         for ( Artifact artifact : pluginArtifacts )
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
@@ -209,10 +245,23 @@ public class CheckDependencySnapshotsPhase
                 }
             }
         }
+    }
 
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> reportArtifacts = project.getReportArtifacts();
+    private void checkDependencies( Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor,
+                                    Map<String, Artifact> artifactMap, Set<Artifact> dependencyArtifacts )
+    {
+        for ( Artifact artifact : dependencyArtifacts )
+        {
+            if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
+            {
+                snapshotDependencies.add( getArtifactFromMap( artifact, artifactMap ) );
+            }
+        }
+    }
 
+    private void checkReports( Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor,
+                               Map<String, Artifact> artifactMap, Set<Artifact> reportArtifacts )
+    {
         for ( Artifact artifact : reportArtifacts )
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
@@ -221,40 +270,16 @@ public class CheckDependencySnapshotsPhase
                 snapshotReportDependencies.add( artifact );
             }
         }
+    }
 
-        @SuppressWarnings( "unchecked" )
-        Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
-
+    private void checkExtensions( Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor,
+                                  Map<String, Artifact> artifactMap, Set<Artifact> extensionArtifacts )
+    {
         for ( Artifact artifact : extensionArtifacts )
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
                 snapshotExtensionsDependencies.add( artifact );
-            }
-        }
-
-        if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
-                        || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
-        {
-            if ( releaseDescriptor.isInteractive() )
-            {
-                resolveSnapshots( snapshotDependencies, snapshotReportDependencies, snapshotExtensionsDependencies,
-                                  snapshotPluginDependencies, releaseDescriptor );
-            }
-
-            if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
-                            || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
-            {
-                StringBuilder message = new StringBuilder();
-
-                printSnapshotDependencies( snapshotDependencies, message );
-                printSnapshotDependencies( snapshotReportDependencies, message );
-                printSnapshotDependencies( snapshotExtensionsDependencies, message );
-                printSnapshotDependencies( snapshotPluginDependencies, message );
-                message.append( "in project '" + project.getName() + "' (" + project.getId() + ")" );
-
-                throw new ReleaseFailureException(
-                    "Can't release project due to non released dependencies :\n" + message );
             }
         }
     }
