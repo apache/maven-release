@@ -19,6 +19,17 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
@@ -34,17 +45,6 @@ import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Check the dependencies of all projects being released to see if there are any unreleased snapshots.
@@ -80,11 +80,10 @@ public class CheckDependencySnapshotsPhase
      */
     private ArtifactFactory artifactFactory;
     
-    private Set<Artifact> snapshotDependencies = new HashSet<Artifact>();
-    private Set<Artifact> snapshotReportDependencies = new HashSet<Artifact>();
-    private Set<Artifact> snapshotExtensionsDependencies = new HashSet<Artifact>();
-    private Set<Artifact> snapshotPluginDependencies = new HashSet<Artifact>();
-
+    private Set<Artifact> usedSnapshotDependencies = new HashSet<Artifact>();
+    private Set<Artifact> usedSnapshotReports = new HashSet<Artifact>();
+    private Set<Artifact> usedSnapshotExtensions = new HashSet<Artifact>();
+    private Set<Artifact> usedSnapshotPlugins = new HashSet<Artifact>();
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -121,10 +120,10 @@ public class CheckDependencySnapshotsPhase
         {
             if ( checkArtifact( project.getParentArtifact(), originalVersions, artifactMap, releaseDescriptor ) )
             {
-                snapshotDependencies.add( project.getParentArtifact() );
+                usedSnapshotDependencies.add( project.getParentArtifact() );
             }
         }
-
+        
         try
         {
             @SuppressWarnings( "unchecked" )
@@ -152,24 +151,24 @@ public class CheckDependencySnapshotsPhase
         
         //@todo check profiles
 
-        if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
-                        || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
+        if ( !usedSnapshotDependencies.isEmpty() || !usedSnapshotReports.isEmpty()
+                        || !usedSnapshotExtensions.isEmpty() || !usedSnapshotPlugins.isEmpty() )
         {
             if ( releaseDescriptor.isInteractive() )
             {
-                resolveSnapshots( snapshotDependencies, snapshotReportDependencies, snapshotExtensionsDependencies,
-                                  snapshotPluginDependencies, releaseDescriptor );
+                resolveSnapshots( usedSnapshotDependencies, usedSnapshotReports, usedSnapshotExtensions,
+                                  usedSnapshotPlugins, releaseDescriptor );
             }
 
-            if ( !snapshotDependencies.isEmpty() || !snapshotReportDependencies.isEmpty()
-                            || !snapshotExtensionsDependencies.isEmpty() || !snapshotPluginDependencies.isEmpty() )
+            if ( !usedSnapshotDependencies.isEmpty() || !usedSnapshotReports.isEmpty()
+                            || !usedSnapshotExtensions.isEmpty() || !usedSnapshotPlugins.isEmpty() )
             {
                 StringBuilder message = new StringBuilder();
 
-                printSnapshotDependencies( snapshotDependencies, message );
-                printSnapshotDependencies( snapshotReportDependencies, message );
-                printSnapshotDependencies( snapshotExtensionsDependencies, message );
-                printSnapshotDependencies( snapshotPluginDependencies, message );
+                printSnapshotDependencies( usedSnapshotDependencies, message );
+                printSnapshotDependencies( usedSnapshotReports, message );
+                printSnapshotDependencies( usedSnapshotExtensions, message );
+                printSnapshotDependencies( usedSnapshotPlugins, message );
                 message.append( "in project '" + project.getName() + "' (" + project.getId() + ")" );
 
                 throw new ReleaseFailureException(
@@ -241,7 +240,7 @@ public class CheckDependencySnapshotsPhase
 
                 if ( addToFailures )
                 {
-                    snapshotPluginDependencies.add( artifact );
+                    usedSnapshotPlugins.add( artifact );
                 }
             }
         }
@@ -254,7 +253,7 @@ public class CheckDependencySnapshotsPhase
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
-                snapshotDependencies.add( getArtifactFromMap( artifact, artifactMap ) );
+                usedSnapshotDependencies.add( getArtifactFromMap( artifact, artifactMap ) );
             }
         }
     }
@@ -267,7 +266,7 @@ public class CheckDependencySnapshotsPhase
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
                 //snapshotDependencies.add( artifact );
-                snapshotReportDependencies.add( artifact );
+                usedSnapshotReports.add( artifact );
             }
         }
     }
@@ -279,7 +278,7 @@ public class CheckDependencySnapshotsPhase
         {
             if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
             {
-                snapshotExtensionsDependencies.add( artifact );
+                usedSnapshotExtensions.add( artifact );
             }
         }
     }
