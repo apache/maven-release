@@ -35,6 +35,7 @@ import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Map projects to their new versions after release / into the next development cycle.
@@ -216,11 +217,7 @@ public class MapVersionsPhase
                 return project.getVersion();
             }
             
-            defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
-            if ( defaultVersion == null )
-            {
-                defaultVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
-            }
+            defaultVersion = getDevelopmentVersion( projectId, releaseDescriptor );
         }
         else
         {
@@ -230,11 +227,7 @@ public class MapVersionsPhase
                 return project.getVersion();
             }
             
-            defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
-            if ( defaultVersion == null )
-            {
-                defaultVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
-            }
+            defaultVersion = getDevelopmentVersion( projectId, releaseDescriptor );
         }
         //@todo validate default version, maybe with DefaultArtifactVersion
         
@@ -312,10 +305,21 @@ public class MapVersionsPhase
         return nextVersion;
     }
 
+    private String getDevelopmentVersion( String projectId, ReleaseDescriptor releaseDescriptor )
+    {
+        String defaultVersion;
+        defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
+        if ( StringUtils.isEmpty( defaultVersion ) )
+        {
+            defaultVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
+        }
+        return defaultVersion;
+    }
+
     private String getReleaseVersion( String projectId, ReleaseDescriptor releaseDescriptor )
     {
         String nextVersion = releaseDescriptor.getDefaultReleaseVersion();
-        if ( nextVersion == null )
+        if ( StringUtils.isEmpty( nextVersion ) )
         {
             nextVersion = ( String ) releaseDescriptor.getReleaseVersions().get( projectId );
         }
