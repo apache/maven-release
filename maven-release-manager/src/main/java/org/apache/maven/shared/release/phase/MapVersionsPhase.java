@@ -332,22 +332,22 @@ public class MapVersionsPhase
         String messageKey;
         if ( convertToBranch )
         {
-            messageKey = "mapversion.prompt.branch";
+            messageKey = "mapversion.branch.prompt";
         }
         else if ( convertToSnapshot )
         {
             if ( releaseDescriptor.isBranchCreation() )
             {
-                messageKey = "mapversion.prompt.workingcopy";
+                messageKey = "mapversion.workingcopy.prompt";
             }
             else
             {
-                messageKey = "mapversion.prompt.development";
+                messageKey = "mapversion.development.prompt";
             }
         }
         else
         {
-            messageKey = "mapversion.prompt.release";
+            messageKey = "mapversion.release.prompt";
         }
         return messageKey;
     }
