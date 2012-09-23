@@ -37,7 +37,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  */
 @Mojo( name="rollback", aggregator = true )
 public class RollbackReleaseMojo
-    extends AbstractReleaseMojo
+    extends AbstractScmReleaseMojo
 {
 
     /**

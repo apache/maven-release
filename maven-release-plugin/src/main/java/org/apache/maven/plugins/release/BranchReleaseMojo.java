@@ -40,7 +40,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  */
 @Mojo( name = "branch", aggregator = true )
 public class BranchReleaseMojo
-    extends AbstractReleaseMojo
+    extends AbstractScmReleaseMojo
 {
     /**
      * The branch name to use.

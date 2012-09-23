@@ -46,7 +46,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  */
 @Mojo( name = "prepare", aggregator = true )
 public class PrepareReleaseMojo
-    extends AbstractReleaseMojo
+    extends AbstractScmReleaseMojo
 {
 
     /**

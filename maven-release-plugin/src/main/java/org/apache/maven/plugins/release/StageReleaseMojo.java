@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 @Mojo( name = "stage", aggregator = true, requiresProject = false )
 public class StageReleaseMojo
-    extends AbstractReleaseMojo
+    extends AbstractScmReleaseMojo
 {
     /**
      * A comma or space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
