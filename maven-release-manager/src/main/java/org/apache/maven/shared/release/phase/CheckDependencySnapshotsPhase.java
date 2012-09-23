@@ -79,7 +79,13 @@ public class CheckDependencySnapshotsPhase
      * @plexus.requirement
      */
     private ArtifactFactory artifactFactory;
-    
+
+    // Be aware of the difference between usedSnapshots and specifiedSnapshots:
+    // UsedSnapshots end up on the classpath.
+    // SpecifiedSnapshots are defined anywhere in the pom.
+    // We'll probably need to introduce specifiedSnapshots as well.
+    // @TODO MRELEASE-378: verify custom dependencies in plugins. Be aware of deprecated/removed Components in M3, such as PluginCollector
+    // @TODO MRELEASE-763: verify all dependencies in inactive profiles
     private Set<Artifact> usedSnapshotDependencies = new HashSet<Artifact>();
     private Set<Artifact> usedSnapshotReports = new HashSet<Artifact>();
     private Set<Artifact> usedSnapshotExtensions = new HashSet<Artifact>();
