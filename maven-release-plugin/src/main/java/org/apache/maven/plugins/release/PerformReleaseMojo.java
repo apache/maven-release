@@ -82,7 +82,7 @@ public class PerformReleaseMojo
 
     /**
      * Dry run: don't checkout anything from the scm repository, or modify the checkout.
-     * The goals (by default at least {@code deploy}) will be executed against the <strong>current</strong> project.
+     * The goals (by default at least {@code deploy}) will <strong>not</strong> be executed.
      */
     @Parameter( defaultValue = "false", property = "dryRun" )
     private boolean dryRun;
