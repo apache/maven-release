@@ -78,8 +78,6 @@ public class UpdateVersionsMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        super.execute();
-
         ReleaseDescriptor config = createReleaseDescriptor();
         config.setAddSchema( addSchema );
         config.setAutoVersionSubmodules( autoVersionSubmodules );

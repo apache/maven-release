@@ -19,7 +19,13 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import java.util.Map;
+
+import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
@@ -80,6 +86,59 @@ public abstract class AbstractScmReleaseMojo
     @Parameter( defaultValue = "[maven-release-plugin] ", property = "scmCommentPrefix" )
     private String scmCommentPrefix;
 
+    /**
+     * Use a local checkout instead of doing a checkout from the upstream repository.
+     * ATTENTION: This will only work with distributed SCMs which support the file:// protocol
+     * like e.g. git, jgit or hg!
+     *
+     * TODO: we should think about having the defaults for the various SCM providers provided via modello!
+     *
+     * @since 2.0
+     */
+    @Parameter( defaultValue = "false", property = "localCheckout" )
+    private boolean localCheckout;
+    
+    /**
+     * Implemented with git will or not push changes to the upstream repository.
+     * <code>true</code> by default to preserve backward compatibility.
+     * @since 2.1
+     */
+    @Parameter( defaultValue = "true", property = "pushChanges" )
+    private boolean pushChanges = true;
+
+    /**
+     * Add a new or overwrite the default implementation per provider. 
+     * The key is the scm prefix and the value is the role hint of the {@link org.apache.maven.scm.provider.ScmProvider}.
+     *
+     * @since 2.0-beta-6
+     * @see ScmManager#setScmProviderImplementation(String, String)
+     */
+    @Parameter
+    private Map<String, String> providerImplementations;
+    
+    /**
+     * The SCM manager.
+     */
+    @Component
+    private ScmManager scmManager;
+
+    /**
+     * {@inheritDoc}
+     */
+    public void execute()
+        throws MojoExecutionException, MojoFailureException
+    {
+        if ( providerImplementations != null )
+        {
+            for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
+            {
+                getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
+                    + providerEntry.getValue() + "'." );
+                scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
+            }
+        }
+    }
+    
     @Override
     protected ReleaseDescriptor createReleaseDescriptor()
     {
@@ -91,6 +150,9 @@ public abstract class AbstractScmReleaseMojo
         descriptor.setScmTagBase( tagBase );
         descriptor.setScmUsername( username );
         descriptor.setScmCommentPrefix( scmCommentPrefix );
+
+        descriptor.setLocalCheckout( localCheckout );
+        descriptor.setPushChanges( pushChanges );
 
         return descriptor;
     }

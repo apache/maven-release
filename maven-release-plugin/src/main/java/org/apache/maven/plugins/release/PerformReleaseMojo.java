@@ -101,8 +101,6 @@ public class PerformReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        super.execute();
-
         // goals may be splitted into multiple line in configuration.
         // Let's build a single line command
         if ( goals != null )

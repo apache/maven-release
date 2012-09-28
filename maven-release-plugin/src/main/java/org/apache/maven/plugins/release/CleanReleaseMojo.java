@@ -44,8 +44,6 @@ public class CleanReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        super.execute();
-
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( getBasedir().getAbsolutePath() );
         releaseManager.clean( releaseDescriptor, null, getReactorProjects() );
