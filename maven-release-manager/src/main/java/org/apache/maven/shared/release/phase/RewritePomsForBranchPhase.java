@@ -32,7 +32,6 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -45,11 +44,6 @@ import org.jdom.Namespace;
 public class RewritePomsForBranchPhase
     extends AbstractRewritePomsPhase
 {
-    /**
-     * SCM URL translators mapped by provider name.
-     */
-    private Map<String, ScmTranslator> scmTranslators;
-
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
                                  ReleaseResult result, String commonBasedir ) 
@@ -112,7 +106,7 @@ public class RewritePomsForBranchPhase
                                   String commonBasedir ) 
     throws IOException
     {
-        ScmTranslator translator = scmTranslators.get( scmRepository.getProvider() );
+        ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
         boolean result = false;
         if ( translator != null )
         {
@@ -155,7 +149,7 @@ public class RewritePomsForBranchPhase
                     {
                         trunkUrl = scm.getConnection();
                     }
-                    scmConnectionBranch = this.translateUrlPath( trunkUrl, branchBase, scm.getConnection() );
+                    scmConnectionBranch = translateUrlPath( trunkUrl, branchBase, scm.getConnection() );
                 }
                 
                 String value =
@@ -205,7 +199,7 @@ public class RewritePomsForBranchPhase
                     {
                         trunkUrl = scm.getConnection();
                     }
-                    tagScmUrl = this.translateUrlPath( trunkUrl, branchBase, scm.getUrl() );
+                    tagScmUrl = translateUrlPath( trunkUrl, branchBase, scm.getUrl() );
                 }
 
                 // use original branch base without protocol
@@ -246,6 +240,7 @@ public class RewritePomsForBranchPhase
     }
 
     @SuppressWarnings( "unchecked" )
+    @Override
     protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getReleaseVersions();
@@ -263,48 +258,6 @@ public class RewritePomsForBranchPhase
         else
         {
             return null;
-        }
-    }
-    
-    /**
-     * Determines the relative path from trunk to tag, and adds this relative path
-     * to the url.
-     *
-     * @param trunkPath - The trunk url
-     * @param tagPath   - The tag base
-     * @param urlPath   - scm.url or scm.connection
-     * @return The url path for the tag.
-     */
-    private String translateUrlPath( String trunkPath, String tagPath, String urlPath )
-    {
-        trunkPath = trunkPath.trim();
-        tagPath = tagPath.trim();
-        //Strip the slash at the end if one is present
-        if ( trunkPath.endsWith( "/" ) )
-        {
-            trunkPath = trunkPath.substring( 0, trunkPath.length() - 1 );
-        }
-        if ( tagPath.endsWith( "/" ) )
-        {
-            tagPath = tagPath.substring( 0, tagPath.length() - 1 );
-        }
-        char[] tagPathChars = trunkPath.toCharArray();
-        char[] trunkPathChars = tagPath.toCharArray();
-        // Find the common path between trunk and tags
-        int i = 0;
-        while ( ( i < tagPathChars.length ) && ( i < trunkPathChars.length ) && tagPathChars[i] == trunkPathChars[i] )
-        {
-            ++i;
-        }
-        // If there is nothing common between trunk and tags, or the relative
-        // path does not exist in the url, then just return the tag.
-        if ( i == 0 || urlPath.indexOf( trunkPath.substring( i ) ) < 0 )
-        {
-            return tagPath;
-        }
-        else
-        {
-            return StringUtils.replace( urlPath, trunkPath.substring( i ), tagPath.substring( i ) );
         }
     }
 }

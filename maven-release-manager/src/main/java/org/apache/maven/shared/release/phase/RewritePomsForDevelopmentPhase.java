@@ -40,11 +40,7 @@ import org.jdom.Namespace;
 public class RewritePomsForDevelopmentPhase
     extends AbstractRewritePomsPhase
 {
-    /**
-     * SCM URL translators mapped by provider name.
-     */
-    private Map<String, ScmTranslator> scmTranslators;
-
+    @Override
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
                                  ReleaseResult result, String commonBasedir )
@@ -65,7 +61,7 @@ public class RewritePomsForDevelopmentPhase
                         "Unable to find original SCM info for '" + project.getName() + "'" );
                 }
 
-                ScmTranslator translator = scmTranslators.get( scmRepository.getProvider() );
+                ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
                 if ( translator != null )
                 {
                     Scm scm = originalScmInfo.get( projectId );
@@ -94,6 +90,7 @@ public class RewritePomsForDevelopmentPhase
     }
 
     @SuppressWarnings( "unchecked" )
+    @Override
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
                                                          List<MavenProject> reactorProjects, boolean simulate )
     {
@@ -103,11 +100,13 @@ public class RewritePomsForDevelopmentPhase
     }
 
     @SuppressWarnings( "unchecked" )
+    @Override
     protected Map<String,String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getDevelopmentVersions();
     }
 
+    @Override
     protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
                                                  Map<String, Map<String, String>> resolvedSnapshotsMap )
     {

@@ -39,6 +39,7 @@ public class RewritePomVersionsPhase
     extends AbstractRewritePomsPhase
 {
 
+    @Override
     protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                  ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
                                  ReleaseResult result, String commonBasedir )
@@ -48,6 +49,7 @@ public class RewritePomVersionsPhase
     }
 
     @SuppressWarnings( "unchecked" )
+    @Override
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
                                          boolean simulate )
     {
@@ -55,11 +57,13 @@ public class RewritePomVersionsPhase
     }
 
     @SuppressWarnings( "unchecked" )
+    @Override
     protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getDevelopmentVersions();
     }
 
+    @Override
     protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshotsMap )
     {
         // Only update the pom version, not the dependency versions

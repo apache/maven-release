@@ -55,6 +55,7 @@ import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
@@ -63,6 +64,7 @@ import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
 import org.jdom.CDATA;
 import org.jdom.Comment;
@@ -89,6 +91,16 @@ public abstract class AbstractRewritePomsPhase
      * Tool that gets a configured SCM repository from release configuration.
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    /**
+     * SCM URL translators mapped by provider name.
+     */
+    private Map<String, ScmTranslator> scmTranslators;
+    
+    protected final Map<String, ScmTranslator> getScmTranslators()
+    {
+        return scmTranslators;
+    }
 
     /**
      * Configuration item for the suffix to add to rewritten POMs when simulating.
@@ -827,5 +839,47 @@ public abstract class AbstractRewritePomsPhase
             scm.setId( project.getProperties().getProperty( "project.scm.id" ) );
         }
         return scm;
+    }
+    
+    /**
+     * Determines the relative path from trunk to tag, and adds this relative path
+     * to the url.
+     *
+     * @param trunkPath - The trunk url
+     * @param tagPath   - The tag base
+     * @param urlPath   - scm.url or scm.connection
+     * @return The url path for the tag.
+     */
+    protected static String translateUrlPath( String trunkPath, String tagPath, String urlPath )
+    {
+        trunkPath = trunkPath.trim();
+        tagPath = tagPath.trim();
+        //Strip the slash at the end if one is present
+        if ( trunkPath.endsWith( "/" ) )
+        {
+            trunkPath = trunkPath.substring( 0, trunkPath.length() - 1 );
+        }
+        if ( tagPath.endsWith( "/" ) )
+        {
+            tagPath = tagPath.substring( 0, tagPath.length() - 1 );
+        }
+        char[] tagPathChars = trunkPath.toCharArray();
+        char[] trunkPathChars = tagPath.toCharArray();
+        // Find the common path between trunk and tags
+        int i = 0;
+        while ( ( i < tagPathChars.length ) && ( i < trunkPathChars.length ) && tagPathChars[i] == trunkPathChars[i] )
+        {
+            ++i;
+        }
+        // If there is nothing common between trunk and tags, or the relative
+        // path does not exist in the url, then just return the tag.
+        if ( i == 0 || urlPath.indexOf( trunkPath.substring( i ) ) < 0 )
+        {
+            return tagPath;
+        }
+        else
+        {
+            return StringUtils.replace( urlPath, trunkPath.substring( i ), tagPath.substring( i ) );
+        }
     }
 }
