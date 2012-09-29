@@ -20,6 +20,8 @@ package org.apache.maven.plugins.release;
  */
 
 import java.io.File;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -35,6 +37,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.util.StringUtils;
+
+import edu.emory.mathcs.backport.java.util.Collections;
 
 /**
  * Base class with shared configuration.
@@ -88,7 +92,7 @@ public abstract class AbstractReleaseMojo
      * @since 2.0-beta-8
      */
     @Parameter( defaultValue = "${maven.home}" )
-    protected File mavenHome;
+    private File mavenHome;
 
     /**
      * The {@code JAVA_HOME} parameter to use for forked Maven invocations.
@@ -149,11 +153,10 @@ public abstract class AbstractReleaseMojo
 
         descriptor.setPomFileName( pomFileName );
 
-        @SuppressWarnings("unchecked")
-        List<Profile> profiles = project.getActiveProfiles();
+        List<String> profileIds = getActiveProfileIds();
 
         String arguments = this.arguments;
-        if ( profiles != null && !profiles.isEmpty() )
+        if ( !profileIds.isEmpty() )
         {
             if ( !StringUtils.isEmpty( arguments ) )
             {
@@ -164,11 +167,9 @@ public abstract class AbstractReleaseMojo
                 arguments = "-P ";
             }
 
-            for ( Iterator<Profile> it = profiles.iterator(); it.hasNext(); )
+            for ( Iterator<String> it = profileIds.iterator(); it.hasNext(); )
             {
-                Profile profile = it.next();
-
-                arguments += profile.getId();
+                arguments += it.next();
                 if ( it.hasNext() )
                 {
                     arguments += ",";
@@ -178,7 +179,7 @@ public abstract class AbstractReleaseMojo
             String additionalProfiles = getAdditionalProfiles();
             if ( additionalProfiles != null )
             {
-                if ( !profiles.isEmpty() )
+                if ( !profileIds.isEmpty() )
                 {
                     arguments += ",";
                 }
@@ -188,6 +189,39 @@ public abstract class AbstractReleaseMojo
         descriptor.setAdditionalArguments( arguments );
 
         return descriptor;
+    }
+
+    /**
+     * 
+     * @return a List with profile ids, never {@code null}
+     */
+    @SuppressWarnings( "unchecked" )
+    private List<String> getActiveProfileIds()
+    {
+        List<String> profiles;
+        try 
+        {
+            Method getRequestMethod = this.session.getClass().getMethod( "getRequest" );
+            Object mavenExecutionRequest = getRequestMethod.invoke( this.session );
+            Method getActiveProfilesMethod = mavenExecutionRequest.getClass().getMethod( "getActiveProfiles" );
+            profiles = ( List<String> ) getActiveProfilesMethod.invoke( mavenExecutionRequest );
+        }
+        catch( Exception e )
+        {
+            if ( project.getActiveProfiles() == null || project.getActiveProfiles().isEmpty() )
+            {
+                profiles = Collections.emptyList();
+            }
+            else
+            {
+                profiles = new ArrayList<String>( project.getActiveProfiles().size() );
+                for ( Object profile : project.getActiveProfiles() )
+                {
+                    profiles.add( ( (Profile) profile ).getId() );
+                }
+            }
+        }
+        return profiles;
     }
 
     /**
