@@ -80,6 +80,17 @@ public class RunPerformGoalsPhase
         {
             additionalArguments = "-f " + pomFileName;
         }
+        
+        if ( simulate )
+        {
+            ReleaseResult result = new ReleaseResult();
+
+            logDebug( result, "Additional arguments: " + additionalArguments );
+            
+            logInfo( result, "Executing perform goals  - since this is simulation mode these goals are skipped." );
+            
+            return result;
+        }
 
         String workDir = releaseDescriptor.getWorkingDirectory();
         if ( workDir == null )
@@ -128,13 +139,7 @@ public class RunPerformGoalsPhase
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
-        ReleaseResult result = new ReleaseResult();
-
-        logInfo( result, "Executing perform goals  - since this is simulation mode these goals are skipped." );
-
-        //runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, true );
-
-        return result;
+        return runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
     protected String getGoals( ReleaseDescriptor releaseDescriptor )

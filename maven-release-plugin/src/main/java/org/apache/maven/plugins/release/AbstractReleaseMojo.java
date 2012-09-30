@@ -154,9 +154,10 @@ public abstract class AbstractReleaseMojo
         descriptor.setPomFileName( pomFileName );
 
         List<String> profileIds = getActiveProfileIds();
+        String additionalProfiles = getAdditionalProfiles();
 
         String arguments = this.arguments;
-        if ( !profileIds.isEmpty() )
+        if ( !profileIds.isEmpty() || StringUtils.isNotBlank( additionalProfiles ) )
         {
             if ( !StringUtils.isEmpty( arguments ) )
             {
@@ -175,8 +176,7 @@ public abstract class AbstractReleaseMojo
                     arguments += ",";
                 }
             }
-
-            String additionalProfiles = getAdditionalProfiles();
+            
             if ( additionalProfiles != null )
             {
                 if ( !profileIds.isEmpty() )
