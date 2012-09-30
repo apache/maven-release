@@ -52,6 +52,7 @@ import java.util.StringTokenizer;
  *
  * @plexus.component role="org.apache.maven.shared.release.exec.MavenExecutor" role-hint="invoker"
  */
+@SuppressWarnings( "static-access" )
 public class InvokerMavenExecutor
     extends AbstractMavenExecutor
 {
@@ -97,7 +98,10 @@ public class InvokerMavenExecutor
     private static final String FAIL_NEVER = "fn";
     
     private static final String ALTERNATE_POM_FILE = "f";
+    
+    private static final String THREADS = "T";
 
+    
     static
     {
         OPTIONS.addOption(
@@ -162,11 +166,14 @@ public class InvokerMavenExecutor
         
         OPTIONS.addOption( OptionBuilder.withLongOpt( "file" ).withDescription( 
             "Force the use of an alternate POM file." ).hasArg().create( ALTERNATE_POM_FILE ) );
+        
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "threads" ).withDescription( 
+            "Thread count, for instance 2.0C where C is core multiplied" ).hasArg().create( THREADS ) );
     }
 
     // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
-    private void setupRequest( InvocationRequest req,
-                               LoggerBridge bridge,
+    protected void setupRequest( InvocationRequest req,
+                                 LoggerBridge bridge,
                                String additionalArguments )
         throws MavenExecutorException
     {
@@ -328,6 +335,11 @@ public class InvokerMavenExecutor
                 {
                     req.setPomFileName( cli.getOptionValue( ALTERNATE_POM_FILE ) );
                 }
+            }
+            
+            if( cli.hasOption( THREADS ) )
+            {
+                getLogger().warn( "Specifying the threadcount is currently not supported ." );
             }
         }
         catch ( Exception e )
