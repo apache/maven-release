@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -32,10 +36,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Remove release POMs.
@@ -69,8 +69,6 @@ public class RemoveReleasePomsPhase
 
         if ( releaseDescriptor.isGenerateReleasePoms() )
         {
-            logInfo( result, "Removing release POMs..." );
-
             removeReleasePoms( releaseDescriptor, releaseEnvironment, simulate, result, reactorProjects );
         }
         else
@@ -96,7 +94,29 @@ public class RemoveReleasePomsPhase
             releasePoms.add( ReleaseUtil.getReleasePom( project ) );
         }
 
-        removeReleasePomsFromScm( releaseDescriptor, releaseEnvironment, simulate, result, releasePoms );
+        if ( releaseDescriptor.isSuppressCommitBeforeTagOrBranch() )
+        {
+            removeReleasePomsFromFilesystem( simulate, result, releasePoms );
+        }
+        else
+        {
+            removeReleasePomsFromScm( releaseDescriptor, releaseEnvironment, simulate, result, releasePoms );
+        }
+    }
+
+    private void removeReleasePomsFromFilesystem( boolean simulate, ReleaseResult result, List<File> releasePoms )
+    {
+        if ( simulate )
+        {
+            logInfo( result, "Full run would be removing " + releasePoms );
+        }
+        else
+        {
+            for ( File releasePom : releasePoms )
+            {
+                releasePom.delete();
+            }
+        }
     }
 
     private void removeReleasePomsFromScm( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,

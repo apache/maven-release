@@ -127,6 +127,12 @@
     <system>Jenkins</system>
     <url>https://builds.apache.org/hudson/job/maven-release/</url>
   </ciManagement>
+  
+  <contributors>
+    <contributor>
+      <name>John R Fallows</name>
+    </contributor>
+  </contributors>
 
   <properties>
     <scmVersion>1.8</scmVersion>

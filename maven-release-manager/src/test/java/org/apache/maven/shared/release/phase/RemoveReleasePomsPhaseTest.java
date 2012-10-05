@@ -26,7 +26,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -42,9 +44,11 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Test the remove release POMs phase.
@@ -142,6 +146,73 @@ public class RemoveReleasePomsPhaseTest
 
         // execute
         phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        // never invoke scmProviderMock
+        verifyNoMoreInteractions( scmProviderMock );
+    }
+    
+    public void testExecuteWithSuppressCommitBeforeTag() throws Exception
+    {
+        // prepare
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+        ReleaseDescriptor config = createReleaseDescriptor();
+        config.setSuppressCommitBeforeTagOrBranch( true );
+        config.setGenerateReleasePoms( true );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+        
+        // execute
+        ReleaseResult result = phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        
+        BufferedReader reader = null;
+        try 
+        {
+            reader = new BufferedReader( new StringReader( result.getOutput() ) );
+            
+            assertEquals( "[INFO] Removing release POM for 'Unnamed - groupId:artifactId:jar:1.0-SNAPSHOT'..." , reader.readLine() );
+            assertEquals( "Expected EOF",  null, reader.readLine() );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
+
+        // never invoke scmProviderMock
+        verifyNoMoreInteractions( scmProviderMock );
+    }
+
+    public void testSimulateWithSuppressCommitBeforeTag() throws Exception
+    {
+        // prepare
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+        ReleaseDescriptor config = createReleaseDescriptor();
+        config.setSuppressCommitBeforeTagOrBranch( true );
+        config.setGenerateReleasePoms( true );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+
+        // execute
+        ReleaseResult result = phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        BufferedReader reader = null;
+        try 
+        {
+            reader = new BufferedReader( new StringReader( result.getOutput() ) );
+            
+            assertEquals( "[INFO] Removing release POM for 'Unnamed - groupId:artifactId:jar:1.0-SNAPSHOT'..." , reader.readLine() );
+            assertEquals( "[INFO] Full run would be removing [" + reactorProjects.get( 0 ).getFile().getParent() + File.separator + "release-pom.xml]", reader.readLine() );
+            assertEquals( "Expected EOF",  null, reader.readLine() );
+        }
+        finally
+        {
+            IOUtil.close( reader );
+        }
 
         // never invoke scmProviderMock
         verifyNoMoreInteractions( scmProviderMock );
