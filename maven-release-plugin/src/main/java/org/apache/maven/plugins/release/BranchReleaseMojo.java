@@ -173,7 +173,8 @@ public class BranchReleaseMojo
     private String checkModificationExcludeList;
 
     /**
-     * Default version to use when preparing a release or a branch.
+     * Specify the new version for the branch. 
+     * This parameter is only meaningful if {@link #updateBranchVersions} = {@code true}.
      *
      * @since 2.0
      */
@@ -181,7 +182,8 @@ public class BranchReleaseMojo
     private String releaseVersion;
 
     /**
-     * Default version to use for new local working copy.
+     * Specify the new version for the working copy.
+     * This parameter is only meaningful if {@link #updateWorkingCopyVersions} = {@code true}.
      *
      * @since 2.0
      */
