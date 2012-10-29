@@ -91,6 +91,8 @@ public class InvokerMavenExecutor
 
     private static final char ALTERNATE_USER_SETTINGS = 's';
 
+    private static final String ALTERNATE_GLOBAL_SETTINGS = "gs";
+
     private static final String FAIL_FAST = "ff";
 
     private static final String FAIL_AT_END = "fae";
@@ -154,6 +156,9 @@ public class InvokerMavenExecutor
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "settings" ).withDescription(
             "Alternate path for the user settings file" ).hasArg().create( ALTERNATE_USER_SETTINGS ) );
+
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "global-settings" ).withDescription(
+            " Alternate path for the global settings file" ).hasArg().create( ALTERNATE_GLOBAL_SETTINGS ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "fail-fast" ).withDescription(
             "Stop at first failure in reactorized builds" ).create( FAIL_FAST ) );
@@ -311,6 +316,11 @@ public class InvokerMavenExecutor
             if ( cli.hasOption( ALTERNATE_USER_SETTINGS ) )
             {
                 req.setUserSettingsFile( new File( cli.getOptionValue( ALTERNATE_USER_SETTINGS ) ) );
+            }
+            
+            if ( cli.hasOption( ALTERNATE_GLOBAL_SETTINGS ) )
+            {
+                req.setGlobalSettingsFile( new File( cli.getOptionValue( ALTERNATE_GLOBAL_SETTINGS ) ) );
             }
 
             if ( cli.hasOption( FAIL_AT_END ) )

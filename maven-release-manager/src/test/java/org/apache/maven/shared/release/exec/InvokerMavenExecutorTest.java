@@ -32,4 +32,20 @@ public class InvokerMavenExecutorTest
         assertEquals( "5", req.getThreads() );
         
     }
+
+    @Test
+    public void testGlobalSettings() throws Exception
+    {
+        InvokerMavenExecutor executor = new InvokerMavenExecutor();
+        Logger logger = mock( Logger.class );
+        executor.enableLogging( logger );
+        
+        InvocationRequest req = new DefaultInvocationRequest();
+        executor.setupRequest( req, null, "-gs custom-settings.xml" );
+        assertEquals( "custom-settings.xml", req.getGlobalSettingsFile().getPath() );
+
+        req = new DefaultInvocationRequest();
+        executor.setupRequest( req, null, "--global-settings other-settings.xml" );
+        assertEquals( "other-settings.xml", req.getGlobalSettingsFile().getPath() );
+    }
 }
