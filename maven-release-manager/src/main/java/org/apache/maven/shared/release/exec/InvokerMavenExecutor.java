@@ -339,7 +339,7 @@ public class InvokerMavenExecutor
             
             if( cli.hasOption( THREADS ) )
             {
-                getLogger().warn( "Specifying the threadcount is currently not supported ." );
+                req.setThreads( cli.getOptionValue( THREADS ) );
             }
         }
         catch ( Exception e )
