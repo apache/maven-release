@@ -30,7 +30,7 @@ Usage
 
 * Prepare your project to use the maven-release-plugin
 
-  To able able to make a solid start with the maven-release-plugin, there are 2 things you should include in our pom:
+  To be able to make a solid start with the maven-release-plugin, there are 2 things you should include in our pom:
   
   * the <<<scm>>>-section with a <<<developerConnection>>>
   
