@@ -4,8 +4,9 @@
   Carlos Sanchez <carlos@apache.org>
   Brett Porter <brett@apache.org>
   John Tolentino <jtolentino@apache.org>
+  Robert Scholte <rfscholte@apache.org>
   ------
-  2010-01-03
+  2011-11-10
   ------
 
 ~~ Licensed to the Apache Software Foundation (ASF) under one
@@ -27,6 +28,45 @@
 
 Usage
 
+* Prepare your project to use the maven-release-plugin
+
+  To able able to make a solid start with the maven-release-plugin, there are 2 things you should include in our pom:
+  
+  * the <<<scm>>>-section with a <<<developerConnection>>>
+  
+  * the maven-release-plugin with a locked version
+  
+  []
+  
+  The <<<developerConnection>>> contains the URL of the Source Control Management system pointing to the folder containing this <<<pom.xml>>>
+  This URL is prefixed with <<<scm:[scm-provider]>>> so the plugin can pick the right implementation for committing and tagging.
+  The {{{http://maven.apache.org/scm/scms-overview.html}Maven SCM}}-page contains an overview all the supported SCMs, per SCM you can see how the URL should look like. 
+  
++--------
+
+<project>
+  ...
+  <scm>
+    <developerConnection>scm:svn:https://svn.mycompany.com/repos/myapplication/trunk/mycomponent/</developerConnection>
+  </scm>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${project.version}</version>
+      </plugin>
+    </plugins>
+    ...
+  </build>
+  ...
+</project>
+
++-------
+
+=======================================================================
+
   The following are some common scenarios in preparing a release.
 
 * Use a different username in the SCM server than the one in the operating system
@@ -34,9 +74,9 @@ Usage
   Most of the SCMs are simply executed as an external command as the current user on your system. If this username is
   not the same as the SCM username, you may need to set the following option:
 
-------
++------
 mvn -Dusername=your_scm_username release:prepare
-------
++------
 
 * Set where to tag the files in Subversion
 
@@ -44,18 +84,17 @@ mvn -Dusername=your_scm_username release:prepare
   Note that this is not needed if you use the standard SVN layout, where the root project is in <<<trunk>>>, and
   there is a sibling <<<tags>>> directory.
 
--------------------
++-------------------
 <project>
   ...
   <build>
-    ...
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>${project.version}</version>
         <configuration>
-          <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
+          <tagBase>https://svn.mycompany.com/repos/myapplication/releases</tagBase>
         </configuration>
       </plugin>
     </plugins>
@@ -63,7 +102,7 @@ mvn -Dusername=your_scm_username release:prepare
   </build>
   ...
 </project>
--------------------
++-------------------
 
 * Do a Dry Run
 
@@ -71,16 +110,16 @@ mvn -Dusername=your_scm_username release:prepare
   before a big release or on a new project. To do this, commit all of your files as if you were about to run a full
   release and run:
 
-------
++------
 mvn release:prepare -DdryRun=true
-------
++------
 
   This will ask all the same questions, run the same tests, and output a copy of how the POMs will look after
   transformation. You can check the output and review the POMs, then run:
 
-------
++------
 mvn release:clean
-------
++------
 
   This will remove all of the files created above, and the project will be ready to execute the proper release.
 
@@ -90,9 +129,9 @@ mvn release:clean
   builds through a build server). To use the default inputs for the versions and tag information and not prompt for any
   values, use Maven's <<<--batch-mode>>> setting:
 
-------
++------
 mvn --batch-mode release:prepare
-------
++------
 
 * Use a staging repository
 
