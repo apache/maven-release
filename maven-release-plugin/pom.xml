@@ -51,7 +51,7 @@
   </distributionManagement>
   
   <properties>
-    <mavenPluginPluginVersion>3.1</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.2</mavenPluginPluginVersion>
   </properties>
   
   <dependencyManagement>
@@ -138,6 +138,9 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-plugin</artifactId>
         <version>${mavenPluginPluginVersion}</version>
+        <configuration>
+          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+        </configuration>
         <executions>
           <execution>
             <id>mojo-descriptor</id>
@@ -150,9 +153,6 @@
             <goals>
               <goal>helpmojo</goal>
             </goals>
-            <configuration>
-              <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-            </configuration>
           </execution>
         </executions>
       </plugin>
