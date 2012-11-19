@@ -91,6 +91,20 @@ public class GenerateReleasePomsPhaseTest
         comparePomFiles( reactorProjects );
     }
 
+    // MRELEASE-787
+    public void testSuppressCommitBeforeTagOrBranch() throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+        ReleaseDescriptor config = new ReleaseDescriptor();
+        config.setGenerateReleasePoms( true );
+        config.setSuppressCommitBeforeTagOrBranch( true );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        verifyNoMoreInteractions( scmProviderMock );
+    }
+
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createDescriptorFromProjects(java.util.List)
      */

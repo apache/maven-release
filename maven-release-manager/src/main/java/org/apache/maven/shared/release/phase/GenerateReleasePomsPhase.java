@@ -129,7 +129,10 @@ public class GenerateReleasePomsPhase
                                                  simulate, result ) );
         }
 
-        addReleasePomsToScm( releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result, releasePoms );
+        if ( !releaseDescriptor.isSuppressCommitBeforeTagOrBranch() )
+        {
+            addReleasePomsToScm( releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result, releasePoms );
+        }
     }
 
     private File generateReleasePom( MavenProject project, ReleaseDescriptor releaseDescriptor,
