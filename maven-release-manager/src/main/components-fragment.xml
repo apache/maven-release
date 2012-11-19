@@ -82,7 +82,7 @@
           <phase>end-release</phase>
         </branchPhases>
         <updateVersionsPhases>
-          <phase>check-poms</phase>
+          <phase>check-poms-updateversions</phase>
           <phase>create-backup-poms</phase>
           <phase>map-development-versions</phase>
           <phase>rewrite-pom-versions</phase>
@@ -246,6 +246,32 @@
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
           <field-name>scmTranslators</field-name>
+        </requirement>
+      </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>check-poms</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.CheckPomPhase</implementation>
+      <configuration>
+        <scmRequired>true</scmRequired>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+      </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>check-poms-updateversions</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.CheckPomPhase</implementation>
+      <configuration>
+        <scmRequired>false</scmRequired>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
         </requirement>
       </requirements>
     </component>

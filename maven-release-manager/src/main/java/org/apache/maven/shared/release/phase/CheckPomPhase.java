@@ -39,16 +39,16 @@ import java.util.List;
  * Phase that checks the validity of the POM before release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="check-poms"
  */
 public class CheckPomPhase
     extends AbstractReleasePhase
 {
+    
     /**
-     * Retrieve an SCM repository, useful for validating an URL.
-     *
-     * @plexus.requirement
+     * @since 2.4
      */
+    private boolean scmRequired = true;
+    
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
@@ -57,7 +57,7 @@ public class CheckPomPhase
         ReleaseResult result = new ReleaseResult();
 
         // Currently, we don't deal with multiple SCM locations in a multiproject
-        if ( StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
+        if ( scmRequired && StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
         {
             MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
             if ( rootProject != null && rootProject.getScm() != null )

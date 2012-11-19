@@ -48,6 +48,12 @@ public class RewritePomVersionsPhase
         // We are only updating versions no mods to scm needed
     }
 
+    @Override
+    protected boolean isUpdateScm()
+    {
+        return false;
+    }
+
     @SuppressWarnings( "unchecked" )
     @Override
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,

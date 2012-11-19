@@ -273,6 +273,22 @@
                   <goal>run</goal>
                 </goals>
               </execution>
+              <execution>
+                <id>integration-test-update-versions</id>
+                <configuration>
+                  <pomIncludes>
+                    <pomInclude>projects/update-versions/*/pom.xml</pomInclude>
+                  </pomIncludes>
+                  <goals>
+                    <goal>clean</goal>
+                    <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal>
+                    <goal>${project.groupId}:${project.artifactId}:${project.version}:update-versions</goal>
+                  </goals>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
            </executions>
           </plugin>
         </plugins>

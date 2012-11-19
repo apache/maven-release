@@ -211,22 +211,26 @@ public abstract class AbstractRewritePomsPhase
             throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
         }
 
-        ScmRepository scmRepository;
-        ScmProvider provider;
-        try
-        {
-            scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                                                                               releaseEnvironment.getSettings() );
+        ScmRepository scmRepository = null;
+        ScmProvider provider = null;
 
-            provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
-        }
-        catch ( ScmRepositoryException e )
+        if( isUpdateScm() )
         {
-            throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
-        }
-        catch ( NoSuchScmProviderException e )
-        {
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+            try
+            {
+                scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                                   releaseEnvironment.getSettings() );
+
+                provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
+            }
+            catch ( ScmRepositoryException e )
+            {
+                throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
+            }
+            catch ( NoSuchScmProviderException e )
+            {
+                throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+            }
         }
 
         transformDocument( project, document.getRootElement(), releaseDescriptor, reactorProjects, scmRepository,
@@ -639,7 +643,7 @@ public abstract class AbstractRewritePomsPhase
     {
         try
         {
-            if ( releaseDescriptor.isScmUseEditMode() || provider.requiresEditMode() )
+            if ( isUpdateScm() && ( releaseDescriptor.isScmUseEditMode() || provider.requiresEditMode() ) )
             {
                 EditScmResult result = provider.edit( repository, new ScmFileSet(
                     new File( releaseDescriptor.getWorkingDirectory() ), pomFile ) );
@@ -768,6 +772,16 @@ public abstract class AbstractRewritePomsPhase
                                           ReleaseDescriptor releaseDescriptor, String projectId,
                                           ScmRepository scmRepository, ReleaseResult result, String commonBasedir )
         throws ReleaseExecutionException;
+
+    /**
+     * 
+     * @return {@code true} if the SCM-section should be updated, otherwise {@code false}
+     * @since 2.4
+     */
+    protected boolean isUpdateScm()
+    {
+        return true;
+    }
 
     protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshots )
     {
