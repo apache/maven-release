@@ -38,6 +38,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
+import org.apache.maven.scm.ScmTagParameters;
 import org.apache.maven.scm.command.add.AddScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
@@ -98,12 +99,32 @@ public class GenerateReleasePomsPhaseTest
         ReleaseDescriptor config = new ReleaseDescriptor();
         config.setGenerateReleasePoms( true );
         config.setSuppressCommitBeforeTagOrBranch( true );
+        config.setRemoteTagging( false );
+        mapNextVersion( config, "groupId:artifactId" );
+
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        
+        verify( scmProviderMock ).add( isA(ScmRepository.class), isA(ScmFileSet.class) );
+
+        verifyNoMoreInteractions( scmProviderMock );
+    }
+    
+    public void testSuppressCommitBeforeTagOrBranchAndReomoteTagging() throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+        ReleaseDescriptor config = new ReleaseDescriptor();
+        config.setGenerateReleasePoms( true );
+        config.setSuppressCommitBeforeTagOrBranch( true );
+        config.setRemoteTagging( true );
         mapNextVersion( config, "groupId:artifactId" );
 
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
+        verify( scmProviderMock ).add( isA(ScmRepository.class), isA(ScmFileSet.class) );
+
         verifyNoMoreInteractions( scmProviderMock );
     }
+
 
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createDescriptorFromProjects(java.util.List)

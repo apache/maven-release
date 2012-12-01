@@ -198,7 +198,7 @@ public abstract class AbstractScmCommitPhase
 
         pomFiles.add( ReleaseUtil.getStandardPom( project ) );
 
-        if ( releaseDescriptor.isGenerateReleasePoms() )
+        if ( releaseDescriptor.isGenerateReleasePoms() && !releaseDescriptor.isSuppressCommitBeforeTagOrBranch() )
         {
             pomFiles.add( ReleaseUtil.getReleasePom( project ) );
         }
