@@ -19,6 +19,13 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Properties;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
@@ -36,16 +43,7 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.IOUtil;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
-
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-import java.util.StringTokenizer;
 
 /**
  * Fork Maven using the maven-invoker shared library.
@@ -248,45 +246,10 @@ public class InvokerMavenExecutor
             if ( cli.hasOption( ACTIVATE_PROFILES ) )
             {
                 String[] profiles = cli.getOptionValues( ACTIVATE_PROFILES );
-                List<String> activatedProfiles = new ArrayList<String>();
-                List<String> deactivatedProfiles = new ArrayList<String>();
-
+                
                 if ( profiles != null )
                 {
-                    for ( int i = 0; i < profiles.length; ++i )
-                    {
-                        StringTokenizer profileTokens = new StringTokenizer( profiles[i], "," );
-
-                        while ( profileTokens.hasMoreTokens() )
-                        {
-                            String profileAction = profileTokens.nextToken().trim();
-
-                            if ( profileAction.startsWith( "-" ) || profileAction.startsWith( "!" ) )
-                            {
-                                deactivatedProfiles.add( profileAction.substring( 1 ) );
-                            }
-                            else if ( profileAction.startsWith( "+" ) )
-                            {
-                                activatedProfiles.add( profileAction.substring( 1 ) );
-                            }
-                            else
-                            {
-                                activatedProfiles.add( profileAction );
-                            }
-                        }
-                    }
-                }
-
-                if ( !deactivatedProfiles.isEmpty() )
-                {
-                    getLogger().warn( "Explicit profile deactivation is not yet supported. "
-                                          + "The following profiles will NOT be deactivated: " + StringUtils.join(
-                        deactivatedProfiles.iterator(), ", " ) );
-                }
-
-                if ( !activatedProfiles.isEmpty() )
-                {
-                    req.setProfiles( activatedProfiles );
+                    req.setProfiles( Arrays.asList( profiles ) );
                 }
             }
 
