@@ -20,4 +20,13 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-assert 1 == buildLog.getText().count("[DEBUG] Additional arguments: -P custom-release -DperformRelease=true -f pom.xml")
+def addArgsExpr = /\Q[DEBUG] Additional arguments: -P\E(.+)\Q-DperformRelease=true -f pom.xml\E/
+def matcher = ( buildLog.getText() =~ addArgsExpr )
+
+// M2:  [DEBUG] Additional arguments: -P custom-release -DperformRelease=true -f pom.xml
+// M3:  [DEBUG] Additional arguments: -P it-repo,it-repo,custom-release -DperformRelease=true -f pom.xml 
+
+assert matcher.find()
+assert matcher.getCount() == 1
+
+assert matcher[0][1].contains( "custom-release" )
