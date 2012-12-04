@@ -59,5 +59,12 @@
         </pluginRepository>
       </pluginRepositories>
     </profile>
+    <profile>
+      <id>mrelease-677</id>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
   </profiles>
+  
 </settings>
