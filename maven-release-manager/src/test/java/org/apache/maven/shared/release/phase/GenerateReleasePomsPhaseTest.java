@@ -125,6 +125,17 @@ public class GenerateReleasePomsPhaseTest
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    // MRELEASE-808
+    public void testFinalName() throws Exception 
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "pom-with-finalname" );
+        ReleaseDescriptor config = createConfigurationForWithParentNextVersion( reactorProjects );
+        config.setGenerateReleasePoms( true );
+        
+        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
 
     /*
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createDescriptorFromProjects(java.util.List)

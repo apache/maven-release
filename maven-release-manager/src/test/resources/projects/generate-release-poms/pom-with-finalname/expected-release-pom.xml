@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>groupId</groupId>
+  <artifactId>artifactId</artifactId>
+  <version>1.0</version>
+  <scm>
+    <connection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</connection>
+    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</developerConnection>
+    <url>file://localhost/tmp/scm-repo/tags/release-label</url>
+  </scm>
+  <build>
+    <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+    <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
+    <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
+    <outputDirectory>${project.build.directory}/classes</outputDirectory>
+    <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+    </resources>
+    <testResources>
+      <testResource>
+        <directory>${project.basedir}/src/test/resources</directory>
+      </testResource>
+    </testResources>
+    <directory>${project.basedir}/target</directory>
+    <finalName>${project.groupId}.${project.artifactId}-${project.version}</finalName>
+  </build>
+  <repositories>
+    <repository>
+      <id>central</id>
+      <url>${remoterepo}</url>
+    </repository>
+  </repositories>
+  <pluginRepositories>
+    <pluginRepository>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>central</id>
+      <name>Maven Plugin Repository</name>
+      <url>http://repo1.maven.org/maven2</url>
+    </pluginRepository>
+  </pluginRepositories>
+  <reporting>
+    <excludeDefaults>false</excludeDefaults>
+    <outputDirectory>target/site</outputDirectory>
+  </reporting>
+</project>
