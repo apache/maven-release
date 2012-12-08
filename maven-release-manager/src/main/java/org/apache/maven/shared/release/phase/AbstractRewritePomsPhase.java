@@ -498,7 +498,7 @@ public abstract class AbstractRewritePomsPhase
                     continue;
                 }
             }
-            String groupId = interpolate( groupIdElement.getTextTrim(), projectModel );
+            String groupId = ReleaseUtil.interpolate( groupIdElement.getTextTrim(), projectModel );
 
             Element artifactIdElement = element.getChild( "artifactId", element.getNamespace() );
             if ( artifactIdElement == null )
@@ -506,7 +506,7 @@ public abstract class AbstractRewritePomsPhase
                 // incomplete element
                 continue;
             }
-            String artifactId = interpolate( artifactIdElement.getTextTrim(), projectModel);
+            String artifactId = ReleaseUtil.interpolate( artifactIdElement.getTextTrim(), projectModel);
 
             String key = ArtifactUtils.versionlessKey( groupId, artifactId );
             String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
@@ -611,30 +611,6 @@ public abstract class AbstractRewritePomsPhase
                 // artifact not related to current release
             }
         }
-    }
-
-    private String interpolate( String value, Model model )
-        throws ReleaseExecutionException
-    {
-        if ( value != null && value.contains( "${" ) )
-        {
-            StringSearchInterpolator interpolator = new StringSearchInterpolator();
-            List<String> pomPrefixes = Arrays.asList( "pom.", "project." );
-            interpolator.addValueSource( new PrefixedObjectValueSource( pomPrefixes, model, false ) );
-            interpolator.addValueSource( new MapBasedValueSource( model.getProperties() ) );
-            interpolator.addValueSource( new ObjectBasedValueSource( model ) );
-            try
-            {
-                value = interpolator.interpolate( value, new PrefixAwareRecursionInterceptor( pomPrefixes ) );
-            }
-            catch ( InterpolationException e )
-            {
-                throw new ReleaseExecutionException(
-                                                     "Failed to interpolate " + value + " for project " + model.getId(),
-                                                     e );
-            }
-        }
-        return value;
     }
 
     private void writePom( File pomFile, Document document, ReleaseDescriptor releaseDescriptor, String modelVersion,

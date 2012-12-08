@@ -242,6 +242,22 @@
                 </goals>
               </execution>
               <execution>
+                <id>integration-test-prepare-with-pom</id>
+                <configuration>
+                  <pomIncludes>
+                    <pomInclude>projects/prepare-with-pom/*/*pom.xml</pomInclude>
+                  </pomIncludes>
+                  <goals>
+                    <goal>clean</goal>
+                    <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal>
+                    <goal>${project.groupId}:${project.artifactId}:${project.version}:prepare-with-pom</goal>
+                  </goals>
+                </configuration>
+                <goals>
+                  <goal>run</goal>
+                </goals>
+              </execution>
+              <execution>
                 <id>integration-test-branch</id>
                 <configuration>
                   <pomIncludes>

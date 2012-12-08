@@ -27,7 +27,7 @@
       </testResource>
     </testResources>
     <directory>${project.basedir}/target</directory>
-    <finalName>${project.groupId}.${project.artifactId}-${project.version}</finalName>
+    <finalName>groupId.artifactId-1.0</finalName>
   </build>
   <repositories>
     <repository>

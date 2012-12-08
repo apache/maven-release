@@ -22,13 +22,21 @@ package org.apache.maven.shared.release.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.codehaus.plexus.interpolation.InterpolationException;
+import org.codehaus.plexus.interpolation.MapBasedValueSource;
+import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
+import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
+import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
+import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
@@ -114,7 +122,7 @@ public class ReleaseUtil
      * Gets the string contents of the specified XML file. Note: In contrast to an XML processor, the line separators in
      * the returned string will be normalized to use the platform's native line separator. This is basically to save
      * another normalization step when writing the string contents back to an XML file.
-     *
+     * 
      * @param file The path to the XML file to read in, must not be <code>null</code>.
      * @return The string contents of the XML file.
      * @throws IOException If the file could not be opened/read.
@@ -142,10 +150,10 @@ public class ReleaseUtil
 
     /**
      * Normalizes the line separators in the specified string.
-     *
-     * @param text      The string to normalize, may be <code>null</code>.
+     * 
+     * @param text The string to normalize, may be <code>null</code>.
      * @param separator The line separator to use for normalization, typically "\n" or "\r\n", must not be
-     *                  <code>null</code>.
+     *            <code>null</code>.
      * @return The input string with normalized line separators or <code>null</code> if the string was <code>null</code>
      *         .
      */
@@ -175,8 +183,7 @@ public class ReleaseUtil
         }
 
         int parentLevels =
-            getBaseWorkingDirectoryParentCount( basedir,
-                                                FileUtils.normalize( releaseDescriptor.getWorkingDirectory() ) );
+            getBaseWorkingDirectoryParentCount( basedir, FileUtils.normalize( releaseDescriptor.getWorkingDirectory() ) );
 
         String url = releaseDescriptor.getScmSourceUrl();
         url = realignScmUrl( parentLevels, url );
@@ -282,5 +289,29 @@ public class ReleaseUtil
         throws IOException
     {
         return !file.getAbsolutePath().equals( file.getCanonicalPath() );
+    }
+
+    public static String interpolate( String value, Model model )
+        throws ReleaseExecutionException
+    {
+        if ( value != null && value.contains( "${" ) )
+        {
+            StringSearchInterpolator interpolator = new StringSearchInterpolator();
+            List<String> pomPrefixes = Arrays.asList( "pom.", "project." );
+            interpolator.addValueSource( new PrefixedObjectValueSource( pomPrefixes, model, false ) );
+            interpolator.addValueSource( new MapBasedValueSource( model.getProperties() ) );
+            interpolator.addValueSource( new ObjectBasedValueSource( model ) );
+            try
+            {
+                value = interpolator.interpolate( value, new PrefixAwareRecursionInterceptor( pomPrefixes ) );
+            }
+            catch ( InterpolationException e )
+            {
+                throw new ReleaseExecutionException(
+                                                     "Failed to interpolate " + value + " for project " + model.getId(),
+                                                     e );
+            }
+        }
+        return value;
     }
 }

@@ -68,6 +68,8 @@ import org.codehaus.plexus.util.WriterFactory;
 public class GenerateReleasePomsPhase
     extends AbstractReleasePomsPhase
 {
+    private static final String FINALNAME_EXPRESSION = "${project.artifactId}-${project.version}";
+
     /**
      *
      *
@@ -232,17 +234,26 @@ public class GenerateReleasePomsPhase
         releaseModel.setVersion( releaseVersion );
 
         // update final name if implicit
-        String finalName = releaseModel.getBuild().getFinalName();
-
-        if ( finalName.equals( releaseModel.getArtifactId() + "-" + projectVersion ) )
+        if ( !FINALNAME_EXPRESSION.equals( releaseModel.getBuild().getFinalName() ) )
         {
-            releaseModel.getBuild().setFinalName( null );
-        }
-        else if ( finalName.indexOf( Artifact.SNAPSHOT_VERSION ) != -1 )
-        {
-            throw new ReleaseFailureException( "Cannot reliably adjust the finalName of project: "
-                            + releaseProject.getId() );
-        }
+            String originalFinalName = findOriginalFinalName( releaseProject );
+            
+            if( originalFinalName == null )
+            {
+                // as defined in super-pom
+                originalFinalName = FINALNAME_EXPRESSION;
+            }
+            String finalName = ReleaseUtil.interpolate( originalFinalName, releaseModel );
+            
+            // still required?
+            if ( finalName.indexOf( Artifact.SNAPSHOT_VERSION ) != -1 )
+            {
+                throw new ReleaseFailureException( "Cannot reliably adjust the finalName of project: "
+                                + releaseProject.getId() );
+            }
+            
+            releaseModel.getBuild().setFinalName( finalName );
+        }        
 
         // update scm
         Scm scm = releaseModel.getScm();
@@ -283,6 +294,23 @@ public class GenerateReleasePomsPhase
         pathTranslator.unalignFromBaseDirectory( releaseProject.getModel(), project.getFile().getParentFile() );
 
         return releaseModel;
+    }
+    
+    // finalName is inherited
+    private String findOriginalFinalName( MavenProject project )
+    {
+        if ( project.getOriginalModel().getBuild() != null && project.getOriginalModel().getBuild().getFinalName() != null )
+        {
+            return project.getOriginalModel().getBuild().getFinalName();
+        }
+        else if( project.hasParent() )
+        {
+            return findOriginalFinalName( project.getParent() );
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
