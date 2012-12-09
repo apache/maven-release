@@ -21,5 +21,7 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-assert 1 == buildLog.getText().count("[DEBUG] Profile with id: 'mrelease-677' has been explicitly activated.")
+// Can only be checked with M3 
+//assert 1 == buildLog.getText().count("[DEBUG] Profile with id: 'mrelease-677' has been explicitly activated.")
+
 assert 1 == buildLog.getText().count("  Profile Id: mrelease-677 (Active: false , Source: settings.xml)")
