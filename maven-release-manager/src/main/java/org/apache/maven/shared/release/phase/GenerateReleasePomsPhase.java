@@ -236,7 +236,7 @@ public class GenerateReleasePomsPhase
         // update final name if implicit
         if ( !FINALNAME_EXPRESSION.equals( releaseModel.getBuild().getFinalName() ) )
         {
-            String originalFinalName = findOriginalFinalName( releaseProject );
+            String originalFinalName = findOriginalFinalName( project );
             
             if( originalFinalName == null )
             {
@@ -296,7 +296,6 @@ public class GenerateReleasePomsPhase
         return releaseModel;
     }
     
-    // finalName is inherited
     private String findOriginalFinalName( MavenProject project )
     {
         if ( project.getOriginalModel().getBuild() != null && project.getOriginalModel().getBuild().getFinalName() != null )
