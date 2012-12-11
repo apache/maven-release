@@ -29,28 +29,28 @@ public interface VersionInfo
     /**
      * Returns a string representing the version with a snapshot specification
      *
-     * @return
+     * @return the snapshot version transformation of the original value
      */
     String getSnapshotVersionString();
 
     /**
      * Returns a string representing the version without a snapshot specification.
      *
-     * @return
+     * @return the final version transformation of the original value
      */
     String getReleaseVersionString();
 
     /**
      * Returns a {@link VersionInfo} object which represents the next version of this object.
      *
-     * @return
+     * @return the next VersionInfo
      */
     VersionInfo getNextVersion();
 
     /**
      * Returns whether this represents a snapshot version.
      *
-     * @return
+     * @return {@code true} if the original value was a snapshot, otherwise {@code false}
      */
     boolean isSnapshot();
 }
