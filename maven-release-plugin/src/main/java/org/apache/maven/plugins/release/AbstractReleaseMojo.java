@@ -155,24 +155,24 @@ public abstract class AbstractReleaseMojo
         List<String> profileIds = getActiveProfileIds();
         String additionalProfiles = getAdditionalProfiles();
 
-        String arguments = this.arguments;
+        String args = this.arguments;
         if ( !profileIds.isEmpty() || StringUtils.isNotBlank( additionalProfiles ) )
         {
-            if ( !StringUtils.isEmpty( arguments ) )
+            if ( !StringUtils.isEmpty( args ) )
             {
-                arguments += " -P ";
+                args += " -P ";
             }
             else
             {
-                arguments = "-P ";
+                args = "-P ";
             }
 
             for ( Iterator<String> it = profileIds.iterator(); it.hasNext(); )
             {
-                arguments += it.next();
+                args += it.next();
                 if ( it.hasNext() )
                 {
-                    arguments += ",";
+                    args += ",";
                 }
             }
             
@@ -180,12 +180,12 @@ public abstract class AbstractReleaseMojo
             {
                 if ( !profileIds.isEmpty() )
                 {
-                    arguments += ",";
+                    args += ",";
                 }
-                arguments += additionalProfiles;
+                args += additionalProfiles;
             }
         }
-        descriptor.setAdditionalArguments( arguments );
+        descriptor.setAdditionalArguments( args );
 
         return descriptor;
     }
@@ -198,14 +198,15 @@ public abstract class AbstractReleaseMojo
     private List<String> getActiveProfileIds()
     {
         List<String> profiles;
-        try 
+        try
         {
+            // Try to use M3-methods
             Method getRequestMethod = this.session.getClass().getMethod( "getRequest" );
             Object mavenExecutionRequest = getRequestMethod.invoke( this.session );
             Method getActiveProfilesMethod = mavenExecutionRequest.getClass().getMethod( "getActiveProfiles" );
-            profiles = ( List<String> ) getActiveProfilesMethod.invoke( mavenExecutionRequest );
+            profiles = (List<String>) getActiveProfilesMethod.invoke( mavenExecutionRequest );
         }
-        catch( Exception e )
+        catch ( Exception e )
         {
             if ( project.getActiveProfiles() == null || project.getActiveProfiles().isEmpty() )
             {
