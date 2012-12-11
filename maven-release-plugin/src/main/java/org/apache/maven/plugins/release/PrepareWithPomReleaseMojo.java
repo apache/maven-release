@@ -27,11 +27,11 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Prepare for a release in SCM, fully resolving dependencies for the purpose of producing a "release POM".
- *
+ * 
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @since 2.0
  */
-@Mojo( name="prepare-with-pom", aggregator = true, requiresDependencyResolution = ResolutionScope.TEST )
+@Mojo( name = "prepare-with-pom", aggregator = true, requiresDependencyResolution = ResolutionScope.TEST )
 public class PrepareWithPomReleaseMojo
     extends PrepareReleaseMojo
 {

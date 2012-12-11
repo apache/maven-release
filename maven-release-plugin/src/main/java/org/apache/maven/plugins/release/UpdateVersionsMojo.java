@@ -34,15 +34,16 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 
 /**
- * Update the POM versions for a project. This performs the normal version updates of the <tt>release:prepare</tt>
- * goal without making other modifications to the SCM such as tagging.
- * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html">http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html</a>.
- *
+ * Update the POM versions for a project. This performs the normal version updates of the <tt>release:prepare</tt> goal
+ * without making other modifications to the SCM such as tagging. For more info see <a
+ * href="http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html"
+ * >http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html</a>.
+ * 
  * @author Paul Gier
  * @version $Id$
  * @since 2.0
  */
-@Mojo( name="update-versions", aggregator = true )
+@Mojo( name = "update-versions", aggregator = true )
 public class UpdateVersionsMojo
     extends AbstractReleaseMojo
 {
@@ -50,10 +51,10 @@ public class UpdateVersionsMojo
     /**
      * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
      * version of each submodules.
-     *
+     * 
      * @since 2.0
      */
-    @Parameter( defaultValue="false", property="autoVersionSubmodules" ) 
+    @Parameter( defaultValue = "false", property = "autoVersionSubmodules" )
     private boolean autoVersionSubmodules;
 
     /**
@@ -61,15 +62,15 @@ public class UpdateVersionsMojo
      * 
      * @since 2.0
      */
-    @Parameter(  defaultValue="true", property="addSchema" )
+    @Parameter( defaultValue = "true", property = "addSchema" )
     private boolean addSchema;
 
     /**
      * Default version to use for new local working copy.
-     *
+     * 
      * @since 2.0
      */
-    @Parameter( property="developmentVersion" )
+    @Parameter( property = "developmentVersion" )
     private String developmentVersion;
 
     /**
@@ -84,12 +85,13 @@ public class UpdateVersionsMojo
         config.setDefaultDevelopmentVersion( developmentVersion );
 
         Map<String, Scm> originalScmInfo = new HashMap<String, Scm>();
-        originalScmInfo.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ), project.getScm() );
+        originalScmInfo.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
+                             project.getScm() );
         config.setOriginalScmInfo( originalScmInfo );
 
         // Create a config containing values from the session properties (ie command line properties with cli).
-        ReleaseDescriptor sysPropertiesConfig
-                = ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
+        ReleaseDescriptor sysPropertiesConfig =
+            ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
         mergeCommandLineConfig( config, sysPropertiesConfig );
 
         try

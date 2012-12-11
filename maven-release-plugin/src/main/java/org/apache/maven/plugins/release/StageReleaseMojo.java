@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Perform a release from SCM to a staging repository.
- *
+ * 
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @version $Id$
  * @since 2.0-beta-8
@@ -44,35 +44,35 @@ public class StageReleaseMojo
     /**
      * A comma or space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
-     *
+     * 
      * @since 2.0-beta-8
      */
-    @Parameter( property="goals" )
+    @Parameter( property = "goals" )
     private String goals;
 
     /**
      * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
-     *
+     * 
      * @since 2.0-beta-8
      */
-    @Parameter( property="releaseProfiles" )
+    @Parameter( property = "releaseProfiles" )
     private String releaseProfiles;
 
     /**
      * The checkout directory.
-     *
+     * 
      * @since 2.0-beta-8
      */
-    @Parameter( defaultValue="${project.build.directory}/checkout", property="workingDirectory", required = true )
+    @Parameter( defaultValue = "${project.build.directory}/checkout", property = "workingDirectory", required = true )
     private File workingDirectory;
 
     /**
      * The SCM URL to checkout from. If omitted, the one from the <code>release.properties</code> file is used, followed
      * by the URL from the current POM.
-     *
+     * 
      * @since 2.0-beta-8
      */
-    @Parameter( property="connectionUrl" )
+    @Parameter( property = "connectionUrl" )
     private String connectionUrl;
 
     /**
@@ -80,15 +80,15 @@ public class StageReleaseMojo
      * 
      * @since 2.0-beta-8
      */
-    @Parameter( defaultValue="true", property="useReleaseProfile" )
+    @Parameter( defaultValue = "true", property = "useReleaseProfile" )
     private boolean useReleaseProfile;
 
     /**
      * URL of the staging repository to use.
-     *
+     * 
      * @since 2.0-beta-8
      */
-    @Parameter( property="stagingRepository", required = true )
+    @Parameter( property = "stagingRepository", required = true )
     private String stagingRepository;
 
     /**
