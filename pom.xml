@@ -125,7 +125,7 @@
   </issueManagement>
   <ciManagement>
     <system>Jenkins</system>
-    <url>https://builds.apache.org/hudson/job/maven-release/</url>
+    <url>https://builds.apache.org/job/maven-release/</url>
   </ciManagement>
   
   <contributors>
