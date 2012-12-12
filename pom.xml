@@ -142,7 +142,7 @@
     <maven.release.siteFilePath>${maven.site.cache}/maven-release-${project.version}</maven.release.siteFilePath>
     <maven.release.siteUrlDeployment>file://${maven.release.siteFilePath}</maven.release.siteUrlDeployment>
     <maven.release.scmPubCheckoutDirectory>${maven.site.cache}/maven-release-site-content-${project.version}</maven.release.scmPubCheckoutDirectory>
-    <maven.release.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/maven/content/release/maven-release-${project.version}</maven.release.scmPubUrl>
+    <maven.release.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/maven/content/maven-release-archives/maven-release-${project.version}</maven.release.scmPubUrl>
 
   </properties>
 
@@ -239,7 +239,7 @@
         <maven.release.siteFilePath>${maven.site.cache}/maven-release</maven.release.siteFilePath>
         <maven.release.siteUrlDeployment>file://${maven.release.siteFilePath}</maven.release.siteUrlDeployment>
         <maven.release.scmPubCheckoutDirectory>${maven.site.cache}/maven-release-site-content</maven.release.scmPubCheckoutDirectory>
-        <maven.release.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/maven/content/release/maven-release</maven.release.scmPubUrl>
+        <maven.release.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/maven/content/maven-release</maven.release.scmPubUrl>
       </properties>
     </profile>
   </profiles>
