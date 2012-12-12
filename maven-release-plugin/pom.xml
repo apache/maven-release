@@ -39,10 +39,7 @@
     <maven>${mavenVersion}</maven>
   </prerequisites>
 
-  <issueManagement>
-    <system>JIRA</system>
-    <url>http://jira.codehaus.org/browse/MRELEASE</url>
-  </issueManagement>
+
   <distributionManagement>
     <site>
       <id>apache.website</id>
