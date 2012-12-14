@@ -137,19 +137,14 @@
   <properties>
     <scmVersion>1.8</scmVersion>
     <mavenVersion>2.2.1</mavenVersion>
-
     <maven.site.cache>${user.home}/maven-sites</maven.site.cache>
-    <maven.release.siteFilePath>${maven.site.cache}/maven-release-${project.version}</maven.release.siteFilePath>
-    <maven.release.siteUrlDeployment>file://${maven.release.siteFilePath}</maven.release.siteUrlDeployment>
-    <maven.release.scmPubCheckoutDirectory>${maven.site.cache}/maven-release-site-content-${project.version}</maven.release.scmPubCheckoutDirectory>
-    <maven.release.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/maven/content/maven-release-archives/maven-release-${project.version}</maven.release.scmPubUrl>
-
+    <maven.site.path>${project.artifactId}-archives/${project.artifactId}-${project.version}</maven.site.path>
   </properties>
 
   <distributionManagement>
     <site>
       <id>apache.website</id>
-      <url>${maven.release.siteUrlDeployment}</url>
+      <url>scm:svn:https://svn.apache.org/repos/infra/websites/production/maven/content/${maven.site.path}</url>
     </site>
   </distributionManagement>
 
@@ -191,10 +186,7 @@
           <artifactId>maven-scm-publish-plugin</artifactId>
           <version>1.0-beta-2</version>
           <configuration>
-            <checkoutDirectory>${maven.release.scmPubCheckoutDirectory}</checkoutDirectory>
-            <pubScmUrl>scm:svn:${maven.release.scmPubUrl}</pubScmUrl>
-            <checkinComment>Apache Maven Release site deployment</checkinComment>
-            <content>${maven.release.siteFilePath}</content>
+            <checkoutDirectory>${maven.site.cache}/${maven.site.path}</checkoutDirectory>
             <tryUpdate>true</tryUpdate>
           </configuration>
         </plugin>
@@ -236,10 +228,7 @@
     <profile>
       <id>site-release</id>
       <properties>
-        <maven.release.siteFilePath>${maven.site.cache}/maven-release</maven.release.siteFilePath>
-        <maven.release.siteUrlDeployment>file://${maven.release.siteFilePath}</maven.release.siteUrlDeployment>
-        <maven.release.scmPubCheckoutDirectory>${maven.site.cache}/maven-release-site-content</maven.release.scmPubCheckoutDirectory>
-        <maven.release.scmPubUrl>https://svn.apache.org/repos/infra/websites/production/maven/content/maven-release</maven.release.scmPubUrl>
+        <maven.site.path>${project.artifactId}</maven.site.path>
       </properties>
     </profile>
   </profiles>
