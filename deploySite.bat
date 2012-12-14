@@ -17,4 +17,4 @@
 @REM under the License.
 @REM ----------------------------------------------------------------------------
 
-mvn clean site-deploy scm-publish:publish-scm %*
+mvn clean site site:stage scm-publish:publish-scm %*

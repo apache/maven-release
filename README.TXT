@@ -1,12 +1,11 @@
 Deploying web site
 -------------------
-You can use the script deploySite.sh
-Without any profile the site will be deploy to http://maven.apache.org/maven-release-archives/maven-release-${project.version}
+You can use the deploySite(.sh|.bat) script
+Without any profile, the site will be deployed to http://maven.apache.org/maven-release-archives/maven-release-${project.version}
 sh ./deploySite.sh -Preporting
 
-To deploy main version http://maven.apache.org/maven-release
-Use
-sh ./deploySite.sh -Preporting -P site-release
+To deploy main version http://maven.apache.org/maven-release, use
+sh ./deploySite.sh -Preporting -Psite-release
 
 Note you can add arguments to the script to pass your svn credentials:
 -Dusername=
@@ -21,5 +20,5 @@ content will be in http://maven.apache.org/maven-release-archives/maven-release-
 
 Once vote passed, redeploy main site:
 cd target/checkout (or use the version tag)
-sh ./deploySite.sh -Preporting -P site-release
+sh ./deploySite.sh -Preporting -Psite-release
 
