@@ -274,7 +274,14 @@ public class CheckoutProjectFromScm
     {
         ReleaseResult result = new ReleaseResult();
 
-        logInfo( result, "The project would be checked out to perform the release ..." );
+        if ( releaseDescriptor.isLocalCheckout() )
+        {
+            logInfo( result, "This would be a LOCAL check out to perform the release ..." );
+        }
+        else
+        {
+            logInfo( result, "The project would be checked out to perform the release ..." );
+        }
 
         result.setResultCode( ReleaseResult.SUCCESS );
         return result;

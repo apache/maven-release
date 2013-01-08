@@ -87,18 +87,6 @@ public abstract class AbstractScmReleaseMojo
     private String scmCommentPrefix;
 
     /**
-     * Use a local checkout instead of doing a checkout from the upstream repository.
-     * ATTENTION: This will only work with distributed SCMs which support the file:// protocol
-     * like e.g. git, jgit or hg!
-     *
-     * TODO: we should think about having the defaults for the various SCM providers provided via modello!
-     *
-     * @since 2.0
-     */
-    @Parameter( defaultValue = "false", property = "localCheckout" )
-    private boolean localCheckout;
-    
-    /**
      * Implemented with git will or not push changes to the upstream repository.
      * <code>true</code> by default to preserve backward compatibility.
      * @since 2.1
@@ -151,7 +139,6 @@ public abstract class AbstractScmReleaseMojo
         descriptor.setScmUsername( username );
         descriptor.setScmCommentPrefix( scmCommentPrefix );
 
-        descriptor.setLocalCheckout( localCheckout );
         descriptor.setPushChanges( pushChanges );
 
         return descriptor;

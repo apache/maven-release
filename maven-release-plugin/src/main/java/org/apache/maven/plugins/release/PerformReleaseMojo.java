@@ -73,6 +73,18 @@ public class PerformReleaseMojo
     private String connectionUrl;
 
     /**
+     * Use a local checkout instead of doing a checkout from the upstream repository.
+     * ATTENTION: This will only work with distributed SCMs which support the file:// protocol
+     * like e.g. git, jgit or hg!
+     *
+     * TODO: we should think about having the defaults for the various SCM providers provided via modello!
+     *
+     * @since 2.0
+     */
+    @Parameter( defaultValue = "false", property = "localCheckout" )
+    private boolean localCheckout;
+    
+    /**
      * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
      * If set to true, the release plugin sets the property "performRelease" to true, which activates the profile
      * "release-profile", which is inherited from the super pom.
@@ -116,6 +128,7 @@ public class PerformReleaseMojo
             {
                 releaseDescriptor.setScmSourceUrl( connectionUrl );
             }
+            releaseDescriptor.setLocalCheckout( localCheckout );
 
             releaseDescriptor.setCheckoutDirectory( workingDirectory.getAbsolutePath() );
             releaseDescriptor.setUseReleaseProfile( useReleaseProfile );
