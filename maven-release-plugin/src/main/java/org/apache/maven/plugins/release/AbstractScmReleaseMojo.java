@@ -32,8 +32,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  * Abstract Mojo containing SCM parameters 
  *  
  * @author Robert Scholte
- * @since 2.4
  */
+// Extra layer since 2.4. Don't use @since doclet, these would be inherited by the subclasses
 public abstract class AbstractScmReleaseMojo
     extends AbstractReleaseMojo
 {
