@@ -85,6 +85,18 @@ public class PerformReleaseMojo
     private boolean localCheckout;
     
     /**
+     * The SCM username to use.
+     */
+    @Parameter( property = "username" )
+    private String username;
+
+    /**
+     * The SCM password to use.
+     */
+    @Parameter( property = "password" )
+    private String password;
+    
+    /**
      * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
      * If set to true, the release plugin sets the property "performRelease" to true, which activates the profile
      * "release-profile", which is inherited from the super pom.
@@ -128,6 +140,17 @@ public class PerformReleaseMojo
             {
                 releaseDescriptor.setScmSourceUrl( connectionUrl );
             }
+            
+            if ( username != null )
+            {
+                releaseDescriptor.setScmUsername( username );
+            }
+            
+            if( password != null )
+            {
+                releaseDescriptor.setScmPassword( password );
+            }
+            
             releaseDescriptor.setLocalCheckout( localCheckout );
 
             releaseDescriptor.setCheckoutDirectory( workingDirectory.getAbsolutePath() );
