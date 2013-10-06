@@ -19,11 +19,6 @@ package org.apache.maven.shared.release.config;
  * under the License.
  */
 
-import org.apache.maven.model.Scm;
-import org.apache.maven.shared.release.scm.IdentifiedScm;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.util.IOUtil;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -37,6 +32,17 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.scm.IdentifiedScm;
+import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.util.IOUtil;
+import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
+import org.sonatype.plexus.components.cipher.PlexusCipherException;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
+import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
+import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
+
 /**
  * Read and write release configuration and state from a properties file.
  *
@@ -47,6 +53,16 @@ public class PropertiesReleaseDescriptorStore
     extends AbstractLogEnabled
     implements ReleaseDescriptorStore
 {
+    
+    /**
+     * When this plugin requires Maven 3.0 as minimum, this component can be removed and o.a.m.s.c.SettingsDecrypter be
+     * used instead.
+     * 
+     * @plexus.requirement role="org.sonatype.plexus.components.sec.dispatcher.SecDispatcher" role-hint="mng-4384"
+     */
+    
+    private DefaultSecDispatcher secDispatcher;
+    
     public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
         throws ReleaseDescriptorStoreException
     {
@@ -130,7 +146,24 @@ public class PropertiesReleaseDescriptorStore
         }
         if ( config.getScmPassword() != null )
         {
-            properties.setProperty( "scm.password", config.getScmPassword() );
+            String password = config.getScmPassword();
+            try
+            {
+                password = encryptAndDecorate( password );
+            }
+            catch ( IllegalStateException e )
+            {
+                getLogger().debug( e.getMessage() );
+            }
+            catch ( SecDispatcherException e )
+            {
+                getLogger().debug( e.getMessage() );
+            }
+            catch ( PlexusCipherException e )
+            {
+                getLogger().debug( e.getMessage() );
+            }
+            properties.setProperty( "scm.password", password );
         }
         if ( config.getScmPrivateKey() != null )
         {
@@ -138,7 +171,24 @@ public class PropertiesReleaseDescriptorStore
         }
         if ( config.getScmPrivateKeyPassPhrase() != null )
         {
-            properties.setProperty( "scm.passphrase", config.getScmPrivateKeyPassPhrase() );
+            String passPhrase = config.getScmPrivateKeyPassPhrase();
+            try
+            {
+                passPhrase = encryptAndDecorate( passPhrase );
+            }
+            catch ( IllegalStateException e )
+            {
+                getLogger().debug( e.getMessage() );
+            }
+            catch ( SecDispatcherException e )
+            {
+                getLogger().debug( e.getMessage() );
+            }
+            catch ( PlexusCipherException e )
+            {
+                getLogger().debug( e.getMessage() );
+            }
+            properties.setProperty( "scm.passphrase", passPhrase  );
         }
         if ( config.getScmTagBase() != null )
         {
@@ -285,6 +335,36 @@ public class PropertiesReleaseDescriptorStore
     private static File getDefaultReleasePropertiesFile( ReleaseDescriptor mergeDescriptor )
     {
         return new File( mergeDescriptor.getWorkingDirectory(), "release.properties" );
+    }
+    
+    // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
+    private String encryptAndDecorate( String passwd ) throws IllegalStateException, SecDispatcherException, PlexusCipherException
+    {
+        String configurationFile = secDispatcher.getConfigurationFile();
+
+        if ( configurationFile.startsWith( "~" ) )
+        {
+            configurationFile = System.getProperty( "user.home" ) + configurationFile.substring( 1 );
+        }
+
+        String file = System.getProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION, configurationFile );
+
+        String master = null;
+
+        SettingsSecurity sec = SecUtil.read( file, true );
+        if ( sec != null )
+        {
+            master = sec.getMaster();
+        }
+
+        if ( master == null )
+        {
+            throw new IllegalStateException( "Master password is not set in the setting security file: " + file );
+        }
+
+        DefaultPlexusCipher cipher = new DefaultPlexusCipher();
+        String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
+        return cipher.encryptAndDecorate( passwd, masterPasswd );
     }
 
 }

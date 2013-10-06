@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.config;
 import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.PlexusTestCase;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,12 +36,15 @@ public class PropertiesReleaseDescriptorStoreTest
     extends PlexusTestCase
 {
     private PropertiesReleaseDescriptorStore store;
+    
+    private SecDispatcher secDispatcher;
 
     protected void setUp()
         throws Exception
     {
         super.setUp();
         store = (PropertiesReleaseDescriptorStore) lookup( ReleaseDescriptorStore.ROLE, "properties" );
+        secDispatcher = (SecDispatcher) lookup( SecDispatcher.ROLE, "mng-4384" );
     }
 
     public void testReadFromFile()
@@ -111,7 +115,7 @@ public class PropertiesReleaseDescriptorStoreTest
     }
 
     public void testWriteToNewFile()
-        throws ReleaseDescriptorStoreException
+        throws Exception
     {
         File file = getTestFile( "target/test-classes/new-release.properties" );
         file.delete();
@@ -122,6 +126,9 @@ public class PropertiesReleaseDescriptorStoreTest
         store.write( config, file );
 
         ReleaseDescriptor rereadDescriptor = store.read( file );
+        
+        assertAndAdjustScmPassword( config, rereadDescriptor );
+        assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
 
         assertEquals( "compare configuration", config, rereadDescriptor );
     }
@@ -141,7 +148,10 @@ public class PropertiesReleaseDescriptorStoreTest
 
         ReleaseDescriptor rereadDescriptor = store.read( file );
         rereadDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
-
+        
+        assertAndAdjustScmPassword( config, rereadDescriptor );
+        assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
+        
         assertEquals( "compare configuration", config, rereadDescriptor );
     }
 
@@ -219,7 +229,7 @@ public class PropertiesReleaseDescriptorStoreTest
     }
 
     public void testOverwriteFile()
-        throws ReleaseDescriptorStoreException
+        throws Exception
     {
         File file = getTestFile( "target/test-classes/rewrite-release.properties" );
         assertTrue( "Check file already exists", file.exists() );
@@ -229,6 +239,9 @@ public class PropertiesReleaseDescriptorStoreTest
         store.write( config, file );
 
         ReleaseDescriptor rereadDescriptor = store.read( file );
+        
+        assertAndAdjustScmPassword( config, rereadDescriptor );
+        assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
 
         assertEquals( "compare configuration", config, rereadDescriptor );
     }
@@ -344,6 +357,38 @@ public class PropertiesReleaseDescriptorStoreTest
         // Not setting non-override setting completedPhase
 
         return releaseDescriptor;
+    }
+    
+    private void assertAndAdjustScmPassword( ReleaseDescriptor expected, ReleaseDescriptor original )
+        throws Exception
+    {
+        String expectedPassword = expected.getScmPassword();
+        String originalPassword = original.getScmPassword();
+
+        // encrypting the same password twice doesn't have to be the same result
+        if ( expectedPassword != null ? !expectedPassword.equals( originalPassword ) : originalPassword != null )
+        {
+            assertEquals( secDispatcher.decrypt( expectedPassword ), secDispatcher.decrypt( originalPassword ) );
+
+            expected.setScmPassword( originalPassword );
+        }
+        assertEquals( expected.getScmPassword(), original.getScmPassword() );
+    }
+
+    private void assertAndAdjustScmPrivateKeyPassPhrase( ReleaseDescriptor expected, ReleaseDescriptor original )
+        throws Exception
+    {
+        String expectedPassPhrase = expected.getScmPrivateKeyPassPhrase();
+        String originalPassPhrase = original.getScmPrivateKeyPassPhrase();
+
+        // encrypting the same passphrase twice doesn't have to be the same result
+        if ( expectedPassPhrase != null ? !expectedPassPhrase.equals( originalPassPhrase ) : originalPassPhrase != null )
+        {
+            assertEquals( secDispatcher.decrypt( expectedPassPhrase ), secDispatcher.decrypt( originalPassPhrase ) );
+
+            expected.setScmPrivateKeyPassPhrase( originalPassPhrase );
+        }
+        assertEquals( expected.getScmPrivateKeyPassPhrase(), original.getScmPrivateKeyPassPhrase() );
     }
 
     private ReleaseDescriptor createExpectedReleaseConfiguration()
