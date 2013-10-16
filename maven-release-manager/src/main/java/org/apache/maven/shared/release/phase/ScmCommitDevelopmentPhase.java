@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -83,8 +84,12 @@ public class ScmCommitDevelopmentPhase
             if ( simulating )
             {
                 Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
+                Collection<File> additionalFiles = createAdditionalFiles(releaseDescriptor, reactorProjects) ;
+                Collection<File> files = new ArrayList<File>() ;
+                files.addAll(pomFiles) ;
+                files.addAll(additionalFiles) ;
                 logInfo( result,
-                         "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
+                         "Full run would be commit " + files.size() + " files with message: '" + message + "'" );
             }
             else
             {

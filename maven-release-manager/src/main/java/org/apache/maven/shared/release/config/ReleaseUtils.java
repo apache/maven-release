@@ -27,6 +27,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.shared.release.scm.IdentifiedScm;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Class providing utility methods used during the release process
@@ -120,6 +121,7 @@ public class ReleaseUtils
         // Not overridden - not configured from caller
         mergeInto.setCompletedPhase( mergeDefault( mergeInto.getCompletedPhase(), toBeMerged.getCompletedPhase() ) );
 
+        mergeInto.setAdditionalCommittedIncludes(mergeOverride(mergeInto.getAdditionalCommittedIncludes(), toBeMerged.getAdditionalCommittedIncludes()));
         return mergeInto;
     }
 
@@ -169,6 +171,12 @@ public class ReleaseUtils
         String pushChanges = properties.getProperty( "pushChanges" );
         releaseDescriptor.setPushChanges( pushChanges == null ? true : Boolean.valueOf( pushChanges ).booleanValue() );
 
+        String additionalCommitedIncludes = properties.getProperty( "additionalCommittedIncludes" ) ;
+        if ( StringUtils.isNotBlank(additionalCommitedIncludes) )
+        {
+            releaseDescriptor.setAdditionalCommittedIncludes(additionalCommitedIncludes);
+        }
+        
         loadResolvedDependencies( properties, releaseDescriptor );
 
         // boolean properties are not written to the properties file because the value from the caller is always used

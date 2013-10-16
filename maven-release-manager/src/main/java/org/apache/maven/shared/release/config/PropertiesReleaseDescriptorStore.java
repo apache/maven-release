@@ -36,6 +36,7 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
@@ -134,6 +135,10 @@ public class PropertiesReleaseDescriptorStore
         if ( config.isCommitByProject() ) //default is false
         {
             properties.setProperty( "commitByProject", "true" );
+        }
+        if ( config.getAdditionalCommittedIncludes() != null )
+        {
+            properties.setProperty( "additionalCommittedIncludes", config.getAdditionalCommittedIncludes() );
         }
         properties.setProperty( "scm.url", config.getScmSourceUrl() );
         if ( config.getScmId() != null )

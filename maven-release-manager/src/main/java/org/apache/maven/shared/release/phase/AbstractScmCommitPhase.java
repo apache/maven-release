@@ -37,6 +37,7 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.util.DirectoryScanner;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -132,7 +133,11 @@ public abstract class AbstractScmCommitPhase
             for ( MavenProject project : reactorProjects )
             {
                 List<File> pomFiles = createPomFiles( releaseDescriptor, project );
-                ScmFileSet fileSet = new ScmFileSet( project.getFile().getParentFile(), pomFiles );
+                List<File> additionalFiles = createAdditionalFiles(releaseDescriptor, project) ;
+                List<File> files = new ArrayList<File>() ;
+                files.addAll(pomFiles);
+                files.addAll(additionalFiles) ;
+                ScmFileSet fileSet = new ScmFileSet( project.getFile().getParentFile(), files );
 
                 checkin( provider, repository, fileSet, releaseDescriptor, message );
             }
@@ -140,7 +145,11 @@ public abstract class AbstractScmCommitPhase
         else
         {
             List<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
-            ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), pomFiles );
+            List<File> additionalFiles = createAdditionalFiles(releaseDescriptor, reactorProjects) ;
+            List<File> files = new ArrayList<File>() ;
+            files.addAll(pomFiles);
+            files.addAll(additionalFiles) ;
+            ScmFileSet fileSet = new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ), files );
 
             checkin( provider, repository, fileSet, releaseDescriptor, message );
         }
@@ -174,7 +183,11 @@ public abstract class AbstractScmCommitPhase
                                      String message )
     {
         Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
-        logInfo( result, "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
+        Collection<File> additionalFiles = createAdditionalFiles(releaseDescriptor, reactorProjects) ;
+        Collection<File> files = new ArrayList<File>() ;
+        files.addAll(pomFiles) ;
+        files.addAll(additionalFiles) ;
+        logInfo( result, "Full run would be commit " + files.size() + " files with message: '" + message + "'" ); 
     }
 
     protected void validateConfiguration( ReleaseDescriptor releaseDescriptor )
@@ -214,5 +227,44 @@ public abstract class AbstractScmCommitPhase
             pomFiles.addAll( createPomFiles( releaseDescriptor, project ) );
         }
         return pomFiles;
+    }
+    
+    protected static List<File> createAdditionalFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )
+    {
+        
+    	List<File> additionalFiles = new ArrayList<File>();
+    	if(releaseDescriptor.getAdditionalCommittedIncludes() != null) {
+	    	String[] additionalIncludes = releaseDescriptor.getAdditionalCommittedIncludes().replaceAll( "\\s", "" ).split( "," ); ;
+	    	
+	    	if(additionalIncludes != null && additionalIncludes.length !=0) {
+		    	
+		        File baseDir = project.getBasedir() ;
+		        
+		        DirectoryScanner scanner = new DirectoryScanner();
+		        scanner.setBasedir(baseDir);
+		        scanner.setIncludes(additionalIncludes);
+		        
+		        scanner.scan(); 
+		        
+		        if(scanner.getIncludedFiles() != null) {
+		        	for(String file : scanner.getIncludedFiles()) {
+		        		additionalFiles.add(new File(baseDir, file)) ;
+		        	}
+		        }
+		        
+	    	}
+    	}
+
+        return additionalFiles;
+    }
+
+    protected static List<File> createAdditionalFiles( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
+    {
+        List<File> additionalFiles = new ArrayList<File>();
+        for ( MavenProject project : reactorProjects )
+        {
+            additionalFiles.addAll( createAdditionalFiles( releaseDescriptor, project ) );
+        }
+        return additionalFiles;
     }
 }

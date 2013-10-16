@@ -489,6 +489,16 @@
             with @{ and }
           </description>
         </field>
+        
+ 		<field>
+          <name>additionalCommittedIncludes</name>
+          <version>2.3.1+</version>
+          <type>String</type>
+          <description>
+            In some exceptions you want to commit some changes to the repository in addition to pom files. Changes
+            to files listed here will be committed.
+          </description>
+        </field>        
 
         <!-- Announcement Information
 
@@ -819,6 +829,11 @@
         {
             return false;
         }
+        if ( !safeEquals( additionalCommittedIncludes, that.additionalCommittedIncludes ) )
+        {
+            return false;
+        }
+        
 
         return true;
     }
@@ -939,6 +954,7 @@
         result = 29 * result + ( performGoals != null ? performGoals.hashCode() : 0 );
         result = 29 * result + ( defaultReleaseVersion != null ? defaultReleaseVersion.hashCode() : 0 );
         result = 29 * result + ( scmReleasedPomRevision != null ? scmReleasedPomRevision.hashCode() : 0 );
+		result = 29 * result + ( additionalCommittedIncludes != null ? additionalCommittedIncludes.hashCode() : 0 );
 
         return result;
     }

@@ -21,6 +21,7 @@ package org.apache.maven.plugins.release;
 
 import java.util.Arrays;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -218,6 +219,22 @@ public class PrepareReleaseMojo
     private int waitBeforeTagging;
 
     /**
+     * A list of additional include filters that will be commited with pom files. 
+     * 
+     * @since 2.4.2
+     */
+    @Parameter
+    private String[] additionalCommittedIncludes;
+    
+    /**
+     * Command-line version of additionalCommittedIncludes.
+     * 
+     * @since 2.4.2
+     */
+    @Parameter( property = "additionalCommittedIncludeList" )
+    private String additionalCommittedIncludeList;   
+    
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -265,6 +282,16 @@ public class PrepareReleaseMojo
         if ( checkModificationExcludes != null )
         {
             config.setCheckModificationExcludes( Arrays.asList( checkModificationExcludes ) );
+        }
+        
+        if ( additionalCommittedIncludeList != null )
+        {
+        	additionalCommittedIncludes = additionalCommittedIncludeList.replaceAll( "\\s", "" ).split( "," );
+        }
+
+        if ( additionalCommittedIncludes != null )
+        {
+            config.setAdditionalCommittedIncludes(StringUtils.join( additionalCommittedIncludes,"," ) );
         }
 
         // Create a config containing values from the session properties (ie command line properties with cli).
