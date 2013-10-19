@@ -24,6 +24,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -32,12 +33,21 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Writer;
 
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.cli.Arg;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.mockito.ArgumentCaptor;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
 /**
  * Test the forked Maven executor.
@@ -48,6 +58,8 @@ public class ForkedMavenExecutorTest
     extends PlexusTestCase
 {
     private ForkedMavenExecutor executor;
+    
+    private SecDispatcher secDispatcher;
 
     protected void setUp()
         throws Exception
@@ -55,6 +67,8 @@ public class ForkedMavenExecutorTest
         super.setUp();
 
         executor = (ForkedMavenExecutor) lookup( MavenExecutor.ROLE, "forked-path" );
+        
+        secDispatcher = (SecDispatcher) lookup( SecDispatcher.ROLE, "mng-4384" );
     }
 
     public void testExecution()
@@ -288,5 +302,68 @@ public class ForkedMavenExecutorTest
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
         
         verifyNoMoreInteractions( commandLineMock, argMock, commandLineFactoryMock );
+    }
+    
+    public void testEncryptSettings()
+        throws Exception
+    {
+        // prepare
+        File workingDirectory = getTestFile( "target/working-directory" );
+        Process mockProcess = mock( Process.class );
+        when( mockProcess.getInputStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getErrorStream() ).thenReturn( mock( InputStream.class ) );
+        when( mockProcess.getOutputStream() ).thenReturn( mock( OutputStream.class ) );
+        when( mockProcess.waitFor() ).thenReturn( 0 );
+
+        Commandline commandLineMock = mock( Commandline.class );
+        when( commandLineMock.execute() ).thenReturn( mockProcess );
+
+        Arg valueArgument = mock( Arg.class );
+        when( commandLineMock.createArg() ).thenReturn( valueArgument );
+
+        CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
+        when( commandLineFactoryMock.createCommandLine( isA( String.class ) /* "mvn" */) ).thenReturn( commandLineMock );
+
+        executor.setCommandLineFactory( commandLineFactoryMock );
+
+        Settings settings = new Settings();
+        Server server = new Server();
+        server.setPassphrase( "server_passphrase" );
+        server.setPassword( "server_password" );
+        settings.addServer( server );
+        Proxy proxy = new Proxy();
+        proxy.setPassword( "proxy_password" );
+        settings.addProxy( proxy );
+
+        ReleaseEnvironment releaseEnvironment = new DefaultReleaseEnvironment();
+        releaseEnvironment.setSettings( settings );
+
+        AbstractMavenExecutor executorSpy = spy( executor );
+        SettingsXpp3Writer settingsWriter = mock( SettingsXpp3Writer.class );
+
+        ArgumentCaptor<Settings> encryptedSettings = ArgumentCaptor.forClass( Settings.class );
+
+        when( executorSpy.getSettingsWriter() ).thenReturn( settingsWriter );
+
+        executorSpy.executeGoals( workingDirectory, "validate", releaseEnvironment, false, null, new ReleaseResult() );
+
+        verify( settingsWriter ).write( isA( Writer.class ), encryptedSettings.capture() );
+
+        assertNotSame( settings, encryptedSettings.getValue() );
+
+        Server encryptedServer = encryptedSettings.getValue().getServers().get( 0 );
+        assertEquals( "server_passphrase", secDispatcher.decrypt( encryptedServer.getPassphrase() ) );
+        assertEquals( "server_password", secDispatcher.decrypt( encryptedServer.getPassword() ) );
+
+        Proxy encryptedProxy = encryptedSettings.getValue().getProxies().get( 0 );
+        assertEquals( "proxy_password", secDispatcher.decrypt( encryptedProxy.getPassword() ) );
+
+        File settingsSecurity = new File( System.getProperty( "user.home" ), ".m2/settings-security.xml" );
+        if ( settingsSecurity.exists() )
+        {
+            assertFalse( "server_passphrase".equals( encryptedServer.getPassphrase() ) );
+            assertFalse( "server_password".equals( encryptedServer.getPassword() ) );
+            assertFalse( "proxy_password".equals( encryptedProxy.getPassword() ) );
+        }
     }
 }

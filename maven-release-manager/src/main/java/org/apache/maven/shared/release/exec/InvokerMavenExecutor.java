@@ -176,7 +176,7 @@ public class InvokerMavenExecutor
 
     // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
     protected void setupRequest( InvocationRequest req,
-                                 LoggerBridge bridge,
+                                 InvokerLogger bridge,
                                String additionalArguments )
         throws MavenExecutorException
     {
@@ -327,8 +327,8 @@ public class InvokerMavenExecutor
                               ReleaseResult result )
         throws MavenExecutorException
     {
-        Handler handler = new Handler( getLogger() );
-        LoggerBridge bridge = new LoggerBridge( getLogger() );
+        InvocationOutputHandler handler = getOutputHandler();
+        InvokerLogger bridge = getInvokerLogger();
 
         Invoker invoker =
             new DefaultInvoker().setMavenHome( releaseEnvironment.getMavenHome() ).setLogger( bridge ).setOutputHandler(
@@ -350,12 +350,12 @@ public class InvokerMavenExecutor
             try
             {
                 settingsFile = File.createTempFile( "release-settings", ".xml" );
-                SettingsXpp3Writer writer = new SettingsXpp3Writer();
+                SettingsXpp3Writer writer = getSettingsWriter();
                 FileWriter fileWriter = null;
                 try
                 {
                     fileWriter = new FileWriter( settingsFile );
-                    writer.write( fileWriter, releaseEnvironment.getSettings() );
+                    writer.write( fileWriter, encryptSettings( releaseEnvironment.getSettings() ) );
                 }
                 finally
                 {
@@ -408,6 +408,16 @@ public class InvokerMavenExecutor
                 settingsFile.deleteOnExit();
             }
         }
+    }
+
+    protected InvokerLogger getInvokerLogger()
+    {
+        return new LoggerBridge( getLogger() );
+    }
+
+    protected InvocationOutputHandler getOutputHandler()
+    {
+        return new Handler( getLogger() );
     }
 
     private static final class Handler

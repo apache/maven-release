@@ -77,12 +77,12 @@ public class ForkedMavenExecutor
             try
             {
                 settingsFile = File.createTempFile( "release-settings", ".xml" );
-                SettingsXpp3Writer writer = new SettingsXpp3Writer();
+                SettingsXpp3Writer writer = getSettingsWriter();
                 FileWriter fileWriter = null;
                 try
                 {
                     fileWriter = new FileWriter( settingsFile );
-                    writer.write( fileWriter, releaseEnvironment.getSettings() );
+                    writer.write( fileWriter, encryptSettings( releaseEnvironment.getSettings() ) );
                 }
                 finally
                 {

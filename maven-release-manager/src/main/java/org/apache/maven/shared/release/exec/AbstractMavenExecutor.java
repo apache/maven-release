@@ -19,16 +19,28 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Server;
+import org.apache.maven.settings.Settings;
+import org.apache.maven.settings.SettingsUtils;
+import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.logging.LogEnabled;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
+import org.sonatype.plexus.components.cipher.PlexusCipher;
+import org.sonatype.plexus.components.cipher.PlexusCipherException;
+import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
+import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
+import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
 
 public abstract class AbstractMavenExecutor
     implements MavenExecutor, LogEnabled
@@ -36,6 +48,19 @@ public abstract class AbstractMavenExecutor
 
     private Logger logger;
 
+    /**
+     * When this plugin requires Maven 3.0 as minimum, this component can be removed and o.a.m.s.c.SettingsDecrypter be
+     * used instead.
+     * 
+     * @plexus.requirement role="org.sonatype.plexus.components.sec.dispatcher.SecDispatcher" role-hint="mng-4384"
+     */
+    private DefaultSecDispatcher secDispatcher;
+
+    /**
+     * @plexus.requirement
+     */
+    private PlexusCipher cipher;
+    
     protected AbstractMavenExecutor()
     {
     }
@@ -99,5 +124,122 @@ public abstract class AbstractMavenExecutor
     public void enableLogging( Logger logger )
     {
         this.logger = logger;
+    }
+
+    
+    protected Settings encryptSettings( Settings settings )
+    {
+        Settings encryptedSettings = SettingsUtils.copySettings( settings );
+        
+        for ( Server server : encryptedSettings.getServers() )
+        {
+            String password = server.getPassword(); 
+            if( password != null && !isEncryptedString( password ) )
+            {
+                try
+                {
+                    server.setPassword( encryptAndDecorate( password ) );
+                }
+                catch ( IllegalStateException e )
+                {
+                    // ignore
+                }
+                catch ( SecDispatcherException e )
+                {
+                    // ignore
+                }
+                catch ( PlexusCipherException e )
+                {
+                    // ignore
+                }
+            }
+
+            String passphrase = server.getPassphrase(); 
+            if( passphrase != null && !isEncryptedString( passphrase ) )
+            {
+                try
+                {
+                    server.setPassphrase( encryptAndDecorate( passphrase ) );
+                }
+                catch ( IllegalStateException e )
+                {
+                    // ignore
+                }
+                catch ( SecDispatcherException e )
+                {
+                    // ignore
+                }
+                catch ( PlexusCipherException e )
+                {
+                    // ignore
+                }
+            }
+        }
+        
+        for ( Proxy proxy : encryptedSettings.getProxies() )
+        {
+            String password = proxy.getPassword();
+            if( password != null && !isEncryptedString( password ) )
+            {
+                try
+                {
+                    proxy.setPassword( encryptAndDecorate( password ) );
+                }
+                catch ( IllegalStateException e )
+                {
+                    // ignore
+                }
+                catch ( SecDispatcherException e )
+                {
+                    // ignore
+                }
+                catch ( PlexusCipherException e )
+                {
+                    // ignore
+                }
+            }
+        }
+        
+        return encryptedSettings;
+    }
+    
+    // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
+    private final String encryptAndDecorate( String passwd ) throws IllegalStateException, SecDispatcherException, PlexusCipherException
+    {
+        String configurationFile = secDispatcher.getConfigurationFile();
+
+        if ( configurationFile.startsWith( "~" ) )
+        {
+            configurationFile = System.getProperty( "user.home" ) + configurationFile.substring( 1 );
+        }
+
+        String file = System.getProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION, configurationFile );
+
+        String master = null;
+
+        SettingsSecurity sec = SecUtil.read( file, true );
+        if ( sec != null )
+        {
+            master = sec.getMaster();
+        }
+
+        if ( master == null )
+        {
+            throw new IllegalStateException( "Master password is not set in the setting security file: " + file );
+        }
+
+        DefaultPlexusCipher cipher = new DefaultPlexusCipher();
+        String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
+        return cipher.encryptAndDecorate( passwd, masterPasswd );
+    }
+    
+    private boolean isEncryptedString( String str )
+    {
+        return cipher.isEncryptedString( str );
+    }
+
+    protected SettingsXpp3Writer getSettingsWriter()
+    {
+        return new SettingsXpp3Writer();
     }
 }
