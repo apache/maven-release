@@ -336,7 +336,7 @@ public class InvokerMavenExecutor
 
         InvocationRequest req =
             new DefaultInvocationRequest().setDebug( getLogger().isDebugEnabled() ).setBaseDirectory(
-                workingDirectory ).setInteractive( interactive );
+                workingDirectory ).setInteractive( interactive ).setJavaHome( releaseEnvironment.getJavaHome() );
 
         if ( pomFileName != null )
         {

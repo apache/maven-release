@@ -70,6 +70,17 @@ public class ForkedMavenExecutor
             mavenPath = System.getProperty( "maven.home" );
         }
 
+        String javaHome = null;
+        // if null we use the current one
+        if ( releaseEnvironment.getJavaHome() != null )
+        {
+            javaHome = releaseEnvironment.getJavaHome().getAbsolutePath();
+        }
+        else
+        {
+            javaHome = System.getProperty( "java.home" );
+        }
+
         File settingsFile = null;
         if ( releaseEnvironment.getSettings() != null )
         {
@@ -105,6 +116,8 @@ public class ForkedMavenExecutor
             cl.addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
 
             cl.addEnvironment( "M2_HOME", mavenPath );
+
+            cl.addEnvironment( "JAVA_HOME", javaHome );
 
             if ( settingsFile != null )
             {
