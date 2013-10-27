@@ -134,7 +134,7 @@ public abstract class AbstractMavenExecutor
         for ( Server server : encryptedSettings.getServers() )
         {
             String password = server.getPassword(); 
-            if( password != null && !isEncryptedString( password ) )
+            if ( password != null && !isEncryptedString( password ) )
             {
                 try
                 {
@@ -155,7 +155,7 @@ public abstract class AbstractMavenExecutor
             }
 
             String passphrase = server.getPassphrase(); 
-            if( passphrase != null && !isEncryptedString( passphrase ) )
+            if ( passphrase != null && !isEncryptedString( passphrase ) )
             {
                 try
                 {
@@ -179,7 +179,7 @@ public abstract class AbstractMavenExecutor
         for ( Proxy proxy : encryptedSettings.getProxies() )
         {
             String password = proxy.getPassword();
-            if( password != null && !isEncryptedString( password ) )
+            if ( password != null && !isEncryptedString( password ) )
             {
                 try
                 {

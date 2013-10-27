@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -196,7 +195,7 @@ public class MapVersionsPhase
         if ( convertToBranch )
         {
             // no branch modification
-            if( !( releaseDescriptor.isUpdateBranchVersions()
+            if ( !( releaseDescriptor.isUpdateBranchVersions()
                           && ( ArtifactUtils.isSnapshot( project.getVersion() ) || releaseDescriptor.isUpdateVersionsToSnapshot() ) ) )
             {
                 return project.getVersion();
@@ -211,7 +210,7 @@ public class MapVersionsPhase
         else if ( releaseDescriptor.isBranchCreation() )
         {
             // no working copy modification
-            if( !( ArtifactUtils.isSnapshot( project.getVersion() )
+            if ( !( ArtifactUtils.isSnapshot( project.getVersion() )
                           && releaseDescriptor.isUpdateWorkingCopyVersions() ) )
             {
                 return project.getVersion();
@@ -222,7 +221,7 @@ public class MapVersionsPhase
         else
         {
             // no working copy modification
-            if( !( releaseDescriptor.isUpdateWorkingCopyVersions() ) )
+            if ( !( releaseDescriptor.isUpdateWorkingCopyVersions() ) )
             {
                 return project.getVersion();
             }
@@ -236,7 +235,7 @@ public class MapVersionsPhase
         String messageKey = null;
         try
         {
-            while( nextVersion == null || ArtifactUtils.isSnapshot( nextVersion ) != convertToSnapshot )
+            while ( nextVersion == null || ArtifactUtils.isSnapshot( nextVersion ) != convertToSnapshot )
             {
                 if ( suggestedVersion == null )
                 {
@@ -244,12 +243,12 @@ public class MapVersionsPhase
                     try
                     {
                         String baseVersion = null;
-                        if( convertToSnapshot )
+                        if ( convertToSnapshot )
                         {
                             baseVersion = getReleaseVersion( projectId, releaseDescriptor );
                         }
                         // unspecified and unmapped version, so use project version 
-                        if( baseVersion == null )
+                        if ( baseVersion == null )
                         {
                             baseVersion = project.getVersion();
                         }
@@ -257,7 +256,7 @@ public class MapVersionsPhase
                     }
                     catch ( VersionParseException e )
                     {
-                        if( releaseDescriptor.isInteractive() )
+                        if ( releaseDescriptor.isInteractive() )
                         {
                             try
                             {
@@ -271,7 +270,9 @@ public class MapVersionsPhase
                         }
                         else
                         {
-                            throw new ReleaseExecutionException( "Error parsing version, cannot determine next version: " + e.getMessage(), e );
+                            throw new ReleaseExecutionException(
+                                                                 "Error parsing version, cannot determine next version: "
+                                                                     + e.getMessage(), e );
                         }
                     }
                     suggestedVersion =
@@ -279,15 +280,14 @@ public class MapVersionsPhase
                                         : versionInfo.getReleaseVersionString(); 
                 }
                 
-                if( releaseDescriptor.isInteractive() )
+                if ( releaseDescriptor.isInteractive() )
                 {
-                    if( messageKey == null )
+                    if ( messageKey == null )
                     {
                         messageKey = getMapversionPromptKey( releaseDescriptor );
                     }
                     String message =
-                        MessageFormat.format( resourceBundle.getString( messageKey ),
-                                              project.getName(), projectId );
+                        MessageFormat.format( resourceBundle.getString( messageKey ), project.getName(), projectId );
                     nextVersion = prompter.prompt( message, suggestedVersion );
                     
                   //@todo validate next version, maybe with DefaultArtifactVersion

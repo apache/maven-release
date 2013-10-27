@@ -101,7 +101,7 @@ public class RewritePomsForDevelopmentPhase
 
     @SuppressWarnings( "unchecked" )
     @Override
-    protected Map<String,String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getDevelopmentVersions();
     }

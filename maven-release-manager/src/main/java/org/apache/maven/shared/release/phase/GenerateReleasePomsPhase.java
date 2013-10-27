@@ -238,7 +238,7 @@ public class GenerateReleasePomsPhase
         {
             String originalFinalName = findOriginalFinalName( project );
             
-            if( originalFinalName == null )
+            if ( originalFinalName == null )
             {
                 // as defined in super-pom
                 originalFinalName = FINALNAME_EXPRESSION;
@@ -298,11 +298,12 @@ public class GenerateReleasePomsPhase
     
     private String findOriginalFinalName( MavenProject project )
     {
-        if ( project.getOriginalModel().getBuild() != null && project.getOriginalModel().getBuild().getFinalName() != null )
+        if ( project.getOriginalModel().getBuild() != null
+            && project.getOriginalModel().getBuild().getFinalName() != null )
         {
             return project.getOriginalModel().getBuild().getFinalName();
         }
-        else if( project.hasParent() )
+        else if ( project.hasParent() )
         {
             return findOriginalFinalName( project.getParent() );
         }

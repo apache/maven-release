@@ -310,7 +310,7 @@ public class InvokerMavenExecutor
                 }
             }
             
-            if( cli.hasOption( THREADS ) )
+            if ( cli.hasOption( THREADS ) )
             {
                 req.setThreads( cli.getOptionValue( THREADS ) );
             }

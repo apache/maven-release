@@ -207,7 +207,7 @@ public abstract class AbstractRewritePomsPhase
         ScmRepository scmRepository = null;
         ScmProvider provider = null;
 
-        if( isUpdateScm() )
+        if ( isUpdateScm() )
         {
             try
             {
@@ -265,8 +265,9 @@ public abstract class AbstractRewritePomsPhase
         Namespace namespace = rootElement.getNamespace();
         Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
         Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects, simulate );
-        @SuppressWarnings("unchecked")
-		Map<String, Map<String, String>> resolvedSnapshotDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
+        @SuppressWarnings( "unchecked" )
+        Map<String, Map<String, String>> resolvedSnapshotDependencies =
+            releaseDescriptor.getResolvedSnapshotDependencies();
         Model model = project.getModel();
         Element properties = rootElement.getChild( "properties", namespace );
 
@@ -499,7 +500,7 @@ public abstract class AbstractRewritePomsPhase
                 // incomplete element
                 continue;
             }
-            String artifactId = ReleaseUtil.interpolate( artifactIdElement.getTextTrim(), projectModel);
+            String artifactId = ReleaseUtil.interpolate( artifactIdElement.getTextTrim(), projectModel );
 
             String key = ArtifactUtils.versionlessKey( groupId, artifactId );
             String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
@@ -730,10 +731,11 @@ public abstract class AbstractRewritePomsPhase
         return result;
     }
 
-    protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String,String>> resolvedSnapshots );
+    protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey,
+                                                          Map<String, Map<String, String>> resolvedSnapshots );
 
-    protected abstract Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
-                                                  boolean simulate );
+    protected abstract Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
+                                                                  List<MavenProject> reactorProjects, boolean simulate );
 
     protected abstract Map<String,String> getNextVersionMap( ReleaseDescriptor releaseDescriptor );
 
@@ -752,7 +754,8 @@ public abstract class AbstractRewritePomsPhase
         return true;
     }
 
-    protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshots )
+    protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey,
+                                                         Map<String, Map<String, String>> resolvedSnapshots )
     {
         Map<String, String> versionsMap = resolvedSnapshots.get( artifactVersionlessKey );
 
