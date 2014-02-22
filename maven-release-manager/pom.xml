@@ -136,7 +136,7 @@
     <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-manager-plexus</artifactId>
-      <version>${scmVersion}</version>
+      <version>1.8</version> <!-- watch it!! Don't use 1.8.1 or 1.9, unittests will fail!! -->
       <scope>runtime</scope>
     </dependency>
     <dependency>
