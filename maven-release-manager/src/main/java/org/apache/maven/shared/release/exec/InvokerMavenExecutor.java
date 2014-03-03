@@ -330,8 +330,27 @@ public class InvokerMavenExecutor
         InvocationOutputHandler handler = getOutputHandler();
         InvokerLogger bridge = getInvokerLogger();
 
+        File mavenPath = null;
+        // if null we use the current one
+        if ( releaseEnvironment.getMavenHome() != null )
+        {
+            mavenPath = releaseEnvironment.getMavenHome();
+        }
+        else
+        {
+            String mavenHome = System.getProperty( "maven.home" );
+            if ( mavenHome == null )
+            {
+                mavenHome = System.getenv("MAVEN_HOME");
+            }
+            if ( mavenHome == null )
+            {
+                mavenHome = System.getenv("M2_HOME");
+            }
+            mavenPath = mavenHome == null ? null : new File( mavenHome );
+        }
         Invoker invoker =
-            new DefaultInvoker().setMavenHome( releaseEnvironment.getMavenHome() ).setLogger( bridge ).setOutputHandler(
+            new DefaultInvoker().setMavenHome( mavenPath ).setLogger( bridge ).setOutputHandler(
                 handler ).setErrorHandler( handler );
 
         InvocationRequest req =
