@@ -101,6 +101,10 @@
           <role>org.codehaus.plexus.components.interactivity.Prompter</role>
           <role-hint>default</role-hint>
         </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+          <field-name>versionPolicies</field-name>
+        </requirement>
       </requirements>
     </component>
     <component>
@@ -114,6 +118,10 @@
         <requirement>
           <role>org.codehaus.plexus.components.interactivity.Prompter</role>
           <role-hint>default</role-hint>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+          <field-name>versionPolicies</field-name>
         </requirement>
       </requirements>
     </component>
@@ -129,6 +137,10 @@
         <requirement>
           <role>org.codehaus.plexus.components.interactivity.Prompter</role>
           <role-hint>default</role-hint>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+          <field-name>versionPolicies</field-name>
         </requirement>
       </requirements>
     </component>

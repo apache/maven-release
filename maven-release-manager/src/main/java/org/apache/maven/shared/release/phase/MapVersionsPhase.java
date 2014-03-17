@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.ArtifactUtils;
@@ -29,8 +30,10 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.policy.PolicyException;
+import org.apache.maven.shared.release.policy.version.VersionPolicy;
+import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
@@ -81,6 +84,12 @@ public class MapVersionsPhase
      * Component used to prompt for input.
      */
     private Prompter prompter;
+    
+    
+    /**
+     * Component used for custom or default version policy
+     */
+    private Map<String, VersionPolicy> versionPolicies;
 
     void setPrompter( Prompter prompter )
     {
@@ -239,46 +248,46 @@ public class MapVersionsPhase
             {
                 if ( suggestedVersion == null )
                 {
-                    DefaultVersionInfo versionInfo;
+                    String baseVersion = null;
+                    if ( convertToSnapshot )
+                    {
+                        baseVersion = getReleaseVersion( projectId, releaseDescriptor );
+                    }
+                    // unspecified and unmapped version, so use project version 
+                    if ( baseVersion == null )
+                    {
+                        baseVersion = project.getVersion();
+                    }
+                    
                     try
                     {
-                        String baseVersion = null;
-                        if ( convertToSnapshot )
+                        try
                         {
-                            baseVersion = getReleaseVersion( projectId, releaseDescriptor );
+                            suggestedVersion = resolveSuggestedVersion( baseVersion );
                         }
-                        // unspecified and unmapped version, so use project version 
-                        if ( baseVersion == null )
+                        catch ( VersionParseException e )
                         {
-                            baseVersion = project.getVersion();
+                            if ( releaseDescriptor.isInteractive() )
+                            {
+                                suggestedVersion = resolveSuggestedVersion( "1.0" );
+                            }
+                            else
+                            {
+                                throw new ReleaseExecutionException(
+                                                                     "Error parsing version, cannot determine next version: "
+                                                                         + e.getMessage(), e );
+                            }
                         }
-                        versionInfo = new DefaultVersionInfo( baseVersion );
+                    }
+                    catch ( PolicyException e )
+                    {
+                        throw new ReleaseExecutionException( e.getMessage(), e );
                     }
                     catch ( VersionParseException e )
                     {
-                        if ( releaseDescriptor.isInteractive() )
-                        {
-                            try
-                            {
-                                versionInfo = new DefaultVersionInfo( "1.0" );
-                            }
-                            catch ( VersionParseException e1 )
-                            {
-                                // if that happens we are in serious trouble!
-                                throw new ReleaseExecutionException( "Version 1.0 could not be parsed!", e1 );
-                            }
-                        }
-                        else
-                        {
-                            throw new ReleaseExecutionException(
-                                                                 "Error parsing version, cannot determine next version: "
-                                                                     + e.getMessage(), e );
-                        }
+                        throw new ReleaseExecutionException( e.getMessage(), e );
                     }
-                    suggestedVersion =
-                        convertToSnapshot ? versionInfo.getNextVersion().getSnapshotVersionString()
-                                        : versionInfo.getReleaseVersionString(); 
-                }
+               }
                 
                 if ( releaseDescriptor.isInteractive() )
                 {
@@ -305,10 +314,20 @@ public class MapVersionsPhase
         return nextVersion;
     }
 
+    private String resolveSuggestedVersion( String baseVersion )
+        throws PolicyException, VersionParseException
+    {
+        // right now only default available
+        VersionPolicy policy = versionPolicies.get( "default" );
+        VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
+
+        return convertToSnapshot ? policy.getDevelopmentVersion( request ).getVersion()
+                        : policy.getReleaseVersion( request ).getVersion();
+    }
+
     private String getDevelopmentVersion( String projectId, ReleaseDescriptor releaseDescriptor )
     {
-        String defaultVersion;
-        defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
+        String defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
         if ( StringUtils.isEmpty( defaultVersion ) )
         {
             defaultVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );

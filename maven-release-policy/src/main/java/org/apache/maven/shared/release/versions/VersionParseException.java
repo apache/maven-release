@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.policy.version;
+package org.apache.maven.shared.release.versions;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,13 +19,11 @@ package org.apache.maven.shared.release.policy.version;
  * under the License.
  */
 
-import org.apache.maven.shared.release.policy.PolicyException;
-import org.apache.maven.shared.release.versions.VersionParseException;
-
-public interface VersionPolicy
+public class VersionParseException
+    extends Exception
 {
-
-    public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request ) throws PolicyException, VersionParseException;
-    
-    public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request ) throws PolicyException, VersionParseException;
+    public VersionParseException( String message )
+    {
+        super( message );
+    }
 }

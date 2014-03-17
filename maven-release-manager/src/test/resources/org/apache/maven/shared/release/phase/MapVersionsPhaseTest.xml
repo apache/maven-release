@@ -26,6 +26,12 @@
       <configuration>
         <convertToSnapshot>true</convertToSnapshot>
       </configuration>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+          <field-name>versionPolicies</field-name>
+        </requirement>
+      </requirements>
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
@@ -34,6 +40,12 @@
       <configuration>
         <convertToSnapshot>false</convertToSnapshot>
       </configuration>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+          <field-name>versionPolicies</field-name>
+        </requirement>
+      </requirements>
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
@@ -43,6 +55,12 @@
         <convertToSnapshot>true</convertToSnapshot>
         <convertToBranch>true</convertToBranch>
       </configuration>
+      <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+          <field-name>versionPolicies</field-name>
+        </requirement>
+      </requirements>
     </component>
     <!-- Turn off info messages -->
     <component>
@@ -52,6 +70,13 @@
       <configuration>
         <threshold>ERROR</threshold>
       </configuration>
+    </component>
+    <!-- For now always use default version policy -->
+    <component>
+      <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+      <role-hint>default</role-hint>
+      <implementation>org.apache.maven.shared.release.policies.DefaultVersionPolicy</implementation>
+      <isolated-realm>false</isolated-realm>
     </component>
   </components>
 </component-set>

@@ -33,4 +33,5 @@
       <artifactId>maven-repository-metadata</artifactId>
     </dependency>
   </dependencies>
+  <name>Maven Release Policy</name>
 </project>
