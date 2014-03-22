@@ -434,6 +434,15 @@
             Default version to use for new working copy.
           </description>
         </field>
+        <field>
+          <name>projectVersionPolicyId</name>
+          <version>2.5.1+</version>
+          <type>String</type>
+          <defaultValue>default</defaultValue>
+          <description>
+            The role-hint for the VersionPolicy implementation used to calculate the project versions.
+          </description>
+        </field>
 
         <field>
           <name>remoteTagging</name>

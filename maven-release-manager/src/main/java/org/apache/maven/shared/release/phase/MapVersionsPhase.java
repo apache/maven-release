@@ -263,13 +263,13 @@ public class MapVersionsPhase
                     {
                         try
                         {
-                            suggestedVersion = resolveSuggestedVersion( baseVersion );
+                            suggestedVersion = resolveSuggestedVersion( baseVersion, releaseDescriptor.getProjectVersionPolicyId() );
                         }
                         catch ( VersionParseException e )
                         {
                             if ( releaseDescriptor.isInteractive() )
                             {
-                                suggestedVersion = resolveSuggestedVersion( "1.0" );
+                                suggestedVersion = resolveSuggestedVersion( "1.0", releaseDescriptor.getProjectVersionPolicyId() );
                             }
                             else
                             {
@@ -314,11 +314,11 @@ public class MapVersionsPhase
         return nextVersion;
     }
 
-    private String resolveSuggestedVersion( String baseVersion )
+    private String resolveSuggestedVersion( String baseVersion, String policyId )
         throws PolicyException, VersionParseException
     {
         // right now only default available
-        VersionPolicy policy = versionPolicies.get( "default" );
+        VersionPolicy policy = versionPolicies.get( policyId );
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
 
         return convertToSnapshot ? policy.getDevelopmentVersion( request ).getVersion()
