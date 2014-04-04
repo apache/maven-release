@@ -34,7 +34,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>maven-release-policy</artifactId>
+      <artifactId>maven-release-api</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
