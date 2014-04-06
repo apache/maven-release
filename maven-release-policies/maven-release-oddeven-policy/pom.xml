@@ -25,6 +25,7 @@
     <groupId>org.apache.maven.release</groupId>
     <artifactId>maven-release</artifactId>
     <version>3.0-SNAPSHOT</version>
+    <relativePath>../..</relativePath>
   </parent>
 
   <artifactId>maven-release-oddeven-policy</artifactId>
