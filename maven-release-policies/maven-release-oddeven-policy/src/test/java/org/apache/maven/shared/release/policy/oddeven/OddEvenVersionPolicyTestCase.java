@@ -64,6 +64,16 @@ public final class OddEvenVersionPolicyTestCase
         assertEquals( "1.0.0", suggestedVersion );
     }
 
+    @Test
+    public void testConvertOddToRelease()
+        throws Exception
+    {
+        String suggestedVersion = versionPolicy.getReleaseVersion( newVersionPolicyRequest( "1.0.1-SNAPSHOT" ) )
+                                               .getVersion();
+
+        assertEquals( "1.0.2", suggestedVersion );
+    }
+
     private static VersionPolicyRequest newVersionPolicyRequest( String version )
     {
         return new VersionPolicyRequest().setVersion( version );
