@@ -41,14 +41,14 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Map projects to their new versions after release / into the next development cycle.
- * 
+ *
  * The map-phases per goal are:
  * <dl>
  *  <dt>release:prepare</dt><dd>map-release-versions + map-development-versions; RD.isBranchCreation() = false</dd>
  *  <dt>release:branch</dt><dd>map-branch-versions + map-development-versions; RD.isBranchCreation() = true</dd>
  *  <dt>release:update-versions</dt><dd>map-development-versions; RD.isBranchCreation() = false</dd>
  * </dl>
- * 
+ *
  * <p>
  * <table>
  *   <tr>
@@ -69,7 +69,7 @@ public class MapVersionsPhase
     extends AbstractReleasePhase
 {
     private ResourceBundle resourceBundle;
-    
+
     /**
      * Whether to convert to a snapshot or a release.
      */
@@ -84,8 +84,8 @@ public class MapVersionsPhase
      * Component used to prompt for input.
      */
     private Prompter prompter;
-    
-    
+
+
     /**
      * Component used for custom or default version policy
      */
@@ -101,7 +101,7 @@ public class MapVersionsPhase
         throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
-        
+
         resourceBundle = getResourceBundle( releaseEnvironment.getLocale() );
 
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
@@ -194,8 +194,8 @@ public class MapVersionsPhase
         return result;
     }
 
-    private String resolveNextVersion( MavenProject project, 
-                                   String projectId, 
+    private String resolveNextVersion( MavenProject project,
+                                   String projectId,
                                    ReleaseDescriptor releaseDescriptor,
                                    ReleaseResult result )
         throws ReleaseExecutionException
@@ -209,7 +209,7 @@ public class MapVersionsPhase
             {
                 return project.getVersion();
             }
-            
+
             defaultVersion = getReleaseVersion( projectId, releaseDescriptor );
         }
         else if ( !convertToSnapshot ) // map-release-version
@@ -224,7 +224,7 @@ public class MapVersionsPhase
             {
                 return project.getVersion();
             }
-            
+
             defaultVersion = getDevelopmentVersion( projectId, releaseDescriptor );
         }
         else
@@ -234,11 +234,11 @@ public class MapVersionsPhase
             {
                 return project.getVersion();
             }
-            
+
             defaultVersion = getDevelopmentVersion( projectId, releaseDescriptor );
         }
         //@todo validate default version, maybe with DefaultArtifactVersion
-        
+
         String suggestedVersion = null;
         String nextVersion = defaultVersion;
         String messageKey = null;
@@ -253,12 +253,12 @@ public class MapVersionsPhase
                     {
                         baseVersion = getReleaseVersion( projectId, releaseDescriptor );
                     }
-                    // unspecified and unmapped version, so use project version 
+                    // unspecified and unmapped version, so use project version
                     if ( baseVersion == null )
                     {
                         baseVersion = project.getVersion();
                     }
-                    
+
                     try
                     {
                         try
@@ -288,7 +288,7 @@ public class MapVersionsPhase
                         throw new ReleaseExecutionException( e.getMessage(), e );
                     }
                }
-                
+
                 if ( releaseDescriptor.isInteractive() )
                 {
                     if ( messageKey == null )
@@ -298,7 +298,7 @@ public class MapVersionsPhase
                     String message =
                         MessageFormat.format( resourceBundle.getString( messageKey ), project.getName(), projectId );
                     nextVersion = prompter.prompt( message, suggestedVersion );
-                    
+
                   //@todo validate next version, maybe with DefaultArtifactVersion
                 }
                 else
@@ -317,7 +317,6 @@ public class MapVersionsPhase
     private String resolveSuggestedVersion( String baseVersion, String policyId )
         throws PolicyException, VersionParseException
     {
-        // right now only default available
         VersionPolicy policy = versionPolicies.get( policyId );
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
 
@@ -344,7 +343,7 @@ public class MapVersionsPhase
         }
         return nextVersion;
     }
-    
+
 
     private String getMapversionPromptKey( ReleaseDescriptor releaseDescriptor )
     {

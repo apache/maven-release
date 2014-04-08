@@ -36,7 +36,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  * used. This can be followed by a call to <tt>release:perform</tt>. For more info see <a
  * href="http://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html"
  * >http://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html</a>.
- * 
+ *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
@@ -69,7 +69,7 @@ public class PrepareReleaseMojo
 
     /**
      * Whether to update dependencies version to the next development version.
-     * 
+     *
      * @since 2.0-beta-5
      */
     @Parameter( defaultValue = "true", property = "updateDependencies" )
@@ -78,7 +78,7 @@ public class PrepareReleaseMojo
     /**
      * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
      * version of each submodules.
-     * 
+     *
      * @since 2.0-beta-5
      */
     @Parameter( defaultValue = "false", property = "autoVersionSubmodules" )
@@ -108,7 +108,7 @@ public class PrepareReleaseMojo
     /**
      * Goals to run on completion of the preparation step, after transformation back to the next development version but
      * before committing. Space delimited.
-     * 
+     *
      * @since 2.2
      */
     @Parameter( defaultValue = "", property = "completionGoals" )
@@ -116,7 +116,7 @@ public class PrepareReleaseMojo
 
     /**
      * Commits to do are atomic or by project.
-     * 
+     *
      * @since 2.0-beta-5
      */
     @Parameter( defaultValue = "false", property = "commitByProject" )
@@ -124,7 +124,7 @@ public class PrepareReleaseMojo
 
     /**
      * Whether to allow timestamped SNAPSHOT dependencies. Default is to fail when finding any SNAPSHOT.
-     * 
+     *
      * @since 2.0-beta-7
      */
     @Parameter( defaultValue = "false", property = "ignoreSnapshots" )
@@ -133,7 +133,7 @@ public class PrepareReleaseMojo
     /**
      * Whether to allow usage of a SNAPSHOT version of the Release Plugin. This in an internal property used to support
      * testing of the plugin itself in batch mode.
-     * 
+     *
      * @since 2.0-beta-9
      */
     @Parameter( defaultValue = "false", property = "allowReleasePluginSnapshot", readonly = true )
@@ -142,7 +142,7 @@ public class PrepareReleaseMojo
     /**
      * A list of additional exclude filters that will be skipped when checking for modifications on the working copy. Is
      * ignored, when checkModificationExcludes is set.
-     * 
+     *
      * @since 2.1
      */
     @Parameter
@@ -150,7 +150,7 @@ public class PrepareReleaseMojo
 
     /**
      * Command-line version of checkModificationExcludes.
-     * 
+     *
      * @since 2.1
      */
     @Parameter( property = "checkModificationExcludeList" )
@@ -158,7 +158,7 @@ public class PrepareReleaseMojo
 
     /**
      * Default version to use when preparing a release or a branch.
-     * 
+     *
      * @since 2.0-beta-8
      */
     @Parameter( property = "releaseVersion" )
@@ -166,7 +166,7 @@ public class PrepareReleaseMojo
 
     /**
      * Default version to use for new local working copy.
-     * 
+     *
      * @since 2.0-beta-8
      */
     @Parameter( property = "developmentVersion" )
@@ -180,15 +180,15 @@ public class PrepareReleaseMojo
      * <li>You may not want to use this in conjunction with <code>suppressCommitBeforeTag</code>, such that no poms with
      * released versions are committed to the working copy ever.</li>
      * </ul>
-     * 
+     *
      * @since 2.0-beta-9
      */
-    @Parameter( defaultValue = "true", property = "remoteTagging" ) 
+    @Parameter( defaultValue = "true", property = "remoteTagging" )
     private boolean remoteTagging;
 
     /**
      * Whether to bump the working copy versions to <code>developmentVersion</code>.
-     * 
+     *
      * @since 2.1
      */
     @Parameter( defaultValue = "true", property = "updateWorkingCopyVersions" )
@@ -201,21 +201,29 @@ public class PrepareReleaseMojo
      * <br/>
      * <code>suppressCommitBeforeTag</code> is useful when you want to avoid poms with released versions in all
      * revisions of your trunk or development branch.
-     * 
+     *
      * @since 2.1
      */
-    @Parameter( defaultValue = "false", property = "suppressCommitBeforeTag" ) 
+    @Parameter( defaultValue = "false", property = "suppressCommitBeforeTag" )
     private boolean suppressCommitBeforeTag;
 
     /**
      * Wait the specified number of second before creating the tag. <br/>
      * <code>waitBeforeTagging</code> is useful when your source repository is synced between several instances and
      * access to it is determined by geographical location, like the SVN repository at the Apache Software Foundation.
-     * 
+     *
      * @since 2.2
      */
     @Parameter( defaultValue = "0", property = "waitBeforeTagging" )
     private int waitBeforeTagging;
+
+    /**
+     * The {@code VersionPolicy} ID.
+     *
+     * @since 3.0
+     */
+    @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
+    private String projectVersionPolicyId;
 
     /**
      * {@inheritDoc}
@@ -256,6 +264,7 @@ public class PrepareReleaseMojo
         config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );
         config.setWaitBeforeTagging( waitBeforeTagging );
+        config.setProjectVersionPolicyId( projectVersionPolicyId );
 
         if ( checkModificationExcludeList != null )
         {

@@ -53,16 +53,16 @@ public class PropertiesReleaseDescriptorStore
     extends AbstractLogEnabled
     implements ReleaseDescriptorStore
 {
-    
+
     /**
      * When this plugin requires Maven 3.0 as minimum, this component can be removed and o.a.m.s.c.SettingsDecrypter be
      * used instead.
-     * 
+     *
      * @plexus.requirement role="org.sonatype.plexus.components.sec.dispatcher.SecDispatcher" role-hint="mng-4384"
      */
-    
+
     private DefaultSecDispatcher secDispatcher;
-    
+
     public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
         throws ReleaseDescriptorStoreException
     {
@@ -226,6 +226,10 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "completionGoals", config.getCompletionGoals() );
         }
+        if ( config.getProjectVersionPolicyId() != null )
+        {
+            properties.setProperty( "projectVersionPolicyId", config.getProjectVersionPolicyId() );
+        }
 
         properties.setProperty( "exec.snapshotReleasePluginAllowed",
                                 Boolean.toString( config.isSnapshotReleasePluginAllowed() ) );
@@ -336,7 +340,7 @@ public class PropertiesReleaseDescriptorStore
     {
         return new File( mergeDescriptor.getWorkingDirectory(), "release.properties" );
     }
-    
+
     // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
     private String encryptAndDecorate( String passwd ) throws IllegalStateException, SecDispatcherException, PlexusCipherException
     {
