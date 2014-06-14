@@ -32,9 +32,16 @@ class MavenArtifactVersion
         this.version = new DefaultArtifactVersion( version );
     }
 
-    public int compareTo( ArtifactVersion o )
+    public int compareTo( Object o )
     {
-        return version.compareTo( o );
+        if ( o instanceof MavenArtifactVersion )
+        {
+            return version.compareTo( ( (MavenArtifactVersion) o ).version );
+        }
+        else
+        {
+            return version.compareTo( version );
+        }
     }
 
     public int getMajorVersion()
@@ -78,10 +85,25 @@ class MavenArtifactVersion
     {
         return this.version.hashCode();
     }
-
+    
     @Override
-    public boolean equals( Object obj )
+    public boolean equals( Object other )
     {
-        return this.version.equals( obj );
+        if ( this == other )
+        {
+            return true;
+        }
+        if ( other == null )
+        {
+            return false;
+        }
+
+        if ( other instanceof MavenArtifactVersion )
+        {
+            return version.equals( ( (MavenArtifactVersion) other ).version );
+        }
+        return false;
     }
+
+    
 }
