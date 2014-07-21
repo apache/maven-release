@@ -25,6 +25,7 @@
     <artifactId>maven-release</artifactId>
     <version>3.0-SNAPSHOT</version>
   </parent>
+
   <artifactId>maven-release-api</artifactId>
 
   <name>Maven Release APIs</name>
