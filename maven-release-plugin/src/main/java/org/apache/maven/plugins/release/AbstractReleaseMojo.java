@@ -55,12 +55,12 @@ public abstract class AbstractReleaseMojo
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
     private Settings settings;
 
     /**
      */
-    @Component
+    @Parameter( defaultValue = "${project}", readonly = true, required = true )
     protected MavenProject project;
 
     /**
@@ -120,7 +120,7 @@ public abstract class AbstractReleaseMojo
     /**
      * @since 2.0
      */
-    @Component
+    @Parameter( defaultValue = "${session}", readonly = true, required = true )
     protected MavenSession session;
 
     /**
