@@ -36,3 +36,9 @@ Maven Release
 *----------------------------------------------------------+----------------+
 | {{{/plugins/maven-release-plugin/}maven-release-plugin}} | release plugin to use from Maven.
 *----------------------------------------------------------+----------------+
+
+Notes for Developers
+
+  There are tests in this project which require you to set the M2_HOME
+  environment variable. Since many of the tests print error messages,
+  it is easy to forget about this and then be puzzled.
