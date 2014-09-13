@@ -208,7 +208,7 @@ public class PrepareReleaseMojo
     private boolean suppressCommitBeforeTag;
 
     /**
-     * Wait the specified number of second before creating the tag. <br/>
+     * Wait the specified number of seconds before creating the tag. <br/>
      * <code>waitBeforeTagging</code> is useful when your source repository is synced between several instances and
      * access to it is determined by geographical location, like the SVN repository at the Apache Software Foundation.
      *
