@@ -89,7 +89,7 @@ public class ScmTagPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( getPath(rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setScmCommentPrefix( "[my prefix]" );
+        descriptor.setScmCommentPrefix( "[my prefix] " );
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
@@ -127,7 +127,7 @@ public class ScmTagPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setScmCommentPrefix( "[my prefix]" );
+        descriptor.setScmCommentPrefix( "[my prefix] " );
         descriptor.setScmTagBase( "http://svn.example.com/repos/project/releases/" );
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
@@ -169,7 +169,7 @@ public class ScmTagPhaseTest
         descriptor.setScmSourceUrl( rootProject.getScm().getConnection() );
         descriptor.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setScmCommentPrefix( "[my prefix]" );
+        descriptor.setScmCommentPrefix( "[my prefix] " );
 
         // one directory up from root project
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile().getParentFile() );
@@ -213,7 +213,7 @@ public class ScmTagPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( getPath (rootProject.getFile().getParentFile() ) );
         descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setScmCommentPrefix( "[my prefix]" );
+        descriptor.setScmCommentPrefix( "[my prefix] " );
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 

@@ -100,7 +100,7 @@ public class ScmBranchPhase
             String branchName = releaseDescriptor.getScmReleaseLabel();
 
             ScmBranchParameters scmBranchParameters = new ScmBranchParameters();
-            scmBranchParameters.setMessage( releaseDescriptor.getScmCommentPrefix() + " copy for branch " + branchName );
+            scmBranchParameters.setMessage( releaseDescriptor.getScmCommentPrefix() + "copy for branch " + branchName );
             scmBranchParameters.setRemoteBranching( releaseDescriptor.isRemoteTagging() );
             scmBranchParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
 

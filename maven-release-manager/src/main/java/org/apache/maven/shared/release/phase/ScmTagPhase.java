@@ -113,7 +113,7 @@ public class ScmTagPhase
             ScmFileSet fileSet = new ScmFileSet( new File( basedirAlignedReleaseDescriptor.getWorkingDirectory() ) );
             String tagName = releaseDescriptor.getScmReleaseLabel();
             ScmTagParameters scmTagParameters =
-                new ScmTagParameters( releaseDescriptor.getScmCommentPrefix() + " copy for tag " + tagName );
+                new ScmTagParameters( releaseDescriptor.getScmCommentPrefix() + "copy for tag " + tagName );
             scmTagParameters.setRemoteTagging( releaseDescriptor.isRemoteTagging() );
             scmTagParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
             if ( getLogger().isDebugEnabled() )
