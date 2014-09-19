@@ -30,7 +30,7 @@ import org.apache.maven.shared.release.versions.VersionParseException;
  * 
  * @author Robert Scholte
  * 
- * @plexus.component role="org.apache.maven.shared.release.policy.version.VersionPolicy" hint="default"
+ * @plexus.component role="org.apache.maven.shared.release.policy.version.VersionPolicy" role-hint="default"
  */
 public class DefaultVersionPolicy implements VersionPolicy
 {
