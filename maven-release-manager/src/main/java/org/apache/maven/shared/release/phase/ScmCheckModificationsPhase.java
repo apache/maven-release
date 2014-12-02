@@ -94,7 +94,8 @@ public class ScmCheckModificationsPhase
             // SelectorUtils expects OS-specific paths and patterns
             for ( String additionalExclude : additionalExcludes )
             {
-                exclusionPatterns.add( additionalExclude.replace( "\\", File.separator ).replace( "/", File.separator ) );
+                exclusionPatterns.add( additionalExclude.replace( "\\", File.separator )
+                                       .replace( "/", File.separator ) );
             }
         }
 
@@ -106,7 +107,8 @@ public class ScmCheckModificationsPhase
         try
         {
             repository =
-                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                   releaseEnvironment.getSettings() );
 
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }

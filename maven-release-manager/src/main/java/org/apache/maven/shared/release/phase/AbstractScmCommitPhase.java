@@ -170,8 +170,8 @@ public abstract class AbstractScmCommitPhase
         }
     }
 
-    protected void simulateCheckins( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects, ReleaseResult result,
-                                     String message )
+    protected void simulateCheckins( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
+                                     ReleaseResult result, String message )
     {
         Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
         logInfo( result, "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
@@ -206,7 +206,8 @@ public abstract class AbstractScmCommitPhase
         return pomFiles;
     }
 
-    protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
+    protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor,
+                                                List<MavenProject> reactorProjects )
     {
         List<File> pomFiles = new ArrayList<File>();
         for ( MavenProject project : reactorProjects )

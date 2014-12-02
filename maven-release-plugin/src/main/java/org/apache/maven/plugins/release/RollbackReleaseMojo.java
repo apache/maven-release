@@ -27,15 +27,16 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
- * Rollback changes made by a previous release. This requires that the previous release descriptor <tt>release.properties</tt>
- * is still available in the local working copy.
- * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/rollback-release.html">http://maven.apache.org/plugins/maven-release-plugin/examples/rollback-release.html</a>.
+ * Rollback changes made by a previous release. This requires that the previous release descriptor
+ * <tt>release.properties</tt> is still available in the local working copy. For more info see <a
+ * href="http://maven.apache.org/plugins/maven-release-plugin/examples/rollback-release.html"
+ * >http://maven.apache.org/plugins/maven-release-plugin/examples/rollback-release.html</a>.
  *
  * @since 2.0-beta-5
  * @author Edwin Punzalan
  * @version $Id$
  */
-@Mojo( name="rollback", aggregator = true )
+@Mojo( name = "rollback", aggregator = true )
 public class RollbackReleaseMojo
     extends AbstractScmReleaseMojo
 {

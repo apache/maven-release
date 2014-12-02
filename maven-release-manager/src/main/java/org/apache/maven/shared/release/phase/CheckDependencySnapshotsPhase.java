@@ -91,7 +91,8 @@ public class CheckDependencySnapshotsPhase
     private Set<Artifact> usedSnapshotExtensions = new HashSet<Artifact>();
     private Set<Artifact> usedSnapshotPlugins = new HashSet<Artifact>();
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -116,7 +117,8 @@ public class CheckDependencySnapshotsPhase
         return result;
     }
 
-    private void checkProject( MavenProject project, Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor )
+    private void checkProject( MavenProject project, Map<String, String> originalVersions,
+                               ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         @SuppressWarnings( "unchecked" )
@@ -289,7 +291,9 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions, Map<String, Artifact> artifactMapByVersionlessId, ReleaseDescriptor releaseDescriptor )
+    private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions,
+                                          Map<String, Artifact> artifactMapByVersionlessId,
+                                          ReleaseDescriptor releaseDescriptor )
     {
         Artifact checkArtifact = getArtifactFromMap( artifact, artifactMapByVersionlessId );
 
@@ -308,14 +312,16 @@ public class CheckDependencySnapshotsPhase
         return checkArtifact;
     }
 
-    private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor )
+    private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions,
+                                          ReleaseDescriptor releaseDescriptor )
     {
         String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
 
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
         boolean result =
-            artifact.isSnapshot() && !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
+            artifact.isSnapshot()
+            && !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
 
         // If we have a snapshot but allowTimestampedSnapshots is true, accept the artifact if the version
         // indicates that it is a timestamped snapshot.
@@ -327,7 +333,8 @@ public class CheckDependencySnapshotsPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
@@ -357,8 +364,9 @@ public class CheckDependencySnapshotsPhase
         return message;
     }
 
-    private void resolveSnapshots( Set<Artifact> projectDependencies, Set<Artifact> reportDependencies, Set<Artifact> extensionDependencies,
-                                   Set<Artifact> pluginDependencies, ReleaseDescriptor releaseDescriptor )
+    private void resolveSnapshots( Set<Artifact> projectDependencies, Set<Artifact> reportDependencies,
+                                   Set<Artifact> extensionDependencies, Set<Artifact> pluginDependencies,
+                                   ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException
     {
         try
@@ -403,6 +411,8 @@ public class CheckDependencySnapshotsPhase
                     case 4:
                         resolvedSnapshots = processSnapshot( extensionDependencies );
                         break;
+
+                    default:
                 }
 
                 releaseDescriptor.getResolvedSnapshotDependencies().putAll( resolvedSnapshots );

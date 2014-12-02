@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.policy.version;
  * under the License.
  */
 
+/**
+ * 
+ */
 public class VersionPolicyResult
 {
     private String version;

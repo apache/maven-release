@@ -34,7 +34,8 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Perform a release from SCM, either from a specified tag, or the tag representing the previous release in
  * the working copy created by <tt>release:prepare</tt>.
- * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html">http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html</a>.
+ * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html"
+ * >http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
@@ -146,7 +147,7 @@ public class PerformReleaseMojo
                 releaseDescriptor.setScmUsername( username );
             }
             
-            if( password != null )
+            if ( password != null )
             {
                 releaseDescriptor.setScmPassword( password );
             }

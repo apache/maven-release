@@ -44,12 +44,14 @@ public abstract class AbstractReleasePomsPhase extends AbstractReleasePhase
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    protected ScmRepository getScmRepository( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment )
+    protected ScmRepository getScmRepository( ReleaseDescriptor releaseDescriptor,
+                                              ReleaseEnvironment releaseEnvironment )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         try
         {
-            return scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+            return scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                      releaseEnvironment.getSettings() );
         }
         catch ( ScmRepositoryException exception )
         {

@@ -1,9 +1,9 @@
+// CHECKSTYLE_OFF: RegexpHeader
 /**
- * A {@link VersionPolicy} implementation that allows release even version numbers only and skips the odd.
+ * A {@link org.apache.maven.shared.release.policy.version.VersionPolicy VersionPolicy} implementation that allows
+ * release even version numbers only and skips the odd.
  */
 package org.apache.maven.shared.release.policy.oddeven;
-
-import org.apache.maven.shared.release.policy.version.VersionPolicy;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one

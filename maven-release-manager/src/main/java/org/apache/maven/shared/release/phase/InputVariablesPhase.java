@@ -78,7 +78,8 @@ public class InputVariablesPhase
         try
         {
             ScmRepository repository =
-                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                   releaseEnvironment.getSettings() );
 
             return scmRepositoryConfigurator.getRepositoryProvider( repository );
         }

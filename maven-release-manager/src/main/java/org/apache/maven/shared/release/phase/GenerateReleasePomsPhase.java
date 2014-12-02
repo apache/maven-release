@@ -141,7 +141,8 @@ public class GenerateReleasePomsPhase
     {
         // create release pom
 
-        Model releasePom = createReleaseModel( project, releaseDescriptor, releaseEnvironment, reactorProjects, result );
+        Model releasePom = createReleaseModel( project, releaseDescriptor, releaseEnvironment, reactorProjects,
+                                               result );
 
         // write release pom to file
 
@@ -332,7 +333,8 @@ public class GenerateReleasePomsPhase
         return releaseDescriptor.getReleaseVersions();
     }
 
-    private String getNextVersion( Map<String, String> mappedVersions, String groupId, String artifactId, String version )
+    private String getNextVersion( Map<String, String> mappedVersions, String groupId, String artifactId,
+                                   String version )
         throws ReleaseFailureException
     {
         // TODO: share with RewritePomsForReleasePhase.rewriteVersion
@@ -429,7 +431,8 @@ public class GenerateReleasePomsPhase
         return releaseDependencies;
     }
 
-    private String getReleaseVersion( Map<String, String> originalVersions, Map<String, String> mappedVersions, Artifact artifact )
+    private String getReleaseVersion( Map<String, String> originalVersions, Map<String, String> mappedVersions,
+                                      Artifact artifact )
         throws ReleaseFailureException
     {
         String key = ArtifactUtils.versionlessKey( artifact );
@@ -461,7 +464,8 @@ public class GenerateReleasePomsPhase
         return version;
     }
 
-    private List<Plugin> createReleasePlugins( Map<String, String> originalVersions, Map<String, String> mappedVersions, MavenProject project )
+    private List<Plugin> createReleasePlugins( Map<String, String> originalVersions,
+                                               Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
         List<Plugin> releasePlugins = null;
@@ -505,8 +509,8 @@ public class GenerateReleasePomsPhase
         return releasePlugins;
     }
 
-    private List<ReportPlugin> createReleaseReportPlugins( Map<String, String> originalVersions, Map<String, String> mappedVersions,
-                                                           MavenProject project )
+    private List<ReportPlugin> createReleaseReportPlugins( Map<String, String> originalVersions,
+                                                           Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
         List<ReportPlugin> releaseReportPlugins = null;
@@ -546,7 +550,8 @@ public class GenerateReleasePomsPhase
         return releaseReportPlugins;
     }
 
-    private List<Extension> createReleaseExtensions( Map<String, String> originalVersions, Map<String, String> mappedVersions, MavenProject project )
+    private List<Extension> createReleaseExtensions( Map<String, String> originalVersions,
+                                                     Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
         List<Extension> releaseExtensions = null;

@@ -61,7 +61,8 @@ public class RewritePomsForReleasePhase
 
                 try
                 {
-                    translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, commonBasedir );
+                    translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
+                                  commonBasedir );
                 }
                 catch ( IOException e )
                 {

@@ -78,7 +78,8 @@ public interface MavenExecutor
      * @param result              holds all results of the execution
      * @throws MavenExecutorException if an error occurred executing Maven
      *
-     * @deprecated Use {@link MavenExecutor#executeGoals(File, String, ReleaseEnvironment, boolean, String, String, ReleaseResult)} instead
+     * @deprecated Use {@link MavenExecutor#executeGoals(File, String, ReleaseEnvironment, boolean, String, String,
+     * ReleaseResult)} instead
      */
     void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
                        String pomFileName, ReleaseResult result )
@@ -94,7 +95,8 @@ public interface MavenExecutor
      * @param result              holds all results of the execution
      * @throws MavenExecutorException if an error occurred executing Maven
      *
-     * @deprecated Use {@link MavenExecutor#executeGoals(File, String, ReleaseEnvironment, boolean, String, ReleaseResult)} instead
+     * @deprecated Use {@link MavenExecutor#executeGoals(File, String, ReleaseEnvironment, boolean, String,
+     * ReleaseResult)} instead
      */
     void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
                        ReleaseResult result )

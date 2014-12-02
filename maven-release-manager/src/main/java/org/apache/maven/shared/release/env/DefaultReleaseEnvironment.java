@@ -24,6 +24,9 @@ import java.util.Locale;
 
 import org.apache.maven.settings.Settings;
 
+/**
+ * 
+ */
 public class DefaultReleaseEnvironment
     implements ReleaseEnvironment
 {

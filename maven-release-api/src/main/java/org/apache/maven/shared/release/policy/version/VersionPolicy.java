@@ -22,10 +22,14 @@ package org.apache.maven.shared.release.policy.version;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.versions.VersionParseException;
 
+/**
+ * 
+ */
 public interface VersionPolicy
 {
+    VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
+        throws PolicyException, VersionParseException;
 
-    public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request ) throws PolicyException, VersionParseException;
-    
-    public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request ) throws PolicyException, VersionParseException;
+    VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
+        throws PolicyException, VersionParseException;
 }

@@ -31,7 +31,8 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="verify-completed-prepare-phases"
+ * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase"
+ *                   role-hint="verify-completed-prepare-phases"
  */
 public class CheckCompletedPreparePhasesPhase
     extends AbstractReleasePhase

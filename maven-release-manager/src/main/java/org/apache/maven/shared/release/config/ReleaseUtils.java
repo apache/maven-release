@@ -56,7 +56,8 @@ public class ReleaseUtils
         mergeInto.setScmSourceUrl( mergeOverride( mergeInto.getScmSourceUrl(), toBeMerged.getScmSourceUrl() ) );
         mergeInto.setScmCommentPrefix(
             mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
-        mergeInto.setScmReleaseLabel( mergeOverride( mergeInto.getScmReleaseLabel(), toBeMerged.getScmReleaseLabel() ) );
+        mergeInto.setScmReleaseLabel( mergeOverride( mergeInto.getScmReleaseLabel(),
+                                                     toBeMerged.getScmReleaseLabel() ) );
         mergeInto.setScmTagBase( mergeOverride( mergeInto.getScmTagBase(), toBeMerged.getScmTagBase() ) );
         mergeInto.setScmTagNameFormat(
             mergeOverride( mergeInto.getScmTagNameFormat(), toBeMerged.getScmTagNameFormat() ) );

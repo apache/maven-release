@@ -341,21 +341,21 @@ public class InvokerMavenExecutor
             String mavenHome = System.getProperty( "maven.home" );
             if ( mavenHome == null )
             {
-                mavenHome = System.getenv("MAVEN_HOME");
+                mavenHome = System.getenv( "MAVEN_HOME" );
             }
             if ( mavenHome == null )
             {
-                mavenHome = System.getenv("M2_HOME");
+                mavenHome = System.getenv( "M2_HOME" );
             }
             mavenPath = mavenHome == null ? null : new File( mavenHome );
         }
         Invoker invoker =
-            new DefaultInvoker().setMavenHome( mavenPath ).setLogger( bridge ).setOutputHandler(
-                handler ).setErrorHandler( handler );
+            new DefaultInvoker().setMavenHome( mavenPath ).setLogger( bridge )
+                .setOutputHandler( handler ).setErrorHandler( handler );
 
         InvocationRequest req =
-            new DefaultInvocationRequest().setDebug( getLogger().isDebugEnabled() ).setBaseDirectory(
-                workingDirectory ).setInteractive( interactive );
+            new DefaultInvocationRequest().setDebug( getLogger().isDebugEnabled() )
+                .setBaseDirectory( workingDirectory ).setInteractive( interactive );
 
         if ( pomFileName != null )
         {

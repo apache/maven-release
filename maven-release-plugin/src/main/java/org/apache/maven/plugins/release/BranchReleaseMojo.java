@@ -31,8 +31,9 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 
 /**
- * Branch a project in SCM, using the same steps as the <tt>release:prepare</tt> goal, creating a branch instead of a tag.
- * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/branch.html">http://maven.apache.org/plugins/maven-release-plugin/examples/branch.html</a>.
+ * Branch a project in SCM, using the same steps as the <tt>release:prepare</tt> goal, creating a branch instead of a
+ * tag. For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/branch.html"
+ * >http://maven.apache.org/plugins/maven-release-plugin/examples/branch.html</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
@@ -52,9 +53,9 @@ public class BranchReleaseMojo
     private String branchName;
 
     /**
-     * The branch base directory in SVN, you must define it if you don't use the standard svn layout (trunk/tags/branches).
-     * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/branches</code>. The URL is an SVN URL and does not
-     * include the SCM provider and protocol.
+     * The branch base directory in SVN, you must define it if you don't use the standard svn layout
+     * (trunk/tags/branches). For example, <code>http://svn.apache.org/repos/asf/maven/plugins/branches</code>. The URL
+     * is an SVN URL and does not include the SCM provider and protocol.
      *
      * @since 2.0
      */

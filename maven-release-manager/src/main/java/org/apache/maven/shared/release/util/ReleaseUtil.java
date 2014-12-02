@@ -47,8 +47,10 @@ import org.codehaus.plexus.util.ReaderFactory;
  */
 public class ReleaseUtil
 {
+    @SuppressWarnings( "checkstyle:constantname" )
     public static final String RELEASE_POMv4 = "release-pom.xml";
 
+    @SuppressWarnings( "checkstyle:constantname" )
     public static final String POMv4 = "pom.xml";
 
     private static final String FS = File.separator;
@@ -183,7 +185,8 @@ public class ReleaseUtil
         }
 
         int parentLevels =
-            getBaseWorkingDirectoryParentCount( basedir, FileUtils.normalize( releaseDescriptor.getWorkingDirectory() ) );
+            getBaseWorkingDirectoryParentCount( basedir,
+                                                FileUtils.normalize( releaseDescriptor.getWorkingDirectory() ) );
 
         String url = releaseDescriptor.getScmSourceUrl();
         url = realignScmUrl( parentLevels, url );
