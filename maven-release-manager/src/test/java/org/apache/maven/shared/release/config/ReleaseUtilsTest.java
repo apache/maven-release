@@ -284,6 +284,22 @@ public class ReleaseUtilsTest
         assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
     }
 
+    // MRELEASE-834
+    public void testSystemPropertyStartingWithDependency()
+        throws IOException
+    {
+        Properties properties = new Properties();
+        properties.setProperty( "dependency.locations.enabled", "false" );
+        String relDependencyKey = ArtifactUtils.versionlessKey( "com.release.magic", "dependency" );
+        properties.put( "dependency." + relDependencyKey  + ".release", "1.3" );
+
+        ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
+
+        Map<String, String> versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( relDependencyKey );
+        assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+
+    }
+
     private static ReleaseDescriptor copyReleaseDescriptor( ReleaseDescriptor originalReleaseDescriptor )
     {
         return createReleaseDescriptor( originalReleaseDescriptor.getWorkingDirectory() );

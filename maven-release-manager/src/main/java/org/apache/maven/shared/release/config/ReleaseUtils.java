@@ -258,6 +258,13 @@ public class ReleaseUtils
                     versionType = ReleaseDescriptor.RELEASE_KEY;
                 }
 
+                // system property which is *not* a dependency, see
+                // http://jira.codehaus.org/browse/MRELEASE-834
+                if ( endIndex == -1 )
+                {
+                    continue;
+                }
+
                 artifactVersionlessKey = propertyName.substring( startIndex, endIndex );
 
                 if ( resolvedDependencies.containsKey( artifactVersionlessKey ) )
