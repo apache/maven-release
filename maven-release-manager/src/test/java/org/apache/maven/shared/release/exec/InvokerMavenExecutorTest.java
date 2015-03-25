@@ -117,6 +117,7 @@ public class InvokerMavenExecutorTest
 
         ReleaseEnvironment releaseEnvironment = new DefaultReleaseEnvironment();
         releaseEnvironment.setSettings( settings );
+        releaseEnvironment.setMavenHome( new File( System.getProperty( "injectedMavenHome" ) ) );
 
         InvokerMavenExecutor executorSpy = spy( executor );
         SettingsXpp3Writer settingsWriter = mock( SettingsXpp3Writer.class );
