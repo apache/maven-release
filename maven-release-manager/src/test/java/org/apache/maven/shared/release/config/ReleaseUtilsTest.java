@@ -284,6 +284,14 @@ public class ReleaseUtilsTest
         assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
     }
 
+    // MRELEASE-834
+    public void testSystemPropertyStartingWithDependency()
+    {
+        Properties properties = new Properties();
+        properties.setProperty( "dependency.locations.enabled", "false" );
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
+    }
+    
     private static ReleaseDescriptor copyReleaseDescriptor( ReleaseDescriptor originalReleaseDescriptor )
     {
         return createReleaseDescriptor( originalReleaseDescriptor.getWorkingDirectory() );
