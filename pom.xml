@@ -41,6 +41,7 @@
     <module>maven-release-manager</module>
     <module>maven-release-plugin</module>
     <module>maven-release-policies/maven-release-oddeven-policy</module>
+    <module>maven-release-policies/maven-release-semver-policy</module>
   </modules>
 
   <scm>
