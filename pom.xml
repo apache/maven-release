@@ -42,7 +42,7 @@
     <module>maven-release-plugin</module>
     <module>maven-release-policies/maven-release-oddeven-policy</module>
     <!-- org.semver:api:jar:0.9.3 requires JDK 1.6
-    <module>maven-release-policies/maven-release-semver-policy</module>
+    <module>maven-release-policies/maven-release-semver-policy REMOVE apache-rat-plugin</module>
      -->
   </modules>
 
@@ -78,6 +78,25 @@
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
   </properties>
 
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.rat</groupId>
+          <artifactId>apache-rat-plugin</artifactId>
+          <configuration>
+            <excludes combine.children="append">
+              <!--
+                This module is not yet included
+              -->
+              <exclude>maven-release-policies/maven-release-semver-policy/**/*.*</exclude>
+            </excludes>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+  
   <dependencyManagement>
     <dependencies>
       <dependency>
