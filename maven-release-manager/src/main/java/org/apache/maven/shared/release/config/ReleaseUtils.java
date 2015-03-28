@@ -252,10 +252,15 @@ public class ReleaseUtils
                     endIndex = propertyName.lastIndexOf( ".development" );
                     versionType = ReleaseDescriptor.DEVELOPMENT_KEY;
                 }
-                else
+                else if ( propertyName.indexOf( ".release" ) != -1 )
                 {
                     endIndex = propertyName.lastIndexOf( ".release" );
                     versionType = ReleaseDescriptor.RELEASE_KEY;
+                }
+                else
+                {
+                    // MRELEASE-834, probably a maven-dependency-plugin property
+                    continue;
                 }
 
                 artifactVersionlessKey = propertyName.substring( startIndex, endIndex );
