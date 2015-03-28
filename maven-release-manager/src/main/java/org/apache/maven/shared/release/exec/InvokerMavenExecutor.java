@@ -101,6 +101,7 @@ public class InvokerMavenExecutor
     
     private static final String THREADS = "T";
 
+    private static final String BATCH_MODE = "B";
     
     static
     {
@@ -172,6 +173,9 @@ public class InvokerMavenExecutor
         
         OPTIONS.addOption( OptionBuilder.withLongOpt( "threads" ).withDescription( 
             "Thread count, for instance 2.0C where C is core multiplied" ).hasArg().create( THREADS ) );
+        
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "batch-mode" ).withDescription( 
+            "Run in non-interactive (batch) mode" ).create( BATCH_MODE ) );
     }
 
     // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
@@ -313,6 +317,11 @@ public class InvokerMavenExecutor
             if ( cli.hasOption( THREADS ) )
             {
                 req.setThreads( cli.getOptionValue( THREADS ) );
+            }
+            
+            if ( cli.hasOption( BATCH_MODE ) )
+            {
+                req.setInteractive( false );
             }
         }
         catch ( Exception e )

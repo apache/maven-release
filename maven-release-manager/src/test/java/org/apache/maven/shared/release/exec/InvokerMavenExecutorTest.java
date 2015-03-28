@@ -83,6 +83,27 @@ public class InvokerMavenExecutorTest
     }
 
     @Test
+    public void testBatch()
+                  throws Exception
+    {
+        Logger logger = mock( Logger.class );
+        executor.enableLogging( logger );
+
+        InvocationRequest req = new DefaultInvocationRequest();
+        // bug: assertEquals( true, req.isInteractive() );
+
+        req = new DefaultInvocationRequest();
+        req.setInteractive( true );
+        executor.setupRequest( req, null, "-B" );
+        assertEquals( false, req.isInteractive() );
+
+        req = new DefaultInvocationRequest();
+        req.setInteractive( true );
+        executor.setupRequest( req, null, "\"-B\"" );
+        assertEquals( false, req.isInteractive() );
+    }
+
+    @Test
     public void testGlobalSettings()
         throws Exception
     {
