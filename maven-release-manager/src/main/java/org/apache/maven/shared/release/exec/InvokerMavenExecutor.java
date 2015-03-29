@@ -329,7 +329,7 @@ public class InvokerMavenExecutor
                 req.setInteractive( false );
             }
             
-            if( cli.hasOption( ALTERNATE_USER_TOOLCHAINS ) )
+            if ( cli.hasOption( ALTERNATE_USER_TOOLCHAINS ) )
             {
                 req.setToolchainsFile( new File( cli.getOptionValue( ALTERNATE_USER_TOOLCHAINS ) ) );
             }
