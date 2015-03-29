@@ -103,6 +103,8 @@ public class InvokerMavenExecutor
 
     private static final String BATCH_MODE = "B";
     
+    public static final char ALTERNATE_USER_TOOLCHAINS = 't';
+    
     static
     {
         OPTIONS.addOption(
@@ -176,6 +178,9 @@ public class InvokerMavenExecutor
         
         OPTIONS.addOption( OptionBuilder.withLongOpt( "batch-mode" ).withDescription( 
             "Run in non-interactive (batch) mode" ).create( BATCH_MODE ) );
+        
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "toolchains" ).withDescription( 
+            "Alternate path for the user toolchains file" ).hasArg().create( ALTERNATE_USER_TOOLCHAINS ) );
     }
 
     // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
@@ -323,6 +328,12 @@ public class InvokerMavenExecutor
             {
                 req.setInteractive( false );
             }
+            
+            if( cli.hasOption( ALTERNATE_USER_TOOLCHAINS ) )
+            {
+                req.setToolchainsFile( new File( cli.getOptionValue( ALTERNATE_USER_TOOLCHAINS ) ) );
+            }
+            
         }
         catch ( Exception e )
         {

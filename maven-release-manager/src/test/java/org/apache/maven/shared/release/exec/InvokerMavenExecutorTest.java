@@ -104,6 +104,26 @@ public class InvokerMavenExecutorTest
     }
 
     @Test
+    public void testUserToolchains()
+        throws Exception
+    {
+        Logger logger = mock( Logger.class );
+        executor.enableLogging( logger );
+
+        InvocationRequest req = new DefaultInvocationRequest();
+        executor.setupRequest( req, null, "-t mytoolchains.xml" );
+        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
+
+        req = new DefaultInvocationRequest();
+        executor.setupRequest( req, null, "-tmytoolchains.xml" );
+        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
+
+        req = new DefaultInvocationRequest();
+        executor.setupRequest( req, null, "\"-tmytoolchains.xml\"" );
+        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
+    }
+    
+    @Test
     public void testGlobalSettings()
         throws Exception
     {
