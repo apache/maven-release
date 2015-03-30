@@ -271,7 +271,7 @@ public class ReleaseUtil
         {
             // normalize
             url = url.replaceAll( "/\\./", "/" ).replaceAll( "/\\.$", "" ).
-                            replaceAll( "/[^/]+/\\.\\./", "/" ).replaceAll("/[^/]+/\\.\\.$","");
+                            replaceAll( "/[^/]+/\\.\\./", "/" ).replaceAll( "/[^/]+/\\.\\.$", "" );
 
             int index = url.length();
             String suffix = "";
