@@ -182,13 +182,18 @@ public class ReleaseUtilTest
     public void testGetBaseScmUrlSingleLevelDotCharacter()
             throws Exception
     {
-        assumeTrue( Os.isFamily( Os.FAMILY_UNIX ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/." ) );
         assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/",
-                ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/." ) );
-        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/",
-                ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/./" ) );
-        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/",
-                ReleaseUtil.realignScmUrl(0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/../trunk") );
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/./" ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/project",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/./project" ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/.." ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/../" ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/branches",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/../branches" ) );
     }
 
     @Test

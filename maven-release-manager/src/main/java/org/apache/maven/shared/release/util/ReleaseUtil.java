@@ -269,6 +269,10 @@ public class ReleaseUtil
     {
         if ( !StringUtils.isEmpty( url ) )
         {
+            // normalize
+            url = url.replaceAll( "/\\./", "/" ).replaceAll( "/\\.$", "" ).
+                            replaceAll( "/[^/]+/../", "/" ).replaceAll("/[^/]+/..$","");
+
             int index = url.length();
             String suffix = "";
             if ( url.endsWith( "/" ) )
@@ -276,6 +280,7 @@ public class ReleaseUtil
                 index--;
                 suffix = "/";
             }
+
             for ( int i = 0; i < parentLevels && index > 0; i++ )
             {
                 index = url.lastIndexOf( '/', index - 1 );
@@ -285,6 +290,7 @@ public class ReleaseUtil
             {
                 url = url.substring( 0, index ) + suffix;
             }
+            
         }
         return url;
     }
