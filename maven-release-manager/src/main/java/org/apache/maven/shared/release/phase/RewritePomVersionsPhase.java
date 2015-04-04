@@ -54,12 +54,11 @@ public class RewritePomVersionsPhase
         return false;
     }
 
-    @SuppressWarnings( "unchecked" )
     @Override
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
                                                          List<MavenProject> reactorProjects, boolean simulate )
     {
-        return releaseDescriptor.getReleaseVersions();
+        return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
     @SuppressWarnings( "unchecked" )
