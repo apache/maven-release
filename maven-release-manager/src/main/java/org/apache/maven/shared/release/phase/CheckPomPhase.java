@@ -49,6 +49,11 @@ public class CheckPomPhase
      */
     private boolean scmRequired = true;
     
+    /**
+     * @since 2.5.2
+     */
+    private boolean snapshotsRequired = true;
+
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
@@ -105,10 +110,12 @@ public class CheckPomPhase
             if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
             {
                 containsSnapshotProjects = true;
+
+                break;
             }
         }
 
-        if ( !containsSnapshotProjects && !releaseDescriptor.isBranchCreation() )
+        if ( snapshotsRequired && !containsSnapshotProjects && !releaseDescriptor.isBranchCreation() )
         {
             throw new ReleaseFailureException( "You don't have a SNAPSHOT project in the reactor projects list." );
         }

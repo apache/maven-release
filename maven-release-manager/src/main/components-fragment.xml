@@ -267,6 +267,7 @@
       <implementation>org.apache.maven.shared.release.phase.CheckPomPhase</implementation>
       <configuration>
         <scmRequired>true</scmRequired>
+        <snapshotsRequired>true</snapshotsRequired>
       </configuration>
       <requirements>
         <requirement>
@@ -280,6 +281,7 @@
       <implementation>org.apache.maven.shared.release.phase.CheckPomPhase</implementation>
       <configuration>
         <scmRequired>false</scmRequired>
+        <snapshotsRequired>false</snapshotsRequired>
       </configuration>
       <requirements>
         <requirement>
