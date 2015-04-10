@@ -34,8 +34,10 @@ import org.apache.maven.model.Site;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseManager;
+import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Test release:perform.
@@ -60,12 +62,24 @@ public class StageReleaseMojoTest
         releaseDescriptor.setPerformGoals( "deploy site:stage-deploy" );
         releaseDescriptor.setAdditionalArguments( "-DaltDeploymentRepository=\"staging\"" );
 
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setReleaseDescriptor( releaseDescriptor );
+        performRequest.setReleaseEnvironment( mojo.getReleaseEnvironment() );
+        performRequest.setReactorProjects( mojo.getReactorProjects() );
+        performRequest.setDryRun( false );
+
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
 
         mojo.execute();
 
-        verify( mock ).perform( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class ), eq( false ) );
+        // verify
+        ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
+        verify( mock ).perform( argument.capture() );
+        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseEnvironment() );
+        assertNull( argument.getValue().getReactorProjects() );
+        assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
         verifyNoMoreInteractions( mock );
     }
 
