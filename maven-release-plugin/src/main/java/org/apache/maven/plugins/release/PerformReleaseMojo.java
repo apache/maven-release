@@ -50,7 +50,7 @@ public class PerformReleaseMojo
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
      */
     @Parameter( property = "goals" )
-    protected String goals;
+    String goals;
 
     /**
      * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
@@ -180,12 +180,12 @@ public class PerformReleaseMojo
     }
 
     /** Just here so it may be overridden by StageReleaseMojo */
-    protected void setDeploymentRepository()
+    void setDeploymentRepository()
     {
     }
 
     /** Just here so it may be overridden by StageReleaseMojo */
-    protected void createGoals()
+    void createGoals()
     {
         if ( goals == null )
         {

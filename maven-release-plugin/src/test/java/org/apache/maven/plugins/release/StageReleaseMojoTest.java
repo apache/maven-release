@@ -40,7 +40,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.mockito.ArgumentCaptor;
 
 /**
- * Test release:perform.
+ * Test release:stage.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -81,6 +81,17 @@ public class StageReleaseMojoTest
         assertNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
         verifyNoMoreInteractions( mock );
+    }
+
+    public void testCreateGoals()
+        throws Exception
+    {
+        StageReleaseMojo mojo = getMojoWithProjectSite( "stage.xml" );
+        mojo.createGoals();
+        assertEquals( "deploy site:stage-deploy", mojo.goals );
+        mojo.goals = "deploy site:deploy";
+        mojo.createGoals();
+        assertEquals( "deploy site:stage-deploy", mojo.goals );
     }
 
     private StageReleaseMojo getMojoWithProjectSite( String fileName )

@@ -56,7 +56,7 @@ public class StageReleaseMojo
     private String stagingRepository;
 
     @Override
-    protected void createGoals()
+    void createGoals()
     {
         if ( goals == null )
         {
@@ -74,7 +74,7 @@ public class StageReleaseMojo
     }
 
     @Override
-    protected void setDeploymentRepository()
+    void setDeploymentRepository()
     {
         addArgument( "-DaltDeploymentRepository=\"" + stagingRepository + "\"" );
     }
