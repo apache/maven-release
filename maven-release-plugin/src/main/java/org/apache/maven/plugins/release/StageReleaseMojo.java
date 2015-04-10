@@ -19,15 +19,8 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
-import java.io.File;
-
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.ReleaseFailureException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
