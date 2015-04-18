@@ -77,7 +77,8 @@ public class ScmBranchPhase
         {
             repository =
                 scmRepositoryConfigurator.getConfiguredRepository( basedirAlignedReleaseDescriptor.getScmSourceUrl(),
-                                                                   releaseDescriptor, releaseEnvironment.getSettings() );
+                                                                   releaseDescriptor,
+                                                                   releaseEnvironment.getSettings() );
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
 

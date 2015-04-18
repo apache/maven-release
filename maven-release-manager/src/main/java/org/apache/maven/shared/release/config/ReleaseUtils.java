@@ -56,7 +56,8 @@ public class ReleaseUtils
         mergeInto.setScmSourceUrl( mergeOverride( mergeInto.getScmSourceUrl(), toBeMerged.getScmSourceUrl() ) );
         mergeInto.setScmCommentPrefix(
             mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
-        mergeInto.setScmReleaseLabel( mergeOverride( mergeInto.getScmReleaseLabel(), toBeMerged.getScmReleaseLabel() ) );
+        mergeInto.setScmReleaseLabel( mergeOverride( mergeInto.getScmReleaseLabel(),
+                                                     toBeMerged.getScmReleaseLabel() ) );
         mergeInto.setScmTagBase( mergeOverride( mergeInto.getScmTagBase(), toBeMerged.getScmTagBase() ) );
         mergeInto.setScmTagNameFormat(
             mergeOverride( mergeInto.getScmTagNameFormat(), toBeMerged.getScmTagNameFormat() ) );
@@ -251,10 +252,15 @@ public class ReleaseUtils
                     endIndex = propertyName.lastIndexOf( ".development" );
                     versionType = ReleaseDescriptor.DEVELOPMENT_KEY;
                 }
-                else
+                else if ( propertyName.indexOf( ".release" ) != -1 )
                 {
                     endIndex = propertyName.lastIndexOf( ".release" );
                     versionType = ReleaseDescriptor.RELEASE_KEY;
+                }
+                else
+                {
+                    // MRELEASE-834, probably a maven-dependency-plugin property
+                    continue;
                 }
 
                 artifactVersionlessKey = propertyName.substring( startIndex, endIndex );

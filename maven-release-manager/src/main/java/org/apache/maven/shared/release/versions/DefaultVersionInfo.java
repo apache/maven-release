@@ -54,7 +54,8 @@ import java.util.regex.Pattern;
  * <p/>
  * Leading zeros are significant when performing comparisons.
  * <p/>
- * TODO: this parser is better than DefaultArtifactVersion - replace it with this (but align naming) and then remove this from here.
+ * TODO: this parser is better than DefaultArtifactVersion - replace it with this (but align naming) and then remove
+ * this from here.
  */
 public class DefaultVersionInfo
     implements VersionInfo
@@ -109,9 +110,8 @@ public class DefaultVersionInfo
      * branchName-SNAPSHOT
      * SNAPSHOT
      */
-    public static final Pattern ALTERNATE_PATTERN = Pattern.compile(
-        "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)"      // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
-    );
+    // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
+    public static final Pattern ALTERNATE_PATTERN = Pattern.compile( "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)" );
 
     /**
      * Constructs this object and parses the supplied version string.
@@ -214,12 +214,13 @@ public class DefaultVersionInfo
     }
 
     /**
-     * Compares this {@link DefaultVersionInfo} to the supplied {@link DefaultVersionInfo}
-     * to determine which version is greater.
+     * Compares this {@link DefaultVersionInfo} to the supplied {@link DefaultVersionInfo} to determine which version is
+     * greater.
      *
      * @param obj the comparison version
      * @return the comparison value
-     * @throws IllegalArgumentException if the components differ between the objects or if either of the annotations can not be determined.
+     * @throws IllegalArgumentException if the components differ between the objects or if either of the annotations can
+     *             not be determined.
      */
     public int compareTo( VersionInfo obj )
     {
@@ -257,6 +258,11 @@ public class DefaultVersionInfo
         }
 
         return compareTo( (VersionInfo) obj ) == 0;
+    }
+
+    public int hashCode()
+    {
+        return strVersion.toLowerCase( Locale.ENGLISH ).hashCode();
     }
 
     /**

@@ -32,7 +32,8 @@ import org.apache.maven.shared.release.versions.VersionParseException;
  * 
  * @plexus.component role="org.apache.maven.shared.release.policy.version.VersionPolicy" role-hint="default"
  */
-public class DefaultVersionPolicy implements VersionPolicy
+public class DefaultVersionPolicy
+    implements VersionPolicy
 {
 
     public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
@@ -45,7 +46,8 @@ public class DefaultVersionPolicy implements VersionPolicy
     public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
         throws PolicyException, VersionParseException
     {
-        String developmentVersion = new DefaultVersionInfo( request.getVersion() ).getNextVersion().getSnapshotVersionString();
+        String developmentVersion =
+            new DefaultVersionInfo( request.getVersion() ).getNextVersion().getSnapshotVersionString();
         return new VersionPolicyResult().setVersion( developmentVersion );
     }
 

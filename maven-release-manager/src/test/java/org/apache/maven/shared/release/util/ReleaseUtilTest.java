@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.*;
 
 import java.io.File;
@@ -178,6 +179,24 @@ public class ReleaseUtilTest
     }
 
     @Test
+    public void testGetBaseScmUrlSingleLevelDotCharacter()
+            throws Exception
+    {
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/." ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/./" ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/trunk/project",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/./project" ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/.." ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/../" ) );
+        assertEquals( "scm:svn:http://svn.repo.com/flat-multi-module/branches",
+                      ReleaseUtil.realignScmUrl( 0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/../branches" ) );
+    }
+
+    @Test
     public void testGetBaseScmUrlReturnOriginal()
         throws Exception
     {
@@ -219,34 +238,84 @@ public class ReleaseUtilTest
     }
 
     @Test
+    public void testGetBaseWorkingDirectoryParentCountSameDirectoryDotCharacter()
+    {
+        String workingDirectory = new File( "/working/directory/maven/release/." ).getAbsolutePath();
+        assertTrue( workingDirectory.contains( "." ) );
+        String basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+
+        // finish with slash
+        workingDirectory = new File( "/working/directory/maven/release/./" ).getAbsolutePath();
+        assertTrue( workingDirectory.contains( "." ) );
+        basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+    }
+
+    @Test
     public void testGetBaseWorkingDirectoryParentCountSubdirectory()
     {
-        String workingDirectory = "/working/directory/maven/release";
-        String basedir = "/working/directory/maven/release/maven-release-manager";
+        String workingDirectory = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        String basedir = new File( "/working/directory/maven/release/maven-release-manager" ).getAbsolutePath();
         assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountParentDirectory()
     {
-        String workingDirectory = "/working/directory/maven/release/maven-release-manager";
-        String basedir = "/working/directory/maven/release";
+        String workingDirectory =
+            new File( "/working/directory/maven/release/maven-release-manager" ).getAbsolutePath();
+        String basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        assertEquals( 1, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+    }
+
+    @Test
+    public void testGetBaseWorkingDirectoryParentCountParentDirectoryDotCharacter()
+    {
+        String workingDirectory =
+            new File( "/working/directory/maven/release/maven-release-manager/." ).getAbsolutePath();
+        assertTrue( workingDirectory.contains( "." ) );
+        String basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        assertEquals( 1, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+
+        // finish with slash
+        workingDirectory = new File( "/working/directory/maven/release/maven-release-manager/./" ).getAbsolutePath();
+        assertTrue( workingDirectory.contains( "." ) );
+        basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
         assertEquals( 1, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountParentDirectoryMultiple()
     {
-        String workingDirectory = "/working/directory/maven/release/maven-release-manager";
-        String basedir = "/working/directory";
+        String workingDirectory =
+            new File( "/working/directory/maven/release/maven-release-manager" ).getAbsolutePath();
+        String basedir = new File( "/working/directory" ).getAbsolutePath();
+        assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+    }
+
+    @Test
+    public void testGetBaseWorkingDirectoryParentCountParentDirectoryMultipleDotCharacter()
+    {
+        String workingDirectory =
+            new File( "/working/directory/maven/release/maven-release-manager/./." ).getAbsolutePath();
+        assertTrue( workingDirectory.contains( "." ) );
+        String basedir = new File( "/working/directory" ).getAbsolutePath();
+        assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
+
+        // finish with slash
+        workingDirectory = new File( "/working/directory/maven/release/maven-release-manager/././" ).getAbsolutePath();
+        assertTrue( workingDirectory.contains( "." ) );
+        basedir = new File( "/working/directory" ).getAbsolutePath();
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountDifferentCase()
     {
-        String workingDirectory = "/Working/Directory/maven/release/maven-release-manager";
-        String basedir = "/working/directory";
+        String workingDirectory =
+            new File( "/Working/Directory/maven/release/maven-release-manager" ).getAbsolutePath();
+        String basedir = new File( "/working/directory" ).getAbsolutePath();
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 

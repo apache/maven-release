@@ -1,7 +1,5 @@
 package org.apache.maven.shared.release.policy.version;
 
-import org.apache.maven.artifact.repository.metadata.Metadata;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,6 +19,11 @@ import org.apache.maven.artifact.repository.metadata.Metadata;
  * under the License.
  */
 
+import org.apache.maven.artifact.repository.metadata.Metadata;
+
+/**
+ * 
+ */
 public class VersionPolicyRequest
 {
 

@@ -233,8 +233,8 @@ public class PrepareReleaseMojo
     {
         if ( generateReleasePoms )
         {
-            throw new MojoFailureException(
-                                            "Generating release POMs is no longer supported in release:prepare. Please run release:prepare-with-pom instead." );
+            throw new MojoFailureException( "Generating release POMs is no longer supported in release:prepare. "
+                + "Please run release:prepare-with-pom instead." );
         }
 
         prepareRelease( generateReleasePoms );

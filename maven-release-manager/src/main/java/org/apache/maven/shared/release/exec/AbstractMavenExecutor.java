@@ -42,6 +42,9 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
 import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
 
+/**
+ * 
+ */
 public abstract class AbstractMavenExecutor
     implements MavenExecutor, LogEnabled
 {
@@ -70,7 +73,8 @@ public abstract class AbstractMavenExecutor
                               String pomFileName, ReleaseResult result )
         throws MavenExecutorException
     {
-        executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments, pomFileName, result );
+        executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments,
+                      pomFileName, result );
     }
 
     /** {@inheritDoc} */
@@ -78,7 +82,8 @@ public abstract class AbstractMavenExecutor
                               ReleaseResult result )
         throws MavenExecutorException
     {
-        executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments, result );
+        executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments,
+                      result );
     }
 
     /** {@inheritDoc} */
@@ -91,7 +96,8 @@ public abstract class AbstractMavenExecutor
 
     /** {@inheritDoc} */
     public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )
+                              boolean interactive, String additionalArguments, String pomFileName,
+                              ReleaseResult result )
         throws MavenExecutorException
     {
         List<String> goalsList = new ArrayList<String>();
@@ -100,20 +106,19 @@ public abstract class AbstractMavenExecutor
             // accept both space and comma, so the old way still work
             // also accept line separators, so that goal lists can be spread
             // across multiple lines in the POM.
-            String[] tokens = StringUtils.split( goals, ", \n\r\t" );
-
-            for ( int i = 0; i < tokens.length; ++i )
+            for ( String token : StringUtils.split( goals, ", \n\r\t" ) )
             {
-                goalsList.add( tokens[i] );
+                goalsList.add( token );
             }
         }
-        executeGoals( workingDirectory, goalsList, releaseEnvironment, interactive, additionalArguments, pomFileName, result );
+        executeGoals( workingDirectory, goalsList, releaseEnvironment, interactive, additionalArguments, pomFileName,
+                      result );
     }
 
-    protected abstract void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )
+    protected abstract void executeGoals( File workingDirectory, List<String> goals,
+                                          ReleaseEnvironment releaseEnvironment, boolean interactive,
+                                          String additionalArguments, String pomFileName, ReleaseResult result )
         throws MavenExecutorException;
-
 
     protected final Logger getLogger()
     {
@@ -204,7 +209,8 @@ public abstract class AbstractMavenExecutor
     }
     
     // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
-    private final String encryptAndDecorate( String passwd ) throws IllegalStateException, SecDispatcherException, PlexusCipherException
+    private String encryptAndDecorate( String passwd )
+        throws IllegalStateException, SecDispatcherException, PlexusCipherException
     {
         String configurationFile = secDispatcher.getConfigurationFile();
 

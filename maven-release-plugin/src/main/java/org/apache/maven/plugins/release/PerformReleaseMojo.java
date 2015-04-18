@@ -34,7 +34,8 @@ import org.codehaus.plexus.util.StringUtils;
 /**
  * Perform a release from SCM, either from a specified tag, or the tag representing the previous release in
  * the working copy created by <tt>release:prepare</tt>.
- * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html">http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html</a>.
+ * For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html"
+ * >http://maven.apache.org/plugins/maven-release-plugin/examples/perform-release.html</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
@@ -49,7 +50,7 @@ public class PerformReleaseMojo
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
      */
     @Parameter( property = "goals" )
-    private String goals;
+    String goals;
 
     /**
      * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
@@ -79,7 +80,7 @@ public class PerformReleaseMojo
      *
      * TODO: we should think about having the defaults for the various SCM providers provided via modello!
      *
-     * @since 2.0
+     * @since 2.0 for release:perform and 2.5.2 for release:stage
      */
     @Parameter( defaultValue = "false", property = "localCheckout" )
     private boolean localCheckout;
@@ -134,6 +135,7 @@ public class PerformReleaseMojo
 
         try
         {
+            setDeploymentRepository();
             // Note that the working directory here is not the same as in the release configuration, so don't reuse that
             ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
             if ( connectionUrl != null )
@@ -146,7 +148,7 @@ public class PerformReleaseMojo
                 releaseDescriptor.setScmUsername( username );
             }
             
-            if( password != null )
+            if ( password != null )
             {
                 releaseDescriptor.setScmPassword( password );
             }
@@ -156,16 +158,7 @@ public class PerformReleaseMojo
             releaseDescriptor.setCheckoutDirectory( workingDirectory.getAbsolutePath() );
             releaseDescriptor.setUseReleaseProfile( useReleaseProfile );
 
-            if ( goals == null )
-            {
-                // set default
-                goals = "deploy";
-                if ( project.getDistributionManagement() != null
-                    && project.getDistributionManagement().getSite() != null )
-                {
-                    goals += " site-deploy";
-                }
-            }
+            createGoals();
             releaseDescriptor.setPerformGoals( goals );
             
             ReleasePerformRequest performRequest  = new ReleasePerformRequest();
@@ -183,6 +176,26 @@ public class PerformReleaseMojo
         catch ( ReleaseFailureException e )
         {
             throw new MojoFailureException( e.getMessage(), e );
+        }
+    }
+
+    /** Just here so it may be overridden by StageReleaseMojo */
+    void setDeploymentRepository()
+    {
+    }
+
+    /** Just here so it may be overridden by StageReleaseMojo */
+    void createGoals()
+    {
+        if ( goals == null )
+        {
+            // set default
+            goals = "deploy";
+            if ( project.getDistributionManagement() != null
+                && project.getDistributionManagement().getSite() != null )
+            {
+                goals += " site-deploy";
+            }
         }
     }
 }

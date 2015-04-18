@@ -48,7 +48,8 @@ public abstract class AbstractRunGoalsPhase
     private Map<String, MavenExecutor> mavenExecutors;
 
     /**
-     * @deprecated Use {@link AbstractRunGoalsPhase#execute(ReleaseDescriptor, ReleaseEnvironment, File, String)} instead.
+     * @deprecated Use {@link AbstractRunGoalsPhase#execute(ReleaseDescriptor, ReleaseEnvironment, File, String)}
+     * instead.
      */
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, File workingDirectory,
                                   String additionalArguments )
@@ -78,9 +79,10 @@ public abstract class AbstractRunGoalsPhase
                         "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId() );
                 }
 
-                mavenExecutor.executeGoals( determineWorkingDirectory( workingDirectory,
-                                                                       releaseDescriptor.getScmRelativePathProjectDirectory() ),
-                                            goals, releaseEnvironment, releaseDescriptor.isInteractive(),
+                File wd =
+                    determineWorkingDirectory( workingDirectory,
+                                               releaseDescriptor.getScmRelativePathProjectDirectory() );
+                mavenExecutor.executeGoals( wd, goals, releaseEnvironment, releaseDescriptor.isInteractive(),
                                             additionalArguments, releaseDescriptor.getPomFileName(), result );
             }
         }

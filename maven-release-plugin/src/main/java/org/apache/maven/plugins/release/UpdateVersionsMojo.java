@@ -74,6 +74,22 @@ public class UpdateVersionsMojo
     private String developmentVersion;
 
     /**
+     * Whether to update dependencies version to the next development version.
+     *
+     * @since 2.5.2
+     */
+    @Parameter( defaultValue = "true", property = "updateDependencies" )
+    private boolean updateDependencies;
+
+    /**
+     * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
+     * 
+     * @since 2.5.2
+     */
+    @Parameter( defaultValue = "false", property = "useEditMode" )
+    private boolean useEditMode;
+    
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -83,6 +99,8 @@ public class UpdateVersionsMojo
         config.setAddSchema( addSchema );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
         config.setDefaultDevelopmentVersion( developmentVersion );
+        config.setScmUseEditMode( useEditMode );
+        config.setUpdateDependencies( updateDependencies );
 
         Map<String, Scm> originalScmInfo = new HashMap<String, Scm>();
         originalScmInfo.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),

@@ -26,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
@@ -47,8 +48,10 @@ import org.codehaus.plexus.util.ReaderFactory;
  */
 public class ReleaseUtil
 {
+    @SuppressWarnings( "checkstyle:constantname" )
     public static final String RELEASE_POMv4 = "release-pom.xml";
 
+    @SuppressWarnings( "checkstyle:constantname" )
     public static final String POMv4 = "pom.xml";
 
     private static final String FS = File.separator;
@@ -183,7 +186,8 @@ public class ReleaseUtil
         }
 
         int parentLevels =
-            getBaseWorkingDirectoryParentCount( basedir, FileUtils.normalize( releaseDescriptor.getWorkingDirectory() ) );
+            getBaseWorkingDirectoryParentCount( basedir,
+                                                FileUtils.normalize( releaseDescriptor.getWorkingDirectory() ) );
 
         String url = releaseDescriptor.getScmSourceUrl();
         url = realignScmUrl( parentLevels, url );
@@ -240,8 +244,8 @@ public class ReleaseUtil
 
         // we can safely assume case-insensitivity as we are just backtracking, not comparing. This helps with issues
         // on Windows with C: vs c:
-        workingDirectory = workingDirectory.toLowerCase( Locale.ENGLISH );
-        basedir = basedir.toLowerCase( Locale.ENGLISH );
+        workingDirectory = FilenameUtils.normalize( workingDirectory.toLowerCase( Locale.ENGLISH ) );
+        basedir = FilenameUtils.normalize( basedir.toLowerCase( Locale.ENGLISH ) );
 
         // MRELEASE-663
         // For Windows is does matter if basedir ends with a file-separator or not to be able to compare.
@@ -265,6 +269,10 @@ public class ReleaseUtil
     {
         if ( !StringUtils.isEmpty( url ) )
         {
+            // normalize
+            url = url.replaceAll( "/\\./", "/" ).replaceAll( "/\\.$", "" ).
+                            replaceAll( "/[^/]+/\\.\\./", "/" ).replaceAll( "/[^/]+/\\.\\.$", "" );
+
             int index = url.length();
             String suffix = "";
             if ( url.endsWith( "/" ) )
@@ -272,6 +280,7 @@ public class ReleaseUtil
                 index--;
                 suffix = "/";
             }
+
             for ( int i = 0; i < parentLevels && index > 0; i++ )
             {
                 index = url.lastIndexOf( '/', index - 1 );
@@ -281,6 +290,7 @@ public class ReleaseUtil
             {
                 url = url.substring( 0, index ) + suffix;
             }
+            
         }
         return url;
     }

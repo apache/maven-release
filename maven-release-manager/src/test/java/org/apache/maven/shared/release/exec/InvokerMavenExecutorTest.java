@@ -33,7 +33,6 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.InvocationOutputHandler;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
@@ -83,6 +82,47 @@ public class InvokerMavenExecutorTest
     }
 
     @Test
+    public void testBatch()
+                  throws Exception
+    {
+        Logger logger = mock( Logger.class );
+        executor.enableLogging( logger );
+
+        InvocationRequest req = new DefaultInvocationRequest();
+        // bug: assertEquals( true, req.isInteractive() );
+
+        req = new DefaultInvocationRequest();
+        req.setInteractive( true );
+        executor.setupRequest( req, null, "-B" );
+        assertEquals( false, req.isInteractive() );
+
+        req = new DefaultInvocationRequest();
+        req.setInteractive( true );
+        executor.setupRequest( req, null, "\"-B\"" );
+        assertEquals( false, req.isInteractive() );
+    }
+
+    @Test
+    public void testUserToolchains()
+        throws Exception
+    {
+        Logger logger = mock( Logger.class );
+        executor.enableLogging( logger );
+
+        InvocationRequest req = new DefaultInvocationRequest();
+        executor.setupRequest( req, null, "-t mytoolchains.xml" );
+        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
+
+        req = new DefaultInvocationRequest();
+        executor.setupRequest( req, null, "-tmytoolchains.xml" );
+        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
+
+        req = new DefaultInvocationRequest();
+        executor.setupRequest( req, null, "\"-tmytoolchains.xml\"" );
+        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
+    }
+    
+    @Test
     public void testGlobalSettings()
         throws Exception
     {
@@ -117,6 +157,7 @@ public class InvokerMavenExecutorTest
 
         ReleaseEnvironment releaseEnvironment = new DefaultReleaseEnvironment();
         releaseEnvironment.setSettings( settings );
+        releaseEnvironment.setMavenHome( new File( System.getProperty( "injectedMavenHome" ) ) );
 
         InvokerMavenExecutor executorSpy = spy( executor );
         SettingsXpp3Writer settingsWriter = mock( SettingsXpp3Writer.class );

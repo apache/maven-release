@@ -307,7 +307,8 @@ public class PomFinder
             {
                 return false;
             }
-            if ( parentGroupId != null ? !parentGroupId.equals( pomInfo.parentGroupId ) : pomInfo.parentGroupId != null )
+            if ( parentGroupId != null ? !parentGroupId.equals( pomInfo.parentGroupId )
+                                       : pomInfo.parentGroupId != null )
             {
                 return false;
             }

@@ -96,7 +96,8 @@ public abstract class AbstractScmReleaseMojo
 
     /**
      * Add a new or overwrite the default implementation per provider. 
-     * The key is the scm prefix and the value is the role hint of the {@link org.apache.maven.scm.provider.ScmProvider}.
+     * The key is the scm prefix and the value is the role hint of the
+     * {@link org.apache.maven.scm.provider.ScmProvider}.
      *
      * @since 2.0-beta-6
      * @see ScmManager#setScmProviderImplementation(String, String)

@@ -52,7 +52,8 @@ import org.codehaus.plexus.util.StringUtils;
  * <p>
  * <table>
  *   <tr>
- *     <th>MapVersionsPhase field</th><th>map-release-versions</th><th>map-branch-versions</th><th>map-development-versions</th>
+ *     <th>MapVersionsPhase field</th><th>map-release-versions</th><th>map-branch-versions</th>
+ *     <th>map-development-versions</th>
  *   </tr>
  *   <tr>
  *     <td>convertToSnapshot</td>     <td>false</td>               <td>true</td>               <td>true</td>
@@ -205,7 +206,8 @@ public class MapVersionsPhase
         {
             // no branch modification
             if ( !( releaseDescriptor.isUpdateBranchVersions()
-                          && ( ArtifactUtils.isSnapshot( project.getVersion() ) || releaseDescriptor.isUpdateVersionsToSnapshot() ) ) )
+                            && ( ArtifactUtils.isSnapshot( project.getVersion() )
+                                            || releaseDescriptor.isUpdateVersionsToSnapshot() ) ) )
             {
                 return project.getVersion();
             }
@@ -263,19 +265,20 @@ public class MapVersionsPhase
                     {
                         try
                         {
-                            suggestedVersion = resolveSuggestedVersion( baseVersion, releaseDescriptor.getProjectVersionPolicyId() );
+                            suggestedVersion =
+                                resolveSuggestedVersion( baseVersion, releaseDescriptor.getProjectVersionPolicyId() );
                         }
                         catch ( VersionParseException e )
                         {
                             if ( releaseDescriptor.isInteractive() )
                             {
-                                suggestedVersion = resolveSuggestedVersion( "1.0", releaseDescriptor.getProjectVersionPolicyId() );
+                                suggestedVersion =
+                                    resolveSuggestedVersion( "1.0", releaseDescriptor.getProjectVersionPolicyId() );
                             }
                             else
                             {
-                                throw new ReleaseExecutionException(
-                                                                     "Error parsing version, cannot determine next version: "
-                                                                         + e.getMessage(), e );
+                                throw new ReleaseExecutionException( "Error parsing version, cannot determine next "
+                                    + "version: " + e.getMessage(), e );
                             }
                         }
                     }

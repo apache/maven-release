@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.policy;
  * under the License.
  */
 
+/**
+ * 
+ */
 public class PolicyException
     extends Exception
 {

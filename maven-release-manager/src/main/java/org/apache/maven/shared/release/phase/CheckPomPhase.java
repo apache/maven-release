@@ -49,9 +49,15 @@ public class CheckPomPhase
      */
     private boolean scmRequired = true;
     
+    /**
+     * @since 2.5.2
+     */
+    private boolean snapshotsRequired = true;
+
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                  List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
@@ -83,7 +89,8 @@ public class CheckPomPhase
 
             try
             {
-                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                                                   releaseEnvironment.getSettings() );
             }
             catch ( ScmRepositoryException e )
             {
@@ -103,10 +110,12 @@ public class CheckPomPhase
             if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
             {
                 containsSnapshotProjects = true;
+
+                break;
             }
         }
 
-        if ( !containsSnapshotProjects && !releaseDescriptor.isBranchCreation() )
+        if ( snapshotsRequired && !containsSnapshotProjects && !releaseDescriptor.isBranchCreation() )
         {
             throw new ReleaseFailureException( "You don't have a SNAPSHOT project in the reactor projects list." );
         }
@@ -116,7 +125,8 @@ public class CheckPomPhase
         return result;
     }
 
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute

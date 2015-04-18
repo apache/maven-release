@@ -25,9 +25,11 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.codehaus.plexus.util.StringUtils;
 
+/**
+ * 
+ */
 public class Version
     implements Comparable<Version>
 {
@@ -82,15 +84,8 @@ public class Version
      * cmaki 02242009 FIX for non-digit release numbers, e.g. trunk-SNAPSHOT or just SNAPSHOT This alternate pattern
      * supports version numbers like: trunk-SNAPSHOT branchName-SNAPSHOT SNAPSHOT
      */
-    public static final Pattern ALTERNATE_PATTERN = Pattern.compile( "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)" // for SNAPSHOT
-                                                                                                         // releases
-                                                                                                         // only
-                                                                                                         // (possible
-                                                                                                         // versions
-                                                                                                         // include:
-                                                                                                         // trunk-SNAPSHOT
-                                                                                                         // or SNAPSHOT)
-    );
+    // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
+    public static final Pattern ALTERNATE_PATTERN = Pattern.compile( "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)" );
 
     public Version( String version )
         throws VersionParseException
@@ -253,7 +248,7 @@ public class Version
 
     /**
      * @throws VersionComparisonConflictException if {@link org.eclipse.aether.version.Version} and
-     *             {@link ArtifactVersion} give different results
+     *             {@link org.apache.maven.artifact.versioning.ArtifactVersion ArtifactVersion} give different results
      */
     public int compareTo( Version other )
         throws VersionComparisonConflictException

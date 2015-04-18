@@ -174,6 +174,7 @@ public abstract class AbstractRewritePomsPhase
                  * fail. So let's try harder. Maybe some day, when JDOM offers a StaxBuilder and this builder employes
                  * XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE, this whole mess can be avoided.
                  */
+                // CHECKSTYLE_OFF: LocalFinalVariableName
                 final String SPACE = "\\s++";
                 final String XML = "<\\?(?:(?:[^\"'>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+>";
                 final String INTSUB = "\\[(?:(?:[^\"'\\]]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+\\]";
@@ -186,6 +187,7 @@ public abstract class AbstractRewritePomsPhase
                     "(?:(?:" + SPACE + ")|(?:" + XML + ")|(?:" + DOCTYPE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
                 final String OUTRO = "(?:(?:" + SPACE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
                 final String POM = "(?s)(" + INTRO + ")(.*?)(" + OUTRO + ")";
+                // CHECKSTYLE_ON: LocalFinalVariableName
 
                 Matcher matcher = Pattern.compile( POM ).matcher( content );
                 if ( matcher.matches() )
@@ -258,8 +260,8 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformDocument( MavenProject project, Element rootElement, ReleaseDescriptor releaseDescriptor,
-                                    List<MavenProject> reactorProjects, ScmRepository scmRepository, ReleaseResult result,
-                                    boolean simulate )
+                                    List<MavenProject> reactorProjects, ScmRepository scmRepository,
+                                    ReleaseResult result, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         Namespace namespace = rootElement.getNamespace();
@@ -394,8 +396,8 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void rewriteVersion( Element rootElement, Namespace namespace, Map<String, String> mappedVersions, String projectId,
-                                 MavenProject project, String parentVersion )
+    private void rewriteVersion( Element rootElement, Namespace namespace, Map<String, String> mappedVersions,
+                                 String projectId, MavenProject project, String parentVersion )
         throws ReleaseFailureException
     {
         Element versionElement = rootElement.getChild( "version", namespace );
@@ -425,8 +427,10 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private String rewriteParent( MavenProject project, Element rootElement, Namespace namespace, Map<String, String> mappedVersions,
-                                  Map<String, Map<String, String>> resolvedSnapshotDependencies, Map<String, String> originalVersions )
+    private String rewriteParent( MavenProject project, Element rootElement, Namespace namespace,
+                                  Map<String, String> mappedVersions,
+                                  Map<String, Map<String, String>> resolvedSnapshotDependencies,
+                                  Map<String, String> originalVersions )
         throws ReleaseFailureException
     {
         String parentVersion = null;
@@ -458,9 +462,9 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void rewriteArtifactVersions( Collection<Element> elements, Map<String, String> mappedVersions,
-                                          Map<String, Map<String, String>> resolvedSnapshotDependencies, Map<String, String> originalVersions,
-                                          Model projectModel, Element properties, ReleaseResult result,
-                                          ReleaseDescriptor releaseDescriptor )
+                                          Map<String, Map<String, String>> resolvedSnapshotDependencies,
+                                          Map<String, String> originalVersions, Model projectModel, Element properties,
+                                          ReleaseResult result, ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( elements == null )
@@ -565,7 +569,8 @@ public abstract class AbstractRewritePomsPhase
                             else if ( !mappedVersion.equals( rawVersion ) )
                             {
                                 if ( mappedVersion.matches( "\\$\\{project.+\\}" )
-                                    || mappedVersion.matches( "\\$\\{pom.+\\}" ) || "${version}".equals( mappedVersion ) )
+                                    || mappedVersion.matches( "\\$\\{pom.+\\}" )
+                                    || "${version}".equals( mappedVersion ) )
                                 {
                                     logInfo( result, "  Ignoring artifact version update for expression "
                                         + mappedVersion );
@@ -735,9 +740,10 @@ public abstract class AbstractRewritePomsPhase
                                                           Map<String, Map<String, String>> resolvedSnapshots );
 
     protected abstract Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
-                                                                  List<MavenProject> reactorProjects, boolean simulate );
+                                                                  List<MavenProject> reactorProjects,
+                                                                  boolean simulate );
 
-    protected abstract Map<String,String> getNextVersionMap( ReleaseDescriptor releaseDescriptor );
+    protected abstract Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor );
 
     protected abstract void transformScm( MavenProject project, Element rootElement, Namespace namespace,
                                           ReleaseDescriptor releaseDescriptor, String projectId,

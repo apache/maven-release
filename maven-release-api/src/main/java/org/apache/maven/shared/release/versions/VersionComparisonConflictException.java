@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.versions;
  * under the License.
  */
 
+/**
+ * 
+ */
 public class VersionComparisonConflictException
     extends RuntimeException
 {

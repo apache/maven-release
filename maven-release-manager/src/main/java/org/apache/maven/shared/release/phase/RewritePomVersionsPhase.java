@@ -54,12 +54,11 @@ public class RewritePomVersionsPhase
         return false;
     }
 
-    @SuppressWarnings( "unchecked" )
     @Override
-    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
-                                         boolean simulate )
+    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
+                                                         List<MavenProject> reactorProjects, boolean simulate )
     {
-        return releaseDescriptor.getReleaseVersions();
+        return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
     @SuppressWarnings( "unchecked" )
@@ -70,7 +69,8 @@ public class RewritePomVersionsPhase
     }
 
     @Override
-    protected String getResolvedSnapshotVersion( String artifactVersionlessKey, Map<String, Map<String, String>> resolvedSnapshotsMap )
+    protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
+                                                 Map<String, Map<String, String>> resolvedSnapshotsMap )
     {
         // Only update the pom version, not the dependency versions
         return null;

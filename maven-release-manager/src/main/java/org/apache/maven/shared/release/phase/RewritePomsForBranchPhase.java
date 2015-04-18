@@ -60,7 +60,8 @@ public class RewritePomsForBranchPhase
 
                 try
                 {
-                    translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result, commonBasedir );
+                    translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
+                                  commonBasedir );
                 }
                 catch ( IOException e )
                 {
@@ -153,7 +154,8 @@ public class RewritePomsForBranchPhase
                 }
                 
                 String value =
-                    translator.translateBranchUrl( scm.getConnection(), branchName + subDirectoryBranch, scmConnectionBranch );
+                    translator.translateBranchUrl( scm.getConnection(), branchName + subDirectoryBranch,
+                                                   scmConnectionBranch );
                 if ( !value.equals( scm.getConnection() ) )
                 {
                     rewriteElement( "connection", value, scmRoot, namespace );

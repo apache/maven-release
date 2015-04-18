@@ -45,11 +45,13 @@ mvn release:perform
   you need to give the goal the URL and an optional tag to perform the release from. For example:
 
 -------
-mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
+mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -DconnectionUrl=scm:svn:https://svn.mycompany.com/repos/path/to/myproject/tags/myproject-1.2.3
 -------
 
   <<<release:perform>>> will fork a new Maven instance to build the checked-out project. This new Maven instance will use the
-  same system configuration and Maven profiles used by the one running the <<<release:perform>>> goal.
+  same system configuration and Maven profiles used by the one running the <<<release:perform>>> goal. Since there's no pom.xml, 
+  you should use the fully qualified name of the goal to ensure the right version of the maven-release-plugin is used.
+  
 
   It is possible to
   force some profiles to get enabled during release (for example to enable time-consuming tasks that are only relevant
@@ -58,6 +60,7 @@ mvn release:perform -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/mav
 
 -------
   <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-release-plugin</artifactId>
     <version>${project.version}</version>
     <configuration>

@@ -540,7 +540,7 @@ public class DefaultReleaseManager
         updateListener( updateVersionsRequest.getReleaseManagerListener(), "updateVersions", GOAL_START );
 
         ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( updateVersionsRequest.getReleaseDescriptor(), 
-                                                                     updateVersionsRequest.getReleaseManagerListener() );
+                                                                   updateVersionsRequest.getReleaseManagerListener() );
 
         for ( String name : updateVersionsPhases )
         {
@@ -747,7 +747,8 @@ public class DefaultReleaseManager
                          ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        perform( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, listener );
+        perform( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects,
+                 listener );
     }
 
     /** {@inheritDoc} */
@@ -803,7 +804,8 @@ public class DefaultReleaseManager
                           ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        rollback( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, listener );
+        rollback( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects,
+                  listener );
     }
 
     /** {@inheritDoc} */

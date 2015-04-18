@@ -342,7 +342,8 @@ public class PropertiesReleaseDescriptorStore
     }
 
     // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
-    private String encryptAndDecorate( String passwd ) throws IllegalStateException, SecDispatcherException, PlexusCipherException
+    private String encryptAndDecorate( String passwd )
+        throws IllegalStateException, SecDispatcherException, PlexusCipherException
     {
         String configurationFile = secDispatcher.getConfigurationFile();
 

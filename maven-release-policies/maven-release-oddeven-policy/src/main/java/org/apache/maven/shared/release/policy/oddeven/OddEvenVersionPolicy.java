@@ -55,7 +55,8 @@ public final class OddEvenVersionPolicy
         return calculateNextVersion( request, true );
     }
 
-    private VersionPolicyResult calculateNextVersion( VersionPolicyRequest request, boolean development ) {
+    private VersionPolicyResult calculateNextVersion( VersionPolicyRequest request, boolean development )
+    {
         DefaultVersionInfo defaultVersionInfo = null;
 
         try
