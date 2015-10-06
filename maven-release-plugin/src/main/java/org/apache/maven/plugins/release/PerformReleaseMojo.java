@@ -20,11 +20,14 @@ package org.apache.maven.plugins.release;
  */
 
 import java.io.File;
+import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePerformRequest;
@@ -113,6 +116,23 @@ public class PerformReleaseMojo
     private boolean dryRun;
 
     /**
+     * Add a new or overwrite the default implementation per provider. 
+     * The key is the scm prefix and the value is the role hint of the
+     * {@link org.apache.maven.scm.provider.ScmProvider}.
+     *
+     * @since 2.5.3
+     * @see ScmManager#setScmProviderImplementation(String, String)
+     */
+    @Parameter
+    private Map<String, String> providerImplementations;
+
+    /**
+     * The SCM manager.
+     */
+    @Component
+    private ScmManager scmManager;
+
+    /**
      * {@inheritDoc}
      */
     protected String getAdditionalProfiles()
@@ -126,6 +146,16 @@ public class PerformReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
+        if ( providerImplementations != null )
+        {
+            for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
+            {
+                getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
+                    + providerEntry.getValue() + "'." );
+                scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
+            }
+        }
+        
         // goals may be splitted into multiple line in configuration.
         // Let's build a single line command
         if ( goals != null )
