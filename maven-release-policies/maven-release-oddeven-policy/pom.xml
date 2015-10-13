@@ -31,6 +31,10 @@
   <artifactId>maven-release-oddeven-policy</artifactId>
 
   <name>Maven Release Odd-Even Policy</name>
+  <properties>
+    <checkstyle.skip>true</checkstyle.skip> <!--suppression does not
+    in package-info.java -->
+  </properties>
 
   <dependencies>
     <dependency>
