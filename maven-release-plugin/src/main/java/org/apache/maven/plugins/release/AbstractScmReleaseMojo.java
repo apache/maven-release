@@ -95,15 +95,6 @@ public abstract class AbstractScmReleaseMojo
     private boolean pushChanges = true;
 
     /**
-     * A workItem for SCMs like RTC, TFS etc, that may require additional
-     * information to perform a pushChange operation.
-     *
-     * @since 2.5.3
-     */
-    @Parameter( property = "workItem" )
-    private String workItem;
-
-    /**
      * Add a new or overwrite the default implementation per provider. 
      * The key is the scm prefix and the value is the role hint of the
      * {@link org.apache.maven.scm.provider.ScmProvider}.
@@ -150,7 +141,6 @@ public abstract class AbstractScmReleaseMojo
         descriptor.setScmCommentPrefix( scmCommentPrefix );
 
         descriptor.setPushChanges( pushChanges );
-        descriptor.setWorkItem( workItem );
 
         return descriptor;
     }

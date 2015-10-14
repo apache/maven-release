@@ -82,8 +82,6 @@ public class ScmBranchPhase
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
 
-            repository.getProviderRepository().setWorkItem( releaseDescriptor.getWorkItem() );
-
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
 
         }

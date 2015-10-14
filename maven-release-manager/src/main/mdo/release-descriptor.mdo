@@ -499,17 +499,6 @@
           </description>
         </field>
 
-        <field>
-          <name>workItem</name>
-          <version>2.5.3+</version>
-          <type>String</type>
-          <description>
-            Some SCMs may require a Work Item or a Task to allow the changes to be pushed or delivered.
-            This field allows you to specify that Work Item or Task. It is optional, and only relevant
-            if pushChanges is true.
-          </description>
-        </field>
-
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.
@@ -726,10 +715,6 @@
             return false;
         }
         if ( !safeEquals( completedPhase, that.completedPhase ) )
-        {
-            return false;
-        }
-        if ( !safeEquals( workItem, that.workItem ) )
         {
             return false;
         }
@@ -957,7 +942,6 @@
         result = 29 * result + ( remoteTagging ? 1 : 0 );
         result = 29 * result + ( localCheckout ? 1 : 0 );
         result = 29 * result + ( pushChanges ? 1 : 0 );
-        result = 29 * result + ( workItem != null ? workItem.hashCode() : 0 );
         result = 29 * result + ( defaultDevelopmentVersion != null ? defaultDevelopmentVersion.hashCode() : 0 );
         result = 29 * result + ( scmRelativePathProjectDirectory != null ? scmRelativePathProjectDirectory.hashCode() : 0 );
         result = 29 * result + ( checkoutDirectory != null ? checkoutDirectory.hashCode() : 0 );
