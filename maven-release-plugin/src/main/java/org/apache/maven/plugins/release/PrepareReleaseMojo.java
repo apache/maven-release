@@ -218,9 +218,9 @@ public class PrepareReleaseMojo
     private int waitBeforeTagging;
 
     /**
-     * The {@code VersionPolicy} ID.
+     * The role-hint for the VersionPolicy implementation used to calculate the project versions.
      *
-     * @since 3.0
+     * @since 2.5.1
      */
     @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
     private String projectVersionPolicyId;
