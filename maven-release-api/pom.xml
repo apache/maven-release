@@ -29,6 +29,7 @@
   <artifactId>maven-release-api</artifactId>
 
   <name>Maven Release APIs</name>
+  <description>APIs to implement to extend maven-release-plugin.</description>
   
   <dependencies>
     <dependency>

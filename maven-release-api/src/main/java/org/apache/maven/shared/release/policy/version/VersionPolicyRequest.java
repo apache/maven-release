@@ -23,6 +23,7 @@ import org.apache.maven.artifact.repository.metadata.Metadata;
 
 /**
  * 
+ * @since 2.5.1 (MRELEASE-431)
  */
 public class VersionPolicyRequest
 {

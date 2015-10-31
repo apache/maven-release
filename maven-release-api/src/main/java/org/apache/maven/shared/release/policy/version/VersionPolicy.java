@@ -23,13 +23,21 @@ import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.versions.VersionParseException;
 
 /**
- * 
+ * API for next version calculations, used by maven-release-plugin to suggest release and next develoment versions.
+ *
+ * @since 2.5.1 (MRELEASE-431)
  */
 public interface VersionPolicy
 {
+    /**
+     * Calculation of the release version from development state.
+     */
     VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
         throws PolicyException, VersionParseException;
 
+    /**
+     * Calculation of the next development version from release state.
+     */
     VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
         throws PolicyException, VersionParseException;
 }

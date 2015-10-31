@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.policy;
 
 /**
  * 
+ * @since 2.5.1 (MRELEASE-431)
  */
 public class PolicyException
     extends Exception
