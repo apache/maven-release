@@ -32,12 +32,17 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * A {@link VersionPolicy} implementation that allows release even version numbers only and skips the odd.
+ * A {@link VersionPolicy} implementation that propose even version numbers only for releases and odd
+ * numbers for development. For example:<ul>
+ * <li><code>1.0.0-SNAPSHOT</code> gets <code>1.0.0</code> for next release,</li>
+ * <li><code>1.0.1-SNAPSHOT</code> gets <code>1.0.2</code> for next release,</li>
+ * <li><code>1.0.2</code> gets <code>1.0.3-SNAPSHOT</code> for next development version.</li>
+ * </ul>
  */
 @Component(
     role = VersionPolicy.class,
     hint = "OddEvenVersionPolicy",
-    description = "A VersionPolicy implementation that allows release even version numbers"
+    description = "A VersionPolicy implementation that selects even version numbers only for releases"
 )
 public final class OddEvenVersionPolicy
     implements VersionPolicy

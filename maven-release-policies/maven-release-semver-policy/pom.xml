@@ -32,6 +32,9 @@
   <artifactId>maven-release-semver-policy</artifactId>
 
   <name>Maven Release SemVer Policy</name>
+  <description>
+    A version policy that enforce SemVer format and upgrades minor element for next development version.
+  </description>
 
   <dependencies>
     <dependency>

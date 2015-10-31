@@ -31,6 +31,10 @@
   <artifactId>maven-release-oddeven-policy</artifactId>
 
   <name>Maven Release Odd-Even Policy</name>
+  <description>
+    A version policy that proposes even version numbers only for releases and odd numbers for development
+  </description>
+
   <properties>
     <checkstyle.skip>true</checkstyle.skip> <!--suppression does not
     in package-info.java -->
