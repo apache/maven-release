@@ -18,6 +18,9 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+/* (c) Copyright [2016] Hewlett Packard Enterprise Development LP */
+
 import static org.mockito.Mockito.*;
 
 import java.io.File;
@@ -133,7 +136,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, false, false );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, false, false, false );
 
         @SuppressWarnings("unchecked")
         Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
@@ -205,7 +208,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( null );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true, false );
 
         @SuppressWarnings("unchecked")
         Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
@@ -229,7 +232,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true, false );
 
         @SuppressWarnings("unchecked")
         Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
@@ -253,7 +256,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step3" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true, false );
 
         @SuppressWarnings("unchecked")
         Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
@@ -277,7 +280,7 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "foo" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
+        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true, false );
 
         @SuppressWarnings("unchecked")
         Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
@@ -359,7 +362,7 @@ public class DefaultReleaseManagerTest
         // execute
         try
         {
-            releaseManager.prepare( releaseDescriptor, new DefaultReleaseEnvironment(), null, false, false );
+            releaseManager.prepare( releaseDescriptor, new DefaultReleaseEnvironment(), null, false, false, false );
             fail( "Should have failed to read configuration" );
         }
         catch ( ReleaseExecutionException e )

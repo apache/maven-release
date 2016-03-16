@@ -17,6 +17,9 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
+
+<!-- (c) Copyright [2016] Hewlett Packard Enterprise Development LP -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -34,7 +37,7 @@ under the License.
   <build>
     <plugins>
       <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
+        <groupId>org.apache.maven.release</groupId>
         <artifactId>maven-release-plugin</artifactId>
         <version>@project.version@</version>
         <dependencies>

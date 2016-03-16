@@ -19,6 +19,8 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+/* (c) Copyright [2016] Hewlett Packard Enterprise Development LP */
+
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.isNull;
@@ -81,7 +83,7 @@ public class PrepareReleaseMojoTest
         mojo.execute();
 
         // verify
-        verify( mock ).prepare( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class), eq( true ), eq( false ) );
+        verify( mock ).prepare( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class), eq( true ), eq( false ), eq( false ) );
         assertTrue( true );
     }
 
@@ -108,7 +110,8 @@ public class PrepareReleaseMojoTest
                                                                                 isA( ReleaseEnvironment.class ), 
                                                                                 isNull( List.class), 
                                                                                 eq( true ), 
-                                                                                eq( false ) );
+                                                                                eq( false ),
+																			    eq( false ) );
         mojo.setReleaseManager( mock );
 
         //execute
@@ -128,7 +131,8 @@ public class PrepareReleaseMojoTest
                                 isA( ReleaseEnvironment.class ), 
                                 isNull( List.class), 
                                 eq( true ), 
-                                eq( false ) );
+                                eq( false ),
+								eq( false ) );
         verifyNoMoreInteractions( mock );
     }
 
@@ -156,7 +160,8 @@ public class PrepareReleaseMojoTest
                                                isA( ReleaseEnvironment.class ), 
                                                isNull( List.class), 
                                                eq( true ), 
-                                               eq( false ) );
+                                               eq( false ),
+											   eq( false ) );
         mojo.setReleaseManager( mock );
 
         // execute
@@ -175,7 +180,8 @@ public class PrepareReleaseMojoTest
                                 isA( ReleaseEnvironment.class ), 
                                 isNull( List.class), 
                                 eq( true ), 
-                                eq( false ) );
+                                eq( false ),
+								eq( false ) );
         verifyNoMoreInteractions( mock );
     }
 

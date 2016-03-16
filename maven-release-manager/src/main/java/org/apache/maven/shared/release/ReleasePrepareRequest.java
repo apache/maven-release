@@ -19,6 +19,8 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+/* (c) Copyright [2016] Hewlett Packard Enterprise Development LP */
+
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 /**
@@ -34,6 +36,9 @@ public class ReleasePrepareRequest
 
     // using Boolean to detect if has been set explicitly
     private Boolean resume;
+
+    // using Boolean to allow the preparephases to be stopped at rewrite-poms-for-release phase
+    private Boolean stopAtRewritePomsForDevelopmentPhase;
 
     private ReleaseEnvironment releaseEnvironment;
 
@@ -83,5 +88,21 @@ public class ReleasePrepareRequest
     public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )
     {
         this.releaseEnvironment = releaseEnvironment;
+    }
+
+    /**
+    * @return the stopAtRewritePomsForDevelopmentPhase
+    */
+    public Boolean getStopAtRewritePomsForDevelopmentPhase()
+    {
+       return stopAtRewritePomsForDevelopmentPhase;
+    }
+
+    /**
+     * @param stopAtRewritePomsForDevelopmentPhase the stopAtRewritePomsForDevelopmentPhase to set
+     */
+    public void setStopAtRewritePomsForDevelopmentPhase( Boolean stopAtRewritePomsForDevelopmentPhase )
+    {
+       this.stopAtRewritePomsForDevelopmentPhase = stopAtRewritePomsForDevelopmentPhase;
     }
 }

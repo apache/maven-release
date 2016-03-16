@@ -19,6 +19,8 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+/* (c) Copyright [2016] Hewlett Packard Enterprise Development LP */
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -77,7 +79,8 @@ public interface ReleaseManager
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
     void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                  List<MavenProject> reactorProjects, boolean resume, boolean dryRun )
+                  List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                  boolean stopAtRewritePomsForDevelopmentPhase )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -95,7 +98,7 @@ public interface ReleaseManager
      * instead.
      */
     void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
-                  boolean resume, boolean dryRun )
+                  boolean resume, boolean dryRun, boolean stopAtRewritePomsForDevelopmentPhase )
         throws ReleaseExecutionException, ReleaseFailureException;
     
     /**
@@ -121,7 +124,8 @@ public interface ReleaseManager
      * @throws ReleaseFailureException   if there is a problem performing the release
      */
     void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                  List<MavenProject> reactorProjects, boolean resume, boolean dryRun, ReleaseManagerListener listener )
+                  List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                  boolean stopAtRewritePomsForDevelopmentPhase, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
@@ -140,20 +144,21 @@ public interface ReleaseManager
      * ReleaseManagerListener)} instead.
      */
     void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
-                  boolean resume, boolean dryRun, ReleaseManagerListener listener )
+                  boolean resume, boolean dryRun, boolean stopAtRewritePomsForDevelopmentPhase, 
+                  ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                     List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
-                                     ReleaseManagerListener listener );
+                                     List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                                     boolean stopAtRewritePomsForDevelopmentPhase, ReleaseManagerListener listener );
 
     /**
      * @deprecated Use {@link ReleaseManager#prepareWithResult(ReleaseDescriptor, ReleaseEnvironment, List, boolean,
      * boolean, ReleaseManagerListener)} instead.
      */
     ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
-                                     List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
-                                     ReleaseManagerListener listener );
+                                     List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                                     boolean stopAtRewritePomsForDevelopmentPhase, ReleaseManagerListener listener );
 
     /**
      * Perform a release.

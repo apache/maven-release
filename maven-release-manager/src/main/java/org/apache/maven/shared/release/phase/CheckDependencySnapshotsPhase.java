@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+/* (c) Copyright [2016] Hewlett Packard Enterprise Development LP */
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -195,7 +197,7 @@ public class CheckDependencySnapshotsPhase
             {
                 boolean addToFailures;
 
-                if ( "org.apache.maven.plugins".equals( artifact.getGroupId() ) && "maven-release-plugin".equals(
+                if ( "org.apache.maven.release".equals( artifact.getGroupId() ) && "maven-release-plugin".equals(
                     artifact.getArtifactId() ) )
                 {
                     // It's a snapshot of the release plugin. Maybe just testing - ask

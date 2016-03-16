@@ -19,6 +19,8 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+/* (c) Copyright [2016] Hewlett Packard Enterprise Development LP */
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,19 +98,22 @@ public class DefaultReleaseManager
                          List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, true, false, null );
+        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, true, false, false, null );
     }
 
     /** {@inheritDoc} */
     public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                         List<MavenProject> reactorProjects, boolean resume, boolean dryRun )
+                         List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                         boolean stopAtRewritePomsForDevelopmentPhase )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, null );
+        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, 
+                         stopAtRewritePomsForDevelopmentPhase, null );
     }
 
     public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                            List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
+                                            List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                                            boolean stopAtRewritePomsForDevelopmentPhase, 
                                             ReleaseManagerListener listener )
     {
         ReleaseResult result = new ReleaseResult();
@@ -117,7 +122,8 @@ public class DefaultReleaseManager
 
         try
         {
-            prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, listener, result );
+            prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, 
+                     stopAtRewritePomsForDevelopmentPhase, listener, result );
 
             result.setResultCode( ReleaseResult.SUCCESS );
         }
@@ -139,11 +145,12 @@ public class DefaultReleaseManager
 
     /** {@inheritDoc} */
     public void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                         List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
-                         ReleaseManagerListener listener )
+                         List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                         boolean stopAtRewritePomsForDevelopmentPhase, ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, listener, null );
+        prepare( releaseDescriptor, releaseEnvironment, reactorProjects, resume, dryRun, 
+                 stopAtRewritePomsForDevelopmentPhase, listener, null );
     }
     
     /** {@inheritDoc} */
@@ -154,8 +161,9 @@ public class DefaultReleaseManager
     }
 
     private void prepare( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                          List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
-                          ReleaseManagerListener listener, ReleaseResult result )
+                          List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                          boolean stopAtRewritePomsForDevelopmentPhase, ReleaseManagerListener listener, 
+                          ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
@@ -164,6 +172,7 @@ public class DefaultReleaseManager
         prepareRequest.setReactorProjects( reactorProjects );
         prepareRequest.setResume( resume );
         prepareRequest.setDryRun( dryRun );
+        prepareRequest.setStopAtRewritePomsForDevelopmentPhase( stopAtRewritePomsForDevelopmentPhase );
         prepareRequest.setReleaseManagerListener( listener );
 
         prepare( prepareRequest, result );
@@ -191,6 +200,10 @@ public class DefaultReleaseManager
         String completedPhase = config.getCompletedPhase();
         int index = preparePhases.indexOf( completedPhase );
 
+        // Defaulting stopPhase to non-existent phase name so that it will be ignored in every case where the 
+        // stopAtRewritePomsForDevelopmentPhase property has not been passed.
+        String stopPhase =  "run-to-finish";
+
         for ( int idx = 0; idx <= index; idx++ )
         {
             updateListener( prepareRequest.getReleaseManagerListener(), preparePhases.get( idx ), PHASE_SKIP );
@@ -206,6 +219,11 @@ public class DefaultReleaseManager
             logInfo( result, "Resuming release from phase '" + preparePhases.get( index + 1 ) + "'" );
         }
 
+        if ( BooleanUtils.isTrue( prepareRequest.getStopAtRewritePomsForDevelopmentPhase() ) )
+        {
+             stopPhase =  "rewrite-poms-for-development";
+        }
+
         // start from next phase
         for ( int i = index + 1; i < preparePhases.size(); i++ )
         {
@@ -218,44 +236,50 @@ public class DefaultReleaseManager
                 throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
             }
 
-            updateListener( prepareRequest.getReleaseManagerListener(), name, PHASE_START );
+           if ( ! stopPhase.equals( name ) )
+           {
+                updateListener( prepareRequest.getReleaseManagerListener(), name, PHASE_START );
 
-            ReleaseResult phaseResult = null;
-            try
-            {
-                if ( BooleanUtils.isTrue( prepareRequest.getDryRun() ) )
+                ReleaseResult phaseResult = null;
+                try
                 {
-                    phaseResult = phase.simulate( config,
-                                                  prepareRequest.getReleaseEnvironment(),
-                                                  prepareRequest.getReactorProjects() );
+                    if ( BooleanUtils.isTrue( prepareRequest.getDryRun() ) )
+                    {
+                        phaseResult = phase.simulate( config,
+                                                      prepareRequest.getReleaseEnvironment(),
+                                                      prepareRequest.getReactorProjects() );
+                    }
+                    else
+                    {
+                        phaseResult = phase.execute( config,
+                                                     prepareRequest.getReleaseEnvironment(),
+                                                     prepareRequest.getReactorProjects() );
+                    }
                 }
-                else
+                finally
+               {
+                    if ( result != null && phaseResult != null )
+                    {
+                       result.appendOutput(  phaseResult.getOutput() );
+                    }
+                }
+                config.setCompletedPhase( name );
+                try
                 {
-                    phaseResult = phase.execute( config,
-                                                 prepareRequest.getReleaseEnvironment(),
-                                                 prepareRequest.getReactorProjects() );
+                    configStore.write( config );
                 }
-            }
-            finally
-            {
-                if ( result != null && phaseResult != null )
+                catch ( ReleaseDescriptorStoreException e )
                 {
-                    result.appendOutput(  phaseResult.getOutput() );
+                    // TODO: rollback?
+                    throw new ReleaseExecutionException( "Error writing release properties after completing phase", e );
                 }
-            }
-
-            config.setCompletedPhase( name );
-            try
-            {
-                configStore.write( config );
-            }
-            catch ( ReleaseDescriptorStoreException e )
-            {
-                // TODO: rollback?
-                throw new ReleaseExecutionException( "Error writing release properties after completing phase", e );
-            }
-
-            updateListener( prepareRequest.getReleaseManagerListener(), name, PHASE_END );
+           }
+           else
+           {
+                //If we've reached rewrite-poms-for-development stage skip the remaining steps
+                i = preparePhases.size() + 1;
+           }
+                updateListener( prepareRequest.getReleaseManagerListener(), name, PHASE_END );
         }
 
         updateListener( prepareRequest.getReleaseManagerListener(), "prepare", GOAL_END );
@@ -775,28 +799,30 @@ public class DefaultReleaseManager
 
     /** {@inheritDoc} */
     public void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
-                         boolean resume, boolean dryRun )
+                         boolean resume, boolean dryRun, boolean stopAtRewritePomsForDevelopmentPhase )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         prepare( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, resume,
-                 dryRun );
+                 dryRun, stopAtRewritePomsForDevelopmentPhase );
     }
 
     /** {@inheritDoc} */
     public void prepare( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects,
-                         boolean resume, boolean dryRun, ReleaseManagerListener listener )
+                         boolean resume, boolean dryRun, boolean stopAtRewritePomsForDevelopmentPhase, 
+                         ReleaseManagerListener listener )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         prepare( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects, resume,
-                 dryRun, listener );
+                 dryRun, stopAtRewritePomsForDevelopmentPhase, listener );
     }
 
     public ReleaseResult prepareWithResult( ReleaseDescriptor releaseDescriptor, Settings settings,
-                                            List<MavenProject> reactorProjects, boolean resume, boolean dryRun,
+                                            List<MavenProject> reactorProjects, boolean resume, boolean dryRun, 
+                                            boolean stopAtRewritePomsForDevelopmentPhase, 
                                             ReleaseManagerListener listener )
     {
         return prepareWithResult( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ),
-                                  reactorProjects, resume, dryRun, listener );
+                                  reactorProjects, resume, dryRun, stopAtRewritePomsForDevelopmentPhase, listener );
     }
 
     /** {@inheritDoc} */

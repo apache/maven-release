@@ -19,6 +19,8 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+/* (c) Copyright [2016] Hewlett Packard Enterprise Development LP */
+
 import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -226,6 +228,15 @@ public class PrepareReleaseMojo
     private String projectVersionPolicyId;
 
     /**
+     * A Boolean parameter that allows the preparephases to be halted at the 
+     * rewrite-poms-for-development phase to be resumed at a later date
+     *
+     * @custom
+     */
+    @Parameter( defaultValue = "false", property = "stopAtRewritePomsForDevelopmentPhase" )
+    private boolean stopAtRewritePomsForDevelopmentPhase;
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -283,7 +294,8 @@ public class PrepareReleaseMojo
 
         try
         {
-            releaseManager.prepare( config, getReleaseEnvironment(), getReactorProjects(), resume, dryRun );
+            releaseManager.prepare( config, getReleaseEnvironment(), getReactorProjects(), 
+                                    resume, dryRun, stopAtRewritePomsForDevelopmentPhase );
         }
         catch ( ReleaseExecutionException e )
         {

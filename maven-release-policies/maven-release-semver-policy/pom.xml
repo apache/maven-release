@@ -18,14 +18,16 @@
   ~ under the License.
   -->
 
+<!-- (c) Copyright [2016] Hewlett Packard Enterprise Development LP -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
     <groupId>org.apache.maven.release</groupId>
-    <artifactId>maven-release</artifactId>
-    <version>2.5.2-SNAPSHOT</version>
+    <artifactId>maven-release-custom</artifactId>
+    <version>2.5.4.CUSTOMHP</version>
     <relativePath>../..</relativePath>
   </parent>
 
@@ -39,7 +41,7 @@
   <dependencies>
     <dependency>
       <groupId>${project.parent.groupId}</groupId>
-      <artifactId>maven-release-api</artifactId>
+      <artifactId>maven-release-api-custom</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
     <dependency>
