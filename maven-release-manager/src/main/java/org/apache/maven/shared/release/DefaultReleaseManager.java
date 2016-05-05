@@ -36,7 +36,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.phase.ReleasePhase;
-import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -83,11 +82,6 @@ public class DefaultReleaseManager
      * The configuration storage.
      */
     private ReleaseDescriptorStore configStore;
-
-    /**
-     * Tool for configuring SCM repositories from release configuration.
-     */
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     private static final int PHASE_SKIP = 0, PHASE_START = 1, PHASE_END = 2, GOAL_START = 11, GOAL_END = 12, ERROR = 99;
 

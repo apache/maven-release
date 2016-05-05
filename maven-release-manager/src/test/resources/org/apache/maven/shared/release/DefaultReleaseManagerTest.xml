@@ -33,9 +33,6 @@
           <role-hint>stub</role-hint>
           <field-name>configStore</field-name>
         </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
       </requirements>
       <configuration>
         <preparePhases>
