@@ -57,6 +57,7 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
+import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Test the default release manager.
@@ -778,8 +779,9 @@ public class DefaultReleaseManagerTest
         ScmManager scmManagerMock = mock( ScmManager.class );
         when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
 
+        ReleasePhase rp = (ReleasePhase) lookup( ReleasePhase.ROLE, "checkout-project-from-scm");
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( rp, "scmRepositoryConfigurator" );
         configurator.setScmManager( scmManagerMock );
 
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
@@ -814,9 +816,10 @@ public class DefaultReleaseManagerTest
         ScmManager scmManagerMock = mock( ScmManager.class );
         when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new ScmRepositoryException( "..." ) );
 
+        ReleasePhase rp = (ReleasePhase) lookup( ReleasePhase.ROLE, "checkout-project-from-scm");
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
-        configurator.setScmManager( scmManagerMock );
+            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( rp, "scmRepositoryConfigurator" );
+        configurator.setScmManager( scmManagerMock );        
 
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
