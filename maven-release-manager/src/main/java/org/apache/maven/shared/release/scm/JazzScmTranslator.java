@@ -21,12 +21,14 @@ package org.apache.maven.shared.release.scm;
 
 import java.io.File;
 
+import org.codehaus.plexus.component.annotations.Component;
+
 /**
  * Jazz tag translator.
  *
  * @author <a href="mailto:ChrisGWarp@gmail.com">Chris Graham</a>
- * @plexus.component role="org.apache.maven.shared.release.scm.ScmTranslator" role-hint="jazz"
  */
+@Component( role = ScmTranslator.class, hint = "jazz" )
 public class JazzScmTranslator
     implements ScmTranslator
 {

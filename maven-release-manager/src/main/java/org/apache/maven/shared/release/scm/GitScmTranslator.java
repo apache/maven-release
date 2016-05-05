@@ -19,9 +19,11 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
+import org.codehaus.plexus.component.annotations.Component;
+
 /**
- * @plexus.component role="org.apache.maven.shared.release.scm.ScmTranslator" role-hint="git"
  */
+@Component( role = ScmTranslator.class, hint = "git" )
 public class GitScmTranslator
     implements ScmTranslator
 {

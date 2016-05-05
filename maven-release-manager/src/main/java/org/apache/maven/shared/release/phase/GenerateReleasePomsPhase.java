@@ -55,6 +55,8 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 
@@ -63,8 +65,8 @@ import org.codehaus.plexus.util.WriterFactory;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="generate-release-poms"
  */
+@Component( role = ReleasePhase.class, hint = "generate-release-poms" )
 public class GenerateReleasePomsPhase
     extends AbstractReleasePomsPhase
 {
@@ -72,16 +74,14 @@ public class GenerateReleasePomsPhase
 
     /**
      *
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private PathTranslator pathTranslator;
 
     /**
      * SCM URL translators mapped by provider name.
-     *
-     * @plexus.requirement role="org.apache.maven.shared.release.scm.ScmTranslator"
      */
+    @Requirement( role = ScmTranslator.class )
     private Map<String, ScmTranslator> scmTranslators;
 
     /*

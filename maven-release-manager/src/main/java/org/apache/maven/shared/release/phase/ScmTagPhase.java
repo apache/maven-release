@@ -40,21 +40,22 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 
 /**
  * Tag the SCM repository after committing the release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="scm-tag"
  */
+@Component( role = ReleasePhase.class, hint = "scm-tag" )
 public class ScmTagPhase
     extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,

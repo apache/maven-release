@@ -19,12 +19,14 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
+import org.codehaus.plexus.component.annotations.Component;
+
 /**
  * ClearCase tag translator.
  *
  * @author <a href="mailto:arne@degenring.com">Arne Degenring</a>
- * @plexus.component role="org.apache.maven.shared.release.scm.ScmTranslator" role-hint="clearcase"
  */
+@Component( role = ScmTranslator.class, hint = "clearcase" )
 public class ClearCaseScmTranslator
     implements ScmTranslator
 {

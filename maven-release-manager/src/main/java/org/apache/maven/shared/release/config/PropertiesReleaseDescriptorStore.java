@@ -34,11 +34,14 @@ import java.util.Set;
 
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
+import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
 import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
 import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
@@ -47,8 +50,8 @@ import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
  * Read and write release configuration and state from a properties file.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.config.ReleaseDescriptorStore" role-hint="properties"
  */
+@Component( role = ReleaseDescriptorStore.class, hint = "properties" )
 public class PropertiesReleaseDescriptorStore
     extends AbstractLogEnabled
     implements ReleaseDescriptorStore
@@ -57,10 +60,8 @@ public class PropertiesReleaseDescriptorStore
     /**
      * When this plugin requires Maven 3.0 as minimum, this component can be removed and o.a.m.s.c.SettingsDecrypter be
      * used instead.
-     *
-     * @plexus.requirement role="org.sonatype.plexus.components.sec.dispatcher.SecDispatcher" role-hint="mng-4384"
      */
-
+    @Requirement( role = SecDispatcher.class, hint = "mng-4384" )
     private DefaultSecDispatcher secDispatcher;
 
     public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )

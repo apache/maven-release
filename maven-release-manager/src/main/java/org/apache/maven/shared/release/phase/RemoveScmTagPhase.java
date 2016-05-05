@@ -25,13 +25,14 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.codehaus.plexus.component.annotations.Component;
 
 import java.util.List;
 
 /**
  * @author Edwin Punzalan
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="remove-scm-tag"
  */
+@Component( role = ReleasePhase.class, hint = "remove-scm-tag" )
 public class RemoveScmTagPhase
     extends AbstractReleasePhase
 {

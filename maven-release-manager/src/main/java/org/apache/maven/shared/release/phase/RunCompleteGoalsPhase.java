@@ -27,14 +27,15 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Run the completion goals for the project to before committing the continuing development stream.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author <a href="mailto:stephenc@apache.org">Stephen Connolly</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="run-completion-goals"
  */
+@Component( role = ReleasePhase.class, hint = "run-completion-goals" )
 public class RunCompleteGoalsPhase
     extends AbstractRunGoalsPhase
 {

@@ -19,12 +19,14 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
+import org.codehaus.plexus.component.annotations.Component;
+
 /**
  * CVS tag translator.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.scm.ScmTranslator" role-hint="cvs"
  */
+@Component( role = ScmTranslator.class, hint = "cvs" )
 public class CvsScmTranslator
     implements ScmTranslator
 {

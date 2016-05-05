@@ -36,6 +36,8 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.FileUtils;
 
 import java.io.File;
@@ -44,16 +46,15 @@ import java.util.List;
 
 /**
  * @author Edwin Punzalan
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="restore-backup-poms"
  */
+@Component( role = ReleasePhase.class, hint = "restore-backup-poms" )
 public class RestoreBackupPomsPhase
     extends AbstractBackupPomsPhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,

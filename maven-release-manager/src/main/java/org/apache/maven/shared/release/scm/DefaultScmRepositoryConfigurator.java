@@ -30,6 +30,8 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
@@ -39,25 +41,23 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
  * Tool that gets a configured SCM repository from release configuration.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.scm.ScmRepositoryConfigurator"
  */
+@Component( role = ScmRepositoryConfigurator.class, instantiationStrategy = "singleton" )
 public class DefaultScmRepositoryConfigurator
     extends AbstractLogEnabled
     implements ScmRepositoryConfigurator
 {
     /**
      * The SCM manager.
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private ScmManager scmManager;
 
     /**
      * When this plugin requires Maven 3.0 as minimum, this component can be removed and o.a.m.s.c.SettingsDecrypter be
      * used instead.
-     * 
-     * @plexus.requirement role-hint="mng-4384"
      */
+    @Requirement( hint = "mng-4384" )
     private SecDispatcher secDispatcher;
 
     public ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )

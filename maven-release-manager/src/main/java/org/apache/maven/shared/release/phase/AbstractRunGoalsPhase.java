@@ -30,6 +30,7 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -42,9 +43,8 @@ public abstract class AbstractRunGoalsPhase
 {
     /**
      * Component to assist in executing Maven.
-     *
-     * @plexus.requirement role="org.apache.maven.shared.release.exec.MavenExecutor"
      */
+    @Requirement( role = MavenExecutor.class )
     private Map<String, MavenExecutor> mavenExecutors;
 
     /**

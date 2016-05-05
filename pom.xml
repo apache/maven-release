@@ -109,6 +109,12 @@
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
+        
+        <plugin>
+          <groupId>org.codehaus.plexus</groupId>
+          <artifactId>plexus-component-metadata</artifactId>
+          <version>1.6</version>
+        </plugin>
       </plugins>
     </pluginManagement>
   </build>

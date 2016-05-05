@@ -29,12 +29,13 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author Edwin Punzalan
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="create-backup-poms"
  */
+@Component( role = ReleasePhase.class, hint = "create-backup-poms" )
 public class CreateBackupPomsPhase
     extends AbstractBackupPomsPhase
 {

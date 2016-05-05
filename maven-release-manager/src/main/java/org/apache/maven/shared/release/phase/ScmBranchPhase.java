@@ -37,6 +37,8 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 
 import java.io.File;
 import java.util.List;
@@ -45,16 +47,15 @@ import java.util.List;
  * Branch the SCM repository.
  * 
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="scm-branch"
  */
+@Component( role = ReleasePhase.class, hint = "scm-branch" )
 public class ScmBranchPhase
     extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     * 
-     * @plexus.requirement
      */
+    @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,

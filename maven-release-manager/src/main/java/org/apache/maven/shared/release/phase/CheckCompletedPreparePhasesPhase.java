@@ -27,13 +27,13 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase"
- *                   role-hint="verify-completed-prepare-phases"
  */
+@Component( role = ReleasePhase.class, hint = "verify-completed-prepare-phases" )
 public class CheckCompletedPreparePhasesPhase
     extends AbstractReleasePhase
 {

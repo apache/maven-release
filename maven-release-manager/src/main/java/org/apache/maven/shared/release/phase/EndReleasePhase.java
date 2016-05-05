@@ -25,6 +25,7 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.codehaus.plexus.component.annotations.Component;
 
 import java.util.List;
 
@@ -32,8 +33,8 @@ import java.util.List;
  * Finalise release preparation so it can be flagged complete..
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="end-release"
  */
+@Component( role = ReleasePhase.class, hint = "end-release" )
 public class EndReleasePhase
     extends AbstractReleasePhase
 {

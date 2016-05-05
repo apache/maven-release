@@ -25,6 +25,7 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.PomFinder;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.io.File;
@@ -34,8 +35,8 @@ import java.util.List;
  * Run the integration tests for the project to verify that it builds before committing.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="run-perform-goals"
  */
+@Component( role = ReleasePhase.class, hint = "run-perform-goals" )
 public class RunPerformGoalsPhase
     extends AbstractRunGoalsPhase
 {

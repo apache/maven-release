@@ -43,6 +43,8 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 
@@ -52,8 +54,8 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @todo plugins with no version will be resolved to RELEASE which is not a snapshot, but remains unresolved to this point. This is a potential hole in the check, and should be revisited after the release pom writing is done and resolving versions to verify whether it is.
  * @todo plugins injected by the lifecycle are not tested here. They will be injected with a RELEASE version so are covered under the above point.
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="check-dependency-snapshots"
  */
+@Component( role = ReleasePhase.class, hint = "check-dependency-snapshots" )
 public class CheckDependencySnapshotsPhase
     extends AbstractReleasePhase
 {
@@ -68,16 +70,14 @@ public class CheckDependencySnapshotsPhase
 
     /**
      * Component used to prompt for input.
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private Prompter prompter;
 
     /**
      * Component used to create artifacts
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private ArtifactFactory artifactFactory;
 
     // Be aware of the difference between usedSnapshots and specifiedSnapshots:

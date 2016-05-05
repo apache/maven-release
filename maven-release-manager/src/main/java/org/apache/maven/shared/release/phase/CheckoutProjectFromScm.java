@@ -41,22 +41,23 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="checkout-project-from-scm"
  */
+@Component( role = ReleasePhase.class, hint = "checkout-project-from-scm" )
 public class CheckoutProjectFromScm
     extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /** {@inheritDoc}  */

@@ -37,6 +37,8 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.SelectorUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -52,23 +54,21 @@ import java.util.Set;
  * See if there are any local modifications to the files before proceeding with SCM operations and the release.
  * 
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.phase.ReleasePhase" role-hint="scm-check-modifications"
  */
+@Component( role = ReleasePhase.class, hint = "scm-check-modifications" )
 public class ScmCheckModificationsPhase
     extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     * 
-     * @plexus.requirement
      */
+    @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
     
     /**
      * SCM URL translators mapped by provider name.
-     *
-     * @plexus.requirement role="org.apache.maven.shared.release.scm.ScmTranslator"
      */
+    @Requirement( role = ScmTranslator.class )
     private Map<String, ScmTranslator> scmTranslators;
 
     /**

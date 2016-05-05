@@ -29,6 +29,8 @@ import java.util.List;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -38,16 +40,15 @@ import org.codehaus.plexus.util.cli.Commandline;
  * Fork Maven to executed a series of goals.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @plexus.component role="org.apache.maven.shared.release.exec.MavenExecutor" role-hint="forked-path"
  */
+@Component( role = MavenExecutor.class, hint = "forked-path" )
 public class ForkedMavenExecutor
     extends AbstractMavenExecutor
 {
     /**
      * Command line factory.
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private CommandLineFactory commandLineFactory;
 
     /**

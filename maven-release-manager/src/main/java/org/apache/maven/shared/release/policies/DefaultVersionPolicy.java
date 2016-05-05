@@ -25,13 +25,13 @@ import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * 
  * @author Robert Scholte
- * 
- * @plexus.component role="org.apache.maven.shared.release.policy.version.VersionPolicy" role-hint="default"
  */
+@Component( role = VersionPolicy.class, hint = "default" )
 public class DefaultVersionPolicy
     implements VersionPolicy
 {

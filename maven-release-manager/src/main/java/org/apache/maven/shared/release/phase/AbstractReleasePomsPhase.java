@@ -29,6 +29,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.codehaus.plexus.component.annotations.Requirement;
 
 /**
  * Abstract release POM phase.
@@ -39,9 +40,8 @@ public abstract class AbstractReleasePomsPhase extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
-     *
-     * @plexus.requirement
      */
+    @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     protected ScmRepository getScmRepository( ReleaseDescriptor releaseDescriptor,

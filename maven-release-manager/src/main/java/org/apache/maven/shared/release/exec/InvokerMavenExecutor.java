@@ -41,15 +41,15 @@ import org.apache.maven.shared.invoker.InvokerLogger;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
  * Fork Maven using the maven-invoker shared library.
- *
- * @plexus.component role="org.apache.maven.shared.release.exec.MavenExecutor" role-hint="invoker"
  */
+@Component( role = MavenExecutor.class, hint = "invoker" )
 @SuppressWarnings( "static-access" )
 public class InvokerMavenExecutor
     extends AbstractMavenExecutor
