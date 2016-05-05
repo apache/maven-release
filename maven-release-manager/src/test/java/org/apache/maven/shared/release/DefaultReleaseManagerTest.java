@@ -88,7 +88,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
@@ -112,7 +112,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
@@ -136,7 +136,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, false, false );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
@@ -160,7 +160,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
@@ -184,7 +184,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = phases.get( "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
@@ -208,7 +208,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
@@ -232,7 +232,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
@@ -256,7 +256,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
@@ -280,7 +280,7 @@ public class DefaultReleaseManagerTest
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
@@ -392,7 +392,7 @@ public class DefaultReleaseManagerTest
 
         // verify
         @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = container.lookupMap( ReleasePhase.ROLE );
+        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
         assertTrue( "step1 not cleaned", phase.isCleaned() );
