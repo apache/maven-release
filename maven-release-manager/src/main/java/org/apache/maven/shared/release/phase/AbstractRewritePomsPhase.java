@@ -107,6 +107,7 @@ public abstract class AbstractRewritePomsPhase
         this.ls = ls;
     }
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -114,6 +115,49 @@ public abstract class AbstractRewritePomsPhase
         ReleaseResult result = new ReleaseResult();
 
         transform( releaseDescriptor, releaseEnvironment, reactorProjects, false, result );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
+    }
+    
+    @Override
+    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                   List<MavenProject> reactorProjects )
+        throws ReleaseExecutionException, ReleaseFailureException
+    {
+        ReleaseResult result = new ReleaseResult();
+
+        transform( releaseDescriptor, releaseEnvironment, reactorProjects, true, result );
+
+        result.setResultCode( ReleaseResult.SUCCESS );
+
+        return result;
+    }
+
+    @Override
+    public ReleaseResult clean( List<MavenProject> reactorProjects )
+    {
+        ReleaseResult result = new ReleaseResult();
+
+        super.clean( reactorProjects );
+
+        if ( reactorProjects != null )
+        {
+            for ( MavenProject project : reactorProjects )
+            {
+                File pomFile = ReleaseUtil.getStandardPom( project );
+                // MRELEASE-273 : if no pom
+                if ( pomFile != null )
+                {
+                    File file = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
+                    if ( file.exists() )
+                    {
+                        file.delete();
+                    }
+                }
+            }
+        }
 
         result.setResultCode( ReleaseResult.SUCCESS );
 
@@ -694,48 +738,6 @@ public abstract class AbstractRewritePomsPhase
             IOUtil.close( writer );
         }
     }
-
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        ReleaseResult result = new ReleaseResult();
-
-        transform( releaseDescriptor, releaseEnvironment, reactorProjects, true, result );
-
-        result.setResultCode( ReleaseResult.SUCCESS );
-
-        return result;
-    }
-
-    public ReleaseResult clean( List<MavenProject> reactorProjects )
-    {
-        ReleaseResult result = new ReleaseResult();
-
-        super.clean( reactorProjects );
-
-        if ( reactorProjects != null )
-        {
-            for ( MavenProject project : reactorProjects )
-            {
-                File pomFile = ReleaseUtil.getStandardPom( project );
-                // MRELEASE-273 : if no pom
-                if ( pomFile != null )
-                {
-                    File file = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
-                    if ( file.exists() )
-                    {
-                        file.delete();
-                    }
-                }
-            }
-        }
-
-        result.setResultCode( ReleaseResult.SUCCESS );
-
-        return result;
-    }
-
     protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey,
                                                           Map<String, Map<String, String>> resolvedSnapshots );
 
