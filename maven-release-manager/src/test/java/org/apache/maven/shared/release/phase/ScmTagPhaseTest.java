@@ -53,9 +53,9 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Test the SCM tag phase.
@@ -306,7 +306,7 @@ public class ScmTagPhaseTest
         when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
 
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
         configurator.setScmManager( scmManagerMock );
 
         // execute
@@ -336,7 +336,7 @@ public class ScmTagPhaseTest
         ScmManager scmManagerMock = mock( ScmManager.class );
         when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new ScmRepositoryException( "..." ) );
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
         configurator.setScmManager( scmManagerMock );
 
         // execute

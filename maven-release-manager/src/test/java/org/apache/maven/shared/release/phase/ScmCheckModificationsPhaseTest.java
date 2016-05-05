@@ -53,8 +53,8 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
+import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Test the SCM modification check phase.
@@ -86,7 +86,7 @@ public class ScmCheckModificationsPhaseTest
         when( scmManagerMock.makeScmRepository( eq( "scm-url" ) ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
 
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
         configurator.setScmManager( scmManagerMock );
 
         // execute
@@ -129,7 +129,7 @@ public class ScmCheckModificationsPhaseTest
         when( scmManagerMock.makeScmRepository( eq( "scm-url" ) ) ).thenThrow( new ScmRepositoryException( "..." ) );
 
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
         configurator.setScmManager( scmManagerMock );
 
         // execute
