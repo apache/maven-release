@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -31,7 +32,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
-import org.apache.maven.shared.release.transform.jdom.JDomScm;
+import org.apache.maven.shared.release.transform.jdom.JDomModel;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -53,18 +54,17 @@ public class RewritePomsForBranchPhase
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
         {
-            Element scmRoot = rootElement.getChild( "scm", namespace );
+            Model modelTarget = new JDomModel( rootElement );
+            Scm scmRoot = modelTarget.getScm();
             
             if ( scmRoot != null )
             {
-                Scm scmTarget = new JDomScm( scmRoot );
-                
                 Scm scm = buildScm( project );
                 releaseDescriptor.mapOriginalScmInfo( projectId, scm );
 
                 try
                 {
-                    translateScm( project, releaseDescriptor, scmTarget, scmRepository, result, commonBasedir );
+                    translateScm( project, releaseDescriptor, scmRoot, scmRepository, result, commonBasedir );
                 }
                 catch ( IOException e )
                 {
@@ -84,16 +84,16 @@ public class RewritePomsForBranchPhase
                     if ( !releaseDescriptor.getOriginalScmInfo().containsKey( parentId ) )
                     {
                         // we need to add it, since it has changed from the inherited value
-                        scmRoot = new Element( "scm" );
-                        scmRoot.addContent( "\n  " );
+                        scmRoot = new Scm();
+                        // reset default value (HEAD)
+                        scmRoot.setTag( null );
 
-                        Scm scmTarget = new JDomScm( scmRoot );
                         try
                         {
-                            if ( translateScm( project, releaseDescriptor, scmTarget, scmRepository, result,
+                            if ( translateScm( project, releaseDescriptor, scmRoot, scmRepository, result,
                                                commonBasedir ) )
                             {
-                                rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
+                                modelTarget.setScm( scmRoot );
                             }
                         }
                         catch ( IOException e )

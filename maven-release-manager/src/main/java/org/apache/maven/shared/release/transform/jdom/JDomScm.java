@@ -32,7 +32,7 @@ public class JDomScm extends Scm
 {
     private Element scm;
 
-    public JDomScm( Element scm )
+    JDomScm( Element scm )
     {
         this.scm = scm;
     }
@@ -83,5 +83,14 @@ public class JDomScm extends Scm
     public void setUrl( String url )
     {
         JDomUtils.rewriteElement( "url", url, scm, scm.getNamespace() );
+    }
+
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( ( scm == null ) ? 0 : scm.hashCode() );
+        return result;
     }
 }

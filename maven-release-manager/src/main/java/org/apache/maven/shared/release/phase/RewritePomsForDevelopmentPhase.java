@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -29,7 +30,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
-import org.apache.maven.shared.release.transform.jdom.JDomUtils;
+import org.apache.maven.shared.release.transform.jdom.JDomModel;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -50,7 +51,9 @@ public class RewritePomsForDevelopmentPhase
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
         {
-            Element scmRoot = rootElement.getChild( "scm", namespace );
+            Model modelTarget = new JDomModel( rootElement );
+            
+            Scm scmRoot = modelTarget.getScm();
             if ( scmRoot != null )
             {
                 @SuppressWarnings( "unchecked" )
@@ -69,16 +72,15 @@ public class RewritePomsForDevelopmentPhase
 
                     if ( scm != null )
                     {
-                        JDomUtils.rewriteElement( "connection", scm.getConnection(), scmRoot, namespace );
-                        JDomUtils.rewriteElement( "developerConnection", scm.getDeveloperConnection(), scmRoot,
-                                                  namespace );
-                        JDomUtils.rewriteElement( "url", scm.getUrl(), scmRoot, namespace );
-                        JDomUtils.rewriteElement( "tag", translator.resolveTag( scm.getTag() ), scmRoot, namespace );
+                        scmRoot.setConnection( scm.getConnection() );
+                        scmRoot.setDeveloperConnection( scm.getDeveloperConnection() );
+                        scmRoot.setUrl( scm.getUrl() );
+                        scmRoot.setTag( translator.resolveTag( scm.getTag() ) );
                     }
                     else
                     {
                         // cleanly remove the SCM element
-                        JDomUtils.rewriteElement( "scm", null, rootElement, namespace );
+                        modelTarget.setScm( null );
                     }
                 }
                 else
