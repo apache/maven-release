@@ -31,6 +31,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.jdom.JDomScm;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -59,10 +60,10 @@ public class RewritePomsForReleasePhase
                 Scm scm = buildScm( project );
                 releaseDescriptor.mapOriginalScmInfo( projectId, scm );
 
+                Scm scmTarget = new JDomScm( scmRoot );
                 try
                 {
-                    translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
-                                  commonBasedir );
+                    translateScm( project, releaseDescriptor, scmTarget, scmRepository, result, commonBasedir );
                 }
                 catch ( IOException e )
                 {
@@ -85,9 +86,10 @@ public class RewritePomsForReleasePhase
                         scmRoot = new Element( "scm" );
                         scmRoot.addContent( "\n  " );
 
+                        Scm scmTarget = new JDomScm( scmRoot );
                         try
                         {
-                            if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
+                            if ( translateScm( project, releaseDescriptor, scmTarget, scmRepository, result,
                                                commonBasedir ) )
                             {
                                 rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
@@ -103,9 +105,9 @@ public class RewritePomsForReleasePhase
         }
     }
 
-    private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Element scmRoot,
-                                  Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult,
-                                  String commonBasedir ) throws IOException
+    private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Scm scmTarget,
+                                  ScmRepository scmRepository, ReleaseResult relResult, String commonBasedir )
+        throws IOException
     {
         ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
         boolean result = false;
@@ -156,7 +158,7 @@ public class RewritePomsForReleasePhase
 
                 if ( !value.equals( scm.getConnection() ) )
                 {
-                    rewriteElement( "connection", value, scmRoot, namespace );
+                    scmTarget.setConnection( value );
                     result = true;
                 }
             }
@@ -176,7 +178,7 @@ public class RewritePomsForReleasePhase
 
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {
-                    rewriteElement( "developerConnection", value, scmRoot, namespace );
+                    scmTarget.setDeveloperConnection( value );
                     result = true;
                 }
             }
@@ -205,7 +207,7 @@ public class RewritePomsForReleasePhase
                 String value = translator.translateTagUrl( scm.getUrl(), tag + subDirectoryTag, tagScmUrl );
                 if ( !value.equals( scm.getUrl() ) )
                 {
-                    rewriteElement( "url", value, scmRoot, namespace );
+                    scmTarget.setUrl( value );
                     result = true;
                 }
             }
@@ -215,7 +217,7 @@ public class RewritePomsForReleasePhase
                 String value = translator.resolveTag( tag );
                 if ( value != null && !value.equals( scm.getTag() ) )
                 {
-                    rewriteElement( "tag", value, scmRoot, namespace );
+                    scmTarget.setTag( value );
                     result = true;
                 }
             }

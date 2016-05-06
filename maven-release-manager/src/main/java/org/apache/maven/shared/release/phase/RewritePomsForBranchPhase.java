@@ -31,6 +31,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.jdom.JDomScm;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -53,15 +54,17 @@ public class RewritePomsForBranchPhase
         if ( project.getScm() != null )
         {
             Element scmRoot = rootElement.getChild( "scm", namespace );
+            
             if ( scmRoot != null )
             {
+                Scm scmTarget = new JDomScm( scmRoot );
+                
                 Scm scm = buildScm( project );
                 releaseDescriptor.mapOriginalScmInfo( projectId, scm );
 
                 try
                 {
-                    translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
-                                  commonBasedir );
+                    translateScm( project, releaseDescriptor, scmTarget, scmRepository, result, commonBasedir );
                 }
                 catch ( IOException e )
                 {
@@ -84,9 +87,10 @@ public class RewritePomsForBranchPhase
                         scmRoot = new Element( "scm" );
                         scmRoot.addContent( "\n  " );
 
+                        Scm scmTarget = new JDomScm( scmRoot );
                         try
                         {
-                            if ( translateScm( project, releaseDescriptor, scmRoot, namespace, scmRepository, result,
+                            if ( translateScm( project, releaseDescriptor, scmTarget, scmRepository, result,
                                                commonBasedir ) )
                             {
                                 rootElement.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
@@ -102,9 +106,8 @@ public class RewritePomsForBranchPhase
         }
     }
 
-    private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Element scmRoot,
-                                  Namespace namespace, ScmRepository scmRepository, ReleaseResult relResult,
-                                  String commonBasedir ) 
+    private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Scm scmTarget,
+                                  ScmRepository scmRepository, ReleaseResult relResult, String commonBasedir ) 
     throws IOException
     {
         ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
@@ -158,7 +161,7 @@ public class RewritePomsForBranchPhase
                                                    scmConnectionBranch );
                 if ( !value.equals( scm.getConnection() ) )
                 {
-                    rewriteElement( "connection", value, scmRoot, namespace );
+                    scmTarget.setConnection( value );
                     result = true;
                 }
             }
@@ -178,7 +181,7 @@ public class RewritePomsForBranchPhase
                                                    branchBase );
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {
-                    rewriteElement( "developerConnection", value, scmRoot, namespace );
+                    scmTarget.setDeveloperConnection( value );
                     result = true;
                 }
             }
@@ -209,7 +212,7 @@ public class RewritePomsForBranchPhase
                                                               tagScmUrl );
                 if ( !value.equals( scm.getUrl() ) )
                 {
-                    rewriteElement( "url", value, scmRoot, namespace );
+                    scmTarget.setUrl( value );
                     result = true;
                 }
             }
@@ -219,7 +222,7 @@ public class RewritePomsForBranchPhase
                 String value = translator.resolveTag( branchName );
                 if ( value != null && !value.equals( scm.getTag() ) )
                 {
-                    rewriteElement( "tag", value, scmRoot, namespace );
+                    scmTarget.setTag( value );
                     result = true;
                 }
             }

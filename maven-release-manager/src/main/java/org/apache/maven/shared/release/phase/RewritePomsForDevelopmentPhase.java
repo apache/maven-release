@@ -29,6 +29,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.jdom.JDomUtils;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
@@ -68,15 +69,16 @@ public class RewritePomsForDevelopmentPhase
 
                     if ( scm != null )
                     {
-                        rewriteElement( "connection", scm.getConnection(), scmRoot, namespace );
-                        rewriteElement( "developerConnection", scm.getDeveloperConnection(), scmRoot, namespace );
-                        rewriteElement( "url", scm.getUrl(), scmRoot, namespace );
-                        rewriteElement( "tag", translator.resolveTag( scm.getTag() ), scmRoot, namespace );
+                        JDomUtils.rewriteElement( "connection", scm.getConnection(), scmRoot, namespace );
+                        JDomUtils.rewriteElement( "developerConnection", scm.getDeveloperConnection(), scmRoot,
+                                                  namespace );
+                        JDomUtils.rewriteElement( "url", scm.getUrl(), scmRoot, namespace );
+                        JDomUtils.rewriteElement( "tag", translator.resolveTag( scm.getTag() ), scmRoot, namespace );
                     }
                     else
                     {
                         // cleanly remove the SCM element
-                        rewriteElement( "scm", null, rootElement, namespace );
+                        JDomUtils.rewriteElement( "scm", null, rootElement, namespace );
                     }
                 }
                 else

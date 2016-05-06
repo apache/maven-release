@@ -55,6 +55,7 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.jdom.JDomUtils;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -390,55 +391,6 @@ public abstract class AbstractRewritePomsPhase
         return parent.getChildren( names[names.length - 1], parent.getNamespace() );
     }
 
-    /**
-     * Updates the text value of the given element. The primary purpose of this method is to preserve any whitespace and
-     * comments around the original text value.
-     *
-     * @param element The element to update, must not be <code>null</code>.
-     * @param value   The text string to set, must not be <code>null</code>.
-     */
-    private void rewriteValue( Element element, String value )
-    {
-        Text text = null;
-        if ( element.getContent() != null )
-        {
-            for ( Iterator<?> it = element.getContent().iterator(); it.hasNext(); )
-            {
-                Object content = it.next();
-                if ( ( content instanceof Text ) && ( (Text) content ).getTextTrim().length() > 0 )
-                {
-                    text = (Text) content;
-                    while ( it.hasNext() )
-                    {
-                        content = it.next();
-                        if ( content instanceof Text )
-                        {
-                            text.append( (Text) content );
-                            it.remove();
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    break;
-                }
-            }
-        }
-        if ( text == null )
-        {
-            element.addContent( value );
-        }
-        else
-        {
-            String chars = text.getText();
-            String trimmed = text.getTextTrim();
-            int idx = chars.indexOf( trimmed );
-            String leadingWhitespace = chars.substring( 0, idx );
-            String trailingWhitespace = chars.substring( idx + trimmed.length() );
-            text.setText( leadingWhitespace + value + trailingWhitespace );
-        }
-    }
 
     private void rewriteVersion( Element rootElement, Namespace namespace, Map<String, String> mappedVersions,
                                  String projectId, MavenProject project, String parentVersion )
@@ -467,7 +419,7 @@ public abstract class AbstractRewritePomsPhase
         }
         else
         {
-            rewriteValue( versionElement, version );
+            JDomUtils.rewriteValue( versionElement, version );
         }
     }
 
@@ -499,7 +451,7 @@ public abstract class AbstractRewritePomsPhase
             }
             else
             {
-                rewriteValue( versionElement, parentVersion );
+                JDomUtils.rewriteValue( versionElement, parentVersion );
             }
         }
         return parentVersion;
@@ -571,7 +523,7 @@ public abstract class AbstractRewritePomsPhase
                 if ( rawVersion.equals( originalVersion ) )
                 {
                     logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
-                    rewriteValue( versionElement, mappedVersion );
+                    JDomUtils.rewriteValue( versionElement, mappedVersion );
                 }
                 else if ( rawVersion.matches( "\\$\\{.+\\}" ) )
                 {
@@ -583,7 +535,7 @@ public abstract class AbstractRewritePomsPhase
                         if ( !mappedVersion.equals( mappedVersions.get( projectId ) ) )
                         {
                             logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
-                            rewriteValue( versionElement, mappedVersion );
+                            JDomUtils.rewriteValue( versionElement, mappedVersion );
                         }
                         else
                         {
@@ -602,7 +554,7 @@ public abstract class AbstractRewritePomsPhase
                             {
                                 logInfo( result, "  Updating " + rawVersion + " to " + mappedVersion );
                                 // change the property only if the property is the same as what's in the reactor
-                                rewriteValue( property, mappedVersion );
+                                JDomUtils.rewriteValue( property, mappedVersion );
                             }
                             else if ( mappedVersion.equals( propertyValue ) )
                             {
@@ -647,7 +599,7 @@ public abstract class AbstractRewritePomsPhase
             {
                 logInfo( result, "  Updating " + artifactId + " to " + resolvedSnapshotVersion );
 
-                rewriteValue( versionElement, resolvedSnapshotVersion );
+                JDomUtils.rewriteValue( versionElement, resolvedSnapshotVersion );
             }
             else
             {
@@ -777,45 +729,6 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    protected Element rewriteElement( String name, String value, Element root, Namespace namespace )
-    {
-        Element tagElement = root.getChild( name, namespace );
-        if ( tagElement != null )
-        {
-            if ( value != null )
-            {
-                rewriteValue( tagElement, value );
-            }
-            else
-            {
-                int index = root.indexOf( tagElement );
-                root.removeContent( index );
-                for ( int i = index - 1; i >= 0; i-- )
-                {
-                    if ( root.getContent( i ) instanceof Text )
-                    {
-                        root.removeContent( i );
-                    }
-                    else
-                    {
-                        break;
-                    }
-                }
-            }
-        }
-        else
-        {
-            if ( value != null )
-            {
-                Element element = new Element( name, namespace );
-                element.setText( value );
-                root.addContent( "  " ).addContent( element ).addContent( "\n  " );
-                tagElement = element;
-            }
-        }
-        return tagElement;
-    }
- 
     protected Scm buildScm( MavenProject project )
     {
         IdentifiedScm scm;
