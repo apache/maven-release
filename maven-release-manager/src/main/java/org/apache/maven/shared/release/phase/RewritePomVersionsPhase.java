@@ -22,13 +22,12 @@ package org.apache.maven.shared.release.phase;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.jdom.Element;
-import org.jdom.Namespace;
 
 /**
  * Rewrite POMs for future development
@@ -40,9 +39,9 @@ public class RewritePomVersionsPhase
 {
 
     @Override
-    protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
-                                 ReleaseResult result, String commonBasedir )
+    protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
+                                 String projectId, ScmRepository scmRepository, ReleaseResult result,
+                                 String commonBasedir )
         throws ReleaseExecutionException
     {
         // We are only updating versions no mods to scm needed

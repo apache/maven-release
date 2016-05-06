@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -31,10 +32,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
-import org.apache.maven.shared.release.transform.jdom.JDomModel;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.jdom.Element;
-import org.jdom.Namespace;
 
 /**
  * Rewrite POMs for release.
@@ -46,17 +44,15 @@ public class RewritePomsForReleasePhase
 {
 
     @Override
-    protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
-                                 ReleaseResult result, String commonBasedir )
+    protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
+                                 String projectId, ScmRepository scmRepository, ReleaseResult result,
+                                 String commonBasedir )
     throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
         {
-            JDomModel model = new JDomModel( rootElement );
-            
-            Scm scmRoot = model.getScm();
+            Scm scmRoot = modelTarget.getScm();
             if ( scmRoot != null )
             {
                 Scm scm = buildScm( project );
@@ -93,7 +89,7 @@ public class RewritePomsForReleasePhase
                             if ( translateScm( project, releaseDescriptor, scmTarget, scmRepository, result,
                                                commonBasedir ) )
                             {
-                                model.setScm( scmTarget );
+                                modelTarget.setScm( scmTarget );
                             }
                         }
                         catch ( IOException e )

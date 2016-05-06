@@ -30,9 +30,6 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
-import org.apache.maven.shared.release.transform.jdom.JDomModel;
-import org.jdom.Element;
-import org.jdom.Namespace;
 
 /**
  * Rewrite POMs for future development
@@ -43,16 +40,14 @@ public class RewritePomsForDevelopmentPhase
     extends AbstractRewritePomsPhase
 {
     @Override
-    protected void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                 ReleaseDescriptor releaseDescriptor, String projectId, ScmRepository scmRepository,
-                                 ReleaseResult result, String commonBasedir )
+    protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
+                                 String projectId, ScmRepository scmRepository, ReleaseResult result,
+                                 String commonBasedir )
         throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
         {
-            Model modelTarget = new JDomModel( rootElement );
-            
             Scm scmRoot = modelTarget.getScm();
             if ( scmRoot != null )
             {

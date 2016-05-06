@@ -55,6 +55,7 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.jdom.JDomModel;
 import org.apache.maven.shared.release.transform.jdom.JDomUtils;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
@@ -372,7 +373,8 @@ public abstract class AbstractRewritePomsPhase
             throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
                 + e.getMessage(), e );
         }
-        transformScm( project, rootElement, namespace, releaseDescriptor, projectId, scmRepository, result,
+        
+        transformScm( project, new JDomModel( rootElement ), releaseDescriptor, projectId, scmRepository, result,
                       commonBasedir );
     }
 
@@ -699,9 +701,9 @@ public abstract class AbstractRewritePomsPhase
 
     protected abstract Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor );
 
-    protected abstract void transformScm( MavenProject project, Element rootElement, Namespace namespace,
-                                          ReleaseDescriptor releaseDescriptor, String projectId,
-                                          ScmRepository scmRepository, ReleaseResult result, String commonBasedir )
+    protected abstract void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
+                                          String projectId, ScmRepository scmRepository,
+                                          ReleaseResult result, String commonBasedir )
         throws ReleaseExecutionException;
 
     /**
