@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.transform.jdom;
  */
 
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.Scm;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -42,6 +43,21 @@ public class JDomModel extends Model
     public JDomModel( Element project )
     {
         this.project = project;
+    }
+
+    @Override
+    public Parent getParent()
+    {
+        Element elm = project.getChild( "parent", project.getNamespace() );
+        if ( elm == null )
+        {
+            return null;
+        }
+        else
+        {
+            // this way scm setters change DOM tree immediately
+            return new JDomParent( elm );
+        }
     }
     
     @Override

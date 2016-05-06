@@ -319,7 +319,7 @@ public abstract class AbstractRewritePomsPhase
         Model model = project.getModel();
         Element properties = rootElement.getChild( "properties", namespace );
 
-        String parentVersion = rewriteParent( project, rootElement, namespace, mappedVersions, 
+        String parentVersion = rewriteParent( project, new JDomModel( rootElement ), mappedVersions,
                                               resolvedSnapshotDependencies, originalVersions );
 
         String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
@@ -425,8 +425,7 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private String rewriteParent( MavenProject project, Element rootElement, Namespace namespace,
-                                  Map<String, String> mappedVersions,
+    private String rewriteParent( MavenProject project, Model targetModel, Map<String, String> mappedVersions,
                                   Map<String, Map<String, String>> resolvedSnapshotDependencies,
                                   Map<String, String> originalVersions )
         throws ReleaseFailureException
@@ -434,8 +433,6 @@ public abstract class AbstractRewritePomsPhase
         String parentVersion = null;
         if ( project.hasParent() )
         {
-            Element parentElement = rootElement.getChild( "parent", namespace );
-            Element versionElement = parentElement.getChild( "version", namespace );
             MavenProject parent = project.getParent();
             String key = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
             parentVersion = mappedVersions.get( key );
@@ -453,7 +450,7 @@ public abstract class AbstractRewritePomsPhase
             }
             else
             {
-                JDomUtils.rewriteValue( versionElement, parentVersion );
+                targetModel.getParent().setVersion( parentVersion );
             }
         }
         return parentVersion;
