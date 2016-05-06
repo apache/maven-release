@@ -40,7 +40,7 @@ public class JDomScm extends Scm
     @Override
     public String getConnection()
     {
-        return scm.getChildText( "connection", scm.getNamespace() );
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -52,7 +52,7 @@ public class JDomScm extends Scm
     @Override
     public String getDeveloperConnection()
     {
-        return scm.getChildText( "developerConnection", scm.getNamespace() );
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -64,7 +64,7 @@ public class JDomScm extends Scm
     @Override
     public String getTag()
     {
-        return scm.getChildText( "tag", scm.getNamespace() );
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -76,21 +76,12 @@ public class JDomScm extends Scm
     @Override
     public String getUrl()
     {
-        return scm.getChildText( "url", scm.getNamespace() );
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setUrl( String url )
     {
         JDomUtils.rewriteElement( "url", url, scm, scm.getNamespace() );
-    }
-
-    @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ( ( scm == null ) ? 0 : scm.hashCode() );
-        return result;
     }
 }
