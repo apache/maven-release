@@ -18,8 +18,8 @@ package org.apache.maven.shared.release.transform.jdom;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.StringReader;
 
@@ -50,20 +50,8 @@ public class JDomModelTest
         assertNull( model.getScm() );
         
         model.setScm( new Scm() );
-        assertNull( model.getScm().getConnection() );
-        assertNull( model.getScm().getDeveloperConnection() );
-        assertEquals( "HEAD", model.getScm().getTag() ); // legacy default
-        assertNull( model.getScm().getUrl() );
-        
-        model.getScm().setConnection( "CONNECTION" );
-        assertEquals( "CONNECTION", model.getScm().getConnection() );
-        model.getScm().setDeveloperConnection( "DEVELOPERCONNECTION" );
-        assertEquals(  "DEVELOPERCONNECTION", model.getScm().getDeveloperConnection() );
-        model.getScm().setTag( "TAG" );
-        assertEquals( "TAG", model.getScm().getTag() );
-        model.getScm().setUrl( "URL" );
-        assertEquals( "URL", model.getScm().getUrl() );
-        
+        assertNotNull( model.getScm() );
+
         model.setScm( null );
         assertNull( model.getScm() );
     }
