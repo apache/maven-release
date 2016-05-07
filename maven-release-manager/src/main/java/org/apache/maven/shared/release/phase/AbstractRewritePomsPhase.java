@@ -56,8 +56,9 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.MavenCoordinate;
+import org.apache.maven.shared.release.transform.jdom.JDomMavenCoordinate;
 import org.apache.maven.shared.release.transform.jdom.JDomModel;
-import org.apache.maven.shared.release.transform.jdom.JDomUtils;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
@@ -453,21 +454,21 @@ public abstract class AbstractRewritePomsPhase
         String projectId = ArtifactUtils.versionlessKey( projectModel.getGroupId(), projectModel.getArtifactId() );
         for ( Element element : elements )
         {
-            Element versionElement = element.getChild( "version", element.getNamespace() );
-            if ( versionElement == null )
+            MavenCoordinate coordinate = new JDomMavenCoordinate( element );
+            
+            String rawVersion = coordinate.getVersion();
+            if ( rawVersion == null )
             {
                 // managed dependency or unversioned plugin
                 continue;
             }
-            String rawVersion = versionElement.getTextTrim();
 
-            Element groupIdElement = element.getChild( "groupId", element.getNamespace() );
-            if ( groupIdElement == null )
+            String rawGroupId = coordinate.getGroupId();
+            if ( rawGroupId == null )
             {
                 if ( "plugin".equals( element.getName() ) )
                 {
-                    groupIdElement = new Element( "groupId", element.getNamespace() );
-                    groupIdElement.setText( "org.apache.maven.plugins" );
+                    rawGroupId = "org.apache.maven.plugins";
                 }
                 else
                 {
@@ -475,15 +476,15 @@ public abstract class AbstractRewritePomsPhase
                     continue;
                 }
             }
-            String groupId = ReleaseUtil.interpolate( groupIdElement.getTextTrim(), projectModel );
+            String groupId = ReleaseUtil.interpolate( rawGroupId, projectModel );
 
-            Element artifactIdElement = element.getChild( "artifactId", element.getNamespace() );
-            if ( artifactIdElement == null )
+            String rawArtifactId = coordinate.getArtifactId();
+            if ( rawArtifactId == null )
             {
                 // incomplete element
                 continue;
             }
-            String artifactId = ReleaseUtil.interpolate( artifactIdElement.getTextTrim(), projectModel );
+            String artifactId = ReleaseUtil.interpolate( rawArtifactId, projectModel );
 
             String key = ArtifactUtils.versionlessKey( groupId, artifactId );
             String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
@@ -506,7 +507,7 @@ public abstract class AbstractRewritePomsPhase
                 if ( rawVersion.equals( originalVersion ) )
                 {
                     logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
-                    JDomUtils.rewriteValue( versionElement, mappedVersion );
+                    coordinate.setVersion( mappedVersion );
                 }
                 else if ( rawVersion.matches( "\\$\\{.+\\}" ) )
                 {
@@ -518,7 +519,7 @@ public abstract class AbstractRewritePomsPhase
                         if ( !mappedVersion.equals( mappedVersions.get( projectId ) ) )
                         {
                             logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
-                            JDomUtils.rewriteValue( versionElement, mappedVersion );
+                            coordinate.setVersion( mappedVersion );
                         }
                         else
                         {
@@ -582,7 +583,7 @@ public abstract class AbstractRewritePomsPhase
             {
                 logInfo( result, "  Updating " + artifactId + " to " + resolvedSnapshotVersion );
 
-                JDomUtils.rewriteValue( versionElement, resolvedSnapshotVersion );
+                coordinate.setVersion( resolvedSnapshotVersion );
             }
             else
             {
