@@ -39,6 +39,7 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.ModelBase;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
@@ -347,6 +348,13 @@ public abstract class AbstractRewritePomsPhase
             rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPlugins() ), mappedVersions,
                                      resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                      releaseDescriptor );
+            
+            for ( Plugin plugin : buildTarget.getPlugins() )
+            {
+                rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
+                                         mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
+                                         properties, result, releaseDescriptor );
+            }
         }
         
         for ( Profile profile : modelTarget.getProfiles() )
@@ -356,6 +364,13 @@ public abstract class AbstractRewritePomsPhase
                 rewriteArtifactVersions( toMavenCoordinates( profile.getBuild().getPlugins() ), mappedVersions,
                                          resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                          releaseDescriptor );
+                
+                for ( Plugin plugin : profile.getBuild().getPlugins() )
+                {
+                    rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
+                                             mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
+                                             properties, result, releaseDescriptor );
+                }
             }
         }
         
