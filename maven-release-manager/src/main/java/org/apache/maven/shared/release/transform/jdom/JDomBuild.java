@@ -256,7 +256,15 @@ public class JDomBuild
     @Override
     public PluginManagement getPluginManagement()
     {
-        throw new UnsupportedOperationException();
+        Element pluginManagementElm = build.getChild( "pluginManagement", build.getNamespace() );
+        if ( pluginManagementElm == null )
+        {
+            return null;
+        }
+        else
+        {
+            return new JDomPluginManagement( pluginManagementElm );
+        }
     }
 
     @Override

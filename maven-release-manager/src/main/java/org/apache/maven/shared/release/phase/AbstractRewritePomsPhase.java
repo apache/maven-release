@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Build;
+import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.ModelBase;
 import org.apache.maven.model.Plugin;
@@ -355,21 +356,50 @@ public abstract class AbstractRewritePomsPhase
                                          mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                          properties, result, releaseDescriptor );
             }
+            
+            if ( buildTarget.getPluginManagement() != null )
+            {
+                rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPluginManagement().getPlugins() ),
+                                         mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
+                                         properties, result, releaseDescriptor );
+                
+                for ( Plugin plugin : buildTarget.getPluginManagement().getPlugins() )
+                {
+                    rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), mappedVersions,
+                                             resolvedSnapshotDependencies, originalVersions, model, properties,
+                                             result, releaseDescriptor );
+                }
+            }
         }
         
         for ( Profile profile : modelTarget.getProfiles() )
         {
-            if ( profile.getBuild() != null )
+            BuildBase profileBuild = profile.getBuild();
+            if ( profileBuild != null )
             {
-                rewriteArtifactVersions( toMavenCoordinates( profile.getBuild().getPlugins() ), mappedVersions,
+                rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPlugins() ), mappedVersions,
                                          resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                          releaseDescriptor );
                 
-                for ( Plugin plugin : profile.getBuild().getPlugins() )
+                for ( Plugin plugin : profileBuild.getPlugins() )
                 {
                     rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
                                              mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                              properties, result, releaseDescriptor );
+                }
+                
+                if ( profileBuild.getPluginManagement() != null )
+                {
+                    rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPluginManagement().getPlugins() ),
+                                             mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
+                                             properties, result, releaseDescriptor );
+                    
+                    for ( Plugin plugin : profileBuild.getPluginManagement().getPlugins() )
+                    {
+                        rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), mappedVersions,
+                                                 resolvedSnapshotDependencies, originalVersions, model, properties,
+                                                 result, releaseDescriptor );
+                    }
                 }
             }
         }
@@ -383,38 +413,17 @@ public abstract class AbstractRewritePomsPhase
             rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencies() ), mappedVersions,
                                      resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                      releaseDescriptor );
+            
             if ( modelBase.getDependencyManagement() != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencyManagement().getDependencies() ),
                                          mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                          properties, result, releaseDescriptor );
             }
-            
         }
 
         for ( Element root : roots )
         {
-            List<Element> pluginElements = new ArrayList<Element>();
-            pluginElements.addAll( getChildren( root, "build", "pluginManagement", "plugins", "plugin" ) );
-            
-            List<MavenCoordinate> pluginCoordinates = new ArrayList<MavenCoordinate>( pluginElements.size() );
-            for ( Element pluginElement : pluginElements )
-            {
-                pluginCoordinates.add( new JDomMavenCoordinate( pluginElement ) );
-            }
-
-            pluginElements.addAll( getChildren( root, "build", "plugins", "plugin" ) );
-
-            rewriteArtifactVersions( pluginCoordinates, mappedVersions, resolvedSnapshotDependencies, originalVersions,
-                                    model, properties, result, releaseDescriptor );
-
-            for ( Element pluginElement : pluginElements )
-            {
-                rewriteArtifactVersions( getMavenCoordinates( pluginElement, "dependencies", "dependency" ),
-                                         mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
-                                         properties, result, releaseDescriptor );
-            }
-
             rewriteArtifactVersions( getMavenCoordinates( root, "reporting", "plugins", "plugin" ), mappedVersions,
                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                     releaseDescriptor );
