@@ -24,6 +24,7 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Scm;
 import org.jdom.Document;
 import org.jdom.Element;
+import org.jdom.Text;
 
 /**
  * JDom implementation of poms PROJECT element
@@ -48,7 +49,7 @@ public class JDomModel extends Model
     @Override
     public Parent getParent()
     {
-        Element elm = project.getChild( "parent", project.getNamespace() );
+        Element elm = getParentElement();
         if ( elm == null )
         {
             return null;
@@ -58,6 +59,11 @@ public class JDomModel extends Model
             // this way scm setters change DOM tree immediately
             return new JDomParent( elm );
         }
+    }
+
+    private Element getParentElement()
+    {
+        return project.getChild( "parent", project.getNamespace() );
     }
     
     @Override
@@ -95,5 +101,42 @@ public class JDomModel extends Model
             // this way scm setters change DOM tree immediately
             return new JDomScm( elm );
         }
+    }
+    
+    @Override
+    public void setVersion( String version )
+    {
+        Element versionElement = project.getChild( "version", project.getNamespace() );
+        
+        String parentVersion;
+        Element parent = getParentElement();
+        if ( parent != null )
+        {
+            parentVersion = parent.getChildTextTrim( "version", project.getNamespace() );
+        }
+        else
+        {
+            parentVersion = null;
+        }
+        
+        if ( versionElement == null )
+        {
+            if ( !version.equals( parentVersion ) )
+            {
+                // we will add this after artifactId, since it was missing but different from the inherited version
+                Element artifactIdElement = project.getChild( "artifactId", project.getNamespace() );
+                int index = project.indexOf( artifactIdElement );
+
+                versionElement = new Element( "version", project.getNamespace() );
+                versionElement.setText( version );
+                project.addContent( index + 1, new Text( "\n  " ) );
+                project.addContent( index + 2, versionElement );
+            }
+        }
+        else
+        {
+            JDomUtils.rewriteValue( versionElement, version );
+        }
+
     }
 }

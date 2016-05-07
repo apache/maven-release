@@ -18,14 +18,18 @@ package org.apache.maven.shared.release.transform.jdom;
  * specific language governing permissions and limitations
  * under the License.
  */
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.io.StringReader;
 
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.Scm;
 import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 import org.junit.Test;
 
@@ -56,5 +60,40 @@ public class JDomModelTest
         assertNull( model.getScm() );
     }
     
+    @Test
+    public void testSetVersion() throws Exception
+    {
+        String content = "<project></project>";
+        Element projectElm = builder.build( new StringReader( content ) ).getRootElement();
+        Model model = new JDomModel( projectElm );
+        assertNull( model.getVersion() );
+
+        model.setVersion( "VERSION" );
+        assertEquals( "VERSION", getVersion( projectElm ) );
+        
+        model.setVersion( null );
+        assertNull( model.getVersion() );
+        
+        // inherit from parent
+        // this business logic might need to moved.
+        content = "<project><parent><version>PARENT_VERSION</version></parent></project>";
+        projectElm = builder.build( new StringReader( content ) ).getRootElement();
+        model = new JDomModel( projectElm );
+        assertNull( model.getVersion() );
+
+        model.setVersion( "PARENT_VERSION" );
+        assertNull( getVersion( projectElm ) );
+
+        model.setVersion( "VERSION" );
+        assertEquals( "VERSION", getVersion( projectElm ) );
+        
+        model.setVersion( null );
+        assertNull( model.getVersion() );
+    }
+    
+    private String getVersion( Element projectElm )
+    {
+        return projectElm.getChildText( "version", projectElm.getNamespace() );
+    }
 
 }

@@ -67,7 +67,6 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.Namespace;
-import org.jdom.Text;
 import org.jdom.filter.ContentFilter;
 import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
@@ -324,7 +323,7 @@ public abstract class AbstractRewritePomsPhase
 
         String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-        rewriteVersion( rootElement, namespace, mappedVersions, projectId, project, parentVersion );
+        rewriteVersion( new JDomModel( rootElement ), mappedVersions, projectId, project, parentVersion );
 
         List<Element> roots = new ArrayList<Element>();
         roots.add( rootElement );
@@ -394,35 +393,17 @@ public abstract class AbstractRewritePomsPhase
     }
 
 
-    private void rewriteVersion( Element rootElement, Namespace namespace, Map<String, String> mappedVersions,
-                                 String projectId, MavenProject project, String parentVersion )
+    private void rewriteVersion( Model modelTarget, Map<String, String> mappedVersions, String projectId,
+                                 MavenProject project, String parentVersion )
         throws ReleaseFailureException
     {
-        Element versionElement = rootElement.getChild( "version", namespace );
         String version = mappedVersions.get( projectId );
         if ( version == null )
         {
             throw new ReleaseFailureException( "Version for '" + project.getName() + "' was not mapped" );
         }
 
-        if ( versionElement == null )
-        {
-            if ( !version.equals( parentVersion ) )
-            {
-                // we will add this after artifactId, since it was missing but different from the inherited version
-                Element artifactIdElement = rootElement.getChild( "artifactId", namespace );
-                int index = rootElement.indexOf( artifactIdElement );
-
-                versionElement = new Element( "version", namespace );
-                versionElement.setText( version );
-                rootElement.addContent( index + 1, new Text( "\n  " ) );
-                rootElement.addContent( index + 2, versionElement );
-            }
-        }
-        else
-        {
-            JDomUtils.rewriteValue( versionElement, version );
-        }
+        modelTarget.setVersion( version );
     }
 
     private String rewriteParent( MavenProject project, Model targetModel, Map<String, String> mappedVersions,
