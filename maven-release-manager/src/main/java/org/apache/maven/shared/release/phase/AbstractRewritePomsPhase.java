@@ -278,7 +278,7 @@ public abstract class AbstractRewritePomsPhase
             }
         }
 
-        transformDocument( project, document.getRootElement(), releaseDescriptor, reactorProjects, scmRepository,
+        transformDocument( project, new JDomModel( document ), releaseDescriptor, reactorProjects, scmRepository,
                            result, simulate );
 
         File pomFile = ReleaseUtil.getStandardPom( project );
@@ -309,7 +309,7 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void transformDocument( MavenProject project, Element rootElement, ReleaseDescriptor releaseDescriptor,
+    private void transformDocument( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                     List<MavenProject> reactorProjects, ScmRepository scmRepository,
                                     ReleaseResult result, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -320,8 +320,6 @@ public abstract class AbstractRewritePomsPhase
         Map<String, Map<String, String>> resolvedSnapshotDependencies =
             releaseDescriptor.getResolvedSnapshotDependencies();
         Model model = project.getModel();
-        
-        JDomModel modelTarget = new JDomModel( rootElement );
         
         Properties properties = modelTarget.getProperties();
 
