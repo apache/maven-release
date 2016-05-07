@@ -96,7 +96,6 @@ public class JDomModel extends Model
         return project.getChild( "parent", project.getNamespace() );
     }
     
-    
     @Override
     public List<Profile> getProfiles()
     {

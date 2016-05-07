@@ -274,7 +274,25 @@ public class JDomBuild
     @Override
     public List<Plugin> getPlugins()
     {
-        throw new UnsupportedOperationException();
+        Element pluginsElm = build.getChild( "plugins", build.getNamespace() );
+        if ( pluginsElm == null )
+        {
+            return Collections.emptyList();
+        }
+        else
+        {
+            List<Element> pluginElms =
+                pluginsElm.getChildren( "plugin", build.getNamespace() );
+
+            List<Plugin> plugins = new ArrayList<Plugin>( pluginElms.size() );
+
+            for ( Element pluginElm : pluginElms )
+            {
+                plugins.add( new JDomPlugin( pluginElm ) );
+            }
+
+            return plugins;
+        }
     }
 
     @Override

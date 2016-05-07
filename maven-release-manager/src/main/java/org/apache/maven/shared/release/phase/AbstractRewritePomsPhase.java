@@ -36,8 +36,10 @@ import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.ModelBase;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
@@ -334,12 +336,27 @@ public abstract class AbstractRewritePomsPhase
         roots.add( rootElement );
         roots.addAll( getChildren( rootElement, "profiles", "profile" ) );
 
-        if ( modelTarget.getBuild() != null )
+        Build buildTarget = modelTarget.getBuild();
+        if ( buildTarget != null )
         {
             // profile.build.extensions doesn't exist, so only rewrite project.build.extensions  
-            rewriteArtifactVersions( toMavenCoordinates( modelTarget.getBuild().getExtensions() ), mappedVersions,
+            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getExtensions() ), mappedVersions,
                                      resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                      releaseDescriptor );
+            
+            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPlugins() ), mappedVersions,
+                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
+                                     releaseDescriptor );
+        }
+        
+        for ( Profile profile : modelTarget.getProfiles() )
+        {
+            if ( profile.getBuild() != null )
+            {
+                rewriteArtifactVersions( toMavenCoordinates( profile.getBuild().getPlugins() ), mappedVersions,
+                                         resolvedSnapshotDependencies, originalVersions, model, properties, result,
+                                         releaseDescriptor );
+            }
         }
         
         List<ModelBase> modelBases = new ArrayList<ModelBase>();
@@ -357,14 +374,12 @@ public abstract class AbstractRewritePomsPhase
                                          mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                          properties, result, releaseDescriptor );
             }
+            
         }
 
         for ( Element root : roots )
         {
-            
-
             List<Element> pluginElements = new ArrayList<Element>();
-            pluginElements.addAll( getChildren( root, "build", "plugins", "plugin" ) );
             pluginElements.addAll( getChildren( root, "build", "pluginManagement", "plugins", "plugin" ) );
             
             List<MavenCoordinate> pluginCoordinates = new ArrayList<MavenCoordinate>( pluginElements.size() );
@@ -372,6 +387,8 @@ public abstract class AbstractRewritePomsPhase
             {
                 pluginCoordinates.add( new JDomMavenCoordinate( pluginElement ) );
             }
+
+            pluginElements.addAll( getChildren( root, "build", "plugins", "plugin" ) );
 
             rewriteArtifactVersions( pluginCoordinates, mappedVersions, resolvedSnapshotDependencies, originalVersions,
                                     model, properties, result, releaseDescriptor );
