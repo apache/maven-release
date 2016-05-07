@@ -311,7 +311,6 @@ public abstract class AbstractRewritePomsPhase
                                     ReleaseResult result, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        Namespace namespace = rootElement.getNamespace();
         Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
         Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects, simulate );
         @SuppressWarnings( "unchecked" )
@@ -334,33 +333,39 @@ public abstract class AbstractRewritePomsPhase
 
         for ( Element root : roots )
         {
-            rewriteArtifactVersions( getChildren( root, "dependencies", "dependency" ), mappedVersions,
+            rewriteArtifactVersions( getMavenCoordinates( root, "dependencies", "dependency" ), mappedVersions,
                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                     releaseDescriptor );
 
-            rewriteArtifactVersions( getChildren( root, "dependencyManagement", "dependencies", "dependency" ),
+            rewriteArtifactVersions( getMavenCoordinates( root, "dependencyManagement", "dependencies", "dependency" ),
                                     mappedVersions, resolvedSnapshotDependencies, originalVersions, model, properties,
                                     result, releaseDescriptor );
 
-            rewriteArtifactVersions( getChildren( root, "build", "extensions", "extension" ), mappedVersions,
+            rewriteArtifactVersions( getMavenCoordinates( root, "build", "extensions", "extension" ), mappedVersions,
                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                     releaseDescriptor );
 
             List<Element> pluginElements = new ArrayList<Element>();
             pluginElements.addAll( getChildren( root, "build", "plugins", "plugin" ) );
             pluginElements.addAll( getChildren( root, "build", "pluginManagement", "plugins", "plugin" ) );
+            
+            List<MavenCoordinate> pluginCoordinates = new ArrayList<MavenCoordinate>( pluginElements.size() );
+            for ( Element pluginElement : pluginElements )
+            {
+                pluginCoordinates.add( new JDomMavenCoordinate( pluginElement ) );
+            }
 
-            rewriteArtifactVersions( pluginElements, mappedVersions, resolvedSnapshotDependencies, originalVersions,
+            rewriteArtifactVersions( pluginCoordinates, mappedVersions, resolvedSnapshotDependencies, originalVersions,
                                     model, properties, result, releaseDescriptor );
 
             for ( Element pluginElement : pluginElements )
             {
-                rewriteArtifactVersions( getChildren( pluginElement, "dependencies", "dependency" ), mappedVersions,
-                                        resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                        releaseDescriptor );
+                rewriteArtifactVersions( getMavenCoordinates( pluginElement, "dependencies", "dependency" ),
+                                         mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
+                                         properties, result, releaseDescriptor );
             }
 
-            rewriteArtifactVersions( getChildren( root, "reporting", "plugins", "plugin" ), mappedVersions,
+            rewriteArtifactVersions( getMavenCoordinates( root, "reporting", "plugins", "plugin" ), mappedVersions,
                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                     releaseDescriptor );
         }
@@ -394,7 +399,18 @@ public abstract class AbstractRewritePomsPhase
         }
         return parent.getChildren( names[names.length - 1], parent.getNamespace() );
     }
-
+    
+    private List<MavenCoordinate> getMavenCoordinates( Element root, String... names )
+    {
+        List<Element> children = getChildren( root, names );
+        
+        List<MavenCoordinate> coordinates = new ArrayList<MavenCoordinate>( children.size() );
+        for ( Element child : children )
+        {
+            coordinates.add( new JDomMavenCoordinate( child ) );
+        }
+        return coordinates;
+    }
 
     private void rewriteVersion( Model modelTarget, Map<String, String> mappedVersions, String projectId,
                                  MavenProject project, String parentVersion )
@@ -440,7 +456,7 @@ public abstract class AbstractRewritePomsPhase
         return parentVersion;
     }
 
-    private void rewriteArtifactVersions( Collection<Element> elements, Map<String, String> mappedVersions,
+    private void rewriteArtifactVersions( Collection<MavenCoordinate> elements, Map<String, String> mappedVersions,
                                           Map<String, Map<String, String>> resolvedSnapshotDependencies,
                                           Map<String, String> originalVersions, Model projectModel,
                                           Properties properties, ReleaseResult result,
@@ -452,10 +468,8 @@ public abstract class AbstractRewritePomsPhase
             return;
         }
         String projectId = ArtifactUtils.versionlessKey( projectModel.getGroupId(), projectModel.getArtifactId() );
-        for ( Element element : elements )
+        for ( MavenCoordinate coordinate : elements )
         {
-            MavenCoordinate coordinate = new JDomMavenCoordinate( element );
-            
             String rawVersion = coordinate.getVersion();
             if ( rawVersion == null )
             {
@@ -466,7 +480,7 @@ public abstract class AbstractRewritePomsPhase
             String rawGroupId = coordinate.getGroupId();
             if ( rawGroupId == null )
             {
-                if ( "plugin".equals( element.getName() ) )
+                if ( "plugin".equals( coordinate.getName() ) )
                 {
                     rawGroupId = "org.apache.maven.plugins";
                 }

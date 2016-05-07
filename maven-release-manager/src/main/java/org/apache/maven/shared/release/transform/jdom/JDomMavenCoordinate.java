@@ -73,4 +73,10 @@ public class JDomMavenCoordinate implements MavenCoordinate
     {
         JDomUtils.rewriteValue( getVersionElement(), version );
     }
+    
+    @Override
+    public String getName()
+    {
+        return element.getName();
+    }
 }
