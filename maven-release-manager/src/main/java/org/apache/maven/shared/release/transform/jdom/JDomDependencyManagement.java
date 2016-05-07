@@ -23,49 +23,43 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.jdom.Element;
 
 /**
+ * JDom implementation of poms DEPENDENCYMANAGEMENT element 
  * 
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomModelBase
+public class JDomDependencyManagement extends DependencyManagement
 {
-    private final Element modelBase;
+    private final Element dependencyManagement;
     
-    public JDomModelBase( Element modelBase )
+    public JDomDependencyManagement( Element dependencyManagement )
     {
-        this.modelBase = modelBase;
+        this.dependencyManagement = dependencyManagement;
     }
-    
-    public Build getBuild()
+
+    @Override
+    public void addDependency( Dependency dependency )
     {
-        Element elm = modelBase.getChild( "build", modelBase.getNamespace() );
-        if ( elm == null )
-        {
-            return null;
-        }
-        else
-        {
-            // this way build setters change DOM tree immediately
-            return new JDomBuild( elm );
-        }
+        throw new UnsupportedOperationException();
     }
-    
+
+    @Override
     public List<Dependency> getDependencies()
     {
-        Element dependenciesElm = modelBase.getChild( "dependencies", modelBase.getNamespace() );
+        Element dependenciesElm = dependencyManagement.getChild( "dependencies", dependencyManagement.getNamespace() );
         if ( dependenciesElm == null )
         {
             return Collections.emptyList();
         }
         else
         {
-            List<Element> dependencyElms = dependenciesElm.getChildren( "dependency", modelBase.getNamespace() );
+            List<Element> dependencyElms =
+                dependenciesElm.getChildren( "dependency", dependencyManagement.getNamespace() );
 
             List<Dependency> dependencies = new ArrayList<Dependency>( dependencyElms.size() );
 
@@ -77,18 +71,17 @@ public class JDomModelBase
             return dependencies;
         }
     }
-    
-    public DependencyManagement getDependencyManagement()
+
+    @Override
+    public void removeDependency( Dependency dependency )
     {
-        Element elm = modelBase.getChild( "dependencyManagement", modelBase.getNamespace() );
-        if ( elm == null )
-        {
-            return null;
-        }
-        else
-        {
-            // this way build setters change DOM tree immediately
-            return new JDomDependencyManagement( elm );
-        }
+        throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void setDependencies( List<Dependency> dependencies )
+    {
+        throw new UnsupportedOperationException();
+    }
+
 }

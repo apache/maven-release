@@ -351,13 +351,17 @@ public abstract class AbstractRewritePomsPhase
             rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencies() ), mappedVersions,
                                      resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                      releaseDescriptor );
+            if ( modelBase.getDependencyManagement() != null )
+            {
+                rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencyManagement().getDependencies() ),
+                                         mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
+                                         properties, result, releaseDescriptor );
+            }
         }
 
         for ( Element root : roots )
         {
-            rewriteArtifactVersions( getMavenCoordinates( root, "dependencyManagement", "dependencies", "dependency" ),
-                                    mappedVersions, resolvedSnapshotDependencies, originalVersions, model, properties,
-                                    result, releaseDescriptor );
+            
 
             List<Element> pluginElements = new ArrayList<Element>();
             pluginElements.addAll( getChildren( root, "build", "plugins", "plugin" ) );

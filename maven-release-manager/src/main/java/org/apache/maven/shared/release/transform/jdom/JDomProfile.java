@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Dependency;
+import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Profile;
 import org.jdom.Element;
 
@@ -52,5 +53,11 @@ public class JDomProfile
     public List<Dependency> getDependencies()
     {
         return modelBase.getDependencies();
+    }
+    
+    @Override
+    public DependencyManagement getDependencyManagement()
+    {
+        return modelBase.getDependencyManagement();
     }
 }
