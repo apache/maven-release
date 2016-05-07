@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
+import java.util.Properties;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.Scm;
@@ -34,7 +36,7 @@ import org.jdom.Text;
  */
 public class JDomModel extends Model
 {
-    private Element project;
+    private final Element project;
     
     public JDomModel( Document document )
     {
@@ -64,6 +66,21 @@ public class JDomModel extends Model
     private Element getParentElement()
     {
         return project.getChild( "parent", project.getNamespace() );
+    }
+    
+    @Override
+    public Properties getProperties()
+    {
+        Element properties = project.getChild( "properties", project.getNamespace() );
+        
+        if ( properties == null )
+        {
+            return null;
+        }
+        else
+        {
+            return new JDomProperties( properties );
+        }
     }
     
     @Override

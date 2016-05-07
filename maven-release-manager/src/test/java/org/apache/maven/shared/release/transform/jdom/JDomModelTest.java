@@ -26,7 +26,6 @@ import static org.junit.Assert.assertNull;
 import java.io.StringReader;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Parent;
 import org.apache.maven.model.Scm;
 import org.jdom.Document;
 import org.jdom.Element;

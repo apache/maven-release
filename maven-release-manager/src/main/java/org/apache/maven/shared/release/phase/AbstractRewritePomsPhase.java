@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -316,7 +317,8 @@ public abstract class AbstractRewritePomsPhase
         Map<String, Map<String, String>> resolvedSnapshotDependencies =
             releaseDescriptor.getResolvedSnapshotDependencies();
         Model model = project.getModel();
-        Element properties = rootElement.getChild( "properties", namespace );
+        
+        Properties properties = new JDomModel( rootElement ).getProperties();
 
         String parentVersion = rewriteParent( project, new JDomModel( rootElement ), mappedVersions,
                                               resolvedSnapshotDependencies, originalVersions );
@@ -439,8 +441,9 @@ public abstract class AbstractRewritePomsPhase
 
     private void rewriteArtifactVersions( Collection<Element> elements, Map<String, String> mappedVersions,
                                           Map<String, Map<String, String>> resolvedSnapshotDependencies,
-                                          Map<String, String> originalVersions, Model projectModel, Element properties,
-                                          ReleaseResult result, ReleaseDescriptor releaseDescriptor )
+                                          Map<String, String> originalVersions, Model projectModel,
+                                          Properties properties, ReleaseResult result,
+                                          ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( elements == null )
@@ -525,16 +528,16 @@ public abstract class AbstractRewritePomsPhase
                     else if ( properties != null )
                     {
                         // version is an expression, check for properties to update instead
-                        Element property = properties.getChild( expression, properties.getNamespace() );
-                        if ( property != null )
+                        
+                        String propertyValue = properties.getProperty( expression );
+                        
+                        if ( propertyValue != null )
                         {
-                            String propertyValue = property.getTextTrim();
-
                             if ( propertyValue.equals( originalVersion ) )
                             {
                                 logInfo( result, "  Updating " + rawVersion + " to " + mappedVersion );
                                 // change the property only if the property is the same as what's in the reactor
-                                JDomUtils.rewriteValue( property, mappedVersion );
+                                properties.setProperty( expression, mappedVersion );
                             }
                             else if ( mappedVersion.equals( propertyValue ) )
                             {
