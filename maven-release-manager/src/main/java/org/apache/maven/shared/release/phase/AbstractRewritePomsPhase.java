@@ -26,7 +26,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -62,7 +61,6 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.apache.maven.shared.release.transform.jdom.JDomMavenCoordinate;
 import org.apache.maven.shared.release.transform.jdom.JDomModel;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
@@ -334,10 +332,6 @@ public abstract class AbstractRewritePomsPhase
 
         rewriteVersion( modelTarget, mappedVersions, projectId, project, parentVersion );
 
-        List<Element> roots = new ArrayList<Element>();
-        roots.add( rootElement );
-        roots.addAll( getChildren( rootElement, "profiles", "profile" ) );
-
         Build buildTarget = modelTarget.getBuild();
         if ( buildTarget != null )
         {
@@ -420,13 +414,13 @@ public abstract class AbstractRewritePomsPhase
                                          mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                          properties, result, releaseDescriptor );
             }
-        }
-
-        for ( Element root : roots )
-        {
-            rewriteArtifactVersions( getMavenCoordinates( root, "reporting", "plugins", "plugin" ), mappedVersions,
-                                    resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                    releaseDescriptor );
+            
+            if ( modelBase.getReporting() != null )
+            {
+                rewriteArtifactVersions( toMavenCoordinates( modelBase.getReporting().getPlugins() ), mappedVersions,
+                                         resolvedSnapshotDependencies, originalVersions, model, properties, result,
+                                         releaseDescriptor );
+            }
         }
         
         String commonBasedir;
@@ -442,33 +436,6 @@ public abstract class AbstractRewritePomsPhase
         
         transformScm( project, modelTarget, releaseDescriptor, projectId, scmRepository, result,
                       commonBasedir );
-    }
-
-    @SuppressWarnings( "unchecked" )
-    private List<Element> getChildren( Element root, String... names )
-    {
-        Element parent = root;
-        for ( int i = 0; i < names.length - 1 && parent != null; i++ )
-        {
-            parent = parent.getChild( names[i], parent.getNamespace() );
-        }
-        if ( parent == null )
-        {
-            return Collections.emptyList();
-        }
-        return parent.getChildren( names[names.length - 1], parent.getNamespace() );
-    }
-    
-    private List<MavenCoordinate> getMavenCoordinates( Element root, String... names )
-    {
-        List<Element> children = getChildren( root, names );
-        
-        List<MavenCoordinate> coordinates = new ArrayList<MavenCoordinate>( children.size() );
-        for ( Element child : children )
-        {
-            coordinates.add( new JDomMavenCoordinate( child ) );
-        }
-        return coordinates;
     }
 
     private void rewriteVersion( Model modelTarget, Map<String, String> mappedVersions, String projectId,

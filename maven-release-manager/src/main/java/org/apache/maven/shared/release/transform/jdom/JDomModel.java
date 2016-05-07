@@ -30,6 +30,7 @@ import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
+import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -132,6 +133,21 @@ public class JDomModel extends Model
         else
         {
             return new JDomProperties( properties );
+        }
+    }
+    
+    @Override
+    public Reporting getReporting()
+    {
+        Element reporting = project.getChild( "reporting", project.getNamespace() );
+        
+        if ( reporting == null )
+        {
+            return null;
+        }
+        else
+        {
+            return new JDomReporting( reporting );
         }
     }
     
