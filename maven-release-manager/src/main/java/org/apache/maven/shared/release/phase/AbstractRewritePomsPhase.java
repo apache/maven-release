@@ -21,8 +21,6 @@ package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,8 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -61,20 +57,15 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.apache.maven.shared.release.transform.jdom.JDomModel;
+import org.apache.maven.shared.release.transform.jdom.JDomModelETL;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.WriterFactory;
-import org.jdom.CDATA;
-import org.jdom.Comment;
 import org.jdom.Document;
 import org.jdom.Element;
-import org.jdom.JDOMException;
 import org.jdom.Namespace;
-import org.jdom.filter.ContentFilter;
 import org.jdom.filter.ElementFilter;
-import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
@@ -187,74 +178,12 @@ public abstract class AbstractRewritePomsPhase
                                    boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        Document document;
-        String intro = null;
-        String outtro = null;
-        try
-        {
-            String content = ReleaseUtil.readXmlFile( ReleaseUtil.getStandardPom( project ), ls );
-            // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
-            content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
-            content = content.replaceAll( "(\\s{2,}|[^\\s])/>", "$1 />" );
-
-            SAXBuilder builder = new SAXBuilder();
-            document = builder.build( new StringReader( content ) );
-
-            // Normalize line endings to platform's style (XML processors like JDOM normalize line endings to "\n" as
-            // per section 2.11 of the XML spec)
-            normaliseLineEndings( document );
-
-            // rewrite DOM as a string to find differences, since text outside the root element is not tracked
-            StringWriter w = new StringWriter();
-            Format format = Format.getRawFormat();
-            format.setLineSeparator( ls );
-            XMLOutputter out = new XMLOutputter( format );
-            out.output( document.getRootElement(), w );
-
-            int index = content.indexOf( w.toString() );
-            if ( index >= 0 )
-            {
-                intro = content.substring( 0, index );
-                outtro = content.substring( index + w.toString().length() );
-            }
-            else
-            {
-                /*
-                 * NOTE: Due to whitespace, attribute reordering or entity expansion the above indexOf test can easily
-                 * fail. So let's try harder. Maybe some day, when JDOM offers a StaxBuilder and this builder employes
-                 * XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE, this whole mess can be avoided.
-                 */
-                // CHECKSTYLE_OFF: LocalFinalVariableName
-                final String SPACE = "\\s++";
-                final String XML = "<\\?(?:(?:[^\"'>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+>";
-                final String INTSUB = "\\[(?:(?:[^\"'\\]]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+\\]";
-                final String DOCTYPE =
-                    "<!DOCTYPE(?:(?:[^\"'\\[>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+')|(?:" + INTSUB + "))*+>";
-                final String PI = XML;
-                final String COMMENT = "<!--(?:[^-]|(?:-[^-]))*+-->";
-
-                final String INTRO =
-                    "(?:(?:" + SPACE + ")|(?:" + XML + ")|(?:" + DOCTYPE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
-                final String OUTRO = "(?:(?:" + SPACE + ")|(?:" + COMMENT + ")|(?:" + PI + "))*";
-                final String POM = "(?s)(" + INTRO + ")(.*?)(" + OUTRO + ")";
-                // CHECKSTYLE_ON: LocalFinalVariableName
-
-                Matcher matcher = Pattern.compile( POM ).matcher( content );
-                if ( matcher.matches() )
-                {
-                    intro = matcher.group( 1 );
-                    outtro = matcher.group( matcher.groupCount() );
-                }
-            }
-        }
-        catch ( JDOMException e )
-        {
-            throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
-        }
-        catch ( IOException e )
-        {
-            throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
-        }
+        File pomFile = ReleaseUtil.getStandardPom( project );
+        
+        JDomModelETL etl = new JDomModelETL();
+        etl.setLs( ls );
+        
+        etl.extract( pomFile );
 
         ScmRepository scmRepository = null;
         ScmProvider provider = null;
@@ -278,11 +207,13 @@ public abstract class AbstractRewritePomsPhase
             }
         }
 
-        transformDocument( project, new JDomModel( document ), releaseDescriptor, reactorProjects, scmRepository,
+        transformDocument( project, etl.getModel(), releaseDescriptor, reactorProjects, scmRepository,
                            result, simulate );
 
-        File pomFile = ReleaseUtil.getStandardPom( project );
-
+        Document document = etl.getDocument();
+        String intro = etl.getIntro();
+        String outtro = etl.getOuttro();
+        
         if ( simulate )
         {
             File outputFile = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
@@ -292,20 +223,6 @@ public abstract class AbstractRewritePomsPhase
         {
             writePom( pomFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro, scmRepository,
                       provider );
-        }
-    }
-
-    private void normaliseLineEndings( Document document )
-    {
-        for ( Iterator<?> i = document.getDescendants( new ContentFilter( ContentFilter.COMMENT ) ); i.hasNext(); )
-        {
-            Comment c = (Comment) i.next();
-            c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ls ) );
-        }
-        for ( Iterator<?> i = document.getDescendants( new ContentFilter( ContentFilter.CDATA ) ); i.hasNext(); )
-        {
-            CDATA c = (CDATA) i.next();
-            c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ls ) );
         }
     }
 
