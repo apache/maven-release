@@ -23,18 +23,26 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.util.IOUtil;
+import org.codehaus.plexus.util.WriterFactory;
 import org.jdom.CDATA;
 import org.jdom.Comment;
 import org.jdom.Document;
+import org.jdom.Element;
 import org.jdom.JDOMException;
+import org.jdom.Namespace;
 import org.jdom.filter.ContentFilter;
+import org.jdom.filter.ElementFilter;
 import org.jdom.input.SAXBuilder;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
@@ -47,6 +55,10 @@ import org.jdom.output.XMLOutputter;
  */
 public class JDomModelETL
 {
+    private ReleaseDescriptor releaseDescriptor;
+    
+    private MavenProject project;
+    
     private Document document;
     
     private String intro = null;
@@ -57,6 +69,16 @@ public class JDomModelETL
     public void setLs( String ls )
     {
         this.ls = ls;
+    }
+    
+    public void setReleaseDescriptor( ReleaseDescriptor releaseDescriptor )
+    {
+        this.releaseDescriptor = releaseDescriptor;
+    }
+    
+    public void setProject( MavenProject project )
+    {
+        this.project = project;
     }
     
     public void extract( File pomFile ) throws ReleaseExecutionException
@@ -133,33 +155,15 @@ public class JDomModelETL
         
     }
     
-    public void load()
+    public void load( File targetFile ) throws ReleaseExecutionException
     {
-        
+        writePom( targetFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro );
     }
     
     // will be removed once transform() is implemented
     public Model getModel()
     {
         return new JDomModel( document );
-    }
-    
-    // will be removed once load() is implemented
-    public Document getDocument()
-    {
-        return document;
-    }
-    
-    // will be removed once load() is implemented
-    public String getIntro()
-    {
-        return intro;
-    }
-    
-    // will be removed once load() is implemented
-    public String getOuttro()
-    {
-        return outtro;
     }
     
     private void normaliseLineEndings( Document document )
@@ -173,6 +177,64 @@ public class JDomModelETL
         {
             CDATA c = (CDATA) i.next();
             c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ls ) );
+        }
+    }
+    
+    private void writePom( File pomFile, Document document, ReleaseDescriptor releaseDescriptor, String modelVersion,
+                           String intro, String outtro )
+        throws ReleaseExecutionException
+    {
+        Element rootElement = document.getRootElement();
+
+        if ( releaseDescriptor.isAddSchema() )
+        {
+            Namespace pomNamespace = Namespace.getNamespace( "", "http://maven.apache.org/POM/" + modelVersion );
+            rootElement.setNamespace( pomNamespace );
+            Namespace xsiNamespace = Namespace.getNamespace( "xsi", "http://www.w3.org/2001/XMLSchema-instance" );
+            rootElement.addNamespaceDeclaration( xsiNamespace );
+
+            if ( rootElement.getAttribute( "schemaLocation", xsiNamespace ) == null )
+            {
+                rootElement.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion
+                    + " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
+            }
+
+            // the empty namespace is considered equal to the POM namespace, so match them up to avoid extra xmlns=""
+            ElementFilter elementFilter = new ElementFilter( Namespace.getNamespace( "" ) );
+            for ( Iterator<?> i = rootElement.getDescendants( elementFilter ); i.hasNext(); )
+            {
+                Element e = (Element) i.next();
+                e.setNamespace( pomNamespace );
+            }
+        }
+
+        Writer writer = null;
+        try
+        {
+            writer = WriterFactory.newXmlWriter( pomFile );
+
+            if ( intro != null )
+            {
+                writer.write( intro );
+            }
+
+            Format format = Format.getRawFormat();
+            format.setLineSeparator( ls );
+            XMLOutputter out = new XMLOutputter( format );
+            out.output( document.getRootElement(), writer );
+
+            if ( outtro != null )
+            {
+                writer.write( outtro );
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new ReleaseExecutionException( "Error writing POM: " + e.getMessage(), e );
+        }
+        finally
+        {
+            IOUtil.close( writer );
         }
     }
 

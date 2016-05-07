@@ -21,10 +21,8 @@ package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -59,15 +57,7 @@ import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.apache.maven.shared.release.transform.jdom.JDomModelETL;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
-import org.codehaus.plexus.util.WriterFactory;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.filter.ElementFilter;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 
 /**
  * Base class for rewriting phases.
@@ -182,6 +172,8 @@ public abstract class AbstractRewritePomsPhase
         
         JDomModelETL etl = new JDomModelETL();
         etl.setLs( ls );
+        etl.setProject( project );
+        etl.setReleaseDescriptor( releaseDescriptor );
         
         etl.extract( pomFile );
 
@@ -210,20 +202,18 @@ public abstract class AbstractRewritePomsPhase
         transformDocument( project, etl.getModel(), releaseDescriptor, reactorProjects, scmRepository,
                            result, simulate );
 
-        Document document = etl.getDocument();
-        String intro = etl.getIntro();
-        String outtro = etl.getOuttro();
-        
+        File outputFile;
         if ( simulate )
         {
-            File outputFile = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
-            writePom( outputFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro );
+            outputFile = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
         }
         else
         {
-            writePom( pomFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro, scmRepository,
-                      provider );
+            outputFile = pomFile;
+            prepareScm( pomFile, releaseDescriptor, scmRepository, provider );
         }
+        etl.load( outputFile );
+    
     }
 
     private void transformDocument( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
@@ -547,8 +537,8 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    private void writePom( File pomFile, Document document, ReleaseDescriptor releaseDescriptor, String modelVersion,
-                           String intro, String outtro, ScmRepository repository, ScmProvider provider )
+    private void prepareScm( File pomFile, ReleaseDescriptor releaseDescriptor, ScmRepository repository,
+                           ScmProvider provider )
         throws ReleaseExecutionException, ReleaseScmCommandException
     {
         try
@@ -568,67 +558,9 @@ public abstract class AbstractRewritePomsPhase
         {
             throw new ReleaseExecutionException( "An error occurred enabling edit mode: " + e.getMessage(), e );
         }
-
-        writePom( pomFile, document, releaseDescriptor, modelVersion, intro, outtro );
     }
 
-    private void writePom( File pomFile, Document document, ReleaseDescriptor releaseDescriptor, String modelVersion,
-                           String intro, String outtro )
-        throws ReleaseExecutionException
-    {
-        Element rootElement = document.getRootElement();
-
-        if ( releaseDescriptor.isAddSchema() )
-        {
-            Namespace pomNamespace = Namespace.getNamespace( "", "http://maven.apache.org/POM/" + modelVersion );
-            rootElement.setNamespace( pomNamespace );
-            Namespace xsiNamespace = Namespace.getNamespace( "xsi", "http://www.w3.org/2001/XMLSchema-instance" );
-            rootElement.addNamespaceDeclaration( xsiNamespace );
-
-            if ( rootElement.getAttribute( "schemaLocation", xsiNamespace ) == null )
-            {
-                rootElement.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion
-                    + " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
-            }
-
-            // the empty namespace is considered equal to the POM namespace, so match them up to avoid extra xmlns=""
-            ElementFilter elementFilter = new ElementFilter( Namespace.getNamespace( "" ) );
-            for ( Iterator<?> i = rootElement.getDescendants( elementFilter ); i.hasNext(); )
-            {
-                Element e = (Element) i.next();
-                e.setNamespace( pomNamespace );
-            }
-        }
-
-        Writer writer = null;
-        try
-        {
-            writer = WriterFactory.newXmlWriter( pomFile );
-
-            if ( intro != null )
-            {
-                writer.write( intro );
-            }
-
-            Format format = Format.getRawFormat();
-            format.setLineSeparator( ls );
-            XMLOutputter out = new XMLOutputter( format );
-            out.output( document.getRootElement(), writer );
-
-            if ( outtro != null )
-            {
-                writer.write( outtro );
-            }
-        }
-        catch ( IOException e )
-        {
-            throw new ReleaseExecutionException( "Error writing POM: " + e.getMessage(), e );
-        }
-        finally
-        {
-            IOUtil.close( writer );
-        }
-    }
+    
     protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey,
                                                           Map<String, Map<String, String>> resolvedSnapshots );
 
