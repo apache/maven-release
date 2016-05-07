@@ -19,10 +19,15 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
+import org.apache.maven.model.Profile;
 import org.apache.maven.model.Scm;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -38,16 +43,25 @@ public class JDomModel extends Model
 {
     private final Element project;
     
+    private final JDomModelBase modelBase;
+    
     public JDomModel( Document document )
     {
-        this.project = document.getRootElement();
+        this( document.getRootElement() );
     }
     
     public JDomModel( Element project )
     {
         this.project = project;
+        this.modelBase = new JDomModelBase( project );
     }
 
+    @Override
+    public Build getBuild()
+    {
+        return modelBase.getBuild();
+    }
+    
     @Override
     public Parent getParent()
     {
@@ -67,6 +81,31 @@ public class JDomModel extends Model
     {
         return project.getChild( "parent", project.getNamespace() );
     }
+    
+    
+    @Override
+    public List<Profile> getProfiles()
+    {
+        Element profilesElm = project.getChild( "profiles", project.getNamespace() );
+        if ( profilesElm == null )
+        {
+            return Collections.emptyList();
+        }
+        else
+        {
+            List<Element> profileElms = profilesElm.getChildren( "profile", project.getNamespace() );
+
+            List<Profile> profiles = new ArrayList<Profile>( profileElms.size() );
+
+            for ( Element profileElm : profileElms )
+            {
+                profiles.add( new JDomProfile( profileElm ) );
+            }
+
+            return profiles;
+        }
+    }
+    
     
     @Override
     public Properties getProperties()
@@ -108,7 +147,8 @@ public class JDomModel extends Model
     
     @Override
     public Scm getScm()
-    {   Element elm = project.getChild( "scm", project.getNamespace() );
+    {
+        Element elm = project.getChild( "scm", project.getNamespace() );
         if ( elm == null )
         {
             return null;
@@ -154,6 +194,5 @@ public class JDomModel extends Model
         {
             JDomUtils.rewriteValue( versionElement, version );
         }
-
     }
 }

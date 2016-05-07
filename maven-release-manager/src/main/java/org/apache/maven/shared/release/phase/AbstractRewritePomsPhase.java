@@ -37,6 +37,7 @@ import java.util.regex.Pattern;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.ModelBase;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
@@ -318,18 +319,32 @@ public abstract class AbstractRewritePomsPhase
             releaseDescriptor.getResolvedSnapshotDependencies();
         Model model = project.getModel();
         
-        Properties properties = new JDomModel( rootElement ).getProperties();
+        JDomModel modelTarget = new JDomModel( rootElement );
+        
+        Properties properties = modelTarget.getProperties();
 
-        String parentVersion = rewriteParent( project, new JDomModel( rootElement ), mappedVersions,
+        String parentVersion = rewriteParent( project, modelTarget, mappedVersions,
                                               resolvedSnapshotDependencies, originalVersions );
 
         String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-        rewriteVersion( new JDomModel( rootElement ), mappedVersions, projectId, project, parentVersion );
+        rewriteVersion( modelTarget, mappedVersions, projectId, project, parentVersion );
 
         List<Element> roots = new ArrayList<Element>();
         roots.add( rootElement );
         roots.addAll( getChildren( rootElement, "profiles", "profile" ) );
+
+        if ( modelTarget.getBuild() != null )
+        {
+            // profile.build.extensions doesn't exist, so only rewrite project.build.extensions  
+            rewriteArtifactVersions( toMavenCoordinates( modelTarget.getBuild().getExtensions() ), mappedVersions,
+                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
+                                     releaseDescriptor );
+        }
+        
+        List<ModelBase> modelBases = new ArrayList<ModelBase>();
+        modelBases.add( modelTarget );
+        modelBases.addAll( modelTarget.getProfiles() );
 
         for ( Element root : roots )
         {
@@ -340,10 +355,6 @@ public abstract class AbstractRewritePomsPhase
             rewriteArtifactVersions( getMavenCoordinates( root, "dependencyManagement", "dependencies", "dependency" ),
                                     mappedVersions, resolvedSnapshotDependencies, originalVersions, model, properties,
                                     result, releaseDescriptor );
-
-            rewriteArtifactVersions( getMavenCoordinates( root, "build", "extensions", "extension" ), mappedVersions,
-                                    resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                    releaseDescriptor );
 
             List<Element> pluginElements = new ArrayList<Element>();
             pluginElements.addAll( getChildren( root, "build", "plugins", "plugin" ) );
@@ -369,7 +380,7 @@ public abstract class AbstractRewritePomsPhase
                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                     releaseDescriptor );
         }
-
+        
         String commonBasedir;
         try
         {
@@ -381,7 +392,7 @@ public abstract class AbstractRewritePomsPhase
                 + e.getMessage(), e );
         }
         
-        transformScm( project, new JDomModel( rootElement ), releaseDescriptor, projectId, scmRepository, result,
+        transformScm( project, modelTarget, releaseDescriptor, projectId, scmRepository, result,
                       commonBasedir );
     }
 
@@ -787,4 +798,23 @@ public abstract class AbstractRewritePomsPhase
             return StringUtils.replace( urlPath, trunkPath.substring( i ), tagPath.substring( i ) );
         }
     }
+    
+    private Collection<MavenCoordinate> toMavenCoordinates( List<?> objects )
+    {
+        Collection<MavenCoordinate> coordinates = new ArrayList<MavenCoordinate>( objects.size() );
+        for ( Object object : objects )
+        {
+            if ( object instanceof MavenCoordinate )
+            {
+                coordinates.add( (MavenCoordinate) object );
+            }
+            else
+            {
+                throw new UnsupportedOperationException();
+            }
+        }
+        return coordinates;
+    }
+
+
 }
