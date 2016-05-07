@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
@@ -60,6 +61,12 @@ public class JDomModel extends Model
     public Build getBuild()
     {
         return modelBase.getBuild();
+    }
+    
+    @Override
+    public List<Dependency> getDependencies()
+    {
+        return modelBase.getDependencies();
     }
     
     @Override

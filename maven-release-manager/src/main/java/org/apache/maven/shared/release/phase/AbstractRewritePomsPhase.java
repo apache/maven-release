@@ -345,13 +345,16 @@ public abstract class AbstractRewritePomsPhase
         List<ModelBase> modelBases = new ArrayList<ModelBase>();
         modelBases.add( modelTarget );
         modelBases.addAll( modelTarget.getProfiles() );
+        
+        for ( ModelBase modelBase : modelBases )
+        {
+            rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencies() ), mappedVersions,
+                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
+                                     releaseDescriptor );
+        }
 
         for ( Element root : roots )
         {
-            rewriteArtifactVersions( getMavenCoordinates( root, "dependencies", "dependency" ), mappedVersions,
-                                    resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                    releaseDescriptor );
-
             rewriteArtifactVersions( getMavenCoordinates( root, "dependencyManagement", "dependencies", "dependency" ),
                                     mappedVersions, resolvedSnapshotDependencies, originalVersions, model, properties,
                                     result, releaseDescriptor );

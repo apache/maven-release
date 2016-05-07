@@ -19,7 +19,10 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
+import java.util.List;
+
 import org.apache.maven.model.BuildBase;
+import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Profile;
 import org.jdom.Element;
 
@@ -43,5 +46,11 @@ public class JDomProfile
     public BuildBase getBuild()
     {
         return modelBase.getBuild();
+    }
+    
+    @Override
+    public List<Dependency> getDependencies()
+    {
+        return modelBase.getDependencies();
     }
 }

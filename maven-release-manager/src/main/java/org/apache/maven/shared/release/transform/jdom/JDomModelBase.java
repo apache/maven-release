@@ -19,7 +19,12 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.model.Build;
+import org.apache.maven.model.Dependency;
 import org.jdom.Element;
 
 /**
@@ -47,6 +52,28 @@ public class JDomModelBase
         {
             // this way build setters change DOM tree immediately
             return new JDomBuild( elm );
+        }
+    }
+    
+    public List<Dependency> getDependencies()
+    {
+        Element dependenciesElm = modelBase.getChild( "dependencies", modelBase.getNamespace() );
+        if ( dependenciesElm == null )
+        {
+            return Collections.emptyList();
+        }
+        else
+        {
+            List<Element> dependencyElms = dependenciesElm.getChildren( "dependency", modelBase.getNamespace() );
+
+            List<Dependency> dependencies = new ArrayList<Dependency>( dependencyElms.size() );
+
+            for ( Element dependencyElm : dependencyElms )
+            {
+                dependencies.add( new JDomDependency( dependencyElm ) );
+            }
+
+            return dependencies;
         }
     }
 }
