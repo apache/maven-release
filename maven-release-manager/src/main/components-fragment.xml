@@ -153,6 +153,10 @@
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
         </requirement>
         <requirement>
+          <role>org.apache.maven.shared.release.transform.ModelETLFactory</role>
+          <field-name>modelETLFactories</field-name>
+        </requirement>
+        <requirement>
           <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
           <field-name>scmTranslators</field-name>
         </requirement>
@@ -210,6 +214,10 @@
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
         </requirement>
         <requirement>
+          <role>org.apache.maven.shared.release.transform.ModelETLFactory</role>
+          <field-name>modelETLFactories</field-name>
+        </requirement>
+        <requirement>
           <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
           <field-name>scmTranslators</field-name>
         </requirement>
@@ -225,6 +233,10 @@
       <requirements>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.transform.ModelETLFactory</role>
+          <field-name>modelETLFactories</field-name>
         </requirement>
       </requirements>
     </component>
@@ -251,6 +263,10 @@
       <requirements>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.transform.ModelETLFactory</role>
+          <field-name>modelETLFactories</field-name>
         </requirement>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmTranslator</role>

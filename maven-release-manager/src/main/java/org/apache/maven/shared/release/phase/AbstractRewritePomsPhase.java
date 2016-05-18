@@ -54,8 +54,11 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.ModelETLRequest;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.apache.maven.shared.release.transform.jdom.JDomModelETL;
+import org.apache.maven.shared.release.transform.ModelETL;
+import org.apache.maven.shared.release.transform.ModelETLFactory;
+import org.apache.maven.shared.release.transform.jdom.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -71,6 +74,10 @@ public abstract class AbstractRewritePomsPhase
      * Tool that gets a configured SCM repository from release configuration.
      */
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    
+    private Map<String, ModelETLFactory> modelETLFactories;
+    
+    private String defaultModelETLFactoryHint = JDomModelETLFactory.ROLE_HINT;
 
     /**
      * SCM URL translators mapped by provider name.
@@ -169,11 +176,13 @@ public abstract class AbstractRewritePomsPhase
         throws ReleaseExecutionException, ReleaseFailureException
     {
         File pomFile = ReleaseUtil.getStandardPom( project );
+
+        ModelETLRequest request = new ModelETLRequest();
+        request.setLineSeparator( ls );
+        request.setProject( project );
+        request.setReleaseDescriptor( releaseDescriptor );
         
-        JDomModelETL etl = new JDomModelETL();
-        etl.setLs( ls );
-        etl.setProject( project );
-        etl.setReleaseDescriptor( releaseDescriptor );
+        ModelETL etl = modelETLFactories.get( defaultModelETLFactoryHint ).newInstance( request );
         
         etl.extract( pomFile );
 

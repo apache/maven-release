@@ -32,6 +32,7 @@ import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
@@ -53,7 +54,7 @@ import org.jdom.output.XMLOutputter;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomModelETL
+public class JDomModelETL implements ModelETL
 {
     private ReleaseDescriptor releaseDescriptor;
     
@@ -160,7 +161,7 @@ public class JDomModelETL
         writePom( targetFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro );
     }
     
-    // will be removed once transform() is implemented
+    @Override
     public Model getModel()
     {
         return new JDomModel( document );
