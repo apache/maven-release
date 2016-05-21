@@ -77,7 +77,10 @@ public abstract class AbstractRewritePomsPhase
     
     private Map<String, ModelETLFactory> modelETLFactories;
     
-    private String defaultModelETLFactoryHint = JDomModelETLFactory.ROLE_HINT;
+    /**
+     * Use jdom-sax as default
+     */
+    private String modelETL = JDomModelETLFactory.ROLE_HINT;
 
     /**
      * SCM URL translators mapped by provider name.
@@ -99,6 +102,11 @@ public abstract class AbstractRewritePomsPhase
     public void setLs( String ls )
     {
         this.ls = ls;
+    }
+    
+    public void setModelETL( String modelETL )
+    {
+        this.modelETL = modelETL;
     }
 
     @Override
@@ -182,7 +190,7 @@ public abstract class AbstractRewritePomsPhase
         request.setProject( project );
         request.setReleaseDescriptor( releaseDescriptor );
         
-        ModelETL etl = modelETLFactories.get( defaultModelETLFactoryHint ).newInstance( request );
+        ModelETL etl = modelETLFactories.get( modelETL ).newInstance( request );
         
         etl.extract( pomFile );
 
