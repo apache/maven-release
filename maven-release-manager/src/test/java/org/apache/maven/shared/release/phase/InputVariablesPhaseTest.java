@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
@@ -32,12 +33,13 @@ import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
+import org.junit.Test;
 
 /**
  * Test the variable input phase.
@@ -45,23 +47,25 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class InputVariablesPhaseTest
-    extends PlexusTestCase
+    extends PlexusJUnit4TestCase
 {
     private InputVariablesPhase phase;
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
         phase = (InputVariablesPhase) lookup( ReleasePhase.ROLE, "input-variables" );
     }
 
+    @Test
     public void testInputVariablesInteractive()
         throws Exception
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ), eq( "artifactId-1.0" ) ) ).thenReturn( "tag-value", "simulated-tag-value" );
+        when( mockPrompter.prompt( isA( String.class ), eq( "artifactId-1.0" ) ) ).thenReturn( "tag-value",
+                                                                                               "simulated-tag-value" );
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
@@ -84,13 +88,14 @@ public class InputVariablesPhaseTest
         // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        //verify
+        // verify
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
-        
+
         verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "artifactId-1.0" ) );
         verifyNoMoreInteractions( mockPrompter );
     }
 
+    @Test
     public void testUnmappedVersion()
         throws Exception
     {
@@ -123,6 +128,7 @@ public class InputVariablesPhaseTest
         }
     }
 
+    @Test
     public void testInputVariablesNonInteractive()
         throws Exception
     {
@@ -154,11 +160,12 @@ public class InputVariablesPhaseTest
 
         // verify
         assertEquals( "Check tag", "artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
-        
+
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
     }
 
+    @Test
     public void testInputVariablesNonInteractiveConfigured()
         throws Exception
     {
@@ -188,11 +195,12 @@ public class InputVariablesPhaseTest
 
         // verify
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
-        
+
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
     }
 
+    @Test
     public void testInputVariablesInteractiveConfigured()
         throws Exception
     {
@@ -220,17 +228,19 @@ public class InputVariablesPhaseTest
 
         // verify
         assertEquals( "Check tag", "simulated-tag-value", releaseDescriptor.getScmReleaseLabel() );
-        
+
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
     }
 
+    @Test
     public void testPrompterException()
         throws Exception
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ), isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
+        when( mockPrompter.prompt( isA( String.class ),
+                                   isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
@@ -267,13 +277,14 @@ public class InputVariablesPhaseTest
         {
             assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
         }
-        
-        //verify
+
+        // verify
         verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), isA( String.class ) );
         verifyNoMoreInteractions( mockPrompter );
     }
 
-    //MRELEASE-110
+    // MRELEASE-110
+    @Test
     public void testCvsTag()
         throws Exception
     {
@@ -305,12 +316,13 @@ public class InputVariablesPhaseTest
 
         // verify
         assertEquals( "Check tag", "artifactId-1_0", releaseConfiguration.getScmReleaseLabel() );
-        
+
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
     }
 
-    //MRELEASE-159
+    // MRELEASE-159
+    @Test
     public void testCustomTagFormat()
         throws Exception
     {
@@ -342,7 +354,7 @@ public class InputVariablesPhaseTest
 
         // verify
         assertEquals( "Check tag", "simulated-artifactId-1.0", releaseDescriptor.getScmReleaseLabel() );
-        
+
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
     }
@@ -355,5 +367,4 @@ public class InputVariablesPhaseTest
         model.setVersion( version );
         return new MavenProject( model );
     }
-
 }

@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
@@ -45,6 +49,7 @@ import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -53,7 +58,7 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.codehaus.plexus.PlexusTestCase;
+import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
 /**
@@ -62,11 +67,11 @@ import org.mockito.internal.util.reflection.Whitebox;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ScmCheckModificationsPhaseTest
-    extends PlexusTestCase
+    extends PlexusJUnit4TestCase
 {
     private ReleasePhase phase;
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -74,6 +79,7 @@ public class ScmCheckModificationsPhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-check-modifications" );
     }
 
+    @Test
     public void testNoSuchScmProviderExceptionThrown()
         throws Exception
     {
@@ -111,12 +117,13 @@ public class ScmCheckModificationsPhaseTest
         {
             assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify( scmManagerMock, times( 2 ) ).makeScmRepository( eq( "scm-url" ) );
         verifyNoMoreInteractions( scmManagerMock );
     }
 
+    @Test
     public void testScmRepositoryExceptionThrown()
         throws Exception
     {
@@ -154,12 +161,13 @@ public class ScmCheckModificationsPhaseTest
         {
             assertNull( "Check no additional cause", e.getCause() );
         }
-        
+
         // verify
         verify( scmManagerMock, times( 2 ) ).makeScmRepository( eq( "scm-url" ) );
         verifyNoMoreInteractions( scmManagerMock );
     }
 
+    @Test
     public void testScmExceptionThrown()
         throws Exception
     {
@@ -169,7 +177,8 @@ public class ScmCheckModificationsPhaseTest
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.status( isA( ScmRepository.class ), isA( ScmFileSet.class ) ) ).thenThrow( new ScmException( "..." ) );
+        when( scmProviderMock.status( isA( ScmRepository.class ),
+                                      isA( ScmFileSet.class ) ) ).thenThrow( new ScmException( "..." ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -196,12 +205,13 @@ public class ScmCheckModificationsPhaseTest
         {
             assertEquals( "check cause", ScmException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify( scmProviderMock, times( 2 ) ).status( isA( ScmRepository.class ), isA( ScmFileSet.class ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testScmResultFailure()
         throws Exception
     {
@@ -236,6 +246,7 @@ public class ScmCheckModificationsPhaseTest
         }
     }
 
+    @Test
     public void testNoModifications()
         throws Exception
     {
@@ -251,13 +262,14 @@ public class ScmCheckModificationsPhaseTest
         assertTrue( true );
     }
 
+    @Test
     public void testModificationsToExcludedFilesOnly()
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties", "pom.xml.backup",
-            "pom.xml.tag", "pom.xml.next" ) );
+        setChangedFiles( releaseDescriptor,
+                         Arrays.asList( "release.properties", "pom.xml.backup", "pom.xml.tag", "pom.xml.next" ) );
 
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
 
@@ -266,23 +278,28 @@ public class ScmCheckModificationsPhaseTest
         // successful execution is verification enough
         assertTrue( true );
     }
-    
+
     // MRELEASE-645: Allow File/Directory Patterns for the checkModificationExcludes Option
+    @Test
     public void testModificationsToCustomExcludedFilesOnly()
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
-        
+
         releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "**/keep.me" ) );
-    
-        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties", "pom.xml.backup",
-            "pom.xml.tag", "pom.xml.next", "keep.me", "src/app/keep.me", "config\\keep.me" ) );
-    
-        assertEquals( ReleaseResult.SUCCESS, phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
-    
-        assertEquals( ReleaseResult.SUCCESS, phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+
+        setChangedFiles( releaseDescriptor,
+                         Arrays.asList( "release.properties", "pom.xml.backup", "pom.xml.tag", "pom.xml.next",
+                                        "keep.me", "src/app/keep.me", "config\\keep.me" ) );
+
+        assertEquals( ReleaseResult.SUCCESS,
+                      phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+
+        assertEquals( ReleaseResult.SUCCESS,
+                      phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
     }
 
+    @Test
     public void testModificationsToPoms()
         throws Exception
     {
@@ -313,6 +330,7 @@ public class ScmCheckModificationsPhaseTest
         }
     }
 
+    @Test
     public void testModificationsToIncludedFilesOnly()
         throws Exception
     {
@@ -343,13 +361,14 @@ public class ScmCheckModificationsPhaseTest
         }
     }
 
+    @Test
     public void testModificationsToIncludedAndExcludedFiles()
         throws Exception
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties", "pom.xml.backup",
-            "pom.xml.tag", "pom.xml.release", "something.txt" ) );
+        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties", "pom.xml.backup", "pom.xml.tag",
+                                                           "pom.xml.release", "something.txt" ) );
 
         try
         {
@@ -373,7 +392,8 @@ public class ScmCheckModificationsPhaseTest
             assertTrue( true );
         }
     }
-    
+
+    @Test
     public void testModificationsToAdditionalExcludedFiles()
         throws Exception
     {
@@ -382,23 +402,29 @@ public class ScmCheckModificationsPhaseTest
 
         setChangedFiles( releaseDescriptor, Collections.singletonList( "something.txt" ) );
 
-        assertEquals( ReleaseResult.SUCCESS,  phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
-        
-        assertEquals( ReleaseResult.SUCCESS,  phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+        assertEquals( ReleaseResult.SUCCESS,
+                      phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+
+        assertEquals( ReleaseResult.SUCCESS,
+                      phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
     }
 
     // MRELEASE-775
-    public void testMultipleExclusionPatternMatch() throws Exception
+    @Test
+    public void testMultipleExclusionPatternMatch()
+        throws Exception
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
-        
+
         releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "release.properties" ) );
-    
+
         setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties" ) );
-    
-        assertEquals( ReleaseResult.SUCCESS, phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
-    
-        assertEquals( ReleaseResult.SUCCESS, phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+
+        assertEquals( ReleaseResult.SUCCESS,
+                      phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+
+        assertEquals( ReleaseResult.SUCCESS,
+                      phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
     }
 
     private void setChangedFiles( ReleaseDescriptor releaseDescriptor, List<String> changedFiles )

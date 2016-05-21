@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.startsWith;
@@ -35,13 +38,14 @@ import java.util.Map;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
+import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -51,11 +55,14 @@ import org.mockito.MockitoAnnotations;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class MapVersionsPhaseTest
-    extends PlexusTestCase
+    extends PlexusJUnit4TestCase
 {
     private static final String TEST_MAP_BRANCH_VERSIONS = "test-map-branch-versions";
+
     private static final String TEST_MAP_DEVELOPMENT_VERSIONS = "test-map-development-versions";
+
     private static final String TEST_MAP_RELEASE_VERSIONS = "test-map-release-versions";
+
     @Mock
     private Prompter mockPrompter;
 
@@ -67,13 +74,14 @@ public class MapVersionsPhaseTest
     }
 
     @Override
-    protected void tearDown()
+    public void tearDown()
         throws Exception
     {
         super.tearDown();
         verifyNoMoreInteractions( mockPrompter );
     }
 
+    @Test
     public void testExecuteSnapshot_MapRelease()
         throws Exception
     {
@@ -81,8 +89,7 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
-        when(
-              mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+        when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
                                    eq( "1.0" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
@@ -97,10 +104,11 @@ public class MapVersionsPhaseTest
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
 
-        verify( mockPrompter ).prompt( startsWith( "What is the release version for \"" + project.getName()
-                                                       + "\"?" ), eq( "1.0" ) );
+        verify( mockPrompter ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+                                       eq( "1.0" ) );
     }
 
+    @Test
     public void testSimulateSnapshot_MapReleaseVersions()
         throws Exception
     {
@@ -108,8 +116,7 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
-        when(
-              mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+        when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
                                    eq( "1.0" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
@@ -123,11 +130,12 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
-        verify( mockPrompter  ).prompt( startsWith( "What is the release version for \"" + project.getName()
-                                                       + "\"?" ), eq( "1.0" ) );
+        verify( mockPrompter ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+                                       eq( "1.0" ) );
     }
 
     // MRELEASE-403: Release plugin ignores given version number
+    @Test
     public void testMapReleaseVersionsInteractiveAddZeroIncremental()
         throws Exception
     {
@@ -135,8 +143,7 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
-        when(
-              mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+        when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
                                    eq( "1.0" ) ) ).thenReturn( "1.0.0" );
         phase.setPrompter( mockPrompter );
 
@@ -160,13 +167,15 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0.0" ),
                       releaseDescriptor.getReleaseVersions() );
-        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName()
-                                                       + "\"?" ), eq( "1.0" ) );
+        verify( mockPrompter,
+                times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+                                     eq( "1.0" ) );
     }
 
     /**
      * Test to release "SNAPSHOT" version MRELEASE-90
      */
+    @Test
     public void testMapReleaseVersionsInteractiveWithSnaphotVersion()
         throws Exception
     {
@@ -174,8 +183,7 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "SNAPSHOT" );
 
-        when(
-              mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+        when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
                                    eq( "1.0" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
@@ -200,13 +208,15 @@ public class MapVersionsPhaseTest
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
                       releaseDescriptor.getReleaseVersions() );
 
-        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName()
-                                                       + "\"?" ), eq( "1.0" ) );
+        verify( mockPrompter,
+                times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
+                                     eq( "1.0" ) );
     }
 
     /**
      * MRELEASE-524: ignores commandline versions in batch mode
      */
+    @Test
     public void testMapReleaseVersionsNonInteractiveWithExplicitVersion()
         throws Exception
     {
@@ -239,6 +249,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getReleaseVersions() );
     }
 
+    @Test
     public void testExecuteSnapshotNonInteractive_MapRelease()
         throws Exception
     {
@@ -258,6 +269,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getReleaseVersions() );
     }
 
+    @Test
     public void testSimulateSnapshotNonInteractive_MapReleaseVersions()
         throws Exception
     {
@@ -277,6 +289,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getReleaseVersions() );
     }
 
+    @Test
     public void testMapDevVersionsInteractive()
         throws Exception
     {
@@ -284,9 +297,8 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0" );
 
-        when(
-              mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName() + "\"?" ),
-                                   eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName()
+            + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
@@ -311,12 +323,13 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
 
         verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for \""
-                                                       + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) );
+            + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) );
     }
 
     /**
      * MRELEASE-760: updateWorkingCopyVersions=false still bumps up pom versions to next development version
      */
+    @Test
     public void testMapDevVersionsInteractiveDoNotUpdateWorkingCopy()
         throws Exception
     {
@@ -350,6 +363,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testMapDevVersionsNonInteractive()
         throws Exception
     {
@@ -385,6 +399,7 @@ public class MapVersionsPhaseTest
     /**
      * MRELEASE-524: ignores commandline versions in batch mode
      */
+    @Test
     public void testMapDevVersionsNonInteractiveWithExplicitVersion()
         throws Exception
     {
@@ -418,13 +433,15 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testPrompterException()
         throws Exception
     {
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
 
-        when( mockPrompter.prompt( isA( String.class ), isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
+        when( mockPrompter.prompt( isA( String.class ),
+                                   isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
@@ -462,6 +479,7 @@ public class MapVersionsPhaseTest
         verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), isA( String.class ) );
     }
 
+    @Test
     public void testAdjustVersionInteractive()
         throws Exception
     {
@@ -469,9 +487,8 @@ public class MapVersionsPhaseTest
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
         MavenProject project = createProject( "artifactId", "foo" );
 
-        when(
-              mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName() + "\"?" ),
-                                   eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName()
+            + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
@@ -494,11 +511,12 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
-        
+
         verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for \""
-                                                       + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) );
+            + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) );
     }
 
+    @Test
     public void testAdjustVersionNonInteractive()
         throws Exception
     {
@@ -534,7 +552,8 @@ public class MapVersionsPhaseTest
             assertEquals( "check cause", VersionParseException.class, e.getCause().getClass() );
         }
     }
-    
+
+    @Test
     public void testExecuteSnapshotBranchCreation_DefaultDevelopmentVersion_MapDevelopment()
         throws Exception
     {
@@ -552,9 +571,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_DefaultDevelopmentVersion_MapDevelopment()
         throws Exception
     {
@@ -572,9 +593,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
-    
+
+    @Test
     public void testExecuteSnapshotBranchCreation_DefaultDevelopmentVersion_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -597,6 +620,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_DefaultDevelopmentVersion_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -618,7 +642,8 @@ public class MapVersionsPhaseTest
         assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
     }
-    
+
+    @Test
     public void testExecuteSnapshotBranchCreation_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -640,6 +665,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -661,7 +687,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
-    
+    @Test
     public void testExecuteSnapshotDefaultDevelopmentVersion_MapDevelopment()
         throws Exception
     {
@@ -678,9 +704,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateSnapshotDefaultDevelopmentVersion_MapDevelopment()
         throws Exception
     {
@@ -697,9 +725,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
-    
+
+    @Test
     public void testExecuteSnapshotDefaultDevelopmentVersion_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -721,6 +751,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateSnapshotDefaultDevelopmentVersion_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -741,7 +772,8 @@ public class MapVersionsPhaseTest
         assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
     }
-    
+
+    @Test
     public void testExecuteSnapshotNonInteractive_MapDevelopment()
         throws Exception
     {
@@ -762,6 +794,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateSnapshotNonInteractive_MapDevelopment()
         throws Exception
     {
@@ -782,6 +815,7 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testExecuteSnapshotAutoVersionSubmodules_NotInteractive_MapDevelopment()
         throws Exception
     {
@@ -803,6 +837,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotAutoVersionSubmodules_NotInteractive_MapDevelopment()
         throws Exception
     {
@@ -824,6 +859,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteReleaseAutoVersionSubmodules_NotInteractive_MapDevelopment()
         throws Exception
     {
@@ -845,6 +881,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateReleaseAutoVersionSubmodules_NotInteractive_MapDevelopment()
         throws Exception
     {
@@ -866,6 +903,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotAutoVersionSubmodules_NotInteractive_MapRelease()
         throws Exception
     {
@@ -884,9 +922,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotAutoVersionSubmodules_NotInteractive_MapRelease()
         throws Exception
     {
@@ -905,9 +945,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteReleaseAutoVersionSubmodules_NotInteractive_MapRelease()
         throws Exception
     {
@@ -926,9 +968,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateReleaseAutoVersionSubmodules_NotInteractive_MapRelease()
         throws Exception
     {
@@ -947,9 +991,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotAutoVersionSubmodules_BranchCreation_NotInteractive_MapDevelopment()
         throws Exception
     {
@@ -972,6 +1018,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotAutoVersionSubmodules_BranchCreation_NotInteractive_MapDevelopment()
         throws Exception
     {
@@ -994,6 +1041,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteReleaseAutoVersionSubmodules_BranchCreation_NotInteractive_MapDevelopment()
         throws Exception
     {
@@ -1016,6 +1064,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateReleaseAutoVersionSubmodules_BranchCreation_NotInteractive_MapDevelopment()
         throws Exception
     {
@@ -1038,6 +1087,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotAutoVersionSubmodules_BranchCreation_NotInteractive_MapBranch()
         throws Exception
     {
@@ -1057,9 +1107,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotAutoVersionSubmodules_BranchCreation_NotInteractive_MapBranch()
         throws Exception
     {
@@ -1079,9 +1131,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteReleaseAutoVersionSubmodules_BranchCreation_NotInteractive_MapBranch()
         throws Exception
     {
@@ -1106,9 +1160,11 @@ public class MapVersionsPhaseTest
          */
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateReleaseAutoVersionSubmodules_BranchCreation_NotInteractive_MapBranch()
         throws Exception
     {
@@ -1133,9 +1189,11 @@ public class MapVersionsPhaseTest
          */
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotBranchCreation_NonInteractive_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1158,9 +1216,11 @@ public class MapVersionsPhaseTest
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_NonInteractive_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1183,9 +1243,11 @@ public class MapVersionsPhaseTest
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotBranchCreation_DefaultReleaseVersion_NonInteractive_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1206,9 +1268,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_DefaultReleaseVersion_NonInteractive_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1229,9 +1293,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotBranchCreation_DefaultReleaseVersion_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1251,9 +1317,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_DefaultReleaseVersion_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1273,9 +1341,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotBranchCreation_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1288,21 +1358,23 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setUpdateBranchVersions( true );
 
-		// updateBranchVersions is set to true, so suggest the next snapshot version
-		// org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
-		// org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-		// org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
-		// org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1315,21 +1387,23 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setUpdateBranchVersions( true );
 
-		// updateBranchVersions is set to true, so suggest the next snapshot version
-		// org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
-		// org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-		// org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
-		// org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
     }
-    
+
+    @Test
     public void testExecuteReleaseBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
         throws Exception
     {
@@ -1343,10 +1417,11 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setUpdateBranchVersions( true );
         releaseDescriptor.setUpdateVersionsToSnapshot( true );
 
-		// updateBranchVersions is set to true, so suggest the next snapshot version
+        // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
@@ -1358,9 +1433,11 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateReleaseBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
         throws Exception
     {
@@ -1374,10 +1451,11 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setUpdateBranchVersions( true );
         releaseDescriptor.setUpdateVersionsToSnapshot( true );
 
-		// updateBranchVersions is set to true, so suggest the next snapshot version
+        // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
@@ -1389,9 +1467,11 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
         throws Exception
     {
@@ -1405,10 +1485,11 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setUpdateBranchVersions( true );
         releaseDescriptor.setUpdateVersionsToSnapshot( true );
 
-		// updateBranchVersions is set to true, so suggest the next snapshot version
+        // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
@@ -1420,6 +1501,7 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
         throws Exception
     {
@@ -1433,10 +1515,11 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setUpdateBranchVersions( true );
         releaseDescriptor.setUpdateVersionsToSnapshot( true );
 
-		// updateBranchVersions is set to true, so suggest the next snapshot version
+        // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
@@ -1447,7 +1530,8 @@ public class MapVersionsPhaseTest
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
     }
-    
+
+    @Test
     public void testExecuteReleaseBranchCreation_MapBranch()
         throws Exception
     {
@@ -1470,9 +1554,11 @@ public class MapVersionsPhaseTest
          */
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateReleaseBranchCreation_MapBranch()
         throws Exception
     {
@@ -1495,9 +1581,11 @@ public class MapVersionsPhaseTest
          */
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
-    
+
+    @Test
     public void testExecuteReleaseBranchCreation_NonUpdateWorkingCopyVersions_MapDevelopment()
         throws Exception
     {
@@ -1515,9 +1603,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateReleaseBranchCreation_NonUpdateWorkingCopyVersions_MapDevelopment()
         throws Exception
     {
@@ -1535,9 +1625,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testExecuteReleaseBranchCreation_MapDevelopment()
         throws Exception
     {
@@ -1553,12 +1645,13 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setInteractive( false );
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateReleaseBranchCreation_MapDevelopment()
         throws Exception
     {
@@ -1578,9 +1671,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testExecuteSnapshotBranchCreation_MapBranch()
         throws Exception
     {
@@ -1598,9 +1693,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_MapBranch()
         throws Exception
     {
@@ -1618,9 +1715,11 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotBranchCreation_NonUpdateWorkingCopyVersions_MapDevelopment()
         throws Exception
     {
@@ -1638,9 +1737,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_NonUpdateWorkingCopyVersions_MapDevelopment()
         throws Exception
     {
@@ -1658,9 +1759,11 @@ public class MapVersionsPhaseTest
 
         // verify
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ), releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
+                      releaseDescriptor.getDevelopmentVersions() );
     }
 
+    @Test
     public void testExecuteReleaseBranchCreation_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1675,16 +1778,18 @@ public class MapVersionsPhaseTest
         // org.apache.maven.release:maven-release-manager:(,2.4) > true
         // org.apache.maven.release:maven-release-manager:[2.4,) > false
         releaseDescriptor.setInteractive( false );
-        
+
         // test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateReleaseBranchCreation_UpdateBranchVersions_MapBranch()
         throws Exception
     {
@@ -1699,16 +1804,18 @@ public class MapVersionsPhaseTest
         // org.apache.maven.release:maven-release-manager:(,2.4) > true
         // org.apache.maven.release:maven-release-manager:[2.4,) > false
         releaseDescriptor.setInteractive( false );
-        
+
         // test
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
                       releaseDescriptor.getReleaseVersions() );
-        assertNull( "Check development versions", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertNull( "Check development versions",
+                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotBranchCreation_UpdateWorkingCopyVersions_MapDevelopment()
         throws Exception
     {
@@ -1721,7 +1828,8 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setUpdateWorkingCopyVersions( true );
 
-        when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
+                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
@@ -1731,6 +1839,7 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the new working copy version for" ), eq( "1.3-SNAPSHOT" ) );
     }
 
+    @Test
     public void testSimulateSnapshotBranchCreation_UpdateWorkingCopyVersions_MapDevelopment()
         throws Exception
     {
@@ -1743,7 +1852,8 @@ public class MapVersionsPhaseTest
         releaseDescriptor.setBranchCreation( true );
         releaseDescriptor.setUpdateWorkingCopyVersions( true );
 
-        when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ), eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
+                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
@@ -1753,6 +1863,7 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the new working copy version for" ), eq( "1.3-SNAPSHOT" ) );
     }
 
+    @Test
     public void testExecuteMultiModuleAutoVersionSubmodules__MapDevelopment()
         throws Exception
     {
@@ -1778,6 +1889,7 @@ public class MapVersionsPhaseTest
         assertEquals( "Check release versions", 0, releaseDescriptor.getReleaseVersions().size() );
     }
 
+    @Test
     public void testSimulateMultiModuleAutoVersionSubmodules__MapDevelopment()
         throws Exception
     {
@@ -1803,6 +1915,7 @@ public class MapVersionsPhaseTest
         assertEquals( "Check release versions", 0, releaseDescriptor.getReleaseVersions().size() );
     }
 
+    @Test
     public void testExecuteSnapshotAutoVersionSubmodules_DefaultReleaseVersion_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -1826,6 +1939,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotAutoVersionSubmodules_DefaultReleaseVersion_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -1849,6 +1963,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testExecuteSnapshotAutoVersionSubmodules_DefaultDevelopmentVersion_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -1872,6 +1987,7 @@ public class MapVersionsPhaseTest
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
 
+    @Test
     public void testSimulateSnapshotAutoVersionSubmodules_DefaultDevelopmentVersion_NonInteractive_MapDevelopment()
         throws Exception
     {
@@ -1894,33 +2010,39 @@ public class MapVersionsPhaseTest
                       releaseDescriptor.getDevelopmentVersions() );
         assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
     }
-    
+
     // MRELEASE-511
-    public void testUnusualVersions1() throws Exception
+    @Test
+    public void testUnusualVersions1()
+        throws Exception
     {
         MapVersionsPhase mapReleasephase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
-        MapVersionsPhase mapDevelopmentphase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
-        
+        MapVersionsPhase mapDevelopmentphase =
+            (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "MYB_200909-SNAPSHOT" ) );
-        
+
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setDefaultReleaseVersion( "PPX" );
         releaseDescriptor.setDefaultDevelopmentVersion( "MYB_200909-SNAPSHOT" );
-        
+
         // test
         mapReleasephase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
         mapDevelopmentphase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        
+
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "MYB_200909-SNAPSHOT" ),
+        assertEquals( "Check development versions",
+                      Collections.singletonMap( "groupId:artifactId", "MYB_200909-SNAPSHOT" ),
                       releaseDescriptor.getDevelopmentVersions() );
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "PPX" ), 
+        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "PPX" ),
                       releaseDescriptor.getReleaseVersions() );
     }
 
     // MRELEASE-269
-    public void testContinuousSnapshotCheck() throws Exception
+    @Test
+    public void testContinuousSnapshotCheck()
+        throws Exception
     {
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
@@ -1929,20 +2051,23 @@ public class MapVersionsPhaseTest
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
-        when( mockPrompter.prompt( startsWith( "What is the new development version for " ), eq( "1.12-SNAPSHOT" ) ) )
-            .thenReturn( "2.0" ) // wrong, expected SNAPSHOT
-            .thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the new development version for " ),
+                                   eq( "1.12-SNAPSHOT" ) ) ).thenReturn( "2.0" ) // wrong, expected SNAPSHOT
+                                                            .thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for " ), eq( "1.12-SNAPSHOT" ) );
+        verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for " ),
+                                                   eq( "1.12-SNAPSHOT" ) );
     }
-    
-    //MRELEASE-734
-    public void testEmptyDefaultDevelopmentVersion() throws Exception
+
+    // MRELEASE-734
+    @Test
+    public void testEmptyDefaultDevelopmentVersion()
+        throws Exception
     {
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
@@ -1952,18 +2077,21 @@ public class MapVersionsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setDefaultDevelopmentVersion( "" );
 
-        when( mockPrompter.prompt( startsWith( "What is the new development version for " ), eq( "1.12-SNAPSHOT" ) ) )
-            .thenReturn( "2.0-SNAPSHOT" );
+        when( mockPrompter.prompt( startsWith( "What is the new development version for " ),
+                                   eq( "1.12-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( mockPrompter ).prompt( startsWith( "What is the new development version for " ), eq( "1.12-SNAPSHOT" ) );
+        verify( mockPrompter ).prompt( startsWith( "What is the new development version for " ),
+                                       eq( "1.12-SNAPSHOT" ) );
     }
-    
-    public void testEmptyDefaultReleaseVersion() throws Exception
+
+    @Test
+    public void testEmptyDefaultReleaseVersion()
+        throws Exception
     {
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
@@ -1973,8 +2101,8 @@ public class MapVersionsPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setDefaultReleaseVersion( "" );
 
-        when( mockPrompter.prompt( startsWith( "What is the release version for " ), eq( "1.11" ) ) )
-            .thenReturn( "2.0" );
+        when( mockPrompter.prompt( startsWith( "What is the release version for " ),
+                                   eq( "1.11" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
         // test
@@ -1984,7 +2112,6 @@ public class MapVersionsPhaseTest
         verify( mockPrompter ).prompt( startsWith( "What is the release version for " ), eq( "1.11" ) );
     }
 
-    
     private static MavenProject createProject( String artifactId, String version )
     {
         Model model = new Model();
@@ -1993,5 +2120,4 @@ public class MapVersionsPhaseTest
         model.setVersion( version );
         return new MavenProject( model );
     }
-
 }

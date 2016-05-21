@@ -19,11 +19,15 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.codehaus.plexus.PlexusTestCase;
+import org.junit.Test;
 
 /**
  * Test the the end release phase. Nothing to see here really, but we want to make sure it is configured.
@@ -31,11 +35,11 @@ import org.codehaus.plexus.PlexusTestCase;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class EndReleasePhaseTest
-    extends PlexusTestCase
+    extends PlexusJUnit4TestCase
 {
     private ReleasePhase phase;
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -43,19 +47,21 @@ public class EndReleasePhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "end-release" );
     }
 
+    @Test
     public void testExecute()
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        phase.execute( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+        ReleaseResult result = phase.execute( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        assertTrue( true );
+        assertEquals( ReleaseResult.SUCCESS, result.getResultCode() );
     }
 
+    @Test
     public void testSimulate()
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        phase.simulate( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+        ReleaseResult result = phase.simulate( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        assertTrue( true );
+        assertEquals( ReleaseResult.SUCCESS, result.getResultCode() );
     }
 }

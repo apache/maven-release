@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.isNull;
@@ -32,24 +34,25 @@ import java.util.List;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
-import org.codehaus.plexus.PlexusTestCase;
+import org.junit.Test;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
 public class RunPerformGoalsPhaseTest
-    extends PlexusTestCase
+    extends PlexusJUnit4TestCase
 {
     private RunPerformGoalsPhase phase;
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -57,6 +60,7 @@ public class RunPerformGoalsPhaseTest
         phase = (RunPerformGoalsPhase) lookup( ReleasePhase.ROLE, "run-perform-goals" );
     }
 
+    @Test
     public void testExecuteException()
         throws Exception
     {
@@ -102,6 +106,7 @@ public class RunPerformGoalsPhaseTest
         verifyNoMoreInteractions( mock );
     }
 
+    @Test
     public void testCustomPomFile() throws Exception
     {
         //prepare
