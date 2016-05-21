@@ -30,6 +30,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,8 +48,12 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.transform.jdom.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 import org.mockito.internal.util.reflection.Whitebox;
 
 /**
@@ -55,9 +61,38 @@ import org.mockito.internal.util.reflection.Whitebox;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
+@RunWith(Parameterized.class)
 public abstract class AbstractRewritingReleasePhaseTestCase
     extends AbstractReleaseTestCase
 {
+    private String modelETL;
+
+    @Parameters
+    public static Collection<Object[]> data()
+    {
+        return Arrays.asList( new Object[][] { { JDomModelETLFactory.ROLE_HINT } } );
+    }
+    
+    public AbstractRewritingReleasePhaseTestCase( String modelETL )
+    {
+        this.modelETL = modelETL;
+    }
+    
+    @Override
+    public void setUp()
+        throws Exception
+    {
+        super.setUp();
+        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, getRoleHint() );
+
+        if( phase instanceof AbstractRewritePomsPhase)
+        {
+            ((AbstractRewritePomsPhase) phase).setModelETL( modelETL );
+        }
+    }
+    
+    protected abstract String getRoleHint();
+    
     @Test
     public void testRewriteBasicPom()
         throws Exception

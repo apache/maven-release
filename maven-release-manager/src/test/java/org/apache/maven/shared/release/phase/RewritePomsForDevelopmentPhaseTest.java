@@ -55,12 +55,15 @@ public class RewritePomsForDevelopmentPhaseTest
 
     private static final String ALTERNATIVE_RELEASE_VERSION = "2.0";
 
-    public void setUp()
-        throws Exception
+    public RewritePomsForDevelopmentPhaseTest( String modelETL )
     {
-        super.setUp();
+        super( modelETL );
+    }
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "rewrite-poms-for-development" );
+    @Override
+    protected String getRoleHint()
+    {
+        return "rewrite-poms-for-development";
     }
 
     @Test

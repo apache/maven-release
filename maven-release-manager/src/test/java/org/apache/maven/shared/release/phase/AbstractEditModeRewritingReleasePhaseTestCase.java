@@ -56,6 +56,11 @@ import org.mockito.internal.util.reflection.Whitebox;
 public abstract class AbstractEditModeRewritingReleasePhaseTestCase
     extends AbstractRewritingReleasePhaseTestCase
 {
+    public AbstractEditModeRewritingReleasePhaseTestCase( String modelETL )
+    {
+        super( modelETL );
+    }
+
     @Test
     public void testRewriteBasicPomWithEditMode()
         throws Exception

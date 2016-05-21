@@ -46,12 +46,15 @@ public class RewritePomsForReleasePhaseTest
 
     private static final String ALTERNATIVE_NEXT_VERSION = "2.0";
 
-    public void setUp()
-        throws Exception
+    public RewritePomsForReleasePhaseTest( String modelETL )
     {
-        super.setUp();
+        super( modelETL );
+    }
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "rewrite-poms-for-release" );
+    @Override
+    protected String getRoleHint()
+    {
+        return "rewrite-poms-for-release";
     }
 
     protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )

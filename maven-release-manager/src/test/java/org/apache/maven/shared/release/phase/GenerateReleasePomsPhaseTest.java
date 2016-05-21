@@ -64,13 +64,23 @@ public class GenerateReleasePomsPhaseTest
 
     private ScmProvider scmProviderMock;
 
+    public GenerateReleasePomsPhaseTest( String modelETL )
+    {
+        super( modelETL );
+    }
+
     public void setUp()
         throws Exception
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "generate-release-poms" );
         scmProviderMock = null;
+    }
+    
+    @Override
+    protected String getRoleHint()
+    {
+        return "generate-release-poms";
     }
 
     // TODO: MRELEASE-262
