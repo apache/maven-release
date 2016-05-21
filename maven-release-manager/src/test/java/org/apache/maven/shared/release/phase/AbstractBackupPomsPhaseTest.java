@@ -22,7 +22,7 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
-import org.codehaus.plexus.PlexusTestCase;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
@@ -34,7 +34,7 @@ import java.util.List;
  * @author Edwin Punzalan
  */
 public abstract class AbstractBackupPomsPhaseTest
-    extends PlexusTestCase
+    extends PlexusJUnit4TestCase
 {
     private final String pomFilename = "pom.xml";
 
@@ -42,7 +42,7 @@ public abstract class AbstractBackupPomsPhaseTest
 
     protected ReleasePhase phase;
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();

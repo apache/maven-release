@@ -19,13 +19,17 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.util.ReleaseUtil;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.junit.Test;
 
 /**
  * @author Edwin Punzalan
@@ -39,33 +43,35 @@ public class CreateBackupPomsPhaseTest
         return (ReleasePhase) lookup( ReleasePhase.ROLE, "create-backup-poms" );
     }
 
+    @Test
     public void testBasicPom()
         throws Exception
     {
         String projectPath = "target/test-classes/projects/create-backup-poms/basic-pom";
 
-        //should create backup files
+        // should create backup files
         runExecuteOnProjects( projectPath );
 
-        //should delete backup files
+        // should delete backup files
         runCleanOnProjects( projectPath );
 
-        //should re-create backup files
+        // should re-create backup files
         runSimulateOnProjects( projectPath );
     }
 
+    @Test
     public void testMultiModulePom()
         throws Exception
     {
         String projectPath = "target/test-classes/projects/create-backup-poms/pom-with-modules";
 
-        //should create backup files
+        // should create backup files
         runExecuteOnProjects( projectPath );
 
-        //should delete backup files
+        // should delete backup files
         runCleanOnProjects( projectPath );
 
-        //should re-create backup files
+        // should re-create backup files
         runSimulateOnProjects( projectPath );
     }
 

@@ -19,15 +19,18 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
-
-import java.io.File;
-import java.util.Iterator;
-import java.util.List;
+import org.junit.Test;
 
 /**
  * @author Edwin Punzalan
@@ -43,12 +46,13 @@ public class RestoreBackupPomsPhaseTest
         return (ReleasePhase) lookup( ReleasePhase.ROLE, "restore-backup-poms" );
     }
 
+    @Test
     public void testBasicPom()
         throws Exception
     {
         String projectPath = "/projects/restore-backup-poms/basic-pom";
 
-        //copy poms so tests are valid without clean
+        // copy poms so tests are valid without clean
         File sourceDir = getTestFile( "src/test/resources" + projectPath );
         File testDir = getTestFile( "target/test-classes" + projectPath );
         FileUtils.copyDirectoryStructure( sourceDir, testDir );
@@ -58,12 +62,13 @@ public class RestoreBackupPomsPhaseTest
         runExecuteOnProjects( testPath );
     }
 
+    @Test
     public void testMultiModulePom()
         throws Exception
     {
         String projectPath = "/projects/restore-backup-poms/pom-with-modules";
 
-        //copy poms so tests are valid without clean
+        // copy poms so tests are valid without clean
         File sourceDir = getTestFile( "src/test/resources" + projectPath );
         File testDir = getTestFile( "target/test-classes" + projectPath );
         FileUtils.copyDirectoryStructure( sourceDir, testDir );
