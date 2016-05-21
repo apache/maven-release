@@ -28,16 +28,23 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Rewrite POMs for future development
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
+@Component( role = ReleasePhase.class, hint = "rewrite-pom-versions" )
 public class RewritePomVersionsPhase
     extends AbstractRewritePomsPhase
 {
-
+    @Override
+    protected final String getPomSuffix()
+    {
+        return "next";
+    }
+    
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,

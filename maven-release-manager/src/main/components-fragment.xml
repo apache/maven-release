@@ -143,27 +143,6 @@
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>rewrite-poms-for-release</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.RewritePomsForReleasePhase</implementation>
-      <configuration>
-        <pomSuffix>tag</pomSuffix>
-      </configuration>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.transform.ModelETLFactory</role>
-          <field-name>modelETLFactories</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
-          <field-name>scmTranslators</field-name>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>scm-commit-release</role-hint>
       <implementation>org.apache.maven.shared.release.phase.ScmCommitPreparationPhase</implementation>
       <requirements>
@@ -204,44 +183,6 @@
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>rewrite-poms-for-development</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.RewritePomsForDevelopmentPhase</implementation>
-      <configuration>
-        <pomSuffix>next</pomSuffix>
-      </configuration>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.transform.ModelETLFactory</role>
-          <field-name>modelETLFactories</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
-          <field-name>scmTranslators</field-name>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>rewrite-pom-versions</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.RewritePomVersionsPhase</implementation>
-      <configuration>
-        <pomSuffix>next</pomSuffix>
-      </configuration>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.transform.ModelETLFactory</role>
-          <field-name>modelETLFactories</field-name>
-        </requirement>
-      </requirements>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>scm-commit-rollback</role-hint>
       <implementation>org.apache.maven.shared.release.phase.ScmCommitPreparationPhase</implementation>
       <requirements>
@@ -252,27 +193,6 @@
       <configuration>
         <messageFormat>rollback the release of {0}</messageFormat>
       </configuration>
-    </component>
-    <component>
-      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-      <role-hint>rewrite-poms-for-branch</role-hint>
-      <implementation>org.apache.maven.shared.release.phase.RewritePomsForBranchPhase</implementation>
-      <configuration>
-        <pomSuffix>branch</pomSuffix>
-      </configuration>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.transform.ModelETLFactory</role>
-          <field-name>modelETLFactories</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.scm.ScmTranslator</role>
-          <field-name>scmTranslators</field-name>
-        </requirement>
-      </requirements>
     </component>
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>

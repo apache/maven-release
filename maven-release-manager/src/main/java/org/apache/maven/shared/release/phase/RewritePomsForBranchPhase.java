@@ -33,6 +33,7 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Rewrite POMs for branch.
@@ -40,9 +41,16 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
  */
+@Component( role = ReleasePhase.class, hint = "rewrite-poms-for-branch" )
 public class RewritePomsForBranchPhase
     extends AbstractRewritePomsPhase
 {
+    @Override
+    protected final String getPomSuffix()
+    {
+        return "branch";
+    }
+    
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,
                                  String commonBasedir ) 

@@ -60,6 +60,7 @@ import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
 import org.apache.maven.shared.release.transform.jdom.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -73,8 +74,10 @@ public abstract class AbstractRewritePomsPhase
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
+    @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
     
+    @Requirement( role = ModelETLFactory.class )
     private Map<String, ModelETLFactory> modelETLFactories;
     
     /**
@@ -85,17 +88,13 @@ public abstract class AbstractRewritePomsPhase
     /**
      * SCM URL translators mapped by provider name.
      */
+    @Requirement( role = ScmTranslator.class )
     private Map<String, ScmTranslator> scmTranslators;
     
     protected final Map<String, ScmTranslator> getScmTranslators()
     {
         return scmTranslators;
     }
-
-    /**
-     * Configuration item for the suffix to add to rewritten POMs when simulating.
-     */
-    private String pomSuffix;
 
     private String ls = ReleaseUtil.LS;
 
@@ -108,6 +107,8 @@ public abstract class AbstractRewritePomsPhase
     {
         this.modelETL = modelETL;
     }
+    
+    protected abstract String getPomSuffix(); 
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
@@ -152,7 +153,7 @@ public abstract class AbstractRewritePomsPhase
                 // MRELEASE-273 : if no pom
                 if ( pomFile != null )
                 {
-                    File file = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
+                    File file = new File( pomFile.getParentFile(), pomFile.getName() + "." + getPomSuffix() );
                     if ( file.exists() )
                     {
                         file.delete();
@@ -222,7 +223,7 @@ public abstract class AbstractRewritePomsPhase
         File outputFile;
         if ( simulate )
         {
-            outputFile = new File( pomFile.getParentFile(), pomFile.getName() + "." + pomSuffix );
+            outputFile = new File( pomFile.getParentFile(), pomFile.getName() + "." + getPomSuffix() );
         }
         else
         {

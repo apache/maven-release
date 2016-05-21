@@ -33,16 +33,23 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Rewrite POMs for release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
+@Component( role = ReleasePhase.class, hint = "rewrite-poms-for-release" )
 public class RewritePomsForReleasePhase
     extends AbstractRewritePomsPhase
 {
-
+    @Override
+    protected final String getPomSuffix()
+    {
+        return "tag";
+    }
+    
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,
