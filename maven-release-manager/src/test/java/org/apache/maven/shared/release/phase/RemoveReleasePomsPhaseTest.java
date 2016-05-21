@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
@@ -49,6 +50,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
+import org.junit.Test;
 
 /**
  * Test the remove release POMs phase.
@@ -58,7 +60,7 @@ import org.codehaus.plexus.util.IOUtil;
 public class RemoveReleasePomsPhaseTest
     extends AbstractReleaseTestCase
 {
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -66,6 +68,7 @@ public class RemoveReleasePomsPhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "remove-release-poms" );
     }
 
+    @Test
     public void testExecuteBasicPom()
         throws Exception
     {
@@ -78,24 +81,24 @@ public class RemoveReleasePomsPhaseTest
         ScmFileSet fileSet = new ScmFileSet( new File( config.getWorkingDirectory() ), releasePom );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.remove( isA( ScmRepository.class ),
-                                      argThat( new IsScmFileSetEquals( fileSet ) ),
-                                      isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...", Collections
-                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.DELETED ) ) ) );
-        
+        when( scmProviderMock.remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                      isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...",
+                                                                                               Collections.singletonList( new ScmFile( Maven.RELEASE_POMv4,
+                                                                                                                                       ScmFileStatus.DELETED ) ) ) );
+
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
 
         // execute
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
-        //verify
-        verify( scmProviderMock ).remove( isA( ScmRepository.class ),
-                                          argThat( new IsScmFileSetEquals( fileSet ) ),
+        // verify
+        verify( scmProviderMock ).remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                           isA( String.class ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testExecutePomWithModules()
         throws Exception
     {
@@ -114,10 +117,10 @@ public class RemoveReleasePomsPhaseTest
         ScmFileSet fileSet = new ScmFileSet( new File( config.getWorkingDirectory() ), releasePoms );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.remove( isA( ScmRepository.class ),
-                                      argThat( new IsScmFileSetEquals( fileSet ) ),
-                                      isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...", Collections
-                       .singletonList( new ScmFile( Maven.RELEASE_POMv4, ScmFileStatus.DELETED ) ) ) );
+        when( scmProviderMock.remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                      isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...",
+                                                                                               Collections.singletonList( new ScmFile( Maven.RELEASE_POMv4,
+                                                                                                                                       ScmFileStatus.DELETED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -126,12 +129,12 @@ public class RemoveReleasePomsPhaseTest
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( scmProviderMock ).remove( isA( ScmRepository.class ),
-                                          argThat( new IsScmFileSetEquals( fileSet ) ),
+        verify( scmProviderMock ).remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                           isA( String.class ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testSimulateBasicPom()
         throws Exception
     {
@@ -150,8 +153,10 @@ public class RemoveReleasePomsPhaseTest
         // never invoke scmProviderMock
         verifyNoMoreInteractions( scmProviderMock );
     }
-    
-    public void testExecuteWithSuppressCommitBeforeTag() throws Exception
+
+    @Test
+    public void testExecuteWithSuppressCommitBeforeTag()
+        throws Exception
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
@@ -163,17 +168,18 @@ public class RemoveReleasePomsPhaseTest
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
-        
+
         // execute
         ReleaseResult result = phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
-        
+
         BufferedReader reader = null;
-        try 
+        try
         {
             reader = new BufferedReader( new StringReader( result.getOutput() ) );
-            
-            assertEquals( "[INFO] Removing release POM for 'Unnamed - groupId:artifactId:jar:1.0-SNAPSHOT'..." , reader.readLine() );
-            assertEquals( "Expected EOF",  null, reader.readLine() );
+
+            assertEquals( "[INFO] Removing release POM for 'Unnamed - groupId:artifactId:jar:1.0-SNAPSHOT'...",
+                          reader.readLine() );
+            assertEquals( "Expected EOF", null, reader.readLine() );
         }
         finally
         {
@@ -184,7 +190,9 @@ public class RemoveReleasePomsPhaseTest
         verifyNoMoreInteractions( scmProviderMock );
     }
 
-    public void testSimulateWithSuppressCommitBeforeTag() throws Exception
+    @Test
+    public void testSimulateWithSuppressCommitBeforeTag()
+        throws Exception
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
@@ -201,13 +209,15 @@ public class RemoveReleasePomsPhaseTest
         ReleaseResult result = phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         BufferedReader reader = null;
-        try 
+        try
         {
             reader = new BufferedReader( new StringReader( result.getOutput() ) );
-            
-            assertEquals( "[INFO] Removing release POM for 'Unnamed - groupId:artifactId:jar:1.0-SNAPSHOT'..." , reader.readLine() );
-            assertEquals( "[INFO] Full run would be removing [" + reactorProjects.get( 0 ).getFile().getParent() + File.separator + "release-pom.xml]", reader.readLine() );
-            assertEquals( "Expected EOF",  null, reader.readLine() );
+
+            assertEquals( "[INFO] Removing release POM for 'Unnamed - groupId:artifactId:jar:1.0-SNAPSHOT'...",
+                          reader.readLine() );
+            assertEquals( "[INFO] Full run would be removing [" + reactorProjects.get( 0 ).getFile().getParent()
+                + File.separator + "release-pom.xml]", reader.readLine() );
+            assertEquals( "Expected EOF", null, reader.readLine() );
         }
         finally
         {

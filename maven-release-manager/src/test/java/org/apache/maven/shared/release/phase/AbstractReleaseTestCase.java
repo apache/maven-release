@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.fail;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
@@ -54,8 +56,8 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectSorter;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.context.DefaultContext;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
@@ -77,7 +79,7 @@ import org.xml.sax.SAXException;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public abstract class AbstractReleaseTestCase
-    extends PlexusTestCase
+    extends PlexusJUnit4TestCase
 {
     protected MavenProjectBuilder projectBuilder;
 
@@ -94,7 +96,7 @@ public abstract class AbstractReleaseTestCase
         }
     };
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -106,7 +108,7 @@ public abstract class AbstractReleaseTestCase
         localRepository = new DefaultArtifactRepository( "local", "file://" + localRepoPath, layout );
     }
 
-    protected void tearDown()
+    public void tearDown()
         throws Exception
     {
         // unhook circular references to the container that would avoid memory being cleaned up
@@ -124,10 +126,8 @@ public abstract class AbstractReleaseTestCase
         if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
         {
             map = new HashMap<String,Artifact>();
-            for ( Iterator i = dependencyManagement.getDependencies().iterator(); i.hasNext(); )
+            for ( Dependency d : dependencyManagement.getDependencies() )
             {
-                Dependency d = (Dependency) i.next();
-
                 try
                 {
                     VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
@@ -211,16 +211,14 @@ public abstract class AbstractReleaseTestCase
         ArtifactMetadataSource artifactMetadataSource = (ArtifactMetadataSource) lookup( ArtifactMetadataSource.ROLE );
 
         // pass back over and resolve dependencies - can't be done earlier as the order may not be correct
-        for ( Iterator i = reactorProjects.iterator(); i.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = (MavenProject) i.next();
-
             project.setRemoteArtifactRepositories( repos );
             project.setPluginArtifactRepositories( repos );
 
             Artifact projectArtifact = project.getArtifact();
 
-            Map managedVersions = createManagedVersionMap(
+            Map<String, Artifact> managedVersions = createManagedVersionMap(
                 ArtifactUtils.versionlessKey( projectArtifact.getGroupId(), projectArtifact.getArtifactId() ),
                 project.getDependencyManagement(), artifactFactory );
 

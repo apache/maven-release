@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -28,6 +32,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.junit.Test;
 
 /**
  * Test the SCM modification check phase.
@@ -41,7 +46,7 @@ public class RewritePomsForReleasePhaseTest
 
     private static final String ALTERNATIVE_NEXT_VERSION = "2.0";
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -61,6 +66,7 @@ public class RewritePomsForReleasePhaseTest
         return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/rewrite-for-release/" + fileName ) );
     }
 
+    @Test
     public void testSimulateRewrite()
         throws Exception
     {
@@ -80,10 +86,11 @@ public class RewritePomsForReleasePhaseTest
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
+    @Test
     public void testRewriteWithDashedComments()
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjects("basic-pom-with-dashes-in-comment");
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-dashes-in-comment" );
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
 
@@ -99,6 +106,7 @@ public class RewritePomsForReleasePhaseTest
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
+    @Test
     public void testClean()
         throws Exception
     {
@@ -119,6 +127,7 @@ public class RewritePomsForReleasePhaseTest
         assertFalse( testFile.exists() );
     }
 
+    @Test
     public void testCleanNotExists()
         throws Exception
     {
@@ -135,7 +144,8 @@ public class RewritePomsForReleasePhaseTest
         assertFalse( testFile.exists() );
     }
 
-    //MRELEASE-116
+    // MRELEASE-116
+    @Test
     public void testScmOverridden()
         throws Exception
     {
@@ -183,6 +193,7 @@ public class RewritePomsForReleasePhaseTest
         // nothing to do
     }
 
+    @Test
     public void testRewriteBasicPomWithCvs()
         throws Exception
     {
@@ -196,6 +207,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithScmExpression()
         throws Exception
     {
@@ -209,6 +221,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithTagBase()
         throws Exception
     {
@@ -223,6 +236,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithTagBaseAndVaryingScmUrls()
         throws Exception
     {
@@ -236,6 +250,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithCvsFromTag()
         throws Exception
     {
@@ -248,6 +263,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithEmptyScm()
         throws Exception
     {
@@ -260,6 +276,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteInterpolatedVersions()
         throws Exception
     {
@@ -271,6 +288,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteInterpolatedVersionsDifferentVersion()
         throws Exception
     {
@@ -296,6 +314,7 @@ public class RewritePomsForReleasePhaseTest
         }
     }
 
+    @Test
     public void testRewriteBasicPomWithInheritedScm()
         throws Exception
     {
@@ -308,6 +327,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomWithParentAndProperties()
         throws Exception
     {
@@ -324,6 +344,7 @@ public class RewritePomsForReleasePhaseTest
     }
 
     // MRELEASE-311
+    @Test
     public void testRewritePomWithDependencyPropertyCoordinate()
         throws Exception
     {
@@ -340,6 +361,7 @@ public class RewritePomsForReleasePhaseTest
     }
 
     // MRELEASE-305
+    @Test
     public void testRewritePomWithScmOfParentEndingWithASlash()
         throws Exception
     {
@@ -354,6 +376,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomWithDeepSubprojects()
         throws Exception
     {
@@ -369,10 +392,12 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomForFlatMultiModule()
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
+        List<MavenProject> reactorProjects =
+            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
 
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
@@ -381,6 +406,7 @@ public class RewritePomsForReleasePhaseTest
     }
 
     // MRELEASE-383
+    @Test
     public void testRewritePomWithCDATASectionOnWindows()
         throws Exception
     {
@@ -402,22 +428,24 @@ public class RewritePomsForReleasePhaseTest
         descriptor.setScmReleaseLabel( "release-label" );
         return descriptor;
     }
-    
+
+    @Test
     public void testRewritePomWithExternallyReleasedParent()
-    throws Exception
+        throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "pom-with-externally-released-parent" );
-    
+
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
-        config.mapResolvedSnapshotDependencies( "external:parent-artifactId", "1" , "2-SNAPSHOT" );
+        config.mapResolvedSnapshotDependencies( "external:parent-artifactId", "1", "2-SNAPSHOT" );
         config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
-    
+
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
-    
+
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
     // MRELEASE-454
+    @Test
     public void testRewritePomWithImportedDependencyManagementInReactor()
         throws Exception
     {
@@ -429,6 +457,7 @@ public class RewritePomsForReleasePhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomWithDifferentVersionsAcrossModules()
         throws Exception
     {

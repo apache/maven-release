@@ -64,7 +64,7 @@ public abstract class AbstractBackupPomsPhaseTest
 
         reactorProjects.add( mainProject );
 
-        for( Iterator modules = mainProject.getModel().getModules().iterator(); modules.hasNext(); )
+        for ( Iterator modules = mainProject.getModel().getModules().iterator(); modules.hasNext(); )
         {
             String module = modules.next().toString();
 

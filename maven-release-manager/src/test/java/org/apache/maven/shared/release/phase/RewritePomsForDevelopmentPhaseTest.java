@@ -19,6 +19,17 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
@@ -26,12 +37,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import org.junit.Test;
 
 /**
  * Test the SCM modification check phase.
@@ -49,7 +55,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
     private static final String ALTERNATIVE_RELEASE_VERSION = "2.0";
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -57,6 +63,7 @@ public class RewritePomsForDevelopmentPhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "rewrite-poms-for-development" );
     }
 
+    @Test
     public void testSimulateRewrite()
         throws Exception
     {
@@ -83,10 +90,12 @@ public class RewritePomsForDevelopmentPhaseTest
         return createReactorProjects( "rewrite-for-release/", "rewrite-for-development/", name );
     }
 
+    @Test
     public void testSimulateRewriteEjbClientDeps()
         throws Exception
     {
-        List<MavenProject> reactorProjects = new LinkedList<MavenProject>( createReactorProjects( "basic-pom-ejb-client-dep/project" ) );
+        List<MavenProject> reactorProjects =
+            new LinkedList<MavenProject>( createReactorProjects( "basic-pom-ejb-client-dep/project" ) );
         reactorProjects.addAll( createReactorProjects( "basic-pom-ejb-client-dep/ejb" ) );
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
@@ -106,6 +115,7 @@ public class RewritePomsForDevelopmentPhaseTest
         assertEquals( "Check the transformed POM", expected, actual );
     }
 
+    @Test
     public void testClean()
         throws Exception
     {
@@ -127,6 +137,7 @@ public class RewritePomsForDevelopmentPhaseTest
         assertFalse( testFile.exists() );
     }
 
+    @Test
     public void testCleanNotExists()
         throws Exception
     {
@@ -144,6 +155,7 @@ public class RewritePomsForDevelopmentPhaseTest
         assertFalse( testFile.exists() );
     }
 
+    @Test
     public void testRewriteBasicPomUnmappedScm()
         throws Exception
     {
@@ -174,7 +186,7 @@ public class RewritePomsForDevelopmentPhaseTest
     protected String readTestProjectFile( String fileName, String subpath )
         throws IOException
     {
-        return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/"+ subpath + fileName ) );
+        return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/" + subpath + fileName ) );
     }
 
     protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
@@ -247,6 +259,7 @@ public class RewritePomsForDevelopmentPhaseTest
         return config;
     }
 
+    @Test
     public void testRewriteBasicPomWithCvs()
         throws Exception
     {
@@ -266,6 +279,7 @@ public class RewritePomsForDevelopmentPhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithCvsFromTag()
         throws Exception
     {
@@ -286,6 +300,7 @@ public class RewritePomsForDevelopmentPhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithInheritedScm()
         throws Exception
     {
@@ -303,7 +318,7 @@ public class RewritePomsForDevelopmentPhaseTest
         Scm scm = new Scm();
         scm.setConnection( "scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1" );
         scm.setDeveloperConnection( "scm:svn:file://localhost/tmp/scm-repo/trunk/subproject1" );
-        //MRELEASE-107
+        // MRELEASE-107
         scm.setUrl( "http://localhost/viewvc/mypath/trunk/subproject1" );
         config.mapOriginalScmInfo( "groupId:subproject1", scm );
         config.mapOriginalScmInfo( "groupId:subsubproject", null );
@@ -313,20 +328,23 @@ public class RewritePomsForDevelopmentPhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomWithParentAndProperties()
         throws Exception
     {
         performTestRewritePomWithParentAndProperties( "pom-with-parent-and-properties" );
     }
 
-    //MRELEASE-454
+    // MRELEASE-454
+    @Test
     public void testRewritePomWithParentAndPropertiesInDependencyManagement()
         throws Exception
     {
         performTestRewritePomWithParentAndProperties( "pom-with-parent-and-properties-in-dependency-management" );
     }
 
-    //MRELEASE-454
+    // MRELEASE-454
+    @Test
     public void testRewritePomWithParentAndPropertiesInDependencyManagementImport()
         throws Exception
     {
@@ -337,7 +355,7 @@ public class RewritePomsForDevelopmentPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( path );
-  
+
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         config.mapDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
@@ -353,6 +371,7 @@ public class RewritePomsForDevelopmentPhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testSimulateRewritePomWithParentAndProperties()
         throws Exception
     {
@@ -384,6 +403,7 @@ public class RewritePomsForDevelopmentPhaseTest
     }
 
     // MRELEASE-311
+    @Test
     public void testRewritePomWithDependencyPropertyCoordinate()
         throws Exception
     {
@@ -404,6 +424,7 @@ public class RewritePomsForDevelopmentPhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomDependenciesWithoutDependenciesVersionUpdate()
         throws Exception
     {

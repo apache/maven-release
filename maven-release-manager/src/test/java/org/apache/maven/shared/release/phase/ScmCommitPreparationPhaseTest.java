@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
@@ -56,6 +60,7 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
 /**
@@ -68,7 +73,7 @@ public class ScmCommitPreparationPhaseTest
 {
     private static final String PREFIX = "[maven-release-manager] prepare release ";
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -76,17 +81,20 @@ public class ScmCommitPreparationPhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-commit-release" );
     }
 
+    @Test
     public void testIsCorrectImplementation()
     {
         assertEquals( ScmCommitPreparationPhase.class, phase.getClass() );
     }
 
+    @Test
     public void testResolvesCorrectBranchImplementation()
         throws Exception
     {
         assertEquals( ScmCommitPreparationPhase.class, lookup( ReleasePhase.ROLE, "scm-commit-branch" ).getClass() );
     }
 
+    @Test
     public void testCommit()
         throws Exception
     {
@@ -101,12 +109,13 @@ public class ScmCommitPreparationPhaseTest
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.checkIn( isA( ScmRepository.class ), 
-                                       argThat( new IsScmFileSetEquals( fileSet ) ), 
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                        isNull( ScmVersion.class ),
-                                       eq( PREFIX + "release-label" ) ) ).thenReturn( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                       .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) );
-        
+                                       eq( PREFIX
+                                           + "release-label" ) ) ).thenReturn( new CheckInScmResult( "...",
+                                                                                                     Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
+                                                                                                                                             ScmFileStatus.CHECKED_IN ) ) ) );
+
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
 
@@ -114,13 +123,12 @@ public class ScmCommitPreparationPhaseTest
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), 
-                                            argThat( new IsScmFileSetEquals( fileSet ) ), 
-                                            isNull( ScmVersion.class ),
-                                            eq( PREFIX + "release-label" ) );
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                           isNull( ScmVersion.class ), eq( PREFIX + "release-label" ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testCommitMultiModule()
         throws Exception
     {
@@ -138,16 +146,15 @@ public class ScmCommitPreparationPhaseTest
             MavenProject project = i.next();
             poms.add( project.getFile() );
         }
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), poms);
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), poms );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.checkIn( isA( ScmRepository.class ), 
-                                       argThat( new IsScmFileSetEquals( fileSet ) ), 
-                                       isNull( ScmVersion.class ), 
-                                       eq( PREFIX + "release-label" ) ) ).thenReturn( new CheckInScmResult(
-                                                    "...",
-                                                    Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
-                                                                                            ScmFileStatus.CHECKED_IN ) ) ) );
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                       isNull( ScmVersion.class ),
+                                       eq( PREFIX
+                                           + "release-label" ) ) ).thenReturn( new CheckInScmResult( "...",
+                                                                                                     Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
+                                                                                                                                             ScmFileStatus.CHECKED_IN ) ) ) );
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
 
@@ -155,13 +162,12 @@ public class ScmCommitPreparationPhaseTest
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), 
-                                           argThat( new IsScmFileSetEquals( fileSet ) ), 
-                                           isNull( ScmVersion.class ), 
-                                           eq( PREFIX + "release-label" ) );
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                           isNull( ScmVersion.class ), eq( PREFIX + "release-label" ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testCommitDevelopment()
         throws Exception
     {
@@ -178,11 +184,11 @@ public class ScmCommitPreparationPhaseTest
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.checkIn( isA( ScmRepository.class ),
-                                       argThat( new IsScmFileSetEquals( fileSet ) ), 
-                                       isNull( ScmVersion.class ), 
-                                       eq( "[maven-release-manager] prepare for next development iteration" ) ) ).thenReturn( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                       .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) );
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                       isNull( ScmVersion.class ),
+                                       eq( "[maven-release-manager] prepare for next development iteration" ) ) ).thenReturn( new CheckInScmResult( "...",
+                                                                                                                                                    Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
+                                                                                                                                                                                            ScmFileStatus.CHECKED_IN ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -191,13 +197,13 @@ public class ScmCommitPreparationPhaseTest
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ),
-                                           argThat( new IsScmFileSetEquals( fileSet ) ), 
-                                           isNull( ScmVersion.class ), 
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                           isNull( ScmVersion.class ),
                                            eq( "[maven-release-manager] prepare for next development iteration" ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testCommitNoReleaseLabel()
         throws Exception
     {
@@ -215,6 +221,7 @@ public class ScmCommitPreparationPhaseTest
         }
     }
 
+    @Test
     public void testCommitGenerateReleasePoms()
         throws Exception
     {
@@ -233,11 +240,12 @@ public class ScmCommitPreparationPhaseTest
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), files );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.checkIn( isA( ScmRepository.class ),
-                                       argThat( new IsScmFileSetEquals( fileSet ) ),
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                        isNull( ScmVersion.class ),
-                                       eq( PREFIX + "release-label" ) ) ).thenReturn( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                       .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) );
+                                       eq( PREFIX
+                                           + "release-label" ) ) ).thenReturn( new CheckInScmResult( "...",
+                                                                                                     Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
+                                                                                                                                             ScmFileStatus.CHECKED_IN ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -246,13 +254,12 @@ public class ScmCommitPreparationPhaseTest
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ),
-                                           argThat( new IsScmFileSetEquals( fileSet ) ),
-                                           isNull( ScmVersion.class ),
-                                           eq( PREFIX + "release-label" ) );
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                           isNull( ScmVersion.class ), eq( PREFIX + "release-label" ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testSimulateCommit()
         throws Exception
     {
@@ -264,7 +271,7 @@ public class ScmCommitPreparationPhaseTest
         descriptor.setScmReleaseLabel( "release-label" );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        
+
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
 
@@ -274,6 +281,7 @@ public class ScmCommitPreparationPhaseTest
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testSimulateCommitNoReleaseLabel()
         throws Exception
     {
@@ -291,6 +299,7 @@ public class ScmCommitPreparationPhaseTest
         }
     }
 
+    @Test
     public void testNoSuchScmProviderExceptionThrown()
         throws Exception
     {
@@ -316,12 +325,13 @@ public class ScmCommitPreparationPhaseTest
         {
             assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify( scmManagerMock ).makeScmRepository( "scm-url" );
         verifyNoMoreInteractions( scmManagerMock );
     }
 
+    @Test
     public void testScmRepositoryExceptionThrown()
         throws Exception
     {
@@ -347,12 +357,13 @@ public class ScmCommitPreparationPhaseTest
         {
             assertNull( "Check no additional cause", e.getCause() );
         }
-        
+
         // verify
         verify( scmManagerMock ).makeScmRepository( "scm-url" );
-        verifyNoMoreInteractions( scmManagerMock ); 
+        verifyNoMoreInteractions( scmManagerMock );
     }
 
+    @Test
     public void testScmExceptionThrown()
         throws Exception
     {
@@ -361,9 +372,7 @@ public class ScmCommitPreparationPhaseTest
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.checkIn( isA( ScmRepository.class ),
-                                       isA( ScmFileSet.class ),
-                                       isNull( ScmVersion.class ), 
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ), isA( ScmFileSet.class ), isNull( ScmVersion.class ),
                                        isA( String.class ) ) ).thenThrow( new ScmException( "..." ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
@@ -380,15 +389,14 @@ public class ScmCommitPreparationPhaseTest
         {
             assertEquals( "check cause", ScmException.class, e.getCause().getClass() );
         }
-        
-        //verify
-        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ),
-                                           isA( ScmFileSet.class ),
-                                           isNull( ScmVersion.class ), 
-                                           isA( String.class ) );
+
+        // verify
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), isA( ScmFileSet.class ),
+                                           isNull( ScmVersion.class ), isA( String.class ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testScmResultFailure()
         throws Exception
     {
@@ -396,8 +404,8 @@ public class ScmCommitPreparationPhaseTest
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
         ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
-        ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl(
-            releaseDescriptor.getScmSourceUrl() );
+        ScmProviderStub providerStub =
+            (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
 
         providerStub.setCheckInScmResult( new CheckInScmResult( "", "", "", false ) );
 
@@ -413,6 +421,7 @@ public class ScmCommitPreparationPhaseTest
         }
     }
 
+    @Test
     public void testSuppressCommitWithRemoteTaggingFails()
         throws Exception
     {
@@ -423,7 +432,7 @@ public class ScmCommitPreparationPhaseTest
         descriptor.setSuppressCommitBeforeTagOrBranch( true );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        
+
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
 
@@ -442,6 +451,7 @@ public class ScmCommitPreparationPhaseTest
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testSuppressCommitAfterBranch()
         throws Exception
     {
@@ -453,7 +463,7 @@ public class ScmCommitPreparationPhaseTest
         descriptor.setSuppressCommitBeforeTagOrBranch( true );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        
+
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
 

@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -43,6 +47,7 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
 /**
@@ -53,6 +58,7 @@ import org.mockito.internal.util.reflection.Whitebox;
 public abstract class AbstractRewritingReleasePhaseTestCase
     extends AbstractReleaseTestCase
 {
+    @Test
     public void testRewriteBasicPom()
         throws Exception
     {
@@ -65,6 +71,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomEntities()
         throws Exception
     {
@@ -77,6 +84,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomNamespace()
         throws Exception
     {
@@ -89,6 +97,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithEncoding()
         throws Exception
     {
@@ -101,6 +110,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomWithParent()
         throws Exception
     {
@@ -112,6 +122,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomWithUnmappedParent()
         throws Exception
     {
@@ -137,6 +148,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewritePomWithReleasedParent()
         throws Exception
     {
@@ -155,6 +167,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
     protected abstract void mapAlternateNextVersion( ReleaseDescriptor config, String projectId );
 
+    @Test
     public void testRewritePomWithInheritedVersion()
         throws Exception
     {
@@ -166,6 +179,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomWithChangedInheritedVersion()
         throws Exception
     {
@@ -181,6 +195,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     protected abstract ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
         throws Exception;
 
+    @Test
     public void testRewritePomDependencies()
         throws Exception
     {
@@ -193,6 +208,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomUnmappedDependencies()
         throws Exception
     {
@@ -211,6 +227,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewritePomDependenciesDifferentVersion()
         throws Exception
     {
@@ -222,6 +239,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteManagedPomDependencies()
         throws Exception
     {
@@ -233,6 +251,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteManagedPomUnmappedDependencies()
         throws Exception
     {
@@ -251,6 +270,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewritePomPlugins()
         throws Exception
     {
@@ -262,6 +282,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomUnmappedPlugins()
         throws Exception
     {
@@ -280,6 +301,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewritePomPluginsDifferentVersion()
         throws Exception
     {
@@ -291,6 +313,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteManagedPomPlugins()
         throws Exception
     {
@@ -302,6 +325,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteManagedPomUnmappedPlugins()
         throws Exception
     {
@@ -320,6 +344,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewritePomReportPlugins()
         throws Exception
     {
@@ -331,6 +356,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomUnmappedReportPlugins()
         throws Exception
     {
@@ -349,6 +375,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewritePomReportPluginsDifferentVersion()
         throws Exception
     {
@@ -360,6 +387,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomExtension()
         throws Exception
     {
@@ -371,6 +399,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomUnmappedExtension()
         throws Exception
     {
@@ -389,6 +418,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewritePomExtensionDifferentVersion()
         throws Exception
     {
@@ -400,6 +430,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomExtensionUndefinedVersion()
         throws Exception
     {
@@ -411,6 +442,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteAddSchema()
         throws Exception
     {
@@ -430,11 +462,12 @@ public abstract class AbstractRewritingReleasePhaseTestCase
             comparePomFiles( reactorProjects, "-with-schema" );
 
             copyFiles = false;
-            
+
             verifyReactorProjects( path, copyFiles );
         }
     }
 
+    @Test
     public void testSimulateRewriteEditModeSkipped()
         throws Exception
     {
@@ -453,12 +486,13 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         scmManager.setScmProvider( scmProviderMock );
 
         // execute
-        phase.simulate( config,  new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testRewriteUnmappedPom()
         throws Exception
     {
@@ -477,6 +511,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewriteBasicPomWithScmRepoException()
         throws Exception
     {
@@ -503,11 +538,12 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         {
             assertNull( "Check no additional cause", e.getCause() );
         }
-        
+
         verify( scmManagerMock ).makeScmRepository( config.getScmSourceUrl() );
         verifyNoMoreInteractions( scmManagerMock );
     }
 
+    @Test
     public void testRewriteBasicPomWithNoSuchProviderException()
         throws Exception
     {
@@ -535,12 +571,13 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         {
             assertEquals( "Check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify( scmManagerMock ).makeScmRepository( config.getScmSourceUrl() );
         verifyNoMoreInteractions( scmManagerMock );
     }
 
+    @Test
     public void testRewriteWhitespaceAroundValues()
         throws Exception
     {
@@ -553,6 +590,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteCommentsAroundValues()
         throws Exception
     {
@@ -565,6 +603,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteCDataAroundValues()
         throws Exception
     {
@@ -577,6 +616,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testCleanNoProjects()
         throws Exception
     {
@@ -657,6 +697,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     protected abstract String readTestProjectFile( String fileName )
         throws IOException;
 
+    @Test
     public void testRewritePomDependenciesWithNamespace()
         throws Exception
     {
@@ -670,8 +711,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
     protected abstract List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception;
-    
-    protected void verifyReactorProjects( String path, boolean copyFiles ) throws Exception
+
+    protected void verifyReactorProjects( String path, boolean copyFiles )
+        throws Exception
     {
     }
 

@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -41,6 +45,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
+import org.junit.Test;
 import org.mockito.internal.util.reflection.Whitebox;
 
 /**
@@ -51,6 +56,7 @@ import org.mockito.internal.util.reflection.Whitebox;
 public abstract class AbstractEditModeRewritingReleasePhaseTestCase
     extends AbstractRewritingReleasePhaseTestCase
 {
+    @Test
     public void testRewriteBasicPomWithEditMode()
         throws Exception
     {
@@ -64,6 +70,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewriteBasicPomWithEditModeFailure()
         throws Exception
     {
@@ -92,6 +99,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewriteBasicPomWithEditModeException()
         throws Exception
     {
@@ -102,7 +110,8 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         mapNextVersion( config, "groupId:artifactId" );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.edit( isA( ScmRepository.class ), isA( ScmFileSet.class) ) ).thenThrow( new ScmException( "..." ) );
+        when( scmProviderMock.edit( isA( ScmRepository.class ),
+                                    isA( ScmFileSet.class ) ) ).thenThrow( new ScmException( "..." ) );
 
         ScmManagerStub scmManager = new ScmManagerStub();
         DefaultScmRepositoryConfigurator configurator =
@@ -126,6 +135,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         verifyNoMoreInteractions( scmProviderMock );
     }
 
+    @Test
     public void testRewritePomPluginDependencies()
         throws Exception
     {
@@ -137,6 +147,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomUnmappedPluginDependencies()
         throws Exception
     {
@@ -155,6 +166,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         }
     }
 
+    @Test
     public void testRewritePomProfile()
         throws Exception
     {
@@ -166,6 +178,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Test
     public void testRewritePomUnmappedProfile()
         throws Exception
     {

@@ -19,7 +19,15 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Matchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +45,7 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.junit.Test;
 
 /**
  * Test the SCM development commit phase.
@@ -56,10 +65,10 @@ public class ScmCommitDevelopmentPhaseTest
     private MavenProject rootProject;
 
     private ReleaseDescriptor descriptor;
-    
+
     private ScmProvider scmProviderMock;
 
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -71,11 +80,13 @@ public class ScmCommitDevelopmentPhaseTest
         descriptor = createReleaseDescriptor( rootProject );
     }
 
+    @Test
     public void testIsCorrectImplementation()
     {
         assertEquals( ScmCommitDevelopmentPhase.class, phase.getClass() );
     }
 
+    @Test
     public void testNoCommitOrRollbackRequired()
         throws Exception
     {
@@ -93,6 +104,7 @@ public class ScmCommitDevelopmentPhaseTest
         verifyNoCheckin();
     }
 
+    @Test
     public void testCommitsNextVersions()
         throws Exception
     {
@@ -105,13 +117,14 @@ public class ScmCommitDevelopmentPhaseTest
         verifyCheckin( COMMIT_MESSAGE );
     }
 
+    @Test
     public void testCommitsRollbackPrepare()
         throws Exception
     {
         descriptor.setUpdateWorkingCopyVersions( false );
 
         String message = ROLLBACK_PREFIX + descriptor.getScmReleaseLabel();
-        
+
         prepareCheckin( message );
 
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -124,22 +137,21 @@ public class ScmCommitDevelopmentPhaseTest
     {
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
         scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.checkIn( isA( ScmRepository.class ),
-                                       argThat( new IsScmFileSetEquals( fileSet ) ),
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                        isNull( ScmVersion.class ),
-                                       eq( message ) ) ).thenReturn( new CheckInScmResult( "...", Collections.singletonList( new ScmFile( rootProject
-                                                                                                                                          .getFile().getPath(), ScmFileStatus.CHECKED_IN ) ) ) );
+                                       eq( message ) ) ).thenReturn( new CheckInScmResult( "...",
+                                                                                           Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
+                                                                                                                                   ScmFileStatus.CHECKED_IN ) ) ) );
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
     }
-    
-    private void verifyCheckin( String message ) throws Exception
+
+    private void verifyCheckin( String message )
+        throws Exception
     {
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
-        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ),
-                                           argThat( new IsScmFileSetEquals( fileSet ) ),
-                                           isNull( ScmVersion.class ),
-                                           eq( message ) );
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                           isNull( ScmVersion.class ), eq( message ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
@@ -150,7 +162,7 @@ public class ScmCommitDevelopmentPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
     }
-    
+
     private void verifyNoCheckin()
     {
         verifyNoMoreInteractions( scmProviderMock );
