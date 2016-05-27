@@ -104,8 +104,11 @@ public class PerformReleaseMojo
      * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
      * If set to true, the release plugin sets the property "performRelease" to true, which activates the profile
      * "release-profile", which is inherited from the super pom.
+     * 
+     * @deprecated The release profile will be removed from future versions of the super POM
      */
-    @Parameter( defaultValue = "true", property = "useReleaseProfile" )
+    @Parameter( defaultValue = "false", property = "useReleaseProfile" )
+    @Deprecated
     private boolean useReleaseProfile;
 
     /**
