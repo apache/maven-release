@@ -87,7 +87,7 @@ public class PerformReleaseMojo
      */
     @Parameter( defaultValue = "false", property = "localCheckout" )
     private boolean localCheckout;
-    
+
     /**
      * The SCM username to use.
      */
@@ -99,11 +99,13 @@ public class PerformReleaseMojo
      */
     @Parameter( property = "password" )
     private String password;
-    
+
     /**
      * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
      * If set to true, the release plugin sets the property "performRelease" to true, which activates the profile
      * "release-profile", which is inherited from the super pom.
+     *
+     * @deprecated The release profile will be removed from future versions of the super POM
      */
     @Parameter( defaultValue = "true", property = "useReleaseProfile" )
     private boolean useReleaseProfile;
@@ -116,7 +118,7 @@ public class PerformReleaseMojo
     private boolean dryRun;
 
     /**
-     * Add a new or overwrite the default implementation per provider. 
+     * Add a new or overwrite the default implementation per provider.
      * The key is the scm prefix and the value is the role hint of the
      * {@link org.apache.maven.scm.provider.ScmProvider}.
      *
@@ -139,7 +141,7 @@ public class PerformReleaseMojo
     {
         return releaseProfiles;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -155,7 +157,7 @@ public class PerformReleaseMojo
                 scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
             }
         }
-        
+
         // goals may be splitted into multiple line in configuration.
         // Let's build a single line command
         if ( goals != null )
@@ -172,17 +174,17 @@ public class PerformReleaseMojo
             {
                 releaseDescriptor.setScmSourceUrl( connectionUrl );
             }
-            
+
             if ( username != null )
             {
                 releaseDescriptor.setScmUsername( username );
             }
-            
+
             if ( password != null )
             {
                 releaseDescriptor.setScmPassword( password );
             }
-            
+
             releaseDescriptor.setLocalCheckout( localCheckout );
 
             releaseDescriptor.setCheckoutDirectory( workingDirectory.getAbsolutePath() );
@@ -190,7 +192,7 @@ public class PerformReleaseMojo
 
             createGoals();
             releaseDescriptor.setPerformGoals( goals );
-            
+
             ReleasePerformRequest performRequest  = new ReleasePerformRequest();
             performRequest.setReleaseDescriptor( releaseDescriptor );
             performRequest.setReleaseEnvironment( getReleaseEnvironment() );
