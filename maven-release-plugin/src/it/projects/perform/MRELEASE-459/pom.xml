@@ -57,6 +57,7 @@
           </dependency>
         </dependencies>
         <configuration>
+          <useReleaseProfile>true</useReleaseProfile>
           <releaseProfiles>custom-release</releaseProfiles>
         </configuration>
       </plugin>

@@ -107,7 +107,8 @@ public class PerformReleaseMojo
      *
      * @deprecated The release profile will be removed from future versions of the super POM
      */
-    @Parameter( defaultValue = "true", property = "useReleaseProfile" )
+    @Parameter( defaultValue = "false", property = "useReleaseProfile" )
+    @Deprecated
     private boolean useReleaseProfile;
 
     /**
