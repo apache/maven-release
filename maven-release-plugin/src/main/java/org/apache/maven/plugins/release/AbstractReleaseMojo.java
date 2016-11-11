@@ -75,9 +75,10 @@ public abstract class AbstractReleaseMojo
     private String arguments;
 
     /**
-     * The file name of the POM to execute any goals against.
+     * The file name of the POM to execute any goals against. As of version 3.0.0, this defaults to the name of
+     * POM file of the project being built.
      */
-    @Parameter( property = "pomFileName" )
+    @Parameter( property = "pomFileName", defaultValue = "${project.file.name}" )
     private String pomFileName;
 
     /**
