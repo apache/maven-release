@@ -321,8 +321,12 @@ public class MapVersionsPhase
         throws PolicyException, VersionParseException
     {
         VersionPolicy policy = versionPolicies.get( policyId );
-        VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
+        if ( policy == null )
+        {
+            throw new PolicyException( "Policy '" + policyId + "' is unknown, available: " + versionPolicies.keySet() );
+        }
 
+        VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
         return convertToSnapshot ? policy.getDevelopmentVersion( request ).getVersion()
                         : policy.getReleaseVersion( request ).getVersion();
     }
