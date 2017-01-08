@@ -323,6 +323,11 @@ public class MapVersionsPhase
         VersionPolicy policy = versionPolicies.get( policyId );
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
 
+        if ( policy == null )
+        {
+            throw new PolicyException( "Policy '" + policyId + "' is unknown, available: " + versionPolicies.keySet() );
+        }
+
         return convertToSnapshot ? policy.getDevelopmentVersion( request ).getVersion()
                         : policy.getReleaseVersion( request ).getVersion();
     }
