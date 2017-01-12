@@ -49,8 +49,8 @@ public class BranchReleaseMojo
      * @required
      * @since 2.0-beta-6
      */
-    @Parameter( property = "branchName", required = true )
-    private String branchName;
+    @Parameter( property = "branchName" )
+    private String branchName = null;
 
     /**
      * The branch base directory in SVN, you must define it if you don't use the standard svn layout
@@ -174,7 +174,7 @@ public class BranchReleaseMojo
     private String checkModificationExcludeList;
 
     /**
-     * Specify the new version for the branch. 
+     * Specify the new version for the branch.
      * This parameter is only meaningful if {@link #updateBranchVersions} = {@code true}.
      *
      * @since 2.0
