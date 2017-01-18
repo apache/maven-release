@@ -70,6 +70,7 @@
           <phase>scm-check-modifications</phase>
           <phase>create-backup-poms</phase>
           <phase>map-branch-versions</phase>
+          <phase>branch-input-variables</phase>
           <phase>map-development-versions</phase>
           <phase>rewrite-poms-for-branch</phase>
           <phase>scm-commit-branch</phase>
@@ -217,6 +218,40 @@
         <snapshotsRequired>false</snapshotsRequired>
       </configuration>
       <requirements>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+      </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>input-variables</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.InputVariablesPhase</implementation>
+      <configuration>
+        <branchOperation>false</branchOperation>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
+          <role-hint>default</role-hint>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+      </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>branch-input-variables</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.InputVariablesPhase</implementation>
+      <configuration>
+        <branchOperation>true</branchOperation>
+      </configuration>
+      <requirements>
+        <requirement>
+          <role>org.codehaus.plexus.components.interactivity.Prompter</role>
+          <role-hint>default</role-hint>
+        </requirement>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
         </requirement>
