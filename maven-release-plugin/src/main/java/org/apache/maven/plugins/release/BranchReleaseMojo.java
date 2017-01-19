@@ -46,10 +46,9 @@ public class BranchReleaseMojo
     /**
      * The branch name to use.
      *
-     * @required
      * @since 2.0-beta-6
      */
-    @Parameter( property = "branchName", required = true )
+    @Parameter( property = "branchName" )
     private String branchName;
 
     /**
@@ -174,7 +173,7 @@ public class BranchReleaseMojo
     private String checkModificationExcludeList;
 
     /**
-     * Specify the new version for the branch. 
+     * Specify the new version for the branch.
      * This parameter is only meaningful if {@link #updateBranchVersions} = {@code true}.
      *
      * @since 2.0

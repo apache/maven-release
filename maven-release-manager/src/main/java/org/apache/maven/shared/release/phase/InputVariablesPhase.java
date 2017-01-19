@@ -32,7 +32,6 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
@@ -42,6 +41,7 @@ import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RecursionInterceptor;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.util.List;
 import java.util.Properties;
@@ -51,7 +51,6 @@ import java.util.Properties;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ReleasePhase.class, hint = "input-variables" )
 public class InputVariablesPhase
     extends AbstractReleasePhase
 {
@@ -62,6 +61,11 @@ public class InputVariablesPhase
     private Prompter prompter;
 
     /**
+     * Whether this is a branch or a tag operation.
+     */
+    private boolean branchOperation;
+
+    /**
      * Tool that gets a configured SCM repository from release configuration.
      */
     @Requirement
@@ -70,6 +74,11 @@ public class InputVariablesPhase
     void setPrompter( Prompter prompter )
     {
         this.prompter = prompter;
+    }
+
+    boolean isBranchOperation()
+    {
+        return branchOperation;
     }
 
     protected ScmProvider getScmProvider( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment )
@@ -159,15 +168,30 @@ public class InputVariablesPhase
             {
                 try
                 {
-                    tag =
-                        prompter.prompt( "What is SCM release tag or label for \"" + project.getName() + "\"? ("
-                            + project.getGroupId() + ":" + project.getArtifactId() + ")", defaultTag );
+                    if ( branchOperation )
+                    {
+                        tag = prompter.prompt( "What is the branch name for \"" + project.getName() + "\"? ("
+                            + project.getGroupId() + ":" + project.getArtifactId() + ")" );
+                        if ( StringUtils.isEmpty( tag ) )
+                        {
+                            throw new ReleaseExecutionException( "No branch name was given." );
+                        }
+                    }
+                    else
+                    {
+                        tag = prompter.prompt( "What is the SCM release tag or label for \"" + project.getName()
+                            + "\"? (" + project.getGroupId() + ":" + project.getArtifactId() + ")", defaultTag );
+                    }
                 }
                 catch ( PrompterException e )
                 {
                     throw new ReleaseExecutionException( "Error reading version from input handler: " + e.getMessage(),
                                                          e );
                 }
+            }
+            else if ( branchOperation )
+            {
+                throw new ReleaseExecutionException( "No branch name was given." );
             }
             else
             {
