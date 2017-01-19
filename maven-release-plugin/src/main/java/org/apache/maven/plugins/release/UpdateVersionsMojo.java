@@ -88,7 +88,15 @@ public class UpdateVersionsMojo
      */
     @Parameter( defaultValue = "false", property = "useEditMode" )
     private boolean useEditMode;
-    
+
+    /**
+     * The role-hint for the VersionPolicy implementation used to calculate the project versions.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
+    private String projectVersionPolicyId;
+
     /**
      * {@inheritDoc}
      */
@@ -101,6 +109,7 @@ public class UpdateVersionsMojo
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setScmUseEditMode( useEditMode );
         config.setUpdateDependencies( updateDependencies );
+        config.setProjectVersionPolicyId( projectVersionPolicyId );
 
         Map<String, Scm> originalScmInfo = new HashMap<String, Scm>();
         originalScmInfo.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),

@@ -220,6 +220,9 @@
                     <pomInclude>projects/prepare/*/*pom.xml</pomInclude>
                     <pomInclude>projects/prepare/flat-multi-module/parent-project/pom.xml</pomInclude>
                   </pomIncludes>
+                  <pomExcludes>
+                    <pomExclude>projects/prepare/MRELEASE-966/pom.xml</pomExclude>
+                  </pomExcludes>
                   <goals>
                     <goal>clean</goal>
                     <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal>

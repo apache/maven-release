@@ -42,10 +42,14 @@ import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
+import org.hamcrest.CoreMatchers;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -62,6 +66,9 @@ public class MapVersionsPhaseTest
     private static final String TEST_MAP_DEVELOPMENT_VERSIONS = "test-map-development-versions";
 
     private static final String TEST_MAP_RELEASE_VERSIONS = "test-map-release-versions";
+
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private Prompter mockPrompter;
@@ -2110,6 +2117,29 @@ public class MapVersionsPhaseTest
 
         // verify
         verify( mockPrompter ).prompt( startsWith( "What is the release version for " ), eq( "1.11" ) );
+    }
+
+    /**
+     * MRELEASE-975: Test that a PolicyException is thrown when using an unknown policy version hint.
+     * @throws Exception
+     */
+    @Test
+    public void testNonExistentVersionPolicy()
+        throws Exception
+    {
+        expectedException.expect( ReleaseExecutionException.class );
+        expectedException.expectCause( CoreMatchers.isA( PolicyException.class ) );
+        
+        // prepare
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
+
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setProjectVersionPolicyId( "UNKNOWN" );
+
+        // test
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
     }
 
     private static MavenProject createProject( String artifactId, String version )

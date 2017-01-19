@@ -192,6 +192,14 @@ public class BranchReleaseMojo
     private String developmentVersion;
 
     /**
+     * The role-hint for the VersionPolicy implementation used to calculate the project versions.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
+    private String projectVersionPolicyId;
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -214,6 +222,7 @@ public class BranchReleaseMojo
         config.setDefaultReleaseVersion( releaseVersion );
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeBranch );
+        config.setProjectVersionPolicyId( projectVersionPolicyId );
 
         // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseDescriptor sysPropertiesConfig
