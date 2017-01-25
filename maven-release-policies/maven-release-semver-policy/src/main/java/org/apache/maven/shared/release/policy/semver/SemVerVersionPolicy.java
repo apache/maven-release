@@ -40,7 +40,7 @@ public class SemVerVersionPolicy implements VersionPolicy
         throws PolicyException, VersionParseException
     {
         Version version;
-        try 
+        try
         {
             version = Version.parse( request.getVersion() );
         }
@@ -48,7 +48,7 @@ public class SemVerVersionPolicy implements VersionPolicy
         {
             throw new VersionParseException( e.getMessage() );
         }
-        
+
         VersionPolicyResult result = new VersionPolicyResult();
         result.setVersion( version.toReleaseVersion().toString() );
         return result;
@@ -58,7 +58,7 @@ public class SemVerVersionPolicy implements VersionPolicy
         throws PolicyException, VersionParseException
     {
         Version version;
-        try 
+        try
         {
             version = Version.parse( request.getVersion() );
         }
@@ -66,10 +66,16 @@ public class SemVerVersionPolicy implements VersionPolicy
         {
             throw new VersionParseException( e.getMessage() );
         }
-        
-        version = version.next( Element.MINOR );  
+
+        version = version.next( Element.MINOR );
         VersionPolicyResult result = new VersionPolicyResult();
         result.setVersion( version.toString() + "-SNAPSHOT" );
         return result;
+    }
+
+    public VersionPolicyResult getBranchOrTagVersion(VersionPolicyRequest request)
+        throws PolicyException, VersionParseException
+    {
+        return null;
     }
 }

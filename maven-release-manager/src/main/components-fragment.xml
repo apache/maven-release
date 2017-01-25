@@ -238,6 +238,10 @@
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
         </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+          <field-name>versionPolicies</field-name>
+        </requirement>
       </requirements>
     </component>
     <component>
@@ -254,6 +258,10 @@
         </requirement>
         <requirement>
           <role>org.apache.maven.shared.release.scm.ScmRepositoryConfigurator</role>
+        </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.policy.version.VersionPolicy</role>
+          <field-name>versionPolicies</field-name>
         </requirement>
       </requirements>
     </component>

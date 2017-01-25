@@ -60,6 +60,12 @@ public final class OddEvenVersionPolicy
         return calculateNextVersion( request, true );
     }
 
+    public VersionPolicyResult getBranchOrTagVersion(VersionPolicyRequest request)
+        throws PolicyException, VersionParseException
+    {
+        return null;
+    }
+
     private VersionPolicyResult calculateNextVersion( VersionPolicyRequest request, boolean development )
     {
         DefaultVersionInfo defaultVersionInfo = null;
@@ -123,5 +129,4 @@ public final class OddEvenVersionPolicy
 
         return mostSignificantSegment % 2 == 0;
     }
-
 }
