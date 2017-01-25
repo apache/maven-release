@@ -30,6 +30,12 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 public interface VersionPolicy
 {
     /**
+     * Calculation of the branch or tag version from development version.
+     */
+    VersionPolicyResult getBranchOrTagVersion( VersionPolicyRequest request )
+        throws PolicyException, VersionParseException;
+
+    /**
      * Calculation of the release version from development state.
      */
     VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )

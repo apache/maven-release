@@ -28,7 +28,7 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.component.annotations.Component;
 
 /**
- * 
+ *
  * @author Robert Scholte
  */
 @Component( role = VersionPolicy.class, hint = "default" )
@@ -51,4 +51,9 @@ public class DefaultVersionPolicy
         return new VersionPolicyResult().setVersion( developmentVersion );
     }
 
+    public VersionPolicyResult getBranchOrTagVersion( VersionPolicyRequest request )
+        throws PolicyException, VersionParseException
+    {
+        return null;
+    }
 }

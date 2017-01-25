@@ -20,9 +20,11 @@ package org.apache.maven.shared.release.policy.oddeven;
  */
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
+import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,6 +74,15 @@ public final class OddEvenVersionPolicyTestCase
                                                .getVersion();
 
         assertEquals( "1.0.2", suggestedVersion );
+    }
+
+    @Test
+    public void testBranchOrTag()
+        throws Exception
+    {
+        VersionPolicyResult result = versionPolicy.getBranchOrTagVersion( new VersionPolicyRequest().setVersion( "not used" ).setProposal( "1.0.1-SNAPSHOT" ) );
+
+        assertNull( result );
     }
 
     private static VersionPolicyRequest newVersionPolicyRequest( String version )

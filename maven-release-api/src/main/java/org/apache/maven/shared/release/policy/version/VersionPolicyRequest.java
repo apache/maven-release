@@ -22,15 +22,17 @@ package org.apache.maven.shared.release.policy.version;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 
 /**
- * 
+ *
  * @since 2.5.1 (MRELEASE-431)
  */
 public class VersionPolicyRequest
 {
 
     private String version;
-    
+
     private Metadata metaData;
+
+    private String proposal;
 
     public String getVersion()
     {
@@ -42,16 +44,26 @@ public class VersionPolicyRequest
         this.version = version;
         return this;
     }
-    
+
     public Metadata getMetaData()
     {
         return metaData;
     }
-    
+
     public VersionPolicyRequest setMetaData( Metadata metaData )
     {
         this.metaData = metaData;
         return this;
     }
-    
+
+    public String getProposal()
+    {
+        return proposal;
+    }
+
+    public VersionPolicyRequest setProposal( String proposal )
+    {
+        this.proposal = proposal;
+        return this;
+    }
 }
