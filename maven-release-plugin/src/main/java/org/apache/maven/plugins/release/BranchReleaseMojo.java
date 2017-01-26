@@ -199,6 +199,14 @@ public class BranchReleaseMojo
     private String projectVersionPolicyId;
 
     /**
+     * The role-hint for the NamingPolicy implementation used to calculate the project branch and tag names.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "default", property = "projectNamingPolicyId" )
+    private String projectNamingPolicyId;
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -222,6 +230,7 @@ public class BranchReleaseMojo
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeBranch );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
+        config.setProjectNamingPolicyId( projectNamingPolicyId );
 
         // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseDescriptor sysPropertiesConfig

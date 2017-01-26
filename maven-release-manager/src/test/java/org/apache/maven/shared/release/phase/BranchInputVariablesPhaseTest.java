@@ -71,6 +71,7 @@ public class BranchInputVariablesPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        releaseDescriptor.setInteractive( true );
 
         // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -137,8 +138,10 @@ public class BranchInputVariablesPhaseTest
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -148,8 +151,10 @@ public class BranchInputVariablesPhaseTest
 
         // prepare
         releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -172,7 +177,10 @@ public class BranchInputVariablesPhaseTest
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        releaseDescriptor.setInteractive( true );
 
         // execute
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -182,7 +190,10 @@ public class BranchInputVariablesPhaseTest
 
         // prepare
         releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        releaseDescriptor.setInteractive( true );
 
         // execute
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -209,6 +220,7 @@ public class BranchInputVariablesPhaseTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        releaseDescriptor.setInteractive( true );
 
         // execute
         try
@@ -226,6 +238,7 @@ public class BranchInputVariablesPhaseTest
         releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        releaseDescriptor.setInteractive( true );
 
         // execute
         try

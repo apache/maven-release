@@ -226,6 +226,14 @@ public class PrepareReleaseMojo
     private String projectVersionPolicyId;
 
     /**
+     * The role-hint for the NamingPolicy implementation used to calculate the project branch and tag names.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "default", property = "projectNamingPolicyId" )
+    private String projectNamingPolicyId;
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -265,6 +273,7 @@ public class PrepareReleaseMojo
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );
         config.setWaitBeforeTagging( waitBeforeTagging );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
+        config.setProjectNamingPolicyId( projectNamingPolicyId );
 
         if ( checkModificationExcludeList != null )
         {
