@@ -38,7 +38,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  * without making other modifications to the SCM such as tagging. For more info see <a
  * href="http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html"
  * >http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html</a>.
- * 
+ *
  * @author Paul Gier
  * @version $Id$
  * @since 2.0
@@ -51,7 +51,7 @@ public class UpdateVersionsMojo
     /**
      * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
      * version of each submodules.
-     * 
+     *
      * @since 2.0
      */
     @Parameter( defaultValue = "false", property = "autoVersionSubmodules" )
@@ -59,7 +59,7 @@ public class UpdateVersionsMojo
 
     /**
      * Whether to add a schema to the POM if it was previously missing on release.
-     * 
+     *
      * @since 2.0
      */
     @Parameter( defaultValue = "true", property = "addSchema" )
@@ -67,7 +67,7 @@ public class UpdateVersionsMojo
 
     /**
      * Default version to use for new local working copy.
-     * 
+     *
      * @since 2.0
      */
     @Parameter( property = "developmentVersion" )
@@ -83,7 +83,7 @@ public class UpdateVersionsMojo
 
     /**
      * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
-     * 
+     *
      * @since 2.5.2
      */
     @Parameter( defaultValue = "false", property = "useEditMode" )
@@ -98,6 +98,14 @@ public class UpdateVersionsMojo
     private String projectVersionPolicyId;
 
     /**
+     * The role-hint for the NamingPolicy implementation used to calculate the project branch and tag names.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "default", property = "projectNamingPolicyId" )
+    private String projectNamingPolicyId;
+
+    /**
      * {@inheritDoc}
      */
     public void execute()
@@ -110,6 +118,7 @@ public class UpdateVersionsMojo
         config.setScmUseEditMode( useEditMode );
         config.setUpdateDependencies( updateDependencies );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
+        config.setProjectNamingPolicyId( projectNamingPolicyId );
 
         Map<String, Scm> originalScmInfo = new HashMap<String, Scm>();
         originalScmInfo.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),

@@ -29,6 +29,10 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.policy.PolicyException;
+import org.apache.maven.shared.release.policy.naming.NamingPolicy;
+import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
+import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
@@ -44,6 +48,7 @@ import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -64,6 +69,11 @@ public class InputVariablesPhase
      * Whether this is a branch or a tag operation.
      */
     private boolean branchOperation;
+
+    /**
+     * Component used for custom or default naming policy
+     */
+    private Map<String, NamingPolicy> namingPolicies;
 
     /**
      * Tool that gets a configured SCM repository from release configuration.
@@ -114,56 +124,75 @@ public class InputVariablesPhase
 
         String tag = releaseDescriptor.getScmReleaseLabel();
 
-        if ( tag == null )
+        // Must get default version from mapped versions, as the project will be the incorrect snapshot
+        String key = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+        String releaseVersion = (String) releaseDescriptor.getReleaseVersions().get( key );
+        if ( releaseVersion == null )
         {
-            // Must get default version from mapped versions, as the project will be the incorrect snapshot
-            String key = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-            String releaseVersion = (String) releaseDescriptor.getReleaseVersions().get( key );
-            if ( releaseVersion == null )
-            {
-                throw new ReleaseExecutionException( "Project tag cannot be selected if version is not yet mapped" );
-            }
+            throw new ReleaseExecutionException( "Project tag cannot be selected if version is not yet mapped" );
+        }
 
-            String defaultTag;
-            String scmTagNameFormat = releaseDescriptor.getScmTagNameFormat();
-            if ( scmTagNameFormat != null )
-            {
-                Interpolator interpolator = new StringSearchInterpolator( "@{", "}" );
-                List<String> possiblePrefixes = java.util.Arrays.asList( "project", "pom" );
-                Properties values = new Properties();
-                values.setProperty( "artifactId", project.getArtifactId() );
-                values.setProperty( "groupId", project.getGroupId() );
-                values.setProperty( "version", releaseVersion );
-                interpolator.addValueSource( new PrefixedPropertiesValueSource( possiblePrefixes, values, true ) );
-                RecursionInterceptor recursionInterceptor = new PrefixAwareRecursionInterceptor( possiblePrefixes );
-                try
-                {
-                    defaultTag = interpolator.interpolate( scmTagNameFormat, recursionInterceptor );
-                }
-                catch ( InterpolationException e )
-                {
-                    throw new ReleaseExecutionException(
-                        "Could not interpolate specified tag name format: " + scmTagNameFormat, e );
-                }
-            }
-            else
-            {
-                defaultTag = project.getArtifactId() + "-" + releaseVersion;
-            }
-
-            ScmProvider provider = null;
+        String defaultTag;
+        String scmTagNameFormat = releaseDescriptor.getScmTagNameFormat();
+        if ( scmTagNameFormat != null )
+        {
+            Interpolator interpolator = new StringSearchInterpolator( "@{", "}" );
+            List<String> possiblePrefixes = java.util.Arrays.asList( "project", "pom" );
+            Properties values = new Properties();
+            values.setProperty( "artifactId", project.getArtifactId() );
+            values.setProperty( "groupId", project.getGroupId() );
+            values.setProperty( "version", releaseVersion );
+            interpolator.addValueSource( new PrefixedPropertiesValueSource( possiblePrefixes, values, true ) );
+            RecursionInterceptor recursionInterceptor = new PrefixAwareRecursionInterceptor( possiblePrefixes );
             try
             {
-                provider = getScmProvider( releaseDescriptor, releaseEnvironment );
+                defaultTag = interpolator.interpolate( scmTagNameFormat, recursionInterceptor );
             }
-            catch ( ReleaseScmRepositoryException e )
+            catch ( InterpolationException e )
             {
                 throw new ReleaseExecutionException(
-                    "No scm provider can be found for url: " + releaseDescriptor.getScmSourceUrl(), e );
+                    "Could not interpolate specified tag name format: " + scmTagNameFormat, e );
             }
+        }
+        else
+        {
+            defaultTag = project.getArtifactId() + "-" + releaseVersion;
+        }
 
-            defaultTag = provider.sanitizeTagName( defaultTag );
+        ScmProvider provider = null;
+        try
+        {
+            provider = getScmProvider( releaseDescriptor, releaseEnvironment );
+        }
+        catch ( ReleaseScmRepositoryException e )
+        {
+            throw new ReleaseExecutionException(
+                "No scm provider can be found for url: " + releaseDescriptor.getScmSourceUrl(), e );
+        }
 
+        defaultTag = provider.sanitizeTagName( defaultTag );
+
+        String policyTag = null;
+
+        try
+        {
+            NamingPolicyRequest request = new NamingPolicyRequest()
+                    .setBranch( branchOperation )
+                    .setVersion( releaseVersion )
+                    .setName( tag )
+                    .setProposal( defaultTag );
+
+            policyTag = resolveTagOrBranchName( request, releaseDescriptor.getProjectNamingPolicyId() );
+        }
+        catch ( PolicyException e )
+        {
+            throw new ReleaseExecutionException( e.getMessage(), e );
+        }
+
+        tag = StringUtils.isEmpty( policyTag ) ? tag : policyTag;
+
+        if ( tag == null )
+        {
             if ( releaseDescriptor.isInteractive() )
             {
                 try
@@ -197,12 +226,27 @@ public class InputVariablesPhase
             {
                 tag = defaultTag;
             }
-            releaseDescriptor.setScmReleaseLabel( tag );
         }
+
+        releaseDescriptor.setScmReleaseLabel( tag );
 
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
+    }
+
+    private String resolveTagOrBranchName( NamingPolicyRequest request, String policyId )
+        throws PolicyException
+    {
+        NamingPolicy policy = namingPolicies.get( policyId );
+        if ( policy == null )
+        {
+            throw new PolicyException( "Policy '" + policyId + "' is unknown, available: " + namingPolicies.keySet() );
+        }
+
+        NamingPolicyResult result = policy.getName( request );
+
+        return ( result == null || result.getName() == null ) ? request.getName() : result.getName();
     }
 
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
