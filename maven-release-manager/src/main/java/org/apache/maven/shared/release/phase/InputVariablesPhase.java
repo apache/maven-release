@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
@@ -29,6 +33,9 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.policy.PolicyException;
+import org.apache.maven.shared.release.policy.naming.NamingPolicy;
+import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
@@ -42,9 +49,6 @@ import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RecursionInterceptor;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Input any variables that were not yet configured.
@@ -70,6 +74,12 @@ public class InputVariablesPhase
      */
     @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    
+    /**
+     * Component used for custom or default naming policy
+     */
+    @Requirement
+    private Map<String, NamingPolicy> namingPolicies;
 
     void setPrompter( Prompter prompter )
     {
@@ -148,7 +158,15 @@ public class InputVariablesPhase
             }
             else
             {
-                defaultTag = project.getArtifactId() + "-" + releaseVersion;
+                try
+                {
+                    defaultTag =
+                        resolveSuggestedName( releaseDescriptor.getProjectNamingPolicyId(), releaseVersion, project );
+                }
+                catch ( PolicyException e )
+                {
+                    throw new ReleaseExecutionException( e.getMessage(), e );
+                } 
             }
 
             ScmProvider provider = null;
@@ -218,5 +236,20 @@ public class InputVariablesPhase
 
         return result;
     }
+    
+    private String resolveSuggestedName( String policyId, String version, MavenProject project )
+        throws PolicyException
+    {
+        NamingPolicy policy = namingPolicies.get( policyId );
+        if ( policy == null )
+        {
+            throw new PolicyException( "Policy '" + policyId + "' is unknown, available: " + namingPolicies.keySet() );
+        }
 
+        NamingPolicyRequest request = new NamingPolicyRequest()
+                        .setGroupId( project.getGroupId() )
+                        .setArtifactId( project.getArtifactId() )
+                        .setVersion( version );
+        return policy.getName( request ).getName();
+    }
 }

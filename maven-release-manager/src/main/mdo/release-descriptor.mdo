@@ -443,6 +443,15 @@
             The role-hint for the VersionPolicy implementation used to calculate the project versions.
           </description>
         </field>
+        <field>
+          <name>projectNamingPolicyId</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>default</defaultValue>
+          <description>
+            The role-hint for the NamingPolicy implementation used to calculate the project branch and tag names.
+          </description>
+        </field>
 
         <field>
           <name>remoteTagging</name>
@@ -869,7 +878,7 @@
             {
                 return true;
             }
-            
+
             if ( thisScm.getConnection() != null ? !thisScm.getConnection().equals( thatScm.getConnection() )
                 : thatScm.getConnection() != null )
             {
@@ -888,15 +897,15 @@
             {
                 return false;
             }
-            
+
             if ( thisScm instanceof org.apache.maven.shared.release.scm.IdentifiedScm && thatScm instanceof org.apache.maven.shared.release.scm.IdentifiedScm )
             {
-            	org.apache.maven.shared.release.scm.IdentifiedScm thisIdentifiedScm = (org.apache.maven.shared.release.scm.IdentifiedScm) thisScm;
-            	org.apache.maven.shared.release.scm.IdentifiedScm thatIdentifiedScm = (org.apache.maven.shared.release.scm.IdentifiedScm) thatScm;
-            	if ( thisIdentifiedScm.getId() != null ? !thisIdentifiedScm.getId().equals( thatIdentifiedScm.getId() ) : thatIdentifiedScm.getId() != null )
-            	{
-                	return false;
-            	}
+                org.apache.maven.shared.release.scm.IdentifiedScm thisIdentifiedScm = (org.apache.maven.shared.release.scm.IdentifiedScm) thisScm;
+                org.apache.maven.shared.release.scm.IdentifiedScm thatIdentifiedScm = (org.apache.maven.shared.release.scm.IdentifiedScm) thatScm;
+                if ( thisIdentifiedScm.getId() != null ? !thisIdentifiedScm.getId().equals( thatIdentifiedScm.getId() ) : thatIdentifiedScm.getId() != null )
+                {
+                    return false;
+                }
             }
         }
 
