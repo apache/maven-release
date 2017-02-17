@@ -39,7 +39,6 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -63,9 +62,9 @@ public abstract class AbstractScmCommitPhase
     protected ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
-     * The format for the commit message.
+     * The getter in the descriptor for the comment.
      */
-    protected String messageFormat;
+    protected String descriptorCommentGetter;
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
@@ -186,10 +185,47 @@ public abstract class AbstractScmCommitPhase
         }
     }
 
-    protected String createMessage( ReleaseDescriptor releaseDescriptor )
+    protected String createMessage( List<MavenProject> reactorProjects,
+                                    ReleaseDescriptor releaseDescriptor )
+                                    throws ReleaseExecutionException
     {
-        return MessageFormat.format( releaseDescriptor.getScmCommentPrefix() + messageFormat,
-                                     new Object[]{releaseDescriptor.getScmReleaseLabel()} );
+        String comment;
+        boolean branch = false;
+        if ( "getScmReleaseCommitComment".equals( descriptorCommentGetter ) )
+        {
+            comment = releaseDescriptor.getScmReleaseCommitComment();
+        }
+        else if ( "getScmDevelopmentCommitComment".equals( descriptorCommentGetter ) )
+        {
+            comment = releaseDescriptor.getScmDevelopmentCommitComment();
+        }
+        else if ( "getScmBranchCommitComment".equals( descriptorCommentGetter ) )
+        {
+            comment = releaseDescriptor.getScmBranchCommitComment();
+            branch = true;
+        }
+        else if ( "getScmRollbackCommitComment".equals( descriptorCommentGetter ) )
+        {
+            comment = releaseDescriptor.getScmRollbackCommitComment();
+        }
+        else
+        {
+            throw new ReleaseExecutionException( "Invalid configuration in components-fragment.xml" );
+        }
+        
+        MavenProject project = ReleaseUtil.getRootProject( reactorProjects );
+        comment = comment.replace( "@{prefix}", releaseDescriptor.getScmCommentPrefix().trim() );
+        comment = comment.replace( "@{groupId}", project.getGroupId() );
+        comment = comment.replace( "@{artifactId}", project.getArtifactId() );
+        if ( branch )
+        {
+            comment = comment.replace( "@{branchName}", releaseDescriptor.getScmReleaseLabel() );
+        }
+        else
+        {
+            comment = comment.replace( "@{releaseLabel}", releaseDescriptor.getScmReleaseLabel() );
+        }
+        return comment;
     }
 
     protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )

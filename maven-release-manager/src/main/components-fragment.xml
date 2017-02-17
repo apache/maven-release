@@ -152,7 +152,7 @@
         </requirement>
       </requirements>
       <configuration>
-        <messageFormat>prepare release {0}</messageFormat>
+        <descriptorCommentGetter>getScmReleaseCommitComment</descriptorCommentGetter>
       </configuration>
     </component>
     <component>
@@ -165,7 +165,7 @@
         </requirement>
       </requirements>
       <configuration>
-        <messageFormat>prepare for next development iteration</messageFormat>
+        <descriptorCommentGetter>getScmDevelopmentCommitComment</descriptorCommentGetter>
         <rollbackMessageFormat>rollback changes from release preparation of {0}</rollbackMessageFormat>
       </configuration>
     </component>
@@ -179,7 +179,7 @@
         </requirement>
       </requirements>
       <configuration>
-        <messageFormat>prepare branch {0}</messageFormat>
+        <descriptorCommentGetter>getScmBranchCommitComment</descriptorCommentGetter>
       </configuration>
     </component>
     <component>
@@ -192,7 +192,7 @@
         </requirement>
       </requirements>
       <configuration>
-        <messageFormat>rollback the release of {0}</messageFormat>
+        <descriptorCommentGetter>getScmRollbackCommitComment</descriptorCommentGetter>
       </configuration>
     </component>
     <component>

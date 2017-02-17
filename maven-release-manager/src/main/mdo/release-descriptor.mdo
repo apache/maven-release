@@ -69,6 +69,42 @@
           </description>
         </field>
         <field>
+          <name>scmReleaseCommitComment</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>@{prefix} prepare release @{releaseLabel}</defaultValue>
+          <description>
+            The SCM commit comment when setting pom.xml to release
+          </description>
+        </field>
+        <field>
+          <name>scmDevelopmentCommitComment</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>@{prefix} prepare for next development iteration</defaultValue>
+          <description>
+            The SCM commit comment when setting pom.xml back to development
+          </description>
+        </field>
+        <field>
+          <name>scmBranchCommitComment</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>@{prefix} prepare branch @{releaseLabel}</defaultValue>
+          <description>
+            The SCM commit comment when branching
+          </description>
+        </field>
+        <field>
+          <name>scmRollbackCommitComment</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>@{prefix} rollback the release of @{releaseLabel}</defaultValue>
+          <description>
+            The SCM commit comment when rolling back
+          </description>
+        </field>
+        <field>
           <name>scmSourceUrl</name>
           <version>1.0.0+</version>
           <type>String</type>
@@ -793,6 +829,22 @@
         {
             return false;
         }
+        if ( !safeEquals( scmDevelopmentCommitComment, that.scmDevelopmentCommitComment ) )
+        {
+            return false;
+        }
+        if ( !safeEquals( scmReleaseCommitComment, that.scmReleaseCommitComment ) )
+        {
+            return false;
+        }
+        if ( !safeEquals( scmBranchCommitComment, that.scmBranchCommitComment ) )
+        {
+            return false;
+        }
+        if ( !safeEquals( scmRollbackCommitComment, that.scmRollbackCommitComment ) )
+        {
+            return false;
+        }
         if ( !safeEquals( scmPrivateKeyPassPhrase, that.scmPrivateKeyPassPhrase ) )
         {
             return false;
@@ -921,6 +973,10 @@
         result = 29 * result + ( completionGoals != null ? completionGoals.hashCode() : 0 );
         result = 29 * result + ( pomFileName != null ? pomFileName.hashCode() : 0 );
         result = 29 * result + ( checkModificationExcludes != null ? checkModificationExcludes.hashCode() : 0 );
+        result = 29 * result + ( scmDevelopmentCommitComment != null ? scmDevelopmentCommitComment.hashCode() : 0 );
+        result = 29 * result + ( scmReleaseCommitComment != null ? scmReleaseCommitComment.hashCode() : 0 );
+        result = 29 * result + ( scmBranchCommitComment != null ? scmBranchCommitComment.hashCode() : 0 );
+        result = 29 * result + ( scmRollbackCommitComment != null ? scmRollbackCommitComment.hashCode() : 0 );
         result = 29 * result + ( scmTagBase != null ? scmTagBase.hashCode() : 0 );
         result = 29 * result + ( scmBranchBase != null ? scmBranchBase.hashCode() : 0 );
         result = 29 * result + ( scmUsername != null ? scmUsername.hashCode() : 0 );

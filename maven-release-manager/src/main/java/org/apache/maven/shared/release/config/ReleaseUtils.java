@@ -69,6 +69,16 @@ public class ReleaseUtils
             mergeOverride( mergeInto.getScmPrivateKeyPassPhrase(), toBeMerged.getScmPrivateKeyPassPhrase() ) );
         mergeInto.setScmCommentPrefix(
             mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
+        mergeInto.setScmDevelopmentCommitComment(
+                mergeOverride( 
+                        mergeInto.getScmDevelopmentCommitComment(),
+                        toBeMerged.getScmDevelopmentCommitComment() ) );
+        mergeInto.setScmReleaseCommitComment(
+                mergeOverride( mergeInto.getScmReleaseCommitComment(), toBeMerged.getScmReleaseCommitComment() ) );
+        mergeInto.setScmBranchCommitComment(
+                mergeOverride( mergeInto.getScmBranchCommitComment(), toBeMerged.getScmBranchCommitComment() ) );
+        mergeInto.setScmRollbackCommitComment(
+                mergeOverride( mergeInto.getScmRollbackCommitComment(), toBeMerged.getScmRollbackCommitComment() ) );
         mergeInto.setAdditionalArguments(
             mergeOverride( mergeInto.getAdditionalArguments(), toBeMerged.getAdditionalArguments() ) );
         mergeInto.setPreparationGoals(
@@ -158,6 +168,23 @@ public class ReleaseUtils
         releaseDescriptor.setScmBranchBase( properties.getProperty( "scm.branchBase" ) );
         releaseDescriptor.setScmReleaseLabel( properties.getProperty( "scm.tag" ) );
         releaseDescriptor.setScmCommentPrefix( properties.getProperty( "scm.commentPrefix" ) );
+        if ( properties.getProperty( "scm.releaseCommitComment" ) != null )
+        {
+            releaseDescriptor.setScmReleaseCommitComment( properties.getProperty( "scm.releaseCommitComment" ) );
+        }
+        if ( properties.getProperty( "scm.developmentCommitComment" ) != null )
+        {
+            releaseDescriptor.setScmDevelopmentCommitComment(
+                    properties.getProperty( "scm.developmentCommitComment" ) );
+        }
+        if ( properties.getProperty( "scm.branchCommitComment" ) != null )
+        {
+            releaseDescriptor.setScmBranchCommitComment( properties.getProperty( "scm.branchCommitComment" ) );
+        }
+        if ( properties.getProperty( "scm.rollbackCommitComment" ) != null )
+        {
+            releaseDescriptor.setScmRollbackCommitComment( properties.getProperty( "scm.rollbackCommitComment" ) );
+        }
         releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
         releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
         releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
