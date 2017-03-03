@@ -18,8 +18,8 @@ package org.apache.maven.shared.release.policies;
  * specific language governing permissions and limitations
  * under the License.
  */
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
 import org.junit.Test;
@@ -27,16 +27,23 @@ import org.junit.Test;
 public class DefaultNamingPolicyTest
 {
     private DefaultNamingPolicy policy = new DefaultNamingPolicy();
-    
+
     @Test
-    public void testName() throws Exception
+    public void testTagName() throws Exception
     {
         assertEquals( "ARTIFACTID-VERSION",
-                      policy.getName( newNamingPolicyRequest( "ARTIFACTID", "VERSION" ) ).getName() );
+                      policy.getTagName( newNamingPolicyRequest( "ARTIFACTID", "VERSION" ) ).getName() );
         assertEquals( "ARTIFACTID-1.0-SNAPSHOT",
-                      policy.getName( newNamingPolicyRequest( "ARTIFACTID", "1.0-SNAPSHOT" ) ).getName() );
+                      policy.getTagName( newNamingPolicyRequest( "ARTIFACTID", "1.0-SNAPSHOT" ) ).getName() );
     }
-    
+
+    @Test
+    public void testBranchName() throws Exception
+    {
+        assertNull( policy.getBranchName( newNamingPolicyRequest( "ARTIFACTID", "VERSION" ) ).getName() );
+        assertNull( policy.getBranchName( newNamingPolicyRequest( "ARTIFACTID", "1.0-SNAPSHOT" ) ).getName() );
+    }
+
     private NamingPolicyRequest newNamingPolicyRequest( String artifactId, String version )
     {
         return new NamingPolicyRequest().setArtifactId( artifactId ).setVersion( version );

@@ -20,16 +20,16 @@ package org.apache.maven.shared.release.policy.naming;
  */
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 3.0.0
  */
 public class NamingPolicyRequest
 {
     private String groupId;
-    
+
     private String artifactId;
-    
+
     private String version;
 
     public String getGroupId()

@@ -26,7 +26,7 @@ import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
 import org.codehaus.plexus.component.annotations.Component;
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 3.0.0
  */
@@ -34,9 +34,16 @@ import org.codehaus.plexus.component.annotations.Component;
 public class DefaultNamingPolicy implements NamingPolicy
 {
     @Override
-    public NamingPolicyResult getName( NamingPolicyRequest request )
+    public NamingPolicyResult getTagName( NamingPolicyRequest request )
         throws PolicyException
     {
         return new NamingPolicyResult().setName( request.getArtifactId() + "-" + request.getVersion() );
+    }
+
+    @Override
+    public NamingPolicyResult getBranchName( NamingPolicyRequest request )
+        throws PolicyException
+    {
+        return new NamingPolicyResult().setName( null );
     }
 }
