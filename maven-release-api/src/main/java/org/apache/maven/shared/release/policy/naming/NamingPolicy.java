@@ -29,9 +29,15 @@ import org.apache.maven.shared.release.policy.PolicyException;
 public interface NamingPolicy
 {
     /**
-     * Calculation of the name used for branching or tagging.
+     * Calculation of the name used for branching.
      */
-    NamingPolicyResult getName( NamingPolicyRequest request )
+    NamingPolicyResult getBranchName( NamingPolicyRequest request )
+        throws PolicyException;
+
+    /**
+     * Calculation of the name used for tagging.
+     */
+    NamingPolicyResult getTagName( NamingPolicyRequest request )
         throws PolicyException;
 
 }
