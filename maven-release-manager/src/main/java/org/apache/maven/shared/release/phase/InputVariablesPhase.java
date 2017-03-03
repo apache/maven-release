@@ -74,7 +74,7 @@ public class InputVariablesPhase
      */
     @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
-    
+
     /**
      * Component used for custom or default naming policy
      */
@@ -134,9 +134,11 @@ public class InputVariablesPhase
                 throw new ReleaseExecutionException( "Project tag cannot be selected if version is not yet mapped" );
             }
 
-            String defaultTag;
+            String defaultTag = null;
             String scmTagNameFormat = releaseDescriptor.getScmTagNameFormat();
-            if ( scmTagNameFormat != null )
+
+            // Only apply the scmTagName format for tag operations, not branching.
+            if ( !branchOperation && scmTagNameFormat != null )
             {
                 Interpolator interpolator = new StringSearchInterpolator( "@{", "}" );
                 List<String> possiblePrefixes = java.util.Arrays.asList( "project", "pom" );
@@ -156,7 +158,8 @@ public class InputVariablesPhase
                         "Could not interpolate specified tag name format: " + scmTagNameFormat, e );
                 }
             }
-            else
+
+            if ( defaultTag == null )
             {
                 try
                 {
@@ -166,7 +169,7 @@ public class InputVariablesPhase
                 catch ( PolicyException e )
                 {
                     throw new ReleaseExecutionException( e.getMessage(), e );
-                } 
+                }
             }
 
             ScmProvider provider = null;
@@ -207,9 +210,16 @@ public class InputVariablesPhase
                                                          e );
                 }
             }
-            else if ( branchOperation )
+            else if ( defaultTag == null )
             {
-                throw new ReleaseExecutionException( "No branch name was given." );
+                if ( branchOperation )
+                {
+                    throw new ReleaseExecutionException( "No branch name was given." );
+                }
+                else
+                {
+                    throw new ReleaseExecutionException( "No tag name was given." );
+                }
             }
             else
             {
@@ -236,7 +246,7 @@ public class InputVariablesPhase
 
         return result;
     }
-    
+
     private String resolveSuggestedName( String policyId, String version, MavenProject project )
         throws PolicyException
     {
