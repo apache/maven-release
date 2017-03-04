@@ -68,7 +68,7 @@ public class BranchInputVariablesPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
@@ -79,7 +79,7 @@ public class BranchInputVariablesPhaseTest
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
@@ -99,7 +99,7 @@ public class BranchInputVariablesPhaseTest
     {
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
         try
         {
@@ -112,7 +112,7 @@ public class BranchInputVariablesPhaseTest
             assertNull( "check no cause", e.getCause() );
         }
 
-        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor = createReleaseDescriptor();
 
         try
         {
@@ -136,7 +136,7 @@ public class BranchInputVariablesPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
 
@@ -147,7 +147,7 @@ public class BranchInputVariablesPhaseTest
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
 
@@ -171,7 +171,7 @@ public class BranchInputVariablesPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.setScmReleaseLabel( "tag-value" );
 
         // execute
@@ -181,7 +181,7 @@ public class BranchInputVariablesPhaseTest
         assertEquals( "Check tag", "tag-value", releaseDescriptor.getScmReleaseLabel() );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.setScmReleaseLabel( "simulated-tag-value" );
 
         // execute
@@ -206,7 +206,7 @@ public class BranchInputVariablesPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
@@ -223,7 +223,7 @@ public class BranchInputVariablesPhaseTest
         }
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
@@ -261,7 +261,7 @@ public class BranchInputVariablesPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( null );
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
@@ -280,7 +280,7 @@ public class BranchInputVariablesPhaseTest
         }
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor = createReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setScmReleaseLabel( null );
         releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
@@ -309,5 +309,12 @@ public class BranchInputVariablesPhaseTest
         model.setArtifactId( artifactId );
         model.setVersion( version );
         return new MavenProject( model );
+    }
+
+    private static ReleaseDescriptor createReleaseDescriptor()
+    {
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setProjectNamingPolicyId("default-branch");
+        return releaseDescriptor;
     }
 }
