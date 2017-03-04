@@ -230,7 +230,7 @@ public class PrepareReleaseMojo
      *
      * @since 3.0.0
      */
-    @Parameter( defaultValue = "default", property = "projectTagNamingPolicyId" )
+    @Parameter( defaultValue = "default", property = "projectNamingPolicyId" )
     private String projectTagNamingPolicyId;
 
     /**

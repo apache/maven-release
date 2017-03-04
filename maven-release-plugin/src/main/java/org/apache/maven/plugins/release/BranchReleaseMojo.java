@@ -203,7 +203,7 @@ public class BranchReleaseMojo
      *
      * @since 3.0.0
      */
-    @Parameter( defaultValue = "default-branch", property = "projectBranchNamingPolicyId" )
+    @Parameter( defaultValue = "default-branch", property = "projectNamingPolicyId" )
     private String projectBranchNamingPolicyId;
 
     /**
