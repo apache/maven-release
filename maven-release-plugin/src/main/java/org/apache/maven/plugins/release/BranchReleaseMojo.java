@@ -199,7 +199,7 @@ public class BranchReleaseMojo
     private String projectVersionPolicyId;
 
     /**
-     * The role-hint for the NamingPolicy implementation used to calculate the project names.
+     * The role-hint for the NamingPolicy implementation used to calculate the project branch names.
      *
      * @since 3.0.0
      */
