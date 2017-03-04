@@ -218,20 +218,24 @@ public class PrepareReleaseMojo
     private int waitBeforeTagging;
 
     /**
-     * The role-hint for the VersionPolicy implementation used to calculate the project versions.
+     * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy} 
+     * implementation used to calculate the project versions.
      *
      * @since 2.5.1
+     * @see org.apache.maven.shared.release.policies.DefaultVersionPolicy
      */
     @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
     private String projectVersionPolicyId;
 
     /**
-     * The role-hint for the NamingPolicy implementation used to calculate the project branch and tag names.
+     * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy} 
+     * implementation used to calculate the project branch and tag names.
      *
      * @since 3.0.0
+     * @see org.apache.maven.shared.release.policies.DefaultNamingPolicy
      */
-    @Parameter( defaultValue = "default", property = "projectNamingPolicyId" )
-    private String projectNamingPolicyId;
+    @Parameter( property = "projectNamingPolicyId" )
+    private String projectTagNamingPolicyId;
 
     /**
      * {@inheritDoc}
@@ -273,7 +277,7 @@ public class PrepareReleaseMojo
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );
         config.setWaitBeforeTagging( waitBeforeTagging );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
-        config.setProjectNamingPolicyId( projectNamingPolicyId );
+        config.setProjectNamingPolicyId( projectTagNamingPolicyId );
 
         if ( checkModificationExcludeList != null )
         {

@@ -121,8 +121,10 @@ public class ReleaseUtils
         // Not overridden - not configured from caller
         mergeInto.setCompletedPhase( mergeDefault( mergeInto.getCompletedPhase(), toBeMerged.getCompletedPhase() ) );
 
-        mergeInto.setProjectVersionPolicyId(
-            mergeDefault( mergeInto.getProjectVersionPolicyId(), toBeMerged.getProjectVersionPolicyId() ) );
+        mergeInto.setProjectVersionPolicyId( mergeDefault( mergeInto.getProjectVersionPolicyId(),
+                                                           toBeMerged.getProjectVersionPolicyId() ) );
+        mergeInto.setProjectNamingPolicyId( mergeDefault( mergeInto.getProjectNamingPolicyId(),
+                                                          toBeMerged.getProjectNamingPolicyId() ) );
 
         return mergeInto;
     }
@@ -163,6 +165,7 @@ public class ReleaseUtils
         releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
         releaseDescriptor.setCompletionGoals( properties.getProperty( "completionGoals" ) );
         releaseDescriptor.setProjectVersionPolicyId( properties.getProperty( "projectVersionPolicyId" ) );
+        releaseDescriptor.setProjectNamingPolicyId( properties.getProperty( "projectNamingPolicyId" ) );
         String snapshotReleasePluginAllowedStr = properties.getProperty( "exec.snapshotReleasePluginAllowed" );
         releaseDescriptor.setSnapshotReleasePluginAllowed( snapshotReleasePluginAllowedStr == null
                                                                ? false

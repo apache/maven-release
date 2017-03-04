@@ -136,7 +136,7 @@ public class InputVariablesPhase
 
             String defaultTag;
             String scmTagNameFormat = releaseDescriptor.getScmTagNameFormat();
-            if ( scmTagNameFormat != null )
+            if ( releaseDescriptor.getProjectNamingPolicyId() == null && scmTagNameFormat != null )
             {
                 Interpolator interpolator = new StringSearchInterpolator( "@{", "}" );
                 List<String> possiblePrefixes = java.util.Arrays.asList( "project", "pom" );
@@ -240,10 +240,13 @@ public class InputVariablesPhase
     private String resolveSuggestedName( String policyId, String version, MavenProject project )
         throws PolicyException
     {
-        NamingPolicy policy = namingPolicies.get( policyId );
+        String namingPolicyKey = policyId != null ? policyId : "default";
+        
+        NamingPolicy policy = namingPolicies.get( namingPolicyKey );
         if ( policy == null )
         {
-            throw new PolicyException( "Policy '" + policyId + "' is unknown, available: " + namingPolicies.keySet() );
+            throw new PolicyException( "Policy '" + namingPolicyKey + "' is unknown, available: "
+                + namingPolicies.keySet() );
         }
 
         NamingPolicyRequest request = new NamingPolicyRequest()
