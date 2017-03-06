@@ -134,7 +134,7 @@ public class InputVariablesPhase
                 throw new ReleaseExecutionException( "Project tag cannot be selected if version is not yet mapped" );
             }
 
-            String defaultTag;
+            String defaultTag = null;
             String scmTagNameFormat = releaseDescriptor.getScmTagNameFormat();
             if ( releaseDescriptor.getProjectNamingPolicyId() == null && scmTagNameFormat != null )
             {
@@ -160,8 +160,11 @@ public class InputVariablesPhase
             {
                 try
                 {
-                    defaultTag =
-                        resolveSuggestedName( releaseDescriptor.getProjectNamingPolicyId(), releaseVersion, project );
+                    if ( !branchOperation || releaseDescriptor.getProjectNamingPolicyId() != null )
+                    {
+                        defaultTag = resolveSuggestedName(
+                            releaseDescriptor.getProjectNamingPolicyId(), releaseVersion, project );
+                    }
                 }
                 catch ( PolicyException e )
                 {
@@ -207,9 +210,16 @@ public class InputVariablesPhase
                                                          e );
                 }
             }
-            else if ( branchOperation )
+            else if ( defaultTag == null )
             {
-                throw new ReleaseExecutionException( "No branch name was given." );
+                if ( branchOperation )
+                {
+                    throw new ReleaseExecutionException( "No branch name was given." );
+                }
+                else
+                {
+                    throw new ReleaseExecutionException( "No tag name was given." );
+                }
             }
             else
             {
