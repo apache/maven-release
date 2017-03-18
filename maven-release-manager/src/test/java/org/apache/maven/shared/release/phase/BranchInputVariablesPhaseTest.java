@@ -18,8 +18,10 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -36,9 +38,13 @@ import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.policy.naming.NamingPolicy;
+import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
+import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.junit.Test;
+import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Test the variable input phase.
@@ -300,6 +306,27 @@ public class BranchInputVariablesPhaseTest
 
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
+    }
+    
+    @Test
+    public void testNamingPolicy() throws Exception
+    {
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.mapReleaseVersion( "groupId:artifactId", "1.0" );
+        releaseDescriptor.setInteractive( false );
+        releaseDescriptor.setProjectNamingPolicyId( "stub" );
+        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        
+        NamingPolicy stubPolicy = mock( NamingPolicy.class );
+        when(stubPolicy.getName( isA(NamingPolicyRequest.class) )).thenReturn( new NamingPolicyResult().setName( "STUB" ) );
+        
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        
+        Whitebox.setInternalState( phase, "namingPolicies", Collections.singletonMap( "stub", stubPolicy ) );
+        
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        
+        assertEquals( "STUB", releaseDescriptor.getScmReleaseLabel() );
     }
 
     private static MavenProject createProject( String artifactId, String version )

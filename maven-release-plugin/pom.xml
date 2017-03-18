@@ -173,7 +173,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-invoker-plugin</artifactId>
-        <version>1.10</version>
+        <version>2.0.0</version>
         <configuration>
           <projectsDirectory>src/it</projectsDirectory>
           <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
@@ -208,7 +208,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.10</version>
             <executions>
               <execution>
                 <id>integration-test-prepare</id>
@@ -217,39 +216,42 @@
                     <setupInclude>setup/*/pom.xml</setupInclude>
                   </setupIncludes>
                   <pomIncludes>
-                    <pomInclude>projects/prepare/*/*pom.xml</pomInclude>
-                    <pomInclude>projects/prepare/flat-multi-module/parent-project/pom.xml</pomInclude>
+                    <pomInclude>X</pomInclude>
                   </pomIncludes>
-                  <pomExcludes>
-                    <pomExclude>projects/prepare/MRELEASE-966/pom.xml</pomExclude>
-                  </pomExcludes>
-                  <goals>
-                    <goal>clean</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:prepare</goal>
-                  </goals>
+<!--                   <pomIncludes> -->
+<!--                     <pomInclude>Xprojects/prepare/*/*pom.xml</pomInclude> -->
+<!--                     <pomInclude>Xprojects/prepare/flat-multi-module/parent-project/pom.xml</pomInclude> -->
+<!--                   </pomIncludes> -->
+<!--                   <pomExcludes> -->
+<!--                     <pomExclude>projects/prepare/MRELEASE-966/pom.xml</pomExclude> -->
+<!--                   </pomExcludes> -->
+<!--                   <goals> -->
+<!--                     <goal>clean</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:prepare</goal> -->
+<!--                   </goals> -->
                 </configuration>
                 <goals>
                   <goal>install</goal>
                   <goal>run</goal>
                 </goals>
               </execution>
-              <execution>
-                <id>integration-test-prepare-with-pom</id>
-                <configuration>
-                  <pomIncludes>
-                    <pomInclude>projects/prepare-with-pom/*/*pom.xml</pomInclude>
-                  </pomIncludes>
-                  <goals>
-                    <goal>clean</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:prepare-with-pom</goal>
-                  </goals>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
+<!--               <execution> -->
+<!--                 <id>integration-test-prepare-with-pom</id> -->
+<!--                 <configuration> -->
+<!--                   <pomIncludes> -->
+<!--                     <pomInclude>Xprojects/prepare-with-pom/*/*pom.xml</pomInclude> -->
+<!--                   </pomIncludes> -->
+<!--                   <goals> -->
+<!--                     <goal>clean</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:prepare-with-pom</goal> -->
+<!--                   </goals> -->
+<!--                 </configuration> -->
+<!--                 <goals> -->
+<!--                   <goal>run</goal> -->
+<!--                 </goals> -->
+<!--               </execution> -->
               <execution>
                 <id>integration-test-branch</id>
                 <configuration>
@@ -266,39 +268,39 @@
                   <goal>run</goal>
                 </goals>
               </execution>
-              <execution>
-                <id>integration-test-perform</id>
-                <configuration>
-                  <pomIncludes>
-                    <pomInclude>projects/perform/*/pom.xml</pomInclude>
-                  </pomIncludes>
-                  <goals>
-                    <goal>clean</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:prepare</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:perform</goal>
-                  </goals>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
-              <execution>
-                <id>integration-test-update-versions</id>
-                <configuration>
-                  <pomIncludes>
-                    <pomInclude>projects/update-versions/*/pom.xml</pomInclude>
-                  </pomIncludes>
-                  <goals>
-                    <goal>clean</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal>
-                    <goal>${project.groupId}:${project.artifactId}:${project.version}:update-versions</goal>
-                  </goals>
-                </configuration>
-                <goals>
-                  <goal>run</goal>
-                </goals>
-              </execution>
+<!--               <execution> -->
+<!--                 <id>integration-test-perform</id> -->
+<!--                 <configuration> -->
+<!--                   <pomIncludes> -->
+<!--                     <pomInclude>projects/perform/*/pom.xml</pomInclude> -->
+<!--                   </pomIncludes> -->
+<!--                   <goals> -->
+<!--                     <goal>clean</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:prepare</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:perform</goal> -->
+<!--                   </goals> -->
+<!--                 </configuration> -->
+<!--                 <goals> -->
+<!--                   <goal>run</goal> -->
+<!--                 </goals> -->
+<!--               </execution> -->
+<!--               <execution> -->
+<!--                 <id>integration-test-update-versions</id> -->
+<!--                 <configuration> -->
+<!--                   <pomIncludes> -->
+<!--                     <pomInclude>projects/update-versions/*/pom.xml</pomInclude> -->
+<!--                   </pomIncludes> -->
+<!--                   <goals> -->
+<!--                     <goal>clean</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:clean</goal> -->
+<!--                     <goal>${project.groupId}:${project.artifactId}:${project.version}:update-versions</goal> -->
+<!--                   </goals> -->
+<!--                 </configuration> -->
+<!--                 <goals> -->
+<!--                   <goal>run</goal> -->
+<!--                 </goals> -->
+<!--               </execution> -->
            </executions>
           </plugin>
         </plugins>

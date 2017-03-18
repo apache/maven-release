@@ -229,6 +229,7 @@
       <implementation>org.apache.maven.shared.release.phase.InputVariablesPhase</implementation>
       <configuration>
         <branchOperation>false</branchOperation>
+        <defaultNamingPolicy>default</defaultNamingPolicy>
       </configuration>
       <requirements>
         <requirement>

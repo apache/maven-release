@@ -80,6 +80,11 @@ public class InputVariablesPhase
      */
     @Requirement
     private Map<String, NamingPolicy> namingPolicies;
+   
+    /**
+     * The default naming policy to apply, if any
+     */
+    private String defaultNamingPolicy;
 
     void setPrompter( Prompter prompter )
     {
@@ -134,9 +139,21 @@ public class InputVariablesPhase
                 throw new ReleaseExecutionException( "Project tag cannot be selected if version is not yet mapped" );
             }
 
-            String defaultTag;
+            String suggestedName;
             String scmTagNameFormat = releaseDescriptor.getScmTagNameFormat();
-            if ( releaseDescriptor.getProjectNamingPolicyId() == null && scmTagNameFormat != null )
+            if ( releaseDescriptor.getProjectNamingPolicyId() != null )
+            {
+                try
+                {
+                    suggestedName =
+                        resolveSuggestedName( releaseDescriptor.getProjectNamingPolicyId(), releaseVersion, project );
+                }
+                catch ( PolicyException e )
+                {
+                    throw new ReleaseExecutionException( e.getMessage(), e );
+                } 
+            }
+            else if ( scmTagNameFormat != null )
             {
                 Interpolator interpolator = new StringSearchInterpolator( "@{", "}" );
                 List<String> possiblePrefixes = java.util.Arrays.asList( "project", "pom" );
@@ -148,7 +165,7 @@ public class InputVariablesPhase
                 RecursionInterceptor recursionInterceptor = new PrefixAwareRecursionInterceptor( possiblePrefixes );
                 try
                 {
-                    defaultTag = interpolator.interpolate( scmTagNameFormat, recursionInterceptor );
+                    suggestedName = interpolator.interpolate( scmTagNameFormat, recursionInterceptor );
                 }
                 catch ( InterpolationException e )
                 {
@@ -160,13 +177,12 @@ public class InputVariablesPhase
             {
                 try
                 {
-                    defaultTag =
-                        resolveSuggestedName( releaseDescriptor.getProjectNamingPolicyId(), releaseVersion, project );
+                    suggestedName = resolveSuggestedName( defaultNamingPolicy, releaseVersion, project );
                 }
                 catch ( PolicyException e )
                 {
                     throw new ReleaseExecutionException( e.getMessage(), e );
-                } 
+                }
             }
 
             ScmProvider provider = null;
@@ -180,7 +196,7 @@ public class InputVariablesPhase
                     "No scm provider can be found for url: " + releaseDescriptor.getScmSourceUrl(), e );
             }
 
-            defaultTag = provider.sanitizeTagName( defaultTag );
+            suggestedName = provider.sanitizeTagName( suggestedName );
 
             if ( releaseDescriptor.isInteractive() )
             {
@@ -198,7 +214,7 @@ public class InputVariablesPhase
                     else
                     {
                         tag = prompter.prompt( "What is the SCM release tag or label for \"" + project.getName()
-                            + "\"? (" + project.getGroupId() + ":" + project.getArtifactId() + ")", defaultTag );
+                            + "\"? (" + project.getGroupId() + ":" + project.getArtifactId() + ")", suggestedName );
                     }
                 }
                 catch ( PrompterException e )
@@ -207,13 +223,20 @@ public class InputVariablesPhase
                                                          e );
                 }
             }
-            else if ( branchOperation )
+            else if ( suggestedName == null )
             {
-                throw new ReleaseExecutionException( "No branch name was given." );
+                if ( isBranchOperation() )
+                {
+                    throw new ReleaseExecutionException( "No branch name was given." );
+                }
+                else
+                {
+                    throw new ReleaseExecutionException( "No tag name was given." );
+                }
             }
             else
             {
-                tag = defaultTag;
+                tag = suggestedName;
             }
             releaseDescriptor.setScmReleaseLabel( tag );
         }
@@ -240,12 +263,15 @@ public class InputVariablesPhase
     private String resolveSuggestedName( String policyId, String version, MavenProject project )
         throws PolicyException
     {
-        String namingPolicyKey = policyId != null ? policyId : "default";
+        if ( policyId == null )
+        {
+            return null;
+        }
         
-        NamingPolicy policy = namingPolicies.get( namingPolicyKey );
+        NamingPolicy policy = namingPolicies.get( policyId );
         if ( policy == null )
         {
-            throw new PolicyException( "Policy '" + namingPolicyKey + "' is unknown, available: "
+            throw new PolicyException( "Policy '" + policyId + "' is unknown, available: "
                 + namingPolicies.keySet() );
         }
 
