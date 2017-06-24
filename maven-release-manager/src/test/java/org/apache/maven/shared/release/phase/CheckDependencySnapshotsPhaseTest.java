@@ -22,14 +22,18 @@ package org.apache.maven.shared.release.phase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
+import org.junit.Test;
+
 import static org.mockito.Mockito.*;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -106,6 +110,42 @@ public class CheckDependencySnapshotsPhaseTest
 
         // successful execution is verification enough
         assertTrue( true );
+    }
+
+    // MRELEASE-985
+    public void testSnapshotDependenciesInProjectAndResolveFromCommandLine() throws Exception {
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-dependencies-no-reactor" );
+        releaseDescriptor.setInteractive( false );
+
+        final Map resolvedSnapshotDependencies = new HashMap();
+        Map releaseKeys = new HashMap();
+        releaseKeys.put( ReleaseDescriptor.RELEASE_KEY, "1.0" );
+        releaseKeys.put( ReleaseDescriptor.DEVELOPMENT_KEY, "1.1" );
+
+        resolvedSnapshotDependencies.put( "groupId:test", releaseKeys );
+
+        releaseDescriptor.setResolvedSnapshotDependencies( resolvedSnapshotDependencies );
+
+        try
+        {
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            assertTrue( true );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            fail( "There should be no failed execution" );
+        }
+
+        try
+        {
+            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            assertTrue( true );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            fail( "There should be no failed execution" );
+        }
     }
 
     public void testSnapshotReleasePluginNonInteractive()
