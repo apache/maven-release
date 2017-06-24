@@ -110,7 +110,7 @@ public class CheckDependencySnapshotsPhase
         }
         else
         {
-            logInfo( result, "Ignoring SNAPSHOT depenedencies and plugins ..." );
+            logInfo( result, "Ignoring SNAPSHOT dependencies and plugins ..." );
         }
         result.setResultCode( ReleaseResult.SUCCESS );
 
@@ -131,7 +131,7 @@ public class CheckDependencySnapshotsPhase
                 usedSnapshotDependencies.add( project.getParentArtifact() );
             }
         }
-        
+
         try
         {
             @SuppressWarnings( "unchecked" )
@@ -156,7 +156,7 @@ public class CheckDependencySnapshotsPhase
         @SuppressWarnings( "unchecked" )
         Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
         checkExtensions( originalVersions, releaseDescriptor, artifactMap, extensionArtifacts );
-        
+
         //@todo check profiles
 
         if ( !usedSnapshotDependencies.isEmpty() || !usedSnapshotReports.isEmpty()
@@ -315,13 +315,21 @@ public class CheckDependencySnapshotsPhase
     private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions,
                                           ReleaseDescriptor releaseDescriptor )
     {
+
         String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
+
+        if ( releaseDescriptor.getResolvedSnapshotDependencies().containsKey( versionlessArtifactKey ) )
+        {
+            artifact.setVersion( ( String ) ( ( Map ) releaseDescriptor.getResolvedSnapshotDependencies()
+                                                                       .get( versionlessArtifactKey ) )
+                            .get( ReleaseDescriptor.RELEASE_KEY ) );
+        }
 
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
         boolean result =
             artifact.isSnapshot()
-            && !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
+                            && !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
 
         // If we have a snapshot but allowTimestampedSnapshots is true, accept the artifact if the version
         // indicates that it is a timestamped snapshot.

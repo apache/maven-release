@@ -103,6 +103,8 @@ public class ReleaseUtils
         mergeInto.setPushChanges( toBeMerged.isPushChanges() );
         mergeInto.setWaitBeforeTagging( toBeMerged.getWaitBeforeTagging() );
 
+        mergeInto.setResolvedSnapshotDependencies( toBeMerged.getResolvedSnapshotDependencies() );
+
         // If the user specifies versions, these should be override the existing versions
         if ( toBeMerged.getReleaseVersions() != null )
         {

@@ -315,5 +315,9 @@ public abstract class AbstractReleaseMojo
         {
             config.getDevelopmentVersions().putAll( sysPropertiesConfig.getDevelopmentVersions() );
         }
+        if ( sysPropertiesConfig.getResolvedSnapshotDependencies() != null )
+        {
+            config.getResolvedSnapshotDependencies().putAll( sysPropertiesConfig.getResolvedSnapshotDependencies() );
+        }
     }
 }
