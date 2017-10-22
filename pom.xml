@@ -47,9 +47,10 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/maven/release/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/maven/release/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/maven/release/trunk</url>
+    <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-release.git</connection>
+    <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-release.git</developerConnection>
+    <url>https://github.com/apache/maven-release/tree/${project.scm.tag}</url>
+    <tag>HEAD</tag>
   </scm>
   <issueManagement>
     <system>jira</system>
