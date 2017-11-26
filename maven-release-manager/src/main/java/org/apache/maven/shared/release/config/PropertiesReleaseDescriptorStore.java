@@ -249,13 +249,16 @@ public class PropertiesReleaseDescriptorStore
 
         properties.setProperty( "remoteTagging", Boolean.toString( config.isRemoteTagging() ) );
 
-        properties.setProperty( "pinExternals", Boolean.toString( config.isPinExternals() ) );
-
         properties.setProperty( "pushChanges", Boolean.toString( config.isPushChanges() ) );
 
         if ( config.getWorkItem() != null )
         {
             properties.setProperty( "workItem", config.getWorkItem() );
+        }
+
+        if ( config.getAutoResolveSnapshots() != null )
+        {
+            properties.setProperty( "autoResolveSnapshots", config.getAutoResolveSnapshots() );
         }
 
         // others boolean properties are not written to the properties file because the value from the caller is always

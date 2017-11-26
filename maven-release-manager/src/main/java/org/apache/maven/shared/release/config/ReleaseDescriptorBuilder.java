@@ -440,9 +440,9 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
-    public ReleaseDescriptorBuilder setPinExternals( boolean pinExternals )
+    public ReleaseDescriptorBuilder setAutoResolveSnapshots( String autoResolveSnapshots )
     {
-        releaseDescriptor.setPinExternals( pinExternals );
+        releaseDescriptor.setAutoResolveSnapshots( autoResolveSnapshots );
         return this;
     }
 

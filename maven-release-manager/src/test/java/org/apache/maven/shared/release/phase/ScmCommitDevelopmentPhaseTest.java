@@ -96,7 +96,6 @@ public class ScmCommitDevelopmentPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
 
         builder.setRemoteTagging( false );
-        builder.setPinExternals( false );
         builder.setSuppressCommitBeforeTagOrBranch( true );
         builder.setUpdateWorkingCopyVersions( false );
 

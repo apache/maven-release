@@ -161,11 +161,6 @@ public class ReleaseUtils
             String remoteTaggingStr = properties.getProperty( "remoteTagging" );
             builder.setRemoteTagging( Boolean.valueOf( remoteTaggingStr ) );
         }
-        if ( properties.containsKey( "pinExternals" ) )
-        {
-            String pinExternals = properties.getProperty( "pinExternals" );
-            builder.setPinExternals( Boolean.valueOf( pinExternals ) );
-        }
         if ( properties.containsKey( "pushChanges" ) )
         {
             String pushChanges = properties.getProperty( "pushChanges" );
@@ -174,6 +169,11 @@ public class ReleaseUtils
         if ( properties.containsKey( "workItem" ) )
         {
             builder.setWorkItem( properties.getProperty( "workItem" ) );
+        }
+        if ( properties.containsKey( "autoResolveSnapshots" ) )
+        {
+            String resolve = properties.getProperty( "autoResolveSnapshots" );
+            builder.setAutoResolveSnapshots( resolve );
         }
 
         loadResolvedDependencies( properties, builder );

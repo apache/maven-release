@@ -108,7 +108,6 @@ public class ScmBranchPhase
             scmBranchParameters.setMessage( releaseDescriptor.getScmCommentPrefix() + "copy for branch " + branchName );
             scmBranchParameters.setRemoteBranching( releaseDescriptor.isRemoteTagging() );
             scmBranchParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
-            scmBranchParameters.setPinExternals( releaseDescriptor.isPinExternals() );
 
             result = provider.branch( repository, fileSet, branchName, scmBranchParameters );
         }
@@ -144,10 +143,6 @@ public class ScmBranchPhase
             logInfo( result, "  To SCM URL: " + releaseDescriptor.getScmBranchBase() );
         }
         logInfo( result, "  with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
-        if ( releaseDescriptor.isPinExternals() )
-        {
-            logInfo( result, "  with pinned externals" );
-        }
 
         result.setResultCode( ReleaseResult.SUCCESS );
 
