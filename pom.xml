@@ -103,6 +103,8 @@
                 This module is not yet included
               -->
               <exclude>maven-release-policies/maven-release-semver-policy/**/*.*</exclude>
+              <exclude>.repository</exclude>
+              <exclude>Jenkinsfile</exclude>
             </excludes>
           </configuration>
         </plugin>
