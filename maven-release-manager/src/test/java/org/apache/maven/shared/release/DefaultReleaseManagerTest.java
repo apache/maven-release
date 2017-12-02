@@ -18,15 +18,9 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
-import static org.mockito.Mockito.*;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -53,11 +47,18 @@ import org.apache.maven.shared.release.phase.RunPerformGoalsPhase;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.ReflectionUtils;
 import org.mockito.internal.util.reflection.Whitebox;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Test the default release manager.
@@ -430,7 +431,9 @@ public class DefaultReleaseManagerTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.checkOut( isA( ScmRepository.class ), 
                                         argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
-                                        isA( ScmTag.class ) ) ).thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )) )
+            .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -448,7 +451,8 @@ public class DefaultReleaseManagerTest
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ), 
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
-                                            isA( ScmTag.class ) );
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
         verifyNoMoreInteractions( mock, scmProviderMock );
     }
 
@@ -493,7 +497,9 @@ public class DefaultReleaseManagerTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.checkOut( isA( ScmRepository.class ), 
                                         argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ), 
-                                        isA( ScmTag.class ) ) ).thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )) )
+            .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -513,7 +519,8 @@ public class DefaultReleaseManagerTest
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ), 
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ), 
-                                            isA( ScmTag.class ) );
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
         verifyNoMoreInteractions( mock, scmProviderMock );
     }
 
@@ -537,7 +544,9 @@ public class DefaultReleaseManagerTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.checkOut( isA( ScmRepository.class ),
                                         argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
-                                        isA( ScmTag.class ) ) ).thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )) )
+            .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -555,7 +564,8 @@ public class DefaultReleaseManagerTest
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
-                                            isA( ScmTag.class ) );
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
         verifyNoMoreInteractions( mock, scmProviderMock );
     }
 
@@ -579,7 +589,9 @@ public class DefaultReleaseManagerTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.checkOut( isA( ScmRepository.class ),
                                         argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
-                                        isA( ScmTag.class ) ) ).thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )))
+                                .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -599,7 +611,8 @@ public class DefaultReleaseManagerTest
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
-                                            isA( ScmTag.class ) );
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
         verifyNoMoreInteractions( mock, scmProviderMock );
     }
 
@@ -622,7 +635,9 @@ public class DefaultReleaseManagerTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.checkOut( isA( ScmRepository.class ),
                                         argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
-                                        isA( ScmTag.class ) ) ).thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )) )
+            .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -644,7 +659,8 @@ public class DefaultReleaseManagerTest
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
-                                            isA( ScmTag.class ) );
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
         verifyNoMoreInteractions( mock, scmProviderMock );
     }
 
@@ -854,7 +870,11 @@ public class DefaultReleaseManagerTest
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.checkOut( any( ScmRepository.class ), any( ScmFileSet.class ), any ( ScmTag.class ) ) ).thenThrow( new ScmException( "..." ) );
+        when( scmProviderMock.checkOut( any( ScmRepository.class ),
+                                        any( ScmFileSet.class ),
+                                        any( ScmTag.class ),
+                                        any(CommandParameters.class)) )
+            .thenThrow( new ScmException( "..." ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
@@ -872,7 +892,8 @@ public class DefaultReleaseManagerTest
         }
         
         // verify
-        verify(  scmProviderMock ).checkOut( any( ScmRepository.class ), any( ScmFileSet.class ), any ( ScmTag.class ) );
+        verify(  scmProviderMock ).checkOut( any( ScmRepository.class ), any( ScmFileSet.class ),
+                                             any( ScmTag.class ), any( CommandParameters.class ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 

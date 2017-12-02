@@ -86,7 +86,8 @@
   </contributors>
 
   <properties>
-    <scmVersion>1.9.4</scmVersion>
+    <scmVersion>1.9.6-SNAPSHOT</scmVersion>
+    <javaVersion>7</javaVersion>
     <mavenVersion>2.2.1</mavenVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
   </properties>

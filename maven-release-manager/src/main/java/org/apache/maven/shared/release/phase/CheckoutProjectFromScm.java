@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.CommandParameter;
+import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
@@ -210,10 +212,11 @@ public class CheckoutProjectFromScm
 
         checkoutDirectory.mkdirs();
 
-        CheckOutScmResult scmResult;
+        CommandParameters commandParameters = new CommandParameters();
+        commandParameters.setString( CommandParameter.SHALLOW, Boolean.TRUE.toString() );
 
-        scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ),
-                                       new ScmTag( releaseDescriptor.getScmReleaseLabel() ) );
+        CheckOutScmResult scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ),
+                           new ScmTag( releaseDescriptor.getScmReleaseLabel() ), commandParameters );
 
         if ( releaseDescriptor.isLocalCheckout() && !scmResult.isSuccess() )
         {
