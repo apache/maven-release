@@ -20,6 +20,7 @@
     <groupId>groupId</groupId>
     <artifactId>artifactId</artifactId>
     <version>1.0</version>
+    <relativePath>../root-project</relativePath>
   </parent>
 
   <artifactId>subproject1</artifactId>
