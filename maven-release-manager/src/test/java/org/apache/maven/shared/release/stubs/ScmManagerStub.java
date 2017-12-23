@@ -32,19 +32,37 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 public class ScmManagerStub
     extends org.apache.maven.scm.manager.ScmManagerStub
 {
-    private Map<String, ScmRepository> scmRepositoriesForUrl = new HashMap<String, ScmRepository>();
+    private Exception e;
+    
+    private Map<String, ScmRepository> scmRepositoriesForUrl = new HashMap<>();
 
-    /*@Override*/
+    @Override
     public ScmRepository makeScmRepository( String scmUrl )
         throws ScmRepositoryException, NoSuchScmProviderException
     {
+        if ( e != null )
+        {
+            if ( e instanceof ScmRepositoryException )
+            {
+                throw (ScmRepositoryException) e;
+            }
+            else if ( e instanceof NoSuchScmProviderException )
+            {
+                throw (NoSuchScmProviderException) e;
+            }
+            else
+            {
+                throw new RuntimeException( e );
+            }
+        }
+        
         if ( scmRepositoriesForUrl.isEmpty() )
         {
             // we didn't configure any for URLs, return the preset one
             return getScmRepository();
         }
 
-        ScmRepository repository = (ScmRepository) scmRepositoriesForUrl.get( scmUrl );
+        ScmRepository repository = scmRepositoriesForUrl.get( scmUrl );
         if ( repository == null )
         {
             throw new ScmRepositoryException( "Unexpected URL: " + scmUrl );
@@ -55,5 +73,10 @@ public class ScmManagerStub
     public void addScmRepositoryForUrl( String url, ScmRepository repository )
     {
         scmRepositoriesForUrl.put( url, repository );
+    }
+    
+    public void setException( Exception e )
+    {
+        this.e = e;
     }
 }

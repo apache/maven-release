@@ -20,6 +20,8 @@ package org.apache.maven.shared.release.phase;
  */
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -36,12 +38,16 @@ import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.junit.Test;
 
@@ -185,6 +191,64 @@ public class CheckoutProjectFromScmTest
                                             argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ),
                                             any( CommandParameters.class ));
         verifyNoMoreInteractions( scmProviderMock );
+    }
+    
+    @Test
+    public void testNoSuchScmProviderExceptionThrown()
+                    throws Exception
+    {
+        // prepare
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
+
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
+        
+        // execute
+        try
+        {
+            releaseDescriptor.setUseReleaseProfile( false );
+
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+            fail( "commit should have failed" );
+        }
+        catch ( ReleaseExecutionException e )
+        {
+            assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
+        }
+    }
+
+    @Test
+    public void testScmRepositoryExceptionThrown()
+        throws Exception
+    {
+        // prepare
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        scmManagerStub.setException( new ScmRepositoryException( "..." )  );
+
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
+        
+        // execute
+        try
+        {
+            releaseDescriptor.setUseReleaseProfile( false );
+
+            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+
+            fail( "commit should have failed" );
+        }
+        catch ( ReleaseScmRepositoryException e )
+        {
+            assertNull( "Check no additional cause", e.getCause() );
+        }
     }
 
 }

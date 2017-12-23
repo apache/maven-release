@@ -19,19 +19,31 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
-import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
@@ -40,19 +52,9 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.phase.ReleasePhaseStub;
-import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
-import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
-import org.mockito.internal.util.reflection.Whitebox;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.Mockito.*;
 
 /**
  * Test the default release manager.
@@ -518,80 +520,6 @@ public class DefaultReleaseManagerTest
         {
             assertNull( "check no cause", e.getCause() );
         }
-    }
-
-    public void testNoSuchScmProviderExceptionThrown()
-        throws Exception
-    {
-        // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
-
-        ScmManager scmManagerMock = mock( ScmManager.class );
-        when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
-
-        ReleasePhase rp = (ReleasePhase) lookup( ReleasePhase.ROLE, "checkout-project-from-scm");
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( rp, "scmRepositoryConfigurator" );
-        configurator.setScmManager( scmManagerMock );
-
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
-
-        // execute
-        try
-        {
-            releaseDescriptor.setUseReleaseProfile( false );
-
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
-
-            fail( "commit should have failed" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
-        }
-        
-        // verify
-        verify( scmManagerMock ).makeScmRepository( "scm-url" );
-        verifyNoMoreInteractions( scmManagerMock );
-    }
-
-    public void testScmRepositoryExceptionThrown()
-        throws Exception
-    {
-        // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
-
-        ScmManager scmManagerMock = mock( ScmManager.class );
-        when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new ScmRepositoryException( "..." ) );
-
-        ReleasePhase rp = (ReleasePhase) lookup( ReleasePhase.ROLE, "checkout-project-from-scm");
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( rp, "scmRepositoryConfigurator" );
-        configurator.setScmManager( scmManagerMock );        
-
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
-
-        // execute
-        try
-        {
-            releaseDescriptor.setUseReleaseProfile( false );
-
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
-
-            fail( "commit should have failed" );
-        }
-        catch ( ReleaseScmRepositoryException e )
-        {
-            assertNull( "Check no additional cause", e.getCause() );
-        }
-        
-        // verify
-        verify( scmManagerMock ).makeScmRepository( "scm-url" );
-        verifyNoMoreInteractions( scmManagerMock );
     }
 
     public void testScmExceptionThrown()
