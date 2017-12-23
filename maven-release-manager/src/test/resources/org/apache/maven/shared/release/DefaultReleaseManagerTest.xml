@@ -48,6 +48,12 @@
         <branchPhases>
           <phase>branch1</phase>
         </branchPhases>
+        <rollbackPhases>
+          <phase>rollbackPhase1</phase>
+        </rollbackPhases>
+        <updateVersionsPhases>
+          <phase>updateVersionsPhase1</phase>
+        </updateVersionsPhases>
       </configuration>
     </component>
     <component>
@@ -94,6 +100,16 @@
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>branch1</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.ReleasePhaseStub</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>rollbackPhase1</role-hint>
+      <implementation>org.apache.maven.shared.release.phase.ReleasePhaseStub</implementation>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
+      <role-hint>updateVersionsPhase1</role-hint>
       <implementation>org.apache.maven.shared.release.phase.ReleasePhaseStub</implementation>
     </component>
     <component>

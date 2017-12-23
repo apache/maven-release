@@ -45,14 +45,12 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.ReflectionUtils;
 import org.mockito.internal.util.reflection.Whitebox;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -85,16 +83,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -109,16 +104,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -133,16 +125,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, false, false );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -157,16 +146,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertFalse( "step2 not executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertFalse( "step3 not executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -181,16 +167,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -205,16 +188,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertTrue( "step3 simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -229,16 +209,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertTrue( "step3 simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -253,16 +230,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertFalse( "step2 not simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertFalse( "step3 not simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -277,16 +251,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
 
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertTrue( "step3 simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -389,19 +360,16 @@ public class DefaultReleaseManagerTest
         releaseManager.clean( releaseDescriptor, null, null );
 
         // verify
-        @SuppressWarnings("unchecked")
-        Map<String,ReleasePhaseStub> phases = getContainer().lookupMap( ReleasePhase.ROLE );
-
-        ReleasePhaseStub phase = (ReleasePhaseStub) phases.get( "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 not cleaned", phase.isCleaned() );
 
-        phase = (ReleasePhaseStub) phases.get( "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 not cleaned", phase.isCleaned() );
 
-        phase = (ReleasePhaseStub) phases.get( "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
         assertTrue( "step3 not cleaned", phase.isCleaned() );
 
-        phase = (ReleasePhaseStub) phases.get( "branch1" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "branch1" );
         assertTrue( "branch1 not cleaned", phase.isCleaned() );
         
         verify( configStoreMock ).delete( releaseDescriptor );
@@ -719,47 +687,29 @@ public class DefaultReleaseManagerTest
     }
 
     // MRELEASE-761
-    @SuppressWarnings( "unchecked" )
     public void testRollbackCall()
         throws Exception
     {
         DefaultReleaseManager defaultReleaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleasePhase rollbackPhase1 = mock( ReleasePhase.class );
-        ReflectionUtils.setVariableValueInObject( defaultReleaseManager, "rollbackPhases",
-                                                  Collections.singletonList( "rollbackPhase1" ) );
-        Map<String, ReleasePhase> releasePhases =
-            (Map<String, ReleasePhase>) ReflectionUtils.getValueIncludingSuperclasses( "releasePhases",
-                                                                                       defaultReleaseManager );
-        releasePhases.put( "rollbackPhase1", rollbackPhase1 );
-
         defaultReleaseManager.rollback( configStore.getReleaseConfiguration(), (ReleaseEnvironment) null, null );
-
-        verify( rollbackPhase1 ).execute( any( ReleaseDescriptor.class ), any( ReleaseEnvironment.class ),
-                                                any( List.class ) );
-        verifyNoMoreInteractions( rollbackPhase1 );
+        
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "rollbackPhase1" );
+        
+        assertTrue( "rollbackPhase1 executed", phase.isExecuted() );
     }
 
 
     // MRELEASE-765
-    @SuppressWarnings( "unchecked" )
     public void testUpdateVersionsCall()
         throws Exception
     {
         DefaultReleaseManager defaultReleaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
-        ReleasePhase updateVersionsPhase1 = mock( ReleasePhase.class );
-        ReflectionUtils.setVariableValueInObject( defaultReleaseManager, "updateVersionsPhases",
-                                                  Collections.singletonList( "updateVersionsPhase1" ) );
-        Map<String, ReleasePhase> releasePhases =
-            (Map<String, ReleasePhase>) ReflectionUtils.getValueIncludingSuperclasses( "releasePhases",
-                                                                                       defaultReleaseManager );
-        releasePhases.put( "updateVersionsPhase1", updateVersionsPhase1 );
-
         defaultReleaseManager.updateVersions( configStore.getReleaseConfiguration(), null, null );
-
-        verify( updateVersionsPhase1 ).execute( any( ReleaseDescriptor.class ), any( ReleaseEnvironment.class ),
-                                                any( List.class ) );
-        verifyNoMoreInteractions( updateVersionsPhase1 );
+        
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "updateVersionsPhase1" );
+        
+        assertTrue( "updateVersionsPhase1 executed", phase.isExecuted() );
     }
 }
