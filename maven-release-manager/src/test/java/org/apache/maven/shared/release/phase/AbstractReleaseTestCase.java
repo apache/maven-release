@@ -1,5 +1,6 @@
 package org.apache.maven.shared.release.phase;
 
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -19,6 +20,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -65,13 +67,13 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.StringUtils;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.Difference;
-import org.custommonkey.xmlunit.DifferenceListener;
-import org.custommonkey.xmlunit.XMLAssert;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
+import org.xmlunit.builder.DiffBuilder;
+import org.xmlunit.diff.Comparison;
+import org.xmlunit.diff.ComparisonResult;
+import org.xmlunit.diff.Diff;
+import org.xmlunit.diff.DifferenceEvaluator;
 
 /**
  * Base class for some release tests.
@@ -291,68 +293,54 @@ public abstract class AbstractReleaseTestCase
         File actualFile = project.getFile();
         File expectedFile = new File( actualFile.getParentFile(), "expected-pom" + expectedFileSuffix + ".xml" );
 
-        comparePomFiles( expectedFile, actualFile, normalizeLineEndings );
+        comparePomFiles( expectedFile, actualFile, normalizeLineEndings, false );
     }
 
     protected void comparePomFiles( File expectedFile, File actualFile )
         throws IOException
     {
-        comparePomFiles( expectedFile, actualFile, true );
+        comparePomFiles( expectedFile, actualFile, true, false );
     }
 
-    protected void comparePomFiles( File expectedFile, File actualFile, boolean normalizeLineEndings )
+    protected void comparePomFiles( File expectedFile, File actualFile, boolean normalizeLineEndings, boolean ignoreComments )
         throws IOException
     {
-        Reader expected = null;
-        Reader actual = null;
-        try
+        StringBuffer sb = new StringBuffer( "Check the transformed POM " + actualFile );
+        sb.append( SystemUtils.LINE_SEPARATOR );
+        
+        final String remoteRepositoryURL = getRemoteRepositoryURL();
+        
+        DiffBuilder diffBuilder = DiffBuilder.compare( expectedFile ).withTest( actualFile );
+        if ( normalizeLineEndings )
         {
-            expected = ReaderFactory.newXmlReader( expectedFile );
-            actual = ReaderFactory.newXmlReader( actualFile );
-            
-            StringBuffer sb = new StringBuffer( "Check the transformed POM " + actualFile );
-            sb.append( SystemUtils.LINE_SEPARATOR );
-            
-            final String remoteRepositoryURL = getRemoteRepositoryURL();
-
-            XMLUnit.setNormalizeWhitespace( true );
-            
-            Diff diff = XMLUnit.compareXML( expected, actual );
-            
-            diff.overrideDifferenceListener( new DifferenceListener()
+            diffBuilder = diffBuilder.normalizeWhitespace();
+        }
+        if ( ignoreComments )
+        {
+            diffBuilder.ignoreComments();
+        }
+        diffBuilder.withDifferenceEvaluator( new DifferenceEvaluator()
+        {
+            @Override
+            public ComparisonResult evaluate( Comparison comparison, ComparisonResult outcome )
             {
-                
-                public void skippedComparison( Node arg0, Node arg1 )
+                if ( "${remoterepo}".equals( comparison.getControlDetails().getValue() ) &&
+                                remoteRepositoryURL.equals( comparison.getTestDetails().getValue() ) )
                 {
-                    //do nothing
+                    return ComparisonResult.EQUAL;
                 }
-                
-                public int differenceFound( Difference difference )
+                else 
                 {
-                    if ( "${remoterepo}".equals( difference.getControlNodeDetail().getValue() ) &&
-                                    remoteRepositoryURL.equals( difference.getTestNodeDetail().getValue() ) )
-                    {
-                        return DifferenceListener.RETURN_IGNORE_DIFFERENCE_NODES_IDENTICAL;
-                    }
-                    else 
-                    {
-                        return DifferenceListener.RETURN_ACCEPT_DIFFERENCE;
-                    }
+                    return outcome;
                 }
-            });
-            diff.appendMessage( sb );
-            
-            XMLAssert.assertXMLIdentical( diff, true );
-        }
-        catch ( SAXException e )
-        {
-            fail( e.getMessage() );
-        }
-        finally 
-        {
-            IOUtil.close( expected );
-            IOUtil.close( actual );
-        }
+            }
+        } );
+        
+        Diff diff = diffBuilder.build();
+
+        sb.append( diff.toString() );
+        
+        assertFalse( sb.toString(), diff.hasDifferences() );
     }
 
     private String getRemoteRepositoryURL()

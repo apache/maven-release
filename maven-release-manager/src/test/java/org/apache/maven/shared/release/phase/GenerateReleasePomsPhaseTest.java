@@ -309,6 +309,6 @@ public class GenerateReleasePomsPhaseTest
         File expectedFile =
             new File( actualFile.getParentFile(), "expected-release-pom" + expectedFileSuffix + ".xml" );
 
-        comparePomFiles( expectedFile, actualFile, normalizeLineEndings );
+        comparePomFiles( expectedFile, actualFile, normalizeLineEndings, true );
     }
 }

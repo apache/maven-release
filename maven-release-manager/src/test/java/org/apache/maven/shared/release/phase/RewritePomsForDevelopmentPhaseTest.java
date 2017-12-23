@@ -401,7 +401,7 @@ public class RewritePomsForDevelopmentPhaseTest
             File actualFile = new File( pomFile.getParentFile(), pomFile.getName() + ".next" );
             File expectedFile = new File( actualFile.getParentFile(), "expected-pom.xml" );
 
-            comparePomFiles( expectedFile, actualFile, true );
+            comparePomFiles( expectedFile, actualFile, true, false );
         }
     }
 
