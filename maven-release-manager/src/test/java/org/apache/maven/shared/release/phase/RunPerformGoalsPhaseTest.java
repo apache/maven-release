@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.isNull;
@@ -28,19 +29,31 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
+import org.apache.maven.scm.CommandParameters;
+import org.apache.maven.scm.ScmFile;
+import org.apache.maven.scm.ScmFileSet;
+import org.apache.maven.scm.ScmTag;
+import org.apache.maven.scm.command.checkout.CheckOutScmResult;
+import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.scm.manager.ScmManagerStub;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
+import org.apache.maven.shared.release.stubs.MavenExecutorWrapper;
 import org.junit.Test;
 
 /**
@@ -51,6 +64,10 @@ public class RunPerformGoalsPhaseTest
     extends PlexusJUnit4TestCase
 {
     private RunPerformGoalsPhase phase;
+    
+    private MavenExecutorWrapper mavenExecutorWrapper;
+    
+    private ReleaseEnvironment releaseEnvironment;
 
     public void setUp()
         throws Exception
@@ -58,6 +75,11 @@ public class RunPerformGoalsPhaseTest
         super.setUp();
 
         phase = (RunPerformGoalsPhase) lookup( ReleasePhase.ROLE, "run-perform-goals" );
+        
+        mavenExecutorWrapper = (MavenExecutorWrapper) lookup( "org.apache.maven.shared.release.exec.MavenExecutor", "wrapper" );
+        
+        releaseEnvironment = new DefaultReleaseEnvironment();
+        releaseEnvironment.setMavenExecutorId( "wrapper" );
     }
 
     @Test
@@ -72,6 +94,8 @@ public class RunPerformGoalsPhaseTest
         config.setCheckoutDirectory( testFile.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
+        
+        mavenExecutorWrapper.setMavenExecutor( mock );
 
         doThrow( new MavenExecutorException( "...", new Exception() ) ).when( mock ).executeGoals( eq( testFile ),
                                                                                                    eq( "goal1 goal2" ),
@@ -81,12 +105,12 @@ public class RunPerformGoalsPhaseTest
                                                                                                    isNull( String.class ),
                                                                                                    isA( ReleaseResult.class ) );
 
-        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+        mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
         try
         {
-            phase.execute( config, (Settings) null, (List<MavenProject>) null );
+            phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
 
             fail( "Should have thrown an exception" );
         }
@@ -118,9 +142,9 @@ public class RunPerformGoalsPhaseTest
         
         MavenExecutor mock = mock( MavenExecutor.class );
         
-        phase.setMavenExecutor(ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+        mavenExecutorWrapper.setMavenExecutor( mock );
         
-        phase.execute( config, (Settings) null, (List<MavenProject>) null );
+        phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
         
         verify( mock ).executeGoals( eq( testFile ),
                                      eq( "goal1 goal2" ),
@@ -131,5 +155,225 @@ public class RunPerformGoalsPhaseTest
                                      isA( ReleaseResult.class ) );
         
         verifyNoMoreInteractions( mock );
+    }
+    
+    public void testReleasePerformWithArgumentsNoReleaseProfile()
+                    throws Exception
+    {
+        // prepare
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        releaseDescriptor.setAdditionalArguments( "-Dmaven.test.skip=true" );
+        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        File checkoutDirectory = getTestFile( "target/checkout-directory" );
+        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+
+        MavenExecutor mock = mock( MavenExecutor.class );
+        mavenExecutorWrapper.setMavenExecutor( mock );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkOut( isA( ScmRepository.class ),
+                                        argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )))
+                                .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+
+        releaseDescriptor.setUseReleaseProfile( false );
+
+        // execute
+        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+
+        // verify
+        verify( mock ).executeGoals( eq( checkoutDirectory ),
+                                     eq( "goal1 goal2" ),
+                                     isA( ReleaseEnvironment.class ),
+                                     eq( true ),
+                                     eq( "-Dmaven.test.skip=true -f pom.xml" ),
+                                     isNull( String.class ),
+                                     isA( ReleaseResult.class ) );
+        verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
+                                            argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
+        verifyNoMoreInteractions( mock, scmProviderMock );
+    }
+    
+    public void testReleasePerform()
+                    throws Exception
+    {
+        // prepare
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        File checkoutDirectory = getTestFile( "target/checkout-directory" );
+        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+
+        MavenExecutor mock = mock( MavenExecutor.class );
+        mavenExecutorWrapper.setMavenExecutor( mock );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkOut( isA( ScmRepository.class ), 
+                                        argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )) )
+            .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+
+        // execute
+        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+
+        // verify
+        verify( mock ).executeGoals( eq( checkoutDirectory ), 
+                                     eq( "goal1 goal2" ), 
+                                     isA( ReleaseEnvironment.class ), 
+                                     eq( true ), 
+                                     eq( "-DperformRelease=true -f pom.xml" ),
+                                     isNull( String.class ), 
+                                     isA( ReleaseResult.class ) );
+        verify( scmProviderMock ).checkOut( isA( ScmRepository.class ), 
+                                            argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
+        verifyNoMoreInteractions( mock, scmProviderMock );
+    }
+    
+    public void testReleasePerformNoReleaseProfile()
+                    throws Exception
+    {
+        // prepare
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        File checkoutDirectory = getTestFile( "target/checkout-directory" );
+        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+
+        MavenExecutor mock = mock( MavenExecutor.class );
+        mavenExecutorWrapper.setMavenExecutor( mock );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkOut( isA( ScmRepository.class ), 
+                                        argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ), 
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )) )
+            .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+
+        releaseDescriptor.setUseReleaseProfile( false );
+
+        // execute
+        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+
+        // verify
+        verify( mock ).executeGoals( eq( checkoutDirectory ), 
+                                     eq( "goal1 goal2" ), 
+                                     isA( ReleaseEnvironment.class ), 
+                                     eq( true ),
+                                     eq( "-f pom.xml" ),
+                                     isNull( String.class ), 
+                                     isA( ReleaseResult.class ) );
+        verify( scmProviderMock ).checkOut( isA( ScmRepository.class ), 
+                                            argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ), 
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
+        verifyNoMoreInteractions( mock, scmProviderMock );
+    }
+    
+    public void testReleasePerformWithArguments()
+                    throws Exception
+    {
+        // prepare
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        releaseDescriptor.setAdditionalArguments( "-Dmaven.test.skip=true" );
+        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        File checkoutDirectory = getTestFile( "target/checkout-directory" );
+        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+
+        MavenExecutor mock = mock( MavenExecutor.class );
+        mavenExecutorWrapper.setMavenExecutor( mock );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkOut( isA( ScmRepository.class ),
+                                        argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )) )
+            .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+
+        // execute
+        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+
+        // verify
+        verify( mock ).executeGoals( eq( checkoutDirectory ),
+                                     eq( "goal1 goal2" ),
+                                     isA( ReleaseEnvironment.class),
+                                     eq( true),
+                                     eq( "-Dmaven.test.skip=true -DperformRelease=true -f pom.xml" ),
+                                     isNull( String.class ),
+                                     isA( ReleaseResult.class ) );
+        verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
+                                            argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
+        verifyNoMoreInteractions( mock, scmProviderMock );
+    }
+    
+    public void testReleasePerformWithReleasePropertiesCompleted()
+                    throws Exception
+    {
+        // prepare
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setScmSourceUrl( "scm-url" );
+        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        File checkoutDirectory = getTestFile( "target/checkout-directory" );
+        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+
+        MavenExecutor mock = mock( MavenExecutor.class );
+        mavenExecutorWrapper.setMavenExecutor( mock );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkOut( isA( ScmRepository.class ),
+                                        argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                        isA( ScmTag.class ),
+                                        isA( CommandParameters.class )) )
+            .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+
+        releaseDescriptor.setCompletedPhase( "end-release" );
+
+        // execute
+        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+
+        // verify
+        verify( mock ).executeGoals( eq( checkoutDirectory ),
+                                     eq( "goal1 goal2" ),
+                                     isA( ReleaseEnvironment.class ),
+                                     eq( true ), 
+                                     eq( "-DperformRelease=true -f pom.xml" ), 
+                                     isNull( String.class ),
+                                     isA( ReleaseResult.class ) );
+        verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
+                                            argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
+                                            isA( ScmTag.class ),
+                                            isA( CommandParameters.class ));
+        verifyNoMoreInteractions( mock, scmProviderMock );
+    }
+    
+    private static List<MavenProject> createReactorProjects()
+    {
+        MavenProject project = new MavenProject();
+        project.setFile( getTestFile( "target/dummy-project/pom.xml" ) );
+        return Collections.singletonList( project );
     }
 }

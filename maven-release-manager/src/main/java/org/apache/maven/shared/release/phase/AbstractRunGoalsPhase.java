@@ -20,7 +20,6 @@ package org.apache.maven.shared.release.phase;
  */
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -94,24 +93,6 @@ public abstract class AbstractRunGoalsPhase
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
-    }
-
-    /**
-     * @deprecated Use {@link AbstractRunGoalsPhase#setMavenExecutor(String, MavenExecutor)} instead.
-     */
-    public void setMavenExecutor( MavenExecutor mavenExecutor )
-    {
-        setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mavenExecutor );
-    }
-
-    public void setMavenExecutor( String id, MavenExecutor executor )
-    {
-        if ( mavenExecutors == null )
-        {
-            mavenExecutors = new HashMap<String, MavenExecutor>();
-        }
-
-        mavenExecutors.put( id, executor );
     }
 
     protected abstract String getGoals( ReleaseDescriptor releaseDescriptor );

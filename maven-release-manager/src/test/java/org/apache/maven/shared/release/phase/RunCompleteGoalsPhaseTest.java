@@ -33,7 +33,6 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -43,6 +42,7 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
+import org.apache.maven.shared.release.stubs.MavenExecutorWrapper;
 import org.junit.Test;
 
 /**
@@ -55,12 +55,21 @@ public class RunCompleteGoalsPhaseTest
 {
     private RunCompleteGoalsPhase phase;
 
+    private MavenExecutorWrapper mavenExecutorWrapper;
+    
+    private ReleaseEnvironment releaseEnvironment;
+
     public void setUp()
         throws Exception
     {
         super.setUp();
 
         phase = (RunCompleteGoalsPhase) lookup( ReleasePhase.ROLE, "run-completion-goals" );
+
+        mavenExecutorWrapper = (MavenExecutorWrapper) lookup( "org.apache.maven.shared.release.exec.MavenExecutor", "wrapper" );
+
+        releaseEnvironment = new DefaultReleaseEnvironment();
+        releaseEnvironment.setMavenExecutorId( "wrapper" );
     }
 
     @Test
@@ -76,10 +85,10 @@ public class RunCompleteGoalsPhaseTest
 
         MavenExecutor mock = mock( MavenExecutor.class );
 
-        phase.setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+        mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
-        phase.execute( config, (Settings) null, (List<MavenProject>) null );
+        phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
 
         // verify
         verify( mock ).executeGoals( eq( testFile ), eq( "clean integration-test" ), isA( ReleaseEnvironment.class ),
@@ -101,10 +110,10 @@ public class RunCompleteGoalsPhaseTest
 
         MavenExecutor mock = mock( MavenExecutor.class );
 
-        phase.setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+        mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
-        phase.simulate( config, new DefaultReleaseEnvironment(), null );
+        phase.simulate( config, releaseEnvironment, null );
 
         // verify
         verify( mock ).executeGoals( eq( testFile ), eq( "clean integration-test" ), isA( ReleaseEnvironment.class ),
@@ -134,12 +143,12 @@ public class RunCompleteGoalsPhaseTest
                                                                                             isNull( String.class ),
                                                                                             isA( ReleaseResult.class ) );
 
-        phase.setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+        mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
         try
         {
-            phase.execute( config, (Settings) null, (List<MavenProject>) null );
+            phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
 
             fail( "Should have thrown an exception" );
         }
@@ -176,12 +185,12 @@ public class RunCompleteGoalsPhaseTest
                                                                                             isNull( String.class ),
                                                                                             isA( ReleaseResult.class ) );
 
-        phase.setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+        mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
         try
         {
-            phase.simulate( config, new DefaultReleaseEnvironment(), null );
+            phase.simulate( config, releaseEnvironment, null );
 
             fail( "Should have thrown an exception" );
         }
@@ -210,10 +219,10 @@ public class RunCompleteGoalsPhaseTest
 
         MavenExecutor mock = mock( MavenExecutor.class );
 
-        phase.setMavenExecutor( ReleaseEnvironment.DEFAULT_MAVEN_EXECUTOR_ID, mock );
+        mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
-        phase.execute( config, (Settings) null, (List<MavenProject>) null );
+        phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
 
         // verify
         // never invoke mock

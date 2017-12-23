@@ -28,5 +28,10 @@
         <threshold>ERROR</threshold>
       </configuration>
     </component>
+    <component>
+      <role>org.apache.maven.shared.release.exec.MavenExecutor</role>
+      <role-hint>wrapper</role-hint>
+      <implementation>org.apache.maven.shared.release.stubs.MavenExecutorWrapper</implementation>
+    </component>    
   </components>
 </component-set>
