@@ -47,7 +47,6 @@ import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -56,12 +55,11 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
+import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Test the release or branch preparation SCM commit phase.
@@ -307,13 +305,8 @@ public class ScmCommitPreparationPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManager scmManagerMock = mock( ScmManager.class );
-        when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
-
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
-        configurator.setScmManager( scmManagerMock );
-
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
         // execute
         try
         {
@@ -323,12 +316,9 @@ public class ScmCommitPreparationPhaseTest
         }
         catch ( ReleaseExecutionException e )
         {
+            // verify
             assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
-
-        // verify
-        verify( scmManagerMock ).makeScmRepository( "scm-url" );
-        verifyNoMoreInteractions( scmManagerMock );
     }
 
     @Test
@@ -339,12 +329,8 @@ public class ScmCommitPreparationPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManager scmManagerMock = mock( ScmManager.class );
-        when( scmManagerMock.makeScmRepository( "scm-url" ) ).thenThrow( new ScmRepositoryException( "..." ) );
-
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
-        configurator.setScmManager( scmManagerMock );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
         // execute
         try
@@ -355,12 +341,9 @@ public class ScmCommitPreparationPhaseTest
         }
         catch ( ReleaseScmRepositoryException e )
         {
+            // verify
             assertNull( "Check no additional cause", e.getCause() );
         }
-
-        // verify
-        verify( scmManagerMock ).makeScmRepository( "scm-url" );
-        verifyNoMoreInteractions( scmManagerMock );
     }
 
     @Test

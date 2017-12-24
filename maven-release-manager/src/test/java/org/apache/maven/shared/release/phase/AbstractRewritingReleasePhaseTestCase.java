@@ -24,9 +24,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,7 +36,6 @@ import java.util.List;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -48,13 +45,13 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.transform.jdom.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Base class with tests for rewriting POMs.
@@ -554,14 +551,14 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
+        config.setScmSourceUrl( "scm:svn:fail" );
         mapNextVersion( config, "groupId:artifactId" );
-
-        ScmManager scmManagerMock = mock( ScmManager.class );
-        when( scmManagerMock.makeScmRepository( config.getScmSourceUrl() ) ).thenThrow( new ScmRepositoryException( "..." ) );
-
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
-        configurator.setScmManager( scmManagerMock );
+        
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        if ( scmManager instanceof ScmManagerStub )
+        {
+            ((ScmManagerStub) scmManager ).setException( new ScmRepositoryException( "..." ) );
+        }
 
         try
         {
@@ -573,9 +570,6 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         {
             assertNull( "Check no additional cause", e.getCause() );
         }
-
-        verify( scmManagerMock ).makeScmRepository( config.getScmSourceUrl() );
-        verifyNoMoreInteractions( scmManagerMock );
     }
 
     @Test
@@ -586,14 +580,14 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.setScmUseEditMode( true );
+        config.setScmSourceUrl( "scm:fail:path" );
         mapNextVersion( config, "groupId:artifactId" );
-
-        ScmManager scmManagerMock = mock( ScmManager.class );
-        when( scmManagerMock.makeScmRepository( config.getScmSourceUrl() ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
-
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
-        configurator.setScmManager( scmManagerMock );
+        
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        if ( scmManager instanceof ScmManagerStub )
+        {
+            ((ScmManagerStub) scmManager ).setException( new NoSuchScmProviderException( "..." ) );;
+        }
 
         // execute
         try
@@ -604,12 +598,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         }
         catch ( ReleaseExecutionException e )
         {
+            // verify
             assertEquals( "Check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
-
-        // verify
-        verify( scmManagerMock ).makeScmRepository( config.getScmSourceUrl() );
-        verifyNoMoreInteractions( scmManagerMock );
     }
 
     @Test

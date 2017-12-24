@@ -23,6 +23,11 @@
       <role>org.apache.maven.scm.manager.ScmManager</role>
       <implementation>org.apache.maven.shared.release.stubs.ScmManagerStub</implementation>
     </component>
+    <component>
+      <role>org.apache.maven.shared.release.policy.naming.NamingPolicy</role>
+      <role-hint>stub</role-hint>
+      <implementation>org.apache.maven.shared.release.stubs.NamingPolicyStub</implementation>
+    </component>
     <!-- Turn off info messages -->
     <component>
       <role>org.codehaus.plexus.logging.LoggerManager</role>

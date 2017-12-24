@@ -38,13 +38,9 @@ import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.policy.naming.NamingPolicy;
-import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
-import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Test the variable input phase.
@@ -317,12 +313,7 @@ public class BranchInputVariablesPhaseTest
         releaseDescriptor.setProjectNamingPolicyId( "stub" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
         
-        NamingPolicy stubPolicy = mock( NamingPolicy.class );
-        when(stubPolicy.getName( isA(NamingPolicyRequest.class) )).thenReturn( new NamingPolicyResult().setName( "STUB" ) );
-        
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
-        
-        Whitebox.setInternalState( phase, "namingPolicies", Collections.singletonMap( "stub", stubPolicy ) );
         
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
         

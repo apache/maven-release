@@ -23,7 +23,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -44,7 +43,6 @@ import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.command.status.StatusScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -55,11 +53,10 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
+import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Test the SCM modification check phase.
@@ -88,12 +85,8 @@ public class ScmCheckModificationsPhaseTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        ScmManager scmManagerMock = mock( ScmManager.class );
-        when( scmManagerMock.makeScmRepository( eq( "scm-url" ) ) ).thenThrow( new NoSuchScmProviderException( "..." ) );
-
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
-        configurator.setScmManager( scmManagerMock );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
 
         // execute
         try
@@ -115,12 +108,9 @@ public class ScmCheckModificationsPhaseTest
         }
         catch ( ReleaseExecutionException e )
         {
+            // verify
             assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
         }
-
-        // verify
-        verify( scmManagerMock, times( 2 ) ).makeScmRepository( eq( "scm-url" ) );
-        verifyNoMoreInteractions( scmManagerMock );
     }
 
     @Test
@@ -132,12 +122,8 @@ public class ScmCheckModificationsPhaseTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        ScmManager scmManagerMock = mock( ScmManager.class );
-        when( scmManagerMock.makeScmRepository( eq( "scm-url" ) ) ).thenThrow( new ScmRepositoryException( "..." ) );
-
-        DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
-        configurator.setScmManager( scmManagerMock );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
         // execute
         try
@@ -161,10 +147,6 @@ public class ScmCheckModificationsPhaseTest
         {
             assertNull( "Check no additional cause", e.getCause() );
         }
-
-        // verify
-        verify( scmManagerMock, times( 2 ) ).makeScmRepository( eq( "scm-url" ) );
-        verifyNoMoreInteractions( scmManagerMock );
     }
 
     @Test
