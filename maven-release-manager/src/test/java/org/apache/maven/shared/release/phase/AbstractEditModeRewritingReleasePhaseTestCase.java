@@ -45,8 +45,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.junit.Test;
-import org.mockito.internal.util.reflection.Whitebox;
 
 /**
  * Base class with tests for rewriting POMs with edit mode.
@@ -86,7 +86,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
 
         ScmManagerStub scmManager = new ScmManagerStub();
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE, "default" );
         configurator.setScmManager( scmManager );
 
         ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl( config.getScmSourceUrl() );
@@ -120,7 +120,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
 
         ScmManagerStub scmManager = new ScmManagerStub();
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) Whitebox.getInternalState( phase, "scmRepositoryConfigurator" );
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE, "default" );
         configurator.setScmManager( scmManager );
         scmManager.setScmProvider( scmProviderMock );
 
