@@ -29,7 +29,7 @@
       <implementation>org.codehaus.plexus.logging.console.ConsoleLoggerManager</implementation>
       <lifecycle-handler>basic</lifecycle-handler>
       <configuration>
-        <threshold>ERROR</threshold>
+        <threshold>FATAL</threshold>
       </configuration>
     </component>
   </components>
