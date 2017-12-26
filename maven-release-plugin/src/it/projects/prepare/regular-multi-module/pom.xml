@@ -29,6 +29,11 @@
     <connection>scm:svn:file://localhost/${project.file.parentFile.parentFile}/target/svnroot/flat-multi-module/trunk/</connection>    
     <developerConnection>scm:svn:file://localhost/${project.file.parentFile.parentFile}/target/svnroot/flat-multi-module/trunk/</developerConnection>
   </scm>
+  
+  <properties>
+    <maven.compiler.source>@maven.compiler.source@</maven.compiler.source>
+    <maven.compiler.target>@maven.compiler.target@</maven.compiler.target>
+  </properties>
   <dependencies>
     <dependency>
       <groupId>junit</groupId>

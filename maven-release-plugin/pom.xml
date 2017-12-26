@@ -167,6 +167,8 @@
           <debug>true</debug>
           <properties>
             <allowReleasePluginSnapshot>true</allowReleasePluginSnapshot>
+            <maven.compiler.source>${maven.compiler.source}</maven.compiler.source>
+            <maven.compiler.target>${maven.compiler.target}</maven.compiler.target>
             <dryRun>true</dryRun>
           </properties>
         </configuration>

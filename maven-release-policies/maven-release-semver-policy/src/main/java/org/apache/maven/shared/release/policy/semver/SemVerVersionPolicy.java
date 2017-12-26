@@ -28,6 +28,11 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.semver.Version;
 import org.semver.Version.Element;
 
+/**
+ * 
+ * Uses SemVer implementation to increase minor element when resolving the development version
+ *
+ */
 @Component(
            role = VersionPolicy.class,
            hint = "SemVerVersionPolicy",
@@ -44,7 +49,7 @@ public class SemVerVersionPolicy implements VersionPolicy
         {
             version = Version.parse( request.getVersion() );
         }
-        catch( IllegalArgumentException e )
+        catch ( IllegalArgumentException e )
         {
             throw new VersionParseException( e.getMessage() );
         }
@@ -62,7 +67,7 @@ public class SemVerVersionPolicy implements VersionPolicy
         {
             version = Version.parse( request.getVersion() );
         }
-        catch( IllegalArgumentException e )
+        catch ( IllegalArgumentException e )
         {
             throw new VersionParseException( e.getMessage() );
         }

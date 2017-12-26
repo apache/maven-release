@@ -22,12 +22,14 @@ package org.apache.maven.shared.release.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -250,14 +252,14 @@ public class ReleaseUtil
         // MRELEASE-663
         // For Windows is does matter if basedir ends with a file-separator or not to be able to compare.
         // Using the parent of a dummy file makes it possible to compare them OS-independent
-        File workingDirectoryFile = new File( workingDirectory, ".tmp" ).getParentFile();
-        File basedirFile = new File( basedir, ".tmp" ).getParentFile();
+        Path workingDirectoryFile = Paths.get( workingDirectory, ".tmp" ).getParent();
+        Path basedirFile = Paths.get( basedir, ".tmp" ).getParent();
 
         if ( !workingDirectoryFile.equals( basedirFile ) && workingDirectory.startsWith( basedir ) )
         {
             do
             {
-                workingDirectoryFile = workingDirectoryFile.getParentFile();
+                workingDirectoryFile = workingDirectoryFile.getParent();
                 num++;
             }
             while ( !workingDirectoryFile.equals( basedirFile ) );
