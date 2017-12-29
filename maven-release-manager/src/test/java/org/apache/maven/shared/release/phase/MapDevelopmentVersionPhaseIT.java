@@ -19,29 +19,19 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.PlexusTestCase;
 
 public class MapDevelopmentVersionPhaseIT
     extends PlexusTestCase
 {
     private MapVersionsPhase mapVersionsPhase;
-
-    @Override
-    protected InputStream getCustomConfiguration()
-        throws Exception
-    {
-        return MapVersionsPhase.class.getResourceAsStream( "/META-INF/plexus/components.xml" );
-    }
 
     @Override
     protected void setUp()
