@@ -24,6 +24,10 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,8 +65,6 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.context.ContextException;
 import org.codehaus.plexus.context.DefaultContext;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
-import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -155,9 +157,13 @@ public abstract class AbstractReleaseTestCase
     protected List<MavenProject> createReactorProjects( String path, String targetPath, String subpath )
         throws Exception
     {
-        File testFile = getTestFile( "target/test-classes/projects/" + path + subpath + "/pom.xml" );
-        Stack<File> projectFiles = new Stack<File>();
-        projectFiles.push( testFile );
+        final Path testCaseRootFrom = Paths.get( getBasedir(), "src/test/resources" ).resolve( Paths.get( "projects", path, subpath ) ) ;
+
+        final Path testCaseRootTo = Paths.get( getBasedir(), "target/test-classes" ).resolve( Paths.get( "projects", targetPath, subpath ) ) ;
+
+        Stack<Path> projectFiles = new Stack<>();
+
+        projectFiles.push( Paths.get( "pom.xml" ) );
 
         List<DefaultArtifactRepository> repos =
             Collections.singletonList( new DefaultArtifactRepository( "central", getRemoteRepositoryURL(), new DefaultRepositoryLayout() ) );
@@ -176,23 +182,32 @@ public abstract class AbstractReleaseTestCase
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
         while ( !projectFiles.isEmpty() )
         {
-            File file = (File) projectFiles.pop();
+            Path projectPath = projectFiles.pop();
+
+            Path oldFile = testCaseRootFrom.resolve( projectPath );
+
+            Path newFile = testCaseRootTo.resolve( projectPath );
 
             // Recopy the test resources since they are modified in some tests
-            String filePath = file.getPath();
-            int index = filePath.indexOf( "test-classes" ) + "test-classes".length() + 1;
-            filePath = filePath.substring( index ).replace( '\\', '/' );
+            Files.copy( oldFile, newFile, StandardCopyOption.REPLACE_EXISTING );
 
-            File newFile = getTestFile( "target/test-classes/" + StringUtils.replace( filePath, path, targetPath ) );
-            FileUtils.copyFile( getTestFile( "src/test/resources/" + filePath ), newFile );
-
-            MavenProject project = projectBuilder.build( newFile, localRepository, profileManager );
+            MavenProject project = projectBuilder.build( newFile.toFile(), localRepository, profileManager );
 
             for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
             {
                 String module = (String) i.next();
 
-                projectFiles.push( new File( file.getParentFile(), module + "/pom.xml" ) );
+                Path modulePath;
+
+                if ( projectPath.getParent() == null )
+                {
+                    modulePath = Paths.get( module, "pom.xml" );
+                }
+                else
+                {
+                    modulePath = projectPath.getParent().resolve( module ).resolve( "pom.xml" );
+                }
+                projectFiles.push( modulePath );
             }
 
             reactorProjects.add( project );
