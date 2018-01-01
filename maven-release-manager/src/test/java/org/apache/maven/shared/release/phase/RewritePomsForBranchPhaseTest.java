@@ -400,7 +400,7 @@ public class RewritePomsForBranchPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects =
-            createReactorProjects( "rewrite-for-branch/pom-with-parent-flat", "/root-project" );
+            createReactorProjects( "rewrite-for-branch/pom-with-parent-flat", "root-project" );
         ReleaseDescriptor config = createConfigurationForPomWithParentAlternateNextVersion( reactorProjects );
 
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );

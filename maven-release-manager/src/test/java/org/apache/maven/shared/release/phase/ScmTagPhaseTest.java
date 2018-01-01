@@ -165,7 +165,7 @@ public class ScmTagPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects =
-            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
+            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "root-project" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         descriptor.setScmSourceUrl( rootProject.getScm().getConnection() );

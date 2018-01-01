@@ -93,7 +93,7 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
-        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "single-pom" );
 
         // execute
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -135,7 +135,7 @@ public class CheckoutProjectFromScmTest
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
         List<MavenProject> reactorProjects =
-            createReactorProjects( "scm-commit", "/multimodule-with-deep-subprojects" );
+            createReactorProjects( "scm-commit", "multimodule-with-deep-subprojects" );
 
         // execute
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -177,7 +177,7 @@ public class CheckoutProjectFromScmTest
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
         List<MavenProject> reactorProjects =
-            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "/root-project" );
+            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "root-project" );
 
         // execute
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -205,7 +205,7 @@ public class CheckoutProjectFromScmTest
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
 
-        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "single-pom" );
         
         // execute
         try
@@ -234,7 +234,7 @@ public class CheckoutProjectFromScmTest
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
-        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "/single-pom" );
+        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "single-pom" );
         
         // execute
         try
