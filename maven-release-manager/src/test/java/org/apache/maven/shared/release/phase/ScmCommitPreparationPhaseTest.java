@@ -132,7 +132,8 @@ public class ScmCommitPreparationPhaseTest
     {
         // prepare
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms" );
+        String dir = "scm-commit/multiple-poms";
+        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
@@ -459,7 +460,8 @@ public class ScmCommitPreparationPhaseTest
     private List<MavenProject> createReactorProjects()
         throws Exception
     {
-        return createReactorProjects( "scm-commit/", "single-pom" );
+        String dir = "scm-commit/single-pom";
+        return createReactorProjects( dir, dir, null );
     }
 
     private static ReleaseDescriptor createReleaseDescriptor()

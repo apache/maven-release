@@ -93,7 +93,8 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
-        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "single-pom" );
+        String dir = "scm-commit/single-pom";
+        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
 
         // execute
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -134,8 +135,9 @@ public class CheckoutProjectFromScmTest
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
+        String dir = "scm-commit/multimodule-with-deep-subprojects";
         List<MavenProject> reactorProjects =
-            createReactorProjects( "scm-commit", "multimodule-with-deep-subprojects" );
+            createReactorProjects( dir, dir, null );
 
         // execute
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -205,7 +207,8 @@ public class CheckoutProjectFromScmTest
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
 
-        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "single-pom" );
+        String dir = "scm-commit/single-pom";  
+        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
         
         // execute
         try
@@ -234,7 +237,8 @@ public class CheckoutProjectFromScmTest
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
-        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit", "single-pom" );
+        String dir = "scm-commit/single-pom";  
+        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
         
         // execute
         try

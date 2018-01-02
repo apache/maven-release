@@ -32,6 +32,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -1216,7 +1217,8 @@ public class CheckDependencySnapshotsPhaseTest
     private List<MavenProject> createDescriptorFromProjects( String path )
         throws Exception
     {
-        return createReactorProjects( "check-dependencies/", path );
+        String dir = "check-dependencies/" + Objects.toString( path, "" );
+        return createReactorProjects( dir, dir, null );
     }
 
     private Prompter createNoMockPrompter()

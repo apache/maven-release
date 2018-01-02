@@ -121,8 +121,9 @@ public class ScmBranchPhaseTest
         throws Exception
     {
         // prepare
+        String dir = "scm-commit/multimodule-with-deep-subprojects";
         List<MavenProject> reactorProjects =
-            createReactorProjects( "scm-commit/", "multimodule-with-deep-subprojects" );
+            createReactorProjects( dir, dir, null );
         String sourceUrl = "http://svn.example.com/repos/project/trunk/";
         String scmUrl = "scm:svn:" + sourceUrl;
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
@@ -206,7 +207,8 @@ public class ScmBranchPhaseTest
     {
         // prepare
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        List<MavenProject> reactorProjects = createReactorProjects( "scm-commit/", "multiple-poms" );
+        String dir = "scm-commit/multiple-poms";
+        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
         descriptor.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         descriptor.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
@@ -407,7 +409,8 @@ public class ScmBranchPhaseTest
     private List<MavenProject> createReactorProjects()
         throws Exception
     {
-        return createReactorProjects( "scm-commit/", "single-pom" );
+        String dir = "scm-commit/single-pom";
+        return createReactorProjects( dir, dir, null );
     }
 
     private static ReleaseDescriptor createReleaseDescriptor()

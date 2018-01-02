@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -60,7 +61,8 @@ public class RewritePomsForReleasePhaseTest
     protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
-        return createReactorProjects( "rewrite-for-release/", path );
+        String dir = "rewrite-for-release/" + Objects.toString( path, "" );
+        return createReactorProjects( dir, dir, null );
     }
 
     protected String readTestProjectFile( String fileName )

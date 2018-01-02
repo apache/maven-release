@@ -171,7 +171,8 @@ public class ScmCommitDevelopmentPhaseTest
     private List<MavenProject> createReactorProjects()
         throws Exception
     {
-        return createReactorProjects( "scm-commit/", "single-pom" );
+        String dir = "scm-commit/single-pom";
+        return createReactorProjects( dir, dir, null );
     }
 
     private static ReleaseDescriptor createReleaseDescriptor( MavenProject rootProject )

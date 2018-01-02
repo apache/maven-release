@@ -154,16 +154,30 @@ public abstract class AbstractReleaseTestCase
         return createReactorProjects( path, path, subpath );
     }
 
-    protected List<MavenProject> createReactorProjects( String path, String targetPath, String subpath )
+    /**
+     * 
+     * @param sourcePath sourceDirectory to copy from 
+     * @param targetPath targetDirectory to copy to
+     * @param executionRoot sub directory of targetPath in case the root pom.xml is not used (e.g. flat projects)
+     * @return all Maven projects
+     * @throws Exception if any occurs
+     */
+    protected List<MavenProject> createReactorProjects( String sourcePath, String targetPath, String executionRoot )
         throws Exception
     {
-        final Path testCaseRootFrom = Paths.get( getBasedir(), "src/test/resources" ).resolve( Paths.get( "projects", path, subpath ) ) ;
+        final Path testCaseRootFrom = Paths.get( getBasedir(), "src/test/resources" ).resolve( Paths.get( "projects", sourcePath ) ) ;
 
-        final Path testCaseRootTo = Paths.get( getBasedir(), "target/test-classes" ).resolve( Paths.get( "projects", targetPath, subpath ) ) ;
+        final Path testCaseRootTo = Paths.get( getBasedir(), "target/test-classes" ).resolve( Paths.get( "projects", targetPath ) ) ;
 
         Stack<Path> projectFiles = new Stack<>();
-
-        projectFiles.push( Paths.get( "pom.xml" ) );
+        if ( executionRoot == null )
+        {
+            projectFiles.push( Paths.get( "pom.xml" ) );
+        }
+        else
+        {
+            projectFiles.push( Paths.get( executionRoot, "pom.xml" ) );
+        }
 
         List<DefaultArtifactRepository> repos =
             Collections.singletonList( new DefaultArtifactRepository( "central", getRemoteRepositoryURL(), new DefaultRepositoryLayout() ) );

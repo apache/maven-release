@@ -228,10 +228,11 @@ public class RemoveReleasePomsPhaseTest
         verifyNoMoreInteractions( scmProviderMock );
     }
 
-    private List<MavenProject> createReactorProjects( String path )
+    protected List<MavenProject> createReactorProjects( String path )
         throws Exception
     {
-        return createReactorProjects( "remove-release-poms/", path );
+        String dir = "remove-release-poms/" + path;
+        return createReactorProjects( dir, dir, null );
     }
 
     private ReleaseDescriptor createReleaseDescriptor()

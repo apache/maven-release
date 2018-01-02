@@ -177,7 +177,8 @@ public class GenerateReleasePomsPhaseTest
     protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjects( "generate-release-poms/", path );
+        String dir = "generate-release-poms/" + path;
+        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
 
         scmProviderMock = mock( ScmProvider.class );
 
@@ -207,7 +208,8 @@ public class GenerateReleasePomsPhaseTest
     protected void verifyReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjects( "generate-release-poms/", path );
+        String dir = "generate-release-poms/"+ path;
+        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
 
         List<File> releasePoms = new ArrayList<File>();
 

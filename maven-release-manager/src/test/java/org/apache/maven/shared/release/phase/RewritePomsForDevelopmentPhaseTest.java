@@ -90,7 +90,7 @@ public class RewritePomsForDevelopmentPhaseTest
     private List<MavenProject> createReactorProjectsWhenSimulated( String name )
         throws Exception
     {
-        return createReactorProjects( "rewrite-for-release/", "rewrite-for-development/", name );
+        return createReactorProjects( "rewrite-for-release/" + name, "rewrite-for-development/" + name, null );
     }
 
     @Test
@@ -195,7 +195,8 @@ public class RewritePomsForDevelopmentPhaseTest
     protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
-        return createReactorProjects( "rewrite-for-development/", path );
+        String dir = "rewrite-for-development/" + path;
+        return createReactorProjects( dir, dir, null );
     }
 
     protected ReleaseDescriptor createDescriptorFromBasicPom( List<MavenProject> reactorProjects )
