@@ -24,10 +24,13 @@ import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -169,6 +172,26 @@ public abstract class AbstractReleaseTestCase
 
         final Path testCaseRootTo = Paths.get( getBasedir(), "target/test-classes" ).resolve( Paths.get( "projects", targetPath ) ) ;
 
+        // Recopy the test resources since they are modified in some tests
+        Files.walkFileTree( testCaseRootFrom, new SimpleFileVisitor<Path>() {
+
+            @Override
+            public FileVisitResult visitFile( Path file, BasicFileAttributes attrs )
+                throws IOException
+            {
+                Path relPath = testCaseRootFrom.relativize( file );
+
+                if ( !relPath.toFile().getName().startsWith( "expected-" ) )
+                {
+                  Files.createDirectories( testCaseRootTo.resolve( relPath ).getParent() );
+
+                  Files.copy( file, testCaseRootTo.resolve( relPath ), StandardCopyOption.REPLACE_EXISTING );
+                }
+
+                return FileVisitResult.CONTINUE;
+            }
+        });
+
         Stack<Path> projectFiles = new Stack<>();
         if ( executionRoot == null )
         {
@@ -179,8 +202,10 @@ public abstract class AbstractReleaseTestCase
             projectFiles.push( Paths.get( executionRoot, "pom.xml" ) );
         }
 
-        List<DefaultArtifactRepository> repos =
-            Collections.singletonList( new DefaultArtifactRepository( "central", getRemoteRepositoryURL(), new DefaultRepositoryLayout() ) );
+        List<ArtifactRepository> repos =
+            Collections.<ArtifactRepository>singletonList( new DefaultArtifactRepository( "central",
+                                                                                          getRemoteRepositoryURL(),
+                                                                                          new DefaultRepositoryLayout() ) );
 
         Repository repository = new Repository();
         repository.setId( "central" );
@@ -198,14 +223,9 @@ public abstract class AbstractReleaseTestCase
         {
             Path projectPath = projectFiles.pop();
 
-            Path oldFile = testCaseRootFrom.resolve( projectPath );
+            Path projectFile = testCaseRootTo.resolve( projectPath );
 
-            Path newFile = testCaseRootTo.resolve( projectPath );
-
-            // Recopy the test resources since they are modified in some tests
-            Files.copy( oldFile, newFile, StandardCopyOption.REPLACE_EXISTING );
-
-            MavenProject project = projectBuilder.build( newFile.toFile(), localRepository, profileManager );
+            MavenProject project = projectBuilder.build( projectFile.toFile(), localRepository, profileManager );
 
             for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
             {
@@ -226,7 +246,7 @@ public abstract class AbstractReleaseTestCase
 
             reactorProjects.add( project );
         }
-
+        
         ProjectSorter sorter = new ProjectSorter( reactorProjects );
 
         reactorProjects = sorter.getSortedProjects();
