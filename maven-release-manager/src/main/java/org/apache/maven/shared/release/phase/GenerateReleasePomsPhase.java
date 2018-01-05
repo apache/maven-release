@@ -292,9 +292,14 @@ public class GenerateReleasePomsPhase
         releaseModel.getBuild().setExtensions( createReleaseExtensions( originalVersions, mappedVersions,
                                                                         releaseProject ) );
 
-        pathTranslator.unalignFromBaseDirectory( releaseProject.getModel(), project.getFile().getParentFile() );
+        unalignFromBaseDirectory( releaseModel, project.getFile().getParentFile() );
 
         return releaseModel;
+    }
+    
+    private void unalignFromBaseDirectory( Model releaseModel, File baseDir )
+    {
+        pathTranslator.unalignFromBaseDirectory( releaseModel, baseDir );  
     }
     
     private String findOriginalFinalName( MavenProject project )
