@@ -42,7 +42,7 @@ under the License.
       </testResource>
     </testResources>
     <directory>${project.basedir}/target</directory>
-    <finalName>${project.artifactId}-${project.version}</finalName>
+    <finalName>subproject2-1.0</finalName>
   </build>
   <repositories>
     <repository>

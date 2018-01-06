@@ -234,27 +234,30 @@ public class GenerateReleasePomsPhase
             getNextVersion( mappedVersions, project.getGroupId(), project.getArtifactId(), projectVersion );
         releaseModel.setVersion( releaseVersion );
 
+        String originalFinalName = releaseModel.getBuild().getFinalName();
         // update final name if implicit
-        if ( !FINALNAME_EXPRESSION.equals( releaseModel.getBuild().getFinalName() ) )
+        if ( !FINALNAME_EXPRESSION.equals( originalFinalName ) )
         {
-            String originalFinalName = findOriginalFinalName( project );
+            originalFinalName = findOriginalFinalName( project );
             
             if ( originalFinalName == null )
             {
                 // as defined in super-pom
                 originalFinalName = FINALNAME_EXPRESSION;
             }
-            String finalName = ReleaseUtil.interpolate( originalFinalName, releaseModel );
-            
-            // still required?
-            if ( finalName.indexOf( Artifact.SNAPSHOT_VERSION ) != -1 )
-            {
-                throw new ReleaseFailureException( "Cannot reliably adjust the finalName of project: "
-                                + releaseProject.getId() );
-            }
-            
-            releaseModel.getBuild().setFinalName( finalName );
-        }        
+        }
+
+        // make finalName always explicit
+        String finalName = ReleaseUtil.interpolate( originalFinalName, releaseModel );
+        
+        // still required?
+        if ( finalName.indexOf( Artifact.SNAPSHOT_VERSION ) != -1 )
+        {
+            throw new ReleaseFailureException( "Cannot reliably adjust the finalName of project: "
+                            + releaseProject.getId() );
+        }
+        releaseModel.getBuild().setFinalName( finalName );
+        
 
         // update scm
         Scm scm = releaseModel.getScm();
