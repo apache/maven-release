@@ -72,7 +72,6 @@ under the License.
     </dependency>
   </dependencies>
   <reporting>
-    <excludeDefaults>false</excludeDefaults>
     <outputDirectory>target/site</outputDirectory>
   </reporting>
 </project>

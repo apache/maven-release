@@ -221,6 +221,16 @@ public class GenerateReleasePomsPhase
         MavenProject releaseProject = new MavenProject( project );
         Model releaseModel = releaseProject.getModel();
 
+        try
+        {
+            // Result of clone in Maven2 is incorrect, fix this value
+            releaseModel.getReporting().setExcludeDefaultsValue( project.getReporting().isExcludeDefaultsValue() );
+        }
+        catch ( NoSuchMethodError e )
+        {
+            // method replaced in Maven3 from Boolean to String
+        }
+
         // the release POM should reflect bits of these which were injected at build time...
         // we don't need these polluting the POM.
         releaseModel.setParent( null );

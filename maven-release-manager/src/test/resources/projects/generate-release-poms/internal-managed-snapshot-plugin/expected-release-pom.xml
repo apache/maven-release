@@ -70,7 +70,6 @@ under the License.
     </pluginRepository>
   </pluginRepositories>
   <reporting>
-    <excludeDefaults>false</excludeDefaults>
     <outputDirectory>target/site</outputDirectory>
   </reporting>
 </project>

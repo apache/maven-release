@@ -64,7 +64,6 @@ under the License.
     </pluginRepository>
   </pluginRepositories>
   <reporting>
-    <excludeDefaults>false</excludeDefaults>
     <outputDirectory>target/site</outputDirectory>
     <plugins>
       <plugin>
