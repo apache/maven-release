@@ -89,7 +89,7 @@ public class ScmCommitPreparationPhaseTest
     public void testResolvesCorrectBranchImplementation()
         throws Exception
     {
-        assertEquals( ScmCommitPreparationPhase.class, lookup( ReleasePhase.ROLE, "scm-commit-branch" ).getClass() );
+        assertTrue( lookup( ReleasePhase.ROLE, "scm-commit-branch" ) instanceof ScmCommitPreparationPhase );
     }
 
     @Test

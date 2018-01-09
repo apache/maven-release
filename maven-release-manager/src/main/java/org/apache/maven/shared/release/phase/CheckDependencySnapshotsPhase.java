@@ -34,7 +34,6 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -132,16 +131,9 @@ public class CheckDependencySnapshotsPhase
             }
         }
         
-        try
-        {
-            @SuppressWarnings( "unchecked" )
-            Set<Artifact> dependencyArtifacts = project.createArtifacts( artifactFactory, null, null );
-            checkDependencies( originalVersions, releaseDescriptor, artifactMap, dependencyArtifacts );
-        }
-        catch ( InvalidDependencyVersionException e )
-        {
-            throw new ReleaseExecutionException( "Failed to create dependency artifacts", e );
-        }
+        Set<Artifact> dependencyArtifacts = project.getArtifacts();
+        checkDependencies( originalVersions, releaseDescriptor, artifactMap, dependencyArtifacts );
+
         //@todo check dependencyManagement
 
         @SuppressWarnings( "unchecked" )
@@ -440,7 +432,7 @@ public class CheckDependencySnapshotsPhase
             String versionlessKey = ArtifactUtils.versionlessKey( currentArtifact );
 
             Map<String, String> versionMap = new HashMap<String, String>();
-            VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getVersion() );
+            VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getBaseVersion() );
             versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, versionInfo.toString() );
 
             prompter.showMessage(

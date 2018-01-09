@@ -23,16 +23,20 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 
+import org.codehaus.plexus.ContainerConfiguration;
+import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.PlexusContainerException;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.context.Context;
+import org.codehaus.plexus.context.DefaultContext;
 import org.junit.After;
 import org.junit.Before;
 
 /**
- * Based on PlexusTestCase from org.codehaus.plexus:plexus-container-default
+ * Based on PlexusTestCase from org.sonatype.sisu:sisu-inject-plexus
  * 
  * @author Robert Scholte
  */
@@ -46,90 +50,82 @@ public abstract class PlexusJUnit4TestCase
     public void setUp()
         throws Exception
     {
-        InputStream configuration = null;
-
-        try
-        {
-            configuration = getCustomConfiguration();
-
-            if ( configuration == null )
-            {
-                configuration = getConfiguration();
-            }
-        }
-        catch ( Exception e )
-        {
-            System.out.println( "Error with configuration:" );
-
-            System.out.println( "configuration = " + configuration );
-
-            fail( e.getMessage() );
-        }
-
         basedir = getBasedir();
+    }
 
-        container = createContainerInstance();
+    protected void setupContainer()
+    {
+        // ----------------------------------------------------------------------------
+        // Context Setup
+        // ----------------------------------------------------------------------------
 
-        container.addContextValue( "basedir", getBasedir() );
+        final DefaultContext context = new DefaultContext();
 
-        // this method was deprecated
-        customizeContext();
+        context.put( "basedir", getBasedir() );
 
-        customizeContext( getContext() );
+        customizeContext( context );
 
-        boolean hasPlexusHome = getContext().contains( "plexus.home" );
+        final boolean hasPlexusHome = context.contains( "plexus.home" );
 
         if ( !hasPlexusHome )
         {
-            File f = getTestFile( "target/plexus-home" );
+            final File f = getTestFile( "target/plexus-home" );
 
             if ( !f.isDirectory() )
             {
                 f.mkdir();
             }
 
-            getContext().put( "plexus.home", f.getAbsolutePath() );
+            context.put( "plexus.home", f.getAbsolutePath() );
         }
 
-        if ( configuration != null )
+        // ----------------------------------------------------------------------------
+        // Configuration
+        // ----------------------------------------------------------------------------
+
+        final String config = getCustomConfigurationName();
+
+        final ContainerConfiguration containerConfiguration =
+            new DefaultContainerConfiguration().setName( "test" ).setContext( context.getContextData() ).setClassPathCaching( true );
+
+        if ( config != null )
         {
-            container.setConfigurationResource( new InputStreamReader( configuration ) );
+            containerConfiguration.setContainerConfiguration( config );
+        }
+        else
+        {
+            final String resource = getConfigurationName( null );
+
+            containerConfiguration.setContainerConfiguration( resource );
         }
 
-        container.initialize();
+        customizeContainerConfiguration( containerConfiguration );
 
-        container.start();
+        try
+        {
+            container = new DefaultPlexusContainer( containerConfiguration );
+        }
+        catch ( final PlexusContainerException e )
+        {
+            e.printStackTrace();
+            fail( "Failed to create plexus container." );
+        }
     }
 
-    protected PlexusContainer createContainerInstance()
-    {
-        return new DefaultPlexusContainer();
-    }
-
-    private Context getContext()
-    {
-        return container.getContext();
-    }
-
-    //!!! this should probably take a context as a parameter so that the
-    //    user is not forced to do getContainer().addContextValue(..)
-    //    this would require a change to PlexusContainer in order to get
-    //    hold of the context ...
-    // @deprecated use void customizeContext( Context context )
-    protected void customizeContext()
-        throws Exception
+    /**
+     * Allow custom test case implementations do augment the default container configuration before executing tests.
+     * 
+     * @param containerConfiguration
+     */
+    protected void customizeContainerConfiguration( final ContainerConfiguration containerConfiguration )
     {
     }
 
-
-    protected void customizeContext( Context context )
-        throws Exception
+    protected void customizeContext( final Context context )
     {
     }
 
-
-    protected InputStream getCustomConfiguration()
-        throws Exception
+    protected PlexusConfiguration customizeComponentConfiguration()
     {
         return null;
     }
@@ -138,13 +134,21 @@ public abstract class PlexusJUnit4TestCase
     public void tearDown()
         throws Exception
     {
-        container.dispose();
+        if ( container != null )
+        {
+            container.dispose();
 
-        container = null;
+            container = null;
+        }
     }
 
     protected PlexusContainer getContainer()
     {
+        if ( container == null )
+        {
+            setupContainer();
+        }
+
         return container;
     }
 
@@ -154,30 +158,32 @@ public abstract class PlexusJUnit4TestCase
         return getConfiguration( null );
     }
 
-    protected InputStream getConfiguration( String subname )
+    @SuppressWarnings( "unused" )
+    protected InputStream getConfiguration( final String subname )
         throws Exception
     {
-        String className = getClass().getName();
-
-        String base = className.substring( className.lastIndexOf( "." ) + 1 );
-
-        String config = null;
-
-        if ( subname == null || subname.equals( "" ) )
-        {
-            config = base + ".xml";
-        }
-        else
-        {
-            config = base + "-" + subname + ".xml";
-        }
-        
-        InputStream configStream = getResourceAsStream( config );
-
-        return configStream;
+        return getResourceAsStream( getConfigurationName( subname ) );
     }
 
-    protected InputStream getResourceAsStream( String resource )
+    protected String getCustomConfigurationName()
+    {
+        return null;
+    }
+
+    /**
+     * Allow the retrieval of a container configuration that is based on the name of the test class being run. So if you
+     * have a test class called org.foo.FunTest, then this will produce a resource name of org/foo/FunTest.xml which
+     * would be used to configure the Plexus container before running your test.
+     * 
+     * @param subname
+     * @return
+     */
+    protected String getConfigurationName( final String subname )
+    {
+        return getClass().getName().replace( '.', '/' ) + ".xml";
+    }
+
+    protected InputStream getResourceAsStream( final String resource )
     {
         return getClass().getResourceAsStream( resource );
     }
@@ -191,19 +197,31 @@ public abstract class PlexusJUnit4TestCase
     // Container access
     // ----------------------------------------------------------------------
 
-    protected Object lookup( String componentKey )
+    protected Object lookup( final String componentKey )
         throws Exception
     {
         return getContainer().lookup( componentKey );
     }
 
-    protected Object lookup( String role, String id )
+    protected Object lookup( final String role, final String roleHint )
         throws Exception
     {
-        return getContainer().lookup( role, id );
+        return getContainer().lookup( role, roleHint );
     }
 
-    protected void release( Object component )
+    protected <T> T lookup( final Class<T> componentClass )
+        throws Exception
+    {
+        return getContainer().lookup( componentClass );
+    }
+
+    protected <T> T lookup( final Class<T> componentClass, final String roleHint )
+        throws Exception
+    {
+        return getContainer().lookup( componentClass, roleHint );
+    }
+
+    protected void release( final Object component )
         throws Exception
     {
         getContainer().release( component );
@@ -213,16 +231,17 @@ public abstract class PlexusJUnit4TestCase
     // Helper methods for sub classes
     // ----------------------------------------------------------------------
 
-    public static File getTestFile( String path )
+    public static File getTestFile( final String path )
     {
         return new File( getBasedir(), path );
     }
 
-    public static File getTestFile( String basedir, String path )
+    @SuppressWarnings( "hiding" )
+    public static File getTestFile( final String basedir, final String path )
     {
         File basedirFile = new File( basedir );
 
-        if ( ! basedirFile.isAbsolute() )
+        if ( !basedirFile.isAbsolute() )
         {
             basedirFile = getTestFile( basedir );
         }
@@ -230,12 +249,13 @@ public abstract class PlexusJUnit4TestCase
         return new File( basedirFile, path );
     }
 
-    public static String getTestPath( String path )
+    public static String getTestPath( final String path )
     {
         return getTestFile( path ).getAbsolutePath();
     }
 
-    public static String getTestPath( String basedir, String path )
+    @SuppressWarnings( "hiding" )
+    public static String getTestPath( final String basedir, final String path )
     {
         return getTestFile( basedir, path ).getAbsolutePath();
     }
@@ -255,5 +275,17 @@ public abstract class PlexusJUnit4TestCase
         }
 
         return basedir;
+    }
+
+    public String getTestConfiguration()
+    {
+        return getTestConfiguration( getClass() );
+    }
+
+    public static String getTestConfiguration( final Class<?> clazz )
+    {
+        final String s = clazz.getName().replace( '.', '/' );
+
+        return s.substring( 0, s.indexOf( "$" ) ) + ".xml";
     }
 }

@@ -32,47 +32,52 @@ import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Stack;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
-import org.apache.maven.artifact.manager.WagonManager;
-import org.apache.maven.artifact.metadata.ArtifactMetadataSource;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
-import org.apache.maven.artifact.resolver.ArtifactCollector;
-import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
 import org.apache.maven.artifact.versioning.VersionRange;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
-import org.apache.maven.profiles.DefaultProfileManager;
-import org.apache.maven.profiles.ProfileManager;
+import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.MavenProjectBuilder;
+import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingException;
+import org.apache.maven.project.ProjectBuildingRequest;
+import org.apache.maven.project.ProjectBuildingRequest.RepositoryMerging;
+import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.project.ProjectSorter;
+import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.context.ContextException;
-import org.codehaus.plexus.context.DefaultContext;
-import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
+import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.sonatype.aether.repository.WorkspaceReader;
+import org.sonatype.aether.repository.WorkspaceRepository;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
+import org.xmlunit.diff.ComparisonType;
+import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.DifferenceEvaluator;
+import org.xmlunit.diff.ElementSelectors;
 
 /**
  * Base class for some release tests.
@@ -82,73 +87,22 @@ import org.xmlunit.diff.DifferenceEvaluator;
 public abstract class AbstractReleaseTestCase
     extends PlexusJUnit4TestCase
 {
-    protected MavenProjectBuilder projectBuilder;
-
+    protected ProjectBuilder projectBuilder;
+    
     protected ArtifactRepository localRepository;
 
     protected ReleasePhase phase;
-
-    private static final DefaultContext EMPTY_CONTEXT = new DefaultContext()
-    {
-        public Object get( Object key )
-            throws ContextException
-        {
-            return null;
-        }
-    };
 
     public void setUp()
         throws Exception
     {
         super.setUp();
-
-        projectBuilder = (MavenProjectBuilder) lookup( MavenProjectBuilder.ROLE );
-
-        ArtifactRepositoryLayout layout = (ArtifactRepositoryLayout) lookup( ArtifactRepositoryLayout.ROLE, "default" );
+        
+        projectBuilder = lookup( ProjectBuilder.class );
+        
+        ArtifactRepositoryLayout layout = lookup( ArtifactRepositoryLayout.class, "default" );
         String localRepoPath = getTestFile( "target/local-repository" ).getAbsolutePath().replace( '\\', '/' );
-        localRepository = new DefaultArtifactRepository( "local", "file://" + localRepoPath, layout );
-    }
-
-    public void tearDown()
-        throws Exception
-    {
-        // unhook circular references to the container that would avoid memory being cleaned up
-        ( (Contextualizable) projectBuilder ).contextualize( EMPTY_CONTEXT );
-        ( (Contextualizable) lookup( WagonManager.ROLE ) ).contextualize( EMPTY_CONTEXT );
-
-        super.tearDown();
-    }
-
-    private Map<String,Artifact> createManagedVersionMap( String projectId, DependencyManagement dependencyManagement,
-                                         ArtifactFactory artifactFactory )
-        throws ProjectBuildingException
-    {
-        Map<String,Artifact> map;
-        if ( dependencyManagement != null && dependencyManagement.getDependencies() != null )
-        {
-            map = new HashMap<String,Artifact>();
-            for ( Dependency d : dependencyManagement.getDependencies() )
-            {
-                try
-                {
-                    VersionRange versionRange = VersionRange.createFromVersionSpec( d.getVersion() );
-                    Artifact artifact = artifactFactory.createDependencyArtifact( d.getGroupId(), d.getArtifactId(),
-                                                                                  versionRange, d.getType(),
-                                                                                  d.getClassifier(), d.getScope() );
-                    map.put( d.getManagementKey(), artifact );
-                }
-                catch ( InvalidVersionSpecificationException e )
-                {
-                    throw new ProjectBuildingException( projectId, "Unable to parse version '" + d.getVersion() +
-                        "' for dependency '" + d.getManagementKey() + "': " + e.getMessage(), e );
-                }
-            }
-        }
-        else
-        {
-            map = Collections.emptyMap();
-        }
-        return map;
+        localRepository = new MavenArtifactRepository( "local", "file://" + localRepoPath, layout, null, null );
     }
 
     protected List<MavenProject> createReactorProjects( String path, String subpath )
@@ -211,73 +165,44 @@ public abstract class AbstractReleaseTestCase
         repository.setId( "central" );
         repository.setUrl( getRemoteRepositoryURL() );
 
-        ProfileManager profileManager = new DefaultProfileManager( getContainer() );
         Profile profile = new Profile();
         profile.setId( "profile" );
         profile.addRepository( repository );
-        profileManager.addProfile( profile );
-        profileManager.activateAsDefault( profile.getId() );
+        
+        ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
+        buildingRequest.setLocalRepository( localRepository );
+        buildingRequest.setRemoteRepositories( repos );
+        buildingRequest.setPluginArtifactRepositories( repos );
+        buildingRequest.setRepositoryMerging( RepositoryMerging.REQUEST_DOMINANT );
+        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepository.getBasedir() ) );
+        buildingRequest.setRepositorySession( repositorySession );
+        buildingRequest.addProfile( profile );
+        buildingRequest.setActiveProfileIds( Arrays.asList( profile.getId() ) );
+        buildingRequest.setResolveDependencies( true );
 
+        List<ProjectBuildingResult> buildingResults =
+            projectBuilder.build( Collections.singletonList( testCaseRootTo.resolve( projectFiles.peek() ).toFile() ),
+                                  true, buildingRequest );
+        
         List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
-        while ( !projectFiles.isEmpty() )
+        for ( ProjectBuildingResult buildingResult : buildingResults )
         {
-            Path projectPath = projectFiles.pop();
-
-            Path projectFile = testCaseRootTo.resolve( projectPath );
-
-            MavenProject project = projectBuilder.build( projectFile.toFile(), localRepository, profileManager );
-
-            for ( Iterator i = project.getModules().iterator(); i.hasNext(); )
-            {
-                String module = (String) i.next();
-
-                Path modulePath;
-
-                if ( projectPath.getParent() == null )
-                {
-                    modulePath = Paths.get( module, "pom.xml" );
-                }
-                else
-                {
-                    modulePath = projectPath.getParent().resolve( module ).resolve( "pom.xml" );
-                }
-                projectFiles.push( modulePath );
-            }
-
-            reactorProjects.add( project );
+            reactorProjects.add( buildingResult.getProject() ) ;
         }
+
+        WorkspaceReader simpleReactorReader = new SimpleReactorWorkspaceReader( reactorProjects );
+        repositorySession.setWorkspaceReader( simpleReactorReader );
         
         ProjectSorter sorter = new ProjectSorter( reactorProjects );
-
         reactorProjects = sorter.getSortedProjects();
-
-        ArtifactFactory artifactFactory = (ArtifactFactory) lookup( ArtifactFactory.ROLE );
-        ArtifactCollector artifactCollector = (ArtifactCollector) lookup( ArtifactCollector.class.getName() );
-        ArtifactMetadataSource artifactMetadataSource = (ArtifactMetadataSource) lookup( ArtifactMetadataSource.ROLE );
-
-        // pass back over and resolve dependencies - can't be done earlier as the order may not be correct
-        for ( MavenProject project : reactorProjects )
+        
+        List<MavenProject> resolvedProjects = new ArrayList<>( reactorProjects.size() );
+        for ( MavenProject project  : reactorProjects )
         {
-            project.setRemoteArtifactRepositories( repos );
-            project.setPluginArtifactRepositories( repos );
-
-            Artifact projectArtifact = project.getArtifact();
-
-            Map<String, Artifact> managedVersions = createManagedVersionMap(
-                ArtifactUtils.versionlessKey( projectArtifact.getGroupId(), projectArtifact.getArtifactId() ),
-                project.getDependencyManagement(), artifactFactory );
-
-            project.setDependencyArtifacts( project.createArtifacts( artifactFactory, null, null ) );
-
-            ArtifactResolutionResult result = artifactCollector.collect( project.getDependencyArtifacts(),
-                                                                         projectArtifact, managedVersions,
-                                                                         localRepository, repos, artifactMetadataSource,
-                                                                         null, Collections.EMPTY_LIST );
-
-            project.setArtifacts( result.getArtifacts() );
+            resolvedProjects.add( projectBuilder.build( project.getFile(), buildingRequest ).getProject() );
         }
-
-        return reactorProjects;
+        return resolvedProjects;
     }
 
     protected static Map<String,MavenProject> getProjectsAsMap( List<MavenProject> reactorProjects )
@@ -362,6 +287,9 @@ public abstract class AbstractReleaseTestCase
         {
             diffBuilder.ignoreComments();
         }
+        // Order of elements has changed between M2 and M3, so match by name
+        diffBuilder.withNodeMatcher( new DefaultNodeMatcher( ElementSelectors.byName ) ).checkForSimilar();        
+        
         diffBuilder.withDifferenceEvaluator( new DifferenceEvaluator()
         {
             @Override
@@ -370,6 +298,19 @@ public abstract class AbstractReleaseTestCase
                 if ( "${remoterepo}".equals( comparison.getControlDetails().getValue() ) &&
                                 remoteRepositoryURL.equals( comparison.getTestDetails().getValue() ) )
                 {
+                    return ComparisonResult.EQUAL;
+                }
+                else if ( outcome == ComparisonResult.DIFFERENT
+                    && comparison.getType() == ComparisonType.CHILD_NODELIST_SEQUENCE )
+                {
+                    // Order of elements has changed between M2 and M3
+                    return ComparisonResult.EQUAL;
+                }
+                else if ( outcome == ComparisonResult.DIFFERENT 
+                                && comparison.getType() == ComparisonType.TEXT_VALUE 
+                                && "${project.build.directory}/site".equals( comparison.getTestDetails().getValue() ) )
+                {
+                    // M2 was target/site, M3 is ${project.build.directory}/site
                     return ComparisonResult.EQUAL;
                 }
                 else 
@@ -401,5 +342,58 @@ public abstract class AbstractReleaseTestCase
         throws IOException
     {
         return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();
-    }    
+    }
+    
+    /**
+     * WorkspaceReader to find versions and artifacts from reactor
+     */
+    private static final class SimpleReactorWorkspaceReader
+        implements WorkspaceReader
+    {
+        private final List<MavenProject> reactorProjects;
+
+        private SimpleReactorWorkspaceReader( List<MavenProject> reactorProjects )
+        {
+            this.reactorProjects = reactorProjects;
+        }
+
+        @Override
+        public WorkspaceRepository getRepository()
+        {
+            return null;
+        }
+
+        @Override
+        public List<String> findVersions( org.sonatype.aether.artifact.Artifact artifact )
+        {
+            for ( MavenProject mavenProject : reactorProjects )
+            {
+                if ( Objects.equals( artifact.toString(), mavenProject.getArtifact().toString() ) )
+                {
+                    return Collections.singletonList( mavenProject.getArtifact().getVersion() );
+                }
+            }
+            return Collections.emptyList();
+        }
+
+        @Override
+        public File findArtifact( org.sonatype.aether.artifact.Artifact artifact )
+        {
+            for ( MavenProject mavenProject : reactorProjects )
+            {
+                String pom = mavenProject.getGroupId() + ':' + mavenProject.getArtifactId() + ":pom:"
+                    + mavenProject.getVersion();
+                if ( Objects.equals( artifact.toString(), pom ) )
+                {
+                    return mavenProject.getFile();
+                }
+                else if ( Objects.equals( artifact.toString(), mavenProject.getArtifact().toString() ) )
+                {
+                    // just an existing, content doesn't matter
+                    return mavenProject.getFile();
+                }
+            }
+            return null;
+        }
+    }
 }

@@ -48,6 +48,7 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.transform.jdom.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -420,6 +421,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     }
 
     @Test
+    @Ignore( "Extensions being part of reactor is not supported anymore" )
     public void testRewritePomExtension()
         throws Exception
     {
@@ -432,6 +434,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     }
 
     @Test
+    @Ignore( "Extensions being part of reactor is not supported anymore" )
     public void testRewritePomUnmappedExtension()
         throws Exception
     {
@@ -451,6 +454,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     }
 
     @Test
+    @Ignore( "Extensions being part of reactor is not supported anymore" )
     public void testRewritePomExtensionDifferentVersion()
         throws Exception
     {
@@ -463,6 +467,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     }
 
     @Test
+    @Ignore( "Extensions being part of reactor is not supported anymore" )
     public void testRewritePomExtensionUndefinedVersion()
         throws Exception
     {

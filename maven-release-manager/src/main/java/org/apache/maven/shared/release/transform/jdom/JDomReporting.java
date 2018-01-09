@@ -80,19 +80,7 @@ public class JDomReporting extends Reporting
     }
 
     @Override
-    public Boolean isExcludeDefaultsValue()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void removePlugin( ReportPlugin reportPlugin )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setExcludeDefaultsValue( Boolean excludeDefaultsValue )
     {
         throw new UnsupportedOperationException();
     }
@@ -129,12 +117,6 @@ public class JDomReporting extends Reporting
 
     @Override
     public void setExcludeDefaults( boolean excludeDefaults )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setExcludeDefaultsValue( String excludeDefaults )
     {
         throw new UnsupportedOperationException();
     }

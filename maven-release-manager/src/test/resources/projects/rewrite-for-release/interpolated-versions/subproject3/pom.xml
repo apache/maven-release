@@ -40,13 +40,14 @@
         <version>${project.version}</version>
       </plugin>
     </plugins>
-    <extensions>
-      <extension>
-        <groupId>groupId</groupId>
-        <artifactId>subproject1</artifactId>
-        <version>${project.version}</version>
-      </extension>
-    </extensions>
+<!-- NOT SUPPORTED ANYMORE SINCE MAVEN3 -->
+<!--     <extensions> -->
+<!--       <extension> -->
+<!--         <groupId>groupId</groupId> -->
+<!--         <artifactId>subproject1</artifactId> -->
+<!--         <version>${project.version}</version> -->
+<!--       </extension> -->
+<!--     </extensions> -->
   </build>
 
   <reporting>

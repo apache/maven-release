@@ -29,6 +29,7 @@
       <plugin>
         <groupId>groupId</groupId>
         <artifactId>subproject1</artifactId>
+        <version>${project.version}</version>
       </plugin>
     </plugins>
   </build>

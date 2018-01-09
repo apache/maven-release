@@ -22,10 +22,13 @@ package org.apache.maven.shared.release.phase;
 import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
@@ -38,10 +41,14 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Reporting;
+import org.apache.maven.model.Resource;
 import org.apache.maven.model.Scm;
+import org.apache.maven.model.building.DefaultModelBuildingRequest;
+import org.apache.maven.model.building.ModelBuildingRequest;
+import org.apache.maven.model.interpolation.ModelInterpolator;
 import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.apache.maven.model.superpom.SuperPomProvider;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.project.path.PathTranslator;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.command.add.AddScmResult;
@@ -72,12 +79,12 @@ public class GenerateReleasePomsPhase
 {
     private static final String FINALNAME_EXPRESSION = "${project.artifactId}-${project.version}";
 
-    /**
-     *
-     */
     @Requirement
-    private PathTranslator pathTranslator;
+    private SuperPomProvider superPomProvider;
 
+    @Requirement
+    private ModelInterpolator modelInterpolator;
+    
     /**
      * SCM URL translators mapped by provider name.
      */
@@ -218,18 +225,8 @@ public class GenerateReleasePomsPhase
         Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects );
         Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
 
-        MavenProject releaseProject = new MavenProject( project );
+        MavenProject releaseProject = project.clone();
         Model releaseModel = releaseProject.getModel();
-
-        try
-        {
-            // Result of clone in Maven2 is incorrect, fix this value
-            releaseModel.getReporting().setExcludeDefaultsValue( project.getReporting().isExcludeDefaultsValue() );
-        }
-        catch ( NoSuchMethodError e )
-        {
-            // method replaced in Maven3 from Boolean to String
-        }
 
         // the release POM should reflect bits of these which were injected at build time...
         // we don't need these polluting the POM.
@@ -305,14 +302,102 @@ public class GenerateReleasePomsPhase
         releaseModel.getBuild().setExtensions( createReleaseExtensions( originalVersions, mappedVersions,
                                                                         releaseProject ) );
 
-        unalignFromBaseDirectory( releaseModel, project.getFile().getParentFile() );
+        unalignFromBaseDirectory( releaseModel, project.getBasedir() );
 
         return releaseModel;
     }
     
-    private void unalignFromBaseDirectory( Model releaseModel, File baseDir )
+    
+    private void unalignFromBaseDirectory( Model releaseModel, File basedir )
     {
-        pathTranslator.unalignFromBaseDirectory( releaseModel, baseDir );  
+        Model rawSuperModel = superPomProvider.getSuperModel( releaseModel.getModelVersion() );
+        
+        ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest();
+        buildingRequest.setValidationLevel( ModelBuildingRequest.VALIDATION_LEVEL_STRICT );
+        
+        // inject proper values used by project.build.finalName
+        Properties properties = new Properties();
+        properties.put( "project.version", releaseModel.getVersion() );
+        properties.put( "project.artifactId", releaseModel.getArtifactId() );
+        buildingRequest.setUserProperties( properties );
+        
+        Model interpolatedSuperModel =
+            modelInterpolator.interpolateModel( rawSuperModel.clone(), basedir, buildingRequest, null );
+        
+        Build currentBuild = releaseModel.getBuild();
+        Build interpolatedSuperBuild = interpolatedSuperModel.getBuild();
+        Build rawSuperBuild = rawSuperModel.getBuild();
+        
+        currentBuild.setSourceDirectory( resolvePath( basedir.toPath(), currentBuild.getSourceDirectory(),
+                                                  interpolatedSuperBuild.getSourceDirectory(),
+                                                  rawSuperBuild.getSourceDirectory() ) );
+        currentBuild.setScriptSourceDirectory( resolvePath( basedir.toPath(), currentBuild.getScriptSourceDirectory(),
+                                                  interpolatedSuperBuild.getScriptSourceDirectory(),
+                                                  rawSuperBuild.getScriptSourceDirectory() ) );
+        currentBuild.setTestSourceDirectory( resolvePath( basedir.toPath(), currentBuild.getTestSourceDirectory(),
+                                                  interpolatedSuperBuild.getTestSourceDirectory(),
+                                                  rawSuperBuild.getTestSourceDirectory() ) );
+        currentBuild.setOutputDirectory( resolvePath( basedir.toPath(), currentBuild.getOutputDirectory(),
+                                                        interpolatedSuperBuild.getOutputDirectory(),
+                                                        rawSuperBuild.getOutputDirectory() ) );
+        currentBuild.setTestOutputDirectory( resolvePath( basedir.toPath(), currentBuild.getTestOutputDirectory(),
+                                                      interpolatedSuperBuild.getTestOutputDirectory(),
+                                                      rawSuperBuild.getTestOutputDirectory() ) );
+        currentBuild.setDirectory( resolvePath( basedir.toPath(), currentBuild.getDirectory(), 
+                                            interpolatedSuperBuild.getDirectory(),
+                                            rawSuperBuild.getDirectory() ) );
+        
+        for ( Resource currentResource : currentBuild.getResources() )
+        {
+            Map<String, String> superResourceDirectories =
+                new LinkedHashMap<>( interpolatedSuperBuild.getResources().size() );
+            for ( int i = 0; i < interpolatedSuperBuild.getResources().size(); i++ )
+            {
+                superResourceDirectories.put( interpolatedSuperBuild.getResources().get( i ).getDirectory(),
+                                              rawSuperBuild.getResources().get( i ).getDirectory() );
+            }
+            currentResource.setDirectory( resolvePath( basedir.toPath(), currentResource.getDirectory(),
+                                                       superResourceDirectories ) );
+        }
+
+        for ( Resource currentResource : currentBuild.getTestResources() )
+        {
+            Map<String, String> superResourceDirectories =
+                new LinkedHashMap<>( interpolatedSuperBuild.getTestResources().size() );
+            for ( int i = 0; i < interpolatedSuperBuild.getTestResources().size(); i++ )
+            {
+                superResourceDirectories.put( interpolatedSuperBuild.getTestResources().get( i ).getDirectory(),
+                                              rawSuperBuild.getTestResources().get( i ).getDirectory() );
+            }
+            currentResource.setDirectory( resolvePath( basedir.toPath(), currentResource.getDirectory(),
+                                                       superResourceDirectories ) );
+        }
+        
+        
+        
+        releaseModel.getReporting().setOutputDirectory( resolvePath( basedir.toPath(),
+                                                         releaseModel.getReporting().getOutputDirectory(),
+                                                         interpolatedSuperModel.getReporting().getOutputDirectory(),
+                                                         rawSuperModel.getReporting().getOutputDirectory() ) );
+    }
+    
+    private String resolvePath( Path basedir, String current, String superInterpolated, String superRaw )
+    {
+        return basedir.resolve( current ).equals( basedir.resolve( superInterpolated ) ) ? superRaw : current;
+    }
+
+    private String resolvePath( Path basedir, 
+                                String current, 
+                                Map<String /* interpolated */, String /* raw */> superValues )
+    {
+        for ( Map.Entry<String, String> superValue : superValues.entrySet() )
+        {
+            if ( basedir.resolve( current ).equals( basedir.resolve( superValue.getKey() ) ) )
+            {
+                return superValue.getValue();
+            }
+        }
+        return current;
     }
     
     private String findOriginalFinalName( MavenProject project )
@@ -512,7 +597,10 @@ public class GenerateReleasePomsPhase
                     releasePlugin.setGroupId( plugin.getGroupId() );
                     releasePlugin.setArtifactId( plugin.getArtifactId() );
                     releasePlugin.setVersion( version );
-                    releasePlugin.setExtensions( plugin.isExtensions() );
+                    if ( plugin.getExtensions() != null )
+                    {
+                        releasePlugin.setExtensions( plugin.isExtensions() );
+                    }
                     releasePlugin.setExecutions( plugin.getExecutions() );
                     releasePlugin.setDependencies( plugin.getDependencies() );
                     releasePlugin.setGoals( plugin.getGoals() );

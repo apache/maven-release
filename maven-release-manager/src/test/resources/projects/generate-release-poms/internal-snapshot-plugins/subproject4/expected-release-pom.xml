@@ -47,7 +47,7 @@ under the License.
       <plugin>
         <groupId>groupId</groupId>
         <artifactId>subproject1</artifactId>
-        <version>RELEASE</version>
+        <version>1.0</version>
       </plugin>
     </plugins>
   </build>

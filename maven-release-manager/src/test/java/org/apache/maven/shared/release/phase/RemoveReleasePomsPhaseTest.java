@@ -83,7 +83,7 @@ public class RemoveReleasePomsPhaseTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                       isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...",
-                                                                                               Collections.singletonList( new ScmFile( Maven.RELEASE_POMv4,
+                                                                                               Collections.singletonList( new ScmFile( Maven.POMv4,
                                                                                                                                        ScmFileStatus.DELETED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
@@ -119,7 +119,7 @@ public class RemoveReleasePomsPhaseTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                       isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...",
-                                                                                               Collections.singletonList( new ScmFile( Maven.RELEASE_POMv4,
+                                                                                               Collections.singletonList( new ScmFile( Maven.POMv4,
                                                                                                                                        ScmFileStatus.DELETED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
@@ -177,7 +177,7 @@ public class RemoveReleasePomsPhaseTest
         {
             reader = new BufferedReader( new StringReader( result.getOutput() ) );
 
-            assertEquals( "[INFO] Removing release POM for 'Unnamed - groupId:artifactId:jar:1.0-SNAPSHOT'...",
+            assertEquals( "[INFO] Removing release POM for 'artifactId'...",
                           reader.readLine() );
             assertEquals( "Expected EOF", null, reader.readLine() );
         }
@@ -213,7 +213,7 @@ public class RemoveReleasePomsPhaseTest
         {
             reader = new BufferedReader( new StringReader( result.getOutput() ) );
 
-            assertEquals( "[INFO] Removing release POM for 'Unnamed - groupId:artifactId:jar:1.0-SNAPSHOT'...",
+            assertEquals( "[INFO] Removing release POM for 'artifactId'...",
                           reader.readLine() );
             assertEquals( "[INFO] Full run would be removing [" + reactorProjects.get( 0 ).getFile().getParent()
                 + File.separator + "release-pom.xml]", reader.readLine() );

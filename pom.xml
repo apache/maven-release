@@ -86,7 +86,7 @@
   <properties>
     <scmVersion>1.9.6-SNAPSHOT</scmVersion>
     <javaVersion>7</javaVersion>
-    <mavenVersion>2.2.1</mavenVersion>
+    <mavenVersion>3.0</mavenVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
   </properties>
 
@@ -138,13 +138,14 @@
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
-        <artifactId>maven-artifact-manager</artifactId>
+        <artifactId>maven-core</artifactId>
         <version>${mavenVersion}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
-        <artifactId>maven-core</artifactId>
+        <artifactId>maven-compat</artifactId>
         <version>${mavenVersion}</version>
+        <scope>test</scope>
       </dependency>
       <dependency>
         <groupId>org.apache.maven</groupId>
@@ -154,11 +155,6 @@
       <dependency>
         <groupId>org.apache.maven</groupId>
         <artifactId>maven-plugin-api</artifactId>
-        <version>${mavenVersion}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.maven</groupId>
-        <artifactId>maven-project</artifactId>
         <version>${mavenVersion}</version>
       </dependency>
       <dependency>
