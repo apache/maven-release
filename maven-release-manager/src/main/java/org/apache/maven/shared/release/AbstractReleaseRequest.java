@@ -25,18 +25,18 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 2.3
  */
 public abstract class AbstractReleaseRequest
 {
     private ReleaseDescriptor releaseDescriptor;
-    
+
     private List<MavenProject> reactorProjects;
 
     private ReleaseManagerListener releaseManagerListener;
-    
+
     /**
      * @return the releaseDescriptor
      */

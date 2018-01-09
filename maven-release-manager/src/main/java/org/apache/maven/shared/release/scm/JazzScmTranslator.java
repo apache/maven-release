@@ -35,6 +35,7 @@ public class JazzScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )
     {
         // Jazz URL's (currently) take the form:
@@ -55,6 +56,7 @@ public class JazzScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         // Jazz URL's (currently) take the form:
@@ -75,6 +77,7 @@ public class JazzScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String resolveTag( String tag )
     {
         // project.scm.tag is not required, so return null.
@@ -84,6 +87,7 @@ public class JazzScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toRelativePath( String path )
     {
         String relativePath;

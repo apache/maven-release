@@ -25,7 +25,7 @@ import java.util.Locale;
 import org.apache.maven.settings.Settings;
 
 /**
- * 
+ *
  */
 public class DefaultReleaseEnvironment
     implements ReleaseEnvironment
@@ -40,53 +40,62 @@ public class DefaultReleaseEnvironment
     private Settings settings;
 
     private String mavenExecutorId = DEFAULT_MAVEN_EXECUTOR_ID;
-    
+
     private Locale locale = Locale.ENGLISH;
 
+    @Override
     public File getMavenHome()
     {
         return mavenHome;
     }
 
+    @Override
     public Settings getSettings()
     {
         return settings;
     }
 
+    @Override
     public ReleaseEnvironment setMavenHome( File mavenHome )
     {
         this.mavenHome = mavenHome;
         return this;
     }
 
+    @Override
     public ReleaseEnvironment setSettings( Settings settings )
     {
         this.settings = settings;
         return this;
     }
 
+    @Override
     public String getMavenExecutorId()
     {
         return mavenExecutorId;
     }
 
+    @Override
     public ReleaseEnvironment setMavenExecutorId( String mavenExecutorId )
     {
         this.mavenExecutorId = mavenExecutorId;
         return this;
     }
 
+    @Override
     public File getJavaHome()
     {
         return javaHome;
     }
 
+    @Override
     public ReleaseEnvironment setJavaHome( File javaHome )
     {
         this.javaHome = javaHome;
         return this;
     }
 
+    @Override
     public File getLocalRepositoryDirectory()
     {
         File localRepo = localRepositoryDirectory;
@@ -99,17 +108,20 @@ public class DefaultReleaseEnvironment
         return localRepo;
     }
 
+    @Override
     public ReleaseEnvironment setLocalRepositoryDirectory( File localRepositoryDirectory )
     {
         this.localRepositoryDirectory = localRepositoryDirectory;
         return this;
     }
 
+    @Override
     public Locale getLocale()
     {
         return locale;
     }
-    
+
+    @Override
     public ReleaseEnvironment setLocale( Locale locale )
     {
         this.locale = locale;

@@ -38,6 +38,7 @@ import java.util.List;
 public class EndReleasePhase
     extends AbstractReleasePhase
 {
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -51,6 +52,7 @@ public class EndReleasePhase
         return result;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException

@@ -24,19 +24,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
- * 
+ *
  */
 public class RawStreamPumper
-    extends Thread 
+    extends Thread
 {
     private InputStream in;
 
     private OutputStream out;
 
     boolean done;
-    
+
     boolean poll;
-    
+
     byte buffer[] = new byte[256];
 
     public RawStreamPumper( InputStream in , OutputStream out, boolean poll )
@@ -58,7 +58,7 @@ public class RawStreamPumper
         done = true;
     }
 
-    public void closeInput() 
+    public void closeInput()
         throws IOException
     {
         in.close();
@@ -70,6 +70,7 @@ public class RawStreamPumper
         out.close();
     }
 
+    @Override
     public void run()
     {
         try

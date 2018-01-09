@@ -49,39 +49,40 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 /**
- * JDom implementation for extracting, transform, loading the Model (pom.xml) 
- * 
+ * JDom implementation for extracting, transform, loading the Model (pom.xml)
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomModelETL implements ModelETL
 {
     private ReleaseDescriptor releaseDescriptor;
-    
+
     private MavenProject project;
-    
+
     private Document document;
-    
+
     private String intro = null;
     private String outtro = null;
-    
+
     private String ls = ReleaseUtil.LS;
 
     public void setLs( String ls )
     {
         this.ls = ls;
     }
-    
+
     public void setReleaseDescriptor( ReleaseDescriptor releaseDescriptor )
     {
         this.releaseDescriptor = releaseDescriptor;
     }
-    
+
     public void setProject( MavenProject project )
     {
         this.project = project;
     }
-    
+
+    @Override
     public void extract( File pomFile ) throws ReleaseExecutionException
     {
         try
@@ -150,23 +151,25 @@ public class JDomModelETL implements ModelETL
             throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
         }
     }
-    
+
+    @Override
     public void transform()
     {
-        
+
     }
-    
+
+    @Override
     public void load( File targetFile ) throws ReleaseExecutionException
     {
         writePom( targetFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro );
     }
-    
+
     @Override
     public Model getModel()
     {
         return new JDomModel( document );
     }
-    
+
     private void normaliseLineEndings( Document document )
     {
         for ( Iterator<?> i = document.getDescendants( new ContentFilter( ContentFilter.COMMENT ) ); i.hasNext(); )
@@ -180,7 +183,7 @@ public class JDomModelETL implements ModelETL
             c.setText( ReleaseUtil.normalizeLineEndings( c.getText(), ls ) );
         }
     }
-    
+
     private void writePom( File pomFile, Document document, ReleaseDescriptor releaseDescriptor, String modelVersion,
                            String intro, String outtro )
         throws ReleaseExecutionException

@@ -25,7 +25,7 @@ import java.util.Locale;
 import org.apache.maven.settings.Settings;
 
 /**
- * 
+ *
  */
 public interface ReleaseEnvironment
 {
@@ -51,14 +51,14 @@ public interface ReleaseEnvironment
     File getJavaHome();
 
     ReleaseEnvironment setJavaHome( File javaHome );
-    
+
     /**
-     * 
+     *
      * @return the locale
      * @since 2.4
      */
     Locale getLocale();
-    
+
     /**
      * @param locale
      * @return the locale

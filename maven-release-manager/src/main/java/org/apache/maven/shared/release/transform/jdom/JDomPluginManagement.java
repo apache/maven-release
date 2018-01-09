@@ -30,17 +30,17 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms PLUGINMANAGEMENT element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomPluginManagement extends PluginManagement
 {
     private final Element pluginManagement;
-    
+
     public JDomPluginManagement( Element pluginManagement )
     {
-        this.pluginManagement = pluginManagement; 
+        this.pluginManagement = pluginManagement;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class JDomPluginManagement extends PluginManagement
         {
             List<Element> pluginElms = pluginsElm.getChildren( "plugin", pluginManagement.getNamespace() );
 
-            List<Plugin> plugins = new ArrayList<Plugin>( pluginElms.size() );
+            List<Plugin> plugins = new ArrayList<>( pluginElms.size() );
 
             for ( Element pluginElm : pluginElms )
             {

@@ -35,14 +35,14 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms PROPERTIES element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomProperties extends Properties
 {
     private final Element properties;
-    
+
     public JDomProperties( Element properties )
     {
         this.properties = properties;
@@ -52,9 +52,9 @@ public class JDomProperties extends Properties
     public synchronized Object setProperty( String key, String value )
     {
         Element property = properties.getChild( key, properties.getNamespace() );
-        
+
         JDomUtils.rewriteValue( property, value );
-        
+
         // todo follow specs of Hashtable.put
         return null;
     }
@@ -118,7 +118,7 @@ public class JDomProperties extends Properties
     public String getProperty( String key )
     {
         Element property = properties.getChild( key, properties.getNamespace() );
-        
+
         if ( property == null )
         {
             return null;

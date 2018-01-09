@@ -186,17 +186,19 @@ public class DefaultVersionInfo
         this.strVersion = getVersionString( this, buildSpecifier, buildSeparator );
     }
 
+    @Override
     public boolean isSnapshot()
     {
         return ArtifactUtils.isSnapshot( strVersion );
     }
 
+    @Override
     public VersionInfo getNextVersion()
     {
         DefaultVersionInfo version = null;
         if ( digits != null )
         {
-            List<String> digits = new ArrayList<String>( this.digits );
+            List<String> digits = new ArrayList<>( this.digits );
             String annotationRevision = this.annotationRevision;
             if ( StringUtils.isNumeric( annotationRevision ) )
             {
@@ -204,7 +206,7 @@ public class DefaultVersionInfo
             }
             else
             {
-                digits.set( digits.size() - 1, incrementVersionString( (String) digits.get( digits.size() - 1 ) ) );
+                digits.set( digits.size() - 1, incrementVersionString( digits.get( digits.size() - 1 ) ) );
             }
 
             version = new DefaultVersionInfo( digits, annotation, annotationRevision, buildSpecifier,
@@ -222,6 +224,7 @@ public class DefaultVersionInfo
      * @throws IllegalArgumentException if the components differ between the objects or if either of the annotations can
      *             not be determined.
      */
+    @Override
     public int compareTo( VersionInfo obj )
     {
         DefaultVersionInfo that = (DefaultVersionInfo) obj;
@@ -250,6 +253,7 @@ public class DefaultVersionInfo
         return result;
     }
 
+    @Override
     public boolean equals( Object obj )
     {
         if ( !( obj instanceof DefaultVersionInfo ) )
@@ -260,6 +264,7 @@ public class DefaultVersionInfo
         return compareTo( (VersionInfo) obj ) == 0;
     }
 
+    @Override
     public int hashCode()
     {
         return strVersion.toLowerCase( Locale.ENGLISH ).hashCode();
@@ -283,6 +288,7 @@ public class DefaultVersionInfo
         return value;
     }
 
+    @Override
     public String getSnapshotVersionString()
     {
         if ( strVersion.equals( Artifact.SNAPSHOT_VERSION ) )
@@ -300,6 +306,7 @@ public class DefaultVersionInfo
         return baseVersion + Artifact.SNAPSHOT_VERSION;
     }
 
+    @Override
     public String getReleaseVersionString()
     {
         String baseVersion = strVersion;
@@ -321,6 +328,7 @@ public class DefaultVersionInfo
         return baseVersion;
     }
 
+    @Override
     public String toString()
     {
         return strVersion;

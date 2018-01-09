@@ -60,6 +60,7 @@ public class DefaultScmRepositoryConfigurator
     @Requirement( hint = "mng-4384" )
     private SecDispatcher secDispatcher;
 
+    @Override
     public ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
         throws ScmRepositoryException, NoSuchScmProviderException
     {
@@ -67,6 +68,7 @@ public class DefaultScmRepositoryConfigurator
         return getConfiguredRepository( url, releaseDescriptor, settings );
     }
 
+    @Override
     public ScmRepository getConfiguredRepository( String url, ReleaseDescriptor releaseDescriptor, Settings settings )
         throws ScmRepositoryException, NoSuchScmProviderException
     {
@@ -198,6 +200,7 @@ public class DefaultScmRepositoryConfigurator
         }
     }
 
+    @Override
     public ScmProvider getRepositoryProvider( ScmRepository repository )
         throws NoSuchScmProviderException
     {

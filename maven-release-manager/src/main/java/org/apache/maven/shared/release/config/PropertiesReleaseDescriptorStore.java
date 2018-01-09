@@ -64,6 +64,7 @@ public class PropertiesReleaseDescriptorStore
     @Requirement( role = SecDispatcher.class, hint = "mng-4384" )
     private DefaultSecDispatcher secDispatcher;
 
+    @Override
     public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
         throws ReleaseDescriptorStoreException
     {
@@ -112,12 +113,14 @@ public class PropertiesReleaseDescriptorStore
         return releaseDescriptor;
     }
 
+    @Override
     public void write( ReleaseDescriptor config )
         throws ReleaseDescriptorStoreException
     {
         write( config, getDefaultReleasePropertiesFile( config ) );
     }
 
+    @Override
     public void delete( ReleaseDescriptor config )
     {
         File file = getDefaultReleasePropertiesFile( config );

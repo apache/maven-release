@@ -46,6 +46,7 @@ public class ScmCommitDevelopmentPhase
      */
     private String rollbackMessageFormat;
 
+    @Override
     protected void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                              List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
         throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException

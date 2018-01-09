@@ -39,6 +39,7 @@ import org.codehaus.plexus.component.annotations.Component;
 public class RunCompleteGoalsPhase
     extends AbstractRunGoalsPhase
 {
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -47,6 +48,7 @@ public class RunCompleteGoalsPhase
                         releaseDescriptor.getAdditionalArguments() );
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -61,6 +63,7 @@ public class RunCompleteGoalsPhase
         return result;
     }
 
+    @Override
     protected String getGoals( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getCompletionGoals();

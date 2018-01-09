@@ -54,6 +54,7 @@ public class TeeConsumer
         this.indent = indent;
     }
 
+    @Override
     public void consumeLine( String line )
     {
         stream.println( indent + line );
@@ -67,6 +68,7 @@ public class TeeConsumer
         return content.toString();
     }
 
+    @Override
     public String toString()
     {
         return getContent();

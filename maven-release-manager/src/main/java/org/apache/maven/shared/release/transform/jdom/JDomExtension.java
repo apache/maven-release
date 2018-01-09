@@ -25,7 +25,7 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms EXTENSION element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */

@@ -45,7 +45,7 @@ import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
 import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
 
 /**
- * 
+ *
  */
 public abstract class AbstractMavenExecutor
     implements MavenExecutor, LogEnabled
@@ -61,16 +61,16 @@ public abstract class AbstractMavenExecutor
     private DefaultSecDispatcher secDispatcher;
 
     /**
-     * 
+     *
      */
     @Requirement
     private PlexusCipher cipher;
-    
+
     protected AbstractMavenExecutor()
     {
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
                               String pomFileName, ReleaseResult result )
         throws MavenExecutorException
@@ -79,7 +79,7 @@ public abstract class AbstractMavenExecutor
                       pomFileName, result );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
                               ReleaseResult result )
         throws MavenExecutorException
@@ -88,7 +88,7 @@ public abstract class AbstractMavenExecutor
                       result );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String arguments, ReleaseResult result )
         throws MavenExecutorException
@@ -96,13 +96,13 @@ public abstract class AbstractMavenExecutor
         executeGoals( workingDirectory, goals, releaseEnvironment, interactive, arguments, null, result );
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String additionalArguments, String pomFileName,
                               ReleaseResult result )
         throws MavenExecutorException
     {
-        List<String> goalsList = new ArrayList<String>();
+        List<String> goalsList = new ArrayList<>();
         if ( goals != null )
         {
             // accept both space and comma, so the old way still work
@@ -127,20 +127,20 @@ public abstract class AbstractMavenExecutor
         return logger;
     }
 
-    /** {@inheritDoc} */
+    @Override
     public void enableLogging( Logger logger )
     {
         this.logger = logger;
     }
 
-    
+
     protected Settings encryptSettings( Settings settings )
     {
         Settings encryptedSettings = SettingsUtils.copySettings( settings );
-        
+
         for ( Server server : encryptedSettings.getServers() )
         {
-            String password = server.getPassword(); 
+            String password = server.getPassword();
             if ( password != null && !isEncryptedString( password ) )
             {
                 try
@@ -161,7 +161,7 @@ public abstract class AbstractMavenExecutor
                 }
             }
 
-            String passphrase = server.getPassphrase(); 
+            String passphrase = server.getPassphrase();
             if ( passphrase != null && !isEncryptedString( passphrase ) )
             {
                 try
@@ -182,7 +182,7 @@ public abstract class AbstractMavenExecutor
                 }
             }
         }
-        
+
         for ( Proxy proxy : encryptedSettings.getProxies() )
         {
             String password = proxy.getPassword();
@@ -206,10 +206,10 @@ public abstract class AbstractMavenExecutor
                 }
             }
         }
-        
+
         return encryptedSettings;
     }
-    
+
     // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
     private String encryptAndDecorate( String passwd )
         throws IllegalStateException, SecDispatcherException, PlexusCipherException
@@ -240,7 +240,7 @@ public abstract class AbstractMavenExecutor
         String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
         return cipher.encryptAndDecorate( passwd, masterPasswd );
     }
-    
+
     private boolean isEncryptedString( String str )
     {
         return cipher.isEncryptedString( str );

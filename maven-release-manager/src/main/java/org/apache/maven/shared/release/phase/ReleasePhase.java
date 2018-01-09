@@ -81,6 +81,7 @@ public interface ReleasePhase
      *
      * @deprecated Use {@link ReleasePhase#execute(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
      */
+    @Deprecated
     ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
@@ -96,6 +97,7 @@ public interface ReleasePhase
      *
      * @deprecated Use {@link ReleasePhase#simulate(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
      */
+    @Deprecated
     ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 

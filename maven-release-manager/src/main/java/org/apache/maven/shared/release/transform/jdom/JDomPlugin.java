@@ -32,7 +32,7 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms PLUGIN element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
@@ -78,7 +78,7 @@ public class JDomPlugin extends Plugin implements MavenCoordinate
             List<Element> dependencyElms =
                 dependenciesElm.getChildren( "dependency", plugin.getNamespace() );
 
-            List<Dependency> dependencies = new ArrayList<Dependency>( dependencyElms.size() );
+            List<Dependency> dependencies = new ArrayList<>( dependencyElms.size() );
 
             for ( Element dependencyElm : dependencyElms )
             {
@@ -184,7 +184,7 @@ public class JDomPlugin extends Plugin implements MavenCoordinate
     {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public String getName()
     {

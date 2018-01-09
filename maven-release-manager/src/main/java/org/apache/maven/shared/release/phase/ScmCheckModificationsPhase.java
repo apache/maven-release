@@ -52,7 +52,7 @@ import java.util.Set;
 
 /**
  * See if there are any local modifications to the files before proceeding with SCM operations and the release.
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Component( role = ReleasePhase.class, hint = "scm-check-modifications" )
@@ -64,7 +64,7 @@ public class ScmCheckModificationsPhase
      */
     @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
-    
+
     /**
      * SCM URL translators mapped by provider name.
      */
@@ -73,14 +73,15 @@ public class ScmCheckModificationsPhase
 
     /**
      * The filepatterns to exclude from the status check.
-     * 
+     *
      * @todo proper construction of filenames, especially release properties
      */
-    private Set<String> exclusionPatterns = new HashSet<String>( Arrays.asList(
+    private Set<String> exclusionPatterns = new HashSet<>( Arrays.asList(
         "**" + File.separator + "pom.xml.backup", "**" + File.separator + "pom.xml.tag",
         "**" + File.separator + "pom.xml.next", "**" + File.separator + "pom.xml.branch",
         "**" + File.separator + "release.properties", "**" + File.separator + "pom.xml.releaseBackup" ) );
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -144,7 +145,7 @@ public class ScmCheckModificationsPhase
         if ( !changedFiles.isEmpty() )
         {
             ScmTranslator scmTranslator = scmTranslators.get( repository.getProvider() );
-            
+
             // TODO: would be nice for SCM status command to do this for me.
             for ( Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); )
             {
@@ -194,6 +195,7 @@ public class ScmCheckModificationsPhase
         return relResult;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException

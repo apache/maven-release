@@ -58,6 +58,7 @@ public class ScmTagPhase
     @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -142,6 +143,7 @@ public class ScmTagPhase
         return relResult;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException

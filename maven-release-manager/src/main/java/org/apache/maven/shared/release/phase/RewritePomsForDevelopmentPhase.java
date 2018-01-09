@@ -46,7 +46,7 @@ public class RewritePomsForDevelopmentPhase
     {
         return "next";
     }
-    
+
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,

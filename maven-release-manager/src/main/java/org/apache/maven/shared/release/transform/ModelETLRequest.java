@@ -23,7 +23,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
@@ -32,19 +32,19 @@ public class ModelETLRequest
     private String lineSeparator;
 
     private MavenProject project;
-    
+
     private ReleaseDescriptor releaseDescriptor;
 
     public String getLineSeparator()
     {
         return lineSeparator;
     }
-    
+
     public void setLineSeparator( String lineSeparator )
     {
         this.lineSeparator = lineSeparator;
     }
-    
+
     public MavenProject getProject()
     {
         return project;

@@ -84,7 +84,7 @@ public class GenerateReleasePomsPhase
 
     @Requirement
     private ModelInterpolator modelInterpolator;
-    
+
     /**
      * SCM URL translators mapped by provider name.
      */
@@ -95,6 +95,7 @@ public class GenerateReleasePomsPhase
      * @see org.apache.maven.shared.release.phase.ReleasePhase#execute(org.apache.maven.shared.release.config.ReleaseDescriptor,
      *      org.apache.maven.settings.Settings, java.util.List)
      */
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -128,7 +129,7 @@ public class GenerateReleasePomsPhase
                                       List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        List<File> releasePoms = new ArrayList<File>();
+        List<File> releasePoms = new ArrayList<>();
 
         for ( MavenProject project : reactorProjects )
         {
@@ -246,7 +247,7 @@ public class GenerateReleasePomsPhase
         if ( !FINALNAME_EXPRESSION.equals( originalFinalName ) )
         {
             originalFinalName = findOriginalFinalName( project );
-            
+
             if ( originalFinalName == null )
             {
                 // as defined in super-pom
@@ -256,7 +257,7 @@ public class GenerateReleasePomsPhase
 
         // make finalName always explicit
         String finalName = ReleaseUtil.interpolate( originalFinalName, releaseModel );
-        
+
         // still required?
         if ( finalName.indexOf( Artifact.SNAPSHOT_VERSION ) != -1 )
         {
@@ -264,7 +265,7 @@ public class GenerateReleasePomsPhase
                             + releaseProject.getId() );
         }
         releaseModel.getBuild().setFinalName( finalName );
-        
+
 
         // update scm
         Scm scm = releaseModel.getScm();
@@ -306,28 +307,28 @@ public class GenerateReleasePomsPhase
 
         return releaseModel;
     }
-    
-    
+
+
     private void unalignFromBaseDirectory( Model releaseModel, File basedir )
     {
         Model rawSuperModel = superPomProvider.getSuperModel( releaseModel.getModelVersion() );
-        
+
         ModelBuildingRequest buildingRequest = new DefaultModelBuildingRequest();
         buildingRequest.setValidationLevel( ModelBuildingRequest.VALIDATION_LEVEL_STRICT );
-        
+
         // inject proper values used by project.build.finalName
         Properties properties = new Properties();
         properties.put( "project.version", releaseModel.getVersion() );
         properties.put( "project.artifactId", releaseModel.getArtifactId() );
         buildingRequest.setUserProperties( properties );
-        
+
         Model interpolatedSuperModel =
             modelInterpolator.interpolateModel( rawSuperModel.clone(), basedir, buildingRequest, null );
-        
+
         Build currentBuild = releaseModel.getBuild();
         Build interpolatedSuperBuild = interpolatedSuperModel.getBuild();
         Build rawSuperBuild = rawSuperModel.getBuild();
-        
+
         currentBuild.setSourceDirectory( resolvePath( basedir.toPath(), currentBuild.getSourceDirectory(),
                                                   interpolatedSuperBuild.getSourceDirectory(),
                                                   rawSuperBuild.getSourceDirectory() ) );
@@ -343,10 +344,10 @@ public class GenerateReleasePomsPhase
         currentBuild.setTestOutputDirectory( resolvePath( basedir.toPath(), currentBuild.getTestOutputDirectory(),
                                                       interpolatedSuperBuild.getTestOutputDirectory(),
                                                       rawSuperBuild.getTestOutputDirectory() ) );
-        currentBuild.setDirectory( resolvePath( basedir.toPath(), currentBuild.getDirectory(), 
+        currentBuild.setDirectory( resolvePath( basedir.toPath(), currentBuild.getDirectory(),
                                             interpolatedSuperBuild.getDirectory(),
                                             rawSuperBuild.getDirectory() ) );
-        
+
         for ( Resource currentResource : currentBuild.getResources() )
         {
             Map<String, String> superResourceDirectories =
@@ -372,22 +373,22 @@ public class GenerateReleasePomsPhase
             currentResource.setDirectory( resolvePath( basedir.toPath(), currentResource.getDirectory(),
                                                        superResourceDirectories ) );
         }
-        
-        
-        
+
+
+
         releaseModel.getReporting().setOutputDirectory( resolvePath( basedir.toPath(),
                                                          releaseModel.getReporting().getOutputDirectory(),
                                                          interpolatedSuperModel.getReporting().getOutputDirectory(),
                                                          rawSuperModel.getReporting().getOutputDirectory() ) );
     }
-    
+
     private String resolvePath( Path basedir, String current, String superInterpolated, String superRaw )
     {
         return basedir.resolve( current ).equals( basedir.resolve( superInterpolated ) ) ? superRaw : current;
     }
 
-    private String resolvePath( Path basedir, 
-                                String current, 
+    private String resolvePath( Path basedir,
+                                String current,
                                 Map<String /* interpolated */, String /* raw */> superValues )
     {
         for ( Map.Entry<String, String> superValue : superValues.entrySet() )
@@ -399,7 +400,7 @@ public class GenerateReleasePomsPhase
         }
         return current;
     }
-    
+
     private String findOriginalFinalName( MavenProject project )
     {
         if ( project.getOriginalModel().getBuild() != null
@@ -417,6 +418,7 @@ public class GenerateReleasePomsPhase
         }
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -507,11 +509,11 @@ public class GenerateReleasePomsPhase
         if ( artifacts != null )
         {
             // make dependency order deterministic for tests (related to MNG-1412)
-            List<Artifact> orderedArtifacts = new ArrayList<Artifact>();
+            List<Artifact> orderedArtifacts = new ArrayList<>();
             orderedArtifacts.addAll( artifacts );
             Collections.sort( orderedArtifacts );
 
-            releaseDependencies = new ArrayList<Dependency>();
+            releaseDependencies = new ArrayList<>();
 
             for ( Artifact artifact : orderedArtifacts )
             {
@@ -585,7 +587,7 @@ public class GenerateReleasePomsPhase
                 @SuppressWarnings( "unchecked" )
                 Map<String, Artifact> artifactsById = project.getPluginArtifactMap();
 
-                releasePlugins = new ArrayList<Plugin>();
+                releasePlugins = new ArrayList<>();
 
                 for ( Plugin plugin : plugins )
                 {
@@ -632,7 +634,7 @@ public class GenerateReleasePomsPhase
                 @SuppressWarnings( "unchecked" )
                 Map<String, Artifact> artifactsById = project.getReportArtifactMap();
 
-                releaseReportPlugins = new ArrayList<ReportPlugin>();
+                releaseReportPlugins = new ArrayList<>();
 
                 for ( ReportPlugin reportPlugin : reportPlugins )
                 {
@@ -671,12 +673,12 @@ public class GenerateReleasePomsPhase
 
             if ( extensions != null )
             {
-                releaseExtensions = new ArrayList<Extension>();
+                releaseExtensions = new ArrayList<>();
 
                 for ( Extension extension : extensions )
                 {
                     String id = ArtifactUtils.versionlessKey( extension.getGroupId(), extension.getArtifactId() );
-                    Artifact artifact = (Artifact) project.getExtensionArtifactMap().get( id );
+                    Artifact artifact = project.getExtensionArtifactMap().get( id );
                     String version = getReleaseVersion( originalVersions, mappedVersions, artifact );
 
                     Extension releaseExtension = new Extension();
@@ -695,6 +697,7 @@ public class GenerateReleasePomsPhase
     /*
      * @see org.apache.maven.shared.release.phase.AbstractReleasePhase#clean(java.util.List)
      */
+    @Override
     public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();

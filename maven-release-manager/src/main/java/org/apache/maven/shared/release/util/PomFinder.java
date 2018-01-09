@@ -280,6 +280,7 @@ public class PomFinder
             this.parentGroupId = parentGroupId;
         }
 
+        @Override
         public boolean equals( Object o )
         {
             if ( this == o )
@@ -316,6 +317,7 @@ public class PomFinder
             return true;
         }
 
+        @Override
         public int hashCode()
         {
             int result = artifactId != null ? artifactId.hashCode() : 0;

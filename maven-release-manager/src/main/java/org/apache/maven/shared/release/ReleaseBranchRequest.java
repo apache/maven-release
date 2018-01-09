@@ -22,7 +22,7 @@ package org.apache.maven.shared.release;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 2.3
  */
@@ -30,7 +30,7 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
 {
     // using Boolean to detect if has been set explicitly
     private Boolean dryRun;
-    
+
     private ReleaseEnvironment releaseEnvironment;
 
     /**
@@ -40,7 +40,7 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
     {
         return dryRun;
     }
-    
+
     /**
      * @param dryRun the dryRun to set
      */

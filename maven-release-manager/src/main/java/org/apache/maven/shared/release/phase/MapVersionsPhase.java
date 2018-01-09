@@ -97,6 +97,7 @@ public class MapVersionsPhase
         this.prompter = prompter;
     }
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -377,6 +378,7 @@ public class MapVersionsPhase
         return messageKey;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException

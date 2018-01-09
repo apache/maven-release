@@ -29,14 +29,14 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms PROFILE element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomProfile
     extends Profile
 {
-    private final JDomModelBase modelBase; 
+    private final JDomModelBase modelBase;
 
     public JDomProfile( Element profile )
     {
@@ -48,13 +48,13 @@ public class JDomProfile
     {
         return modelBase.getBuild();
     }
-    
+
     @Override
     public List<Dependency> getDependencies()
     {
         return modelBase.getDependencies();
     }
-    
+
     @Override
     public DependencyManagement getDependencyManagement()
     {

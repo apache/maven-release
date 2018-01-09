@@ -27,7 +27,7 @@ import org.jdom.Text;
 
 /**
  * Common JDom functions
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
@@ -127,6 +127,6 @@ public final class JDomUtils
         }
         return tagElement;
     }
-    
-    
+
+
 }

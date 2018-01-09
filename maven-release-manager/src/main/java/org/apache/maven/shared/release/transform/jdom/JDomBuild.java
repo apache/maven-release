@@ -32,7 +32,7 @@ import org.apache.maven.model.Resource;
 import org.jdom.Element;
 /**
  * JDom implementation of poms BUILD element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
@@ -63,8 +63,8 @@ public class JDomBuild
         else
         {
             List<Element> extensionElms = extensionsElm.getChildren( "extension", build.getNamespace() );
-            
-            List<Extension> extensions = new ArrayList<Extension>( extensionElms.size() );
+
+            List<Extension> extensions = new ArrayList<>( extensionElms.size() );
             for ( Element extensionElm : extensionElms )
             {
                 extensions.add( new JDomExtension( extensionElm ) );
@@ -292,7 +292,7 @@ public class JDomBuild
             List<Element> pluginElms =
                 pluginsElm.getChildren( "plugin", build.getNamespace() );
 
-            List<Plugin> plugins = new ArrayList<Plugin>( pluginElms.size() );
+            List<Plugin> plugins = new ArrayList<>( pluginElms.size() );
 
             for ( Element pluginElm : pluginElms )
             {

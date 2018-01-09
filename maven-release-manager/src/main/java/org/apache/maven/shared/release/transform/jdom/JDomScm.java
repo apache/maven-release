@@ -24,7 +24,7 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms SCM element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */

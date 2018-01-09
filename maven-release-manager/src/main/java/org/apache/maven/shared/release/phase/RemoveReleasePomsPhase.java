@@ -48,6 +48,7 @@ import org.codehaus.plexus.component.annotations.Component;
 public class RemoveReleasePomsPhase
     extends AbstractReleasePomsPhase
 {
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseFailureException, ReleaseExecutionException
@@ -55,6 +56,7 @@ public class RemoveReleasePomsPhase
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects, false );
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseFailureException, ReleaseExecutionException
@@ -86,7 +88,7 @@ public class RemoveReleasePomsPhase
                                     boolean simulate, ReleaseResult result, List<MavenProject> projects )
         throws ReleaseFailureException, ReleaseExecutionException
     {
-        List<File> releasePoms = new ArrayList<File>();
+        List<File> releasePoms = new ArrayList<>();
 
         for ( MavenProject project : projects )
         {

@@ -45,6 +45,7 @@ public class ScmCommitPreparationPhase
      */
     private String rollbackMessageFormat;
 
+    @Override
     protected void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                              List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
         throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException
@@ -84,6 +85,7 @@ public class ScmCommitPreparationPhase
                                      new Object[]{releaseDescriptor.getScmReleaseLabel()} );
     }
 
+    @Override
     protected void validateConfiguration( ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException
     {

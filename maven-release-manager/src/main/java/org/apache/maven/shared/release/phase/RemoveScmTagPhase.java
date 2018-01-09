@@ -36,6 +36,7 @@ import java.util.List;
 public class RemoveScmTagPhase
     extends AbstractReleasePhase
 {
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -49,6 +50,7 @@ public class RemoveScmTagPhase
         return result;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException

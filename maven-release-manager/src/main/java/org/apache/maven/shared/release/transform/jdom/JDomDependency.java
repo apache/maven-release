@@ -28,14 +28,14 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms DEPENDENCY element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomDependency extends Dependency implements MavenCoordinate
 {
     private final MavenCoordinate coordinate;
-    
+
     public JDomDependency( Element dependency )
     {
         this.coordinate = new JDomMavenCoordinate( dependency );
@@ -160,7 +160,7 @@ public class JDomDependency extends Dependency implements MavenCoordinate
     {
         coordinate.setVersion( version );
     }
-    
+
     @Override
     public String getName()
     {

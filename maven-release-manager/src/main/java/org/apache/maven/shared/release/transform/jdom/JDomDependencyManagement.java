@@ -28,15 +28,15 @@ import org.apache.maven.model.DependencyManagement;
 import org.jdom.Element;
 
 /**
- * JDom implementation of poms DEPENDENCYMANAGEMENT element 
- * 
+ * JDom implementation of poms DEPENDENCYMANAGEMENT element
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomDependencyManagement extends DependencyManagement
 {
     private final Element dependencyManagement;
-    
+
     public JDomDependencyManagement( Element dependencyManagement )
     {
         this.dependencyManagement = dependencyManagement;
@@ -61,7 +61,7 @@ public class JDomDependencyManagement extends DependencyManagement
             List<Element> dependencyElms =
                 dependenciesElm.getChildren( "dependency", dependencyManagement.getNamespace() );
 
-            List<Dependency> dependencies = new ArrayList<Dependency>( dependencyElms.size() );
+            List<Dependency> dependencies = new ArrayList<>( dependencyElms.size() );
 
             for ( Element dependencyElm : dependencyElms )
             {

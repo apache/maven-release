@@ -38,6 +38,7 @@ import java.util.List;
 public class RunPrepareGoalsPhase
     extends AbstractRunGoalsPhase
 {
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -46,6 +47,7 @@ public class RunPrepareGoalsPhase
                         releaseDescriptor.getAdditionalArguments() );
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -60,6 +62,7 @@ public class RunPrepareGoalsPhase
         return result;
     }
 
+    @Override
     protected String getGoals( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getPreparationGoals();

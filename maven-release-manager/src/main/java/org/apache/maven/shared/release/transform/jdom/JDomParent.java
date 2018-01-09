@@ -24,7 +24,7 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms PARENT element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
@@ -36,13 +36,13 @@ public class JDomParent extends Parent
     {
         this.parent = parent;
     }
-    
+
     @Override
     public String getVersion()
     {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public void setVersion( String version )
     {

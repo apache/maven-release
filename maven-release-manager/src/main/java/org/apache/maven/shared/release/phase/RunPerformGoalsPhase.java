@@ -40,6 +40,7 @@ import java.util.List;
 public class RunPerformGoalsPhase
     extends AbstractRunGoalsPhase
 {
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -64,7 +65,7 @@ public class RunPerformGoalsPhase
                 additionalArguments = "-DperformRelease=true";
             }
         }
-        
+
         String pomFileName = releaseDescriptor.getPomFileName();
         if ( pomFileName == null )
         {
@@ -72,7 +73,7 @@ public class RunPerformGoalsPhase
         }
 
         // ensure we don't use the release pom for the perform goals
-        // ^^ paranoia? A MavenExecutor has already access to this. Probably worth refactoring. 
+        // ^^ paranoia? A MavenExecutor has already access to this. Probably worth refactoring.
         if ( !StringUtils.isEmpty( additionalArguments ) )
         {
             additionalArguments = additionalArguments + " -f " + pomFileName;
@@ -81,15 +82,15 @@ public class RunPerformGoalsPhase
         {
             additionalArguments = "-f " + pomFileName;
         }
-        
+
         if ( simulate )
         {
             ReleaseResult result = new ReleaseResult();
 
             logDebug( result, "Additional arguments: " + additionalArguments );
-            
+
             logInfo( result, "Executing perform goals  - since this is simulation mode these goals are skipped." );
-            
+
             return result;
         }
 
@@ -136,6 +137,7 @@ public class RunPerformGoalsPhase
         return execute( releaseDescriptor, releaseEnvironment, workDirectory, additionalArguments );
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -143,6 +145,7 @@ public class RunPerformGoalsPhase
         return runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
+    @Override
     protected String getGoals( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getPerformGoals();

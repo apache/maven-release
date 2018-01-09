@@ -74,13 +74,13 @@ public class InputVariablesPhase
      */
     @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
-    
+
     /**
      * Component used for custom or default naming policy
      */
     @Requirement
     private Map<String, NamingPolicy> namingPolicies;
-   
+
     /**
      * The default naming policy to apply, if any
      */
@@ -118,6 +118,7 @@ public class InputVariablesPhase
         }
     }
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -151,7 +152,7 @@ public class InputVariablesPhase
                 catch ( PolicyException e )
                 {
                     throw new ReleaseExecutionException( e.getMessage(), e );
-                } 
+                }
             }
             else if ( scmTagNameFormat != null )
             {
@@ -246,6 +247,7 @@ public class InputVariablesPhase
         return result;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
@@ -259,7 +261,7 @@ public class InputVariablesPhase
 
         return result;
     }
-    
+
     private String resolveSuggestedName( String policyId, String version, MavenProject project )
         throws PolicyException
     {
@@ -267,7 +269,7 @@ public class InputVariablesPhase
         {
             return null;
         }
-        
+
         NamingPolicy policy = namingPolicies.get( policyId );
         if ( policy == null )
         {

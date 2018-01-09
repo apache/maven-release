@@ -127,7 +127,7 @@ public class ReleaseUtil
      * Gets the string contents of the specified XML file. Note: In contrast to an XML processor, the line separators in
      * the returned string will be normalized to use the platform's native line separator. This is basically to save
      * another normalization step when writing the string contents back to an XML file.
-     * 
+     *
      * @param file The path to the XML file to read in, must not be <code>null</code>.
      * @return The string contents of the XML file.
      * @throws IOException If the file could not be opened/read.
@@ -155,7 +155,7 @@ public class ReleaseUtil
 
     /**
      * Normalizes the line separators in the specified string.
-     * 
+     *
      * @param text The string to normalize, may be <code>null</code>.
      * @param separator The line separator to use for normalization, typically "\n" or "\r\n", must not be
      *            <code>null</code>.
@@ -292,7 +292,7 @@ public class ReleaseUtil
             {
                 url = url.substring( 0, index ) + suffix;
             }
-            
+
         }
         return url;
     }

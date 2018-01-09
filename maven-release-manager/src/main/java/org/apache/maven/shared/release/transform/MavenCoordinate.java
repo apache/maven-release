@@ -20,20 +20,20 @@ package org.apache.maven.shared.release.transform;
  */
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public interface MavenCoordinate
 {
     String getGroupId();
-    
+
     String getArtifactId();
-    
+
     String getVersion();
-    
+
     void setVersion( String version );
-    
+
     // @todo helper method during refactoring, will be removed
     String getName();
 }

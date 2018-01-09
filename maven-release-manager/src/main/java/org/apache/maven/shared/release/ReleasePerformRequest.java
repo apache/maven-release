@@ -22,7 +22,7 @@ package org.apache.maven.shared.release;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 2.3
  */

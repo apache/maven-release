@@ -38,21 +38,21 @@ import org.jdom.Text;
 
 /**
  * JDom implementation of poms PROJECT element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomModel extends Model
 {
     private final Element project;
-    
+
     private final JDomModelBase modelBase;
-    
+
     public JDomModel( Document document )
     {
         this( document.getRootElement() );
     }
-    
+
     public JDomModel( Element project )
     {
         this.project = project;
@@ -64,19 +64,19 @@ public class JDomModel extends Model
     {
         return modelBase.getBuild();
     }
-    
+
     @Override
     public List<Dependency> getDependencies()
     {
         return modelBase.getDependencies();
     }
-    
+
     @Override
     public DependencyManagement getDependencyManagement()
     {
         return modelBase.getDependencyManagement();
     }
-    
+
     @Override
     public Parent getParent()
     {
@@ -96,7 +96,7 @@ public class JDomModel extends Model
     {
         return project.getChild( "parent", project.getNamespace() );
     }
-    
+
     @Override
     public List<Profile> getProfiles()
     {
@@ -109,7 +109,7 @@ public class JDomModel extends Model
         {
             List<Element> profileElms = profilesElm.getChildren( "profile", project.getNamespace() );
 
-            List<Profile> profiles = new ArrayList<Profile>( profileElms.size() );
+            List<Profile> profiles = new ArrayList<>( profileElms.size() );
 
             for ( Element profileElm : profileElms )
             {
@@ -119,13 +119,13 @@ public class JDomModel extends Model
             return profiles;
         }
     }
-    
-    
+
+
     @Override
     public Properties getProperties()
     {
         Element properties = project.getChild( "properties", project.getNamespace() );
-        
+
         if ( properties == null )
         {
             return null;
@@ -135,12 +135,12 @@ public class JDomModel extends Model
             return new JDomProperties( properties );
         }
     }
-    
+
     @Override
     public Reporting getReporting()
     {
         Element reporting = project.getChild( "reporting", project.getNamespace() );
-        
+
         if ( reporting == null )
         {
             return null;
@@ -150,7 +150,7 @@ public class JDomModel extends Model
             return new JDomReporting( reporting );
         }
     }
-    
+
     @Override
     public void setScm( Scm scm )
     {
@@ -162,18 +162,18 @@ public class JDomModel extends Model
         {
             Element scmRoot = new Element( "scm" );
             scmRoot.addContent( "\n  " );
-            
+
             // Write current values to JDom tree
             Scm jdomScm = new JDomScm( scmRoot );
             jdomScm.setConnection( scm.getConnection() );
             jdomScm.setDeveloperConnection( scm.getDeveloperConnection() );
             jdomScm.setTag( scm.getTag() );
             jdomScm.setUrl( scm.getUrl() );
-            
+
             project.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
         }
     }
-    
+
     @Override
     public Scm getScm()
     {
@@ -188,12 +188,12 @@ public class JDomModel extends Model
             return new JDomScm( elm );
         }
     }
-    
+
     @Override
     public void setVersion( String version )
     {
         Element versionElement = project.getChild( "version", project.getNamespace() );
-        
+
         String parentVersion;
         Element parent = getParentElement();
         if ( parent != null )
@@ -204,7 +204,7 @@ public class JDomModel extends Model
         {
             parentVersion = null;
         }
-        
+
         if ( versionElement == null )
         {
             if ( !version.equals( parentVersion ) )

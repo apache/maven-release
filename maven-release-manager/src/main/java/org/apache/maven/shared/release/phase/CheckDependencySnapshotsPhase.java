@@ -85,11 +85,12 @@ public class CheckDependencySnapshotsPhase
     // We'll probably need to introduce specifiedSnapshots as well.
     // @TODO MRELEASE-378: verify custom dependencies in plugins. Be aware of deprecated/removed Components in M3, such as PluginCollector
     // @TODO MRELEASE-763: verify all dependencies in inactive profiles
-    private Set<Artifact> usedSnapshotDependencies = new HashSet<Artifact>();
-    private Set<Artifact> usedSnapshotReports = new HashSet<Artifact>();
-    private Set<Artifact> usedSnapshotExtensions = new HashSet<Artifact>();
-    private Set<Artifact> usedSnapshotPlugins = new HashSet<Artifact>();
+    private Set<Artifact> usedSnapshotDependencies = new HashSet<>();
+    private Set<Artifact> usedSnapshotReports = new HashSet<>();
+    private Set<Artifact> usedSnapshotExtensions = new HashSet<>();
+    private Set<Artifact> usedSnapshotPlugins = new HashSet<>();
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -130,7 +131,7 @@ public class CheckDependencySnapshotsPhase
                 usedSnapshotDependencies.add( project.getParentArtifact() );
             }
         }
-        
+
         Set<Artifact> dependencyArtifacts = project.getArtifacts();
         checkDependencies( originalVersions, releaseDescriptor, artifactMap, dependencyArtifacts );
 
@@ -148,7 +149,7 @@ public class CheckDependencySnapshotsPhase
         @SuppressWarnings( "unchecked" )
         Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
         checkExtensions( originalVersions, releaseDescriptor, artifactMap, extensionArtifacts );
-        
+
         //@todo check profiles
 
         if ( !usedSnapshotDependencies.isEmpty() || !usedSnapshotReports.isEmpty()
@@ -325,6 +326,7 @@ public class CheckDependencySnapshotsPhase
         return result;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -340,7 +342,7 @@ public class CheckDependencySnapshotsPhase
 
     private StringBuilder printSnapshotDependencies( Set<Artifact> snapshotsSet, StringBuilder message )
     {
-        List<Artifact> snapshotsList = new ArrayList<Artifact>( snapshotsSet );
+        List<Artifact> snapshotsList = new ArrayList<>( snapshotsSet );
 
         Collections.sort( snapshotsList );
 
@@ -423,7 +425,7 @@ public class CheckDependencySnapshotsPhase
     private Map<String, Map<String, String>> processSnapshot( Set<Artifact> snapshotSet )
         throws PrompterException, VersionParseException
     {
-        Map<String, Map<String, String>> resolvedSnapshots = new HashMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> resolvedSnapshots = new HashMap<>();
         Iterator<Artifact> iterator = snapshotSet.iterator();
 
         while ( iterator.hasNext() )
@@ -431,7 +433,7 @@ public class CheckDependencySnapshotsPhase
             Artifact currentArtifact = iterator.next();
             String versionlessKey = ArtifactUtils.versionlessKey( currentArtifact );
 
-            Map<String, String> versionMap = new HashMap<String, String>();
+            Map<String, String> versionMap = new HashMap<>();
             VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getBaseVersion() );
             versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, versionInfo.toString() );
 

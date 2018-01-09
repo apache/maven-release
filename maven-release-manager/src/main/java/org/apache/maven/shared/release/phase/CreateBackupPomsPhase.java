@@ -39,6 +39,7 @@ import org.codehaus.plexus.util.FileUtils;
 public class CreateBackupPomsPhase
     extends AbstractBackupPomsPhase
 {
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -58,6 +59,7 @@ public class CreateBackupPomsPhase
         return result;
     }
 
+    @Override
     public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
@@ -72,6 +74,7 @@ public class CreateBackupPomsPhase
         return result;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException

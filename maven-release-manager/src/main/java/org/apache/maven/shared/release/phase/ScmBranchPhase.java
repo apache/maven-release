@@ -45,7 +45,7 @@ import java.util.List;
 
 /**
  * Branch the SCM repository.
- * 
+ *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  */
 @Component( role = ReleasePhase.class, hint = "scm-branch" )
@@ -58,6 +58,7 @@ public class ScmBranchPhase
     @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -123,6 +124,7 @@ public class ScmBranchPhase
         return relResult;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException

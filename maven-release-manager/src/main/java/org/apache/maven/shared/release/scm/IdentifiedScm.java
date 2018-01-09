@@ -23,16 +23,16 @@ import org.apache.maven.model.Scm;
 
 /**
  * Unlike repositories the scm of the Project Model doesn't have an id.
- * This makes it quite hard to bind it to the credentials of a server as specified in the settings.xml 
- * 
+ * This makes it quite hard to bind it to the credentials of a server as specified in the settings.xml
+ *
  * @author Robert Scholte
- * 
+ *
  * @since 2.3
  */
 public class IdentifiedScm
     extends Scm
 {
-    
+
     private String id;
 
     /**

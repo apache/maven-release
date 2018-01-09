@@ -20,7 +20,7 @@ package org.apache.maven.shared.release.transform;
  */
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */

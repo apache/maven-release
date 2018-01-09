@@ -67,6 +67,7 @@ public abstract class AbstractScmCommitPhase
      */
     protected String messageFormat;
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -82,6 +83,7 @@ public abstract class AbstractScmCommitPhase
         return relResult;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException
@@ -194,7 +196,7 @@ public abstract class AbstractScmCommitPhase
 
     protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )
     {
-        List<File> pomFiles = new ArrayList<File>();
+        List<File> pomFiles = new ArrayList<>();
 
         pomFiles.add( ReleaseUtil.getStandardPom( project ) );
 
@@ -209,7 +211,7 @@ public abstract class AbstractScmCommitPhase
     protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor,
                                                 List<MavenProject> reactorProjects )
     {
-        List<File> pomFiles = new ArrayList<File>();
+        List<File> pomFiles = new ArrayList<>();
         for ( MavenProject project : reactorProjects )
         {
             pomFiles.addAll( createPomFiles( releaseDescriptor, project ) );

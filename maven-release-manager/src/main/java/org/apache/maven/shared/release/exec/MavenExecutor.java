@@ -81,6 +81,7 @@ public interface MavenExecutor
      * @deprecated Use {@link MavenExecutor#executeGoals(File, String, ReleaseEnvironment, boolean, String, String,
      * ReleaseResult)} instead
      */
+    @Deprecated
     void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
                        String pomFileName, ReleaseResult result )
         throws MavenExecutorException;
@@ -98,6 +99,7 @@ public interface MavenExecutor
      * @deprecated Use {@link MavenExecutor#executeGoals(File, String, ReleaseEnvironment, boolean, String,
      * ReleaseResult)} instead
      */
+    @Deprecated
     void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
                        ReleaseResult result )
         throws MavenExecutorException;

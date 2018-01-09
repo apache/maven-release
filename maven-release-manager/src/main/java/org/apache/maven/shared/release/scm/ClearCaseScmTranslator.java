@@ -33,6 +33,7 @@ public class ClearCaseScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )
     {
         return url;
@@ -41,6 +42,7 @@ public class ClearCaseScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         return url;
@@ -49,6 +51,7 @@ public class ClearCaseScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String resolveTag( String tag )
     {
         if ( !"HEAD".equals( tag ) )
@@ -60,10 +63,11 @@ public class ClearCaseScmTranslator
             return null;
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toRelativePath( String path )
     {
         return path;

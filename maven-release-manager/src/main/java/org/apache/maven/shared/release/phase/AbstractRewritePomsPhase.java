@@ -76,10 +76,10 @@ public abstract class AbstractRewritePomsPhase
      */
     @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
-    
+
     @Requirement( role = ModelETLFactory.class )
     private Map<String, ModelETLFactory> modelETLFactories;
-    
+
     /**
      * Use jdom-sax as default
      */
@@ -90,7 +90,7 @@ public abstract class AbstractRewritePomsPhase
      */
     @Requirement( role = ScmTranslator.class )
     private Map<String, ScmTranslator> scmTranslators;
-    
+
     protected final Map<String, ScmTranslator> getScmTranslators()
     {
         return scmTranslators;
@@ -102,13 +102,13 @@ public abstract class AbstractRewritePomsPhase
     {
         this.ls = ls;
     }
-    
+
     public void setModelETL( String modelETL )
     {
         this.modelETL = modelETL;
     }
-    
-    protected abstract String getPomSuffix(); 
+
+    protected abstract String getPomSuffix();
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
@@ -123,7 +123,7 @@ public abstract class AbstractRewritePomsPhase
 
         return result;
     }
-    
+
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
@@ -190,9 +190,9 @@ public abstract class AbstractRewritePomsPhase
         request.setLineSeparator( ls );
         request.setProject( project );
         request.setReleaseDescriptor( releaseDescriptor );
-        
+
         ModelETL etl = modelETLFactories.get( modelETL ).newInstance( request );
-        
+
         etl.extract( pomFile );
 
         ScmRepository scmRepository = null;
@@ -231,7 +231,7 @@ public abstract class AbstractRewritePomsPhase
             prepareScm( pomFile, releaseDescriptor, scmRepository, provider );
         }
         etl.load( outputFile );
-    
+
     }
 
     private void transformDocument( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
@@ -245,7 +245,7 @@ public abstract class AbstractRewritePomsPhase
         Map<String, Map<String, String>> resolvedSnapshotDependencies =
             releaseDescriptor.getResolvedSnapshotDependencies();
         Model model = project.getModel();
-        
+
         Properties properties = modelTarget.getProperties();
 
         String parentVersion = rewriteParent( project, modelTarget, mappedVersions,
@@ -258,28 +258,28 @@ public abstract class AbstractRewritePomsPhase
         Build buildTarget = modelTarget.getBuild();
         if ( buildTarget != null )
         {
-            // profile.build.extensions doesn't exist, so only rewrite project.build.extensions  
+            // profile.build.extensions doesn't exist, so only rewrite project.build.extensions
             rewriteArtifactVersions( toMavenCoordinates( buildTarget.getExtensions() ), mappedVersions,
                                      resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                      releaseDescriptor );
-            
+
             rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPlugins() ), mappedVersions,
                                      resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                      releaseDescriptor );
-            
+
             for ( Plugin plugin : buildTarget.getPlugins() )
             {
                 rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
                                          mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                          properties, result, releaseDescriptor );
             }
-            
+
             if ( buildTarget.getPluginManagement() != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPluginManagement().getPlugins() ),
                                          mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                          properties, result, releaseDescriptor );
-                
+
                 for ( Plugin plugin : buildTarget.getPluginManagement().getPlugins() )
                 {
                     rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), mappedVersions,
@@ -288,7 +288,7 @@ public abstract class AbstractRewritePomsPhase
                 }
             }
         }
-        
+
         for ( Profile profile : modelTarget.getProfiles() )
         {
             BuildBase profileBuild = profile.getBuild();
@@ -297,20 +297,20 @@ public abstract class AbstractRewritePomsPhase
                 rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPlugins() ), mappedVersions,
                                          resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                          releaseDescriptor );
-                
+
                 for ( Plugin plugin : profileBuild.getPlugins() )
                 {
                     rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
                                              mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                              properties, result, releaseDescriptor );
                 }
-                
+
                 if ( profileBuild.getPluginManagement() != null )
                 {
                     rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPluginManagement().getPlugins() ),
                                              mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                              properties, result, releaseDescriptor );
-                    
+
                     for ( Plugin plugin : profileBuild.getPluginManagement().getPlugins() )
                     {
                         rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), mappedVersions,
@@ -320,24 +320,24 @@ public abstract class AbstractRewritePomsPhase
                 }
             }
         }
-        
-        List<ModelBase> modelBases = new ArrayList<ModelBase>();
+
+        List<ModelBase> modelBases = new ArrayList<>();
         modelBases.add( modelTarget );
         modelBases.addAll( modelTarget.getProfiles() );
-        
+
         for ( ModelBase modelBase : modelBases )
         {
             rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencies() ), mappedVersions,
                                      resolvedSnapshotDependencies, originalVersions, model, properties, result,
                                      releaseDescriptor );
-            
+
             if ( modelBase.getDependencyManagement() != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencyManagement().getDependencies() ),
                                          mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
                                          properties, result, releaseDescriptor );
             }
-            
+
             if ( modelBase.getReporting() != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( modelBase.getReporting().getPlugins() ), mappedVersions,
@@ -345,7 +345,7 @@ public abstract class AbstractRewritePomsPhase
                                          releaseDescriptor );
             }
         }
-        
+
         String commonBasedir;
         try
         {
@@ -356,7 +356,7 @@ public abstract class AbstractRewritePomsPhase
             throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
                 + e.getMessage(), e );
         }
-        
+
         transformScm( project, modelTarget, releaseDescriptor, projectId, scmRepository, result,
                       commonBasedir );
     }
@@ -492,9 +492,9 @@ public abstract class AbstractRewritePomsPhase
                     else if ( properties != null )
                     {
                         // version is an expression, check for properties to update instead
-                        
+
                         String propertyValue = properties.getProperty( expression );
-                        
+
                         if ( propertyValue != null )
                         {
                             if ( propertyValue.equals( originalVersion ) )
@@ -578,7 +578,7 @@ public abstract class AbstractRewritePomsPhase
         }
     }
 
-    
+
     protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey,
                                                           Map<String, Map<String, String>> resolvedSnapshots );
 
@@ -594,7 +594,7 @@ public abstract class AbstractRewritePomsPhase
         throws ReleaseExecutionException;
 
     /**
-     * 
+     *
      * @return {@code true} if the SCM-section should be updated, otherwise {@code false}
      * @since 2.4
      */
@@ -636,7 +636,7 @@ public abstract class AbstractRewritePomsPhase
         }
         return scm;
     }
-    
+
     /**
      * Determines the relative path from trunk to tag, and adds this relative path
      * to the url.
@@ -678,10 +678,10 @@ public abstract class AbstractRewritePomsPhase
             return StringUtils.replace( urlPath, trunkPath.substring( i ), tagPath.substring( i ) );
         }
     }
-    
+
     private Collection<MavenCoordinate> toMavenCoordinates( List<?> objects )
     {
-        Collection<MavenCoordinate> coordinates = new ArrayList<MavenCoordinate>( objects.size() );
+        Collection<MavenCoordinate> coordinates = new ArrayList<>( objects.size() );
         for ( Object object : objects )
         {
             if ( object instanceof MavenCoordinate )

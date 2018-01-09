@@ -50,17 +50,18 @@ public class RewritePomsForBranchPhase
     {
         return "branch";
     }
-    
+
+    @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,
-                                 String commonBasedir ) 
+                                 String commonBasedir )
     throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
         {
             Scm scmRoot = modelTarget.getScm();
-            
+
             if ( scmRoot != null )
             {
                 Scm scm = buildScm( project );
@@ -111,7 +112,7 @@ public class RewritePomsForBranchPhase
     }
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Scm scmTarget,
-                                  ScmRepository scmRepository, ReleaseResult relResult, String commonBasedir ) 
+                                  ScmRepository scmRepository, ReleaseResult relResult, String commonBasedir )
     throws IOException
     {
         ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
@@ -123,7 +124,7 @@ public class RewritePomsForBranchPhase
             {
                 scm = project.getScm();
             }
-            
+
             String branchName = releaseDescriptor.getScmReleaseLabel();
             String branchBase = releaseDescriptor.getScmBranchBase();
 
@@ -159,7 +160,7 @@ public class RewritePomsForBranchPhase
                     }
                     scmConnectionBranch = translateUrlPath( trunkUrl, branchBase, scm.getConnection() );
                 }
-                
+
                 String value =
                     translator.translateBranchUrl( scm.getConnection(), branchName + subDirectoryBranch,
                                                    scmConnectionBranch );
@@ -199,7 +200,7 @@ public class RewritePomsForBranchPhase
                 {
                     subDirectoryBranch = "/" + subDirectoryBranch;
                 }
-                
+
                 String tagScmUrl = branchBase;
                 if ( tagScmUrl != null )
                 {
@@ -242,6 +243,7 @@ public class RewritePomsForBranchPhase
         return result;
     }
 
+    @Override
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
                                                          List<MavenProject> reactorProjects, boolean simulate )
     {
@@ -255,6 +257,7 @@ public class RewritePomsForBranchPhase
         return releaseDescriptor.getReleaseVersions();
     }
 
+    @Override
     protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
                                                  Map<String, Map<String, String>> resolvedSnapshotsMap )
     {

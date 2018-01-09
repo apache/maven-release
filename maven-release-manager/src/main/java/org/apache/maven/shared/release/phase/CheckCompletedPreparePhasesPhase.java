@@ -37,6 +37,7 @@ import org.codehaus.plexus.component.annotations.Component;
 public class CheckCompletedPreparePhasesPhase
     extends AbstractReleasePhase
 {
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
                                   ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
@@ -74,6 +75,7 @@ public class CheckCompletedPreparePhasesPhase
         return result;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor,
                                    ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )

@@ -50,6 +50,7 @@ public abstract class AbstractRunGoalsPhase
      * @deprecated Use {@link AbstractRunGoalsPhase#execute(ReleaseDescriptor, ReleaseEnvironment, File, String)}
      * instead.
      */
+    @Deprecated
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, File workingDirectory,
                                   String additionalArguments )
         throws ReleaseExecutionException

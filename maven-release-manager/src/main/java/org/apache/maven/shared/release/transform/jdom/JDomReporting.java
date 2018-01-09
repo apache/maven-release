@@ -30,7 +30,7 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms REPORTING element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
@@ -38,7 +38,7 @@ public class JDomReporting extends Reporting
 {
 
     private final Element reporting;
-    
+
     public JDomReporting( Element reporting )
     {
         this.reporting = reporting;
@@ -68,7 +68,7 @@ public class JDomReporting extends Reporting
         {
             List<Element> pluginElms = pluginsElm.getChildren( "plugin", reporting.getNamespace() );
 
-            List<ReportPlugin> plugins = new ArrayList<ReportPlugin>( pluginElms.size() );
+            List<ReportPlugin> plugins = new ArrayList<>( pluginElms.size() );
 
             for ( Element pluginElm : pluginElms )
             {

@@ -20,7 +20,7 @@ package org.apache.maven.shared.release;
  */
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 2.3
  */

@@ -31,16 +31,16 @@ import org.codehaus.plexus.component.annotations.Component;
 public class JDomModelETLFactory implements ModelETLFactory
 {
     public static final String ROLE_HINT = "jdom-sax";
-    
+
     @Override
     public JDomModelETL newInstance( ModelETLRequest request )
     {
         JDomModelETL result = new JDomModelETL();
-        
+
         result.setLs( request.getLineSeparator() );
         result.setProject( request.getProject() );
         result.setReleaseDescriptor( request.getReleaseDescriptor() );
-        
+
         return result;
     }
 }

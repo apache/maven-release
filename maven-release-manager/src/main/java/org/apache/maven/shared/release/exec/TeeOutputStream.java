@@ -25,10 +25,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * 
+ *
  */
-public class TeeOutputStream 
-    extends FilterOutputStream 
+public class TeeOutputStream
+    extends FilterOutputStream
 {
     private ByteArrayOutputStream bout = new ByteArrayOutputStream( 1024 * 8 );
     private byte indent[];
@@ -38,13 +38,14 @@ public class TeeOutputStream
     {
         this( out, "    " );
     }
-    
+
     public TeeOutputStream( OutputStream out, String i )
     {
         super( out );
         indent = i.getBytes();
     }
 
+    @Override
     public void write( byte[] b, int off, int len )
         throws IOException
     {
@@ -66,6 +67,7 @@ public class TeeOutputStream
         bout.write( b, off, len );
     }
 
+    @Override
     public void write( int b )
         throws IOException
     {
@@ -77,8 +79,9 @@ public class TeeOutputStream
         bout.write( b );
         last = b;
     }
-    
-    public String toString() 
+
+    @Override
+    public String toString()
     {
         return bout.toString();
     }

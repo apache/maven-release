@@ -29,7 +29,7 @@ import org.jdom.Element;
 
 /**
  * JDom implementation of poms reports PLUGIN element
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
@@ -156,7 +156,7 @@ public class JDomReportPlugin
     {
         throw new UnsupportedOperationException();
     }
-    
+
     @Override
     public String getName()
     {

@@ -45,7 +45,8 @@ public abstract class AbstractReleasePhase
     {
         return ResourceBundle.getBundle( "release-messages", locale, AbstractReleasePhase.class.getClassLoader() );
     }
-    
+
+    @Override
     public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         // nothing to do by default
@@ -53,6 +54,7 @@ public abstract class AbstractReleasePhase
         return getReleaseResultSuccess();
     }
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
                                   Settings settings,
                                   List<MavenProject> reactorProjects )
@@ -61,6 +63,7 @@ public abstract class AbstractReleasePhase
         return execute( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor,
                                    Settings settings,
                                    List<MavenProject> reactorProjects )
@@ -98,7 +101,7 @@ public abstract class AbstractReleasePhase
         result.appendDebug( message, e );
         getLogger().debug( message, e );
     }
-    
+
     protected ReleaseResult getReleaseResultSuccess()
     {
         ReleaseResult result = new ReleaseResult();

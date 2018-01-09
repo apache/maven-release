@@ -25,16 +25,16 @@ import org.apache.maven.model.Model;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public interface ModelETL
 {
     void extract( File pomFile ) throws ReleaseExecutionException;
-    
+
     void transform();
-    
+
     void load( File pomFile ) throws ReleaseExecutionException;
 
     // will be removed once transform() is implemented

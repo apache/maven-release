@@ -36,6 +36,7 @@ public class SubversionScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )
     {
         return SvnTagBranchUtils.resolveUrl( url, branchBase, SvnTagBranchUtils.SVN_BRANCHES,
@@ -45,6 +46,7 @@ public class SubversionScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, new ScmTag( tag ) );
@@ -53,14 +55,16 @@ public class SubversionScmTranslator
     /**
      * {@inheritDoc}
      */
+    @Override
     public String resolveTag( String tag )
     {
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
+    @Override
     public String toRelativePath( String path )
     {
         return path;

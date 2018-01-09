@@ -29,19 +29,19 @@ import org.apache.maven.model.DependencyManagement;
 import org.jdom.Element;
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomModelBase
 {
     private final Element modelBase;
-    
+
     public JDomModelBase( Element modelBase )
     {
         this.modelBase = modelBase;
     }
-    
+
     public Build getBuild()
     {
         Element elm = modelBase.getChild( "build", modelBase.getNamespace() );
@@ -55,7 +55,7 @@ public class JDomModelBase
             return new JDomBuild( elm );
         }
     }
-    
+
     public List<Dependency> getDependencies()
     {
         Element dependenciesElm = modelBase.getChild( "dependencies", modelBase.getNamespace() );
@@ -67,7 +67,7 @@ public class JDomModelBase
         {
             List<Element> dependencyElms = dependenciesElm.getChildren( "dependency", modelBase.getNamespace() );
 
-            List<Dependency> dependencies = new ArrayList<Dependency>( dependencyElms.size() );
+            List<Dependency> dependencies = new ArrayList<>( dependencyElms.size() );
 
             for ( Element dependencyElm : dependencyElms )
             {
@@ -77,7 +77,7 @@ public class JDomModelBase
             return dependencies;
         }
     }
-    
+
     public DependencyManagement getDependencyManagement()
     {
         Element elm = modelBase.getChild( "dependencyManagement", modelBase.getNamespace() );

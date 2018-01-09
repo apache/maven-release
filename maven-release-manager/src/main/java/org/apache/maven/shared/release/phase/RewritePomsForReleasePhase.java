@@ -49,7 +49,7 @@ public class RewritePomsForReleasePhase
     {
         return "tag";
     }
-    
+
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,
@@ -90,7 +90,7 @@ public class RewritePomsForReleasePhase
                         Scm scmTarget = new Scm();
                         // reset default value (HEAD)
                         scmTarget.setTag( null );
-                        
+
                         try
                         {
                             if ( translateScm( project, releaseDescriptor, scmTarget, scmRepository, result,

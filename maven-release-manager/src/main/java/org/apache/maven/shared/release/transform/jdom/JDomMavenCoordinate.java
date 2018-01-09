@@ -23,14 +23,14 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.jdom.Element;
 
 /**
- * 
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 public class JDomMavenCoordinate implements MavenCoordinate
 {
     private final Element element;
-    
+
     public JDomMavenCoordinate( Element elm )
     {
         this.element = elm;
@@ -60,20 +60,20 @@ public class JDomMavenCoordinate implements MavenCoordinate
         {
             return version.getTextTrim();
         }
-        
+
     }
-    
+
     private Element getVersionElement()
     {
         return element.getChild( "version", element.getNamespace() );
     }
-    
+
     @Override
     public void setVersion( String version )
     {
         JDomUtils.rewriteValue( getVersionElement(), version );
     }
-    
+
     @Override
     public String getName()
     {
