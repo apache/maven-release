@@ -43,7 +43,6 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
@@ -390,15 +389,10 @@ public class InvokerMavenExecutor
             {
                 settingsFile = File.createTempFile( "release-settings", ".xml" );
                 SettingsXpp3Writer writer = getSettingsWriter();
-                FileWriter fileWriter = null;
-                try
+                
+                try ( FileWriter fileWriter = new FileWriter( settingsFile ) )
                 {
-                    fileWriter = new FileWriter( settingsFile );
                     writer.write( fileWriter, encryptSettings( releaseEnvironment.getSettings() ) );
-                }
-                finally
-                {
-                    IOUtil.close( fileWriter );
                 }
                 req.setUserSettingsFile( settingsFile );
             }
@@ -486,86 +480,91 @@ public class InvokerMavenExecutor
             this.logger = logger;
         }
 
+        @Override
         public void debug( String message, Throwable error )
         {
             logger.debug( message, error );
         }
 
+        @Override
         public void debug( String message )
         {
             logger.debug( message );
         }
 
+        @Override
         public void error( String message, Throwable error )
         {
             logger.error( message, error );
         }
 
+        @Override
         public void error( String message )
         {
             logger.error( message );
         }
 
+        @Override
         public void fatalError( String message, Throwable error )
         {
             logger.fatalError( message, error );
         }
 
+        @Override
         public void fatalError( String message )
         {
             logger.fatalError( message );
         }
 
-        public Logger getChildLogger( String message )
-        {
-            return logger.getChildLogger( message );
-        }
-
-        public String getName()
-        {
-            return logger.getName();
-        }
-
+        @Override
         public int getThreshold()
         {
             return logger.getThreshold();
         }
 
+        @Override
         public void info( String message, Throwable error )
         {
             logger.info( message, error );
         }
 
+        @Override
         public void info( String message )
         {
             logger.info( message );
         }
 
+        @Override
         public boolean isDebugEnabled()
         {
             return logger.isDebugEnabled();
         }
 
+        @Override
         public boolean isErrorEnabled()
         {
             return logger.isErrorEnabled();
         }
 
+        @Override
         public boolean isFatalErrorEnabled()
         {
             return logger.isFatalErrorEnabled();
         }
 
+        @Override
         public boolean isInfoEnabled()
         {
             return logger.isInfoEnabled();
         }
 
+        @Override
         public boolean isWarnEnabled()
         {
             return logger.isWarnEnabled();
         }
 
+        @Override
         public void setThreshold( int level )
         {
             // NOTE:
@@ -573,16 +572,17 @@ public class InvokerMavenExecutor
             // is not supported in plexus-container-default:1.0-alpha-9 as used in Maven 2.x
         }
 
+        @Override
         public void warn( String message, Throwable error )
         {
             logger.warn( message, error );
         }
 
+        @Override
         public void warn( String message )
         {
             logger.warn( message );
         }
-
     }
 
 }

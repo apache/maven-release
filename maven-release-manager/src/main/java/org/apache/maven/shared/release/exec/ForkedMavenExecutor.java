@@ -31,7 +31,6 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -79,15 +78,10 @@ public class ForkedMavenExecutor
             {
                 settingsFile = File.createTempFile( "release-settings", ".xml" );
                 SettingsXpp3Writer writer = getSettingsWriter();
-                FileWriter fileWriter = null;
-                try
+                
+                try ( FileWriter fileWriter = new FileWriter( settingsFile ) )
                 {
-                    fileWriter = new FileWriter( settingsFile );
                     writer.write( fileWriter, encryptSettings( releaseEnvironment.getSettings() ) );
-                }
-                finally
-                {
-                    IOUtil.close( fileWriter );
                 }
             }
             catch ( IOException e )

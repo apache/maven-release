@@ -26,7 +26,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
@@ -189,17 +188,13 @@ public class PomFinder
         PomInfo pomInfo = null;
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        XmlStreamReader xmlReader = null;
+        
         Model model = null;
-        try
+        try ( XmlStreamReader xmlReader = ReaderFactory.newXmlReader( pomFile ) )
         {
-            xmlReader = ReaderFactory.newXmlReader( pomFile );
             model = reader.read( xmlReader );
         }
-        finally
-        {
-            IOUtil.close( xmlReader );
-        }
+
         if ( model != null )
         {
             pomInfo = new PomInfo();
@@ -240,19 +235,9 @@ public class PomFinder
             this.fileName = fileName;
         }
 
-        public String getArtifactId()
-        {
-            return artifactId;
-        }
-
         public void setArtifactId( String artifactId )
         {
             this.artifactId = artifactId;
-        }
-
-        public String getGroupId()
-        {
-            return groupId;
         }
 
         public void setGroupId( String groupId )
@@ -260,19 +245,9 @@ public class PomFinder
             this.groupId = groupId;
         }
 
-        public String getParentArtifactId()
-        {
-            return parentArtifactId;
-        }
-
         public void setParentArtifactId( String parentArtifactId )
         {
             this.parentArtifactId = parentArtifactId;
-        }
-
-        public String getParentGroupId()
-        {
-            return parentGroupId;
         }
 
         public void setParentGroupId( String parentGroupId )

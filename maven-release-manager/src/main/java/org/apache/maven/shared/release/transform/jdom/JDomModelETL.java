@@ -34,7 +34,6 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 import org.jdom.CDATA;
 import org.jdom.Comment;
@@ -212,11 +211,9 @@ public class JDomModelETL implements ModelETL
             }
         }
 
-        Writer writer = null;
-        try
+        
+        try ( Writer writer = WriterFactory.newXmlWriter( pomFile ) )
         {
-            writer = WriterFactory.newXmlWriter( pomFile );
-
             if ( intro != null )
             {
                 writer.write( intro );
@@ -235,10 +232,6 @@ public class JDomModelETL implements ModelETL
         catch ( IOException e )
         {
             throw new ReleaseExecutionException( "Error writing POM: " + e.getMessage(), e );
-        }
-        finally
-        {
-            IOUtil.close( writer );
         }
     }
 

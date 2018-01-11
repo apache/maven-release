@@ -141,15 +141,9 @@ public class ReleaseUtil
     public static String readXmlFile( File file, String ls )
         throws IOException
     {
-        Reader reader = null;
-        try
+        try ( Reader reader = ReaderFactory.newXmlReader( file ) )
         {
-            reader = ReaderFactory.newXmlReader( file );
             return normalizeLineEndings( IOUtil.toString( reader ), ls );
-        }
-        finally
-        {
-            IOUtil.close( reader );
         }
     }
 

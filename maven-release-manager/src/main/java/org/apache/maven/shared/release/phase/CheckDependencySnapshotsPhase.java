@@ -32,7 +32,6 @@ import java.util.Set;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -72,12 +71,6 @@ public class CheckDependencySnapshotsPhase
      */
     @Requirement
     private Prompter prompter;
-
-    /**
-     * Component used to create artifacts
-     */
-    @Requirement
-    private ArtifactFactory artifactFactory;
 
     // Be aware of the difference between usedSnapshots and specifiedSnapshots:
     // UsedSnapshots end up on the classpath.
@@ -121,7 +114,6 @@ public class CheckDependencySnapshotsPhase
                                ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException, ReleaseExecutionException
     {
-        @SuppressWarnings( "unchecked" )
         Map<String, Artifact> artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
 
         if ( project.getParentArtifact() != null )
@@ -137,16 +129,14 @@ public class CheckDependencySnapshotsPhase
 
         //@todo check dependencyManagement
 
-        @SuppressWarnings( "unchecked" )
         Set<Artifact> pluginArtifacts = project.getPluginArtifacts();
         checkPlugins( originalVersions, releaseDescriptor, artifactMap, pluginArtifacts );
+
         //@todo check pluginManagement
 
-        @SuppressWarnings( "unchecked" )
         Set<Artifact> reportArtifacts = project.getReportArtifacts();
         checkReports( originalVersions, releaseDescriptor, artifactMap, reportArtifacts );
 
-        @SuppressWarnings( "unchecked" )
         Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
         checkExtensions( originalVersions, releaseDescriptor, artifactMap, extensionArtifacts );
 

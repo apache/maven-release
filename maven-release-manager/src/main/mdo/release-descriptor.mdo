@@ -539,7 +539,7 @@
     {
         if ( resolvedSnapshotDependencies == null )
         {
-            resolvedSnapshotDependencies = new java.util.HashMap();
+            resolvedSnapshotDependencies = new java.util.HashMap<>();
         }
         else
         {

@@ -37,7 +37,6 @@ import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-import org.codehaus.plexus.util.IOUtil;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
@@ -82,11 +81,8 @@ public class PropertiesReleaseDescriptorStore
     {
         Properties properties = new Properties();
 
-        InputStream inStream = null;
-        try
+        try ( InputStream inStream = new FileInputStream( file ) )
         {
-            inStream = new FileInputStream( file );
-
             properties.load( inStream );
         }
         catch ( FileNotFoundException e )
@@ -97,10 +93,6 @@ public class PropertiesReleaseDescriptorStore
         {
             throw new ReleaseDescriptorStoreException(
                 "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e );
-        }
-        finally
-        {
-            IOUtil.close( inStream );
         }
 
         ReleaseDescriptor releaseDescriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
@@ -301,12 +293,8 @@ public class PropertiesReleaseDescriptorStore
             processResolvedDependencies( properties, config.getResolvedSnapshotDependencies() );
         }
 
-        OutputStream outStream = null;
-        //noinspection OverlyBroadCatchBlock
-        try
+        try ( OutputStream outStream = new FileOutputStream( file ) )
         {
-            outStream = new FileOutputStream( file );
-
             properties.store( outStream, "release configuration" );
         }
         catch ( IOException e )
@@ -314,11 +302,6 @@ public class PropertiesReleaseDescriptorStore
             throw new ReleaseDescriptorStoreException(
                 "Error writing properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
-        finally
-        {
-            IOUtil.close( outStream );
-        }
-
     }
 
     private void processResolvedDependencies( Properties prop, Map<?, ?> resolvedDependencies )

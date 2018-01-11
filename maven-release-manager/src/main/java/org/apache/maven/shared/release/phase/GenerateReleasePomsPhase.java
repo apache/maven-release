@@ -64,7 +64,6 @@ import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.WriterFactory;
 
 /**
@@ -164,21 +163,15 @@ public class GenerateReleasePomsPhase
             throw new ReleaseExecutionException( "Cannot generate release POM : pom file is null" );
         }
 
-        Writer fileWriter = null;
+        
 
-        try
+        try ( Writer fileWriter = WriterFactory.newXmlWriter( releasePomFile ) ) 
         {
-            fileWriter = WriterFactory.newXmlWriter( releasePomFile );
-
             pomWriter.write( fileWriter, releasePom );
         }
         catch ( IOException exception )
         {
             throw new ReleaseExecutionException( "Cannot generate release POM", exception );
-        }
-        finally
-        {
-            IOUtil.close( fileWriter );
         }
 
         return releasePomFile;
@@ -501,7 +494,6 @@ public class GenerateReleasePomsPhase
                                                         Map<String, String> mappedVersions, MavenProject project )
         throws ReleaseFailureException
     {
-        @SuppressWarnings( "unchecked" )
         Set<Artifact> artifacts = project.getArtifacts();
 
         List<Dependency> releaseDependencies = null;
@@ -584,7 +576,6 @@ public class GenerateReleasePomsPhase
 
             if ( plugins != null )
             {
-                @SuppressWarnings( "unchecked" )
                 Map<String, Artifact> artifactsById = project.getPluginArtifactMap();
 
                 releasePlugins = new ArrayList<>();
@@ -631,7 +622,6 @@ public class GenerateReleasePomsPhase
 
             if ( reportPlugins != null )
             {
-                @SuppressWarnings( "unchecked" )
                 Map<String, Artifact> artifactsById = project.getReportArtifactMap();
 
                 releaseReportPlugins = new ArrayList<>();
