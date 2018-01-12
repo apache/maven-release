@@ -49,7 +49,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreStub;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.phase.ReleasePhaseStub;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
@@ -79,12 +78,16 @@ public class DefaultReleaseManagerTest
     public void testPrepareNoCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( null );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
@@ -100,12 +103,16 @@ public class DefaultReleaseManagerTest
     public void testPrepareCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
@@ -121,15 +128,21 @@ public class DefaultReleaseManagerTest
     public void testPrepareCompletedPhaseNoResume()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, false, false );
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        prepareRequest.setDryRun( false );
+        prepareRequest.setResume( false );
+        
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
-        assertTrue( "step1 executed", phase.isExecuted() );
+        assertFalse( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
         phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
@@ -142,12 +155,16 @@ public class DefaultReleaseManagerTest
     public void testPrepareCompletedAllPhases()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step3" );
+        
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
@@ -163,12 +180,16 @@ public class DefaultReleaseManagerTest
     public void testPrepareInvalidCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "foo" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
@@ -184,12 +205,18 @@ public class DefaultReleaseManagerTest
     public void testPrepareSimulateNoCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( null );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        prepareRequest.setDryRun( true );
+        prepareRequest.setResume( true );
+        
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
@@ -205,12 +232,18 @@ public class DefaultReleaseManagerTest
     public void testPrepareSimulateCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step1" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        prepareRequest.setDryRun( true );
+        prepareRequest.setResume( true );
+        
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
@@ -226,12 +259,18 @@ public class DefaultReleaseManagerTest
     public void testPrepareSimulateCompletedAllPhases()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "step3" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        prepareRequest.setDryRun( true );
+        prepareRequest.setResume( true );
+        
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
@@ -247,12 +286,18 @@ public class DefaultReleaseManagerTest
     public void testPrepareSimulateInvalidCompletedPhase()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = configStore.getReleaseConfiguration();
         releaseDescriptor.setCompletedPhase( "foo" );
 
-        releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null, true, true );
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        prepareRequest.setDryRun( true );
+        prepareRequest.setResume( true );
+        
+        releaseManager.prepare( prepareRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
@@ -268,11 +313,14 @@ public class DefaultReleaseManagerTest
     public void testPrepareUnknownPhaseConfigured()
         throws Exception
     {
-        ReleaseManager releaseManager = (ReleaseManager) lookup( ReleaseManager.ROLE, "bad-phase-configured" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "bad-phase-configured" );
 
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( new ReleaseDescriptor() );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
         try
         {
-            releaseManager.prepare( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+            releaseManager.prepare( prepareRequest );
             fail( "Should have failed to find a phase" );
         }
         catch ( ReleaseExecutionException e )
@@ -289,17 +337,21 @@ public class DefaultReleaseManagerTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
         when( configStoreMock.read( releaseDescriptor ) ).thenThrow( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) );
 
         releaseManager.setConfigStore( configStoreMock );
+        
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
 
         // execute
         try
         {
-            releaseManager.prepare( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            releaseManager.prepare( prepareRequest );
             fail( "Should have failed to read configuration" );
         }
         catch ( ReleaseExecutionException e )
@@ -321,17 +373,23 @@ public class DefaultReleaseManagerTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
         doThrow( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) ).when( configStoreMock ).write( releaseDescriptor );
 
         releaseManager.setConfigStore( configStoreMock );
+        
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
+        prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        prepareRequest.setDryRun( false );
+        prepareRequest.setResume( false );
 
         // execute
         try
         {
-            releaseManager.prepare( releaseDescriptor, new DefaultReleaseEnvironment(), null, false, false );
+            releaseManager.prepare( prepareRequest );
             fail( "Should have failed to read configuration" );
         }
         catch ( ReleaseExecutionException e )
@@ -353,14 +411,17 @@ public class DefaultReleaseManagerTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
 
         releaseManager.setConfigStore( configStoreMock );
 
+        ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();
+        cleanRequest.setReleaseDescriptor( releaseDescriptor );
+        
         // execute
-        releaseManager.clean( releaseDescriptor, null, null );
+        releaseManager.clean( cleanRequest );
 
         // verify
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
@@ -391,15 +452,20 @@ public class DefaultReleaseManagerTest
     public void testReleasePerformWithResult()
         throws Exception
     {
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setReleaseDescriptor( releaseDescriptor );
+        performRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        performRequest.setReactorProjects( createReactorProjects() );
 
-        ReleaseResult result = releaseManager.performWithResult( releaseDescriptor, new DefaultReleaseEnvironment(),
-                                                                 createReactorProjects(), null );
+        ReleaseResult result = releaseManager.performWithResult( performRequest );
+
         assertTrue( result.getOutput().length() > 0 );
     }
 
@@ -411,19 +477,23 @@ public class DefaultReleaseManagerTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
         when( configStoreMock.read( releaseDescriptor ) ).thenThrow( new ReleaseDescriptorStoreException( "message", new IOException( "ioExceptionMsg" ) ) );
 
         releaseManager.setConfigStore( configStoreMock );
+        
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setReleaseDescriptor( releaseDescriptor );
+        performRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
 
         // execute
         try
         {
             releaseDescriptor.setUseReleaseProfile( false );
 
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            releaseManager.perform( performRequest );
             fail( "Should have failed to read configuration" );
         }
         catch ( ReleaseExecutionException e )
@@ -444,17 +514,21 @@ public class DefaultReleaseManagerTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptorStoreStub configStore = new ReleaseDescriptorStoreStub();
         releaseDescriptor.setCompletedPhase( "scm-tag" );
         releaseManager.setConfigStore( configStore );
 
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setReleaseDescriptor( releaseDescriptor );
+        performRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+
         try
         {
             releaseDescriptor.setUseReleaseProfile( false );
 
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            releaseManager.perform( performRequest );
             fail( "Should have failed to perform" );
         }
         catch ( ReleaseFailureException e )
@@ -481,7 +555,7 @@ public class DefaultReleaseManagerTest
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
         performRequest.setReleaseDescriptor( releaseDescriptor );
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         // test
         releaseManager.perform( performRequest );
@@ -507,13 +581,17 @@ public class DefaultReleaseManagerTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setReleaseDescriptor( releaseDescriptor );
+        performRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        
         try
         {
             releaseDescriptor.setUseReleaseProfile( false );
 
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            releaseManager.perform( performRequest );
 
             fail( "perform should have failed" );
         }
@@ -527,7 +605,7 @@ public class DefaultReleaseManagerTest
         throws Exception
     {
         // prepare
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
@@ -544,10 +622,15 @@ public class DefaultReleaseManagerTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
         stub.setScmProvider( scmProviderMock );
 
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setReleaseDescriptor( releaseDescriptor );
+        performRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        performRequest.setReactorProjects( createReactorProjects() );
+
         // execute
         try
         {
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
+            releaseManager.perform( performRequest );
 
             fail( "commit should have failed" );
         }
@@ -565,7 +648,7 @@ public class DefaultReleaseManagerTest
     public void testScmResultFailure()
         throws Exception
     {
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
@@ -577,10 +660,15 @@ public class DefaultReleaseManagerTest
             (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
 
         providerStub.setCheckOutScmResult( new CheckOutScmResult( "", "", "", false ) );
+        
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setReleaseDescriptor( releaseDescriptor );
+        performRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        performRequest.setReactorProjects( createReactorProjects() );
 
         try
         {
-            releaseManager.perform( releaseDescriptor, new DefaultReleaseEnvironment(), createReactorProjects() );
+            releaseManager.perform( performRequest );
 
             fail( "commit should have failed" );
         }
@@ -619,9 +707,12 @@ public class DefaultReleaseManagerTest
     public void testRollbackCall()
         throws Exception
     {
-        DefaultReleaseManager defaultReleaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
+        
+        ReleaseRollbackRequest rollbackRequest = new ReleaseRollbackRequest();
+        rollbackRequest.setReleaseDescriptor( configStore.getReleaseConfiguration() );
 
-        defaultReleaseManager.rollback( configStore.getReleaseConfiguration(), (ReleaseEnvironment) null, null );
+        releaseManager.rollback( rollbackRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "rollbackPhase1" );
 
@@ -633,9 +724,12 @@ public class DefaultReleaseManagerTest
     public void testUpdateVersionsCall()
         throws Exception
     {
-        DefaultReleaseManager defaultReleaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
+        ReleaseManager releaseManager = lookup( ReleaseManager.class, "test" );
+        
+        ReleaseUpdateVersionsRequest updateVersionsRequest = new ReleaseUpdateVersionsRequest();
+        updateVersionsRequest.setReleaseDescriptor( configStore.getReleaseConfiguration() );
 
-        defaultReleaseManager.updateVersions( configStore.getReleaseConfiguration(), null, null );
+        releaseManager.updateVersions( updateVersionsRequest );
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "updateVersionsPhase1" );
 

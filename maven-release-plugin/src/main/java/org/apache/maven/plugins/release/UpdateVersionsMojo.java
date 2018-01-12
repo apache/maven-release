@@ -26,6 +26,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseUpdateVersionsRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 
@@ -115,7 +116,12 @@ public class UpdateVersionsMojo
 
         try
         {
-            releaseManager.updateVersions( config, getReleaseEnvironment(), getReactorProjects() );
+            ReleaseUpdateVersionsRequest updateVersionsRequest = new ReleaseUpdateVersionsRequest();
+            updateVersionsRequest.setReleaseDescriptor( config );
+            updateVersionsRequest.setReleaseEnvironment( getReleaseEnvironment() );
+            updateVersionsRequest.setReactorProjects( getReactorProjects() );
+
+            releaseManager.updateVersions( updateVersionsRequest );
         }
         catch ( ReleaseExecutionException e )
         {

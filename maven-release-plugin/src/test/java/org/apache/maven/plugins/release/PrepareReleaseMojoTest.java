@@ -19,6 +19,12 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertThat;
+
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Matchers.isNull;
@@ -38,8 +44,10 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
+import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Test release:prepare.
@@ -55,7 +63,6 @@ public class PrepareReleaseMojoTest
         setVariableValueToObject( mojo, "updateWorkingCopyVersions", Boolean.TRUE );
     }
     
-    @SuppressWarnings( "unchecked" )
     public void testPrepare()
         throws Exception
     {
@@ -80,12 +87,18 @@ public class PrepareReleaseMojoTest
         // execute
         mojo.execute();
 
+        ArgumentCaptor<ReleasePrepareRequest> prepareRequest = ArgumentCaptor.forClass( ReleasePrepareRequest.class );
+        
         // verify
-        verify( mock ).prepare( eq( releaseDescriptor ), isA( ReleaseEnvironment.class ), isNull( List.class), eq( true ), eq( false ) );
-        assertTrue( true );
+        verify( mock ).prepare( prepareRequest.capture() );
+        
+        assertThat( prepareRequest.getValue().getReleaseDescriptor(), is( releaseDescriptor ) );
+        assertThat( prepareRequest.getValue().getReleaseEnvironment(), is(instanceOf( ReleaseEnvironment.class ) ) );
+        assertThat( prepareRequest.getValue().getReactorProjects(), is( nullValue() ) );
+        assertThat( prepareRequest.getValue().getResume(), is( true ) );
+        assertThat( prepareRequest.getValue().getDryRun(), is( false ) );
     }
 
-    @SuppressWarnings( "unchecked" )
     public void testPrepareWithExecutionException()
         throws Exception
     {
@@ -104,11 +117,7 @@ public class PrepareReleaseMojoTest
         releaseDescriptor.setUpdateDependencies( false );
         
         ReleaseManager mock = mock( ReleaseManager.class );
-        doThrow( new ReleaseExecutionException( "..." ) ).when( mock ).prepare( eq( releaseDescriptor ), 
-                                                                                isA( ReleaseEnvironment.class ), 
-                                                                                isNull( List.class), 
-                                                                                eq( true ), 
-                                                                                eq( false ) );
+        doThrow( new ReleaseExecutionException( "..." ) ).when( mock ).prepare( isA( ReleasePrepareRequest.class ) );
         mojo.setReleaseManager( mock );
 
         //execute
@@ -124,15 +133,10 @@ public class PrepareReleaseMojoTest
         }
         
         // verify
-        verify( mock ).prepare( eq( releaseDescriptor ), 
-                                isA( ReleaseEnvironment.class ), 
-                                isNull( List.class), 
-                                eq( true ), 
-                                eq( false ) );
+        verify( mock ).prepare( isA( ReleasePrepareRequest.class ) );
         verifyNoMoreInteractions( mock );
     }
 
-    @SuppressWarnings( "unchecked" )
     public void testPrepareWithExecutionFailure()
         throws Exception
     {
@@ -152,11 +156,7 @@ public class PrepareReleaseMojoTest
         
         ReleaseManager mock = mock( ReleaseManager.class );
         ReleaseFailureException cause = new ReleaseFailureException( "..." );
-        doThrow( cause ).when( mock ).prepare( eq( releaseDescriptor ), 
-                                               isA( ReleaseEnvironment.class ), 
-                                               isNull( List.class), 
-                                               eq( true ), 
-                                               eq( false ) );
+        doThrow( cause ).when( mock ).prepare( isA( ReleasePrepareRequest.class ) );
         mojo.setReleaseManager( mock );
 
         // execute
@@ -171,11 +171,7 @@ public class PrepareReleaseMojoTest
             assertEquals( "Check cause exists", cause, e.getCause() );
         }
         // verify
-        verify( mock ).prepare( eq( releaseDescriptor ), 
-                                isA( ReleaseEnvironment.class ), 
-                                isNull( List.class), 
-                                eq( true ), 
-                                eq( false ) );
+        verify( mock ).prepare( isA( ReleasePrepareRequest.class ) );
         verifyNoMoreInteractions( mock );
     }
 

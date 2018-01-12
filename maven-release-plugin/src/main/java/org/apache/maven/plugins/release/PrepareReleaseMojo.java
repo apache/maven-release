@@ -27,6 +27,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 
@@ -292,10 +293,17 @@ public class PrepareReleaseMojo
         ReleaseDescriptor sysPropertiesConfig =
             ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
         mergeCommandLineConfig( config, sysPropertiesConfig );
+        
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptor( config );
+        prepareRequest.setReleaseEnvironment( getReleaseEnvironment() );
+        prepareRequest.setReactorProjects( getReactorProjects() );
+        prepareRequest.setResume( resume );
+        prepareRequest.setDryRun( dryRun );
 
         try
         {
-            releaseManager.prepare( config, getReleaseEnvironment(), getReactorProjects(), resume, dryRun );
+            releaseManager.prepare( prepareRequest );
         }
         catch ( ReleaseExecutionException e )
         {

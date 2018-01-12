@@ -28,8 +28,10 @@ import java.io.File;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.shared.release.ReleaseCleanRequest;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.mockito.ArgumentCaptor;
 
 /**
  * Test release:clean.
@@ -58,9 +60,8 @@ public class CleanReleaseMojoTest
         throws MojoFailureException, MojoExecutionException
     {
         // prepare
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        descriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );
-
+        ArgumentCaptor<ReleaseCleanRequest> request = ArgumentCaptor.forClass( ReleaseCleanRequest.class );
+        
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
 
@@ -68,7 +69,12 @@ public class CleanReleaseMojoTest
         mojo.execute();
 
         // verify
-        verify( mock ).clean( descriptor, null, mojo.getReactorProjects() );
+        verify( mock ).clean( request.capture() );
+        
+        assertEquals( workingDirectory.getAbsolutePath(),
+                      request.getValue().getReleaseDescriptor().getWorkingDirectory() );
+        assertEquals( mojo.getReactorProjects(), request.getValue().getReactorProjects() );
+        
         verifyNoMoreInteractions( mock );
     }
 }
