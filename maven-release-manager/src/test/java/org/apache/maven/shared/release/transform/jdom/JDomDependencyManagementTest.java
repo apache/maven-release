@@ -31,7 +31,7 @@ import org.junit.Test;
 public class JDomDependencyManagementTest
 {
     private SAXBuilder builder = new SAXBuilder();
-    
+
     @Test
     public void testGetDependencies() throws Exception
     {
@@ -50,7 +50,7 @@ public class JDomDependencyManagementTest
     }
 
     // All other methods throw UnsupportedOperationException
-    
+
     @Test( expected = UnsupportedOperationException.class )
     public void testAddDependency()
     {

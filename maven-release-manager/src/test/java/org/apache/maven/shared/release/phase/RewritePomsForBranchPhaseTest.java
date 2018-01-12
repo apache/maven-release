@@ -58,6 +58,7 @@ public class RewritePomsForBranchPhaseTest
         return "rewrite-poms-for-branch";
     }
 
+    @Override
     protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
@@ -65,6 +66,7 @@ public class RewritePomsForBranchPhaseTest
         return createReactorProjects( dir, dir, null );
     }
 
+    @Override
     protected String readTestProjectFile( String fileName )
         throws IOException
     {
@@ -163,16 +165,19 @@ public class RewritePomsForBranchPhaseTest
         assertTrue( comparePomFiles( reactorProjects ) );
     }
 
+    @Override
     protected void mapAlternateNextVersion( ReleaseDescriptor config, String projectId )
     {
         config.mapReleaseVersion( projectId, ALTERNATIVE_NEXT_VERSION );
     }
 
+    @Override
     protected void mapNextVersion( ReleaseDescriptor config, String projectId )
     {
         config.mapReleaseVersion( projectId, NEXT_VERSION );
     }
 
+    @Override
     protected ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {
@@ -183,6 +188,7 @@ public class RewritePomsForBranchPhaseTest
         return config;
     }
 
+    @Override
     protected ReleaseDescriptor createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {
@@ -193,6 +199,7 @@ public class RewritePomsForBranchPhaseTest
         return config;
     }
 
+    @Override
     protected void unmapNextVersion( ReleaseDescriptor config, String projectId )
     {
         // nothing to do
@@ -427,6 +434,7 @@ public class RewritePomsForBranchPhaseTest
         assertTrue( comparePomFiles( reactorProjects, false ) );
     }
 
+    @Override
     protected ReleaseDescriptor createDescriptorFromProjects( List<MavenProject> reactorProjects )
     {
         ReleaseDescriptor descriptor = super.createDescriptorFromProjects( reactorProjects );

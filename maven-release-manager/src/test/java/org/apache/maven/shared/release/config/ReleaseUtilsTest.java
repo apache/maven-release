@@ -38,7 +38,7 @@ import java.util.Properties;
 public class ReleaseUtilsTest
     extends TestCase
 {
-    public void testMergeConfigurationSourceEmpty() 
+    public void testMergeConfigurationSourceEmpty()
         throws IOException
     {
         ReleaseDescriptor mergeDescriptor = createReleaseDescriptor();
@@ -49,19 +49,19 @@ public class ReleaseUtilsTest
         assertEquals( "Check merge", mergedReleaseDescriptor, mergedMergeDescriptor );
     }
 
-    public void testMergeEqualsWithUpdateWorkingCopyTrue() 
+    public void testMergeEqualsWithUpdateWorkingCopyTrue()
         throws IOException
     {
         ReleaseDescriptor mergeDescriptor = createReleaseDescriptor();
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        
+
         ReleaseDescriptor mergedReleaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
         ReleaseDescriptor mergedMergeDescriptor = ReleaseUtils.merge( mergeDescriptor, releaseDescriptor );
 
         assertEquals( "Check merge", mergedReleaseDescriptor, mergedMergeDescriptor );
     }
 
-    public void testMergeConfigurationDestEmpty() 
+    public void testMergeConfigurationDestEmpty()
         throws IOException
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
@@ -71,7 +71,7 @@ public class ReleaseUtilsTest
         assertEquals( "Check merge", expectedDescriptor, releaseDescriptor );
     }
 
-    public void testMergeConfiguration() 
+    public void testMergeConfiguration()
         throws IOException
     {
         File workingDirectory = new File( "." );
@@ -87,7 +87,7 @@ public class ReleaseUtilsTest
         assertEquals( "Check merge", expected, releaseDescriptor );
     }
 
-    public void testEquals() 
+    public void testEquals()
         throws IOException
     {
         ReleaseDescriptor originalReleaseDescriptor = createReleaseDescriptor();
@@ -110,7 +110,7 @@ public class ReleaseUtilsTest
     }
 
     private static void doEqualsAssertions( ReleaseDescriptor releaseDescriptor,
-                                            ReleaseDescriptor originalReleaseDescriptor, String other, File otherFile ) 
+                                            ReleaseDescriptor originalReleaseDescriptor, String other, File otherFile )
         throws IOException
     {
         ReleaseDescriptor origConfig = originalReleaseDescriptor;
@@ -148,7 +148,7 @@ public class ReleaseUtilsTest
         config.setCompletedPhase( other );
         assertFalse( "Check original comparison", config.equals( origConfig ) );
         config.setCompletedPhase( origConfig.getCompletedPhase() );
-        
+
         config.setScmPrivateKeyPassPhrase( other );
         assertFalse( "Check original comparison", config.equals( origConfig ) );
         config.setScmPrivateKeyPassPhrase( origConfig.getScmPrivateKeyPassPhrase() );
@@ -245,7 +245,7 @@ public class ReleaseUtilsTest
         assertFalse( "Check original comparison", config.equals( origConfig ) );
     }
 
-    public void testHashCode() 
+    public void testHashCode()
         throws IOException
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
@@ -261,7 +261,7 @@ public class ReleaseUtilsTest
         properties.put( "dependency." + dependencyKey  + ".release", "1.3" );
         properties.put( "dependency." + dependencyKey + ".development", "1.3-SNAPSHOT" );
         ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
-        
+
         Map<String, String> versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( dependencyKey );
         assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
         assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
@@ -276,10 +276,10 @@ public class ReleaseUtilsTest
         String devDependencyKey = ArtifactUtils.versionlessKey( "com.development.magic", "dependency" );
         properties.put( "dependency." + devDependencyKey + ".development", "1.3-SNAPSHOT" );
         ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
-        
+
         Map<String, String> versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( relDependencyKey );
         assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
-        
+
         versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( devDependencyKey );
         assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
     }
@@ -291,7 +291,7 @@ public class ReleaseUtilsTest
         properties.setProperty( "dependency.locations.enabled", "false" );
         ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
     }
-    
+
     private static ReleaseDescriptor copyReleaseDescriptor( ReleaseDescriptor originalReleaseDescriptor )
     {
         return createReleaseDescriptor( originalReleaseDescriptor.getWorkingDirectory() );

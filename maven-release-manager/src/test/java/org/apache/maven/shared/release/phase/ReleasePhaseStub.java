@@ -50,6 +50,7 @@ public class ReleasePhaseStub
      */
     private boolean cleaned;
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
@@ -61,6 +62,7 @@ public class ReleasePhaseStub
         return result;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
@@ -72,6 +74,7 @@ public class ReleasePhaseStub
         return result;
     }
 
+    @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
@@ -83,6 +86,7 @@ public class ReleasePhaseStub
         return result;
     }
 
+    @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
@@ -94,6 +98,7 @@ public class ReleasePhaseStub
         return result;
     }
 
+    @Override
     public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();

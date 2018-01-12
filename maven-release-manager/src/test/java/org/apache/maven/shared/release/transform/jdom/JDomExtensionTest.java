@@ -31,14 +31,14 @@ import org.junit.Test;
 public class JDomExtensionTest
 {
     private SAXBuilder builder = new SAXBuilder();
-    
+
     @Test
     public void testGetArtifactId() throws Exception
     {
         String content = "<extension></extension>";
         Element extensionElm = builder.build( new StringReader( content ) ).getRootElement();
         assertNull( new JDomExtension( extensionElm ).getArtifactId() );
-        
+
         content = "<extension><artifactId>ARTIFACTID</artifactId></extension>";
         extensionElm = builder.build( new StringReader( content ) ).getRootElement();
         assertEquals( "ARTIFACTID", new JDomExtension( extensionElm ).getArtifactId() );
@@ -50,7 +50,7 @@ public class JDomExtensionTest
         String content = "<extension></extension>";
         Element extensionElm = builder.build( new StringReader( content ) ).getRootElement();
         assertNull( new JDomExtension( extensionElm ).getGroupId() );
-        
+
         content = "<extension><groupId>GROUPID</groupId></extension>";
         extensionElm = builder.build( new StringReader( content ) ).getRootElement();
         assertEquals( "GROUPID", new JDomExtension( extensionElm ).getGroupId() );
@@ -62,7 +62,7 @@ public class JDomExtensionTest
         String content = "<extension></extension>";
         Element extensionElm = builder.build( new StringReader( content ) ).getRootElement();
         assertNull( new JDomExtension( extensionElm ).getVersion() );
-        
+
         content = "<extension><version>VERSION</version></extension>";
         extensionElm = builder.build( new StringReader( content ) ).getRootElement();
         assertEquals( "VERSION", new JDomExtension( extensionElm ).getVersion() );

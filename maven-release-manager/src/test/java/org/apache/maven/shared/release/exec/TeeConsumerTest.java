@@ -38,6 +38,7 @@ public class TeeConsumerTest
 
     private static final String LS = System.getProperty( "line.separator" );
 
+    @Override
     protected void setUp()
         throws Exception
     {

@@ -68,6 +68,7 @@ public class ScmCommitDevelopmentPhaseTest
 
     private ScmProvider scmProviderMock;
 
+    @Override
     public void setUp()
         throws Exception
     {

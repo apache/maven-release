@@ -36,9 +36,10 @@ public class PropertiesReleaseDescriptorStoreTest
     extends PlexusTestCase
 {
     private PropertiesReleaseDescriptorStore store;
-    
+
     private SecDispatcher secDispatcher;
 
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -126,7 +127,7 @@ public class PropertiesReleaseDescriptorStoreTest
         store.write( config, file );
 
         ReleaseDescriptor rereadDescriptor = store.read( file );
-        
+
         assertAndAdjustScmPassword( config, rereadDescriptor );
         assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
 
@@ -148,10 +149,10 @@ public class PropertiesReleaseDescriptorStoreTest
 
         ReleaseDescriptor rereadDescriptor = store.read( file );
         rereadDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
-        
+
         assertAndAdjustScmPassword( config, rereadDescriptor );
         assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
-        
+
         assertEquals( "compare configuration", config, rereadDescriptor );
     }
 
@@ -239,7 +240,7 @@ public class PropertiesReleaseDescriptorStoreTest
         store.write( config, file );
 
         ReleaseDescriptor rereadDescriptor = store.read( file );
-        
+
         assertAndAdjustScmPassword( config, rereadDescriptor );
         assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
 
@@ -358,7 +359,7 @@ public class PropertiesReleaseDescriptorStoreTest
 
         return releaseDescriptor;
     }
-    
+
     private void assertAndAdjustScmPassword( ReleaseDescriptor expected, ReleaseDescriptor original )
         throws Exception
     {

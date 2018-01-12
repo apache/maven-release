@@ -34,6 +34,7 @@ public class PomFinderTest extends PlexusTestCase
 {
     private Logger logger = null;
 
+    @Override
     protected void setUp() throws Exception
     {
         super.setUp();

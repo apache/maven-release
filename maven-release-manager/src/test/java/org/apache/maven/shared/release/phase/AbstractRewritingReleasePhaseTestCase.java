@@ -70,12 +70,12 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     {
         return Arrays.asList( new Object[][] { { JDomModelETLFactory.ROLE_HINT } } );
     }
-    
+
     public AbstractRewritingReleasePhaseTestCase( String modelETL )
     {
         this.modelETL = modelETL;
     }
-    
+
     @Override
     public void setUp()
         throws Exception
@@ -88,9 +88,9 @@ public abstract class AbstractRewritingReleasePhaseTestCase
             ((AbstractRewritePomsPhase) phase).setModelETL( modelETL );
         }
     }
-    
+
     protected abstract String getRoleHint();
-    
+
     @Test
     public void testRewriteBasicPom()
         throws Exception
@@ -164,7 +164,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
 
         // Process the child first
-        reactorProjects = new ArrayList<MavenProject>( reactorProjects );
+        reactorProjects = new ArrayList<>( reactorProjects );
         Collections.reverse( reactorProjects );
 
         mapAlternateNextVersion( config, "groupId:subproject1" );
@@ -221,7 +221,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
 
-        MavenProject project = (MavenProject) getProjectsAsMap( reactorProjects ).get( "groupId:subproject1" );
+        MavenProject project = getProjectsAsMap( reactorProjects ).get( "groupId:subproject1" );
         comparePomFiles( project, "-version-changed" );
     }
 
@@ -558,7 +558,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         config.setScmUseEditMode( true );
         config.setScmSourceUrl( "scm:svn:fail" );
         mapNextVersion( config, "groupId:artifactId" );
-        
+
         ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
         if ( scmManager instanceof ScmManagerStub )
         {
@@ -587,7 +587,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         config.setScmUseEditMode( true );
         config.setScmSourceUrl( "scm:fail:path" );
         mapNextVersion( config, "groupId:artifactId" );
-        
+
         ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
         if ( scmManager instanceof ScmManagerStub )
         {

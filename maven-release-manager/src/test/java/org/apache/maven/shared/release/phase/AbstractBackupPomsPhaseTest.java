@@ -42,6 +42,7 @@ public abstract class AbstractBackupPomsPhaseTest
 
     protected ReleasePhase phase;
 
+    @Override
     public void setUp()
         throws Exception
     {
@@ -56,7 +57,7 @@ public abstract class AbstractBackupPomsPhaseTest
     protected List<MavenProject> getReactorProjects( String projectPath )
         throws Exception
     {
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        List<MavenProject> reactorProjects = new ArrayList<>();
 
         File pomFile = new File( projectPath, pomFilename );
 

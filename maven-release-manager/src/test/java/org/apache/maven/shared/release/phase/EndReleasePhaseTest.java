@@ -39,6 +39,7 @@ public class EndReleasePhaseTest
 {
     private ReleasePhase phase;
 
+    @Override
     public void setUp()
         throws Exception
     {

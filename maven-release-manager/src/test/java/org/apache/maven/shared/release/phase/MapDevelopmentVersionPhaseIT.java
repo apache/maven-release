@@ -40,7 +40,7 @@ public class MapDevelopmentVersionPhaseIT
         super.setUp();
         mapVersionsPhase = (MapVersionsPhase) lookup( ReleasePhase.class.getName(), "map-development-versions" );
     }
-    
+
     private static MavenProject createProject( String artifactId, String version )
     {
         Model model = new Model();
@@ -55,10 +55,10 @@ public class MapDevelopmentVersionPhaseIT
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setUpdateWorkingCopyVersions( false );
-        
+
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
         mapVersionsPhase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        
+
         assertEquals( "1.0", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
     }
 }

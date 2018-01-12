@@ -33,7 +33,7 @@ public class ScmManagerStub
     extends org.apache.maven.scm.manager.ScmManagerStub
 {
     private Exception e;
-    
+
     private Map<String, ScmRepository> scmRepositoriesForUrl = new HashMap<>();
 
     @Override
@@ -55,7 +55,7 @@ public class ScmManagerStub
                 throw new RuntimeException( e );
             }
         }
-        
+
         if ( scmRepositoriesForUrl.isEmpty() )
         {
             // we didn't configure any for URLs, return the preset one
@@ -74,7 +74,7 @@ public class ScmManagerStub
     {
         scmRepositoriesForUrl.put( url, repository );
     }
-    
+
     public void setException( Exception e )
     {
         this.e = e;

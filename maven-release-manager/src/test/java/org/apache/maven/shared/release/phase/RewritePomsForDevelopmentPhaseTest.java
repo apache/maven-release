@@ -98,7 +98,7 @@ public class RewritePomsForDevelopmentPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects =
-            new LinkedList<MavenProject>( createReactorProjects( "basic-pom-ejb-client-dep/project" ) );
+            new LinkedList<>( createReactorProjects( "basic-pom-ejb-client-dep/project" ) );
         reactorProjects.addAll( createReactorProjects( "basic-pom-ejb-client-dep/ejb" ) );
         ReleaseDescriptor config = createDescriptorFromBasicPom( reactorProjects );
         config.mapReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
@@ -180,6 +180,7 @@ public class RewritePomsForDevelopmentPhaseTest
         }
     }
 
+    @Override
     protected String readTestProjectFile( String fileName )
         throws IOException
     {
@@ -192,6 +193,7 @@ public class RewritePomsForDevelopmentPhaseTest
         return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/" + subpath + fileName ) );
     }
 
+    @Override
     protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
@@ -199,6 +201,7 @@ public class RewritePomsForDevelopmentPhaseTest
         return createReactorProjects( dir, dir, null );
     }
 
+    @Override
     protected ReleaseDescriptor createDescriptorFromBasicPom( List<MavenProject> reactorProjects )
         throws Exception
     {
@@ -218,23 +221,27 @@ public class RewritePomsForDevelopmentPhaseTest
         config.mapOriginalScmInfo( "groupId:artifactId", scm );
     }
 
+    @Override
     protected void mapAlternateNextVersion( ReleaseDescriptor config, String projectId )
     {
         config.mapReleaseVersion( projectId, ALTERNATIVE_RELEASE_VERSION );
         config.mapDevelopmentVersion( projectId, ALTERNATIVE_NEXT_VERSION );
     }
 
+    @Override
     protected void mapNextVersion( ReleaseDescriptor config, String projectId )
     {
         config.mapReleaseVersion( projectId, RELEASE_VERSION );
         config.mapDevelopmentVersion( projectId, NEXT_VERSION );
     }
 
+    @Override
     protected void unmapNextVersion( ReleaseDescriptor config, String projectId )
     {
         config.mapReleaseVersion( projectId, RELEASE_VERSION );
     }
 
+    @Override
     protected ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {
@@ -249,6 +256,7 @@ public class RewritePomsForDevelopmentPhaseTest
         return config;
     }
 
+    @Override
     protected ReleaseDescriptor createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {

@@ -29,7 +29,7 @@ public class DefaultVersionInfoTest
     extends TestCase
 {
     private String mavenVersion;
-    
+
     @Override
     protected void setUp()
         throws Exception
@@ -38,7 +38,7 @@ public class DefaultVersionInfoTest
         pomProperties.load( DefaultArtifactVersion.class.getResourceAsStream( "/META-INF/maven/org.apache.maven/maven-artifact/pom.properties" ) );
         mavenVersion = pomProperties.getProperty( "version" );
     }
-    
+
     public void testParse()
         throws Exception
     {
@@ -152,7 +152,7 @@ public class DefaultVersionInfoTest
         checkNextVersion( "1.009", "1.010" );
 
         checkNextVersion( "1.99", "1.100" );
-        
+
         //MRELEASE-623 SNAPSHOT is case-insensitive
         checkNextVersion( "2.2-SNAPshot", "2.3-SNAPshot" );
     }
@@ -172,21 +172,21 @@ public class DefaultVersionInfoTest
         throws Exception
     {
         checkVersionLessThanVersion( "1.01", "1.02" );
-        
+
         // M2.2.1
         // checkVersionLessThanVersion( "1.00009", "1.01" );
         // M3.0, because prefix 0's are ignored, hence 1 < 9
         checkVersionLessThanVersion( "1.01", "1.00009" );
-        
+
         checkVersionLessThanVersion( "1.01", "1.01.01" );
 
         // M2.2.1
         // checkVersionLessThanVersion( "1.01", "1.1" );
         // M3.0, because prefix 0's are ignored, hence 1 == 1
         checkVersionEqualVersion( "1.01", "1.1" );
-        
+
         checkVersionEqualVersion( "1.01", "1.01" );
-        
+
         // M2.2.1
         // checkVersionLessThanVersion( "1.001", "1.01" );
         // M3.0, because prefix 0's are ignored, hence 1 == 1
@@ -281,13 +281,13 @@ public class DefaultVersionInfoTest
         assertTrue( new DefaultVersionInfo( "1.01-beta-04-SNAPSHOT" ).isSnapshot() );
         assertTrue( new DefaultVersionInfo( "1.01-beta-04-20051112.134500-1" ).isSnapshot() );
         assertFalse( new DefaultVersionInfo( "1.01-beta-04_20051112.134500-1" ).isSnapshot() );
-        
+
     }
-    
+
     //MRELEASE-623 SNAPSHOT is case-insensitive
     public void testCaseInsensitiveSnapshot() throws VersionParseException
     {
-        DefaultVersionInfo currentVersionInfo = new DefaultVersionInfo( "2.2-SNAPshot" ); 
+        DefaultVersionInfo currentVersionInfo = new DefaultVersionInfo( "2.2-SNAPshot" );
         assertTrue( currentVersionInfo.isSnapshot()  );
         assertEquals( "2.2", currentVersionInfo.getReleaseVersionString() );
         VersionInfo nextVersionInfo = currentVersionInfo.getNextVersion();

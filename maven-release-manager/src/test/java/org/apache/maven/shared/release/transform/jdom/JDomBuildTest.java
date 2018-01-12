@@ -32,7 +32,7 @@ import org.junit.Test;
 public class JDomBuildTest
 {
     private SAXBuilder builder = new SAXBuilder();
-    
+
     @Test
     public void testGetExtensions() throws Exception
     {
@@ -79,7 +79,7 @@ public class JDomBuildTest
         document = builder.build( new StringReader( content ) );
         assertEquals( 1, new JDomBuild( document.getRootElement() ).getPlugins().size() );
     }
-    
+
     // All other methods throw UnsupportedOperationException
 
     @Test( expected = UnsupportedOperationException.class )

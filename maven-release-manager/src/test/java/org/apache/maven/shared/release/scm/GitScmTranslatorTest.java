@@ -30,7 +30,7 @@ public class GitScmTranslatorTest
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
-    public void testResolveTag() 
+    public void testResolveTag()
     {
         assertEquals( "HEAD", scmTranslator.resolveTag( "HEAD" ) );
         assertEquals( "project-1.0", scmTranslator.resolveTag( "project-1.0" ) );

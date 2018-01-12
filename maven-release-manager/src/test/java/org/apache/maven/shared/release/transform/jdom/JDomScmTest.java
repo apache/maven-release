@@ -31,7 +31,7 @@ import org.junit.Test;
 public class JDomScmTest
 {
     private SAXBuilder builder = new SAXBuilder();
-    
+
     @Test( expected = UnsupportedOperationException.class )
     public void testGetConnection()
     {
@@ -61,9 +61,9 @@ public class JDomScmTest
     {
         String content = "<scm></scm>";
         Element scmElm = builder.build( new StringReader( content ) ).getRootElement();
-        
+
         assertNull( getConnection( scmElm ) );
-        
+
         new JDomScm( scmElm ).setConnection( "CONNECTION" );
         assertEquals( "CONNECTION", getConnection( scmElm ) );
 
@@ -76,9 +76,9 @@ public class JDomScmTest
     {
         String content = "<scm></scm>";
         Element scmElm = builder.build( new StringReader( content ) ).getRootElement();
-        
+
         assertNull( getDeveloperConnection( scmElm ) );
-        
+
         new JDomScm( scmElm ).setDeveloperConnection( "DEVELOPERCONNECTION" );
         assertEquals( "DEVELOPERCONNECTION", getDeveloperConnection( scmElm ) );
 
@@ -91,9 +91,9 @@ public class JDomScmTest
     {
         String content = "<scm></scm>";
         Element scmElm = builder.build( new StringReader( content ) ).getRootElement();
-        
+
         assertNull( getUrl( scmElm ) );
-        
+
         new JDomScm( scmElm ).setUrl( "URL" );
         assertEquals( "URL", getUrl( scmElm ) );
 
@@ -106,16 +106,16 @@ public class JDomScmTest
     {
         String content = "<scm></scm>";
         Element scmElm = builder.build( new StringReader( content ) ).getRootElement();
-        
+
         assertNull( getTag( scmElm ) );
-        
+
         new JDomScm( scmElm ).setTag( "TAG" );
         assertEquals( "TAG", getTag( scmElm ) );
 
         new JDomScm( scmElm ).setTag( null );
         assertNull( getTag( scmElm ) );
     }
-    
+
     private String getConnection( Element scmElm )
     {
         return scmElm.getChildText( "connection", scmElm.getNamespace() );
@@ -125,7 +125,7 @@ public class JDomScmTest
     {
         return scmElm.getChildText( "developerConnection", scmElm.getNamespace() );
     }
-    
+
     private String getTag( Element scmElm )
     {
         return scmElm.getChildText( "tag", scmElm.getNamespace() );

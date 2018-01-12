@@ -59,6 +59,7 @@ public class CheckoutProjectFromScmTest
 {
     private CheckoutProjectFromScm phase;
 
+    @Override
     public void setUp()
         throws Exception
     {
@@ -194,7 +195,7 @@ public class CheckoutProjectFromScmTest
                                             any( CommandParameters.class ));
         verifyNoMoreInteractions( scmProviderMock );
     }
-    
+
     @Test
     public void testNoSuchScmProviderExceptionThrown()
                     throws Exception
@@ -203,13 +204,13 @@ public class CheckoutProjectFromScmTest
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
-        
+
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
 
-        String dir = "scm-commit/single-pom";  
+        String dir = "scm-commit/single-pom";
         List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
-        
+
         // execute
         try
         {
@@ -237,9 +238,9 @@ public class CheckoutProjectFromScmTest
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
-        String dir = "scm-commit/single-pom";  
+        String dir = "scm-commit/single-pom";
         List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
-        
+
         // execute
         try
         {

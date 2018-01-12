@@ -61,6 +61,7 @@ public class CheckDependencySnapshotsPhaseTest
 
     private static final List<String> CHOICE_ARRAY = Arrays.asList( "0", DEFAULT_CHOICE, "2", "3" );
 
+    @Override
     public void setUp()
         throws Exception
     {

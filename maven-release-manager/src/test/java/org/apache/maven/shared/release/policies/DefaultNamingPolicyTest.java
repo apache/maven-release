@@ -27,7 +27,7 @@ import org.junit.Test;
 public class DefaultNamingPolicyTest
 {
     private DefaultNamingPolicy policy = new DefaultNamingPolicy();
-    
+
     @Test
     public void testName() throws Exception
     {
@@ -36,7 +36,7 @@ public class DefaultNamingPolicyTest
         assertEquals( "ARTIFACTID-1.0-SNAPSHOT",
                       policy.getName( newNamingPolicyRequest( "ARTIFACTID", "1.0-SNAPSHOT" ) ).getName() );
     }
-    
+
     private NamingPolicyRequest newNamingPolicyRequest( String artifactId, String version )
     {
         return new NamingPolicyRequest().setArtifactId( artifactId ).setVersion( version );

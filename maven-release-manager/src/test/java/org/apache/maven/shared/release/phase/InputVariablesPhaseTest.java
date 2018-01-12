@@ -51,6 +51,7 @@ public class InputVariablesPhaseTest
 {
     private InputVariablesPhase phase;
 
+    @Override
     public void setUp()
         throws Exception
     {

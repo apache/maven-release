@@ -31,7 +31,7 @@ import org.junit.Test;
 public class JDomDependencyTest
 {
     private SAXBuilder builder = new SAXBuilder();
-    
+
     @Test( expected = UnsupportedOperationException.class )
     public void testIsOptional()
     {
@@ -56,7 +56,7 @@ public class JDomDependencyTest
         String content = "<dependency></dependency>";
         Element dependencyElm = builder.build( new StringReader( content ) ).getRootElement();
         assertNull( new JDomDependency( dependencyElm ).getArtifactId() );
-        
+
         content = "<dependency><artifactId>ARTIFACTID</artifactId></dependency>";
         dependencyElm = builder.build( new StringReader( content ) ).getRootElement();
         assertEquals( "ARTIFACTID", new JDomDependency( dependencyElm ).getArtifactId() );
@@ -80,7 +80,7 @@ public class JDomDependencyTest
         String content = "<dependency></dependency>";
         Element dependencyElm = builder.build( new StringReader( content ) ).getRootElement();
         assertNull( new JDomDependency( dependencyElm ).getGroupId() );
-        
+
         content = "<dependency><groupId>GROUPID</groupId></dependency>";
         dependencyElm = builder.build( new StringReader( content ) ).getRootElement();
         assertEquals( "GROUPID", new JDomDependency( dependencyElm ).getGroupId() );
@@ -110,7 +110,7 @@ public class JDomDependencyTest
         String content = "<dependency></dependency>";
         Element dependencyElm = builder.build( new StringReader( content ) ).getRootElement();
         assertNull( new JDomDependency( dependencyElm ).getVersion() );
-        
+
         content = "<dependency><version>VERSION</version></dependency>";
         dependencyElm = builder.build( new StringReader( content ) ).getRootElement();
         assertEquals( "VERSION", new JDomDependency( dependencyElm ).getVersion() );

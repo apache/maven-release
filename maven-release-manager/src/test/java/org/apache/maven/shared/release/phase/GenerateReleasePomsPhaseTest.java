@@ -69,6 +69,7 @@ public class GenerateReleasePomsPhaseTest
         super( modelETL );
     }
 
+    @Override
     public void setUp()
         throws Exception
     {
@@ -76,7 +77,7 @@ public class GenerateReleasePomsPhaseTest
 
         scmProviderMock = null;
     }
-    
+
     @Override
     protected String getRoleHint()
     {
@@ -162,6 +163,7 @@ public class GenerateReleasePomsPhaseTest
      * org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createDescriptorFromProjects(java.
      * util.List)
      */
+    @Override
     protected ReleaseDescriptor createDescriptorFromProjects( List<MavenProject> reactorProjects )
     {
         ReleaseDescriptor descriptor = super.createDescriptorFromProjects( reactorProjects );
@@ -174,6 +176,7 @@ public class GenerateReleasePomsPhaseTest
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#createReactorProjects(java.lang.
      * String, boolean)
      */
+    @Override
     protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
         throws Exception
     {
@@ -182,7 +185,7 @@ public class GenerateReleasePomsPhaseTest
 
         scmProviderMock = mock( ScmProvider.class );
 
-        List<File> releasePoms = new ArrayList<File>();
+        List<File> releasePoms = new ArrayList<>();
 
         for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
         {
@@ -211,7 +214,7 @@ public class GenerateReleasePomsPhaseTest
         String dir = "generate-release-poms/"+ path;
         List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
 
-        List<File> releasePoms = new ArrayList<File>();
+        List<File> releasePoms = new ArrayList<>();
 
         for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
         {
@@ -231,6 +234,7 @@ public class GenerateReleasePomsPhaseTest
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#mapNextVersion(org.apache.maven.
      * shared.release.config.ReleaseDescriptor, java.lang.String)
      */
+    @Override
     protected void mapNextVersion( ReleaseDescriptor config, String projectId )
     {
         config.mapReleaseVersion( projectId, NEXT_VERSION );
@@ -241,6 +245,7 @@ public class GenerateReleasePomsPhaseTest
      * org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#mapAlternateNextVersion(org.apache.
      * maven.shared.release.config.ReleaseDescriptor, java.lang.String)
      */
+    @Override
     protected void mapAlternateNextVersion( ReleaseDescriptor config, String projectId )
     {
         config.mapReleaseVersion( projectId, ALTERNATIVE_NEXT_VERSION );
@@ -251,6 +256,7 @@ public class GenerateReleasePomsPhaseTest
      * org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#unmapNextVersion(org.apache.maven.
      * shared.release.config.ReleaseDescriptor, java.lang.String)
      */
+    @Override
     protected void unmapNextVersion( ReleaseDescriptor config, String projectId )
     {
         // nothing to do
@@ -260,6 +266,7 @@ public class GenerateReleasePomsPhaseTest
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#
      * createConfigurationForPomWithParentAlternateNextVersion(java.util.List)
      */
+    @Override
     protected ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {
@@ -275,6 +282,7 @@ public class GenerateReleasePomsPhaseTest
      * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#
      * createConfigurationForWithParentNextVersion(java.util.List)
      */
+    @Override
     protected ReleaseDescriptor createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {
@@ -290,6 +298,7 @@ public class GenerateReleasePomsPhaseTest
      * @see
      * org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#readTestProjectFile(java.lang.String)
      */
+    @Override
     protected String readTestProjectFile( String fileName )
         throws IOException
     {
@@ -303,6 +312,7 @@ public class GenerateReleasePomsPhaseTest
      * java.lang.String)
      */
     // @Override
+    @Override
     protected void comparePomFiles( MavenProject project, String expectedFileSuffix, boolean normalizeLineEndings )
         throws IOException
     {

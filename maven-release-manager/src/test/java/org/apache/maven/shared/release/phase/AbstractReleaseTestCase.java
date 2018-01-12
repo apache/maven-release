@@ -42,24 +42,17 @@ import java.util.Objects;
 import java.util.Stack;
 
 import org.apache.commons.lang.SystemUtils;
-import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
-import org.apache.maven.artifact.versioning.InvalidVersionSpecificationException;
-import org.apache.maven.artifact.versioning.VersionRange;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
-import org.apache.maven.project.ProjectBuildingException;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest.RepositoryMerging;
 import org.apache.maven.project.ProjectBuildingResult;
@@ -88,18 +81,19 @@ public abstract class AbstractReleaseTestCase
     extends PlexusJUnit4TestCase
 {
     protected ProjectBuilder projectBuilder;
-    
+
     protected ArtifactRepository localRepository;
 
     protected ReleasePhase phase;
 
+    @Override
     public void setUp()
         throws Exception
     {
         super.setUp();
-        
+
         projectBuilder = lookup( ProjectBuilder.class );
-        
+
         ArtifactRepositoryLayout layout = lookup( ArtifactRepositoryLayout.class, "default" );
         String localRepoPath = getTestFile( "target/local-repository" ).getAbsolutePath().replace( '\\', '/' );
         localRepository = new MavenArtifactRepository( "local", "file://" + localRepoPath, layout, null, null );
@@ -112,8 +106,8 @@ public abstract class AbstractReleaseTestCase
     }
 
     /**
-     * 
-     * @param sourcePath sourceDirectory to copy from 
+     *
+     * @param sourcePath sourceDirectory to copy from
      * @param targetPath targetDirectory to copy to
      * @param executionRoot sub directory of targetPath in case the root pom.xml is not used (e.g. flat projects)
      * @return all Maven projects
@@ -168,7 +162,7 @@ public abstract class AbstractReleaseTestCase
         Profile profile = new Profile();
         profile.setId( "profile" );
         profile.addRepository( repository );
-        
+
         ProjectBuildingRequest buildingRequest = new DefaultProjectBuildingRequest();
         buildingRequest.setLocalRepository( localRepository );
         buildingRequest.setRemoteRepositories( repos );
@@ -184,8 +178,8 @@ public abstract class AbstractReleaseTestCase
         List<ProjectBuildingResult> buildingResults =
             projectBuilder.build( Collections.singletonList( testCaseRootTo.resolve( projectFiles.peek() ).toFile() ),
                                   true, buildingRequest );
-        
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+
+        List<MavenProject> reactorProjects = new ArrayList<>();
         for ( ProjectBuildingResult buildingResult : buildingResults )
         {
             reactorProjects.add( buildingResult.getProject() ) ;
@@ -193,10 +187,10 @@ public abstract class AbstractReleaseTestCase
 
         WorkspaceReader simpleReactorReader = new SimpleReactorWorkspaceReader( reactorProjects );
         repositorySession.setWorkspaceReader( simpleReactorReader );
-        
+
         ProjectSorter sorter = new ProjectSorter( reactorProjects );
         reactorProjects = sorter.getSortedProjects();
-        
+
         List<MavenProject> resolvedProjects = new ArrayList<>( reactorProjects.size() );
         for ( MavenProject project  : reactorProjects )
         {
@@ -207,10 +201,10 @@ public abstract class AbstractReleaseTestCase
 
     protected static Map<String,MavenProject> getProjectsAsMap( List<MavenProject> reactorProjects )
     {
-        Map<String,MavenProject> map = new HashMap<String,MavenProject>();
+        Map<String,MavenProject> map = new HashMap<>();
         for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
         {
-            MavenProject project = (MavenProject) i.next();
+            MavenProject project = i.next();
 
             map.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ), project );
         }
@@ -275,9 +269,9 @@ public abstract class AbstractReleaseTestCase
     {
         StringBuffer sb = new StringBuffer( "Check the transformed POM " + actualFile );
         sb.append( SystemUtils.LINE_SEPARATOR );
-        
+
         final String remoteRepositoryURL = getRemoteRepositoryURL();
-        
+
         DiffBuilder diffBuilder = DiffBuilder.compare( expectedFile ).withTest( actualFile );
         if ( normalizeLineEndings )
         {
@@ -288,8 +282,8 @@ public abstract class AbstractReleaseTestCase
             diffBuilder.ignoreComments();
         }
         // Order of elements has changed between M2 and M3, so match by name
-        diffBuilder.withNodeMatcher( new DefaultNodeMatcher( ElementSelectors.byName ) ).checkForSimilar();        
-        
+        diffBuilder.withNodeMatcher( new DefaultNodeMatcher( ElementSelectors.byName ) ).checkForSimilar();
+
         diffBuilder.withDifferenceEvaluator( new DifferenceEvaluator()
         {
             @Override
@@ -306,24 +300,24 @@ public abstract class AbstractReleaseTestCase
                     // Order of elements has changed between M2 and M3
                     return ComparisonResult.EQUAL;
                 }
-                else if ( outcome == ComparisonResult.DIFFERENT 
-                                && comparison.getType() == ComparisonType.TEXT_VALUE 
+                else if ( outcome == ComparisonResult.DIFFERENT
+                                && comparison.getType() == ComparisonType.TEXT_VALUE
                                 && "${project.build.directory}/site".equals( comparison.getTestDetails().getValue() ) )
                 {
                     // M2 was target/site, M3 is ${project.build.directory}/site
                     return ComparisonResult.EQUAL;
                 }
-                else 
+                else
                 {
                     return outcome;
                 }
             }
         } );
-        
+
         Diff diff = diffBuilder.build();
 
         sb.append( diff.toString() );
-        
+
         assertFalse( sb.toString(), diff.hasDifferences() );
     }
 
@@ -337,13 +331,13 @@ public abstract class AbstractReleaseTestCase
         }
         return "file://" + getTestFile( "src/test/remote-repository" ).getCanonicalPath().replace( '\\', '/' );
     }
-    
+
     public static String getPath( File file )
         throws IOException
     {
         return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();
     }
-    
+
     /**
      * WorkspaceReader to find versions and artifacts from reactor
      */

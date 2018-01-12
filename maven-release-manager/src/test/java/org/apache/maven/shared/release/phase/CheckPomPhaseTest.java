@@ -40,6 +40,7 @@ public class CheckPomPhaseTest
 {
     private ReleasePhase phase;
 
+    @Override
     protected void setUp()
         throws Exception
     {

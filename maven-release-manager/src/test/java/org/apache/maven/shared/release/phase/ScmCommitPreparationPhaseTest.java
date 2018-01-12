@@ -71,6 +71,7 @@ public class ScmCommitPreparationPhaseTest
 {
     private static final String PREFIX = "[maven-release-manager] prepare release ";
 
+    @Override
     public void setUp()
         throws Exception
     {
@@ -139,7 +140,7 @@ public class ScmCommitPreparationPhaseTest
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
 
-        List<File> poms = new ArrayList<File>();
+        List<File> poms = new ArrayList<>();
         for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
         {
             MavenProject project = i.next();
@@ -233,7 +234,7 @@ public class ScmCommitPreparationPhaseTest
         descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         descriptor.setScmReleaseLabel( "release-label" );
 
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
         files.add( rootProject.getFile() );
         files.add( ReleaseUtil.getReleasePom( rootProject ) );
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), files );

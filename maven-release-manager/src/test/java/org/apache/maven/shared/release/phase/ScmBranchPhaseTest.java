@@ -68,6 +68,7 @@ import org.junit.Test;
 public class ScmBranchPhaseTest
     extends AbstractReleaseTestCase
 {
+    @Override
     public void setUp()
         throws Exception
     {

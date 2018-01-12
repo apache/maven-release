@@ -37,7 +37,7 @@ import org.junit.Test;
 public class JDomPropertiesTest
 {
     private SAXBuilder builder = new SAXBuilder();
-    
+
     @Test
     public void testSetProperty() throws Exception
     {
@@ -114,7 +114,7 @@ public class JDomPropertiesTest
         String content = "<properties></properties>";
         Element propertiesElm = builder.build( new StringReader( content ) ).getRootElement();
         assertNull( new JDomProperties( propertiesElm ).getProperty( "KEY" ) );
-        
+
         content = "<properties><KEY>VALUE</KEY></properties>";
         propertiesElm = builder.build( new StringReader( content ) ).getRootElement();
         assertEquals( "VALUE", new JDomProperties( propertiesElm ).getProperty( "KEY" ) );
@@ -149,7 +149,7 @@ public class JDomPropertiesTest
     {
         new JDomProperties( null ).list( (PrintWriter) null );
     }
-    
+
     private String getProperty( Element propertiesElm, String key )
     {
         return propertiesElm.getChildText( key, propertiesElm.getNamespace() );

@@ -24,12 +24,12 @@ import junit.framework.TestCase;
 public class HgScmTranslatorTest
     extends TestCase
 {
-    private HgScmTranslator scmTranslator = new HgScmTranslator();   
-    
+    private HgScmTranslator scmTranslator = new HgScmTranslator();
+
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
-    public void testResolveTag() 
+    public void testResolveTag()
     {
         assertEquals( "HEAD", scmTranslator.resolveTag( "HEAD" ) );
         assertEquals( "project-1.0", scmTranslator.resolveTag( "project-1.0" ) );
@@ -46,7 +46,7 @@ public class HgScmTranslatorTest
         assertEquals( "url", scmTranslator.translateBranchUrl( "url", "branchName", null )  );
         assertEquals( "url", scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
     }
-    
+
     public void testGetRelativePath()
     {
         assertEquals( "a/b/c", "a/b/c" );

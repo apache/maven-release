@@ -24,12 +24,12 @@ import junit.framework.TestCase;
 public class CvsScmTranslatorTest
     extends TestCase
 {
-    private CvsScmTranslator scmTranslator = new CvsScmTranslator();   
-    
+    private CvsScmTranslator scmTranslator = new CvsScmTranslator();
+
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
-    public void testResolveTag() 
+    public void testResolveTag()
     {
         // with current implementation you can't call your tag 'HEAD' (which is the default)
         assertEquals( null, scmTranslator.resolveTag( "HEAD" ) );
@@ -47,7 +47,7 @@ public class CvsScmTranslatorTest
         assertEquals( "url", scmTranslator.translateBranchUrl( "url", "branchName", null )  );
         assertEquals( "url", scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
     }
-    
+
     public void testGetRelativePath()
     {
         assertEquals( "a/b/c", "a/b/c" );

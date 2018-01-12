@@ -56,9 +56,10 @@ public class RunCompleteGoalsPhaseTest
     private RunCompleteGoalsPhase phase;
 
     private MavenExecutorWrapper mavenExecutorWrapper;
-    
+
     private ReleaseEnvironment releaseEnvironment;
 
+    @Override
     public void setUp()
         throws Exception
     {

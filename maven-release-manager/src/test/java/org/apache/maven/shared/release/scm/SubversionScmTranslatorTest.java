@@ -30,9 +30,9 @@ public class SubversionScmTranslatorTest
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
-    public void testResolveTag() 
+    public void testResolveTag()
     {
-        // "HEAD"is default 
+        // "HEAD"is default
         assertNull( scmTranslator.resolveTag( "HEAD" ) );
         assertNull( scmTranslator.resolveTag( "project-1.0" ) );
     }
@@ -48,7 +48,7 @@ public class SubversionScmTranslatorTest
         assertEquals( "url/branches/branchName", scmTranslator.translateBranchUrl( "url", "branchName", null )  );
         assertEquals( "tagBase/branchName", scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
     }
-    
+
     public void testGetRelativePath()
     {
         assertEquals( "a/b/c", "a/b/c" );

@@ -32,6 +32,7 @@ public class CommandLineFactoryTest
 {
     private CommandLineFactory factory;
 
+    @Override
     protected void setUp()
         throws Exception
     {

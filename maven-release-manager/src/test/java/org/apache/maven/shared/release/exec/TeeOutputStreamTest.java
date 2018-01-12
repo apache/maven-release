@@ -26,7 +26,7 @@ import java.io.PrintStream;
 
 /**
  * Test the output stream that tees output both to a stream and into an internal buffer for later.
- * 
+ *
  * @author Benjamin Bentmann
  * @version $Id$
  */
@@ -39,6 +39,7 @@ public class TeeOutputStreamTest
 
     private static final String LS = System.getProperty( "line.separator" );
 
+    @Override
     protected void setUp()
         throws Exception
     {

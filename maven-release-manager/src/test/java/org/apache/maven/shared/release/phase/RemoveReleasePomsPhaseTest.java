@@ -60,6 +60,7 @@ import org.junit.Test;
 public class RemoveReleasePomsPhaseTest
     extends AbstractReleaseTestCase
 {
+    @Override
     public void setUp()
         throws Exception
     {
@@ -106,7 +107,7 @@ public class RemoveReleasePomsPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects( "pom-with-modules" );
         ReleaseDescriptor config = createReleaseDescriptor();
 
-        List<File> releasePoms = new ArrayList<File>();
+        List<File> releasePoms = new ArrayList<>();
         for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
         {
             MavenProject project = iterator.next();

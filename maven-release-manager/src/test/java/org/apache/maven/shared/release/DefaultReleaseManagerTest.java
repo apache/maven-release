@@ -67,6 +67,7 @@ public class DefaultReleaseManagerTest
     private ReleaseDescriptorStoreStub configStore;
 
 
+    @Override
     protected void setUp()
         throws Exception
     {
@@ -306,7 +307,7 @@ public class DefaultReleaseManagerTest
             // good
             assertEquals( "check cause", ReleaseDescriptorStoreException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify( configStoreMock ).read( releaseDescriptor );
         verifyNoMoreInteractions( configStoreMock );
@@ -338,7 +339,7 @@ public class DefaultReleaseManagerTest
             // good
             assertEquals( "check cause", ReleaseDescriptorStoreException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify( configStoreMock ).write( releaseDescriptor ) ;
         verifyNoMoreInteractions( configStoreMock );
@@ -373,12 +374,12 @@ public class DefaultReleaseManagerTest
 
         phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "branch1" );
         assertTrue( "branch1 not cleaned", phase.isCleaned() );
-        
+
         verify( configStoreMock ).delete( releaseDescriptor );
         verifyNoMoreInteractions( configStoreMock );
     }
 
-    
+
 
     private static List<MavenProject> createReactorProjects()
     {
@@ -387,11 +388,11 @@ public class DefaultReleaseManagerTest
         return Collections.singletonList( project );
     }
 
-    public void testReleasePerformWithResult() 
+    public void testReleasePerformWithResult()
         throws Exception
     {
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
-        
+
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
@@ -400,7 +401,7 @@ public class DefaultReleaseManagerTest
         ReleaseResult result = releaseManager.performWithResult( releaseDescriptor, new DefaultReleaseEnvironment(),
                                                                  createReactorProjects(), null );
         assertTrue( result.getOutput().length() > 0 );
-    }  
+    }
 
     public void testReleaseConfigurationStoreReadFailureOnPerform()
         throws Exception
@@ -430,7 +431,7 @@ public class DefaultReleaseManagerTest
             // good
             assertEquals( "check cause", ReleaseDescriptorStoreException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify( configStoreMock ).read( releaseDescriptor );
         verifyNoMoreInteractions( configStoreMock );
@@ -462,7 +463,7 @@ public class DefaultReleaseManagerTest
             assertTrue( true );
         }
     }
-    
+
     // MRELEASE-758: release:perform no longer removes release.properties
     @SuppressWarnings( "unchecked" )
     public void testPerformWithDefaultClean()
@@ -471,17 +472,17 @@ public class DefaultReleaseManagerTest
         // prepare
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setDryRun( true );
-        
+
         ReleaseManagerListener managerListener = mock( ReleaseManagerListener.class );
         performRequest.setReleaseManagerListener( managerListener );
-        
+
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
         performRequest.setReleaseDescriptor( releaseDescriptor );
-        
+
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
-        
+
         // test
         releaseManager.perform( performRequest );
 
@@ -492,11 +493,11 @@ public class DefaultReleaseManagerTest
         verify( managerListener ).phaseStart( "run-perform-goals" );
         verify( managerListener ).phaseStart( "cleanup" );
         verify( managerListener, times( 5 ) ).phaseEnd();
-        
+
         // not part of actual test, but required to confirm 'no more interactions'
         verify( managerListener ).goalStart( anyString(), any( List.class ) );
         verify( managerListener ).goalEnd();
-        
+
         verifyNoMoreInteractions( managerListener );
     }
 
@@ -554,7 +555,7 @@ public class DefaultReleaseManagerTest
         {
             assertEquals( "check cause", ScmException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify(  scmProviderMock ).checkOut( any( ScmRepository.class ), any( ScmFileSet.class ),
                                              any( ScmTag.class ), any( CommandParameters.class ) );
@@ -621,9 +622,9 @@ public class DefaultReleaseManagerTest
         DefaultReleaseManager defaultReleaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
         defaultReleaseManager.rollback( configStore.getReleaseConfiguration(), (ReleaseEnvironment) null, null );
-        
+
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "rollbackPhase1" );
-        
+
         assertTrue( "rollbackPhase1 executed", phase.isExecuted() );
     }
 
@@ -635,9 +636,9 @@ public class DefaultReleaseManagerTest
         DefaultReleaseManager defaultReleaseManager = (DefaultReleaseManager) lookup( ReleaseManager.ROLE, "test" );
 
         defaultReleaseManager.updateVersions( configStore.getReleaseConfiguration(), null, null );
-        
+
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "updateVersionsPhase1" );
-        
+
         assertTrue( "updateVersionsPhase1 executed", phase.isExecuted() );
     }
 }

@@ -37,7 +37,7 @@ import org.junit.Before;
 
 /**
  * Based on PlexusTestCase from org.sonatype.sisu:sisu-inject-plexus
- * 
+ *
  * @author Robert Scholte
  */
 public abstract class PlexusJUnit4TestCase
@@ -114,7 +114,7 @@ public abstract class PlexusJUnit4TestCase
 
     /**
      * Allow custom test case implementations do augment the default container configuration before executing tests.
-     * 
+     *
      * @param containerConfiguration
      */
     protected void customizeContainerConfiguration( final ContainerConfiguration containerConfiguration )
@@ -174,7 +174,7 @@ public abstract class PlexusJUnit4TestCase
      * Allow the retrieval of a container configuration that is based on the name of the test class being run. So if you
      * have a test class called org.foo.FunTest, then this will produce a resource name of org/foo/FunTest.xml which
      * would be used to configure the Plexus container before running your test.
-     * 
+     *
      * @param subname
      * @return
      */

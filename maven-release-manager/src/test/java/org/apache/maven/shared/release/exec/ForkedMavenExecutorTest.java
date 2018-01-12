@@ -58,16 +58,17 @@ public class ForkedMavenExecutorTest
     extends PlexusTestCase
 {
     private ForkedMavenExecutor executor;
-    
+
     private SecDispatcher secDispatcher;
 
+    @Override
     protected void setUp()
         throws Exception
     {
         super.setUp();
 
         executor = (ForkedMavenExecutor) lookup( MavenExecutor.ROLE, "forked-path" );
-        
+
         secDispatcher = (SecDispatcher) lookup( SecDispatcher.ROLE, "mng-4384" );
     }
 
@@ -87,7 +88,7 @@ public class ForkedMavenExecutorTest
 
         Arg valueArgument = mock( Arg.class );
         when( commandLineMock.createArg() ).thenReturn( valueArgument );
-        
+
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( isA( String.class ) /*"mvn"*/ ) ).thenReturn( commandLineMock );
 
@@ -111,7 +112,7 @@ public class ForkedMavenExecutorTest
         verify( valueArgument ).setValue( "--no-plugin-updates" );
         verify( valueArgument ).setValue( "--batch-mode" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
-        
+
         verifyNoMoreInteractions( mockProcess, commandLineFactoryMock, commandLineMock, valueArgument );
     }
 
@@ -124,13 +125,13 @@ public class ForkedMavenExecutorTest
         when( mockProcess.getErrorStream() ).thenReturn( mock( InputStream.class ) );
         when( mockProcess.getOutputStream() ).thenReturn( mock( OutputStream.class ) );
         when( mockProcess.waitFor() ).thenReturn( 0 );
-        
+
         Commandline commandLineMock = mock( Commandline.class );
         when( commandLineMock.execute() ).thenReturn( mockProcess );
-        
+
         Arg argMock = mock( Arg.class );
         when( commandLineMock.createArg() ).thenReturn( argMock );
-        
+
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( isA( String.class ) /* "mvn" */ ) ).thenReturn( commandLineMock );
 
@@ -156,7 +157,7 @@ public class ForkedMavenExecutorTest
         verify( argMock ).setValue( "--no-plugin-updates" );
         verify( argMock ).setValue( "--batch-mode" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
-        
+
         verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
@@ -172,7 +173,7 @@ public class ForkedMavenExecutorTest
 
         Commandline commandLineMock = mock( Commandline.class );
         when( commandLineMock.execute() ).thenReturn( mockProcess );
-        
+
         Arg argMock = mock( Arg.class );
         when( commandLineMock.createArg() ).thenReturn( argMock );
 
@@ -201,7 +202,7 @@ public class ForkedMavenExecutorTest
         verify( argMock ).setValue( "--batch-mode" );
         verify( argMock ).setLine( "-DperformRelease=true -Dmaven.test.skip=true" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
-        
+
         verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
@@ -219,10 +220,10 @@ public class ForkedMavenExecutorTest
 
         Commandline commandLineMock = mock( Commandline.class );
         when( commandLineMock.execute() ).thenReturn( mockProcess );
-        
+
         Arg argMock = mock( Arg.class );
         when( commandLineMock.createArg() ).thenReturn( argMock );
-        
+
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( endsWith( "mvn" ) ) ).thenReturn( commandLineMock );
 
@@ -239,7 +240,7 @@ public class ForkedMavenExecutorTest
         {
             assertEquals( "Check exit code", 1, e.getExitCode() );
         }
-        
+
         // verify
         verify( mockProcess ).getInputStream();
         verify( mockProcess ).getErrorStream();
@@ -256,7 +257,7 @@ public class ForkedMavenExecutorTest
         verify( argMock ).setValue( "--no-plugin-updates" );
         verify( argMock ).setValue( "--batch-mode" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
-        
+
         verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
@@ -271,10 +272,10 @@ public class ForkedMavenExecutorTest
 
         Arg argMock = mock( Arg.class );
         when ( commandLineMock.createArg() ).thenReturn( argMock );
-        
+
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( endsWith( "mvn" ) ) ).thenReturn( commandLineMock );
-        
+
         executor.setCommandLineFactory( commandLineFactoryMock );
 
         // execute
@@ -300,10 +301,10 @@ public class ForkedMavenExecutorTest
         verify( argMock ).setValue( "--no-plugin-updates" );
         verify( argMock ).setValue( "--batch-mode" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
-        
+
         verifyNoMoreInteractions( commandLineMock, argMock, commandLineFactoryMock );
     }
-    
+
     public void testEncryptSettings()
         throws Exception
     {

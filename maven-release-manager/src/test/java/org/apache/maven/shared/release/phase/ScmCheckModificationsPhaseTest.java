@@ -68,6 +68,7 @@ public class ScmCheckModificationsPhaseTest
 {
     private ReleasePhase phase;
 
+    @Override
     public void setUp()
         throws Exception
     {
@@ -421,7 +422,7 @@ public class ScmCheckModificationsPhaseTest
 
     private static List<ScmFile> createScmFiles( List<String> changedFiles )
     {
-        List<ScmFile> files = new ArrayList<ScmFile>( changedFiles.size() );
+        List<ScmFile> files = new ArrayList<>( changedFiles.size() );
         for ( Iterator<String> i = changedFiles.iterator(); i.hasNext(); )
         {
             String fileName = i.next();

@@ -52,6 +52,7 @@ public class BranchInputVariablesPhaseTest
 {
     private InputVariablesPhase phase;
 
+    @Override
     public void setUp()
         throws Exception
     {
@@ -303,7 +304,7 @@ public class BranchInputVariablesPhaseTest
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
     }
-    
+
     @Test
     public void testNamingPolicy() throws Exception
     {
@@ -312,11 +313,11 @@ public class BranchInputVariablesPhaseTest
         releaseDescriptor.setInteractive( false );
         releaseDescriptor.setProjectNamingPolicyId( "stub" );
         releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
-        
+
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
-        
+
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        
+
         assertEquals( "STUB", releaseDescriptor.getScmReleaseLabel() );
     }
 

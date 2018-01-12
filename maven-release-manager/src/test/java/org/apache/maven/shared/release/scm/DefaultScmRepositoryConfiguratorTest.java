@@ -42,6 +42,7 @@ public class DefaultScmRepositoryConfiguratorTest
 
     private static final int CVS_PORT = 2401;
 
+    @Override
     protected void setUp()
         throws Exception
     {

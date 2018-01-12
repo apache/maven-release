@@ -35,7 +35,7 @@ import org.junit.Test;
 public class JDomModelTest
 {
     private SAXBuilder builder = new SAXBuilder();
-    
+
     @Test
     public void testGetScm() throws Exception
     {
@@ -43,7 +43,7 @@ public class JDomModelTest
         Document document = builder.build( new StringReader( content ) );
         assertNull( new JDomModel( document ).getScm() );
     }
-    
+
     @Test
     public void testSetScm() throws Exception
     {
@@ -51,14 +51,14 @@ public class JDomModelTest
         Document document = builder.build( new StringReader( content ) );
         Model model = new JDomModel( document );
         assertNull( model.getScm() );
-        
+
         model.setScm( new Scm() );
         assertNotNull( model.getScm() );
 
         model.setScm( null );
         assertNull( model.getScm() );
     }
-    
+
     @Test
     public void testSetVersion() throws Exception
     {
@@ -69,10 +69,10 @@ public class JDomModelTest
 
         model.setVersion( "VERSION" );
         assertEquals( "VERSION", getVersion( projectElm ) );
-        
+
         model.setVersion( null );
         assertNull( model.getVersion() );
-        
+
         // inherit from parent
         // this business logic might need to moved.
         content = "<project><parent><version>PARENT_VERSION</version></parent></project>";
@@ -85,11 +85,11 @@ public class JDomModelTest
 
         model.setVersion( "VERSION" );
         assertEquals( "VERSION", getVersion( projectElm ) );
-        
+
         model.setVersion( null );
         assertNull( model.getVersion() );
     }
-    
+
     private String getVersion( Element projectElm )
     {
         return projectElm.getChildText( "version", projectElm.getNamespace() );

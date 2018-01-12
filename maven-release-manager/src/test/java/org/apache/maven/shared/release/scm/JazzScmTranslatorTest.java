@@ -32,7 +32,7 @@ public class JazzScmTranslatorTest
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
-    public void testResolveTag() 
+    public void testResolveTag()
     {
         assertNull( scmTranslator.resolveTag( "HEAD" ) );
         assertNull( scmTranslator.resolveTag( "project-1.0" ) );
@@ -49,7 +49,7 @@ public class JazzScmTranslatorTest
         assertEquals( "url:branchName", scmTranslator.translateBranchUrl( "url:module", "branchName", null ) );
         assertEquals( "url:branchName", scmTranslator.translateBranchUrl( "url:module", "branchName", "tagBase" ) );
     }
-    
+
     public void testGetRelativePath()
     {
         assertEquals( "BogusTest" + File.separator + "release.properties", scmTranslator.toRelativePath( "BogusTest/release.properties" ) );

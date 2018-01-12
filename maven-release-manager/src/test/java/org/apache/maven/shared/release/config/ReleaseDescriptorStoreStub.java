@@ -32,17 +32,20 @@ public class ReleaseDescriptorStoreStub
      */
     private ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
 
+    @Override
     public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
     {
         ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
         return releaseDescriptor;
     }
 
+    @Override
     public void write( ReleaseDescriptor config )
     {
         this.releaseDescriptor = config;
     }
 
+    @Override
     public void delete( ReleaseDescriptor config )
     {
     }

@@ -40,6 +40,7 @@ public class RestoreBackupPomsPhaseTest
 {
     private String expectedPomFilename = "expected-pom.xml";
 
+    @Override
     ReleasePhase getReleasePhase()
         throws Exception
     {

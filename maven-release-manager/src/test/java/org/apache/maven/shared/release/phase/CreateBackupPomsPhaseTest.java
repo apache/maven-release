@@ -37,6 +37,7 @@ import org.junit.Test;
 public class CreateBackupPomsPhaseTest
     extends AbstractBackupPomsPhaseTest
 {
+    @Override
     ReleasePhase getReleasePhase()
         throws Exception
     {

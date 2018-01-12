@@ -55,7 +55,7 @@ import org.mockito.MockitoAnnotations;
 
 /**
  * Test the version mapping phase.
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class MapVersionsPhaseTest
@@ -73,6 +73,7 @@ public class MapVersionsPhaseTest
     @Mock
     private Prompter mockPrompter;
 
+    @Override
     public void setUp()
         throws Exception
     {
@@ -1877,7 +1878,7 @@ public class MapVersionsPhaseTest
         // verify
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
 
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        List<MavenProject> reactorProjects = new ArrayList<>();
         Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),
                             createProject( "module1", "2.0" ) );
 
@@ -1889,7 +1890,7 @@ public class MapVersionsPhaseTest
         phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        Map<String, String> developmentVersions = new HashMap<String, String>();
+        Map<String, String> developmentVersions = new HashMap<>();
         developmentVersions.put( "groupId:artifactId", "1.3-SNAPSHOT" );
         developmentVersions.put( "groupId:module1", "2.0" );
         assertEquals( "Check development versions", developmentVersions, releaseDescriptor.getDevelopmentVersions() );
@@ -1903,7 +1904,7 @@ public class MapVersionsPhaseTest
         // verify
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
 
-        List<MavenProject> reactorProjects = new ArrayList<MavenProject>();
+        List<MavenProject> reactorProjects = new ArrayList<>();
         Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),
                             createProject( "module1", "2.0" ) );
 
@@ -1915,7 +1916,7 @@ public class MapVersionsPhaseTest
         phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        Map<String, String> developmentVersions = new HashMap<String, String>();
+        Map<String, String> developmentVersions = new HashMap<>();
         developmentVersions.put( "groupId:artifactId", "1.3-SNAPSHOT" );
         developmentVersions.put( "groupId:module1", "2.0" );
         assertEquals( "Check development versions", developmentVersions, releaseDescriptor.getDevelopmentVersions() );
@@ -2129,7 +2130,7 @@ public class MapVersionsPhaseTest
     {
         expectedException.expect( ReleaseExecutionException.class );
         expectedException.expectCause( CoreMatchers.isA( PolicyException.class ) );
-        
+
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
 

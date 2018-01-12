@@ -337,16 +337,18 @@ public class ReleaseUtilTest
     {
     	return createProject( basedir, basedir );
     }
-    
+
     private static MavenProject createProject( final String basedirPath, final String basedirCanonicalPath )
     {
         return new MavenProject()
         {
+            @Override
             public File getBasedir()
             {
                 return new File( basedirPath )
                 {
-                	public String getCanonicalPath()
+                	@Override
+                    public String getCanonicalPath()
                 	{
                 		return basedirCanonicalPath;
                 	}

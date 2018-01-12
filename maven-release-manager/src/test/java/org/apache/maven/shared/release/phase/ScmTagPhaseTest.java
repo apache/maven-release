@@ -68,6 +68,7 @@ import org.junit.Test;
 public class ScmTagPhaseTest
     extends AbstractReleaseTestCase
 {
+    @Override
     public void setUp()
         throws Exception
     {
@@ -331,7 +332,7 @@ public class ScmTagPhaseTest
 
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
-        
+
         // execute
         try
         {

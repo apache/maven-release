@@ -30,7 +30,7 @@ import org.junit.Test;
 public class JDomParentTest
 {
     private SAXBuilder builder = new SAXBuilder();
-    
+
     @Test( expected = UnsupportedOperationException.class )
     public void testGetArtifactId()
     {
@@ -78,9 +78,9 @@ public class JDomParentTest
     {
         String content = "<parent></parent>";
         Element parentElm = builder.build( new StringReader( content ) ).getRootElement();
-        
+
         assertNull( getVersion( parentElm ) );
-        
+
         new JDomParent( parentElm ).setVersion( "VERSION" );
         assertEquals( "VERSION", getVersion( parentElm ) );
 
@@ -96,6 +96,6 @@ public class JDomParentTest
 
     private String getVersion( Element parentElm )
     {
-        return parentElm.getChildText( "version", parentElm.getNamespace() ); 
+        return parentElm.getChildText( "version", parentElm.getNamespace() );
     }
 }

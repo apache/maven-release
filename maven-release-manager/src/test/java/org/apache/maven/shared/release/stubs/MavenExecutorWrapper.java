@@ -29,7 +29,7 @@ import org.apache.maven.shared.release.exec.MavenExecutorException;
 public class MavenExecutorWrapper implements MavenExecutor
 {
     private MavenExecutor executor;
-    
+
     public void setMavenExecutor( MavenExecutor executor )
     {
         this.executor = executor;

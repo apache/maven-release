@@ -43,7 +43,7 @@ public class IsScmFileSetEquals extends ArgumentMatcher<ScmFileSet>
     public boolean matches( Object argument )
     {
         ScmFileSet fs = (ScmFileSet) argument;
-        
+
         try
         {
             return fs.getBasedir().getCanonicalPath().equals( fileSet.getBasedir().getCanonicalPath() )

@@ -56,18 +56,19 @@ public class RunPrepareGoalsPhaseTest
     private RunPrepareGoalsPhase phase;
 
     private MavenExecutorWrapper mavenExecutorWrapper;
-    
+
     private ReleaseEnvironment releaseEnvironment;
 
+    @Override
     public void setUp()
         throws Exception
     {
         super.setUp();
 
         phase = (RunPrepareGoalsPhase) lookup( ReleasePhase.ROLE, "run-preparation-goals" );
-        
+
         mavenExecutorWrapper = (MavenExecutorWrapper) lookup( "org.apache.maven.shared.release.exec.MavenExecutor", "wrapper" );
-        
+
         releaseEnvironment = new DefaultReleaseEnvironment();
         releaseEnvironment.setMavenExecutorId( "wrapper" );
     }
