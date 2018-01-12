@@ -26,11 +26,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
-import java.util.Set;
 
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
@@ -237,22 +234,19 @@ public class PropertiesReleaseDescriptorStore
         // others boolean properties are not written to the properties file because the value from the caller is always
         // used
 
-        for ( Iterator<?> i = config.getReleaseVersions().entrySet().iterator(); i.hasNext(); )
+        for ( Map.Entry<String, String> entry : config.getReleaseVersions().entrySet() )
         {
-            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
-            properties.setProperty( "project.rel." + entry.getKey(), (String) entry.getValue() );
+            properties.setProperty( "project.rel." + entry.getKey(), entry.getValue() );
         }
 
-        for ( Iterator<?> i = config.getDevelopmentVersions().entrySet().iterator(); i.hasNext(); )
+        for ( Map.Entry<String, String> entry : config.getDevelopmentVersions().entrySet() )
         {
-            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
             properties.setProperty( "project.dev." + entry.getKey(), (String) entry.getValue() );
         }
 
-        for ( Iterator<?> i = config.getOriginalScmInfo().entrySet().iterator(); i.hasNext(); )
+        for ( Map.Entry<String, Scm> entry : config.getOriginalScmInfo().entrySet() )
         {
-            Map.Entry<?, ?> entry = (Map.Entry<?, ?>) i.next();
-            Scm scm = (Scm) entry.getValue();
+            Scm scm = entry.getValue();
             String prefix = "project.scm." + entry.getKey();
             if ( scm != null )
             {
@@ -304,22 +298,16 @@ public class PropertiesReleaseDescriptorStore
         }
     }
 
-    private void processResolvedDependencies( Properties prop, Map<?, ?> resolvedDependencies )
+    private void processResolvedDependencies( Properties prop, Map<String, Map<String, String>> resolvedDependencies )
     {
-        Set<?> entries = resolvedDependencies.entrySet();
-        Iterator<?> iterator = entries.iterator();
-        Entry<?, ?> currentEntry;
-
-        while ( iterator.hasNext() )
+        for ( Map.Entry<String, Map<String, String>> currentEntry : resolvedDependencies.entrySet() )
         {
-            currentEntry = (Entry<?, ?>) iterator.next();
-
-            Map<?, ?> versionMap = (Map<?, ?>) currentEntry.getValue();
-
+            Map<String, String> versionMap = currentEntry.getValue();
+            
             prop.setProperty( "dependency." + currentEntry.getKey() + ".release",
-                              (String) versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+                              versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
             prop.setProperty( "dependency." + currentEntry.getKey() + ".development",
-                              (String) versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+                              versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
         }
     }
 

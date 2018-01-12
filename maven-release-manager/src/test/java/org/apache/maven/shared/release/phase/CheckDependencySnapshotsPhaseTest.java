@@ -1092,8 +1092,7 @@ public class CheckDependencySnapshotsPhaseTest
         }
 
         // validate
-        @SuppressWarnings( "rawtypes" )
-        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "groupId:parent-external" );
+        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "groupId:parent-external" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0-test", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );

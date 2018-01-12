@@ -35,11 +35,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Stack;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -140,14 +138,14 @@ public abstract class AbstractReleaseTestCase
             }
         });
 
-        Stack<Path> projectFiles = new Stack<>();
+        Path projectFile;
         if ( executionRoot == null )
         {
-            projectFiles.push( Paths.get( "pom.xml" ) );
+            projectFile = testCaseRootTo.resolve( "pom.xml" );
         }
         else
         {
-            projectFiles.push( Paths.get( executionRoot, "pom.xml" ) );
+            projectFile = testCaseRootTo.resolve( Paths.get( executionRoot, "pom.xml" ) );
         }
 
         List<ArtifactRepository> repos =
@@ -176,8 +174,7 @@ public abstract class AbstractReleaseTestCase
         buildingRequest.setResolveDependencies( true );
 
         List<ProjectBuildingResult> buildingResults =
-            projectBuilder.build( Collections.singletonList( testCaseRootTo.resolve( projectFiles.peek() ).toFile() ),
-                                  true, buildingRequest );
+            projectBuilder.build( Collections.singletonList( projectFile.toFile() ), true, buildingRequest );
 
         List<MavenProject> reactorProjects = new ArrayList<>();
         for ( ProjectBuildingResult buildingResult : buildingResults )
@@ -202,10 +199,8 @@ public abstract class AbstractReleaseTestCase
     protected static Map<String,MavenProject> getProjectsAsMap( List<MavenProject> reactorProjects )
     {
         Map<String,MavenProject> map = new HashMap<>();
-        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = i.next();
-
             map.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ), project );
         }
         return map;
@@ -235,10 +230,8 @@ public abstract class AbstractReleaseTestCase
     protected void comparePomFiles( List<MavenProject> reactorProjects, String expectedFileSuffix, boolean normalizeLineEndings )
         throws IOException
     {
-        for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = i.next();
-
             comparePomFiles( project, expectedFileSuffix, normalizeLineEndings );
         }
     }
