@@ -21,12 +21,12 @@ package org.apache.maven.shared.release.policy.oddeven;
 
 import java.util.List;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
-import org.apache.maven.shared.release.versions.DefaultVersionInfo;
-import org.apache.maven.shared.release.versions.VersionInfo;
+import org.apache.maven.shared.release.versions.Version;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.StringUtils;
@@ -48,12 +48,14 @@ public final class OddEvenVersionPolicy
     implements VersionPolicy
 {
 
+    @Override
     public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
         throws PolicyException
     {
         return calculateNextVersion( request, false );
     }
 
+    @Override
     public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
         throws PolicyException
     {
@@ -62,52 +64,34 @@ public final class OddEvenVersionPolicy
 
     private VersionPolicyResult calculateNextVersion( VersionPolicyRequest request, boolean development )
     {
-        DefaultVersionInfo defaultVersionInfo = null;
+        Version defaultVersionInfo = null;
 
         try
         {
-            defaultVersionInfo = new DefaultVersionInfo( request.getVersion() );
+            defaultVersionInfo = new Version( request.getVersion() );
         }
         catch ( VersionParseException e )
         {
             throw new IllegalArgumentException( "Can't tell if version with no digits is even: " + e.getMessage(), e );
         }
 
-        // by default, never reuse revisions
-        int versionNumbersToSkip = 1;
+        Version newVersion = newVersion( defaultVersionInfo, development );
 
-        // do we need a snapshot? make sure the version info is odd
-        if ( development && !isEven( defaultVersionInfo ) )
-        {
-            versionNumbersToSkip = 2;
-        }
-
-        // do we need a release? make sure the version info is even
-        if ( !development && isEven( defaultVersionInfo ) )
-        {
-            versionNumbersToSkip = 0;
-        }
-
-        VersionInfo suggestedVersionInfo = defaultVersionInfo;
-        while ( versionNumbersToSkip != 0 )
-        {
-            suggestedVersionInfo = suggestedVersionInfo.getNextVersion();
-            versionNumbersToSkip--;
-        }
-
-        String nextVersion = development ? suggestedVersionInfo.getSnapshotVersionString()
-                                         : suggestedVersionInfo.getReleaseVersionString();
-
-        return new VersionPolicyResult().setVersion( nextVersion );
+        return new VersionPolicyResult().setVersion( newVersion.toString()  );
     }
 
-    private boolean isEven( DefaultVersionInfo defaultVersionInfo )
+    private Version newVersion( Version defaultVersionInfo, boolean development )
     {
+        Version newVersion;
         int mostSignificantSegment;
 
         if ( StringUtils.isNumeric( defaultVersionInfo.getAnnotationRevision() ) )
         {
             mostSignificantSegment = Integer.parseInt( defaultVersionInfo.getAnnotationRevision() );
+
+            int skip = getVersionIncrements( development, mostSignificantSegment % 2 == 0 );
+
+            newVersion = defaultVersionInfo.setAnnotationRevision( String.valueOf( mostSignificantSegment + skip ) );
         }
         else
         {
@@ -119,9 +103,40 @@ public final class OddEvenVersionPolicy
             }
 
             mostSignificantSegment = Integer.parseInt( digits.get( digits.size() - 1 ) );
+
+            int skip = getVersionIncrements( development, mostSignificantSegment % 2 == 0 );
+
+            digits.set( digits.size() - 1, String.valueOf( String.valueOf( mostSignificantSegment + skip ) ) );
+
+            newVersion = defaultVersionInfo.setDigits( digits );
         }
 
-        return mostSignificantSegment % 2 == 0;
+        if ( development )
+        {
+            return newVersion.setBuildSpecifier( Artifact.SNAPSHOT_VERSION );
+        }
+        else
+        {
+            return newVersion.setBuildSpecifier( null );
+        }
     }
 
+    private int getVersionIncrements( boolean development, boolean isEven )
+    {
+        if ( development && !isEven )
+        {
+            // do we need a snapshot? make sure the version info is odd
+            return 2;
+        }
+        else if ( !development && isEven )
+        {
+            // do we need a release? make sure the version info is even
+            return 0;
+        }
+        else
+        {
+            // by default, never reuse revisions
+            return 1;
+        }
+    }
 }

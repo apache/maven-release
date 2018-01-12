@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.versions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +32,7 @@ import org.codehaus.plexus.util.StringUtils;
  * 
  */
 public class Version
-    implements Comparable<Version>
+    implements Comparable<Version>, Cloneable
 {
     private final AetherVersion aetherVersion;
 
@@ -51,7 +52,7 @@ public class Version
 
     private String annotationRevSeparator;
 
-    private final String buildSeparator;
+    private String buildSeparator;
 
     private static final int DIGITS_INDEX = 1;
 
@@ -70,6 +71,10 @@ public class Version
     private static final String SNAPSHOT_IDENTIFIER = "SNAPSHOT";
 
     private static final String DIGIT_SEPARATOR_STRING = ".";
+    
+    private static final String DEFAULT_ANNOTATION_REV_SEPARATOR = "-";
+
+    private static final String DEFAULT_BUILD_SEPARATOR = "-";
 
     public static final Pattern STANDARD_PATTERN = Pattern.compile( "^((?:\\d+\\.)*\\d+)" // digit(s) and '.' repeated -
                                                                                           // followed by digit (version
@@ -86,6 +91,23 @@ public class Version
      */
     // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
     public static final Pattern ALTERNATE_PATTERN = Pattern.compile( "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)" );
+    
+    private Version( List<String> digits, String annotation, String annotationRevision, String buildSpecifier,
+                               String annotationSeparator, String annotationRevSeparator, String buildSeparator )
+    {
+        this.digits = digits;
+        this.annotation = annotation;
+        this.annotationRevision = annotationRevision;
+        this.buildSpecifier = buildSpecifier;
+        this.annotationSeparator = annotationSeparator;
+        this.annotationRevSeparator = annotationRevSeparator;
+        this.buildSeparator = buildSeparator;
+        this.strVersion = getVersionString( this, buildSpecifier, buildSeparator );
+
+        // for now no need to reparse, original version was valid 
+        this.aetherVersion = null;
+        this.mavenArtifactVersion = null;
+    }
 
     public Version( String version )
         throws VersionParseException
@@ -220,7 +242,7 @@ public class Version
     {
         return digits;
     }
-
+    
     public String getAnnotation()
     {
         return annotation;
@@ -245,7 +267,43 @@ public class Version
     {
         return buildSpecifier;
     }
-
+    
+    /**
+     * 
+     * @param newDigits the new list of digits
+     * @return a new instance of Version
+     */
+    public Version setDigits( List<String> newDigits )
+    {
+        return new Version( newDigits, this.annotation, this.annotationRevision, this.buildSpecifier,
+                            this.annotationSeparator, this.annotationRevSeparator, this.buildSeparator );
+    }
+    
+    /**
+     * 
+     * @param newAnnotationRevision the new annotation revision
+     * @return a new instance of Version
+     */
+    public Version setAnnotationRevision( String newAnnotationRevision )
+    {
+        return new Version( this.digits, this.annotation, newAnnotationRevision, this.buildSpecifier,
+                            this.annotationSeparator,
+                            Objects.toString( this.annotationRevSeparator, DEFAULT_ANNOTATION_REV_SEPARATOR ),
+                            this.buildSeparator );
+    }
+    
+    /**
+     * 
+     * @param newBuildSpecifier the new build specifier
+     * @return a new instance of Version
+     */
+    public Version setBuildSpecifier( String newBuildSpecifier )
+    {
+        return new Version( this.digits, this.annotation, this.annotationRevision, newBuildSpecifier,
+                            this.annotationSeparator, this.annotationRevSeparator,
+                            Objects.toString( this.buildSeparator, DEFAULT_BUILD_SEPARATOR ) );
+    }
+    
     /**
      * @throws VersionComparisonConflictException if {@link org.eclipse.aether.version.Version} and
      *             {@link org.apache.maven.artifact.versioning.ArtifactVersion ArtifactVersion} give different results
