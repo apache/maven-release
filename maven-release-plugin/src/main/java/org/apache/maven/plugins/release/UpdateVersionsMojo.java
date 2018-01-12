@@ -38,7 +38,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
  * without making other modifications to the SCM such as tagging. For more info see <a
  * href="http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html"
  * >http://maven.apache.org/plugins/maven-release-plugin/examples/update-versions.html</a>.
- * 
+ *
  * @author Paul Gier
  * @version $Id$
  * @since 2.0
@@ -51,7 +51,7 @@ public class UpdateVersionsMojo
     /**
      * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
      * version of each submodules.
-     * 
+     *
      * @since 2.0
      */
     @Parameter( defaultValue = "false", property = "autoVersionSubmodules" )
@@ -59,7 +59,7 @@ public class UpdateVersionsMojo
 
     /**
      * Whether to add a schema to the POM if it was previously missing on release.
-     * 
+     *
      * @since 2.0
      */
     @Parameter( defaultValue = "true", property = "addSchema" )
@@ -67,7 +67,7 @@ public class UpdateVersionsMojo
 
     /**
      * Default version to use for new local working copy.
-     * 
+     *
      * @since 2.0
      */
     @Parameter( property = "developmentVersion" )
@@ -83,7 +83,7 @@ public class UpdateVersionsMojo
 
     /**
      * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
-     * 
+     *
      * @since 2.5.2
      */
     @Parameter( defaultValue = "false", property = "useEditMode" )
@@ -97,9 +97,7 @@ public class UpdateVersionsMojo
     @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
     private String projectVersionPolicyId;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -111,7 +109,7 @@ public class UpdateVersionsMojo
         config.setUpdateDependencies( updateDependencies );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
 
-        Map<String, Scm> originalScmInfo = new HashMap<String, Scm>();
+        Map<String, Scm> originalScmInfo = new HashMap<>();
         originalScmInfo.put( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
                              project.getScm() );
         config.setOriginalScmInfo( originalScmInfo );

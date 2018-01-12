@@ -135,17 +135,13 @@ public class PerformReleaseMojo
     @Component
     private ScmManager scmManager;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     protected String getAdditionalProfiles()
     {
         return releaseProfiles;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

@@ -29,8 +29,8 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
- * Abstract Mojo containing SCM parameters 
- *  
+ * Abstract Mojo containing SCM parameters
+ *
  * @author Robert Scholte
  */
 // Extra layer since 2.4. Don't use @since doclet, these would be inherited by the subclasses
@@ -95,7 +95,7 @@ public abstract class AbstractScmReleaseMojo
     private boolean pushChanges = true;
 
     /**
-     * Add a new or overwrite the default implementation per provider. 
+     * Add a new or overwrite the default implementation per provider.
      * The key is the scm prefix and the value is the role hint of the
      * {@link org.apache.maven.scm.provider.ScmProvider}.
      *
@@ -104,16 +104,14 @@ public abstract class AbstractScmReleaseMojo
      */
     @Parameter
     private Map<String, String> providerImplementations;
-    
+
     /**
      * The SCM manager.
      */
     @Component
     private ScmManager scmManager;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
@@ -127,7 +125,7 @@ public abstract class AbstractScmReleaseMojo
             }
         }
     }
-    
+
     @Override
     protected ReleaseDescriptor createReleaseDescriptor()
     {

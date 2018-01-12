@@ -176,7 +176,7 @@ public abstract class AbstractReleaseMojo
                     args += ",";
                 }
             }
-            
+
             if ( additionalProfiles != null )
             {
                 if ( !profileIds.isEmpty() )
@@ -192,7 +192,7 @@ public abstract class AbstractReleaseMojo
     }
 
     /**
-     * 
+     *
      * @return a List with profile ids, never {@code null}
      */
     @SuppressWarnings( "unchecked" )
@@ -215,7 +215,7 @@ public abstract class AbstractReleaseMojo
             }
             else
             {
-                profiles = new ArrayList<String>( project.getActiveProfiles().size() );
+                profiles = new ArrayList<>( project.getActiveProfiles().size() );
                 for ( Object profile : project.getActiveProfiles() )
                 {
                     profiles.add( ( (Profile) profile ).getId() );
@@ -254,7 +254,7 @@ public abstract class AbstractReleaseMojo
     {
         return settings;
     }
-    
+
     protected final File getBasedir()
     {
         return basedir;

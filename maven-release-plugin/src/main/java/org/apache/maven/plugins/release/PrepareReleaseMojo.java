@@ -58,6 +58,7 @@ public class PrepareReleaseMojo
     /**
      * @deprecated Please use release:prepare-with-pom instead.
      */
+    @Deprecated
     @Parameter( defaultValue = "false", property = "generateReleasePoms" )
     private boolean generateReleasePoms;
 
@@ -218,7 +219,7 @@ public class PrepareReleaseMojo
     private int waitBeforeTagging;
 
     /**
-     * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy} 
+     * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy}
      * implementation used to calculate the project versions.
      *
      * @since 2.5.1
@@ -228,7 +229,7 @@ public class PrepareReleaseMojo
     private String projectVersionPolicyId;
 
     /**
-     * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy} 
+     * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project branch and tag names.
      *
      * @since 3.0.0
@@ -237,9 +238,7 @@ public class PrepareReleaseMojo
     @Parameter( property = "projectNamingPolicyId" )
     private String projectTagNamingPolicyId;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

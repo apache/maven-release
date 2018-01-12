@@ -40,10 +40,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 public class RollbackReleaseMojo
     extends AbstractScmReleaseMojo
 {
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

@@ -38,10 +38,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 public class CleanReleaseMojo
     extends AbstractReleaseMojo
 {
-
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

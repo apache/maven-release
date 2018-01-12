@@ -191,7 +191,7 @@ public class BranchReleaseMojo
     private String developmentVersion;
 
     /**
-     * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy} 
+     * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy}
      * implementation used to calculate the project versions.
      *
      * @since 3.0.0
@@ -201,7 +201,7 @@ public class BranchReleaseMojo
     private String projectVersionPolicyId;
 
     /**
-     * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy} 
+     * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project names.
      *
      * @since 3.0.0
@@ -210,9 +210,7 @@ public class BranchReleaseMojo
     @Parameter( property = "projectNamingPolicyId" )
     private String projectBranchNamingPolicyId;
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

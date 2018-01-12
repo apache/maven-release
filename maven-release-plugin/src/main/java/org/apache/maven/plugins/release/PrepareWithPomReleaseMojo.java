@@ -27,7 +27,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 
 /**
  * Prepare for a release in SCM, fully resolving dependencies for the purpose of producing a "release POM".
- * 
+ *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @since 2.0
  */
@@ -41,6 +41,7 @@ public class PrepareWithPomReleaseMojo
     @Parameter( defaultValue = "true", property = "generateReleasePoms" )
     private boolean generateReleasePoms;
 
+    @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {

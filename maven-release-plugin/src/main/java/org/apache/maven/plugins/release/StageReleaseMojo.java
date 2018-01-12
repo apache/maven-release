@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * If the goals contain <code>site-deploy</code> or <code>site:deploy</code>, these
  * are overridden with <code>site:stage-deploy</code>.
- * 
+ *
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @version $Id$
  * @since 2.0-beta-8
@@ -42,7 +42,7 @@ public class StageReleaseMojo
 {
     /**
      * URL of the staging repository to use.
-     * 
+     *
      * @since 2.0-beta-8
      */
     @Parameter( property = "stagingRepository", required = true )
