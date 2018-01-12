@@ -337,7 +337,7 @@ public class MapVersionsPhase
         String defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
         if ( StringUtils.isEmpty( defaultVersion ) )
         {
-            defaultVersion = ( String ) releaseDescriptor.getDevelopmentVersions().get( projectId );
+            defaultVersion = releaseDescriptor.getDevelopmentVersions().get( projectId );
         }
         return defaultVersion;
     }
@@ -347,7 +347,7 @@ public class MapVersionsPhase
         String nextVersion = releaseDescriptor.getDefaultReleaseVersion();
         if ( StringUtils.isEmpty( nextVersion ) )
         {
-            nextVersion = ( String ) releaseDescriptor.getReleaseVersions().get( projectId );
+            nextVersion = releaseDescriptor.getReleaseVersions().get( projectId );
         }
         return nextVersion;
     }

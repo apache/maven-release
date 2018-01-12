@@ -59,7 +59,6 @@ public class RewritePomsForDevelopmentPhase
             Scm scmRoot = modelTarget.getScm();
             if ( scmRoot != null )
             {
-                @SuppressWarnings( "unchecked" )
                 Map<String, Scm> originalScmInfo = releaseDescriptor.getOriginalScmInfo();
                 // check containsKey, not == null, as we store null as a value
                 if ( !originalScmInfo.containsKey( projectId ) )
@@ -96,7 +95,6 @@ public class RewritePomsForDevelopmentPhase
         }
     }
 
-    @SuppressWarnings( "unchecked" )
     @Override
     protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
                                                          List<MavenProject> reactorProjects, boolean simulate )
@@ -106,7 +104,6 @@ public class RewritePomsForDevelopmentPhase
             : releaseDescriptor.getReleaseVersions();
     }
 
-    @SuppressWarnings( "unchecked" )
     @Override
     protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {

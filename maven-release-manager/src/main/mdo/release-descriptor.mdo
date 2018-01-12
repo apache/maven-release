@@ -162,42 +162,42 @@
           </description>
         </field>
         <!-- Maven Information -->
-        <field>
-          <name>releaseVersions</name>
-          <version>1.0.0+</version>
-          <type>Map</type>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-          <description>
-            A map of projects to versions to use when releasing the given projects.
-          </description>
-        </field>
-        <field>
-          <name>developmentVersions</name>
-          <version>1.0.0+</version>
-          <type>Map</type>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-          <description>
-            A map of projects to versions to use when moving the given projects back into development after release.
-          </description>
-        </field>
-        <field>
-          <name>resolvedSnapshotDependencies</name>
-          <version>1.0.0+</version>
-          <type>Map</type>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-          <description>
-            A map of resolved snapshot dependencies versions.
-          </description>
-        </field>
+<!--         <field> -->
+<!--           <name>releaseVersions</name> -->
+<!--           <version>1.0.0+</version> -->
+<!--           <type>Map</type> -->
+<!--           <association> -->
+<!--             <type>String</type> -->
+<!--             <multiplicity>*</multiplicity> -->
+<!--           </association> -->
+<!--           <description> -->
+<!--             A map of projects to versions to use when releasing the given projects. -->
+<!--           </description> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--           <name>developmentVersions</name> -->
+<!--           <version>1.0.0+</version> -->
+<!--           <type>Map</type> -->
+<!--           <association> -->
+<!--             <type>String</type> -->
+<!--             <multiplicity>*</multiplicity> -->
+<!--           </association> -->
+<!--           <description> -->
+<!--             A map of projects to versions to use when moving the given projects back into development after release. -->
+<!--           </description> -->
+<!--         </field> -->
+<!--         <field> -->
+<!--           <name>resolvedSnapshotDependencies</name> -->
+<!--           <version>1.0.0+</version> -->
+<!--           <type>Map</type> -->
+<!--           <association> -->
+<!--             <type>String</type> -->
+<!--             <multiplicity>*</multiplicity> -->
+<!--           </association> -->
+<!--           <description> -->
+<!--             A map of resolved snapshot dependencies versions. -->
+<!--           </description> -->
+<!--         </field> -->
         <field>
           <name>updateDependencies</name>
           <version>1.0.0+</version>
@@ -217,18 +217,18 @@
             If set to true, this will set the property "performRelease" to true.
           </description>
         </field>
-        <field>
-          <name>originalScmInfo</name>
-          <version>1.0.0+</version>
-          <type>Map</type>
-          <association>
-            <type>String</type>
-            <multiplicity>*</multiplicity>
-          </association>
-          <description>
-            A map of projects to original SCM information.
-          </description>
-        </field>
+<!--         <field> -->
+<!--           <name>originalScmInfo</name> -->
+<!--           <version>1.0.0+</version> -->
+<!--           <type>Map</type> -->
+<!--           <association> -->
+<!--             <type>String</type> -->
+<!--             <multiplicity>*</multiplicity> -->
+<!--           </association> -->
+<!--           <description> -->
+<!--             A map of projects to original SCM information. -->
+<!--           </description> -->
+<!--         </field> -->
         <field>
           <name>workingDirectory</name>
           <version>1.0.0+</version>
@@ -532,6 +532,129 @@
     public static final String ORIGINAL_VERSION = "original";
 
     /**
+     * Field resolvedSnapshotDependencies.
+     */
+    private java.util.Map<String, java.util.Map<String, String>> resolvedSnapshotDependencies;
+
+    /**
+     * Field releaseVersions.
+     */
+    private java.util.Map<String, String> releaseVersions;
+
+    /**
+     * Field developmentVersions.
+     */
+    private java.util.Map<String, String> developmentVersions;
+    
+    /**
+     * Field originalScmInfo.
+     */
+    private java.util.Map<String, org.apache.maven.model.Scm> originalScmInfo;
+    
+    /**
+     * Method getResolvedSnapshotDependencies.
+     * 
+     * @return Map
+     */
+    public java.util.Map<String, java.util.Map<String, String>> getResolvedSnapshotDependencies()
+    {
+        if ( this.resolvedSnapshotDependencies == null )
+        {
+            this.resolvedSnapshotDependencies = new java.util.HashMap<>();
+        }
+
+        return this.resolvedSnapshotDependencies;
+    } //-- java.util.Map<String, java.util.Map<String, String>> getResolvedSnapshotDependencies()
+    
+    /**
+     * Set a map of resolved snapshot dependencies versions.
+     * 
+     * @param resolvedSnapshotDependencies
+     */
+    public void setResolvedSnapshotDependencies( java.util.Map<String, java.util.Map<String, String>> resolvedSnapshotDependencies )
+    {
+        this.resolvedSnapshotDependencies = resolvedSnapshotDependencies;
+    } //-- void setResolvedSnapshotDependencies( java.util.Map<String, java.util.Map<String, String>> )
+
+    /**
+     * Method getReleaseVersions.
+     * 
+     * @return Map
+     */
+    public java.util.Map<String, String> getReleaseVersions()
+    {
+        if ( this.releaseVersions == null )
+        {
+            this.releaseVersions = new java.util.HashMap<>();
+        }
+
+        return this.releaseVersions;
+    } //-- java.util.Map<String, String> getReleaseVersions()
+
+    /**
+     * Method addReleaseVersion.
+     * 
+     * @param key
+     * @param value
+     */
+    public void addReleaseVersion( String key, String value )
+    {
+        getReleaseVersions().put( key, value );
+    } //-- void addReleaseVersion( String, String )
+
+    /**
+     * Method getDevelopmentVersions.
+     * 
+     * @return Map
+     */
+    public java.util.Map<String, String> getDevelopmentVersions()
+    {
+        if ( this.developmentVersions == null )
+        {
+            this.developmentVersions = new java.util.HashMap<>();
+        }
+
+        return this.developmentVersions;
+    } //-- java.util.Map<String, String> getDevelopmentVersions()
+
+    /**
+     * Method addDevelopmentVersion.
+     * 
+     * @param key
+     * @param value
+     */
+    public void addDevelopmentVersion( String key, String value )
+    {
+        getDevelopmentVersions().put( key, value );
+    } //-- void addDevelopmentVersion( String, String )
+
+    /**
+     * Method getOriginalScmInfo.
+     * 
+     * @return Map
+     */
+    public java.util.Map<String, org.apache.maven.model.Scm> getOriginalScmInfo()
+    {
+        if ( this.originalScmInfo == null )
+        {
+            this.originalScmInfo = new java.util.HashMap<>();
+        }
+
+        return this.originalScmInfo;
+    } //-- java.util.Map<Object, String> getOriginalScmInfo()
+    
+    /**
+     * Method addOriginalScmInfo.
+     * 
+     * @param key
+     * @param value
+     */
+    public void addOriginalScmInfo( String key, org.apache.maven.model.Scm value )
+    {
+        getOriginalScmInfo().put( key, value );
+    } //-- void addOriginalScmInfo( String, org.apache.maven.model.Scm )
+
+    /**
      * Map a given snapshot dependency to a specified version from when it is released.
      *
      */
@@ -546,7 +669,7 @@
             assert !resolvedSnapshotDependencies.containsKey( artifactName );
         }
 
-        java.util.Map versionsMap = new java.util.HashMap();
+        java.util.Map versionsMap = new java.util.HashMap<>();
 
         versionsMap.put( DEVELOPMENT_KEY, developmentVersion );
         versionsMap.put( RELEASE_KEY, releaseVersion );
@@ -563,7 +686,7 @@
     {
         if ( releaseVersions == null )
         {
-            releaseVersions = new java.util.HashMap();
+            releaseVersions = new java.util.HashMap<>();
         }
 
         releaseVersions.put( projectId, nextVersion );
@@ -579,7 +702,7 @@
     {
         if ( developmentVersions == null )
         {
-            developmentVersions = new java.util.HashMap();
+            developmentVersions = new java.util.HashMap<>();
         }
 
         developmentVersions.put( projectId, nextVersion );
@@ -595,7 +718,7 @@
     {
         if ( originalScmInfo == null )
         {
-            originalScmInfo = new java.util.HashMap();
+            originalScmInfo = new java.util.HashMap<>();
         }
         else
         {
@@ -621,7 +744,7 @@
     {
         if ( originalVersions == null )
         {
-            originalVersions = new java.util.HashMap();
+            originalVersions = new java.util.HashMap<>();
             for ( org.apache.maven.project.MavenProject project : reactorProjects )
             {
                 originalVersions.put( org.apache.maven.artifact.ArtifactUtils.versionlessKey( project.getGroupId(),
@@ -639,8 +762,8 @@
     {
         if ( ( resolvedSnapshotDependencies == null ) && ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) ) )
         {
-            java.util.Map versionMap = ( java.util.Map ) resolvedSnapshotDependencies.get( artifactConflictId );
-            return ( String ) versionMap.get( DEVELOPMENT_KEY );
+            java.util.Map<String, String> versionMap = resolvedSnapshotDependencies.get( artifactConflictId );
+            return versionMap.get( DEVELOPMENT_KEY );
         }
         return null;
     }
@@ -653,8 +776,8 @@
     {
         if ( ( resolvedSnapshotDependencies == null ) && ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) ) )
         {
-            java.util.Map versionMap = ( java.util.Map ) resolvedSnapshotDependencies.get( artifactConflictId );
-            return ( String ) versionMap.get( RELEASE_KEY );
+            java.util.Map<String, String> versionMap = resolvedSnapshotDependencies.get( artifactConflictId );
+            return versionMap.get( RELEASE_KEY );
         }
         return null;
     }

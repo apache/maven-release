@@ -507,7 +507,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         // validate
         @SuppressWarnings( "rawtypes" )
-        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -551,7 +551,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         // validate
         @SuppressWarnings( "rawtypes" )
-        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -581,7 +581,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         // validate
         @SuppressWarnings( "rawtypes" )
-        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -611,7 +611,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         // validate
         @SuppressWarnings( "rawtypes" )
-        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -645,7 +645,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         // validate
         @SuppressWarnings( "rawtypes" )
-        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -689,13 +689,13 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( resolvedDependencies.containsKey( "external:artifactId2" ) );
 
         @SuppressWarnings( "rawtypes" )
-        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
 
-        versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId2" );
+        versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId2" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -1093,7 +1093,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         // validate
         @SuppressWarnings( "rawtypes" )
-        Map versionsMap = (Map) releaseDescriptor.getResolvedSnapshotDependencies().get( "groupId:parent-external" );
+        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "groupId:parent-external" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0-test", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );

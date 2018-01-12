@@ -425,7 +425,6 @@ public class GenerateReleasePomsPhase
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
-    @SuppressWarnings( "unchecked" )
     protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {
         return releaseDescriptor.getReleaseVersions();

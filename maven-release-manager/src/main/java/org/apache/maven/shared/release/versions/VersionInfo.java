@@ -20,7 +20,7 @@ package org.apache.maven.shared.release.versions;
  */
 
 /**
- * @todo this has an overlap with ArtifactVersion in maven-artifact - would be good to migrate this there.
+ * Represent the different version representations during the release-prepare phase
  */
 public interface VersionInfo
     extends Comparable<VersionInfo>

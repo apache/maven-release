@@ -134,7 +134,7 @@ public class InputVariablesPhase
         {
             // Must get default version from mapped versions, as the project will be the incorrect snapshot
             String key = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-            String releaseVersion = (String) releaseDescriptor.getReleaseVersions().get( key );
+            String releaseVersion = releaseDescriptor.getReleaseVersions().get( key );
             if ( releaseVersion == null )
             {
                 throw new ReleaseExecutionException( "Project tag cannot be selected if version is not yet mapped" );

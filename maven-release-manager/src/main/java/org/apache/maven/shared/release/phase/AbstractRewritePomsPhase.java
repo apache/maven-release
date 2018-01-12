@@ -241,7 +241,6 @@ public abstract class AbstractRewritePomsPhase
     {
         Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
         Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects, simulate );
-        @SuppressWarnings( "unchecked" )
         Map<String, Map<String, String>> resolvedSnapshotDependencies =
             releaseDescriptor.getResolvedSnapshotDependencies();
         Model model = project.getModel();

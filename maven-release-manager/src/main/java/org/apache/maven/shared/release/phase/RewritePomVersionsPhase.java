@@ -67,7 +67,6 @@ public class RewritePomVersionsPhase
         return releaseDescriptor.getOriginalVersions( reactorProjects );
     }
 
-    @SuppressWarnings( "unchecked" )
     @Override
     protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
     {

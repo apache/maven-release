@@ -262,7 +262,7 @@ public class ReleaseUtilsTest
         properties.put( "dependency." + dependencyKey + ".development", "1.3-SNAPSHOT" );
         ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
 
-        Map<String, String> versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( dependencyKey );
+        Map<String, String> versionMap = descriptor.getResolvedSnapshotDependencies().get( dependencyKey );
         assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
         assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
     }
@@ -277,10 +277,10 @@ public class ReleaseUtilsTest
         properties.put( "dependency." + devDependencyKey + ".development", "1.3-SNAPSHOT" );
         ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
 
-        Map<String, String> versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( relDependencyKey );
+        Map<String, String> versionMap = descriptor.getResolvedSnapshotDependencies().get( relDependencyKey );
         assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
 
-        versionMap = (Map<String, String>) descriptor.getResolvedSnapshotDependencies().get( devDependencyKey );
+        versionMap = descriptor.getResolvedSnapshotDependencies().get( devDependencyKey );
         assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
     }
 
