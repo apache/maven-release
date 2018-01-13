@@ -125,6 +125,16 @@ public abstract class AbstractReleaseMojo
     protected MavenSession session;
 
     /**
+     * The role-hint for the {@link org.apache.maven.shared.release.strategy.Strategy}
+     * implementation used to specify the phases per goal.
+     * 
+     * @since 3.0.0
+     * @see org.apache.maven.shared.release.strategies.DefaultStrategy
+     */
+    @Parameter( defaultValue = "default", property = "releaseStrategyId" )
+    private String releaseStrategyId;
+    
+    /**
      * Gets the enviroment settings configured for this release.
      *
      * @return The release environment, never <code>null</code>.
@@ -187,6 +197,8 @@ public abstract class AbstractReleaseMojo
             }
         }
         descriptor.setAdditionalArguments( args );
+        
+        descriptor.setReleaseStrategyId( releaseStrategyId );
 
         return descriptor;
     }

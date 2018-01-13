@@ -19,15 +19,11 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.File;
-import java.util.List;
 
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Site;
@@ -36,7 +32,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.mockito.ArgumentCaptor;
 
 /**
@@ -49,7 +44,6 @@ public class StageReleaseMojoTest
 {
     private File workingDirectory;
 
-    @SuppressWarnings( "unchecked" )
     public void testStage()
         throws Exception
     {

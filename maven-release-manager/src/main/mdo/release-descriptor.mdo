@@ -452,6 +452,15 @@
             The role-hint for the NamingPolicy implementation used to calculate the project branch and tag names.
           </description>
         </field>
+        <field>
+          <name>releaseStrategyId</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>default</defaultValue>
+          <description>
+            The role-hint for the release Strategy implementation.
+          </description>
+        </field>
 
         <field>
           <name>remoteTagging</name>

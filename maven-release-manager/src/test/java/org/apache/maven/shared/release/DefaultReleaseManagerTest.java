@@ -316,8 +316,11 @@ public class DefaultReleaseManagerTest
         ReleaseManager releaseManager = lookup( ReleaseManager.class, "bad-phase-configured" );
 
         ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
-        prepareRequest.setReleaseDescriptor( new ReleaseDescriptor() );
+        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        releaseDescriptor.setReleaseStrategyId( "foo" );
+        prepareRequest.setReleaseDescriptor( releaseDescriptor );
         prepareRequest.setReleaseEnvironment( new DefaultReleaseEnvironment() );
+        
         try
         {
             releaseManager.prepare( prepareRequest );

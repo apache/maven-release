@@ -55,9 +55,10 @@ public interface ReleaseManager
      * Clean a release.
      *
      * @param cleanRequest all clean arguments
+     * @throws ReleaseFailureException 
      * @since 2.3
      */
-    void clean( ReleaseCleanRequest cleanRequest );
+    void clean( ReleaseCleanRequest cleanRequest ) throws ReleaseFailureException;
 
     /**
      * Rollback changes made by the previous release

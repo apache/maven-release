@@ -21,20 +21,9 @@
 <component-set>
   <components>
     <component>
-      <role>org.apache.maven.shared.release.ReleaseManager</role>
+      <role>org.apache.maven.shared.release.strategy.Strategy</role>
       <role-hint>default</role-hint>
-      <implementation>org.apache.maven.shared.release.DefaultReleaseManager</implementation>
-      <requirements>
-        <requirement>
-          <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
-          <field-name>releasePhases</field-name>
-        </requirement>
-        <requirement>
-          <role>org.apache.maven.shared.release.config.ReleaseDescriptorStore</role>
-          <role-hint>properties</role-hint>
-          <field-name>configStore</field-name>
-        </requirement>
-      </requirements>
+      <implementation>org.apache.maven.shared.release.strategies.DefaultStrategy</implementation>
       <configuration>
         <preparePhases>
           <phase>check-poms</phase>

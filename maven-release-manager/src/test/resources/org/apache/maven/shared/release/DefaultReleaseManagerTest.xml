@@ -33,7 +33,16 @@
           <role-hint>stub</role-hint>
           <field-name>configStore</field-name>
         </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.strategy.Strategy</role>
+          <field-name>strategies</field-name>
+        </requirement>
       </requirements>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.strategy.Strategy</role>
+      <role-hint>default</role-hint>
+      <implementation>org.apache.maven.shared.release.strategies.DefaultStrategy</implementation>
       <configuration>
         <preparePhases>
           <phase>step1</phase>
@@ -70,7 +79,21 @@
           <role-hint>stub</role-hint>
           <field-name>configStore</field-name>
         </requirement>
+        <requirement>
+          <role>org.apache.maven.shared.release.strategy.Strategy</role>
+          <field-name>strategies</field-name>
+        </requirement>
       </requirements>
+      <configuration>
+        <preparePhases>
+          <phase>foo</phase>
+        </preparePhases>
+      </configuration>
+    </component>
+    <component>
+      <role>org.apache.maven.shared.release.strategy.Strategy</role>
+      <role-hint>foo</role-hint>
+      <implementation>org.apache.maven.shared.release.strategies.DefaultStrategy</implementation>
       <configuration>
         <preparePhases>
           <phase>foo</phase>

@@ -223,6 +223,14 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "projectVersionPolicyId", config.getProjectVersionPolicyId() );
         }
+        if ( config.getProjectNamingPolicyId() != null )
+        {
+            properties.setProperty( "projectNamingPolicyId", config.getProjectNamingPolicyId() );
+        }
+        if ( config.getReleaseStrategyId() != null )
+        {
+            properties.setProperty( "releaseStrategyId", config.getReleaseStrategyId() );
+        }
 
         properties.setProperty( "exec.snapshotReleasePluginAllowed",
                                 Boolean.toString( config.isSnapshotReleasePluginAllowed() ) );

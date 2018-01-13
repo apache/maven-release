@@ -125,6 +125,8 @@ public class ReleaseUtils
                                                            toBeMerged.getProjectVersionPolicyId() ) );
         mergeInto.setProjectNamingPolicyId( mergeDefault( mergeInto.getProjectNamingPolicyId(),
                                                           toBeMerged.getProjectNamingPolicyId() ) );
+        mergeInto.setReleaseStrategyId( mergeOverride( mergeInto.getReleaseStrategyId(),
+                                                          toBeMerged.getReleaseStrategyId() ) );
 
         return mergeInto;
     }
@@ -166,6 +168,7 @@ public class ReleaseUtils
         releaseDescriptor.setCompletionGoals( properties.getProperty( "completionGoals" ) );
         releaseDescriptor.setProjectVersionPolicyId( properties.getProperty( "projectVersionPolicyId" ) );
         releaseDescriptor.setProjectNamingPolicyId( properties.getProperty( "projectNamingPolicyId" ) );
+        releaseDescriptor.setReleaseStrategyId( properties.getProperty( "releaseStrategyId" ) );
         String snapshotReleasePluginAllowedStr = properties.getProperty( "exec.snapshotReleasePluginAllowed" );
         releaseDescriptor.setSnapshotReleasePluginAllowed( snapshotReleasePluginAllowedStr == null
                                                                ? false

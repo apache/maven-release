@@ -20,7 +20,6 @@ package org.apache.maven.shared.release;
  */
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,6 +31,9 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
 import org.apache.maven.shared.release.phase.ReleasePhase;
+import org.apache.maven.shared.release.strategy.Strategy;
+import org.codehaus.plexus.component.annotations.Component;
+import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -40,46 +42,27 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
+@Component( role = ReleaseManager.class )
 public class DefaultReleaseManager
     extends AbstractLogEnabled
     implements ReleaseManager
 {
-    /**
-     * The phases of release to run, and in what order.
-     */
-    private List<String> preparePhases;
-
-    /**
-     * The phases of release to run to perform.
-     */
-    private List<String> performPhases;
-
-    /**
-     * The phases of release to run to rollback changes
-     */
-    private List<String> rollbackPhases;
-
-    /**
-     * The phases to create a branch.
-     */
-    private List<String> branchPhases;
-
-    /**
-     * The phases to create update versions.
-     */
-    private List<String> updateVersionsPhases;
+    @Requirement
+    private Map<String, Strategy> strategies;
 
     /**
      * The available phases.
      */
+    @Requirement
     private Map<String, ReleasePhase> releasePhases;
 
     /**
      * The configuration storage.
      */
+    @Requirement( hint = "properties" )
     private ReleaseDescriptorStore configStore;
 
-    private static final int PHASE_SKIP = 0, PHASE_START = 1, PHASE_END = 2, GOAL_START = 11, GOAL_END = 12, ERROR = 99;
+    private static final int PHASE_SKIP = 0, PHASE_START = 1, PHASE_END = 2, GOAL_END = 12, ERROR = 99;
 
     @Override
     public ReleaseResult prepareWithResult( ReleasePrepareRequest prepareRequest )
@@ -116,8 +99,6 @@ public class DefaultReleaseManager
     private void prepare( ReleasePrepareRequest prepareRequest, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        updateListener( prepareRequest.getReleaseManagerListener(), "prepare", GOAL_START );
-
         ReleaseDescriptor config;
         if ( BooleanUtils.isNotFalse( prepareRequest.getResume() ) )
         {
@@ -128,6 +109,12 @@ public class DefaultReleaseManager
         {
             config = prepareRequest.getReleaseDescriptor();
         }
+
+        Strategy releaseStrategy = getStrategy( config.getReleaseStrategyId() );
+
+        List<String> preparePhases = getGoalPhases( releaseStrategy, "prepare" );
+
+        goalStart( prepareRequest.getReleaseManagerListener(), "prepare", preparePhases );
 
         // Later, it would be a good idea to introduce a proper workflow tool so that the release can be made up of a
         // more flexible set of steps.
@@ -209,9 +196,13 @@ public class DefaultReleaseManager
     public void rollback( ReleaseRollbackRequest rollbackRequest )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        updateListener( rollbackRequest.getReleaseManagerListener(), "rollback", GOAL_START );
-
         ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( rollbackRequest.getReleaseDescriptor(), null );
+
+        Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
+
+        List<String> rollbackPhases = getGoalPhases( releaseStrategy, "rollback" );
+
+        goalStart( rollbackRequest.getReleaseManagerListener(), "rollback", rollbackPhases );
 
         for ( String name : rollbackPhases )
         {
@@ -269,10 +260,14 @@ public class DefaultReleaseManager
     private void perform( ReleasePerformRequest performRequest, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        updateListener( performRequest.getReleaseManagerListener(), "perform", GOAL_START );
-
         ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( performRequest.getReleaseDescriptor(),
                                                                      performRequest.getReleaseManagerListener() );
+
+        Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
+
+        List<String> performPhases = getGoalPhases( releaseStrategy, "perform" );
+
+        goalStart( performRequest.getReleaseManagerListener(), "perform", performPhases );
 
         for ( String name : performPhases )
         {
@@ -328,9 +323,13 @@ public class DefaultReleaseManager
         ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( branchRequest.getReleaseDescriptor(),
                                                                      branchRequest.getReleaseManagerListener() );
 
-        updateListener( branchRequest.getReleaseManagerListener(), "branch", GOAL_START );
-
         boolean dryRun = BooleanUtils.isTrue( branchRequest.getDryRun() );
+
+        Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
+
+        List<String> branchPhases = getGoalPhases( releaseStrategy, "branch" );
+
+        goalStart( branchRequest.getReleaseManagerListener(), "branch", branchPhases );
 
         for ( String name : branchPhases )
         {
@@ -370,10 +369,14 @@ public class DefaultReleaseManager
     public void updateVersions( ReleaseUpdateVersionsRequest updateVersionsRequest )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        updateListener( updateVersionsRequest.getReleaseManagerListener(), "updateVersions", GOAL_START );
-
         ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( updateVersionsRequest.getReleaseDescriptor(),
                                                                    updateVersionsRequest.getReleaseManagerListener() );
+
+        Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
+
+        List<String> updateVersionsPhases = getGoalPhases( releaseStrategy, "updateVersions" );
+
+        goalStart( updateVersionsRequest.getReleaseManagerListener(), "updateVersions", updateVersionsPhases );
 
         for ( String name : updateVersionsPhases )
         {
@@ -438,7 +441,7 @@ public class DefaultReleaseManager
     }
 
     
-    protected void clean( AbstractReleaseRequest releaseRequest  )
+    protected void clean( AbstractReleaseRequest releaseRequest  ) throws ReleaseFailureException
     {
         ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();
         cleanRequest.setReleaseDescriptor( releaseRequest.getReleaseDescriptor() );
@@ -449,15 +452,21 @@ public class DefaultReleaseManager
     }
 
     @Override
-    public void clean( ReleaseCleanRequest cleanRequest )
+    public void clean( ReleaseCleanRequest cleanRequest ) throws ReleaseFailureException
     {
         updateListener( cleanRequest.getReleaseManagerListener(), "cleanup", PHASE_START );
 
         getLogger().info( "Cleaning up after release..." );
 
-        configStore.delete( cleanRequest.getReleaseDescriptor() );
-        Set<String> phases = new LinkedHashSet<>( preparePhases );
-        phases.addAll( branchPhases );
+        ReleaseDescriptor releaseDescriptor = cleanRequest.getReleaseDescriptor();
+
+        configStore.delete( releaseDescriptor );
+
+        Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
+
+        Set<String> phases = new LinkedHashSet<>();
+        phases.addAll( getGoalPhases( releaseStrategy, "prepare" ) );
+        phases.addAll( getGoalPhases( releaseStrategy, "branch" ) );
 
         for ( String name : phases )
         {
@@ -474,15 +483,20 @@ public class DefaultReleaseManager
         this.configStore = configStore;
     }
 
+    void goalStart( ReleaseManagerListener listener, String goal, List<String> phases )
+    {
+        if ( listener != null )
+        {
+            listener.goalStart( goal, phases );
+        }
+    }
+
     void updateListener( ReleaseManagerListener listener, String name, int state )
     {
         if ( listener != null )
         {
             switch ( state )
             {
-                case GOAL_START:
-                    listener.goalStart( name, getGoalPhases( name ) );
-                    break;
                 case GOAL_END:
                     listener.goalEnd();
                     break;
@@ -501,29 +515,63 @@ public class DefaultReleaseManager
         }
     }
 
-    private List<String> getGoalPhases( String name )
+    private Strategy getStrategy( String strategyId ) throws ReleaseFailureException
     {
-        List<String> phases = new ArrayList<>();
+        Strategy strategy = strategies.get( strategyId );
+        if ( strategy == null )
+        {
+            throw new ReleaseFailureException( "Unknown strategy: " + strategyId );
+        }
+        return strategy;
+    }
 
-        if ( "prepare".equals( name ) )
+    private List<String> getGoalPhases( Strategy strategy, String goal )
+    {
+        List<String> phases;
+
+        if ( "prepare".equals( goal ) )
         {
-            phases.addAll( preparePhases );
+            phases = strategy.getPreparePhases();
+            if ( phases  == null )
+            {
+                phases = strategies.get( "default" ).getPreparePhases();
+            }
         }
-        else if ( "perform".equals( name ) )
+        else if ( "perform".equals( goal ) )
         {
-            phases.addAll( performPhases );
+            phases = strategy.getPerformPhases();
+            if ( phases  == null )
+            {
+                phases = strategies.get( "default" ).getPerformPhases();
+            }
         }
-        else if ( "rollback".equals( name ) )
+        else if ( "rollback".equals( goal ) )
         {
-            phases.addAll( rollbackPhases );
+            phases = strategy.getRollbackPhases();
+            if ( phases  == null )
+            {
+                phases = strategies.get( "default" ).getRollbackPhases();
+            }
         }
-        else if ( "branch".equals( name ) )
+        else if ( "branch".equals( goal ) )
         {
-            phases.addAll( branchPhases );
+            phases = strategy.getBranchPhases();
+            if ( phases  == null )
+            {
+                phases = strategies.get( "default" ).getBranchPhases();
+            }
         }
-        else if ( "updateVersions".equals( name ) )
+        else if ( "updateVersions".equals( goal ) )
         {
-            phases.addAll( updateVersionsPhases );
+            phases = strategy.getUpdateVersionsPhases();
+            if ( phases  == null )
+            {
+                phases = strategies.get( "default" ).getUpdateVersionsPhases();
+            }
+        }
+        else
+        {
+            phases = null;
         }
 
         return Collections.unmodifiableList( phases );

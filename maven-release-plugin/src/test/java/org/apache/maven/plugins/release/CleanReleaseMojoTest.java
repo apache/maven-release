@@ -25,12 +25,9 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.File;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.release.ReleaseCleanRequest;
 import org.apache.maven.shared.release.ReleaseManager;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.mockito.ArgumentCaptor;
 
 /**
@@ -57,7 +54,7 @@ public class CleanReleaseMojoTest
     }
 
     public void testClean()
-        throws MojoFailureException, MojoExecutionException
+        throws Exception
     {
         // prepare
         ArgumentCaptor<ReleaseCleanRequest> request = ArgumentCaptor.forClass( ReleaseCleanRequest.class );
