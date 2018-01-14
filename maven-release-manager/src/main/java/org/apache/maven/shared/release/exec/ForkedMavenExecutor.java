@@ -118,8 +118,6 @@ public class ForkedMavenExecutor
                 cl.createArg().setValue( goal );
             }
 
-            cl.createArg().setValue( "--no-plugin-updates" );
-
             if ( !interactive )
             {
                 cl.createArg().setValue( "--batch-mode" );

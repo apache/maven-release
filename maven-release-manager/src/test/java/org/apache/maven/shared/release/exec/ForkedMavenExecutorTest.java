@@ -106,10 +106,9 @@ public class ForkedMavenExecutorTest
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
         verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
         verify( commandLineMock ).execute();
-        verify( commandLineMock, times( 4 ) ).createArg();
+        verify( commandLineMock, times( 3 ) ).createArg();
         verify( valueArgument ).setValue( "clean" );
         verify( valueArgument ).setValue( "integration-test" );
-        verify( valueArgument ).setValue( "--no-plugin-updates" );
         verify( valueArgument ).setValue( "--batch-mode" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
 
@@ -149,12 +148,11 @@ public class ForkedMavenExecutorTest
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
         verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
         verify( commandLineMock ).execute();
-        verify( commandLineMock, times( 6 ) ).createArg();
+        verify( commandLineMock, times( 5 ) ).createArg();
         verify( argMock ).setValue( "clean" );
         verify( argMock ).setValue( "integration-test" );
         verify( argMock ).setValue( "-f" );
         verify( argMock ).setValue( "my-pom.xml" );
-        verify( argMock ).setValue( "--no-plugin-updates" );
         verify( argMock ).setValue( "--batch-mode" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
 
@@ -195,10 +193,9 @@ public class ForkedMavenExecutorTest
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
         verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
         verify( commandLineMock ).execute();
-        verify( commandLineMock, times( 5 ) ).createArg();
+        verify( commandLineMock, times( 4 ) ).createArg();
         verify( argMock ).setValue( "clean" );
         verify( argMock ).setValue( "integration-test" );
-        verify( argMock ).setValue( "--no-plugin-updates" );
         verify( argMock ).setValue( "--batch-mode" );
         verify( argMock ).setLine( "-DperformRelease=true -Dmaven.test.skip=true" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
@@ -251,10 +248,9 @@ public class ForkedMavenExecutorTest
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
         verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
         verify( commandLineMock ).execute();
-        verify( commandLineMock, times( 4 ) ).createArg();
+        verify( commandLineMock, times( 3 ) ).createArg();
         verify( argMock ).setValue( "clean" );
         verify( argMock ).setValue( "integration-test" );
-        verify( argMock ).setValue( "--no-plugin-updates" );
         verify( argMock ).setValue( "--batch-mode" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
 
@@ -295,10 +291,9 @@ public class ForkedMavenExecutorTest
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
         verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull( String.class ) );
         verify( commandLineMock ).execute();
-        verify( commandLineMock, times( 4 ) ).createArg();
+        verify( commandLineMock, times( 3 ) ).createArg();
         verify( argMock ).setValue( "clean" );
         verify( argMock ).setValue( "integration-test" );
-        verify( argMock ).setValue( "--no-plugin-updates" );
         verify( argMock ).setValue( "--batch-mode" );
         verify( commandLineFactoryMock ).createCommandLine( endsWith( "mvn" ) );
 

@@ -74,14 +74,6 @@ public class InvokerMavenExecutor
 
     private static final char ACTIVATE_PROFILES = 'P';
 
-    private static final String FORCE_PLUGIN_UPDATES = "cpu";
-
-    private static final String FORCE_PLUGIN_UPDATES2 = "up";
-
-    private static final String SUPPRESS_PLUGIN_UPDATES = "npu";
-
-    private static final String SUPPRESS_PLUGIN_REGISTRY = "npr";
-
     private static final char CHECKSUM_FAILURE_POLICY = 'C';
 
     private static final char CHECKSUM_WARNING_POLICY = 'c';
@@ -134,18 +126,6 @@ public class InvokerMavenExecutor
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "activate-profiles" ).withDescription(
             "Comma-delimited list of profiles to activate" ).hasArg().create( ACTIVATE_PROFILES ) );
-
-        OPTIONS.addOption( OptionBuilder.withLongOpt( "check-plugin-updates" ).withDescription(
-            "Force upToDate check for any relevant registered plugins" ).create( FORCE_PLUGIN_UPDATES ) );
-
-        OPTIONS.addOption( OptionBuilder.withLongOpt( "update-plugins" ).withDescription(
-            "Synonym for " + FORCE_PLUGIN_UPDATES ).create( FORCE_PLUGIN_UPDATES2 ) );
-
-        OPTIONS.addOption( OptionBuilder.withLongOpt( "no-plugin-updates" ).withDescription(
-            "Suppress upToDate check for any relevant registered plugins" ).create( SUPPRESS_PLUGIN_UPDATES ) );
-
-        OPTIONS.addOption( OptionBuilder.withLongOpt( "no-plugin-registry" ).withDescription(
-            "Don't use ~/.m2/plugin-registry.xml for plugin versions" ).create( SUPPRESS_PLUGIN_REGISTRY ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "strict-checksums" ).withDescription(
             "Fail the build if checksums don't match" ).create( CHECKSUM_FAILURE_POLICY ) );
@@ -259,20 +239,6 @@ public class InvokerMavenExecutor
                 {
                     req.setProfiles( Arrays.asList( profiles ) );
                 }
-            }
-
-            if ( cli.hasOption( FORCE_PLUGIN_UPDATES ) || cli.hasOption( FORCE_PLUGIN_UPDATES2 ) )
-            {
-                getLogger().warn( "Forcing plugin updates is not supported currently." );
-            }
-            else if ( cli.hasOption( SUPPRESS_PLUGIN_UPDATES ) )
-            {
-                req.setNonPluginUpdates( true );
-            }
-
-            if ( cli.hasOption( SUPPRESS_PLUGIN_REGISTRY ) )
-            {
-                getLogger().warn( "Explicit suppression of the plugin registry is not supported currently." );
             }
 
             if ( cli.hasOption( CHECKSUM_FAILURE_POLICY ) )
