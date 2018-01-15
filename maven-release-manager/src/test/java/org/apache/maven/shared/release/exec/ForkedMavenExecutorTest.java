@@ -95,7 +95,8 @@ public class ForkedMavenExecutorTest
         executor.setCommandLineFactory( commandLineFactoryMock );
 
         // execute
-        executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
+        executor.executeGoals( workingDirectory, "clean integration-test", new DefaultReleaseEnvironment(), false, null,
+                               null, new ReleaseResult() );
 
         // verify
         verify( mockProcess ).getInputStream();
@@ -137,7 +138,7 @@ public class ForkedMavenExecutorTest
         executor.setCommandLineFactory( commandLineFactoryMock );
 
         // execute
-        executor.executeGoals( workingDirectory, "clean integration-test", false, null, "my-pom.xml",
+        executor.executeGoals( workingDirectory, "clean integration-test", new DefaultReleaseEnvironment(), false, null, "my-pom.xml",
                                new ReleaseResult() );
         // verify
         verify( mockProcess ).getInputStream();
@@ -182,7 +183,7 @@ public class ForkedMavenExecutorTest
 
         // execute
         String arguments = "-DperformRelease=true -Dmaven.test.skip=true";
-        executor.executeGoals( workingDirectory, "clean integration-test", false, arguments, new ReleaseResult() );
+        executor.executeGoals( workingDirectory, "clean integration-test", new DefaultReleaseEnvironment(), false, arguments, null, new ReleaseResult() );
 
         // verify
         verify( mockProcess ).getInputStream();
@@ -229,7 +230,7 @@ public class ForkedMavenExecutorTest
         // execute
         try
         {
-            executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
+            executor.executeGoals( workingDirectory, "clean integration-test", new DefaultReleaseEnvironment(), false, null, null, new ReleaseResult() );
 
             fail( "Should have thrown an exception" );
         }
@@ -277,7 +278,7 @@ public class ForkedMavenExecutorTest
         // execute
         try
         {
-            executor.executeGoals( workingDirectory, "clean integration-test", false, null, new ReleaseResult() );
+            executor.executeGoals( workingDirectory, "clean integration-test", new DefaultReleaseEnvironment(), false, null, null, new ReleaseResult() );
 
             fail( "Should have thrown an exception" );
         }
@@ -341,7 +342,7 @@ public class ForkedMavenExecutorTest
 
         when( executorSpy.getSettingsWriter() ).thenReturn( settingsWriter );
 
-        executorSpy.executeGoals( workingDirectory, "validate", releaseEnvironment, false, null, new ReleaseResult() );
+        executorSpy.executeGoals( workingDirectory, "validate", releaseEnvironment, false, null, null, new ReleaseResult() );
 
         verify( settingsWriter ).write( isA( Writer.class ), encryptedSettings.capture() );
 

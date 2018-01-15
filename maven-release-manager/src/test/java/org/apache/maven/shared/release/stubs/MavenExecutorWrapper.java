@@ -44,28 +44,4 @@ public class MavenExecutorWrapper implements MavenExecutor
         executor.executeGoals( workingDirectory, goals, releaseEnvironment, interactive, additionalArguments,
                                pomFileName, result );
     }
-
-    @Override
-    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String additionalArguments, ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executor.executeGoals( workingDirectory, goals, releaseEnvironment, interactive, additionalArguments, result );
-    }
-
-    @Override
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
-                              String pomFileName, ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executor.executeGoals( workingDirectory, goals, interactive, additionalArguments, pomFileName, result );
-    }
-
-    @Override
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
-                              ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executor.executeGoals( workingDirectory, goals, interactive, additionalArguments, result );
-    }
 }

@@ -20,7 +20,6 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
@@ -49,30 +48,6 @@ public class ReleasePhaseStub
      * Whether the phase was cleaned.
      */
     private boolean cleaned;
-
-    @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
-    {
-        ReleaseResult result = new ReleaseResult();
-
-        executed = true;
-
-        result.setResultCode( ReleaseResult.SUCCESS );
-
-        return result;
-    }
-
-    @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
-    {
-        ReleaseResult result = new ReleaseResult();
-
-        simulated = true;
-
-        result.setResultCode( ReleaseResult.SUCCESS );
-
-        return result;
-    }
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )

@@ -29,7 +29,6 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.LogEnabled;
@@ -68,32 +67,6 @@ public abstract class AbstractMavenExecutor
 
     protected AbstractMavenExecutor()
     {
-    }
-
-    @Override
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
-                              String pomFileName, ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments,
-                      pomFileName, result );
-    }
-
-    @Override
-    public void executeGoals( File workingDirectory, String goals, boolean interactive, String additionalArguments,
-                              ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executeGoals( workingDirectory, goals, new DefaultReleaseEnvironment(), interactive, additionalArguments,
-                      result );
-    }
-
-    @Override
-    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String arguments, ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executeGoals( workingDirectory, goals, releaseEnvironment, interactive, arguments, null, result );
     }
 
     @Override

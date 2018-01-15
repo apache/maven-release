@@ -20,7 +20,6 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -62,38 +61,6 @@ public interface ReleasePhase
      */
     ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                             List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException;
-
-    /**
-     * Execute the phase.
-     *
-     * @param releaseDescriptor the configuration to use
-     * @param settings          the settings.xml configuration
-     * @param reactorProjects   the reactor projects
-     * @throws ReleaseExecutionException an exception during the execution of the phase
-     * @throws ReleaseFailureException   a failure during the execution of the phase
-     * @return the release result
-     *
-     * @deprecated Use {@link ReleasePhase#execute(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
-     */
-    @Deprecated
-    ReleaseResult execute( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException;
-
-    /**
-     * Simulate the phase, but don't make any changes to the project.
-     *
-     * @param releaseDescriptor the configuration to use
-     * @param settings          the settings.xml configuration
-     * @param reactorProjects   the reactor projects
-     * @throws ReleaseExecutionException an exception during the execution of the phase
-     * @throws ReleaseFailureException   a failure during the execution of the phase
-     * @return the release result
-     *
-     * @deprecated Use {@link ReleasePhase#simulate(ReleaseDescriptor, ReleaseEnvironment, List)} instead.
-     */
-    @Deprecated
-    ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, Settings settings, List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
     /**

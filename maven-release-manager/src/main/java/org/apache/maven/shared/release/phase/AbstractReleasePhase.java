@@ -20,12 +20,7 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.util.List;
@@ -52,24 +47,6 @@ public abstract class AbstractReleasePhase
         // nothing to do by default
 
         return getReleaseResultSuccess();
-    }
-
-    @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
-                                  Settings settings,
-                                  List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        return execute( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );
-    }
-
-    @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor,
-                                   Settings settings,
-                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        return simulate( releaseDescriptor, new DefaultReleaseEnvironment().setSettings( settings ), reactorProjects );
     }
 
     protected void logInfo( ReleaseResult result, String message )

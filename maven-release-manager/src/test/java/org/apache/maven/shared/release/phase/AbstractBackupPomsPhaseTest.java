@@ -27,7 +27,6 @@ import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -65,10 +64,8 @@ public abstract class AbstractBackupPomsPhaseTest
 
         reactorProjects.add( mainProject );
 
-        for ( Iterator modules = mainProject.getModel().getModules().iterator(); modules.hasNext(); )
+        for ( String module : mainProject.getModel().getModules() )
         {
-            String module = modules.next().toString();
-
             File modulePom = new File( projectPath + "/" + module, pomFilename );
 
             MavenProject subproject = createMavenProject( modulePom );

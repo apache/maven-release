@@ -171,7 +171,7 @@ public class InvokerMavenExecutorTest
 
         try
         {
-            executorSpy.executeGoals( workingDirectory, "validate", releaseEnvironment, false, null, new ReleaseResult() );
+            executorSpy.executeGoals( workingDirectory, "validate", releaseEnvironment, false, null, null, new ReleaseResult() );
         }
         catch ( MavenExecutorException e )
         {

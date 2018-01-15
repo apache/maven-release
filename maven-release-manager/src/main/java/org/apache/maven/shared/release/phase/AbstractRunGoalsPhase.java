@@ -25,7 +25,6 @@ import java.util.Map;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
@@ -45,18 +44,6 @@ public abstract class AbstractRunGoalsPhase
      */
     @Requirement( role = MavenExecutor.class )
     private Map<String, MavenExecutor> mavenExecutors;
-
-    /**
-     * @deprecated Use {@link AbstractRunGoalsPhase#execute(ReleaseDescriptor, ReleaseEnvironment, File, String)}
-     * instead.
-     */
-    @Deprecated
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, File workingDirectory,
-                                  String additionalArguments )
-        throws ReleaseExecutionException
-    {
-        return execute( releaseDescriptor, new DefaultReleaseEnvironment(), workingDirectory, additionalArguments );
-    }
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   File workingDirectory, String additionalArguments )
