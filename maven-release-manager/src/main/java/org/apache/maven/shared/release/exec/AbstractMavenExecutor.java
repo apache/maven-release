@@ -147,15 +147,7 @@ public abstract class AbstractMavenExecutor
                 {
                     server.setPassword( encryptAndDecorate( password ) );
                 }
-                catch ( IllegalStateException e )
-                {
-                    // ignore
-                }
-                catch ( SecDispatcherException e )
-                {
-                    // ignore
-                }
-                catch ( PlexusCipherException e )
+                catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
                 {
                     // ignore
                 }
@@ -168,15 +160,7 @@ public abstract class AbstractMavenExecutor
                 {
                     server.setPassphrase( encryptAndDecorate( passphrase ) );
                 }
-                catch ( IllegalStateException e )
-                {
-                    // ignore
-                }
-                catch ( SecDispatcherException e )
-                {
-                    // ignore
-                }
-                catch ( PlexusCipherException e )
+                catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
                 {
                     // ignore
                 }
@@ -192,15 +176,7 @@ public abstract class AbstractMavenExecutor
                 {
                     proxy.setPassword( encryptAndDecorate( password ) );
                 }
-                catch ( IllegalStateException e )
-                {
-                    // ignore
-                }
-                catch ( SecDispatcherException e )
-                {
-                    // ignore
-                }
-                catch ( PlexusCipherException e )
+                catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
                 {
                     // ignore
                 }

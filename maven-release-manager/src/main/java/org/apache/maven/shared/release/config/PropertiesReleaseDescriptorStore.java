@@ -144,15 +144,7 @@ public class PropertiesReleaseDescriptorStore
             {
                 password = encryptAndDecorate( password );
             }
-            catch ( IllegalStateException e )
-            {
-                getLogger().debug( e.getMessage() );
-            }
-            catch ( SecDispatcherException e )
-            {
-                getLogger().debug( e.getMessage() );
-            }
-            catch ( PlexusCipherException e )
+            catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
             {
                 getLogger().debug( e.getMessage() );
             }
@@ -169,15 +161,7 @@ public class PropertiesReleaseDescriptorStore
             {
                 passPhrase = encryptAndDecorate( passPhrase );
             }
-            catch ( IllegalStateException e )
-            {
-                getLogger().debug( e.getMessage() );
-            }
-            catch ( SecDispatcherException e )
-            {
-                getLogger().debug( e.getMessage() );
-            }
-            catch ( PlexusCipherException e )
+            catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
             {
                 getLogger().debug( e.getMessage() );
             }

@@ -283,11 +283,7 @@ public class MapVersionsPhase
                             }
                         }
                     }
-                    catch ( PolicyException e )
-                    {
-                        throw new ReleaseExecutionException( e.getMessage(), e );
-                    }
-                    catch ( VersionParseException e )
+                    catch ( PolicyException | VersionParseException e )
                     {
                         throw new ReleaseExecutionException( e.getMessage(), e );
                     }

@@ -402,11 +402,7 @@ public class CheckDependencySnapshotsPhase
                 releaseDescriptor.getResolvedSnapshotDependencies().putAll( resolvedSnapshots );
             }
         }
-        catch ( PrompterException e )
-        {
-            throw new ReleaseExecutionException( e.getMessage(), e );
-        }
-        catch ( VersionParseException e )
+        catch ( PrompterException | VersionParseException e )
         {
             throw new ReleaseExecutionException( e.getMessage(), e );
         }

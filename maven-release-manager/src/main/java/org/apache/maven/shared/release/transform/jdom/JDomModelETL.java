@@ -141,11 +141,7 @@ public class JDomModelETL implements ModelETL
                 }
             }
         }
-        catch ( JDOMException e )
-        {
-            throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
-        }
-        catch ( IOException e )
+        catch ( JDOMException | IOException e )
         {
             throw new ReleaseExecutionException( "Error reading POM: " + e.getMessage(), e );
         }
