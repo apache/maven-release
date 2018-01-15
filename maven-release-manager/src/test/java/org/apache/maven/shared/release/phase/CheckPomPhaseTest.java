@@ -46,7 +46,7 @@ public class CheckPomPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "check-poms" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "check-poms" );
     }
 
     public void testCorrectlyConfigured()

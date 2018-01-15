@@ -45,7 +45,7 @@ public class EndReleasePhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "end-release" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "end-release" );
     }
 
     @Test

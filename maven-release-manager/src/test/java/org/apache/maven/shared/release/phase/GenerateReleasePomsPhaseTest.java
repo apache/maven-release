@@ -201,7 +201,7 @@ public class GenerateReleasePomsPhaseTest
                argThat( new IsScmFileSetEquals( fileSet ) ) ) ).thenReturn( new AddScmResult( "...",
                               Collections.singletonList( new ScmFile( Maven.POMv4, ScmFileStatus.ADDED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         return reactorProjects;

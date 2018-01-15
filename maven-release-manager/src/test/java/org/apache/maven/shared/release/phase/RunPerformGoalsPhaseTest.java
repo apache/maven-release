@@ -75,7 +75,7 @@ public class RunPerformGoalsPhaseTest
     {
         super.setUp();
 
-        phase = (RunPerformGoalsPhase) lookup( ReleasePhase.ROLE, "run-perform-goals" );
+        phase = (RunPerformGoalsPhase) lookup( ReleasePhase.class, "run-perform-goals" );
 
         mavenExecutorWrapper = (MavenExecutorWrapper) lookup( "org.apache.maven.shared.release.exec.MavenExecutor", "wrapper" );
 
@@ -179,7 +179,7 @@ public class RunPerformGoalsPhaseTest
                                         isA( CommandParameters.class )))
                                 .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         releaseDescriptor.setUseReleaseProfile( false );
@@ -222,7 +222,7 @@ public class RunPerformGoalsPhaseTest
                                         isA( CommandParameters.class )) )
             .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -263,7 +263,7 @@ public class RunPerformGoalsPhaseTest
                                         isA( CommandParameters.class )) )
             .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         releaseDescriptor.setUseReleaseProfile( false );
@@ -307,7 +307,7 @@ public class RunPerformGoalsPhaseTest
                                         isA( CommandParameters.class )) )
             .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -348,7 +348,7 @@ public class RunPerformGoalsPhaseTest
                                         isA( CommandParameters.class )) )
             .thenReturn( new CheckOutScmResult( "...", Collections.<ScmFile>emptyList() ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         releaseDescriptor.setCompletedPhase( "end-release" );

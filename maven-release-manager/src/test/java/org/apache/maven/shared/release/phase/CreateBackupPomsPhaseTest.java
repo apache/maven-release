@@ -41,7 +41,7 @@ public class CreateBackupPomsPhaseTest
     ReleasePhase getReleasePhase()
         throws Exception
     {
-        return (ReleasePhase) lookup( ReleasePhase.ROLE, "create-backup-poms" );
+        return (ReleasePhase) lookup( ReleasePhase.class, "create-backup-poms" );
     }
 
     @Test

@@ -34,11 +34,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 public interface ScmRepositoryConfigurator
 {
     /**
-     * The Plexus role.
-     */
-    String ROLE = ScmRepositoryConfigurator.class.getName();
-
-    /**
      * Construct a configured SCM repository from a release configuration.
      *
      * @param releaseDescriptor the configuration to insert into the repository

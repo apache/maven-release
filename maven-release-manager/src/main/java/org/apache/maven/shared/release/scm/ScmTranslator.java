@@ -28,11 +28,6 @@ package org.apache.maven.shared.release.scm;
 public interface ScmTranslator
 {
     /**
-     * Plexus Role.
-     */
-    String ROLE = ScmTranslator.class.getName();
-
-    /**
      * Take an URL and find the correct replacement URL for a given branch.
      *
      * @param url        the source URL

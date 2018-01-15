@@ -81,7 +81,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         throws Exception
     {
         super.setUp();
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, getRoleHint() );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, getRoleHint() );
 
         if( phase instanceof AbstractRewritePomsPhase)
         {
@@ -518,7 +518,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
         ScmManagerStub scmManager = new ScmManagerStub();
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.class );
         configurator.setScmManager( scmManager );
         scmManager.setScmProvider( scmProviderMock );
 
@@ -559,7 +559,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         config.setScmSourceUrl( "scm:svn:fail" );
         mapNextVersion( config, "groupId:artifactId" );
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         if ( scmManager instanceof ScmManagerStub )
         {
             ((ScmManagerStub) scmManager ).setException( new ScmRepositoryException( "..." ) );
@@ -588,7 +588,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         config.setScmSourceUrl( "scm:fail:path" );
         mapNextVersion( config, "groupId:artifactId" );
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         if ( scmManager instanceof ScmManagerStub )
         {
             ((ScmManagerStub) scmManager ).setException( new NoSuchScmProviderException( "..." ) );;

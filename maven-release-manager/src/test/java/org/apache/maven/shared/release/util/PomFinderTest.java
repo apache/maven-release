@@ -38,8 +38,8 @@ public class PomFinderTest extends PlexusTestCase
     protected void setUp() throws Exception
     {
         super.setUp();
-        LoggerManager lm = (LoggerManager) lookup(LoggerManager.ROLE);
-        logger = lm.getLoggerForComponent(LoggerManager.ROLE); //X TODO use a better ROLE!
+        LoggerManager lm = (LoggerManager) lookup(LoggerManager.class);
+        logger = lm.getLoggerForComponent(LoggerManager.ROLE); //X TODO use a better class!
     }
 
     public void testPomFinderParser() throws Exception

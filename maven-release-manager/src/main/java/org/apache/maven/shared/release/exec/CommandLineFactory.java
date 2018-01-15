@@ -29,11 +29,6 @@ import org.codehaus.plexus.util.cli.Commandline;
 public interface CommandLineFactory
 {
     /**
-     * Plexus role.
-     */
-    String ROLE = CommandLineFactory.class.getName();
-
-    /**
      * Create a command line object with default environment for the given executable.
      *
      * @param executable the executable

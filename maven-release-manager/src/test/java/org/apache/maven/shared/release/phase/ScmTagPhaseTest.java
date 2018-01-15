@@ -74,7 +74,7 @@ public class ScmTagPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-tag" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-tag" );
     }
 
     public static String getPath( File file )
@@ -104,7 +104,7 @@ public class ScmTagPhaseTest
                                    argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult( "...",
                                                                                                                                                                                  Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -146,7 +146,7 @@ public class ScmTagPhaseTest
                                                                                                                                                                                  Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
@@ -187,7 +187,7 @@ public class ScmTagPhaseTest
                                                                                                                                                                                  Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( "scm:svn:" + scmUrl, repository );
 
@@ -224,7 +224,7 @@ public class ScmTagPhaseTest
                                                                                                                                                                                  Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // exeucte
@@ -268,7 +268,7 @@ public class ScmTagPhaseTest
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -305,7 +305,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
 
         // execute
@@ -330,7 +330,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
         // execute
@@ -359,7 +359,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( isA( ScmRepository.class ), isA( ScmFileSet.class ), isA( String.class ),
                                    isA( ScmTagParameters.class ) ) ).thenThrow( new ScmException( "..." ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -387,7 +387,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =
             (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
 

@@ -57,9 +57,9 @@ public class InvokerMavenExecutorTest
     {
         super.setUp();
 
-        executor = (InvokerMavenExecutor) lookup( MavenExecutor.ROLE, "invoker" );
+        executor = (InvokerMavenExecutor) lookup( MavenExecutor.class, "invoker" );
 
-        secDispatcher = (SecDispatcher) lookup( SecDispatcher.ROLE, "mng-4384" );
+        secDispatcher = (SecDispatcher) lookup( SecDispatcher.class, "mng-4384" );
     }
 
     @Test

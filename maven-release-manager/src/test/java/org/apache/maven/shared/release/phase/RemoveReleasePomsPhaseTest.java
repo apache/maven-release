@@ -66,7 +66,7 @@ public class RemoveReleasePomsPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "remove-release-poms" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "remove-release-poms" );
     }
 
     @Test
@@ -87,7 +87,7 @@ public class RemoveReleasePomsPhaseTest
                                                                                                Collections.singletonList( new ScmFile( Maven.POMv4,
                                                                                                                                        ScmFileStatus.DELETED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -123,7 +123,7 @@ public class RemoveReleasePomsPhaseTest
                                                                                                Collections.singletonList( new ScmFile( Maven.POMv4,
                                                                                                                                        ScmFileStatus.DELETED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -145,7 +145,7 @@ public class RemoveReleasePomsPhaseTest
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -167,7 +167,7 @@ public class RemoveReleasePomsPhaseTest
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -203,7 +203,7 @@ public class RemoveReleasePomsPhaseTest
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute

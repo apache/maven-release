@@ -86,7 +86,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
 
         ScmManagerStub scmManager = new ScmManagerStub();
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE, "default" );
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.class, "default" );
         configurator.setScmManager( scmManager );
 
         ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl( config.getScmSourceUrl() );
@@ -120,7 +120,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
 
         ScmManagerStub scmManager = new ScmManagerStub();
         DefaultScmRepositoryConfigurator configurator =
-            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE, "default" );
+            (DefaultScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.class, "default" );
         configurator.setScmManager( scmManager );
         scmManager.setScmProvider( scmProviderMock );
 

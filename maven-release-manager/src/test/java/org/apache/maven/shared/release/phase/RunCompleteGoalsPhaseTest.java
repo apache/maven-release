@@ -65,7 +65,7 @@ public class RunCompleteGoalsPhaseTest
     {
         super.setUp();
 
-        phase = (RunCompleteGoalsPhase) lookup( ReleasePhase.ROLE, "run-completion-goals" );
+        phase = (RunCompleteGoalsPhase) lookup( ReleasePhase.class, "run-completion-goals" );
 
         mavenExecutorWrapper = (MavenExecutorWrapper) lookup( "org.apache.maven.shared.release.exec.MavenExecutor", "wrapper" );
 

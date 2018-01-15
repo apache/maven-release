@@ -38,7 +38,7 @@ public class CommandLineFactoryTest
     {
         super.setUp();
 
-        factory = (CommandLineFactory) lookup( CommandLineFactory.ROLE );
+        factory = (CommandLineFactory) lookup( CommandLineFactory.class );
     }
 
     public void testCreation()

@@ -94,7 +94,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
@@ -121,7 +121,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
@@ -148,7 +148,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
 
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
@@ -188,7 +188,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "SNAPSHOT" );
 
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
@@ -231,7 +231,7 @@ public class MapVersionsPhaseTest
         // prepare
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
 
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.addReleaseVersion( "groupId:artifactId", "2.0" );
@@ -262,7 +262,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
@@ -282,7 +282,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
@@ -302,7 +302,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0" );
 
         when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName()
@@ -342,7 +342,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0" );
 
         phase.setPrompter( mockPrompter );
@@ -376,7 +376,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         phase.setPrompter( mockPrompter );
 
@@ -412,7 +412,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
         phase.setPrompter( mockPrompter );
@@ -446,7 +446,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         when( mockPrompter.prompt( isA( String.class ),
                                    isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
@@ -492,7 +492,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
         MavenProject project = createProject( "artifactId", "foo" );
 
         when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName()
@@ -528,7 +528,7 @@ public class MapVersionsPhaseTest
     public void testAdjustVersionNonInteractive()
         throws Exception
     {
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
 
@@ -566,7 +566,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -588,7 +588,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -610,7 +610,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -633,7 +633,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -656,7 +656,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -678,7 +678,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -700,7 +700,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -721,7 +721,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -742,7 +742,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -764,7 +764,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -786,7 +786,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -807,7 +807,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -828,7 +828,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -850,7 +850,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -872,7 +872,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -894,7 +894,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -916,7 +916,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -939,7 +939,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -962,7 +962,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -985,7 +985,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1008,7 +1008,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1031,7 +1031,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1054,7 +1054,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1077,7 +1077,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1100,7 +1100,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1124,7 +1124,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1148,7 +1148,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1177,7 +1177,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1206,7 +1206,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1233,7 +1233,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1260,7 +1260,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1285,7 +1285,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1310,7 +1310,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1334,7 +1334,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1358,7 +1358,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1387,7 +1387,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1416,7 +1416,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1450,7 +1450,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1484,7 +1484,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1514,7 +1514,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1544,7 +1544,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1571,7 +1571,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1598,7 +1598,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1620,7 +1620,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1642,7 +1642,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1664,7 +1664,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1688,7 +1688,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1710,7 +1710,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1732,7 +1732,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1754,7 +1754,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1776,7 +1776,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1802,7 +1802,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_BRANCH_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1828,7 +1828,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1852,7 +1852,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1876,7 +1876,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = new ArrayList<>();
         Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),
@@ -1902,7 +1902,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = new ArrayList<>();
         Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),
@@ -1928,7 +1928,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
@@ -1952,7 +1952,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
@@ -1976,7 +1976,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
@@ -2000,7 +2000,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
@@ -2024,9 +2024,9 @@ public class MapVersionsPhaseTest
     public void testUnusualVersions1()
         throws Exception
     {
-        MapVersionsPhase mapReleasephase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase mapReleasephase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MapVersionsPhase mapDevelopmentphase =
-            (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+            (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "MYB_200909-SNAPSHOT" ) );
@@ -2053,7 +2053,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
@@ -2078,7 +2078,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
@@ -2102,7 +2102,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
@@ -2132,7 +2132,7 @@ public class MapVersionsPhaseTest
         expectedException.expectCause( CoreMatchers.isA( PolicyException.class ) );
 
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.ROLE, TEST_MAP_RELEASE_VERSIONS );
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 

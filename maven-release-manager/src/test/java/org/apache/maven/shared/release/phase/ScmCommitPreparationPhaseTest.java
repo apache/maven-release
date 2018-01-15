@@ -77,7 +77,7 @@ public class ScmCommitPreparationPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-commit-release" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-commit-release" );
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ScmCommitPreparationPhaseTest
     public void testResolvesCorrectBranchImplementation()
         throws Exception
     {
-        assertTrue( lookup( ReleasePhase.ROLE, "scm-commit-branch" ) instanceof ScmCommitPreparationPhase );
+        assertTrue( lookup( ReleasePhase.class, "scm-commit-branch" ) instanceof ScmCommitPreparationPhase );
     }
 
     @Test
@@ -115,7 +115,7 @@ public class ScmCommitPreparationPhaseTest
                                                                                                      Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
                                                                                                                                              ScmFileStatus.CHECKED_IN ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -155,7 +155,7 @@ public class ScmCommitPreparationPhaseTest
                                            + "release-label" ) ) ).thenReturn( new CheckInScmResult( "...",
                                                                                                      Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
                                                                                                                                              ScmFileStatus.CHECKED_IN ) ) ) );
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -172,7 +172,7 @@ public class ScmCommitPreparationPhaseTest
         throws Exception
     {
         // prepare
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-commit-development" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-commit-development" );
 
         ReleaseDescriptor descriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createReactorProjects();
@@ -190,7 +190,7 @@ public class ScmCommitPreparationPhaseTest
                                                                                                                                                     Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
                                                                                                                                                                                             ScmFileStatus.CHECKED_IN ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -247,7 +247,7 @@ public class ScmCommitPreparationPhaseTest
                                                                                                      Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
                                                                                                                                              ScmFileStatus.CHECKED_IN ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -272,7 +272,7 @@ public class ScmCommitPreparationPhaseTest
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
@@ -307,7 +307,7 @@ public class ScmCommitPreparationPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
         // execute
         try
@@ -331,7 +331,7 @@ public class ScmCommitPreparationPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
         // execute
@@ -360,7 +360,7 @@ public class ScmCommitPreparationPhaseTest
         when( scmProviderMock.checkIn( isA( ScmRepository.class ), isA( ScmFileSet.class ), isNull( ScmVersion.class ),
                                        isA( String.class ) ) ).thenThrow( new ScmException( "..." ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -388,7 +388,7 @@ public class ScmCommitPreparationPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =
             (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
 
@@ -418,7 +418,7 @@ public class ScmCommitPreparationPhaseTest
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         try
@@ -449,7 +449,7 @@ public class ScmCommitPreparationPhaseTest
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );

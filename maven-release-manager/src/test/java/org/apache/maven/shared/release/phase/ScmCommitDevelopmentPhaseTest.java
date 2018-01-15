@@ -74,7 +74,7 @@ public class ScmCommitDevelopmentPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-commit-development" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-commit-development" );
 
         reactorProjects = createReactorProjects();
         rootProject = ReleaseUtil.getRootProject( reactorProjects );
@@ -143,7 +143,7 @@ public class ScmCommitDevelopmentPhaseTest
                                        eq( message ) ) ).thenReturn( new CheckInScmResult( "...",
                                                                                            Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
                                                                                                                                    ScmFileStatus.CHECKED_IN ) ) ) );
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
     }
 
@@ -160,7 +160,7 @@ public class ScmCommitDevelopmentPhaseTest
         throws Exception
     {
         scmProviderMock = mock( ScmProvider.class );
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
     }
 

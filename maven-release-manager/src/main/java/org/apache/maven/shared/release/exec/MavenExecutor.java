@@ -32,11 +32,6 @@ import java.io.File;
 public interface MavenExecutor
 {
     /**
-     * Plexus Role.
-     */
-    String ROLE = MavenExecutor.class.getName();
-
-    /**
      * Execute goals using Maven.
      *
      * @param workingDirectory    the directory to execute in

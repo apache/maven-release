@@ -57,7 +57,7 @@ public class BranchInputVariablesPhaseTest
         throws Exception
     {
         super.setUp();
-        phase = (InputVariablesPhase) lookup( ReleasePhase.ROLE, "branch-input-variables" );
+        phase = (InputVariablesPhase) lookup( ReleasePhase.class, "branch-input-variables" );
     }
 
     @Test

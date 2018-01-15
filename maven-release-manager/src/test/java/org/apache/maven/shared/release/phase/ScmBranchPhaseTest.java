@@ -74,7 +74,7 @@ public class ScmBranchPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-branch" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-branch" );
     }
 
     public static String getPath( File file )
@@ -104,7 +104,7 @@ public class ScmBranchPhaseTest
                                       argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
                                                                                                                                                                                                 Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                                         ScmFileStatus.TAGGED ) ) ) );
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -147,7 +147,7 @@ public class ScmBranchPhaseTest
                                                                                                                                                                                                 Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                                         ScmFileStatus.TAGGED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
@@ -188,7 +188,7 @@ public class ScmBranchPhaseTest
                                                                                                                                                                                                 Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                                         ScmFileStatus.TAGGED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( "scm:svn:" + scmUrl, repository );
 
@@ -225,7 +225,7 @@ public class ScmBranchPhaseTest
                                                                                                                                                                                                 Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                                         ScmFileStatus.TAGGED ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // exeucte
@@ -269,7 +269,7 @@ public class ScmBranchPhaseTest
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -306,7 +306,7 @@ public class ScmBranchPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
 
         // execute
@@ -331,7 +331,7 @@ public class ScmBranchPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
         // execute
@@ -361,7 +361,7 @@ public class ScmBranchPhaseTest
         when( scmProviderMock.branch( isA( ScmRepository.class ), isA( ScmFileSet.class ), isA( String.class ),
                                       isA( ScmBranchParameters.class ) ) ).thenThrow( new ScmException( "..." ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -389,7 +389,7 @@ public class ScmBranchPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =
             (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
 

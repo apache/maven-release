@@ -44,8 +44,8 @@ public class PropertiesReleaseDescriptorStoreTest
         throws Exception
     {
         super.setUp();
-        store = (PropertiesReleaseDescriptorStore) lookup( ReleaseDescriptorStore.ROLE, "properties" );
-        secDispatcher = (SecDispatcher) lookup( SecDispatcher.ROLE, "mng-4384" );
+        store = (PropertiesReleaseDescriptorStore) lookup( ReleaseDescriptorStore.class, "properties" );
+        secDispatcher = (SecDispatcher) lookup( SecDispatcher.class, "mng-4384" );
     }
 
     public void testReadFromFile()

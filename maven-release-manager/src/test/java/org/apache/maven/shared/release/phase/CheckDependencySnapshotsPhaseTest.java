@@ -67,7 +67,7 @@ public class CheckDependencySnapshotsPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
     }
 
     @Test
@@ -90,7 +90,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-range-dependencies" );
@@ -158,7 +158,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
@@ -195,7 +195,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
@@ -212,7 +212,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
@@ -229,7 +229,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
@@ -266,7 +266,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
@@ -308,7 +308,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-differing-snapshot-dependencies" );
@@ -488,7 +488,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
@@ -532,7 +532,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
@@ -563,7 +563,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
@@ -593,7 +593,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
@@ -623,7 +623,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-all" );
@@ -658,7 +658,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
@@ -707,7 +707,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
@@ -775,7 +775,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-report-plugins" );
@@ -812,7 +812,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
@@ -925,7 +925,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-managed-snapshot-plugin" );
@@ -962,7 +962,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-plugins" );
@@ -999,7 +999,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-plugins" );
@@ -1036,7 +1036,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
@@ -1073,7 +1073,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
@@ -1119,7 +1119,7 @@ public class CheckDependencySnapshotsPhaseTest
         throws Exception
     {
         CheckDependencySnapshotsPhase phase =
-            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.ROLE, "check-dependency-snapshots" );
+            (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-extension" );

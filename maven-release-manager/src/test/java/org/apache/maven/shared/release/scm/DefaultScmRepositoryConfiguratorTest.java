@@ -48,7 +48,7 @@ public class DefaultScmRepositoryConfiguratorTest
     {
         super.setUp();
 
-        scmRepositoryConfigurator = (ScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.ROLE );
+        scmRepositoryConfigurator = (ScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.class );
     }
 
     public void testGetConfiguredRepository()

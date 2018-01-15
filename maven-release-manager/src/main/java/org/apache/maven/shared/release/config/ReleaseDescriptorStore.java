@@ -27,11 +27,6 @@ package org.apache.maven.shared.release.config;
 public interface ReleaseDescriptorStore
 {
     /**
-     * The Plexus role.
-     */
-    String ROLE = ReleaseDescriptorStore.class.getName();
-
-    /**
      * Read a configuration.
      *
      * @param mergeDescriptor configuration to merge with the loaded configuration. Some values are used as defaults,

@@ -65,7 +65,7 @@ public class CheckoutProjectFromScmTest
     {
         super.setUp();
 
-        phase = (CheckoutProjectFromScm) lookup( ReleasePhase.ROLE, "checkout-project-from-scm" );
+        phase = (CheckoutProjectFromScm) lookup( ReleasePhase.class, "checkout-project-from-scm" );
     }
 
     @Test
@@ -90,7 +90,7 @@ public class CheckoutProjectFromScmTest
                                         any( CommandParameters.class)))
             .thenReturn( new CheckOutScmResult( "",null ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
@@ -132,7 +132,7 @@ public class CheckoutProjectFromScmTest
                                         any(CommandParameters.class)))
             .thenReturn( new CheckOutScmResult( "", null ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
@@ -175,7 +175,7 @@ public class CheckoutProjectFromScmTest
                                         any( CommandParameters.class )) )
             .thenReturn( new CheckOutScmResult( "",null ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
@@ -205,7 +205,7 @@ public class CheckoutProjectFromScmTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
 
         String dir = "scm-commit/single-pom";
@@ -235,7 +235,7 @@ public class CheckoutProjectFromScmTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
         String dir = "scm-commit/single-pom";

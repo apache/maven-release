@@ -74,7 +74,7 @@ public class ScmCheckModificationsPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.ROLE, "scm-check-modifications" );
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-check-modifications" );
     }
 
     @Test
@@ -86,7 +86,7 @@ public class ScmCheckModificationsPhaseTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
 
         // execute
@@ -123,7 +123,7 @@ public class ScmCheckModificationsPhaseTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
 
         // execute
@@ -163,7 +163,7 @@ public class ScmCheckModificationsPhaseTest
         when( scmProviderMock.status( isA( ScmRepository.class ),
                                       isA( ScmFileSet.class ) ) ).thenThrow( new ScmException( "..." ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -200,7 +200,7 @@ public class ScmCheckModificationsPhaseTest
     {
         ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =
             (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
 
@@ -413,7 +413,7 @@ public class ScmCheckModificationsPhaseTest
     private void setChangedFiles( ReleaseDescriptor releaseDescriptor, List<String> changedFiles )
         throws Exception
     {
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =
             (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
 

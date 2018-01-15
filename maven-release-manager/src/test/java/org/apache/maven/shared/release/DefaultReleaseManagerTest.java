@@ -72,7 +72,7 @@ public class DefaultReleaseManagerTest
     {
         super.setUp();
 
-        configStore = (ReleaseDescriptorStoreStub) lookup( ReleaseDescriptorStore.ROLE, "stub" );
+        configStore = (ReleaseDescriptorStoreStub) lookup( ReleaseDescriptorStore.class, "stub" );
     }
 
     public void testPrepareNoCompletedPhase()
@@ -89,13 +89,13 @@ public class DefaultReleaseManagerTest
         
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -114,13 +114,13 @@ public class DefaultReleaseManagerTest
         
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -141,13 +141,13 @@ public class DefaultReleaseManagerTest
         
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertFalse( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -166,13 +166,13 @@ public class DefaultReleaseManagerTest
 
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertFalse( "step1 not executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertFalse( "step2 not executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertFalse( "step3 not executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -191,13 +191,13 @@ public class DefaultReleaseManagerTest
         
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertTrue( "step1 executed", phase.isExecuted() );
         assertFalse( "step1 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertTrue( "step2 executed", phase.isExecuted() );
         assertFalse( "step2 not simulated", phase.isSimulated() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertTrue( "step3 executed", phase.isExecuted() );
         assertFalse( "step3 not simulated", phase.isSimulated() );
     }
@@ -218,13 +218,13 @@ public class DefaultReleaseManagerTest
         
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertTrue( "step2 simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertTrue( "step3 simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -245,13 +245,13 @@ public class DefaultReleaseManagerTest
         
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertTrue( "step2 simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertTrue( "step3 simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -272,13 +272,13 @@ public class DefaultReleaseManagerTest
         
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertFalse( "step1 not simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertFalse( "step2 not simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertFalse( "step3 not simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -299,13 +299,13 @@ public class DefaultReleaseManagerTest
         
         releaseManager.prepare( prepareRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertTrue( "step1 simulated", phase.isSimulated() );
         assertFalse( "step1 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertTrue( "step2 simulated", phase.isSimulated() );
         assertFalse( "step2 not executed", phase.isExecuted() );
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertTrue( "step3 simulated", phase.isSimulated() );
         assertFalse( "step3 not executed", phase.isExecuted() );
     }
@@ -427,16 +427,16 @@ public class DefaultReleaseManagerTest
         releaseManager.clean( cleanRequest );
 
         // verify
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step1" );
         assertTrue( "step1 not cleaned", phase.isCleaned() );
 
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step2" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step2" );
         assertTrue( "step2 not cleaned", phase.isCleaned() );
 
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "step3" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "step3" );
         assertTrue( "step3 not cleaned", phase.isCleaned() );
 
-        phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "branch1" );
+        phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "branch1" );
         assertTrue( "branch1 not cleaned", phase.isCleaned() );
 
         verify( configStoreMock ).delete( releaseDescriptor );
@@ -622,7 +622,7 @@ public class DefaultReleaseManagerTest
                                         any(CommandParameters.class)) )
             .thenThrow( new ScmException( "..." ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
@@ -658,7 +658,7 @@ public class DefaultReleaseManagerTest
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
         releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.ROLE );
+        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =
             (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
 
@@ -717,7 +717,7 @@ public class DefaultReleaseManagerTest
 
         releaseManager.rollback( rollbackRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "rollbackPhase1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "rollbackPhase1" );
 
         assertTrue( "rollbackPhase1 executed", phase.isExecuted() );
     }
@@ -734,7 +734,7 @@ public class DefaultReleaseManagerTest
 
         releaseManager.updateVersions( updateVersionsRequest );
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.ROLE, "updateVersionsPhase1" );
+        ReleasePhaseStub phase = (ReleasePhaseStub) lookup( ReleasePhase.class, "updateVersionsPhase1" );
 
         assertTrue( "updateVersionsPhase1 executed", phase.isExecuted() );
     }

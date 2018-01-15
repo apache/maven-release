@@ -37,11 +37,6 @@ import java.util.List;
 public interface ReleasePhase
 {
     /**
-     * The Plexus role.
-     */
-    String ROLE = ReleasePhase.class.getName();
-
-    /**
      * Execute the phase.
      *
      * @param releaseDescriptor the configuration to use
