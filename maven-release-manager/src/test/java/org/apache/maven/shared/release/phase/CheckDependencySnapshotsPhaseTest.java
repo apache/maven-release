@@ -496,18 +496,10 @@ public class CheckDependencySnapshotsPhaseTest
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0", "1.1-SNAPSHOT" ),
                                                new VersionPair( "1.0", "1.0" ) ) );
 
-        try
-        {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            fail( e.getMessage() );
-        }
-
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+ 
         // validate
-        @SuppressWarnings( "rawtypes" )
-        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -517,14 +509,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0", "1.1-SNAPSHOT" ) ) );
 
-        try
-        {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            fail( e.getMessage() );
-        }
+        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
     }
 
     @Test
@@ -540,18 +525,10 @@ public class CheckDependencySnapshotsPhaseTest
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "0.9", "1.0-SNAPSHOT" ),
                                                new VersionPair( "1.0", "1.0-SNAPSHOT" ) ) );
 
-        try
-        {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            fail( e.getMessage() );
-        }
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        @SuppressWarnings( "rawtypes" )
-        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -570,18 +547,10 @@ public class CheckDependencySnapshotsPhaseTest
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0", "1.0" ) ) );
 
-        try
-        {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            fail( e.getMessage() );
-        }
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        @SuppressWarnings( "rawtypes" )
-        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -600,18 +569,10 @@ public class CheckDependencySnapshotsPhaseTest
 
         phase.setPrompter( createMockPrompter( YES, "0", new VersionPair( "1.0", "1.0" ) ) );
 
-        try
-        {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            fail( e.getMessage() );
-        }
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        @SuppressWarnings( "rawtypes" )
-        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -634,18 +595,10 @@ public class CheckDependencySnapshotsPhaseTest
                                                new VersionPair( "1.2", "1.2" ), new VersionPair( "1.3", "1.3" ) ) );
         phase.setPrompter( mockPrompter );
 
-        try
-        {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            fail( e.getMessage() );
-        }
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        @SuppressWarnings( "rawtypes" )
-        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -670,17 +623,9 @@ public class CheckDependencySnapshotsPhaseTest
             createMockPrompter( "yes", "1", Arrays.asList( pair, pair ), Arrays.asList( defaultPair, defaultPair ) );
         phase.setPrompter( mockPrompter );
 
-        try
-        {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            fail( e.getMessage() );
-        }
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
-        @SuppressWarnings( "rawtypes" )
-        Map resolvedDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
+        Map<String, Map<String, String>> resolvedDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
 
         assertNotNull( resolvedDependencies );
         assertEquals( 2, resolvedDependencies.size() );
@@ -688,8 +633,7 @@ public class CheckDependencySnapshotsPhaseTest
         assertTrue( resolvedDependencies.containsKey( "external:artifactId" ) );
         assertTrue( resolvedDependencies.containsKey( "external:artifactId2" ) );
 
-        @SuppressWarnings( "rawtypes" )
-        Map versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
 
         assertNotNull( versionsMap );
         assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
@@ -1082,14 +1026,7 @@ public class CheckDependencySnapshotsPhaseTest
                                                     new VersionPair( "1.0", "1.0-test" ) );
         phase.setPrompter( mockPrompter );
 
-        try
-        {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            fail( e.getMessage() );
-        }
+        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
         Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "groupId:parent-external" );

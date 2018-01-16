@@ -71,7 +71,7 @@ public class CheckDependencySnapshotsPhase
      */
     @Requirement
     private Prompter prompter;
-
+    
     // Be aware of the difference between usedSnapshots and specifiedSnapshots:
     // UsedSnapshots end up on the classpath.
     // SpecifiedSnapshots are defined anywhere in the pom.
@@ -82,7 +82,12 @@ public class CheckDependencySnapshotsPhase
     private Set<Artifact> usedSnapshotReports = new HashSet<>();
     private Set<Artifact> usedSnapshotExtensions = new HashSet<>();
     private Set<Artifact> usedSnapshotPlugins = new HashSet<>();
+    
+    // Don't prompt for every project in reactor, remember state of questions
+    private String resolveSnapshot;
 
+    private String resolveSnapshotType;
+    
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
@@ -355,18 +360,24 @@ public class CheckDependencySnapshotsPhase
     {
         try
         {
-            prompter.showMessage( RESOLVE_SNAPSHOT_MESSAGE );
-            String result =
-                prompter.prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( "yes", "no" ), "no" );
+            if ( resolveSnapshot == null )
+            {
+                prompter.showMessage( RESOLVE_SNAPSHOT_MESSAGE );
+                resolveSnapshot = prompter.prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( "yes", "no" ), "no" );
+            }
 
-            if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
+            if ( resolveSnapshot.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
             {
                 Map<String, Map<String, String>> resolvedSnapshots = null;
-                prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
-                result = prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT,
-                                          Arrays.asList( "0", "1", "2", "3" ), "1" );
+                
+                if ( resolveSnapshotType == null )
+                {
+                    prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
+                    resolveSnapshotType =
+                        prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT, Arrays.asList( "0", "1", "2", "3" ), "1" );
+                }
 
-                switch ( Integer.parseInt( result.toLowerCase( Locale.ENGLISH ) ) )
+                switch ( Integer.parseInt( resolveSnapshotType.toLowerCase( Locale.ENGLISH ) ) )
                 {
                     // all
                     case 0:
