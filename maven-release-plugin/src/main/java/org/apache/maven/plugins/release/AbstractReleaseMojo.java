@@ -20,14 +20,10 @@ package org.apache.maven.plugins.release;
  */
 
 import java.io.File;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.Profile;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -163,7 +159,7 @@ public abstract class AbstractReleaseMojo
 
         descriptor.setPomFileName( pomFileName );
 
-        List<String> profileIds = getActiveProfileIds();
+        List<String> profileIds = session.getRequest().getActiveProfiles();
         String additionalProfiles = getAdditionalProfiles();
 
         String args = this.arguments;
@@ -201,40 +197,6 @@ public abstract class AbstractReleaseMojo
         descriptor.setReleaseStrategyId( releaseStrategyId );
 
         return descriptor;
-    }
-
-    /**
-     *
-     * @return a List with profile ids, never {@code null}
-     */
-    @SuppressWarnings( "unchecked" )
-    private List<String> getActiveProfileIds()
-    {
-        List<String> profiles;
-        try
-        {
-            // Try to use M3-methods
-            Method getRequestMethod = this.session.getClass().getMethod( "getRequest" );
-            Object mavenExecutionRequest = getRequestMethod.invoke( this.session );
-            Method getActiveProfilesMethod = mavenExecutionRequest.getClass().getMethod( "getActiveProfiles" );
-            profiles = (List<String>) getActiveProfilesMethod.invoke( mavenExecutionRequest );
-        }
-        catch ( Exception e )
-        {
-            if ( project.getActiveProfiles() == null || project.getActiveProfiles().isEmpty() )
-            {
-                profiles = Collections.emptyList();
-            }
-            else
-            {
-                profiles = new ArrayList<>( project.getActiveProfiles().size() );
-                for ( Object profile : project.getActiveProfiles() )
-                {
-                    profiles.add( ( (Profile) profile ).getId() );
-                }
-            }
-        }
-        return profiles;
     }
 
     /**
