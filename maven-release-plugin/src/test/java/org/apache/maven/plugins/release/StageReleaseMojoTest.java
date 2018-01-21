@@ -93,11 +93,13 @@ public class StageReleaseMojoTest
     {
         StageReleaseMojo mojo = (StageReleaseMojo) lookupMojo( "stage", new File( workingDirectory, fileName ) );
         mojo.setBasedir( workingDirectory );
-
+        
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
         DistributionManagement distributionManagement = new DistributionManagement();
         distributionManagement.setSite( new Site() );
         project.setDistributionManagement( distributionManagement );
+
+        setVariableValueToObject( mojo, "session", newMavenSession( project ) );
 
         return mojo;
     }

@@ -28,6 +28,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import java.io.File;
 import java.util.Arrays;
 
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Site;
@@ -115,6 +116,9 @@ public class PerformReleaseMojoTest
         PerformReleaseMojo mojo =
             (PerformReleaseMojo) lookupMojo( "perform", new File( testFileDirectory, "perform-without-site.xml" ) );
         mojo.setBasedir( testFileDirectory );
+        
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        setVariableValueToObject( mojo, "session", newMavenSession( project ) );
 
         ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         releaseDescriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );
@@ -148,6 +152,8 @@ public class PerformReleaseMojoTest
         DistributionManagement distributionManagement = new DistributionManagement();
         distributionManagement.setSite( new Site() );
         project.setDistributionManagement( distributionManagement );
+        
+        setVariableValueToObject( mojo, "session", newMavenSession( project ) );
 
         return mojo;
     }
@@ -271,12 +277,14 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setPerformGoals( "deploy site-deploy" );
         releaseDescriptor.setAdditionalArguments( "-P prof1,2prof" );
 
-        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        MavenSession session = (MavenSession) getVariableValueFromObject( mojo, "session");
         Profile profile1 = new Profile();
         profile1.setId( "prof1" );
+        session.getRequest().addProfile( profile1 );
         Profile profile2 = new Profile();
         profile2.setId( "2prof" );
-        project.setActiveProfiles( Arrays.asList( new Profile[]{profile1, profile2} ) );
+        session.getRequest().addProfile( profile2 );
+        session.getRequest().setActiveProfiles( Arrays.asList( "prof1", "2prof" ) );
 
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
@@ -307,12 +315,14 @@ public class PerformReleaseMojoTest
         releaseDescriptor.setPerformGoals( "deploy site-deploy" );
         releaseDescriptor.setAdditionalArguments( "-Dmaven.test.skip=true -P prof1,2prof" );
 
-        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        MavenSession session = (MavenSession) getVariableValueFromObject( mojo, "session");
         Profile profile1 = new Profile();
         profile1.setId( "prof1" );
+        session.getRequest().addProfile( profile1 );
         Profile profile2 = new Profile();
         profile2.setId( "2prof" );
-        project.setActiveProfiles( Arrays.asList( new Profile[]{profile1, profile2} ) );
+        session.getRequest().addProfile( profile2 );
+        session.getRequest().setActiveProfiles( Arrays.asList( "prof1", "2prof" ) );
 
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
