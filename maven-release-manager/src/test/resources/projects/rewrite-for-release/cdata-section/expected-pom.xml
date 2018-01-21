@@ -59,6 +59,7 @@
               </content>
             </file>
           </additionalConfig>
+          <replacetoken><![CDATA[<distributable/>]]></replacetoken>
         </configuration>
       </plugin>
     </plugins>
