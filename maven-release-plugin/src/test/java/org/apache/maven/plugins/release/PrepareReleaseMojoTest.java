@@ -22,7 +22,7 @@ package org.apache.maven.plugins.release;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import static org.mockito.Matchers.isA;
@@ -32,17 +32,20 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.mockito.ArgumentCaptor;
 
@@ -64,19 +67,26 @@ public class PrepareReleaseMojoTest
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
-        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
-          public Properties getExecutionProperties(){
-              return new Properties();
-          };
+            public Properties getExecutionProperties()
+            {
+                return new Properties();
+            };
+
+            @Override
+            public List<MavenProject> getProjects()
+            {
+                return Collections.singletonList( mojo.project );
+            }
         };
         
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
-        releaseDescriptor.setUpdateDependencies( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
+        builder.setUpdateDependencies( false );
         
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
@@ -89,9 +99,10 @@ public class PrepareReleaseMojoTest
         // verify
         verify( mock ).prepare( prepareRequest.capture() );
         
-        assertThat( prepareRequest.getValue().getReleaseDescriptor(), is( releaseDescriptor ) );
-        assertThat( prepareRequest.getValue().getReleaseEnvironment(), is(instanceOf( ReleaseEnvironment.class ) ) );
-        assertThat( prepareRequest.getValue().getReactorProjects(), is( nullValue() ) );
+        assertThat( prepareRequest.getValue().getReleaseDescriptorBuilder(),
+                    is( instanceOf( ReleaseDescriptorBuilder.class ) ) );
+        assertThat( prepareRequest.getValue().getReleaseEnvironment(), is( instanceOf( ReleaseEnvironment.class ) ) );
+        assertThat( prepareRequest.getValue().getReactorProjects(), is( notNullValue() ) );
         assertThat( prepareRequest.getValue().getResume(), is( true ) );
         assertThat( prepareRequest.getValue().getDryRun(), is( false ) );
     }
@@ -100,7 +111,7 @@ public class PrepareReleaseMojoTest
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
-        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
@@ -108,11 +119,14 @@ public class PrepareReleaseMojoTest
           public Properties getExecutionProperties(){
               return new Properties();
           };
+
+          @Override
+          public List<MavenProject> getProjects()
+          {
+              return Collections.singletonList( mojo.project );
+          }
         };
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
-        releaseDescriptor.setUpdateDependencies( false );
-        
+
         ReleaseManager mock = mock( ReleaseManager.class );
         doThrow( new ReleaseExecutionException( "..." ) ).when( mock ).prepare( isA( ReleasePrepareRequest.class ) );
         mojo.setReleaseManager( mock );
@@ -138,7 +152,7 @@ public class PrepareReleaseMojoTest
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
-        PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
@@ -146,10 +160,13 @@ public class PrepareReleaseMojoTest
           public Properties getExecutionProperties(){
               return new Properties();
           };
+          
+          @Override
+          public List<MavenProject> getProjects()
+          {
+              return Collections.singletonList( mojo.project );
+          }
         };
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
-        releaseDescriptor.setUpdateDependencies( false );
         
         ReleaseManager mock = mock( ReleaseManager.class );
         ReleaseFailureException cause = new ReleaseFailureException( "..." );

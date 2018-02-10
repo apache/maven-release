@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -61,19 +62,19 @@ public class PropertiesReleaseDescriptorStore
     private DefaultSecDispatcher secDispatcher;
 
     @Override
-    public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
+    public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor )
         throws ReleaseDescriptorStoreException
     {
-        return read( mergeDescriptor, getDefaultReleasePropertiesFile( mergeDescriptor ) );
+        return read( mergeDescriptor, getDefaultReleasePropertiesFile( mergeDescriptor.build() ) );
     }
 
-    public ReleaseDescriptor read( File file )
+    public ReleaseDescriptorBuilder read( File file )
         throws ReleaseDescriptorStoreException
     {
         return read( null, file );
     }
 
-    public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor, File file )
+    public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor, File file )
         throws ReleaseDescriptorStoreException
     {
         Properties properties = new Properties();
@@ -92,21 +93,26 @@ public class PropertiesReleaseDescriptorStore
                 "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
 
-        ReleaseDescriptor releaseDescriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
-
+        ReleaseDescriptorBuilder builder;
         if ( mergeDescriptor != null )
         {
-            releaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
+            builder = mergeDescriptor;
         }
+        else
+        {
+           builder = new ReleaseDescriptorBuilder(); 
+        }
+        
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( properties, builder );
 
-        return releaseDescriptor;
+        return builder;
     }
 
     @Override
     public void write( ReleaseDescriptor config )
         throws ReleaseDescriptorStoreException
     {
-        write( config, getDefaultReleasePropertiesFile( config ) );
+        write( (BuilderReleaseDescriptor) config, getDefaultReleasePropertiesFile( config ) );
     }
 
     @Override
@@ -119,7 +125,7 @@ public class PropertiesReleaseDescriptorStore
         }
     }
 
-    public void write( ReleaseDescriptor config, File file )
+    public void write( BuilderReleaseDescriptor config, File file )
         throws ReleaseDescriptorStoreException
     {
         Properties properties = new Properties();
@@ -226,14 +232,17 @@ public class PropertiesReleaseDescriptorStore
         // others boolean properties are not written to the properties file because the value from the caller is always
         // used
 
-        for ( Map.Entry<String, String> entry : config.getReleaseVersions().entrySet() )
+        
+        for ( Map.Entry<String, ReleaseStageVersions> entry : config.getProjectVersions().entrySet() )
         {
-            properties.setProperty( "project.rel." + entry.getKey(), entry.getValue() );
-        }
-
-        for ( Map.Entry<String, String> entry : config.getDevelopmentVersions().entrySet() )
-        {
-            properties.setProperty( "project.dev." + entry.getKey(), (String) entry.getValue() );
+            if ( entry.getValue().getRelease() != null )
+            {
+                properties.setProperty( "project.rel." + entry.getKey(), entry.getValue().getRelease() );
+            }
+            if ( entry.getValue().getDevelopment() != null )
+            {
+                properties.setProperty( "project.dev." + entry.getKey(), entry.getValue().getDevelopment() );
+            }
         }
 
         for ( Map.Entry<String, Scm> entry : config.getOriginalScmInfo().entrySet() )
@@ -290,16 +299,16 @@ public class PropertiesReleaseDescriptorStore
         }
     }
 
-    private void processResolvedDependencies( Properties prop, Map<String, Map<String, String>> resolvedDependencies )
+    private void processResolvedDependencies( Properties prop, Map<String, ReleaseStageVersions> resolvedDependencies )
     {
-        for ( Map.Entry<String, Map<String, String>> currentEntry : resolvedDependencies.entrySet() )
+        for ( Map.Entry<String, ReleaseStageVersions> currentEntry : resolvedDependencies.entrySet() )
         {
-            Map<String, String> versionMap = currentEntry.getValue();
+            ReleaseStageVersions versionMap = currentEntry.getValue();
             
             prop.setProperty( "dependency." + currentEntry.getKey() + ".release",
-                              versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+                              versionMap.getRelease() );
             prop.setProperty( "dependency." + currentEntry.getKey() + ".development",
-                              versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
+                              versionMap.getDevelopment() );
         }
     }
 

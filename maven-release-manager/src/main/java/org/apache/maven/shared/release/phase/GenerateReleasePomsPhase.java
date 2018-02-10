@@ -216,9 +216,6 @@ public class GenerateReleasePomsPhase
                                       ReleaseResult result )
         throws ReleaseFailureException, ReleaseExecutionException
     {
-        Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects );
-        Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
-
         MavenProject releaseProject = project.clone();
         Model releaseModel = releaseProject.getModel();
 
@@ -232,7 +229,7 @@ public class GenerateReleasePomsPhase
         // update project version
         String projectVersion = releaseModel.getVersion();
         String releaseVersion =
-            getNextVersion( mappedVersions, project.getGroupId(), project.getArtifactId(), projectVersion );
+            getNextVersion( releaseDescriptor, project.getGroupId(), project.getArtifactId(), projectVersion );
         releaseModel.setVersion( releaseVersion );
 
         String originalFinalName = releaseModel.getBuild().getFinalName();
@@ -283,17 +280,17 @@ public class GenerateReleasePomsPhase
         }
 
         // rewrite dependencies
-        releaseModel.setDependencies( createReleaseDependencies( originalVersions, mappedVersions, releaseProject ) );
+        releaseModel.setDependencies( createReleaseDependencies( releaseDescriptor, releaseProject ) );
 
         // rewrite plugins
-        releaseModel.getBuild().setPlugins( createReleasePlugins( originalVersions, mappedVersions, releaseProject ) );
+        releaseModel.getBuild().setPlugins( createReleasePlugins( releaseDescriptor, releaseProject ) );
 
         // rewrite reports
-        releaseModel.getReporting().setPlugins( createReleaseReportPlugins( originalVersions, mappedVersions,
+        releaseModel.getReporting().setPlugins( createReleaseReportPlugins( releaseDescriptor, 
                                                                             releaseProject ) );
 
         // rewrite extensions
-        releaseModel.getBuild().setExtensions( createReleaseExtensions( originalVersions, mappedVersions,
+        releaseModel.getBuild().setExtensions( createReleaseExtensions( releaseDescriptor, 
                                                                         releaseProject ) );
 
         unalignFromBaseDirectory( releaseModel, project.getBasedir() );
@@ -419,18 +416,7 @@ public class GenerateReleasePomsPhase
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
-    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
-                                                         List<MavenProject> reactorProjects )
-    {
-        return releaseDescriptor.getOriginalVersions( reactorProjects );
-    }
-
-    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
-    {
-        return releaseDescriptor.getReleaseVersions();
-    }
-
-    private String getNextVersion( Map<String, String> mappedVersions, String groupId, String artifactId,
+    private String getNextVersion( ReleaseDescriptor releaseDescriptor, String groupId, String artifactId,
                                    String version )
         throws ReleaseFailureException
     {
@@ -438,7 +424,7 @@ public class GenerateReleasePomsPhase
 
         String id = ArtifactUtils.versionlessKey( groupId, artifactId );
 
-        String nextVersion = mappedVersions.get( id );
+        String nextVersion = releaseDescriptor.getProjectReleaseVersion( id );
 
         if ( nextVersion == null )
         {
@@ -489,8 +475,8 @@ public class GenerateReleasePomsPhase
         return releaseScm;
     }
 
-    private List<Dependency> createReleaseDependencies( Map<String, String> originalVersions,
-                                                        Map<String, String> mappedVersions, MavenProject project )
+    private List<Dependency> createReleaseDependencies( ReleaseDescriptor releaseDescriptor,
+                                                        MavenProject project )
         throws ReleaseFailureException
     {
         Set<Artifact> artifacts = project.getArtifacts();
@@ -513,7 +499,7 @@ public class GenerateReleasePomsPhase
                 releaseDependency.setGroupId( artifact.getGroupId() );
                 releaseDependency.setArtifactId( artifact.getArtifactId() );
 
-                String version = getReleaseVersion( originalVersions, mappedVersions, artifact );
+                String version = getReleaseVersion( releaseDescriptor, artifact );
 
                 releaseDependency.setVersion( version );
                 releaseDependency.setType( artifact.getType() );
@@ -527,14 +513,14 @@ public class GenerateReleasePomsPhase
         return releaseDependencies;
     }
 
-    private String getReleaseVersion( Map<String, String> originalVersions, Map<String, String> mappedVersions,
+    private String getReleaseVersion( ReleaseDescriptor releaseDescriptor,
                                       Artifact artifact )
         throws ReleaseFailureException
     {
         String key = ArtifactUtils.versionlessKey( artifact );
 
-        String originalVersion = originalVersions.get( key );
-        String mappedVersion = mappedVersions.get( key );
+        String originalVersion = releaseDescriptor.getProjectOriginalVersion( key );
+        String mappedVersion = releaseDescriptor.getProjectReleaseVersion( key );
 
         String version = artifact.getVersion();
 
@@ -560,8 +546,8 @@ public class GenerateReleasePomsPhase
         return version;
     }
 
-    private List<Plugin> createReleasePlugins( Map<String, String> originalVersions,
-                                               Map<String, String> mappedVersions, MavenProject project )
+    private List<Plugin> createReleasePlugins( ReleaseDescriptor releaseDescriptor,
+                                               MavenProject project )
         throws ReleaseFailureException
     {
         List<Plugin> releasePlugins = null;
@@ -583,7 +569,7 @@ public class GenerateReleasePomsPhase
                 {
                     String id = ArtifactUtils.versionlessKey( plugin.getGroupId(), plugin.getArtifactId() );
                     Artifact artifact = artifactsById.get( id );
-                    String version = getReleaseVersion( originalVersions, mappedVersions, artifact );
+                    String version = getReleaseVersion( releaseDescriptor, artifact );
 
                     Plugin releasePlugin = new Plugin();
                     releasePlugin.setGroupId( plugin.getGroupId() );
@@ -607,8 +593,8 @@ public class GenerateReleasePomsPhase
         return releasePlugins;
     }
 
-    private List<ReportPlugin> createReleaseReportPlugins( Map<String, String> originalVersions,
-                                                           Map<String, String> mappedVersions, MavenProject project )
+    private List<ReportPlugin> createReleaseReportPlugins( ReleaseDescriptor releaseDescriptor,
+                                                           MavenProject project )
         throws ReleaseFailureException
     {
         List<ReportPlugin> releaseReportPlugins = null;
@@ -629,7 +615,7 @@ public class GenerateReleasePomsPhase
                 {
                     String id = ArtifactUtils.versionlessKey( reportPlugin.getGroupId(), reportPlugin.getArtifactId() );
                     Artifact artifact = artifactsById.get( id );
-                    String version = getReleaseVersion( originalVersions, mappedVersions, artifact );
+                    String version = getReleaseVersion( releaseDescriptor, artifact );
 
                     ReportPlugin releaseReportPlugin = new ReportPlugin();
                     releaseReportPlugin.setGroupId( reportPlugin.getGroupId() );
@@ -647,8 +633,8 @@ public class GenerateReleasePomsPhase
         return releaseReportPlugins;
     }
 
-    private List<Extension> createReleaseExtensions( Map<String, String> originalVersions,
-                                                     Map<String, String> mappedVersions, MavenProject project )
+    private List<Extension> createReleaseExtensions( ReleaseDescriptor releaseDescriptor,
+                                                     MavenProject project )
         throws ReleaseFailureException
     {
         List<Extension> releaseExtensions = null;
@@ -668,7 +654,7 @@ public class GenerateReleasePomsPhase
                 {
                     String id = ArtifactUtils.versionlessKey( extension.getGroupId(), extension.getArtifactId() );
                     Artifact artifact = project.getExtensionArtifactMap().get( id );
-                    String version = getReleaseVersion( originalVersions, mappedVersions, artifact );
+                    String version = getReleaseVersion( releaseDescriptor, artifact );
 
                     Extension releaseExtension = new Extension();
                     releaseExtension.setGroupId( extension.getGroupId() );

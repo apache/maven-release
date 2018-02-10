@@ -28,8 +28,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseBranchRequest;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.config.ReleaseUtils;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
  * Branch a project in SCM, using the same steps as the <tt>release:prepare</tt> goal, creating a branch instead of a
@@ -217,7 +216,7 @@ public class BranchReleaseMojo
     {
         super.execute();
 
-        ReleaseDescriptor config = createReleaseDescriptor();
+        final ReleaseDescriptorBuilder config = createReleaseDescriptor();
         config.setAddSchema( addSchema );
         config.setScmUseEditMode( useEditMode );
         config.setUpdateDependencies( updateDependencies );
@@ -235,11 +234,6 @@ public class BranchReleaseMojo
         config.setProjectVersionPolicyId( projectVersionPolicyId );
         config.setProjectNamingPolicyId( projectBranchNamingPolicyId );
 
-        // Create a config containing values from the session properties (ie command line properties with cli).
-        ReleaseDescriptor sysPropertiesConfig
-                = ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
-        mergeCommandLineConfig( config, sysPropertiesConfig );
-
         if ( checkModificationExcludeList != null )
         {
             checkModificationExcludes = checkModificationExcludeList.replaceAll( "\\s", "" ).split( "," );
@@ -253,10 +247,11 @@ public class BranchReleaseMojo
         try
         {
             ReleaseBranchRequest branchRequest = new ReleaseBranchRequest();
-            branchRequest.setReleaseDescriptor( config );
+            branchRequest.setReleaseDescriptorBuilder( config );
             branchRequest.setReleaseEnvironment( getReleaseEnvironment() );
             branchRequest.setReactorProjects( getReactorProjects() );
             branchRequest.setDryRun( dryRun );
+            branchRequest.setUserProperties( session.getUserProperties() );
 
             releaseManager.branch( branchRequest );
         }

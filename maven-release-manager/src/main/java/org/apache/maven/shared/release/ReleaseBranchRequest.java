@@ -19,6 +19,7 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+import java.util.Properties;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 /**
@@ -32,6 +33,8 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
     private Boolean dryRun;
 
     private ReleaseEnvironment releaseEnvironment;
+    
+    private Properties userProperties;
 
     /**
      * @return the dryRun
@@ -63,5 +66,15 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
     public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )
     {
         this.releaseEnvironment = releaseEnvironment;
+    }
+    
+    public Properties getUserProperties()
+    {
+        return userProperties;
+    }
+    
+    public void setUserProperties( Properties userProperties )
+    {
+        this.userProperties = userProperties;
     }
 }

@@ -30,7 +30,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import java.util.List;
@@ -64,29 +63,13 @@ public class CheckPomPhase
         ReleaseResult result = new ReleaseResult();
 
         // Currently, we don't deal with multiple SCM locations in a multiproject
-        if ( scmRequired && StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
+        if ( scmRequired )
         {
-            MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-            if ( rootProject != null && rootProject.getScm() != null )
-            {
-                if ( rootProject.getScm().getDeveloperConnection() != null )
-                {
-                    releaseDescriptor.setScmSourceUrl( rootProject.getScm().getDeveloperConnection() );
-                }
-                else if ( rootProject.getScm().getConnection() != null )
-                {
-                    releaseDescriptor.setScmSourceUrl( rootProject.getScm().getConnection() );
-                }
-            }
-
             if ( StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
             {
                 throw new ReleaseFailureException(
                     "Missing required setting: scm connection or developerConnection must be specified." );
             }
-
-            // As long as Scm.getId() does not exist, read it as a property
-            releaseDescriptor.setScmId( rootProject.getProperties().getProperty( "project.scm.id" ) );
 
             try
             {

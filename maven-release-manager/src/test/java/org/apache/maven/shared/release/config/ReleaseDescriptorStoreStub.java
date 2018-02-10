@@ -30,19 +30,17 @@ public class ReleaseDescriptorStoreStub
     /**
      * The release configuration to use.
      */
-    private ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+    private ReleaseDescriptorBuilder releaseDescriptor = new ReleaseDescriptorBuilder();
 
     @Override
-    public ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
+    public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor )
     {
-        ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
-        return releaseDescriptor;
+        return mergeDescriptor;
     }
 
     @Override
     public void write( ReleaseDescriptor config )
     {
-        this.releaseDescriptor = config;
     }
 
     @Override
@@ -50,7 +48,7 @@ public class ReleaseDescriptorStoreStub
     {
     }
 
-    public ReleaseDescriptor getReleaseConfiguration()
+    public ReleaseDescriptorBuilder getReleaseConfiguration()
     {
         return releaseDescriptor;
     }

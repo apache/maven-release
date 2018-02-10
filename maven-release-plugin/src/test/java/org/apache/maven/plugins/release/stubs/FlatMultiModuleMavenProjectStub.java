@@ -82,5 +82,22 @@ public class FlatMultiModuleMavenProjectStub
         
         return scm;
     }
-
+    
+    @Override
+    public String getGroupId()
+    {
+        return "GROUPID";
+    }
+    
+    @Override
+    public String getArtifactId()
+    {
+        return "ARTIFACTID";
+    }
+    
+    @Override
+    public String getVersion()
+    {
+        return "VERSION";
+    }
 }

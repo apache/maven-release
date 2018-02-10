@@ -23,11 +23,11 @@ import junit.framework.TestCase;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -38,220 +38,171 @@ import java.util.Properties;
 public class ReleaseUtilsTest
     extends TestCase
 {
-    public void testMergeConfigurationSourceEmpty()
-        throws IOException
-    {
-        ReleaseDescriptor mergeDescriptor = createReleaseDescriptor();
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        ReleaseDescriptor mergedReleaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
-        ReleaseDescriptor mergedMergeDescriptor = ReleaseUtils.merge( mergeDescriptor, releaseDescriptor );
-
-        assertEquals( "Check merge", mergedReleaseDescriptor, mergedMergeDescriptor );
-    }
-
-    public void testMergeEqualsWithUpdateWorkingCopyTrue()
-        throws IOException
-    {
-        ReleaseDescriptor mergeDescriptor = createReleaseDescriptor();
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-
-        ReleaseDescriptor mergedReleaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
-        ReleaseDescriptor mergedMergeDescriptor = ReleaseUtils.merge( mergeDescriptor, releaseDescriptor );
-
-        assertEquals( "Check merge", mergedReleaseDescriptor, mergedMergeDescriptor );
-    }
-
-    public void testMergeConfigurationDestEmpty()
-        throws IOException
-    {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
-        ReleaseDescriptor mergedReleaseDescriptor = ReleaseUtils.merge( releaseDescriptor, new ReleaseDescriptor() );
-        ReleaseDescriptor expectedDescriptor = copyReleaseDescriptor( mergedReleaseDescriptor );
-
-        assertEquals( "Check merge", expectedDescriptor, releaseDescriptor );
-    }
-
-    public void testMergeConfiguration()
-        throws IOException
-    {
-        File workingDirectory = new File( "." );
-
-        ReleaseDescriptor mergeDescriptor =
-            createMergeDescriptor( AbstractReleaseTestCase.getPath( workingDirectory ), "completed-phase-merge" );
-
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
-        releaseDescriptor = ReleaseUtils.merge( releaseDescriptor, mergeDescriptor );
-
-        ReleaseDescriptor expected =
-            createMergeDescriptor( releaseDescriptor.getWorkingDirectory(), releaseDescriptor.getCompletedPhase() );
-        assertEquals( "Check merge", expected, releaseDescriptor );
-    }
-
     public void testEquals()
         throws IOException
     {
-        ReleaseDescriptor originalReleaseDescriptor = createReleaseDescriptor();
-        ReleaseDescriptor releaseDescriptor = copyReleaseDescriptor( originalReleaseDescriptor );
-        doEqualsAssertions( releaseDescriptor, originalReleaseDescriptor, "other", new File( "f" ) );
+        ReleaseDescriptorBuilder originalReleaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = copyReleaseDescriptor( originalReleaseDescriptor.build() );
+        doEqualsAssertions( builder, originalReleaseDescriptor, "other", new File( "f" ) );
         originalReleaseDescriptor = createReleaseDescriptor();
-        releaseDescriptor = copyReleaseDescriptor( originalReleaseDescriptor );
-        doEqualsAssertions( originalReleaseDescriptor, releaseDescriptor, "other", new File( "f" ) );
+        builder = copyReleaseDescriptor( originalReleaseDescriptor.build() );
+        doEqualsAssertions( originalReleaseDescriptor, builder, "other", new File( "f" ) );
 
         originalReleaseDescriptor = createReleaseDescriptor();
-        releaseDescriptor = copyReleaseDescriptor( originalReleaseDescriptor );
-        doEqualsAssertions( releaseDescriptor, originalReleaseDescriptor, null, null );
+        builder = copyReleaseDescriptor( originalReleaseDescriptor.build() );
+        doEqualsAssertions( builder, originalReleaseDescriptor, null, null );
         originalReleaseDescriptor = createReleaseDescriptor();
-        releaseDescriptor = copyReleaseDescriptor( originalReleaseDescriptor );
-        doEqualsAssertions( originalReleaseDescriptor, releaseDescriptor, null, null );
+        builder = copyReleaseDescriptor( originalReleaseDescriptor.build() );
+        doEqualsAssertions( originalReleaseDescriptor, builder, null, null );
 
-        assertEquals( "test ==", releaseDescriptor, releaseDescriptor );
+        assertEquals( "test ==", builder, builder );
         Object obj = this;
-        assertFalse( "test class instance", releaseDescriptor.equals( obj ) );
+        assertFalse( "test class instance", builder.equals( obj ) );
     }
 
-    private static void doEqualsAssertions( ReleaseDescriptor releaseDescriptor,
-                                            ReleaseDescriptor originalReleaseDescriptor, String other, File otherFile )
+    private static void doEqualsAssertions( ReleaseDescriptorBuilder releaseDescriptor,
+                                            ReleaseDescriptorBuilder originalReleaseDescriptor, String other, File otherFile )
         throws IOException
     {
-        ReleaseDescriptor origConfig = originalReleaseDescriptor;
-        ReleaseDescriptor config = releaseDescriptor;
-        assertEquals( "Check original comparison", config, origConfig );
+        BuilderReleaseDescriptor origConfig = originalReleaseDescriptor.build();
+        ReleaseDescriptorBuilder configBuilder = releaseDescriptor;
+        assertEquals( "Check original comparison", configBuilder.build(), origConfig );
 
-        config.setScmSourceUrl( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setScmSourceUrl( origConfig.getScmSourceUrl() );
+        configBuilder.setScmSourceUrl( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setScmSourceUrl( origConfig.getScmSourceUrl() );
 
-        config.setAdditionalArguments( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setAdditionalArguments( origConfig.getAdditionalArguments() );
+        configBuilder.setAdditionalArguments( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setAdditionalArguments( origConfig.getAdditionalArguments() );
 
-        config.setAddSchema( !origConfig.isAddSchema() );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setAddSchema( origConfig.isAddSchema() );
+        configBuilder.setAddSchema( !origConfig.isAddSchema() );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setAddSchema( origConfig.isAddSchema() );
 
-        config.setGenerateReleasePoms( !origConfig.isAddSchema() );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setGenerateReleasePoms( origConfig.isGenerateReleasePoms() );
+        configBuilder.setGenerateReleasePoms( !origConfig.isAddSchema() );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setGenerateReleasePoms( origConfig.isGenerateReleasePoms() );
 
-        config.setScmUseEditMode( !origConfig.isScmUseEditMode() );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setScmUseEditMode( origConfig.isScmUseEditMode() );
+        configBuilder.setScmUseEditMode( !origConfig.isScmUseEditMode() );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setScmUseEditMode( origConfig.isScmUseEditMode() );
 
-        config.setInteractive( !origConfig.isInteractive() );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setInteractive( origConfig.isInteractive() );
+        configBuilder.setInteractive( !origConfig.isInteractive() );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setInteractive( origConfig.isInteractive() );
 
-        config.setCommitByProject( !origConfig.isCommitByProject() );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setCommitByProject( origConfig.isCommitByProject() );
+        configBuilder.setCommitByProject( !origConfig.isCommitByProject() );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setCommitByProject( origConfig.isCommitByProject() );
 
-        config.setCompletedPhase( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setCompletedPhase( origConfig.getCompletedPhase() );
+        configBuilder.setCompletedPhase( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setCompletedPhase( origConfig.getCompletedPhase() );
 
-        config.setScmPrivateKeyPassPhrase( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setScmPrivateKeyPassPhrase( origConfig.getScmPrivateKeyPassPhrase() );
+        configBuilder.setScmPrivateKeyPassPhrase( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setScmPrivateKeyPassPhrase( origConfig.getScmPrivateKeyPassPhrase() );
 
-        config.setScmPassword( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setScmPassword( origConfig.getScmPassword() );
+        configBuilder.setScmPassword( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setScmPassword( origConfig.getScmPassword() );
 
-        config.setScmUsername( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setScmUsername( origConfig.getScmUsername() );
+        configBuilder.setScmUsername( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setScmUsername( origConfig.getScmUsername() );
 
-        config.setScmPrivateKey( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setScmPrivateKey( origConfig.getScmPrivateKey() );
+        configBuilder.setScmPrivateKey( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setScmPrivateKey( origConfig.getScmPrivateKey() );
 
-        config.setPomFileName( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setPomFileName( origConfig.getPomFileName() );
+        configBuilder.setPomFileName( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setPomFileName( origConfig.getPomFileName() );
 
-        config.setPreparationGoals( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setPreparationGoals( origConfig.getPreparationGoals() );
+        configBuilder.setPreparationGoals( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setPreparationGoals( origConfig.getPreparationGoals() );
 
-        config.setScmReleaseLabel( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setScmReleaseLabel( origConfig.getScmReleaseLabel() );
+        configBuilder.setScmReleaseLabel( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setScmReleaseLabel( origConfig.getScmReleaseLabel() );
 
-        config.setScmTagBase( other );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config.setScmTagBase( origConfig.getScmTagBase() );
+        configBuilder.setScmTagBase( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setScmTagBase( origConfig.getScmTagBase() );
 
         if ( otherFile != null )
         {
-            config.setWorkingDirectory( AbstractReleaseTestCase.getPath( otherFile ) );
-            assertFalse( "Check original comparison", config.equals( origConfig ) );
+            configBuilder.setWorkingDirectory( AbstractReleaseTestCase.getPath( otherFile ) );
+            assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
         }
 
-        config.setWorkingDirectory( origConfig.getWorkingDirectory() );
+        configBuilder.setWorkingDirectory( origConfig.getWorkingDirectory() );
 
         // sanity check the test was resetting correctly
-        assertEquals( "Check original comparison", config, origConfig );
+        assertEquals( "Check original comparison", configBuilder.build(), origConfig );
 
-        config.mapDevelopmentVersion( "groupId:artifactId", "1.0-SNAPSHOT" );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addDevelopmentVersion( "groupId:artifactId", "1.0-SNAPSHOT" );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addReleaseVersion( "groupId:artifactId", "1.0" );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addOriginalScmInfo( "groupId:artifactId", new Scm() );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
-        origConfig.mapOriginalScmInfo( "foo", new Scm() );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        origConfig = createReleaseDescriptor();
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addOriginalScmInfo( "groupId:artifactId", new Scm() );
+        origConfig.addOriginalScmInfo( "foo", new Scm() );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        origConfig = createReleaseDescriptor().build();
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
-        origConfig.mapOriginalScmInfo( "groupId:artifactId", new Scm() );
-        assertEquals( "Check original comparison", config, origConfig );
-        origConfig = createReleaseDescriptor();
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addOriginalScmInfo( "groupId:artifactId", new Scm() );
+        origConfig.addOriginalScmInfo( "groupId:artifactId", new Scm() );
+        assertEquals( "Check original comparison", configBuilder.build(), origConfig );
+        origConfig = createReleaseDescriptor().build();
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertEquals( "Check original comparison", config, origConfig );
-        origConfig = createReleaseDescriptor();
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        origConfig.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertEquals( "Check original comparison", configBuilder.build(), origConfig );
+        origConfig = createReleaseDescriptor().build();
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapOriginalScmInfo( "groupId:artifactId", getScm( "-", "dev", "url", "tag" ) );
-        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        origConfig = createReleaseDescriptor();
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addOriginalScmInfo( "groupId:artifactId", getScm( "-", "dev", "url", "tag" ) );
+        origConfig.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        origConfig = createReleaseDescriptor().build();
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "-", "url", "tag" ) );
-        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        origConfig = createReleaseDescriptor();
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "-", "url", "tag" ) );
+        origConfig.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        origConfig = createReleaseDescriptor().build();
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "-", "tag" ) );
-        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
-        origConfig = createReleaseDescriptor();
-        config = copyReleaseDescriptor( origConfig );
+        configBuilder.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "-", "tag" ) );
+        origConfig.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        origConfig = createReleaseDescriptor().build();
+        configBuilder = copyReleaseDescriptor( origConfig );
 
-        config.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "-" ) );
-        origConfig.mapOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
-        assertFalse( "Check original comparison", config.equals( origConfig ) );
+        configBuilder.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "-" ) );
+        origConfig.addOriginalScmInfo( "groupId:artifactId", getScm( "conn", "dev", "url", "tag" ) );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
     }
 
     public void testHashCode()
         throws IOException
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor().build();
 
         assertEquals( "Check hash code", releaseDescriptor.hashCode(),
-                      createReleaseDescriptor( releaseDescriptor.getWorkingDirectory() ).hashCode() );
+                      createReleaseDescriptor( releaseDescriptor.getWorkingDirectory() ).build().hashCode() );
     }
 
     public void testLoadResolvedDependencies()
@@ -260,11 +211,13 @@ public class ReleaseUtilsTest
         String dependencyKey = ArtifactUtils.versionlessKey( "com.groupId", "artifactId" );
         properties.put( "dependency." + dependencyKey  + ".release", "1.3" );
         properties.put( "dependency." + dependencyKey + ".development", "1.3-SNAPSHOT" );
-        ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
+        
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( properties, builder );
+        ReleaseDescriptor descriptor = builder.build();
 
-        Map<String, String> versionMap = descriptor.getResolvedSnapshotDependencies().get( dependencyKey );
-        assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
-        assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
+        assertEquals( "1.3", descriptor.getDependencyReleaseVersion( dependencyKey ) );
+        assertEquals( "1.3-SNAPSHOT", descriptor.getDependencyDevelopmentVersion( dependencyKey ) );
     }
 
     // MRELEASE-750
@@ -275,13 +228,13 @@ public class ReleaseUtilsTest
         properties.put( "dependency." + relDependencyKey  + ".release", "1.3" );
         String devDependencyKey = ArtifactUtils.versionlessKey( "com.development.magic", "dependency" );
         properties.put( "dependency." + devDependencyKey + ".development", "1.3-SNAPSHOT" );
-        ReleaseDescriptor descriptor = ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
+        
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( properties, builder );
+        ReleaseDescriptor descriptor = builder.build();
 
-        Map<String, String> versionMap = descriptor.getResolvedSnapshotDependencies().get( relDependencyKey );
-        assertEquals( "1.3", versionMap.get( ReleaseDescriptor.RELEASE_KEY ) );
-
-        versionMap = descriptor.getResolvedSnapshotDependencies().get( devDependencyKey );
-        assertEquals( "1.3-SNAPSHOT", versionMap.get( ReleaseDescriptor.DEVELOPMENT_KEY) );
+        assertEquals( "1.3", descriptor.getDependencyReleaseVersion( relDependencyKey ) );
+        assertEquals( "1.3-SNAPSHOT", descriptor.getDependencyDevelopmentVersion( devDependencyKey ) );
     }
 
     // MRELEASE-834
@@ -289,10 +242,10 @@ public class ReleaseUtilsTest
     {
         Properties properties = new Properties();
         properties.setProperty( "dependency.locations.enabled", "false" );
-        ReleaseUtils.copyPropertiesToReleaseDescriptor( properties );
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( properties, new ReleaseDescriptorBuilder() );
     }
 
-    private static ReleaseDescriptor copyReleaseDescriptor( ReleaseDescriptor originalReleaseDescriptor )
+    private static ReleaseDescriptorBuilder copyReleaseDescriptor( ReleaseDescriptor originalReleaseDescriptor )
     {
         return createReleaseDescriptor( originalReleaseDescriptor.getWorkingDirectory() );
     }
@@ -307,25 +260,7 @@ public class ReleaseUtilsTest
         return scm;
     }
 
-    private static ReleaseDescriptor createMergeDescriptor( String workingDirectory, String completedPhase )
-    {
-        ReleaseDescriptor mergeDescriptor = new ReleaseDescriptor();
-        mergeDescriptor.setScmSourceUrl( "scm-url-merge" );
-        mergeDescriptor.setCompletedPhase( completedPhase );
-        mergeDescriptor.setScmPrivateKeyPassPhrase( "passphrase-merge" );
-        mergeDescriptor.setScmPassword( "password-merge" );
-        mergeDescriptor.setScmPrivateKey( "private-key-merge" );
-        mergeDescriptor.setScmTagBase( "tag-base-merge" );
-        mergeDescriptor.setScmReleaseLabel( "tag-merge" );
-        mergeDescriptor.setScmUsername( "username-merge" );
-        mergeDescriptor.setAdditionalArguments( "additional-arguments-merge" );
-        mergeDescriptor.setPomFileName( "pom-file-name-merge" );
-        mergeDescriptor.setPreparationGoals( "preparation-goals-merge" );
-        mergeDescriptor.setWorkingDirectory( workingDirectory );
-        return mergeDescriptor;
-    }
-
-    private static ReleaseDescriptor createReleaseDescriptor()
+    private static ReleaseDescriptorBuilder createReleaseDescriptor()
         throws IOException
     {
         File workingDirectory = new File( "." );
@@ -333,9 +268,9 @@ public class ReleaseUtilsTest
         return createReleaseDescriptor(AbstractReleaseTestCase.getPath( workingDirectory ) );
     }
 
-    private static ReleaseDescriptor createReleaseDescriptor( String workingDirectory )
+    private static ReleaseDescriptorBuilder createReleaseDescriptor( String workingDirectory )
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder releaseDescriptor = new ReleaseDescriptorBuilder();
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setCompletedPhase( "completed-phase" );
         releaseDescriptor.setScmPrivateKeyPassPhrase( "passphrase" );

@@ -22,11 +22,11 @@ package org.apache.maven.shared.release.phase;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
@@ -44,7 +44,7 @@ public class RestoreBackupPomsPhaseTest
     ReleasePhase getReleasePhase()
         throws Exception
     {
-        return (ReleasePhase) lookup( ReleasePhase.class, "restore-backup-poms" );
+        return lookup( ReleasePhase.class, "restore-backup-poms" );
     }
 
     @Test
@@ -84,9 +84,9 @@ public class RestoreBackupPomsPhaseTest
     {
         List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
 
-        ReleaseDescriptor desc = new ReleaseDescriptor();
-        desc.setScmSourceUrl( "scm:svn:http://myhost/myrepo" );
-        phase.execute( desc, new DefaultReleaseEnvironment(), projects );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm:svn:http://myhost/myrepo" );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), projects );
 
         testProjectIsRestored( projects );
     }
@@ -94,10 +94,8 @@ public class RestoreBackupPomsPhaseTest
     private void testProjectIsRestored( List<MavenProject> reactorProjects )
         throws Exception
     {
-        for ( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = projects.next();
-
             File pomFile = project.getFile();
 
             File expectedFile = new File( pomFile.getParentFile(), expectedPomFilename );

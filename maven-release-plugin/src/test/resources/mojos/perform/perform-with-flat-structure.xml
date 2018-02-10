@@ -26,6 +26,9 @@
         <configuration>
           <settings implementation="org.apache.maven.settings.Settings"/>
           <project implementation="org.apache.maven.plugins.release.stubs.FlatMultiModuleMavenProjectStub"/>
+          <reactorProjects>
+            <reactorProject implementation="org.apache.maven.plugins.release.stubs.FlatMultiModuleMavenProjectStub"/>
+          </reactorProjects>
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
           <connectionUrl>scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project</connectionUrl>

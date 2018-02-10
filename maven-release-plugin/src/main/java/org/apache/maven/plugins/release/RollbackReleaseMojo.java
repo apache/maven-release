@@ -49,7 +49,7 @@ public class RollbackReleaseMojo
         try
         {
             ReleaseRollbackRequest rollbackRequest = new ReleaseRollbackRequest();
-            rollbackRequest.setReleaseDescriptor( createReleaseDescriptor() );
+            rollbackRequest.setReleaseDescriptorBuilder( createReleaseDescriptor() );
             rollbackRequest.setReleaseEnvironment( getReleaseEnvironment() );
             rollbackRequest.setReactorProjects( getReactorProjects()  );
             

@@ -37,7 +37,7 @@
   </defaults>
   <classes>
     <class rootElement="true">
-      <name>ReleaseDescriptor</name>
+      <name>ModelloReleaseDescriptor</name>
       <version>1.0.0+</version>
       <fields>
         <!-- Descriptive Information -->
@@ -241,6 +241,7 @@
           <name>checkoutDirectory</name>
           <version>1.0.0+</version>
           <type>String</type>
+          <defaultValue>target/checkout</defaultValue>
           <description>
             The directory where the tag will be checked out.
           </description>
@@ -534,71 +535,50 @@
         <codeSegment>
           <version>2.1.0+</version>
           <code><![CDATA[
-    public static final String DEVELOPMENT_KEY = "dev";
-
-    public static final String RELEASE_KEY = "rel";
-
-    public static final String ORIGINAL_VERSION = "original";
-
     /**
      * Field resolvedSnapshotDependencies.
      */
-    private java.util.Map<String, java.util.Map<String, String>> resolvedSnapshotDependencies;
+    private java.util.Map<String, ReleaseStageVersions> resolvedSnapshotDependencies = new java.util.HashMap<>();
 
     /**
-     * Field releaseVersions.
+     * Field projectVersions
      */
-    private java.util.Map<String, String> releaseVersions;
-
-    /**
-     * Field developmentVersions.
-     */
-    private java.util.Map<String, String> developmentVersions;
+    private java.util.Map<String, ReleaseStageVersions> projectVersions = new java.util.HashMap<>();
     
     /**
      * Field originalScmInfo.
      */
-    private java.util.Map<String, org.apache.maven.model.Scm> originalScmInfo;
+    private java.util.Map<String, org.apache.maven.model.Scm> originalScmInfo = new java.util.HashMap<>();
+    
+    
+    java.util.Map<String, ReleaseStageVersions> getProjectVersions()
+    {
+        return projectVersions;
+    }
+    
+    java.util.Map<String, org.apache.maven.model.Scm> getOriginalScmInfo()
+    {
+        return originalScmInfo;
+    }
     
     /**
      * Method getResolvedSnapshotDependencies.
      * 
      * @return Map
      */
-    public java.util.Map<String, java.util.Map<String, String>> getResolvedSnapshotDependencies()
+    java.util.Map<String, ReleaseStageVersions> getResolvedSnapshotDependencies()
     {
-        if ( this.resolvedSnapshotDependencies == null )
-        {
-            this.resolvedSnapshotDependencies = new java.util.HashMap<>();
-        }
-
         return this.resolvedSnapshotDependencies;
-    } //-- java.util.Map<String, java.util.Map<String, String>> getResolvedSnapshotDependencies()
-    
-    /**
-     * Set a map of resolved snapshot dependencies versions.
-     * 
-     * @param resolvedSnapshotDependencies
-     */
-    public void setResolvedSnapshotDependencies( java.util.Map<String, java.util.Map<String, String>> resolvedSnapshotDependencies )
-    {
-        this.resolvedSnapshotDependencies = resolvedSnapshotDependencies;
-    } //-- void setResolvedSnapshotDependencies( java.util.Map<String, java.util.Map<String, String>> )
+    } //-- java.util.Map<String, ReleaseStageVersions> getResolvedSnapshotDependencies()
 
-    /**
-     * Method getReleaseVersions.
-     * 
-     * @return Map
-     */
-    public java.util.Map<String, String> getReleaseVersions()
+    public String getProjectReleaseVersion( String projectId )
     {
-        if ( this.releaseVersions == null )
-        {
-            this.releaseVersions = new java.util.HashMap<>();
-        }
-
-        return this.releaseVersions;
-    } //-- java.util.Map<String, String> getReleaseVersions()
+      if ( projectVersions.containsKey( projectId ) )
+      {
+        return projectVersions.get( projectId ).getRelease();
+      }
+      return null;
+    }
 
     /**
      * Method addReleaseVersion.
@@ -606,25 +586,19 @@
      * @param key
      * @param value
      */
-    public void addReleaseVersion( String key, String value )
+    public void addReleaseVersion( String projectId, String version )
     {
-        getReleaseVersions().put( key, value );
+        computeIfAbsent( projectVersions, projectId ).setRelease( version ); 
     } //-- void addReleaseVersion( String, String )
 
-    /**
-     * Method getDevelopmentVersions.
-     * 
-     * @return Map
-     */
-    public java.util.Map<String, String> getDevelopmentVersions()
+    public String getProjectDevelopmentVersion( String projectId )
     {
-        if ( this.developmentVersions == null )
-        {
-            this.developmentVersions = new java.util.HashMap<>();
-        }
-
-        return this.developmentVersions;
-    } //-- java.util.Map<String, String> getDevelopmentVersions()
+      if ( projectVersions.containsKey( projectId ) )
+      {
+        return projectVersions.get( projectId ).getDevelopment();
+      }
+      return null;
+    }
 
     /**
      * Method addDevelopmentVersion.
@@ -632,9 +606,9 @@
      * @param key
      * @param value
      */
-    public void addDevelopmentVersion( String key, String value )
+    public void addDevelopmentVersion( String projectId, String version )
     {
-        getDevelopmentVersions().put( key, value );
+        computeIfAbsent( projectVersions, projectId ).setDevelopment( version ); 
     } //-- void addDevelopmentVersion( String, String )
 
     /**
@@ -642,14 +616,9 @@
      * 
      * @return Map
      */
-    public java.util.Map<String, org.apache.maven.model.Scm> getOriginalScmInfo()
+    public org.apache.maven.model.Scm getOriginalScmInfo( String id )
     {
-        if ( this.originalScmInfo == null )
-        {
-            this.originalScmInfo = new java.util.HashMap<>();
-        }
-
-        return this.originalScmInfo;
+        return this.originalScmInfo.get( id );
     } //-- java.util.Map<Object, String> getOriginalScmInfo()
     
     /**
@@ -663,104 +632,18 @@
         getOriginalScmInfo().put( key, value );
     } //-- void addOriginalScmInfo( String, org.apache.maven.model.Scm )
 
-    /**
-     * Map a given snapshot dependency to a specified version from when it is released.
-     *
-     */
-    public void mapResolvedSnapshotDependencies( String artifactName, String releaseVersion, String developmentVersion )
+    public String getProjectOriginalVersion( String projectId )
     {
-        if ( resolvedSnapshotDependencies == null )
-        {
-            resolvedSnapshotDependencies = new java.util.HashMap<>();
-        }
-        else
-        {
-            assert !resolvedSnapshotDependencies.containsKey( artifactName );
-        }
-
-        java.util.Map versionsMap = new java.util.HashMap<>();
-
-        versionsMap.put( DEVELOPMENT_KEY, developmentVersion );
-        versionsMap.put( RELEASE_KEY, releaseVersion );
-        resolvedSnapshotDependencies.put( artifactName, versionsMap );
+      if ( projectVersions.containsKey( projectId ) )
+      {
+        return projectVersions.get( projectId ).getOriginal();
+      }
+      return null;
     }
-
-    /**
-     * Map a given project to a specified version from when it is released.
-     *
-     * @param projectId   the project's group and artifact ID
-     * @param nextVersion the version to map to
-     */
-    public void mapReleaseVersion( String projectId, String nextVersion )
+    
+    public void addOriginalVersion( String projectId, String version )
     {
-        if ( releaseVersions == null )
-        {
-            releaseVersions = new java.util.HashMap<>();
-        }
-
-        releaseVersions.put( projectId, nextVersion );
-    }
-
-    /**
-     * Map a given project to a specified version from when it is incremented and placed back into development.
-     *
-     * @param projectId   the project's group and artifact ID
-     * @param nextVersion the version to map to
-     */
-    public void mapDevelopmentVersion( String projectId, String nextVersion )
-    {
-        if ( developmentVersions == null )
-        {
-            developmentVersions = new java.util.HashMap<>();
-        }
-
-        developmentVersions.put( projectId, nextVersion );
-    }
-
-    /**
-     * Map a given project to a specified set of SCM information.
-     *
-     * @param projectId the project's group and artifact ID
-     * @param scm       the original SCM information to store
-     */
-    public void mapOriginalScmInfo( String projectId, org.apache.maven.model.Scm scm )
-    {
-        if ( originalScmInfo == null )
-        {
-            originalScmInfo = new java.util.HashMap<>();
-        }
-        else
-        {
-            assert !originalScmInfo.containsKey( projectId );
-        }
-
-        originalScmInfo.put( projectId, scm );
-    }
-
-    /**
-     * A map of projects to original versions before any transformation.
-     */
-    private java.util.Map originalVersions;
-
-    /**
-     * Retrieve the original version map, before transformation, keyed by project's versionless identifier.
-     *
-     * @param reactorProjects The reactor projects.
-     *
-     * @return the map of project IDs to versions.
-     */
-    public synchronized java.util.Map<String, String> getOriginalVersions( java.util.List<org.apache.maven.project.MavenProject> reactorProjects )
-    {
-        if ( originalVersions == null )
-        {
-            originalVersions = new java.util.HashMap<>();
-            for ( org.apache.maven.project.MavenProject project : reactorProjects )
-            {
-                originalVersions.put( org.apache.maven.artifact.ArtifactUtils.versionlessKey( project.getGroupId(),
-                                      project.getArtifactId() ), project.getVersion() );
-            }
-        }
-        return originalVersions;
+      computeIfAbsent( projectVersions, projectId ).setOriginal( version ); 
     }
 
     /**
@@ -769,10 +652,10 @@
      */
     public String getDependencyDevelopmentVersion( String artifactConflictId )
     {
-        if ( ( resolvedSnapshotDependencies == null ) && ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) ) )
+        if ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) )
         {
-            java.util.Map<String, String> versionMap = resolvedSnapshotDependencies.get( artifactConflictId );
-            return versionMap.get( DEVELOPMENT_KEY );
+            ReleaseStageVersions versionMap = resolvedSnapshotDependencies.get( artifactConflictId );
+            return versionMap.getDevelopment();
         }
         return null;
     }
@@ -783,19 +666,55 @@
      */
     public String getDependencyReleaseVersion( String artifactConflictId )
     {
-        if ( ( resolvedSnapshotDependencies == null ) && ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) ) )
+        if ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) )
         {
-            java.util.Map<String, String> versionMap = resolvedSnapshotDependencies.get( artifactConflictId );
-            return versionMap.get( RELEASE_KEY );
+            ReleaseStageVersions versionMap = resolvedSnapshotDependencies.get( artifactConflictId );
+            return versionMap.getRelease();
         }
         return null;
     }
 
-    boolean safeEquals( String a, String b )
+    /**
+     * Retrieve the original version for the resolved snapshot dependency.
+     *
+     */
+    public String getDependencyOriginalVersion( String artifactConflictId )
     {
-        return a != null ? a.equals( b ) : b == null;
+        if ( resolvedSnapshotDependencies.containsKey( artifactConflictId ) )
+        {
+            ReleaseStageVersions versionMap = resolvedSnapshotDependencies.get( artifactConflictId );
+            return versionMap.getOriginal();
+        }
+        return null;
+    }
+    
+    public void addDependencyOriginalVersion( String dependencyKey, String version )
+    {
+        computeIfAbsent( resolvedSnapshotDependencies, dependencyKey ).setOriginal( version );
     }
 
+    public void addDependencyReleaseVersion( String dependencyKey, String version )
+    {
+        computeIfAbsent( resolvedSnapshotDependencies, dependencyKey ).setRelease( version );
+    }
+
+    public void addDependencyDevelopmentVersion( String dependencyKey, String version )
+    {
+        computeIfAbsent( resolvedSnapshotDependencies, dependencyKey ).setDevelopment( version );
+    }
+    
+    private static ReleaseStageVersions computeIfAbsent( java.util.Map<String, ReleaseStageVersions> map, String key )
+    {
+        ReleaseStageVersions value = map.get( key );
+        if ( value == null )
+        {
+            value = new ReleaseStageVersions();
+            map.put( key, value );
+        }
+        return value;
+    }
+
+    @Override
     public boolean equals( Object obj )
     {
         if ( this == obj )
@@ -807,165 +726,148 @@
             return false;
         }
 
-        ReleaseDescriptor that = (ReleaseDescriptor) obj;
+        ModelloReleaseDescriptor that = (ModelloReleaseDescriptor) obj;
 
-        if ( updateDependencies        != that.updateDependencies       ||
-             useReleaseProfile         != that.useReleaseProfile        ||
-             autoVersionSubmodules     != that.autoVersionSubmodules    ||
-             snapshotReleasePluginAllowed != that.snapshotReleasePluginAllowed ||
-             commitByProject           != that.commitByProject          ||
-             branchCreation            != that.branchCreation           ||
-             updateBranchVersions      != that.updateBranchVersions     ||
-             updateWorkingCopyVersions != that.updateWorkingCopyVersions||
-             suppressCommitBeforeTagOrBranch   != that.suppressCommitBeforeTagOrBranch  ||
-             updateVersionsToSnapshot  != that.updateVersionsToSnapshot ||
-             allowTimestampedSnapshots != that.allowTimestampedSnapshots||
-             remoteTagging             != that.remoteTagging            ||
-             localCheckout             != that.localCheckout            ||
-             pushChanges               != that.pushChanges
+        if ( updateDependencies               != that.isUpdateDependencies()               ||
+             useReleaseProfile                != that.isUseReleaseProfile()                ||
+             autoVersionSubmodules            != that.isAutoVersionSubmodules()            ||
+             snapshotReleasePluginAllowed     != that.isSnapshotReleasePluginAllowed()     ||
+             commitByProject                  != that.isCommitByProject()                  ||
+             branchCreation                   != that.isBranchCreation()                   ||
+             updateBranchVersions             != that.isUpdateBranchVersions()             ||
+             updateWorkingCopyVersions        != that.isUpdateWorkingCopyVersions()        ||
+             suppressCommitBeforeTagOrBranch  != that.isSuppressCommitBeforeTagOrBranch()  ||
+             updateVersionsToSnapshot         != that.isUpdateVersionsToSnapshot()         ||
+             allowTimestampedSnapshots        != that.isAllowTimestampedSnapshots()        ||
+             remoteTagging                    != that.isRemoteTagging()                    ||
+             localCheckout                    != that.isLocalCheckout()                    ||
+             pushChanges                      != that.isPushChanges()
            )
            {
                return false;
            }
 
-        if ( !safeEquals( defaultDevelopmentVersion, that.defaultDevelopmentVersion ) ||
-             !safeEquals( scmRelativePathProjectDirectory, that.scmRelativePathProjectDirectory ) ||
-             !safeEquals( checkoutDirectory, that.checkoutDirectory ) ||
-             !safeEquals( performGoals, that.performGoals ) ||
-             !safeEquals( defaultReleaseVersion, that.defaultReleaseVersion ) ||
-             !safeEquals( scmReleasedPomRevision, that.scmReleasedPomRevision )
+        if ( !java.util.Objects.equals( defaultDevelopmentVersion, that.getDefaultDevelopmentVersion() ) ||
+             !java.util.Objects.equals( scmRelativePathProjectDirectory, that.getScmRelativePathProjectDirectory() ) ||
+             !java.util.Objects.equals( checkoutDirectory, that.getCheckoutDirectory() ) ||
+             !java.util.Objects.equals( performGoals, that.getPerformGoals() ) ||
+             !java.util.Objects.equals( defaultReleaseVersion, that.getDefaultReleaseVersion() ) ||
+             !java.util.Objects.equals( scmReleasedPomRevision, that.getScmReleasedPomRevision() )
            )
         {
             return false;
         }
 
-        if ( addSchema != that.addSchema )
+        if ( addSchema != that.isAddSchema() )
         {
             return false;
         }
-        if ( generateReleasePoms != that.generateReleasePoms )
+        if ( generateReleasePoms != that.isGenerateReleasePoms() )
         {
             return false;
         }
-        if ( interactive != that.interactive )
+        if ( interactive != that.isInteractive() )
         {
             return false;
         }
-        if ( scmUseEditMode != that.scmUseEditMode )
+        if ( scmUseEditMode != that.isScmUseEditMode() )
         {
             return false;
         }
-        if ( !safeEquals( completedPhase, that.completedPhase ) )
+        if ( !java.util.Objects.equals( completedPhase, that.getCompletedPhase() ) )
         {
             return false;
         }
         if ( ( checkModificationExcludes == null || ( checkModificationExcludes != null && checkModificationExcludes.size() == 0) ) &&
-            ( that.checkModificationExcludes == null || ( that.checkModificationExcludes != null && that.checkModificationExcludes.size() == 0) ) )
+            ( that.getCheckModificationExcludes() == null || ( that.getCheckModificationExcludes() != null && that.getCheckModificationExcludes().size() == 0) ) )
         {
             // Do nothing.  This is a Modello workaround
         }
         else
         {
-            if ( checkModificationExcludes != null ? !checkModificationExcludes.equals( that.checkModificationExcludes )
-                : that.checkModificationExcludes != null )
-            {
-                return false;
-            }
-        }
-        if ( ( developmentVersions == null || ( developmentVersions != null && developmentVersions.size() == 0) ) &&
-            ( that.developmentVersions == null || ( that.developmentVersions != null && that.developmentVersions.size() == 0) ) )
-        {
-            // Do nothing.  This is a Modello workaround
-        }
-        else
-        {
-            if ( developmentVersions != null ? !developmentVersions.equals( that.developmentVersions )
-                : that.developmentVersions != null )
+            if ( checkModificationExcludes != null ? !checkModificationExcludes.equals( that.getCheckModificationExcludes() )
+                : that.getCheckModificationExcludes() != null )
             {
                 return false;
             }
         }
         if ( ( originalScmInfo == null || (originalScmInfo != null && originalScmInfo.size() == 0 ) ) &&
-            ( that.originalScmInfo == null || ( that.originalScmInfo != null && that.originalScmInfo.size() == 0 ) ) )
+            ( that.getOriginalScmInfo() == null || ( that.getOriginalScmInfo() != null && that.getOriginalScmInfo().size() == 0 ) ) )
         {
             // Do nothing.  This is a Modello workaround
         }
         else
         {
-            if ( originalScmInfo != null ? !compareScmCollections( that.originalScmInfo ) : that.originalScmInfo != null )
+            if ( originalScmInfo != null ? !compareScmCollections( that.getOriginalScmInfo() ) : that.getOriginalScmInfo() != null )
             {
                 return false;
             }
         }
-        if ( ( releaseVersions == null || ( releaseVersions != null && releaseVersions.size() == 0 ) ) &&
-            ( that.releaseVersions == null || ( that.releaseVersions != null && that.releaseVersions.size() == 0 ) ) )
-        {
-            // Do nothing.  This is a Modello workaround
-        }
-        else
-        {
-            if ( releaseVersions != null ? !releaseVersions.equals( that.releaseVersions ) : that.releaseVersions != null )
-            {
-                return false;
-            }
-        }
-        if ( !safeEquals( additionalArguments, that.additionalArguments ) )
+        if ( !java.util.Objects.equals( additionalArguments, that.getAdditionalArguments() ) )
         {
             return false;
         }
-        if ( !safeEquals( preparationGoals, that.preparationGoals ) )
+        if ( !java.util.Objects.equals( preparationGoals, that.getPreparationGoals() ) )
         {
             return false;
         }
-        if ( !safeEquals( completionGoals, that.completionGoals ) )
+        if ( !java.util.Objects.equals( completionGoals, that.getCompletionGoals() ) )
         {
             return false;
         }
-        if ( !safeEquals( pomFileName, that.pomFileName ) )
+        if ( !java.util.Objects.equals( pomFileName, that.getPomFileName() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmPrivateKeyPassPhrase, that.scmPrivateKeyPassPhrase ) )
+        if ( !java.util.Objects.equals( scmPrivateKeyPassPhrase, that.getScmPrivateKeyPassPhrase() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmPassword, that.scmPassword ) )
+        if ( !java.util.Objects.equals( scmPassword, that.getScmPassword() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmPrivateKey, that.scmPrivateKey ) )
+        if ( !java.util.Objects.equals( scmPrivateKey, that.getScmPrivateKey() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmReleaseLabel, that.scmReleaseLabel ) )
+        if ( !java.util.Objects.equals( scmReleaseLabel, that.getScmReleaseLabel() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmTagBase, that.scmTagBase ) )
+        if ( !java.util.Objects.equals( scmTagBase, that.getScmTagBase() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmBranchBase, that.scmBranchBase ) )
+        if ( !java.util.Objects.equals( scmBranchBase, that.getScmBranchBase() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmId, that.scmId ) )
+        if ( !java.util.Objects.equals( scmId, that.getScmId() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmSourceUrl, that.scmSourceUrl ) )
+        if ( !java.util.Objects.equals( scmSourceUrl, that.getScmSourceUrl() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmUsername, that.scmUsername ) )
+        if ( !java.util.Objects.equals( scmUsername, that.getScmUsername() ) )
         {
             return false;
         }
-        if ( !safeEquals( workingDirectory, that.workingDirectory ) )
+        if ( !java.util.Objects.equals( workingDirectory, that.getWorkingDirectory() ) )
         {
             return false;
         }
-        if ( !safeEquals( scmTagNameFormat, that.scmTagNameFormat ) )
+        if ( !java.util.Objects.equals( scmTagNameFormat, that.getScmTagNameFormat() ) )
+        {
+            return false;
+        }
+        if ( !java.util.Objects.equals( scmTagNameFormat, that.getScmTagNameFormat() ) )
+        {
+            return false;
+        }
+        if ( !java.util.Objects.deepEquals( projectVersions, that.getProjectVersions() ) )
         {
             return false;
         }
@@ -973,7 +875,7 @@
         return true;
     }
 
-    private boolean compareScmCollections( java.util.Map that )
+    private boolean compareScmCollections( java.util.Map<String, org.apache.maven.model.Scm> that )
     {
         // Must manually compare as Scm doesn't have an equals method
         if ( that == null && originalScmInfo == null )
@@ -991,13 +893,13 @@
             return false;
         }
 
-        for ( java.util.Iterator i = originalScmInfo.entrySet().iterator(); i.hasNext(); )
+        for ( java.util.Iterator<java.util.Map.Entry<String, org.apache.maven.model.Scm>> i = originalScmInfo.entrySet().iterator(); i.hasNext(); )
         {
-            java.util.Map.Entry entry = (java.util.Map.Entry) i.next();
+            java.util.Map.Entry<String, org.apache.maven.model.Scm> entry = i.next();
 
-            org.apache.maven.model.Scm thatScm = (org.apache.maven.model.Scm) that.get( entry.getKey() );
+            org.apache.maven.model.Scm thatScm = that.get( entry.getKey() );
 
-            org.apache.maven.model.Scm thisScm = (org.apache.maven.model.Scm) entry.getValue();
+            org.apache.maven.model.Scm thisScm = entry.getValue();
             if ( thatScm == null && thisScm == null )
             {
                 return true;
@@ -1044,57 +946,121 @@
         return true;
     }
 
+    @Override
     public int hashCode()
     {
-        int result = completedPhase != null ? completedPhase.hashCode() : 0;
-        result = 29 * result + ( scmReleaseLabel != null ? scmReleaseLabel.hashCode() : 0 );
-        result = 29 * result + ( additionalArguments != null ? additionalArguments.hashCode() : 0 );
-        result = 29 * result + ( preparationGoals != null ? preparationGoals.hashCode() : 0 );
-        result = 29 * result + ( completionGoals != null ? completionGoals.hashCode() : 0 );
-        result = 29 * result + ( pomFileName != null ? pomFileName.hashCode() : 0 );
-        result = 29 * result + ( checkModificationExcludes != null ? checkModificationExcludes.hashCode() : 0 );
-        result = 29 * result + ( scmTagBase != null ? scmTagBase.hashCode() : 0 );
-        result = 29 * result + ( scmBranchBase != null ? scmBranchBase.hashCode() : 0 );
-        result = 29 * result + ( scmUsername != null ? scmUsername.hashCode() : 0 );
-        result = 29 * result + ( scmPassword != null ? scmPassword.hashCode() : 0 );
-        result = 29 * result + ( scmId != null ? scmId.hashCode() : 0 );
-        result = 29 * result + ( scmSourceUrl != null ? scmSourceUrl.hashCode() : 0 );
-        result = 29 * result + ( scmPrivateKey != null ? scmPrivateKey.hashCode() : 0 );
-        result = 29 * result + ( scmPrivateKeyPassPhrase != null ? scmPrivateKeyPassPhrase.hashCode() : 0 );
-        result = 29 * result + ( workingDirectory != null ? workingDirectory.hashCode() : 0 );
-        result = 29 * result + ( scmUseEditMode ? 1 : 0 );
-        result = 29 * result + ( addSchema ? 1 : 0 );
-        result = 29 * result + ( generateReleasePoms ? 1 : 0 );
-        result = 29 * result + ( interactive ? 1 : 0 );
-        result = 29 * result + ( releaseVersions != null ? releaseVersions.hashCode() : 0 );
-        result = 29 * result + ( developmentVersions != null ? developmentVersions.hashCode() : 0 );
-        result = 29 * result + ( originalScmInfo != null ? originalScmInfo.hashCode() : 0 );
-        result = 29 * result + ( updateDependencies ? 1 : 0 );
-        result = 29 * result + ( useReleaseProfile ? 1 : 0 );
-        result = 29 * result + ( autoVersionSubmodules ? 1 : 0 );
-        result = 29 * result + ( snapshotReleasePluginAllowed ? 1 : 0 );
-        result = 29 * result + ( commitByProject ? 1 : 0 );
-        result = 29 * result + ( branchCreation ? 1 : 0 );
-        result = 29 * result + ( updateBranchVersions ? 1 : 0 );
-        result = 29 * result + ( updateWorkingCopyVersions ? 1 : 0 );
-        result = 29 * result + ( suppressCommitBeforeTagOrBranch ? 1 : 0 );
-        result = 29 * result + ( updateVersionsToSnapshot ? 1 : 0 );
-        result = 29 * result + ( allowTimestampedSnapshots ? 1 : 0 );
-        result = 29 * result + ( remoteTagging ? 1 : 0 );
-        result = 29 * result + ( localCheckout ? 1 : 0 );
-        result = 29 * result + ( pushChanges ? 1 : 0 );
-        result = 29 * result + ( defaultDevelopmentVersion != null ? defaultDevelopmentVersion.hashCode() : 0 );
-        result = 29 * result + ( scmRelativePathProjectDirectory != null ? scmRelativePathProjectDirectory.hashCode() : 0 );
-        result = 29 * result + ( checkoutDirectory != null ? checkoutDirectory.hashCode() : 0 );
-        result = 29 * result + ( performGoals != null ? performGoals.hashCode() : 0 );
-        result = 29 * result + ( defaultReleaseVersion != null ? defaultReleaseVersion.hashCode() : 0 );
-        result = 29 * result + ( scmReleasedPomRevision != null ? scmReleasedPomRevision.hashCode() : 0 );
+        int result = java.util.Objects.hashCode( completedPhase );
+        result = 29 * result + java.util.Objects.hashCode( scmReleaseLabel );
+        result = 29 * result + java.util.Objects.hashCode( additionalArguments );
+        result = 29 * result + java.util.Objects.hashCode( preparationGoals );
+        result = 29 * result + java.util.Objects.hashCode( completionGoals );
+        result = 29 * result + java.util.Objects.hashCode( pomFileName );
+        result = 29 * result + java.util.Objects.hashCode( checkModificationExcludes );
+        result = 29 * result + java.util.Objects.hashCode( scmTagBase );
+        result = 29 * result + java.util.Objects.hashCode( scmBranchBase );
+        result = 29 * result + java.util.Objects.hashCode( scmUsername );
+        result = 29 * result + java.util.Objects.hashCode( scmPassword  );
+        result = 29 * result + java.util.Objects.hashCode( scmId );
+        result = 29 * result + java.util.Objects.hashCode( scmSourceUrl );
+        result = 29 * result + java.util.Objects.hashCode( scmPrivateKey );
+        result = 29 * result + java.util.Objects.hashCode( scmPrivateKeyPassPhrase );
+        result = 29 * result + java.util.Objects.hashCode( workingDirectory );
+        result = 29 * result + java.util.Objects.hashCode( scmUseEditMode );
+        result = 29 * result + java.util.Objects.hashCode( addSchema );
+        result = 29 * result + java.util.Objects.hashCode( generateReleasePoms );
+        result = 29 * result + java.util.Objects.hashCode( interactive );
+        result = 29 * result + java.util.Objects.hashCode( projectVersions );
+        result = 29 * result + java.util.Objects.hashCode( originalScmInfo  );
+        result = 29 * result + java.util.Objects.hashCode( updateDependencies );
+        result = 29 * result + java.util.Objects.hashCode( useReleaseProfile );
+        result = 29 * result + java.util.Objects.hashCode( autoVersionSubmodules );
+        result = 29 * result + java.util.Objects.hashCode( snapshotReleasePluginAllowed );
+        result = 29 * result + java.util.Objects.hashCode( commitByProject );
+        result = 29 * result + java.util.Objects.hashCode( branchCreation );
+        result = 29 * result + java.util.Objects.hashCode( updateBranchVersions );
+        result = 29 * result + java.util.Objects.hashCode( updateWorkingCopyVersions );
+        result = 29 * result + java.util.Objects.hashCode( suppressCommitBeforeTagOrBranch );
+        result = 29 * result + java.util.Objects.hashCode( updateVersionsToSnapshot );
+        result = 29 * result + java.util.Objects.hashCode( allowTimestampedSnapshots );
+        result = 29 * result + java.util.Objects.hashCode( remoteTagging );
+        result = 29 * result + java.util.Objects.hashCode( localCheckout );
+        result = 29 * result + java.util.Objects.hashCode( pushChanges );
+        result = 29 * result + java.util.Objects.hashCode( defaultDevelopmentVersion  );
+        result = 29 * result + java.util.Objects.hashCode( scmRelativePathProjectDirectory );
+        result = 29 * result + java.util.Objects.hashCode( checkoutDirectory );
+        result = 29 * result + java.util.Objects.hashCode( performGoals );
+        result = 29 * result + java.util.Objects.hashCode( defaultReleaseVersion );
+        result = 29 * result + java.util.Objects.hashCode( scmReleasedPomRevision );
 
         return result;
     }
 ]]></code>
         </codeSegment>
       </codeSegments>
+    </class>
+    <class>
+      <name>ReleaseStageVersions</name>
+      <fields>
+        <field>
+          <name>original</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+        </field>
+        <field>
+          <name>release</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+        </field>
+        <field>
+          <name>development</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>2.1.0+</version>
+          <code><![CDATA[
+    @Override
+    public boolean equals( Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( obj == null || getClass() != obj.getClass() )
+        {
+            return false;
+        }
+
+        ReleaseStageVersions that = (ReleaseStageVersions) obj;
+        if ( !java.util.Objects.equals( original, that.original ) )
+        {
+            return false;
+        }
+        if ( !java.util.Objects.equals( release, that.release ) )
+        {
+            return false;
+        }
+        if ( !java.util.Objects.equals( development, that.development ) )
+        {
+            return false;
+        }
+        return true;
+    }
+          
+    @Override
+    public int hashCode()
+    {
+        int result = java.util.Objects.hashCode( original );
+        result = 29 * result + java.util.Objects.hashCode( release );
+        result = 29 * result + java.util.Objects.hashCode( development );
+        return result;
+    }      
+          
+]]></code>
+        </codeSegment>
+      </codeSegments>          
     </class>
   </classes>
 </model>

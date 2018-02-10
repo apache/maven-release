@@ -42,7 +42,8 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
@@ -64,7 +65,7 @@ public class ScmCommitDevelopmentPhaseTest
 
     private MavenProject rootProject;
 
-    private ReleaseDescriptor descriptor;
+    private ReleaseDescriptorBuilder builder;
 
     private ScmProvider scmProviderMock;
 
@@ -78,7 +79,7 @@ public class ScmCommitDevelopmentPhaseTest
 
         reactorProjects = createReactorProjects();
         rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor = createReleaseDescriptor( rootProject );
+        builder = createReleaseDescriptorBuilder( rootProject );
     }
 
     @Test
@@ -91,16 +92,16 @@ public class ScmCommitDevelopmentPhaseTest
     public void testNoCommitOrRollbackRequired()
         throws Exception
     {
-        ReleaseDescriptor descriptor = createReleaseDescriptor( rootProject );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( rootProject );
         List<MavenProject> reactorProjects = createReactorProjects();
 
-        descriptor.setRemoteTagging( false );
-        descriptor.setSuppressCommitBeforeTagOrBranch( true );
-        descriptor.setUpdateWorkingCopyVersions( false );
+        builder.setRemoteTagging( false );
+        builder.setSuppressCommitBeforeTagOrBranch( true );
+        builder.setUpdateWorkingCopyVersions( false );
 
         prepareNoCheckin();
 
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         verifyNoCheckin();
     }
@@ -109,11 +110,11 @@ public class ScmCommitDevelopmentPhaseTest
     public void testCommitsNextVersions()
         throws Exception
     {
-        descriptor.setUpdateWorkingCopyVersions( true );
+        builder.setUpdateWorkingCopyVersions( true );
 
         prepareCheckin( COMMIT_MESSAGE );
 
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         verifyCheckin( COMMIT_MESSAGE );
     }
@@ -122,13 +123,13 @@ public class ScmCommitDevelopmentPhaseTest
     public void testCommitsRollbackPrepare()
         throws Exception
     {
-        descriptor.setUpdateWorkingCopyVersions( false );
+        builder.setUpdateWorkingCopyVersions( false );
 
-        String message = ROLLBACK_PREFIX + descriptor.getScmReleaseLabel();
+        String message = ROLLBACK_PREFIX + "release-label";
 
         prepareCheckin( message );
 
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         verifyCheckin( message );
     }
@@ -176,12 +177,12 @@ public class ScmCommitDevelopmentPhaseTest
         return createReactorProjects( dir, dir, null );
     }
 
-    private static ReleaseDescriptor createReleaseDescriptor( MavenProject rootProject )
+    private static ReleaseDescriptorBuilder createReleaseDescriptorBuilder( MavenProject rootProject )
     {
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        descriptor.setScmSourceUrl( "scm-url" );
-        descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
-        return descriptor;
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmReleaseLabel( "release-label" );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        return builder;
     }
 }

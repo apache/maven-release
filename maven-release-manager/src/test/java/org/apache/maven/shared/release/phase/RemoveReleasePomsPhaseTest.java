@@ -46,7 +46,8 @@ import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.IOUtil;
@@ -66,7 +67,7 @@ public class RemoveReleasePomsPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.class, "remove-release-poms" );
+        phase = lookup( ReleasePhase.class, "remove-release-poms" );
     }
 
     @Test
@@ -74,12 +75,13 @@ public class RemoveReleasePomsPhaseTest
         throws Exception
     {
         // prepare
+        File workingDirectory = getTestFile( "target/test/checkout" );
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
-        ReleaseDescriptor config = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( workingDirectory );
         MavenProject project = ReleaseUtil.getRootProject( reactorProjects );
 
         File releasePom = ReleaseUtil.getReleasePom( project );
-        ScmFileSet fileSet = new ScmFileSet( new File( config.getWorkingDirectory() ), releasePom );
+        ScmFileSet fileSet = new ScmFileSet( workingDirectory, releasePom );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -91,7 +93,7 @@ public class RemoveReleasePomsPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( scmProviderMock ).remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -104,8 +106,9 @@ public class RemoveReleasePomsPhaseTest
         throws Exception
     {
         // prepare
+        File workingDirectory = getTestFile( "target/test/checkout" );
         List<MavenProject> reactorProjects = createReactorProjects( "pom-with-modules" );
-        ReleaseDescriptor config = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         List<File> releasePoms = new ArrayList<>();
         for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
@@ -115,7 +118,7 @@ public class RemoveReleasePomsPhaseTest
             releasePoms.add( releasePom );
         }
 
-        ScmFileSet fileSet = new ScmFileSet( new File( config.getWorkingDirectory() ), releasePoms );
+        ScmFileSet fileSet = new ScmFileSet( workingDirectory, releasePoms );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -127,7 +130,7 @@ public class RemoveReleasePomsPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( scmProviderMock ).remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -141,7 +144,7 @@ public class RemoveReleasePomsPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
-        ReleaseDescriptor config = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
@@ -149,7 +152,7 @@ public class RemoveReleasePomsPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // never invoke scmProviderMock
         verifyNoMoreInteractions( scmProviderMock );
@@ -161,9 +164,9 @@ public class RemoveReleasePomsPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
-        ReleaseDescriptor config = createReleaseDescriptor();
-        config.setSuppressCommitBeforeTagOrBranch( true );
-        config.setGenerateReleasePoms( true );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
+        builder.setSuppressCommitBeforeTagOrBranch( true );
+        builder.setGenerateReleasePoms( true );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
@@ -171,7 +174,7 @@ public class RemoveReleasePomsPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        ReleaseResult result = phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseResult result = phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         BufferedReader reader = null;
         try
@@ -197,9 +200,9 @@ public class RemoveReleasePomsPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
-        ReleaseDescriptor config = createReleaseDescriptor();
-        config.setSuppressCommitBeforeTagOrBranch( true );
-        config.setGenerateReleasePoms( true );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
+        builder.setSuppressCommitBeforeTagOrBranch( true );
+        builder.setGenerateReleasePoms( true );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
@@ -207,7 +210,7 @@ public class RemoveReleasePomsPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        ReleaseResult result = phase.simulate( config, new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseResult result = phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         BufferedReader reader = null;
         try
@@ -236,11 +239,16 @@ public class RemoveReleasePomsPhaseTest
         return createReactorProjects( dir, dir, null );
     }
 
-    private ReleaseDescriptor createReleaseDescriptor()
+    private ReleaseDescriptorBuilder createReleaseDescriptorBuilder()
     {
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        descriptor.setGenerateReleasePoms( true );
-        descriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
-        return descriptor;
+        return createReleaseDescriptorBuilder( getTestFile( "target/test/checkout" ) );
+    }
+    
+    private ReleaseDescriptorBuilder createReleaseDescriptorBuilder( File workingDirectory )
+    {
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setGenerateReleasePoms( true );
+        builder.setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        return builder;
     }
 }

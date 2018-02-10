@@ -22,4 +22,3 @@ File releaseProperties = new File( basedir, 'release.properties' )
 assert releaseProperties.exists()
 
 assert 1 == releaseProperties.getText().count("scm.id=it-server")
-assert 1 == releaseProperties.getText().count("project.scm.org.apache.maven.plugin.release.its\\:mrelease-420.id=it-server")

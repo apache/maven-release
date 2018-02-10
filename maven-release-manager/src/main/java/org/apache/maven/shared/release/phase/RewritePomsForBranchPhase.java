@@ -20,8 +20,6 @@ package org.apache.maven.shared.release.phase;
  */
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
@@ -64,9 +62,6 @@ public class RewritePomsForBranchPhase
 
             if ( scmRoot != null )
             {
-                Scm scm = buildScm( project );
-                releaseDescriptor.mapOriginalScmInfo( projectId, scm );
-
                 try
                 {
                     translateScm( project, releaseDescriptor, scmRoot, scmRepository, result, commonBasedir );
@@ -78,15 +73,13 @@ public class RewritePomsForBranchPhase
             }
             else
             {
-                releaseDescriptor.mapOriginalScmInfo( projectId, null );
-
                 MavenProject parent = project.getParent();
                 if ( parent != null )
                 {
                     // If the SCM element is not present, only add it if the parent was not mapped (ie, it's external to
                     // the release process and so has not been modified, so the values will not be correct on the tag),
                     String parentId = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
-                    if ( !releaseDescriptor.getOriginalScmInfo().containsKey( parentId ) )
+                    if ( releaseDescriptor.getOriginalScmInfo( parentId ) == null )
                     {
                         // we need to add it, since it has changed from the inherited value
                         scmRoot = new Scm();
@@ -244,31 +237,21 @@ public class RewritePomsForBranchPhase
     }
 
     @Override
-    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
-                                                         List<MavenProject> reactorProjects, boolean simulate )
+    protected String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate )
     {
-        return releaseDescriptor.getOriginalVersions( reactorProjects );
+        return releaseDescriptor.getProjectOriginalVersion( projectKey );
     }
 
     @Override
-    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    protected String getNextVersion( ReleaseDescriptor releaseDescriptor, String key )
     {
-        return releaseDescriptor.getReleaseVersions();
+        return releaseDescriptor.getProjectReleaseVersion( key );
     }
 
     @Override
     protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                 Map<String, Map<String, String>> resolvedSnapshotsMap )
+                                                 ReleaseDescriptor releaseDescriptor )
     {
-        Map<String, String> versionsMap = resolvedSnapshotsMap.get( artifactVersionlessKey );
-
-        if ( versionsMap != null )
-        {
-            return versionsMap.get( ReleaseDescriptor.RELEASE_KEY );
-        }
-        else
-        {
-            return null;
-        }
+        return releaseDescriptor.getDependencyReleaseVersion( artifactVersionlessKey );
     }
 }

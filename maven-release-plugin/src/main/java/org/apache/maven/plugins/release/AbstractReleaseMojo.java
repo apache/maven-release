@@ -23,6 +23,7 @@ import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Component;
@@ -30,7 +31,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.ReleaseManager;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.util.StringUtils;
@@ -149,15 +150,21 @@ public abstract class AbstractReleaseMojo
      *
      * @return The release descriptor, never <code>null</code>.
      */
-    protected ReleaseDescriptor createReleaseDescriptor()
+    protected ReleaseDescriptorBuilder createReleaseDescriptor()
     {
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
-
+        ReleaseDescriptorBuilder descriptor = new ReleaseDescriptorBuilder();
+        
         descriptor.setInteractive( settings.isInteractiveMode() );
 
         descriptor.setWorkingDirectory( basedir.getAbsolutePath() );
 
         descriptor.setPomFileName( pomFileName );
+
+        for ( MavenProject project : reactorProjects )
+        {
+            String versionlessKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+            descriptor.putOriginalVersion( versionlessKey, project.getVersion() );
+        }
 
         List<String> profileIds = session.getRequest().getActiveProfiles();
         String additionalProfiles = getAdditionalProfiles();
@@ -268,27 +275,6 @@ public abstract class AbstractReleaseMojo
         else
         {
             arguments = argument;
-        }
-    }
-
-    /**
-     * This method takes some of the release configuration picked up from the command line system properties and copies
-     * it into the release config object.
-     *
-     * @param config The release configuration to merge the system properties into, must not be <code>null</code>.
-     * @param sysPropertiesConfig The configuration from the system properties to merge in, must not be
-     *            <code>null</code>.
-     */
-    protected void mergeCommandLineConfig( ReleaseDescriptor config, ReleaseDescriptor sysPropertiesConfig )
-    {
-        // If the user specifies versions, these should override the existing versions
-        if ( sysPropertiesConfig.getReleaseVersions() != null )
-        {
-            config.getReleaseVersions().putAll( sysPropertiesConfig.getReleaseVersions() );
-        }
-        if ( sysPropertiesConfig.getDevelopmentVersions() != null )
-        {
-            config.getDevelopmentVersions().putAll( sysPropertiesConfig.getDevelopmentVersions() );
         }
     }
 }

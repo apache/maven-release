@@ -27,8 +27,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseUpdateVersionsRequest;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.config.ReleaseUtils;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
  * Update the POM versions for a project. This performs the normal version updates of the <tt>release:prepare</tt> goal
@@ -98,7 +97,7 @@ public class UpdateVersionsMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        ReleaseDescriptor config = createReleaseDescriptor();
+        final ReleaseDescriptorBuilder config = createReleaseDescriptor();
         config.setAddSchema( addSchema );
         config.setAutoVersionSubmodules( autoVersionSubmodules );
         config.setDefaultDevelopmentVersion( developmentVersion );
@@ -109,17 +108,13 @@ public class UpdateVersionsMojo
         config.addOriginalScmInfo( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
                                    project.getScm() );
 
-        // Create a config containing values from the session properties (ie command line properties with cli).
-        ReleaseDescriptor sysPropertiesConfig =
-            ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
-        mergeCommandLineConfig( config, sysPropertiesConfig );
-
         try
         {
             ReleaseUpdateVersionsRequest updateVersionsRequest = new ReleaseUpdateVersionsRequest();
-            updateVersionsRequest.setReleaseDescriptor( config );
+            updateVersionsRequest.setReleaseDescriptorBuilder( config );
             updateVersionsRequest.setReleaseEnvironment( getReleaseEnvironment() );
             updateVersionsRequest.setReactorProjects( getReactorProjects() );
+            updateVersionsRequest.setUserProperties( session.getUserProperties() );
 
             releaseManager.updateVersions( updateVersionsRequest );
         }

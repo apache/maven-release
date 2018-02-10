@@ -183,17 +183,10 @@ public class CheckoutProjectFromScm
         }
 
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+
         // TODO: sanity check that it is not . or .. or lower
-        File checkoutDirectory;
-        if ( StringUtils.isEmpty( releaseDescriptor.getCheckoutDirectory() ) )
-        {
-            checkoutDirectory = new File( rootProject.getFile().getParentFile(), "target/checkout" );
-            releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
-        }
-        else
-        {
-            checkoutDirectory = new File( releaseDescriptor.getCheckoutDirectory() );
-        }
+        File checkoutDirectory =
+            FileUtils.resolveFile( rootProject.getBasedir(), releaseDescriptor.getCheckoutDirectory() );
 
         if ( checkoutDirectory.exists() )
         {

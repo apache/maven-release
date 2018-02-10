@@ -22,7 +22,6 @@ package org.apache.maven.shared.release.phase;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -78,10 +77,6 @@ public class CheckDependencySnapshotsPhase
     // We'll probably need to introduce specifiedSnapshots as well.
     // @TODO MRELEASE-378: verify custom dependencies in plugins. Be aware of deprecated/removed Components in M3, such as PluginCollector
     // @TODO MRELEASE-763: verify all dependencies in inactive profiles
-    private Set<Artifact> usedSnapshotDependencies = new HashSet<>();
-    private Set<Artifact> usedSnapshotReports = new HashSet<>();
-    private Set<Artifact> usedSnapshotExtensions = new HashSet<>();
-    private Set<Artifact> usedSnapshotPlugins = new HashSet<>();
     
     // Don't prompt for every project in reactor, remember state of questions
     private String resolveSnapshot;
@@ -99,11 +94,9 @@ public class CheckDependencySnapshotsPhase
         {
             logInfo( result, "Checking dependencies and plugins for snapshots ..." );
 
-            Map<String, String> originalVersions = releaseDescriptor.getOriginalVersions( reactorProjects );
-
             for ( MavenProject project : reactorProjects )
             {
-                checkProject( project, originalVersions, releaseDescriptor );
+                checkProject( project, releaseDescriptor );
             }
         }
         else
@@ -115,35 +108,36 @@ public class CheckDependencySnapshotsPhase
         return result;
     }
 
-    private void checkProject( MavenProject project, Map<String, String> originalVersions,
-                               ReleaseDescriptor releaseDescriptor )
+    private void checkProject( MavenProject project, ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException, ReleaseExecutionException
     {
         Map<String, Artifact> artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
+        
+        Set<Artifact> usedSnapshotDependencies = new HashSet<>();
 
         if ( project.getParentArtifact() != null )
         {
-            if ( checkArtifact( project.getParentArtifact(), originalVersions, artifactMap, releaseDescriptor ) )
+            if ( checkArtifact( project.getParentArtifact(), artifactMap, releaseDescriptor ) )
             {
                 usedSnapshotDependencies.add( project.getParentArtifact() );
             }
         }
 
         Set<Artifact> dependencyArtifacts = project.getArtifacts();
-        checkDependencies( originalVersions, releaseDescriptor, artifactMap, dependencyArtifacts );
+        usedSnapshotDependencies.addAll( checkDependencies( releaseDescriptor, artifactMap, dependencyArtifacts ) );
 
         //@todo check dependencyManagement
 
         Set<Artifact> pluginArtifacts = project.getPluginArtifacts();
-        checkPlugins( originalVersions, releaseDescriptor, artifactMap, pluginArtifacts );
+        Set<Artifact> usedSnapshotPlugins = checkPlugins( releaseDescriptor, artifactMap, pluginArtifacts );
 
         //@todo check pluginManagement
 
         Set<Artifact> reportArtifacts = project.getReportArtifacts();
-        checkReports( originalVersions, releaseDescriptor, artifactMap, reportArtifacts );
+        Set<Artifact> usedSnapshotReports = checkReports( releaseDescriptor, artifactMap, reportArtifacts );
 
         Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
-        checkExtensions( originalVersions, releaseDescriptor, artifactMap, extensionArtifacts );
+        Set<Artifact> usedSnapshotExtensions = checkExtensions( releaseDescriptor, artifactMap, extensionArtifacts );
 
         //@todo check profiles
 
@@ -173,13 +167,14 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private void checkPlugins( Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor,
+    private Set<Artifact> checkPlugins( ReleaseDescriptor releaseDescriptor,
                                Map<String, Artifact> artifactMap, Set<Artifact> pluginArtifacts )
         throws ReleaseExecutionException
     {
+        Set<Artifact> usedSnapshotPlugins = new HashSet<>();
         for ( Artifact artifact : pluginArtifacts )
         {
-            if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
+            if ( checkArtifact( artifact, artifactMap, releaseDescriptor ) )
             {
                 boolean addToFailures;
 
@@ -212,7 +207,6 @@ public class CheckDependencySnapshotsPhase
                             if ( result.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
                             {
                                 addToFailures = false;
-                                releaseDescriptor.setSnapshotReleasePluginAllowed( true );
                             }
                             else
                             {
@@ -240,52 +234,60 @@ public class CheckDependencySnapshotsPhase
                 }
             }
         }
+        return usedSnapshotPlugins;
     }
 
-    private void checkDependencies( Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor,
-                                    Map<String, Artifact> artifactMap, Set<Artifact> dependencyArtifacts )
+    private Set<Artifact> checkDependencies( ReleaseDescriptor releaseDescriptor,
+                                    Map<String, Artifact> artifactMap, 
+                                    Set<Artifact> dependencyArtifacts )
     {
+        Set<Artifact> usedSnapshotDependencies = new HashSet<>();
         for ( Artifact artifact : dependencyArtifacts )
         {
-            if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
+            if ( checkArtifact( artifact, artifactMap, releaseDescriptor ) )
             {
                 usedSnapshotDependencies.add( getArtifactFromMap( artifact, artifactMap ) );
             }
         }
+        return usedSnapshotDependencies;
     }
 
-    private void checkReports( Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor,
+    private Set<Artifact> checkReports( ReleaseDescriptor releaseDescriptor,
                                Map<String, Artifact> artifactMap, Set<Artifact> reportArtifacts )
     {
+        Set<Artifact> usedSnapshotReports = new HashSet<>();
         for ( Artifact artifact : reportArtifacts )
         {
-            if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
+            if ( checkArtifact( artifact, artifactMap, releaseDescriptor ) )
             {
                 //snapshotDependencies.add( artifact );
                 usedSnapshotReports.add( artifact );
             }
         }
+        return usedSnapshotReports;
     }
 
-    private void checkExtensions( Map<String, String> originalVersions, ReleaseDescriptor releaseDescriptor,
+    private Set<Artifact> checkExtensions( ReleaseDescriptor releaseDescriptor,
                                   Map<String, Artifact> artifactMap, Set<Artifact> extensionArtifacts )
     {
+        Set<Artifact> usedSnapshotExtensions = new HashSet<>();
         for ( Artifact artifact : extensionArtifacts )
         {
-            if ( checkArtifact( artifact, originalVersions, artifactMap, releaseDescriptor ) )
+            if ( checkArtifact( artifact, artifactMap, releaseDescriptor ) )
             {
                 usedSnapshotExtensions.add( artifact );
             }
         }
+        return usedSnapshotExtensions;
     }
 
-    private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions,
+    private static boolean checkArtifact( Artifact artifact,
                                           Map<String, Artifact> artifactMapByVersionlessId,
                                           ReleaseDescriptor releaseDescriptor )
     {
         Artifact checkArtifact = getArtifactFromMap( artifact, artifactMapByVersionlessId );
 
-        return checkArtifact( checkArtifact, originalVersions, releaseDescriptor );
+        return checkArtifact( checkArtifact, releaseDescriptor );
     }
 
     private static Artifact getArtifactFromMap( Artifact artifact, Map<String, Artifact> artifactMapByVersionlessId )
@@ -300,16 +302,14 @@ public class CheckDependencySnapshotsPhase
         return checkArtifact;
     }
 
-    private static boolean checkArtifact( Artifact artifact, Map<String, String> originalVersions,
-                                          ReleaseDescriptor releaseDescriptor )
+    private static boolean checkArtifact( Artifact artifact, ReleaseDescriptor releaseDescriptor )
     {
-        String versionlessArtifactKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
-
+        String versionlessKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
+        
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
-        boolean result =
-            artifact.isSnapshot()
-            && !artifact.getBaseVersion().equals( originalVersions.get( versionlessArtifactKey ) );
+        boolean result = artifact.isSnapshot()
+                && !artifact.getBaseVersion().equals( releaseDescriptor.getProjectOriginalVersion( versionlessKey ) );
 
         // If we have a snapshot but allowTimestampedSnapshots is true, accept the artifact if the version
         // indicates that it is a timestamped snapshot.
@@ -368,8 +368,6 @@ public class CheckDependencySnapshotsPhase
 
             if ( resolveSnapshot.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
             {
-                Map<String, Map<String, String>> resolvedSnapshots = null;
-                
                 if ( resolveSnapshotType == null )
                 {
                     prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
@@ -381,36 +379,34 @@ public class CheckDependencySnapshotsPhase
                 {
                     // all
                     case 0:
-                        resolvedSnapshots = processSnapshot( projectDependencies );
-                        resolvedSnapshots.putAll( processSnapshot( pluginDependencies ) );
-                        resolvedSnapshots.putAll( processSnapshot( reportDependencies ) );
-                        resolvedSnapshots.putAll( processSnapshot( extensionDependencies ) );
+                        processSnapshot( projectDependencies, releaseDescriptor );
+                        processSnapshot( pluginDependencies, releaseDescriptor );
+                        processSnapshot( reportDependencies, releaseDescriptor );
+                        processSnapshot( extensionDependencies, releaseDescriptor );
                         break;
 
                         // project dependencies
                     case 1:
-                        resolvedSnapshots = processSnapshot( projectDependencies );
+                        processSnapshot( projectDependencies, releaseDescriptor );
                         break;
 
                         // plugins
                     case 2:
-                        resolvedSnapshots = processSnapshot( pluginDependencies );
+                        processSnapshot( pluginDependencies, releaseDescriptor );
                         break;
 
                         // reports
                     case 3:
-                        resolvedSnapshots = processSnapshot( reportDependencies );
+                        processSnapshot( reportDependencies, releaseDescriptor );
                         break;
 
                         // extensions
                     case 4:
-                        resolvedSnapshots = processSnapshot( extensionDependencies );
+                        processSnapshot( extensionDependencies, releaseDescriptor );
                         break;
 
                     default:
                 }
-
-                releaseDescriptor.getResolvedSnapshotDependencies().putAll( resolvedSnapshots );
             }
         }
         catch ( PrompterException | VersionParseException e )
@@ -419,10 +415,9 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private Map<String, Map<String, String>> processSnapshot( Set<Artifact> snapshotSet )
+    private void processSnapshot( Set<Artifact> snapshotSet, ReleaseDescriptor releaseDescriptor )
         throws PrompterException, VersionParseException
     {
-        Map<String, Map<String, String>> resolvedSnapshots = new HashMap<>();
         Iterator<Artifact> iterator = snapshotSet.iterator();
 
         while ( iterator.hasNext() )
@@ -430,15 +425,15 @@ public class CheckDependencySnapshotsPhase
             Artifact currentArtifact = iterator.next();
             String versionlessKey = ArtifactUtils.versionlessKey( currentArtifact );
 
-            Map<String, String> versionMap = new HashMap<>();
             VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getBaseVersion() );
-            versionMap.put( ReleaseDescriptor.ORIGINAL_VERSION, versionInfo.toString() );
+            releaseDescriptor.addDependencyOriginalVersion( versionlessKey, versionInfo.toString() );
 
             prompter.showMessage(
                 "Dependency '" + versionlessKey + "' is a snapshot (" + currentArtifact.getVersion() + ")\n" );
             String result = prompter.prompt( "Which release version should it be set to?",
                                              versionInfo.getReleaseVersionString() );
-            versionMap.put( ReleaseDescriptor.RELEASE_KEY, result );
+            
+            releaseDescriptor.addDependencyReleaseVersion( versionlessKey, result );
 
             iterator.remove();
 
@@ -457,11 +452,8 @@ public class CheckDependencySnapshotsPhase
             }
 
             result = prompter.prompt( "What version should the dependency be reset to for development?", nextVersion );
-            versionMap.put( ReleaseDescriptor.DEVELOPMENT_KEY, result );
-
-            resolvedSnapshots.put( versionlessKey, versionMap );
+            
+            releaseDescriptor.addDependencyDevelopmentVersion( versionlessKey, result );
         }
-
-        return resolvedSnapshots;
     }
 }

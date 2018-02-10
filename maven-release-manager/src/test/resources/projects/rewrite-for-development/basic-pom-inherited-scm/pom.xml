@@ -37,9 +37,4 @@
     <module>subproject1</module>
   </modules>
 
-  <scm>
-    <connection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</connection>
-    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</developerConnection>
-    <url>file://localhost/tmp/scm-repo/tags/release-label</url>
-  </scm>
 </project>

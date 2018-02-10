@@ -55,15 +55,13 @@ public class DefaultReleaseEnvironment
         return settings;
     }
 
-    @Override
-    public ReleaseEnvironment setMavenHome( File mavenHome )
+    public DefaultReleaseEnvironment setMavenHome( File mavenHome )
     {
         this.mavenHome = mavenHome;
         return this;
     }
 
-    @Override
-    public ReleaseEnvironment setSettings( Settings settings )
+    public DefaultReleaseEnvironment setSettings( Settings settings )
     {
         this.settings = settings;
         return this;
@@ -75,8 +73,7 @@ public class DefaultReleaseEnvironment
         return mavenExecutorId;
     }
 
-    @Override
-    public ReleaseEnvironment setMavenExecutorId( String mavenExecutorId )
+    public DefaultReleaseEnvironment setMavenExecutorId( String mavenExecutorId )
     {
         this.mavenExecutorId = mavenExecutorId;
         return this;
@@ -88,8 +85,7 @@ public class DefaultReleaseEnvironment
         return javaHome;
     }
 
-    @Override
-    public ReleaseEnvironment setJavaHome( File javaHome )
+    public DefaultReleaseEnvironment setJavaHome( File javaHome )
     {
         this.javaHome = javaHome;
         return this;
@@ -108,8 +104,7 @@ public class DefaultReleaseEnvironment
         return localRepo;
     }
 
-    @Override
-    public ReleaseEnvironment setLocalRepositoryDirectory( File localRepositoryDirectory )
+    public DefaultReleaseEnvironment setLocalRepositoryDirectory( File localRepositoryDirectory )
     {
         this.localRepositoryDirectory = localRepositoryDirectory;
         return this;
@@ -121,8 +116,7 @@ public class DefaultReleaseEnvironment
         return locale;
     }
 
-    @Override
-    public ReleaseEnvironment setLocale( Locale locale )
+    public DefaultReleaseEnvironment setLocale( Locale locale )
     {
         this.locale = locale;
         return this;

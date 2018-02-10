@@ -48,7 +48,8 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
@@ -67,7 +68,7 @@ public class RunPerformGoalsPhaseTest
 
     private MavenExecutorWrapper mavenExecutorWrapper;
 
-    private ReleaseEnvironment releaseEnvironment;
+    private DefaultReleaseEnvironment releaseEnvironment;
 
     @Override
     public void setUp()
@@ -90,9 +91,9 @@ public class RunPerformGoalsPhaseTest
         // prepare
         File testFile = getTestFile( "target/checkout-directory" );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setPerformGoals( "goal1 goal2" );
-        config.setCheckoutDirectory( testFile.getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setPerformGoals( "goal1 goal2" );
+        builder.setCheckoutDirectory( testFile.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
 
@@ -111,7 +112,7 @@ public class RunPerformGoalsPhaseTest
         // execute
         try
         {
-            phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, (List<MavenProject>) null );
 
             fail( "Should have thrown an exception" );
         }
@@ -136,16 +137,16 @@ public class RunPerformGoalsPhaseTest
     {
         //prepare
         File testFile = getTestFile( "target/checkout-directory" );
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setPerformGoals( "goal1 goal2" );
-        config.setPomFileName( "pom1.xml" );
-        config.setCheckoutDirectory( testFile.getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setPerformGoals( "goal1 goal2" );
+        builder.setPomFileName( "pom1.xml" );
+        builder.setCheckoutDirectory( testFile.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
 
         mavenExecutorWrapper.setMavenExecutor( mock );
 
-        phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, (List<MavenProject>) null );
 
         verify( mock ).executeGoals( eq( testFile ),
                                      eq( "goal1 goal2" ),
@@ -162,12 +163,12 @@ public class RunPerformGoalsPhaseTest
                     throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setAdditionalArguments( "-Dmaven.test.skip=true" );
-        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setAdditionalArguments( "-Dmaven.test.skip=true" );
+        builder.setPerformGoals( "goal1 goal2" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
-        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
         mavenExecutorWrapper.setMavenExecutor( mock );
@@ -182,10 +183,10 @@ public class RunPerformGoalsPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
-        releaseDescriptor.setUseReleaseProfile( false );
+        builder.setUseReleaseProfile( false );
 
         // execute
-        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, createReactorProjects() );
 
         // verify
         verify( mock ).executeGoals( eq( checkoutDirectory ),
@@ -206,11 +207,11 @@ public class RunPerformGoalsPhaseTest
                     throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setPerformGoals( "goal1 goal2" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
-        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
         mavenExecutorWrapper.setMavenExecutor( mock );
@@ -226,7 +227,7 @@ public class RunPerformGoalsPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, createReactorProjects() );
 
         // verify
         verify( mock ).executeGoals( eq( checkoutDirectory ),
@@ -247,11 +248,11 @@ public class RunPerformGoalsPhaseTest
                     throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setPerformGoals( "goal1 goal2" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
-        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
         mavenExecutorWrapper.setMavenExecutor( mock );
@@ -266,10 +267,10 @@ public class RunPerformGoalsPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
-        releaseDescriptor.setUseReleaseProfile( false );
+        builder.setUseReleaseProfile( false );
 
         // execute
-        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, createReactorProjects() );
 
         // verify
         verify( mock ).executeGoals( eq( checkoutDirectory ),
@@ -290,12 +291,12 @@ public class RunPerformGoalsPhaseTest
                     throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setAdditionalArguments( "-Dmaven.test.skip=true" );
-        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setAdditionalArguments( "-Dmaven.test.skip=true" );
+        builder.setPerformGoals( "goal1 goal2" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
-        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
         mavenExecutorWrapper.setMavenExecutor( mock );
@@ -311,7 +312,7 @@ public class RunPerformGoalsPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, createReactorProjects() );
 
         // verify
         verify( mock ).executeGoals( eq( checkoutDirectory ),
@@ -332,11 +333,11 @@ public class RunPerformGoalsPhaseTest
                     throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setPerformGoals( "goal1 goal2" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setPerformGoals( "goal1 goal2" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
-        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
         mavenExecutorWrapper.setMavenExecutor( mock );
@@ -351,10 +352,10 @@ public class RunPerformGoalsPhaseTest
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
-        releaseDescriptor.setCompletedPhase( "end-release" );
+        builder.setCompletedPhase( "end-release" );
 
         // execute
-        phase.execute( releaseDescriptor, releaseEnvironment, createReactorProjects() );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, createReactorProjects() );
 
         // verify
         verify( mock ).executeGoals( eq( checkoutDirectory ),

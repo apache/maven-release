@@ -34,6 +34,8 @@ import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.codehaus.plexus.interpolation.InterpolationException;
 import org.codehaus.plexus.interpolation.MapBasedValueSource;
 import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
@@ -188,10 +190,10 @@ public class ReleaseUtil
         String url = releaseDescriptor.getScmSourceUrl();
         url = realignScmUrl( parentLevels, url );
 
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        descriptor.setWorkingDirectory( basedir );
-        descriptor.setScmSourceUrl( url );
-        return descriptor;
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setWorkingDirectory( basedir );
+        builder.setScmSourceUrl( url );
+        return ReleaseUtils.buildReleaseDescriptor( builder );
     }
 
     public static String getCommonBasedir( List<MavenProject> reactorProjects )

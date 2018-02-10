@@ -41,7 +41,6 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.cli.Arg;
 import org.codehaus.plexus.util.cli.CommandLineException;
@@ -332,7 +331,7 @@ public class ForkedMavenExecutorTest
         proxy.setPassword( "proxy_password" );
         settings.addProxy( proxy );
 
-        ReleaseEnvironment releaseEnvironment = new DefaultReleaseEnvironment();
+        DefaultReleaseEnvironment releaseEnvironment = new DefaultReleaseEnvironment();
         releaseEnvironment.setSettings( settings );
 
         AbstractMavenExecutor executorSpy = spy( executor );

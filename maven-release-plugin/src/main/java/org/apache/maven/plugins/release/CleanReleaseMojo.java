@@ -24,7 +24,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.shared.release.ReleaseCleanRequest;
 import org.apache.maven.shared.release.ReleaseFailureException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
  * Clean up after a release preparation. This is done automatically after a successful <tt>release:perform</tt>,
@@ -44,11 +44,11 @@ public class CleanReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder releaseDescriptor = new ReleaseDescriptorBuilder();
         releaseDescriptor.setWorkingDirectory( getBasedir().getAbsolutePath() );
 
         ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();
-        cleanRequest.setReleaseDescriptor( releaseDescriptor );
+        cleanRequest.setReleaseDescriptorBuilder( releaseDescriptor );
         cleanRequest.setReactorProjects( getReactorProjects() );
         
         try

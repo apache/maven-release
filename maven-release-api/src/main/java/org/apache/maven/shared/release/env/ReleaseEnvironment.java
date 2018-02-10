@@ -34,23 +34,13 @@ public interface ReleaseEnvironment
 
     String getMavenExecutorId();
 
-    ReleaseEnvironment setMavenExecutorId( String mavenExecutorId );
-
     File getLocalRepositoryDirectory();
-
-    ReleaseEnvironment setLocalRepositoryDirectory( File localRepositoryDirectory );
 
     Settings getSettings();
 
-    ReleaseEnvironment setSettings( Settings settings );
-
     File getMavenHome();
 
-    ReleaseEnvironment setMavenHome( File mavenHome );
-
     File getJavaHome();
-
-    ReleaseEnvironment setJavaHome( File javaHome );
 
     /**
      *
@@ -58,12 +48,4 @@ public interface ReleaseEnvironment
      * @since 2.4
      */
     Locale getLocale();
-
-    /**
-     * @param locale
-     * @return the locale
-     * @since 2.4
-     */
-    ReleaseEnvironment setLocale( Locale locale );
-
 }

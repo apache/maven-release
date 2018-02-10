@@ -19,13 +19,12 @@ package org.apache.maven.shared.release.config;
  * under the License.
  */
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
 
 /**
@@ -35,152 +34,119 @@ import org.apache.maven.shared.release.scm.IdentifiedScm;
  */
 public class ReleaseUtils
 {
+    private static final String DEVELOPMENT_KEY = "dev";
+
+    private static final String RELEASE_KEY = "rel";
+
     private ReleaseUtils()
     {
         // nothing to see here
     }
 
-    /**
-     * Merge two descriptors together. All SCM settings are overridden by the merge descriptor, as is the
-     * <code>workingDirectory</code> field. The <code>completedPhase</code> field is used as
-     * a default from the merge descriptor, but not overridden if it exists.
-     *
-     * @param mergeInto  the descriptor to be merged into
-     * @param toBeMerged the descriptor to merge into mergeInto
-     * @return ReleaseDescriptor the merged descriptor
-     */
-    public static ReleaseDescriptor merge( ReleaseDescriptor mergeInto, ReleaseDescriptor toBeMerged )
+    public static BuilderReleaseDescriptor buildReleaseDescriptor( ReleaseDescriptorBuilder builder )
     {
-        // Overridden if configured from the caller
-        mergeInto.setScmId( mergeOverride( mergeInto.getScmId(), toBeMerged.getScmId() ) );
-        mergeInto.setScmSourceUrl( mergeOverride( mergeInto.getScmSourceUrl(), toBeMerged.getScmSourceUrl() ) );
-        mergeInto.setScmCommentPrefix(
-            mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
-        mergeInto.setScmReleaseLabel( mergeOverride( mergeInto.getScmReleaseLabel(),
-                                                     toBeMerged.getScmReleaseLabel() ) );
-        mergeInto.setScmTagBase( mergeOverride( mergeInto.getScmTagBase(), toBeMerged.getScmTagBase() ) );
-        mergeInto.setScmTagNameFormat(
-            mergeOverride( mergeInto.getScmTagNameFormat(), toBeMerged.getScmTagNameFormat() ) );
-        mergeInto.setScmBranchBase( mergeOverride( mergeInto.getScmBranchBase(), toBeMerged.getScmBranchBase() ) );
-        mergeInto.setScmUsername( mergeOverride( mergeInto.getScmUsername(), toBeMerged.getScmUsername() ) );
-        mergeInto.setScmPassword( mergeOverride( mergeInto.getScmPassword(), toBeMerged.getScmPassword() ) );
-        mergeInto.setScmPrivateKey( mergeOverride( mergeInto.getScmPrivateKey(), toBeMerged.getScmPrivateKey() ) );
-        mergeInto.setScmPrivateKeyPassPhrase(
-            mergeOverride( mergeInto.getScmPrivateKeyPassPhrase(), toBeMerged.getScmPrivateKeyPassPhrase() ) );
-        mergeInto.setScmCommentPrefix(
-            mergeOverride( mergeInto.getScmCommentPrefix(), toBeMerged.getScmCommentPrefix() ) );
-        mergeInto.setAdditionalArguments(
-            mergeOverride( mergeInto.getAdditionalArguments(), toBeMerged.getAdditionalArguments() ) );
-        mergeInto.setPreparationGoals(
-            mergeOverride( mergeInto.getPreparationGoals(), toBeMerged.getPreparationGoals() ) );
-        mergeInto.setCompletionGoals(
-            mergeOverride( mergeInto.getCompletionGoals(), toBeMerged.getCompletionGoals() ) );
-        mergeInto.setPerformGoals( mergeOverride( mergeInto.getPerformGoals(), toBeMerged.getPerformGoals() ) );
-        mergeInto.setPomFileName( mergeOverride( mergeInto.getPomFileName(), toBeMerged.getPomFileName() ) );
-        mergeInto.setCheckModificationExcludes( toBeMerged.getCheckModificationExcludes() );
-        mergeInto.setScmUseEditMode( toBeMerged.isScmUseEditMode() );
-        mergeInto.setAddSchema( toBeMerged.isAddSchema() );
-        mergeInto.setGenerateReleasePoms( toBeMerged.isGenerateReleasePoms() );
-        mergeInto.setInteractive( toBeMerged.isInteractive() );
-        mergeInto.setUpdateDependencies( toBeMerged.isUpdateDependencies() );
-        mergeInto.setCommitByProject( mergeOverride( mergeInto.isCommitByProject(), toBeMerged.isCommitByProject(),
-                                                     false ) );
-        mergeInto.setUseReleaseProfile( toBeMerged.isUseReleaseProfile() );
-        mergeInto.setBranchCreation( toBeMerged.isBranchCreation() );
-        mergeInto.setUpdateBranchVersions( toBeMerged.isUpdateBranchVersions() );
-        mergeInto.setUpdateWorkingCopyVersions( toBeMerged.isUpdateWorkingCopyVersions() );
-        mergeInto.setSuppressCommitBeforeTagOrBranch( toBeMerged.isSuppressCommitBeforeTagOrBranch() );
-        mergeInto.setUpdateVersionsToSnapshot( toBeMerged.isUpdateVersionsToSnapshot() );
-        mergeInto.setAllowTimestampedSnapshots( toBeMerged.isAllowTimestampedSnapshots() );
-        mergeInto.setSnapshotReleasePluginAllowed( toBeMerged.isSnapshotReleasePluginAllowed() );
-        mergeInto.setAutoVersionSubmodules( toBeMerged.isAutoVersionSubmodules() );
-        mergeInto.setDefaultReleaseVersion( mergeOverride( mergeInto.getDefaultReleaseVersion(),
-                                                           toBeMerged.getDefaultReleaseVersion() ) );
-        mergeInto.setDefaultDevelopmentVersion( mergeOverride( mergeInto.getDefaultDevelopmentVersion(),
-                                                               toBeMerged.getDefaultDevelopmentVersion() ) );
-        mergeInto.setRemoteTagging( toBeMerged.isRemoteTagging() );
-        mergeInto.setLocalCheckout( toBeMerged.isLocalCheckout() );
-        mergeInto.setPushChanges( toBeMerged.isPushChanges() );
-        mergeInto.setWaitBeforeTagging( toBeMerged.getWaitBeforeTagging() );
+        return builder.build();
+    }
 
-        // If the user specifies versions, these should be override the existing versions
-        if ( toBeMerged.getReleaseVersions() != null )
+    public static void copyPropertiesToReleaseDescriptor( Properties properties, ReleaseDescriptorBuilder builder )
+    {
+        if ( properties.containsKey( "completedPhase" ) )
         {
-            mergeInto.getReleaseVersions().putAll( toBeMerged.getReleaseVersions() );
+            builder.setCompletedPhase( properties.getProperty( "completedPhase" ) );
         }
-        if ( toBeMerged.getDevelopmentVersions() != null )
+        if ( properties.containsKey( "commitByProject" ) )
         {
-            mergeInto.getDevelopmentVersions().putAll( toBeMerged.getDevelopmentVersions() );
+            builder.setCommitByProject( Boolean.parseBoolean( properties.getProperty( "commitByProject" ) ) );
         }
-        // These must be overridden, as they are not stored
-        mergeInto.setWorkingDirectory(
-            mergeOverride( mergeInto.getWorkingDirectory(), toBeMerged.getWorkingDirectory() ) );
-        mergeInto.setCheckoutDirectory(
-            mergeOverride( mergeInto.getCheckoutDirectory(), toBeMerged.getCheckoutDirectory() ) );
+        if ( properties.containsKey( "scm.id" ) )
+        {
+            builder.setScmId( properties.getProperty( "scm.id" ) );
+        }
+        if ( properties.containsKey( "scm.url" ) )
+        {
+            builder.setScmSourceUrl( properties.getProperty( "scm.url" ) );
+        }
+        if ( properties.containsKey( "scm.username" ) )
+        {
+            builder.setScmUsername( properties.getProperty( "scm.username" ) );
+        }
+        if ( properties.containsKey( "scm.password" ) )
+        {
+            builder.setScmPassword( properties.getProperty( "scm.password" ) );
+        }
+        if ( properties.containsKey( "scm.privateKey" ) )
+        {
+            builder.setScmPrivateKey( properties.getProperty( "scm.privateKey" ) );
+        }
+        if ( properties.containsKey( "scm.passphrase" ) )
+        {
+            builder.setScmPrivateKeyPassPhrase( properties.getProperty( "scm.passphrase" ) );
+        }
+        if ( properties.containsKey( "scm.tagBase" ) )
+        {
+            builder.setScmTagBase( properties.getProperty( "scm.tagBase" ) );
+        }
+        if ( properties.containsKey( "scm.tagNameFormat" ) )
+        {
+            builder.setScmTagNameFormat( properties.getProperty( "scm.tagNameFormat" ) );
+        }
+        if ( properties.containsKey( "scm.branchBase" ) )
+        {
+            builder.setScmBranchBase( properties.getProperty( "scm.branchBase" ) );
+        }
+        if ( properties.containsKey( "scm.tag" ) )
+        {
+            builder.setScmReleaseLabel( properties.getProperty( "scm.tag" ) );
+        }
+        if ( properties.containsKey( "scm.commentPrefix" ) )
+        {
+            builder.setScmCommentPrefix( properties.getProperty( "scm.commentPrefix" ) );
+        }
+        if ( properties.containsKey( "exec.additionalArguments" ) )
+        {
+            builder.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
+        }
+        if ( properties.containsKey( "exec.pomFileName" ) )
+        {
+            builder.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
+        }
+        if ( properties.containsKey( "preparationGoals" ) )
+        {
+            builder.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
+        }
+        if ( properties.containsKey( "completionGoals" ) )
+        {
+            builder.setCompletionGoals( properties.getProperty( "completionGoals" ) );
+        }
+        if ( properties.containsKey( "projectVersionPolicyId" ) )
+        {
+            builder.setProjectVersionPolicyId( properties.getProperty( "projectVersionPolicyId" ) );
+        }
+        if ( properties.containsKey( "projectNamingPolicyId" ) )
+        {
+            builder.setProjectNamingPolicyId( properties.getProperty( "projectNamingPolicyId" ) );
+        }
+        if ( properties.containsKey( "releaseStrategyId" ) )
+        {
+            builder.setReleaseStrategyId( properties.getProperty( "releaseStrategyId" ) );
+        }
+        if ( properties.containsKey( "exec.snapshotReleasePluginAllowed" ) )
+        {
+            String snapshotReleasePluginAllowedStr = properties.getProperty( "exec.snapshotReleasePluginAllowed" );
+            builder.setSnapshotReleasePluginAllowed( Boolean.valueOf( snapshotReleasePluginAllowedStr ) );
+        }
+        if ( properties.containsKey( "remoteTagging" ) )
+        {
+            String remoteTaggingStr = properties.getProperty( "remoteTagging" );
+            builder.setRemoteTagging( Boolean.valueOf( remoteTaggingStr ) );
+        }
+        if ( properties.containsKey( "pushChanges" ) )
+        {
+            String pushChanges = properties.getProperty( "pushChanges" );
+            builder.setPushChanges( Boolean.valueOf( pushChanges ) );
+        }
 
-        // Not overridden - not configured from caller
-        mergeInto.setCompletedPhase( mergeDefault( mergeInto.getCompletedPhase(), toBeMerged.getCompletedPhase() ) );
-
-        mergeInto.setProjectVersionPolicyId( mergeDefault( mergeInto.getProjectVersionPolicyId(),
-                                                           toBeMerged.getProjectVersionPolicyId() ) );
-        mergeInto.setProjectNamingPolicyId( mergeDefault( mergeInto.getProjectNamingPolicyId(),
-                                                          toBeMerged.getProjectNamingPolicyId() ) );
-        mergeInto.setReleaseStrategyId( mergeOverride( mergeInto.getReleaseStrategyId(),
-                                                          toBeMerged.getReleaseStrategyId() ) );
-
-        return mergeInto;
-    }
-
-    private static String mergeOverride( String thisValue, String mergeValue )
-    {
-        return mergeValue != null ? mergeValue : thisValue;
-    }
-
-    private static String mergeDefault( String thisValue, String mergeValue )
-    {
-        return thisValue != null ? thisValue : mergeValue;
-    }
-
-    private static boolean mergeOverride( boolean thisValue, boolean mergeValue, boolean defaultValue )
-    {
-        return mergeValue != defaultValue ? mergeValue : thisValue;
-    }
-
-    public static ReleaseDescriptor copyPropertiesToReleaseDescriptor( Properties properties )
-    {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setCompletedPhase( properties.getProperty( "completedPhase" ) );
-        releaseDescriptor.setCommitByProject( Boolean.parseBoolean( properties.getProperty( "commitByProject" ) ) );
-        releaseDescriptor.setScmId( properties.getProperty( "scm.id" ) );
-        releaseDescriptor.setScmSourceUrl( properties.getProperty( "scm.url" ) );
-        releaseDescriptor.setScmUsername( properties.getProperty( "scm.username" ) );
-        releaseDescriptor.setScmPassword( properties.getProperty( "scm.password" ) );
-        releaseDescriptor.setScmPrivateKey( properties.getProperty( "scm.privateKey" ) );
-        releaseDescriptor.setScmPrivateKeyPassPhrase( properties.getProperty( "scm.passphrase" ) );
-        releaseDescriptor.setScmTagBase( properties.getProperty( "scm.tagBase" ) );
-        releaseDescriptor.setScmTagNameFormat( properties.getProperty( "scm.tagNameFormat" ) );
-        releaseDescriptor.setScmBranchBase( properties.getProperty( "scm.branchBase" ) );
-        releaseDescriptor.setScmReleaseLabel( properties.getProperty( "scm.tag" ) );
-        releaseDescriptor.setScmCommentPrefix( properties.getProperty( "scm.commentPrefix" ) );
-        releaseDescriptor.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
-        releaseDescriptor.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
-        releaseDescriptor.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
-        releaseDescriptor.setCompletionGoals( properties.getProperty( "completionGoals" ) );
-        releaseDescriptor.setProjectVersionPolicyId( properties.getProperty( "projectVersionPolicyId" ) );
-        releaseDescriptor.setProjectNamingPolicyId( properties.getProperty( "projectNamingPolicyId" ) );
-        releaseDescriptor.setReleaseStrategyId( properties.getProperty( "releaseStrategyId" ) );
-        String snapshotReleasePluginAllowedStr = properties.getProperty( "exec.snapshotReleasePluginAllowed" );
-        releaseDescriptor.setSnapshotReleasePluginAllowed( snapshotReleasePluginAllowedStr == null
-                                                               ? false
-                                                               : Boolean.valueOf(
-                                                                   snapshotReleasePluginAllowedStr ).booleanValue() );
-        String remoteTaggingStr = properties.getProperty( "remoteTagging" );
-        releaseDescriptor.setRemoteTagging(
-            remoteTaggingStr == null ? false : Boolean.valueOf( remoteTaggingStr ).booleanValue() );
-        String pushChanges = properties.getProperty( "pushChanges" );
-        releaseDescriptor.setPushChanges( pushChanges == null ? true : Boolean.valueOf( pushChanges ).booleanValue() );
-
-        loadResolvedDependencies( properties, releaseDescriptor );
+        loadResolvedDependencies( properties, builder );
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
@@ -189,12 +155,12 @@ public class ReleaseUtils
             String property = (String) i.next();
             if ( property.startsWith( "project.rel." ) )
             {
-                releaseDescriptor.mapReleaseVersion( property.substring( "project.rel.".length() ),
+                builder.addReleaseVersion( property.substring( "project.rel.".length() ),
                                                      properties.getProperty( property ) );
             }
             else if ( property.startsWith( "project.dev." ) )
             {
-                releaseDescriptor.mapDevelopmentVersion( property.substring( "project.dev.".length() ),
+                builder.addDevelopmentVersion( property.substring( "project.dev.".length() ),
                                                          properties.getProperty( property ) );
             }
             else if ( property.startsWith( "project.scm." ) )
@@ -204,11 +170,11 @@ public class ReleaseUtils
                 {
                     String key = property.substring( "project.scm.".length(), index );
 
-                    if ( !releaseDescriptor.getOriginalScmInfo().containsKey( key ) )
+                    if ( builder.build().getOriginalScmInfo( key ) == null )
                     {
                         if ( properties.getProperty( "project.scm." + key + ".empty" ) != null )
                         {
-                            releaseDescriptor.mapOriginalScmInfo( key, null );
+                            builder.addOriginalScmInfo( key, null );
                         }
                         else
                         {
@@ -220,19 +186,16 @@ public class ReleaseUtils
                             scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
                             scm.setId( properties.getProperty( "project.scm." + key + ".id" ) );
 
-                            releaseDescriptor.mapOriginalScmInfo( key, scm );
+                            builder.addOriginalScmInfo( key, scm );
                         }
                     }
                 }
             }
         }
-        return releaseDescriptor;
     }
 
-    private static void loadResolvedDependencies( Properties prop, ReleaseDescriptor descriptor )
+    private static void loadResolvedDependencies( Properties prop, ReleaseDescriptorBuilder builder )
     {
-        Map<String, Map<String, String>> resolvedDependencies = new HashMap<>();
-
         Set entries = prop.entrySet();
         Iterator<Entry<String, String>> iterator = entries.iterator();
         String propertyName;
@@ -245,23 +208,20 @@ public class ReleaseUtils
 
             if ( propertyName.startsWith( "dependency." ) )
             {
-                Map<String, String> versionMap;
                 String artifactVersionlessKey;
                 int startIndex = "dependency.".length();
                 int endIndex;
                 String versionType;
 
-                versionMap = new HashMap<>();
-
                 if ( propertyName.indexOf( ".development" ) != -1 )
                 {
                     endIndex = propertyName.lastIndexOf( ".development" );
-                    versionType = ReleaseDescriptor.DEVELOPMENT_KEY;
+                    versionType = DEVELOPMENT_KEY;
                 }
                 else if ( propertyName.indexOf( ".release" ) != -1 )
                 {
                     endIndex = propertyName.lastIndexOf( ".release" );
-                    versionType = ReleaseDescriptor.RELEASE_KEY;
+                    versionType = RELEASE_KEY;
                 }
                 else
                 {
@@ -271,21 +231,16 @@ public class ReleaseUtils
 
                 artifactVersionlessKey = propertyName.substring( startIndex, endIndex );
 
-                if ( resolvedDependencies.containsKey( artifactVersionlessKey ) )
+                if ( RELEASE_KEY.equals( versionType ) )
                 {
-                    versionMap = resolvedDependencies.get( artifactVersionlessKey );
+                    builder.addDependencyReleaseVersion( artifactVersionlessKey, currentEntry.getValue() );
                 }
-                else
+                else if ( DEVELOPMENT_KEY.equals( versionType ) )
                 {
-                    versionMap = new HashMap<>();
-                    resolvedDependencies.put( artifactVersionlessKey, versionMap );
+                    builder.addDependencyDevelopmentVersion( artifactVersionlessKey, currentEntry.getValue() );
                 }
-
-                versionMap.put( versionType, currentEntry.getValue() );
             }
         }
-
-        descriptor.setResolvedSnapshotDependencies( resolvedDependencies );
     }
 
 }

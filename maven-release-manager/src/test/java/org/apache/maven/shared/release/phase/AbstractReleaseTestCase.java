@@ -57,6 +57,7 @@ import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.project.ProjectSorter;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.repository.WorkspaceReader;
@@ -101,6 +102,16 @@ public abstract class AbstractReleaseTestCase
         throws Exception
     {
         return createReactorProjects( path, path, subpath );
+    }
+    
+    protected ReleaseDescriptorBuilder createReleaseDescriptorBuilder( List<MavenProject> reactorProjects )
+    {
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        for ( MavenProject project : reactorProjects )
+        {
+            builder.putOriginalVersion( project.getGroupId() + ':' + project.getArtifactId(), project.getVersion() );
+        }
+        return builder;
     }
 
     /**

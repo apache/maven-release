@@ -121,16 +121,16 @@ public class MapVersionsPhase
             {
                 if ( releaseDescriptor.isBranchCreation() && convertToBranch )
                 {
-                    releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
+                    releaseDescriptor.addReleaseVersion( projectId, nextVersion );
                 }
                 else
                 {
-                    releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
+                    releaseDescriptor.addDevelopmentVersion( projectId, nextVersion );
                 }
             }
             else
             {
-                releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
+                releaseDescriptor.addReleaseVersion( projectId, nextVersion );
             }
 
             for ( MavenProject subProject : reactorProjects )
@@ -152,16 +152,16 @@ public class MapVersionsPhase
 
                     if ( releaseDescriptor.isBranchCreation() && convertToBranch )
                     {
-                        releaseDescriptor.mapReleaseVersion( subProjectId, v );
+                        releaseDescriptor.addReleaseVersion( subProjectId, v );
                     }
                     else
                     {
-                        releaseDescriptor.mapDevelopmentVersion( subProjectId, v );
+                        releaseDescriptor.addDevelopmentVersion( subProjectId, v );
                     }
                 }
                 else
                 {
-                    releaseDescriptor.mapReleaseVersion( subProjectId, nextVersion );
+                    releaseDescriptor.addReleaseVersion( subProjectId, nextVersion );
                 }
             }
         }
@@ -177,16 +177,16 @@ public class MapVersionsPhase
                 {
                     if ( releaseDescriptor.isBranchCreation() && convertToBranch )
                     {
-                        releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
+                        releaseDescriptor.addReleaseVersion( projectId, nextVersion );
                     }
                     else
                     {
-                        releaseDescriptor.mapDevelopmentVersion( projectId, nextVersion );
+                        releaseDescriptor.addDevelopmentVersion( projectId, nextVersion );
                     }
                 }
                 else
                 {
-                    releaseDescriptor.mapReleaseVersion( projectId, nextVersion );
+                    releaseDescriptor.addReleaseVersion( projectId, nextVersion );
                 }
             }
         }
@@ -333,7 +333,7 @@ public class MapVersionsPhase
         String defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
         if ( StringUtils.isEmpty( defaultVersion ) )
         {
-            defaultVersion = releaseDescriptor.getDevelopmentVersions().get( projectId );
+            defaultVersion = releaseDescriptor.getProjectDevelopmentVersion( projectId );
         }
         return defaultVersion;
     }
@@ -343,7 +343,7 @@ public class MapVersionsPhase
         String nextVersion = releaseDescriptor.getDefaultReleaseVersion();
         if ( StringUtils.isEmpty( nextVersion ) )
         {
-            nextVersion = releaseDescriptor.getReleaseVersions().get( projectId );
+            nextVersion = releaseDescriptor.getProjectReleaseVersion( projectId );
         }
         return nextVersion;
     }

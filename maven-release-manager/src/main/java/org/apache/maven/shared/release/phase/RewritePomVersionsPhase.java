@@ -19,9 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -61,21 +58,20 @@ public class RewritePomVersionsPhase
     }
 
     @Override
-    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
-                                                         List<MavenProject> reactorProjects, boolean simulate )
+    protected String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate )
     {
-        return releaseDescriptor.getOriginalVersions( reactorProjects );
+        return releaseDescriptor.getProjectOriginalVersion( projectKey );
     }
 
     @Override
-    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    protected String getNextVersion( ReleaseDescriptor releaseDescriptor, String key )
     {
-        return releaseDescriptor.getDevelopmentVersions();
+        return releaseDescriptor.getProjectDevelopmentVersion( key );
     }
 
     @Override
     protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                 Map<String, Map<String, String>> resolvedSnapshotsMap )
+                                                 ReleaseDescriptor resolvedSnapshotsMap )
     {
         // Only update the pom version, not the dependency versions
         return null;

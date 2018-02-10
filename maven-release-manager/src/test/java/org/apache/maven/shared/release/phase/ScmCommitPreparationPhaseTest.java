@@ -53,7 +53,8 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
@@ -99,11 +100,11 @@ public class ScmCommitPreparationPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        descriptor.setScmSourceUrl( "scm-url" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
-        descriptor.setScmReleaseLabel( "release-label" );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
 
@@ -119,7 +120,7 @@ public class ScmCommitPreparationPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -132,13 +133,13 @@ public class ScmCommitPreparationPhaseTest
         throws Exception
     {
         // prepare
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         String dir = "scm-commit/multiple-poms";
         List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
-        descriptor.setScmSourceUrl( "scm-url" );
+        builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
-        descriptor.setScmReleaseLabel( "release-label" );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
 
         List<File> poms = new ArrayList<>();
         for ( Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); )
@@ -159,7 +160,7 @@ public class ScmCommitPreparationPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -174,12 +175,12 @@ public class ScmCommitPreparationPhaseTest
         // prepare
         phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-commit-development" );
 
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
-        descriptor.setScmSourceUrl( "scm-url" );
+        builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
-        descriptor.setScmReleaseLabel( "release-label" );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
 
@@ -194,7 +195,7 @@ public class ScmCommitPreparationPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -207,12 +208,12 @@ public class ScmCommitPreparationPhaseTest
     public void testCommitNoReleaseLabel()
         throws Exception
     {
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
 
         try
         {
-            phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
             fail( "Should have thrown an exception" );
         }
         catch ( ReleaseFailureException e )
@@ -227,12 +228,12 @@ public class ScmCommitPreparationPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        descriptor.setScmSourceUrl( "scm-url" );
-        descriptor.setGenerateReleasePoms( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setGenerateReleasePoms( true );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
-        descriptor.setScmReleaseLabel( "release-label" );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
 
         List<File> files = new ArrayList<>();
         files.add( rootProject.getFile() );
@@ -251,7 +252,7 @@ public class ScmCommitPreparationPhaseTest
         stub.setScmProvider( scmProviderMock );
 
         // execute
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -263,19 +264,19 @@ public class ScmCommitPreparationPhaseTest
     public void testSimulateCommit()
         throws Exception
     {
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
-        descriptor.setScmSourceUrl( "scm-url" );
+        builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        descriptor.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
-        descriptor.setScmReleaseLabel( "release-label" );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
-        phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // never invoke scmProviderMock
         verifyNoMoreInteractions( scmProviderMock );
@@ -285,12 +286,12 @@ public class ScmCommitPreparationPhaseTest
     public void testSimulateCommitNoReleaseLabel()
         throws Exception
     {
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
 
         try
         {
-            phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
             fail( "Should have thrown an exception" );
         }
         catch ( ReleaseFailureException e )
@@ -305,14 +306,14 @@ public class ScmCommitPreparationPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
         // execute
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -329,7 +330,7 @@ public class ScmCommitPreparationPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
@@ -337,7 +338,7 @@ public class ScmCommitPreparationPhaseTest
         // execute
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -354,7 +355,7 @@ public class ScmCommitPreparationPhaseTest
     {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.checkIn( isA( ScmRepository.class ), isA( ScmFileSet.class ), isNull( ScmVersion.class ),
@@ -366,7 +367,7 @@ public class ScmCommitPreparationPhaseTest
         // execute
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Status check should have failed" );
         }
@@ -386,17 +387,17 @@ public class ScmCommitPreparationPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects();
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =
-            (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
+            (ScmProviderStub) scmManager.getProviderByUrl( "scm-url" );
 
         providerStub.setCheckInScmResult( new CheckInScmResult( "", "", "", false ) );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Commit should have failed" );
         }
@@ -410,11 +411,11 @@ public class ScmCommitPreparationPhaseTest
     public void testSuppressCommitWithRemoteTaggingFails()
         throws Exception
     {
-        ReleaseDescriptor descriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
 
-        descriptor.setRemoteTagging( true );
-        descriptor.setSuppressCommitBeforeTagOrBranch( true );
+        builder.setRemoteTagging( true );
+        builder.setSuppressCommitBeforeTagOrBranch( true );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
@@ -423,7 +424,7 @@ public class ScmCommitPreparationPhaseTest
 
         try
         {
-            phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Commit should have failed with ReleaseFailureException" );
         }
@@ -440,19 +441,19 @@ public class ScmCommitPreparationPhaseTest
     public void testSuppressCommitAfterBranch()
         throws Exception
     {
-        ReleaseDescriptor descriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
 
-        descriptor.setBranchCreation( true );
-        descriptor.setRemoteTagging( false );
-        descriptor.setSuppressCommitBeforeTagOrBranch( true );
+        builder.setBranchCreation( true );
+        builder.setRemoteTagging( false );
+        builder.setSuppressCommitBeforeTagOrBranch( true );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // never invoke scmProviderMock
         verifyNoMoreInteractions( scmProviderMock );
@@ -465,12 +466,12 @@ public class ScmCommitPreparationPhaseTest
         return createReactorProjects( dir, dir, null );
     }
 
-    private static ReleaseDescriptor createReleaseDescriptor()
+    private static ReleaseDescriptorBuilder createReleaseDescriptorBuilder()
     {
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
-        descriptor.setScmSourceUrl( "scm-url" );
-        descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
-        return descriptor;
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmReleaseLabel( "release-label" );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        return builder;
     }
 }

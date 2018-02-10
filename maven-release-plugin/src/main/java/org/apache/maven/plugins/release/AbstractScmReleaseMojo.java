@@ -21,12 +21,15 @@ package org.apache.maven.plugins.release;
 
 import java.util.Map;
 
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
  * Abstract Mojo containing SCM parameters
@@ -127,9 +130,9 @@ public abstract class AbstractScmReleaseMojo
     }
 
     @Override
-    protected ReleaseDescriptor createReleaseDescriptor()
+    protected ReleaseDescriptorBuilder createReleaseDescriptor()
     {
-        ReleaseDescriptor descriptor = super.createReleaseDescriptor();
+        ReleaseDescriptorBuilder descriptor = super.createReleaseDescriptor();
 
         descriptor.setScmPassword( password );
         descriptor.setScmReleaseLabel( tag );
@@ -139,7 +142,51 @@ public abstract class AbstractScmReleaseMojo
         descriptor.setScmCommentPrefix( scmCommentPrefix );
 
         descriptor.setPushChanges( pushChanges );
+        
+        if ( project.getScm() != null )
+        {
+            if ( project.getScm().getDeveloperConnection() != null )
+            {
+                descriptor.setScmSourceUrl( project.getScm().getDeveloperConnection() );
+            }
+            else if ( project.getScm().getConnection() != null )
+            {
+                descriptor.setScmSourceUrl( project.getScm().getConnection() );
+            }
+        }
+        
+        // As long as Scm.getId() does not exist, read it as a property
+        descriptor.setScmId( project.getProperties().getProperty( "project.scm.id" ) );
+        
+        for ( MavenProject reactorProject : session.getProjects() )
+        {
+            if ( reactorProject.getScm() != null )
+            {
+                String projectId =
+                    ArtifactUtils.versionlessKey( reactorProject.getGroupId(), reactorProject.getArtifactId() );
+                
+                descriptor.addOriginalScmInfo( projectId, buildScm( project ) );
+            }
+        }
 
         return descriptor;
+    }
+    
+    protected Scm buildScm( MavenProject project )
+    {
+        Scm scm;
+        if ( project.getOriginalModel().getScm() == null )
+        {
+            scm = null;
+        }
+        else
+        {
+            scm = new Scm();
+            scm.setConnection( project.getOriginalModel().getScm().getConnection() );
+            scm.setDeveloperConnection( project.getOriginalModel().getScm().getDeveloperConnection() );
+            scm.setTag( project.getOriginalModel().getScm().getTag() );
+            scm.setUrl( project.getOriginalModel().getScm().getUrl() );
+        }
+        return scm;
     }
 }

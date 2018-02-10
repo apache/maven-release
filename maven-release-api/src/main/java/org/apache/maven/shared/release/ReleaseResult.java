@@ -132,10 +132,4 @@ public class ReleaseResult
 
         return byteStream.toString();
     }
-
-    @Deprecated
-    public StringBuffer getOutputBuffer()
-    {
-        return new StringBuffer( stdOut );
-    }
 }

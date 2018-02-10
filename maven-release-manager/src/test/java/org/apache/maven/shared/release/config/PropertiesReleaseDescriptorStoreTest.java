@@ -1,5 +1,7 @@
 package org.apache.maven.shared.release.config;
 
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -45,7 +47,7 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         super.setUp();
         store = (PropertiesReleaseDescriptorStore) lookup( ReleaseDescriptorStore.class, "properties" );
-        secDispatcher = (SecDispatcher) lookup( SecDispatcher.class, "mng-4384" );
+        secDispatcher = lookup( SecDispatcher.class, "mng-4384" );
     }
 
     public void testReadFromFile()
@@ -53,9 +55,9 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         File file = getTestFile( "target/test-classes/release.properties" );
 
-        ReleaseDescriptor config = store.read( file );
+        ReleaseDescriptor config = store.read( file ).build();
 
-        ReleaseDescriptor expected = createExpectedReleaseConfiguration();
+        ReleaseDescriptor expected = createExpectedReleaseConfiguration().build();
 
         assertEquals( "check matches", expected, config );
     }
@@ -63,14 +65,14 @@ public class PropertiesReleaseDescriptorStoreTest
     public void testReadFromFileUsingWorkingDirectory()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath(  getTestFile( "target/test-classes" ) ) );
-        ReleaseDescriptor config = store.read( releaseDescriptor );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setWorkingDirectory( AbstractReleaseTestCase.getPath(  getTestFile( "target/test-classes" ) ) );
+        ReleaseDescriptor config = store.read( builder ).build();
 
-        ReleaseDescriptor expected = createExpectedReleaseConfiguration();
-        expected.setWorkingDirectory( releaseDescriptor.getWorkingDirectory() );
+        ReleaseDescriptorBuilder expected = createExpectedReleaseConfiguration();
+        expected.setWorkingDirectory( builder.build().getWorkingDirectory() );
 
-        assertEquals( "check matches", expected, config );
+        assertEquals( "check matches", expected.build(), config );
     }
 
     public void testReadFromEmptyFile()
@@ -78,7 +80,7 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         File file = getTestFile( "target/test-classes/empty-release.properties" );
 
-        ReleaseDescriptor config = store.read( file );
+        BuilderReleaseDescriptor config = store.read( file ).build();
 
         assertDefaultReleaseConfiguration( config );
     }
@@ -88,7 +90,7 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         File file = getTestFile( "target/test-classes/no-release.properties" );
 
-        ReleaseDescriptor config = store.read( file );
+        BuilderReleaseDescriptor config = store.read( file ).build();
 
         assertDefaultReleaseConfiguration( config );
     }
@@ -98,10 +100,10 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         File file = getTestFile( "target/test-classes/empty-release.properties" );
 
-        ReleaseDescriptor mergeDescriptor = createMergeConfiguration();
-        ReleaseDescriptor config = store.read( mergeDescriptor, file );
+        ReleaseDescriptorBuilder mergeDescriptor = createMergeConfiguration();
+        ReleaseDescriptor config = store.read( mergeDescriptor, file ).build();
 
-        assertEquals( "Check configurations merged", mergeDescriptor, config );
+        assertEquals( "Check configurations merged", mergeDescriptor.build(), config );
     }
 
     public void testMergeFromMissingFile()
@@ -109,10 +111,10 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         File file = getTestFile( "target/test-classes/no-release.properties" );
 
-        ReleaseDescriptor mergeDescriptor = createMergeConfiguration();
-        ReleaseDescriptor config = store.read( mergeDescriptor, file );
+        ReleaseDescriptorBuilder mergeDescriptor = createMergeConfiguration();
+        ReleaseDescriptor config = store.read( mergeDescriptor, file ).build();
 
-        assertEquals( "Check configurations merged", mergeDescriptor, config );
+        assertEquals( "Check configurations merged", mergeDescriptor.build(), config );
     }
 
     public void testWriteToNewFile()
@@ -122,16 +124,16 @@ public class PropertiesReleaseDescriptorStoreTest
         file.delete();
         assertFalse( "Check file doesn't exist", file.exists() );
 
-        ReleaseDescriptor config = createReleaseConfigurationForWriting();
+        ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
 
-        store.write( config, file );
+        store.write( config.build(), file );
 
-        ReleaseDescriptor rereadDescriptor = store.read( file );
+        ReleaseDescriptor rereadDescriptor = store.read( file ).build();
 
         assertAndAdjustScmPassword( config, rereadDescriptor );
         assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
 
-        assertEquals( "compare configuration", config, rereadDescriptor );
+        assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
 
     public void testWriteToWorkingDirectory()
@@ -142,18 +144,18 @@ public class PropertiesReleaseDescriptorStoreTest
         assertFalse( "Check file doesn't exist", file.exists() );
         file.getParentFile().mkdirs();
 
-        ReleaseDescriptor config = createReleaseConfigurationForWriting();
+        ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
         config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
-        store.write( config );
+        store.write( config.build() );
 
-        ReleaseDescriptor rereadDescriptor = store.read( file );
-        rereadDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
+        ReleaseDescriptorBuilder rereadDescriptorBuilder = store.read( file );
+        rereadDescriptorBuilder.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
-        assertAndAdjustScmPassword( config, rereadDescriptor );
-        assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
+        assertAndAdjustScmPassword( config, rereadDescriptorBuilder.build() );
+        assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptorBuilder.build() );
 
-        assertEquals( "compare configuration", config, rereadDescriptor );
+        assertEquals( "compare configuration", config.build(), rereadDescriptorBuilder.build() );
     }
 
     public void testWriteToNewFileRequiredOnly()
@@ -163,15 +165,15 @@ public class PropertiesReleaseDescriptorStoreTest
         file.delete();
         assertFalse( "Check file doesn't exist", file.exists() );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder config = new ReleaseDescriptorBuilder();
         config.setCompletedPhase( "completed-phase-write" );
         config.setScmSourceUrl( "url-write" );
 
-        store.write( config, file );
+        store.write( config.build(), file );
 
-        ReleaseDescriptor rereadDescriptor = store.read( file );
+        ReleaseDescriptor rereadDescriptor = store.read( file ).build();
 
-        assertEquals( "compare configuration", config, rereadDescriptor );
+        assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
 
     public void testWriteToNewFileDottedIds()
@@ -181,12 +183,12 @@ public class PropertiesReleaseDescriptorStoreTest
         file.delete();
         assertFalse( "Check file doesn't exist", file.exists() );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder config = new ReleaseDescriptorBuilder();
         config.setCompletedPhase( "completed-phase-write" );
         config.setScmSourceUrl( "url-write" );
 
-        config.mapReleaseVersion( "group.id:artifact.id", "1.1" );
-        config.mapDevelopmentVersion( "group.id:artifact.id", "1.2-SNAPSHOT" );
+        config.addReleaseVersion( "group.id:artifact.id", "1.1" );
+        config.addDevelopmentVersion( "group.id:artifact.id", "1.2-SNAPSHOT" );
 
         IdentifiedScm scm = new IdentifiedScm();
         scm.setId( "id" );
@@ -194,13 +196,13 @@ public class PropertiesReleaseDescriptorStoreTest
         scm.setDeveloperConnection( "devConnection" );
         scm.setTag( "tag" );
         scm.setUrl( "url" );
-        config.mapOriginalScmInfo( "group.id:artifact.id", scm );
+        config.addOriginalScmInfo( "group.id:artifact.id", scm );
 
-        store.write( config, file );
+        store.write( config.build(), file );
 
-        ReleaseDescriptor rereadDescriptor = store.read( file );
+        ReleaseDescriptor rereadDescriptor = store.read( file ).build();
 
-        assertEquals( "compare configuration", config, rereadDescriptor );
+        assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
 
     public void testWriteToNewFileNullMappedScm()
@@ -210,23 +212,23 @@ public class PropertiesReleaseDescriptorStoreTest
         file.delete();
         assertFalse( "Check file doesn't exist", file.exists() );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setCompletedPhase( "completed-phase-write" );
-        config.setScmSourceUrl( "url-write" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCompletedPhase( "completed-phase-write" );
+        builder.setScmSourceUrl( "url-write" );
 
-        config.mapReleaseVersion( "group.id:artifact.id", "1.1" );
-        config.mapDevelopmentVersion( "group.id:artifact.id", "1.2-SNAPSHOT" );
+        builder.addReleaseVersion( "group.id:artifact.id", "1.1" );
+        builder.addDevelopmentVersion( "group.id:artifact.id", "1.2-SNAPSHOT" );
 
-        config.mapOriginalScmInfo( "group.id:artifact.id", null );
+        builder.addOriginalScmInfo( "group.id:artifact.id", null );
 
-        store.write( config, file );
+        store.write( builder.build(), file );
 
-        ReleaseDescriptor rereadDescriptor = store.read( file );
+        ReleaseDescriptor rereadDescriptor = store.read( file ).build();
 
         assertNull( "check null scm is mapped correctly",
-                    rereadDescriptor.getOriginalScmInfo().get( "group.id:artifact.id" ) );
+                    rereadDescriptor.getOriginalScmInfo( "group.id:artifact.id" ) );
 
-        assertEquals( "compare configuration", config, rereadDescriptor );
+        assertEquals( "compare configuration", builder.build(), rereadDescriptor );
     }
 
     public void testOverwriteFile()
@@ -235,16 +237,16 @@ public class PropertiesReleaseDescriptorStoreTest
         File file = getTestFile( "target/test-classes/rewrite-release.properties" );
         assertTrue( "Check file already exists", file.exists() );
 
-        ReleaseDescriptor config = createReleaseConfigurationForWriting();
+        ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
 
-        store.write( config, file );
+        store.write( config.build(), file );
 
-        ReleaseDescriptor rereadDescriptor = store.read( file );
+        ReleaseDescriptor rereadDescriptor = store.read( file ).build();
 
         assertAndAdjustScmPassword( config, rereadDescriptor );
         assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptor );
 
-        assertEquals( "compare configuration", config, rereadDescriptor );
+        assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
 
     public void testDeleteFile()
@@ -255,10 +257,10 @@ public class PropertiesReleaseDescriptorStoreTest
         file.createNewFile();
         assertTrue( "Check file already exists", file.exists() );
 
-        ReleaseDescriptor config = createReleaseConfigurationForWriting();
+        ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
         config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
-        store.delete( config );
+        store.delete( config.build() );
 
         assertFalse( "Check file already exists", file.exists() );
     }
@@ -271,35 +273,35 @@ public class PropertiesReleaseDescriptorStoreTest
         file.delete();
         assertFalse( "Check file already exists", file.exists() );
 
-        ReleaseDescriptor config = createReleaseConfigurationForWriting();
+        ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
         config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
-        store.delete( config );
+        store.delete( config.build() );
 
         assertFalse( "Check file already exists", file.exists() );
     }
 
-    private ReleaseDescriptor createReleaseConfigurationForWriting()
+    private ReleaseDescriptorBuilder createReleaseConfigurationForWriting()
     {
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setCompletedPhase( "completed-phase-write" );
-        config.setCommitByProject( true );
-        config.setScmSourceUrl( "url-write" );
-        config.setScmId( "id-write" );
-        config.setScmUsername( "username-write" );
-        config.setScmPassword( "password-write" );
-        config.setScmPrivateKey( "private-key-write" );
-        config.setScmPrivateKeyPassPhrase( "passphrase-write" );
-        config.setScmTagBase( "tag-base-write" );
-        config.setScmBranchBase( "branch-base-write" );
-        config.setScmReleaseLabel( "tag-write" );
-        config.setAdditionalArguments( "additional-args-write" );
-        config.setPreparationGoals( "preparation-goals-write" );
-        config.setCompletionGoals( "completion-goals-write" );
-        config.setPomFileName( "pom-file-name-write" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCompletedPhase( "completed-phase-write" );
+        builder.setCommitByProject( true );
+        builder.setScmSourceUrl( "url-write" );
+        builder.setScmId( "id-write" );
+        builder.setScmUsername( "username-write" );
+        builder.setScmPassword( "password-write" );
+        builder.setScmPrivateKey( "private-key-write" );
+        builder.setScmPrivateKeyPassPhrase( "passphrase-write" );
+        builder.setScmTagBase( "tag-base-write" );
+        builder.setScmBranchBase( "branch-base-write" );
+        builder.setScmReleaseLabel( "tag-write" );
+        builder.setAdditionalArguments( "additional-args-write" );
+        builder.setPreparationGoals( "preparation-goals-write" );
+        builder.setCompletionGoals( "completion-goals-write" );
+        builder.setPomFileName( "pom-file-name-write" );
 
-        config.mapReleaseVersion( "groupId:artifactId", "1.0" );
-        config.mapDevelopmentVersion( "groupId:artifactId", "1.1-SNAPSHOT" );
+        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
+        builder.addDevelopmentVersion( "groupId:artifactId", "1.1-SNAPSHOT" );
 
         IdentifiedScm scm = new IdentifiedScm();
         scm.setId( "id-write" );
@@ -307,17 +309,17 @@ public class PropertiesReleaseDescriptorStoreTest
         scm.setDeveloperConnection( "developerConnection-write" );
         scm.setUrl( "url-write" );
         scm.setTag( "tag-write" );
-        config.mapOriginalScmInfo( "groupId:artifactId", scm );
+        builder.addOriginalScmInfo( "groupId:artifactId", scm );
 
         scm = new IdentifiedScm();
         scm.setConnection( "connection-write" );
         // omit optional elements
-        config.mapOriginalScmInfo( "groupId:subproject1", scm );
+        builder.addOriginalScmInfo( "groupId:subproject1", scm );
 
-        return config;
+        return builder;
     }
 
-    private static void assertDefaultReleaseConfiguration( ReleaseDescriptor config )
+    private static void assertDefaultReleaseConfiguration( BuilderReleaseDescriptor config )
     {
         assertNull( "Expected no completedPhase", config.getCompletedPhase() );
         assertFalse( "Expected no commitPerProject", config.isCommitByProject() );
@@ -340,16 +342,19 @@ public class PropertiesReleaseDescriptorStoreTest
         assertTrue( "Expected default interactive", config.isInteractive() );
         assertFalse( "Expected no addScema", config.isAddSchema() );
 
-        assertTrue( "Expected no release version mappings", config.getReleaseVersions().isEmpty() );
-        assertTrue( "Expected no dev version mappings", config.getDevelopmentVersions().isEmpty() );
+        for ( ReleaseStageVersions versions : config.getProjectVersions().values() )
+        {
+            assertNull( "Expected no release version mappings", versions.getRelease() );
+            assertNull( "Expected no dev version mappings", versions.getDevelopment() );
+        }
         assertTrue( "Expected no scm mappings", config.getOriginalScmInfo().isEmpty() );
         assertNotNull( "Expected resolved snapshot dependencies map", config.getResolvedSnapshotDependencies() );
     }
 
-    public ReleaseDescriptor createMergeConfiguration()
+    public ReleaseDescriptorBuilder createMergeConfiguration()
         throws IOException
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder releaseDescriptor = new ReleaseDescriptorBuilder();
 
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setScmUsername( "username" );
@@ -360,10 +365,10 @@ public class PropertiesReleaseDescriptorStoreTest
         return releaseDescriptor;
     }
 
-    private void assertAndAdjustScmPassword( ReleaseDescriptor expected, ReleaseDescriptor original )
+    private void assertAndAdjustScmPassword( ReleaseDescriptorBuilder expected, ReleaseDescriptor original )
         throws Exception
     {
-        String expectedPassword = expected.getScmPassword();
+        String expectedPassword = expected.build().getScmPassword();
         String originalPassword = original.getScmPassword();
 
         // encrypting the same password twice doesn't have to be the same result
@@ -373,13 +378,13 @@ public class PropertiesReleaseDescriptorStoreTest
 
             expected.setScmPassword( originalPassword );
         }
-        assertEquals( expected.getScmPassword(), original.getScmPassword() );
+        assertEquals( expected.build().getScmPassword(), original.getScmPassword() );
     }
 
-    private void assertAndAdjustScmPrivateKeyPassPhrase( ReleaseDescriptor expected, ReleaseDescriptor original )
+    private void assertAndAdjustScmPrivateKeyPassPhrase( ReleaseDescriptorBuilder expected, ReleaseDescriptor original )
         throws Exception
     {
-        String expectedPassPhrase = expected.getScmPrivateKeyPassPhrase();
+        String expectedPassPhrase = expected.build().getScmPrivateKeyPassPhrase();
         String originalPassPhrase = original.getScmPrivateKeyPassPhrase();
 
         // encrypting the same passphrase twice doesn't have to be the same result
@@ -389,54 +394,55 @@ public class PropertiesReleaseDescriptorStoreTest
 
             expected.setScmPrivateKeyPassPhrase( originalPassPhrase );
         }
-        assertEquals( expected.getScmPrivateKeyPassPhrase(), original.getScmPrivateKeyPassPhrase() );
+        assertEquals( expected.build().getScmPrivateKeyPassPhrase(), original.getScmPrivateKeyPassPhrase() );
     }
 
-    private ReleaseDescriptor createExpectedReleaseConfiguration()
+    private ReleaseDescriptorBuilder createExpectedReleaseConfiguration()
     {
-        ReleaseDescriptor expected = new ReleaseDescriptor();
-        expected.setCompletedPhase( "step1" );
-        expected.setCommitByProject( true );
-        expected.setScmId( "scm-id" );
-        expected.setScmSourceUrl( "scm-url" );
-        expected.setScmUsername( "username" );
-        expected.setScmPassword( "password" );
-        expected.setScmPrivateKey( "private-key" );
-        expected.setScmPrivateKeyPassPhrase( "passphrase" );
-        expected.setScmTagBase( "tagBase" );
-        expected.setScmTagNameFormat( "expectedTagNameFormat" );
-        expected.setScmBranchBase( "branchBase" );
-        expected.setScmReleaseLabel( "tag" );
-        expected.setAdditionalArguments( "additional-arguments" );
-        expected.setPreparationGoals( "preparation-goals" );
-        expected.setCompletionGoals( "completion-goals" );
-        expected.setPomFileName( "pom-file-name" );
-        expected.setWorkingDirectory( null );
-        expected.setGenerateReleasePoms( false );
-        expected.setScmUseEditMode( false );
-        expected.setInteractive( true );
-        expected.setAddSchema( false );
-        expected.mapReleaseVersion( "groupId:artifactId1", "2.0" );
-        expected.mapReleaseVersion( "groupId:artifactId2", "3.0" );
-        expected.mapDevelopmentVersion( "groupId:artifactId1", "2.1-SNAPSHOT" );
-        expected.mapDevelopmentVersion( "groupId:artifactId2", "3.0.1-SNAPSHOT" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCompletedPhase( "step1" );
+        builder.setCommitByProject( true );
+        builder.setScmId( "scm-id" );
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmUsername( "username" );
+        builder.setScmPassword( "password" );
+        builder.setScmPrivateKey( "private-key" );
+        builder.setScmPrivateKeyPassPhrase( "passphrase" );
+        builder.setScmTagBase( "tagBase" );
+        builder.setScmTagNameFormat( "expectedTagNameFormat" );
+        builder.setScmBranchBase( "branchBase" );
+        builder.setScmReleaseLabel( "tag" );
+        builder.setAdditionalArguments( "additional-arguments" );
+        builder.setPreparationGoals( "preparation-goals" );
+        builder.setCompletionGoals( "completion-goals" );
+        builder.setPomFileName( "pom-file-name" );
+        builder.setWorkingDirectory( null );
+        builder.setGenerateReleasePoms( false );
+        builder.setScmUseEditMode( false );
+        builder.setInteractive( true );
+        builder.setAddSchema( false );
+        builder.addReleaseVersion( "groupId:artifactId1", "2.0" );
+        builder.addReleaseVersion( "groupId:artifactId2", "3.0" );
+        builder.addDevelopmentVersion( "groupId:artifactId1", "2.1-SNAPSHOT" );
+        builder.addDevelopmentVersion( "groupId:artifactId2", "3.0.1-SNAPSHOT" );
         IdentifiedScm scm = new IdentifiedScm();
         scm.setId( "id" );
         scm.setConnection( "connection" );
         scm.setDeveloperConnection( "developerConnection" );
         scm.setUrl( "url" );
         scm.setTag( "tag" );
-        expected.mapOriginalScmInfo( "groupId:artifactId1", scm );
+        builder.addOriginalScmInfo( "groupId:artifactId1", scm );
         scm = new IdentifiedScm();
         scm.setId( null );
         scm.setConnection( "connection2" );
         scm.setUrl( "url2" );
         scm.setTag( null );
         scm.setDeveloperConnection( null );
-        expected.mapOriginalScmInfo( "groupId:artifactId2", scm );
-        expected.mapResolvedSnapshotDependencies( "external:artifactId", "1.0", "1.1-SNAPSHOT" );
+        builder.addOriginalScmInfo( "groupId:artifactId2", scm );
+        builder.addDependencyReleaseVersion( "external:artifactId",  "1.0" );
+        builder.addDependencyDevelopmentVersion( "external:artifactId", "1.1-SNAPSHOT" );
 
-        return expected;
+        return builder;
     }
 
 }

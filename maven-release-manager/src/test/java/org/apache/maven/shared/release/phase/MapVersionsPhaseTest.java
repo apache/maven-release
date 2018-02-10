@@ -32,15 +32,14 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.versions.VersionParseException;
@@ -103,14 +102,14 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "2.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
 
         verify( mockPrompter ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
                                        eq( "1.0" ) );
@@ -130,14 +129,14 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "2.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
         verify( mockPrompter ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
                                        eq( "1.0" ) );
     }
@@ -157,24 +156,24 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "1.0.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "1.0.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
         verify( mockPrompter,
                 times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
                                      eq( "1.0" ) );
@@ -197,24 +196,24 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "2.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "2.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
 
         verify( mockPrompter,
                 times( 2 ) ).prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
@@ -233,28 +232,28 @@ public class MapVersionsPhaseTest
 
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.addReleaseVersion( "groupId:artifactId", "2.0" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.addReleaseVersion( "groupId:artifactId", "2.0" );
 
         phase.setPrompter( mockPrompter );
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "2.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.addReleaseVersion( "groupId:artifactId", "2.0" );
+        builder = new ReleaseDescriptorBuilder();
+        builder.addReleaseVersion( "groupId:artifactId", "2.0" );
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "2.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
     }
 
     @Test
@@ -266,15 +265,15 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "1.0" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
     }
 
     @Test
@@ -286,15 +285,15 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check mapped versions", "1.0" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
     }
 
     @Test
@@ -311,24 +310,24 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "2.0-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "2.0-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
 
         verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for \""
             + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) );
@@ -349,26 +348,26 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setUpdateWorkingCopyVersions( false );
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "1.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+        builder = new ReleaseDescriptorBuilder();
+        builder.setUpdateWorkingCopyVersions( false );
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.0" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "1.0" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -382,26 +381,26 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "1.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
+        builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "1.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     /**
@@ -417,28 +416,28 @@ public class MapVersionsPhaseTest
 
         phase.setPrompter( mockPrompter );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
-        releaseDescriptor.addDevelopmentVersion( "groupId:artifactId", "2-SNAPSHOT" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
+        builder.addDevelopmentVersion( "groupId:artifactId", "2-SNAPSHOT" );
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "2-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
-        releaseDescriptor.addDevelopmentVersion( "groupId:artifactId", "2-SNAPSHOT" );
+        builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
+        builder.addDevelopmentVersion( "groupId:artifactId", "2-SNAPSHOT" );
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "2-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -454,12 +453,12 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         // execute
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -469,12 +468,12 @@ public class MapVersionsPhaseTest
         }
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        builder = new ReleaseDescriptorBuilder();
 
         // execute
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -501,24 +500,24 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "2.0-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
 
         // prepare
-        releaseDescriptor = new ReleaseDescriptor();
+        builder = new ReleaseDescriptorBuilder();
 
         // execute
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check mapped versions", Collections.singletonMap( "groupId:artifactId", "2.0-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertEquals( "Check mapped versions", "2.0-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
 
         verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for \""
             + project.getName() + "\"?" ), eq( "1.1-SNAPSHOT" ) );
@@ -532,12 +531,12 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -546,12 +545,12 @@ public class MapVersionsPhaseTest
             assertEquals( "check cause", VersionParseException.class, e.getCause().getClass() );
         }
 
-        releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
+        builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Expected an exception" );
         }
@@ -570,17 +569,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.1.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -592,17 +591,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.1.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -614,18 +613,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.1.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -637,18 +636,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.1.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -660,17 +659,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -682,17 +681,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -704,16 +703,16 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.1.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -725,16 +724,16 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.1.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -746,17 +745,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.1.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -768,17 +767,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultDevelopmentVersion( "1.1.1-SNAPSHOT" );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.1.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.1.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -790,16 +789,16 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -811,16 +810,16 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -832,17 +831,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -854,17 +853,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -876,17 +875,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions",  "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -898,17 +897,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -920,18 +919,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -943,18 +942,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions",  "1.2" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -966,18 +965,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -989,18 +988,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1012,18 +1011,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1035,18 +1034,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1058,18 +1057,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1081,18 +1080,18 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1104,19 +1103,19 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1128,19 +1127,19 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1152,13 +1151,13 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         /*
@@ -1166,10 +1165,10 @@ public class MapVersionsPhaseTest
          * This is true for trunk, but when branching from a tag I would expect the next SNAPSHOT version. For now keep
          * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
          */
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1181,13 +1180,13 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         /*
@@ -1195,10 +1194,10 @@ public class MapVersionsPhaseTest
          * This is true for trunk, but when branching from a tag I would expect the next SNAPSHOT version. For now keep
          * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
          */
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions",  "1.2" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1210,22 +1209,22 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
+        builder.setUpdateBranchVersions( true );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions",  "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1237,22 +1236,22 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setInteractive( false );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setInteractive( false );
+        builder.setUpdateBranchVersions( true );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.3-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.3-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1264,20 +1263,20 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setDefaultReleaseVersion( "2.1-SNAPSHOT" );
-        releaseDescriptor.setInteractive( false );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setDefaultReleaseVersion( "2.1-SNAPSHOT" );
+        builder.setInteractive( false );
+        builder.setUpdateBranchVersions( true );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "2.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1289,20 +1288,20 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setDefaultReleaseVersion( "2.1-SNAPSHOT" );
-        releaseDescriptor.setInteractive( false );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setDefaultReleaseVersion( "2.1-SNAPSHOT" );
+        builder.setInteractive( false );
+        builder.setUpdateBranchVersions( true );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions",  "2.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1314,19 +1313,19 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setDefaultReleaseVersion( "2.1-SNAPSHOT" );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setDefaultReleaseVersion( "2.1-SNAPSHOT" );
+        builder.setUpdateBranchVersions( true );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "2.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1338,19 +1337,19 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setDefaultReleaseVersion( "2.1-SNAPSHOT" );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setDefaultReleaseVersion( "2.1-SNAPSHOT" );
+        builder.setUpdateBranchVersions( true );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "2.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1362,9 +1361,9 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateBranchVersions( true );
 
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1374,7 +1373,7 @@ public class MapVersionsPhaseTest
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1391,9 +1390,9 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateBranchVersions( true );
 
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1403,7 +1402,7 @@ public class MapVersionsPhaseTest
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1420,10 +1419,10 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateBranchVersions( true );
-        releaseDescriptor.setUpdateVersionsToSnapshot( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateBranchVersions( true );
+        builder.setUpdateVersionsToSnapshot( true );
 
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
@@ -1433,16 +1432,16 @@ public class MapVersionsPhaseTest
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions",  "2.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1454,10 +1453,10 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateBranchVersions( true );
-        releaseDescriptor.setUpdateVersionsToSnapshot( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateBranchVersions( true );
+        builder.setUpdateVersionsToSnapshot( true );
 
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
@@ -1467,16 +1466,16 @@ public class MapVersionsPhaseTest
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         verify( mockPrompter ).prompt( startsWith( "What is the branch version for" ), eq( "1.3-SNAPSHOT" ) );
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "2.1-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "2.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1488,10 +1487,10 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateBranchVersions( true );
-        releaseDescriptor.setUpdateVersionsToSnapshot( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateBranchVersions( true );
+        builder.setUpdateVersionsToSnapshot( true );
 
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1501,7 +1500,7 @@ public class MapVersionsPhaseTest
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1518,10 +1517,10 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateBranchVersions( true );
-        releaseDescriptor.setUpdateVersionsToSnapshot( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateBranchVersions( true );
+        builder.setUpdateVersionsToSnapshot( true );
 
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1531,7 +1530,7 @@ public class MapVersionsPhaseTest
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1548,11 +1547,11 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         /*
@@ -1560,10 +1559,10 @@ public class MapVersionsPhaseTest
          * This is true for trunk, but when branching from a tag I would expect the next SNAPSHOT version. For now keep
          * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
          */
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions",  "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1575,11 +1574,11 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         /*
@@ -1587,10 +1586,10 @@ public class MapVersionsPhaseTest
          * This is true for trunk, but when branching from a tag I would expect the next SNAPSHOT version. For now keep
          * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
          */
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1602,17 +1601,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateWorkingCopyVersions( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -1624,17 +1623,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateWorkingCopyVersions( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.2" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -1646,17 +1645,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
         // org.apache.maven.release:maven-release-manager:(,2.4) > true
         // org.apache.maven.release:maven-release-manager:[2.4,) > false
-        releaseDescriptor.setInteractive( false );
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        builder.setInteractive( false );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.2" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -1668,19 +1667,19 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
         // org.apache.maven.release:maven-release-manager:(,2.4) > true
         // org.apache.maven.release:maven-release-manager:[2.4,) > false
-        releaseDescriptor.setInteractive( false );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -1692,17 +1691,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1714,17 +1713,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1736,17 +1735,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateWorkingCopyVersions( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.2-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1758,17 +1757,17 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateWorkingCopyVersions( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "1.2-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "1.2-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -1780,21 +1779,21 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateBranchVersions( true );
         // org.apache.maven.release:maven-release-manager:(,2.4) > true
         // org.apache.maven.release:maven-release-manager:[2.4,) > false
-        releaseDescriptor.setInteractive( false );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1806,21 +1805,21 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateBranchVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateBranchVersions( true );
         // org.apache.maven.release:maven-release-manager:(,2.4) > true
         // org.apache.maven.release:maven-release-manager:[2.4,) > false
-        releaseDescriptor.setInteractive( false );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "1.2" ),
-                      releaseDescriptor.getReleaseVersions() );
+        assertEquals( "Check release versions", "1.2" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
         assertNull( "Check development versions",
-                    releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+                    ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1832,16 +1831,16 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateWorkingCopyVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateWorkingCopyVersions( true );
 
         when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
                                    eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( mockPrompter ).prompt( startsWith( "What is the new working copy version for" ), eq( "1.3-SNAPSHOT" ) );
@@ -1856,16 +1855,16 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setBranchCreation( true );
-        releaseDescriptor.setUpdateWorkingCopyVersions( true );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation( true );
+        builder.setUpdateWorkingCopyVersions( true );
 
         when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
                                    eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( mockPrompter ).prompt( startsWith( "What is the new working copy version for" ), eq( "1.3-SNAPSHOT" ) );
@@ -1882,19 +1881,18 @@ public class MapVersionsPhaseTest
         Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),
                             createProject( "module1", "2.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        Map<String, String> developmentVersions = new HashMap<>();
-        developmentVersions.put( "groupId:artifactId", "1.3-SNAPSHOT" );
-        developmentVersions.put( "groupId:module1", "2.0" );
-        assertEquals( "Check development versions", developmentVersions, releaseDescriptor.getDevelopmentVersions() );
-        assertEquals( "Check release versions", 0, releaseDescriptor.getReleaseVersions().size() );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertEquals( "Check development versions", "2.0" , ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:module1") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:module1") );
     }
 
     @Test
@@ -1908,19 +1906,18 @@ public class MapVersionsPhaseTest
         Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),
                             createProject( "module1", "2.0" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        Map<String, String> developmentVersions = new HashMap<>();
-        developmentVersions.put( "groupId:artifactId", "1.3-SNAPSHOT" );
-        developmentVersions.put( "groupId:module1", "2.0" );
-        assertEquals( "Check development versions", developmentVersions, releaseDescriptor.getDevelopmentVersions() );
-        assertEquals( "Check release versions", 0, releaseDescriptor.getReleaseVersions().size() );
+        assertEquals( "Check development versions", "1.3-SNAPSHOT", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "2.0", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:module1") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:module1") );
     }
 
     @Test
@@ -1933,18 +1930,18 @@ public class MapVersionsPhaseTest
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setDefaultReleaseVersion( "3.0" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setDefaultReleaseVersion( "3.0" );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "3.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "3.1-SNAPSHOT" ,
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId" ) );
     }
 
     @Test
@@ -1957,18 +1954,18 @@ public class MapVersionsPhaseTest
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setDefaultReleaseVersion( "3.0" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setDefaultReleaseVersion( "3.0" );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "3.1-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "3.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -1981,18 +1978,18 @@ public class MapVersionsPhaseTest
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setDefaultDevelopmentVersion( "3.0-SNAPSHOT" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setDefaultDevelopmentVersion( "3.0-SNAPSHOT" );
+        builder.setInteractive( false );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "3.0-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "3.0-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     @Test
@@ -2005,18 +2002,18 @@ public class MapVersionsPhaseTest
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setAutoVersionSubmodules( true );
-        releaseDescriptor.setDefaultDevelopmentVersion( "3.0-SNAPSHOT" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setAutoVersionSubmodules( true );
+        builder.setDefaultDevelopmentVersion( "3.0-SNAPSHOT" );
+        builder.setInteractive( false );
 
         // test
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check development versions", Collections.singletonMap( "groupId:artifactId", "3.0-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertNull( "Check release versions", releaseDescriptor.getReleaseVersions().get( "groupId:artifactId" ) );
+        assertEquals( "Check development versions", "3.0-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertNull( "Check release versions", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     // MRELEASE-511
@@ -2031,20 +2028,20 @@ public class MapVersionsPhaseTest
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "MYB_200909-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setDefaultReleaseVersion( "PPX" );
-        releaseDescriptor.setDefaultDevelopmentVersion( "MYB_200909-SNAPSHOT" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultReleaseVersion( "PPX" );
+        builder.setDefaultDevelopmentVersion( "MYB_200909-SNAPSHOT" );
 
         // test
-        mapReleasephase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
-        mapDevelopmentphase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        mapReleasephase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        mapDevelopmentphase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         assertEquals( "Check development versions",
-                      Collections.singletonMap( "groupId:artifactId", "MYB_200909-SNAPSHOT" ),
-                      releaseDescriptor.getDevelopmentVersions() );
-        assertEquals( "Check release versions", Collections.singletonMap( "groupId:artifactId", "PPX" ),
-                      releaseDescriptor.getReleaseVersions() );
+                      "MYB_200909-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+        assertEquals( "Check release versions", "PPX",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion( "groupId:artifactId" ) );
     }
 
     // MRELEASE-269
@@ -2057,7 +2054,7 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         when( mockPrompter.prompt( startsWith( "What is the new development version for " ),
                                    eq( "1.12-SNAPSHOT" ) ) ).thenReturn( "2.0" ) // wrong, expected SNAPSHOT
@@ -2065,7 +2062,7 @@ public class MapVersionsPhaseTest
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( mockPrompter, times( 2 ) ).prompt( startsWith( "What is the new development version for " ),
@@ -2082,15 +2079,15 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setDefaultDevelopmentVersion( "" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultDevelopmentVersion( "" );
 
         when( mockPrompter.prompt( startsWith( "What is the new development version for " ),
                                    eq( "1.12-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( mockPrompter ).prompt( startsWith( "What is the new development version for " ),
@@ -2106,15 +2103,15 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setDefaultReleaseVersion( "" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultReleaseVersion( "" );
 
         when( mockPrompter.prompt( startsWith( "What is the release version for " ),
                                    eq( "1.11" ) ) ).thenReturn( "2.0" );
         phase.setPrompter( mockPrompter );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
         verify( mockPrompter ).prompt( startsWith( "What is the release version for " ), eq( "1.11" ) );
@@ -2136,11 +2133,11 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setProjectVersionPolicyId( "UNKNOWN" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setProjectVersionPolicyId( "UNKNOWN" );
 
         // test
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
     }
 
     private static MavenProject createProject( String artifactId, String version )

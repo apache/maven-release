@@ -45,7 +45,8 @@ import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
@@ -73,13 +74,13 @@ public class CheckoutProjectFromScmTest
         throws Exception
     {
         // prepare
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         File checkoutDirectory = getTestFile( "target/checkout-test/standard" );
-        descriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
-        descriptor.setScmReleaseLabel( "release-label" );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
         String sourceUrl = "file://localhost/tmp/scm-repo/trunk";
         String scmUrl = "scm:svn:" + sourceUrl;
-        descriptor.setScmSourceUrl( scmUrl );
+        builder.setScmSourceUrl( scmUrl );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( sourceUrl );
@@ -98,10 +99,10 @@ public class CheckoutProjectFromScmTest
         List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
 
         // execute
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // prepare
-        assertEquals( "", descriptor.getScmRelativePathProjectDirectory() );
+        assertEquals( "", ReleaseUtils.buildReleaseDescriptor( builder ).getScmRelativePathProjectDirectory() );
 
         verify( scmProviderMock ).checkOut( eq( repository ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
@@ -115,13 +116,13 @@ public class CheckoutProjectFromScmTest
         throws Exception
     {
         // prepare
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         File checkoutDirectory = getTestFile( "target/checkout-test/multimodule-with-deep-subprojects" );
-        descriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
-        descriptor.setScmReleaseLabel( "release-label" );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
         String sourceUrl = "file://localhost/tmp/scm-repo/trunk";
         String scmUrl = "scm:svn:" + sourceUrl;
-        descriptor.setScmSourceUrl( scmUrl );
+        builder.setScmSourceUrl( scmUrl );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( sourceUrl );
@@ -141,10 +142,10 @@ public class CheckoutProjectFromScmTest
             createReactorProjects( dir, dir, null );
 
         // execute
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "", descriptor.getScmRelativePathProjectDirectory() );
+        assertEquals( "", ReleaseUtils.buildReleaseDescriptor( builder ).getScmRelativePathProjectDirectory() );
 
         verify( scmProviderMock ).checkOut( eq( repository ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
@@ -158,13 +159,13 @@ public class CheckoutProjectFromScmTest
         throws Exception
     {
         // prepare
-        ReleaseDescriptor descriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         File checkoutDirectory = getTestFile( "target/checkout-test/flat-multi-module" );
-        descriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
-        descriptor.setScmReleaseLabel( "release-label" );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
         String sourceUrl = "file://localhost/tmp/scm-repo/trunk/root-project";
         String scmUrl = "scm:svn:" + sourceUrl;
-        descriptor.setScmSourceUrl( scmUrl );
+        builder.setScmSourceUrl( scmUrl );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( sourceUrl );
@@ -183,11 +184,11 @@ public class CheckoutProjectFromScmTest
             createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "root-project" );
 
         // execute
-        phase.execute( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "not found root-project but " + descriptor.getScmRelativePathProjectDirectory(), "root-project",
-                      descriptor.getScmRelativePathProjectDirectory() );
+        assertEquals( "not found root-project but " + ReleaseUtils.buildReleaseDescriptor( builder ).getScmRelativePathProjectDirectory(), "root-project",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getScmRelativePathProjectDirectory() );
 
         verify( scmProviderMock ).checkOut( eq( repository ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
@@ -201,9 +202,9 @@ public class CheckoutProjectFromScmTest
                     throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
@@ -214,9 +215,9 @@ public class CheckoutProjectFromScmTest
         // execute
         try
         {
-            releaseDescriptor.setUseReleaseProfile( false );
+            builder.setUseReleaseProfile( false );
 
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "commit should have failed" );
         }
@@ -231,9 +232,9 @@ public class CheckoutProjectFromScmTest
         throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
@@ -244,9 +245,9 @@ public class CheckoutProjectFromScmTest
         // execute
         try
         {
-            releaseDescriptor.setUseReleaseProfile( false );
+            builder.setUseReleaseProfile( false );
 
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "commit should have failed" );
         }

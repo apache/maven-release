@@ -37,7 +37,8 @@ import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
@@ -57,7 +58,7 @@ public class RunCompleteGoalsPhaseTest
 
     private MavenExecutorWrapper mavenExecutorWrapper;
 
-    private ReleaseEnvironment releaseEnvironment;
+    private DefaultReleaseEnvironment releaseEnvironment;
 
     @Override
     public void setUp()
@@ -80,16 +81,16 @@ public class RunCompleteGoalsPhaseTest
         // prepare
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setCompletionGoals( "clean integration-test" );
-        config.setWorkingDirectory( testFile.getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCompletionGoals( "clean integration-test" );
+        builder.setWorkingDirectory( testFile.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
 
         mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
-        phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, (List<MavenProject>) null );
 
         // verify
         verify( mock ).executeGoals( eq( testFile ), eq( "clean integration-test" ), isA( ReleaseEnvironment.class ),
@@ -105,16 +106,16 @@ public class RunCompleteGoalsPhaseTest
         // prepare
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setCompletionGoals( "clean integration-test" );
-        config.setWorkingDirectory( testFile.getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCompletionGoals( "clean integration-test" );
+        builder.setWorkingDirectory( testFile.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
 
         mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
-        phase.simulate( config, releaseEnvironment, null );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, null );
 
         // verify
         verify( mock ).executeGoals( eq( testFile ), eq( "clean integration-test" ), isA( ReleaseEnvironment.class ),
@@ -130,9 +131,9 @@ public class RunCompleteGoalsPhaseTest
         // prepare
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setCompletionGoals( "clean integration-test" );
-        config.setWorkingDirectory( testFile.getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCompletionGoals( "clean integration-test" );
+        builder.setWorkingDirectory( testFile.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
         doThrow( new MavenExecutorException( "...",
@@ -149,7 +150,7 @@ public class RunCompleteGoalsPhaseTest
         // execute
         try
         {
-            phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, (List<MavenProject>) null );
 
             fail( "Should have thrown an exception" );
         }
@@ -172,9 +173,9 @@ public class RunCompleteGoalsPhaseTest
         // prepare
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setCompletionGoals( "clean integration-test" );
-        config.setWorkingDirectory( testFile.getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCompletionGoals( "clean integration-test" );
+        builder.setWorkingDirectory( testFile.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
         doThrow( new MavenExecutorException( "...",
@@ -191,7 +192,7 @@ public class RunCompleteGoalsPhaseTest
         // execute
         try
         {
-            phase.simulate( config, releaseEnvironment, null );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, null );
 
             fail( "Should have thrown an exception" );
         }
@@ -214,16 +215,16 @@ public class RunCompleteGoalsPhaseTest
         // prepare
         File testFile = getTestFile( "target/working-directory" );
 
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setCompletionGoals( "" );
-        config.setWorkingDirectory( testFile.getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCompletionGoals( "" );
+        builder.setWorkingDirectory( testFile.getAbsolutePath() );
 
         MavenExecutor mock = mock( MavenExecutor.class );
 
         mavenExecutorWrapper.setMavenExecutor( mock );
 
         // execute
-        phase.execute( config, releaseEnvironment, (List<MavenProject>) null );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), releaseEnvironment, (List<MavenProject>) null );
 
         // verify
         // never invoke mock

@@ -31,13 +31,14 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
@@ -67,19 +68,19 @@ public class CheckDependencySnapshotsPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
+        phase = lookup( ReleasePhase.class, "check-dependency-snapshots" );
     }
 
     @Test
     public void testNoSnapshotDependencies()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();;
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-dependencies" );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -92,16 +93,16 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-range-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.1", "1.2-SNAPSHOT" ) ) );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.1", "1.2-SNAPSHOT" ) ) );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -111,12 +112,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotDependenciesInProjectOnly()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -126,13 +127,13 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotReleasePluginNonInteractive()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
-        releaseDescriptor.setInteractive( false );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
+        builder.setInteractive( false );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -143,7 +144,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -160,14 +161,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createMockPrompterWithSnapshotReleasePlugin( NO, NO ) );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -180,7 +181,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -197,12 +198,12 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createYesMockPrompter() );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -214,12 +215,12 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createYesMockPrompter() );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( true );
     }
@@ -231,14 +232,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createMockPrompterWithSnapshotReleasePlugin( "donkey", NO ) );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -251,7 +252,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -268,8 +269,8 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "snapshot-release-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( anyString(), eq( YES_NO_ARRAY ),
@@ -278,7 +279,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -293,7 +294,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -310,14 +311,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-differing-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -330,7 +331,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -344,12 +345,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotManagedDependenciesInProjectOnly()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-managed-snapshot-dependency" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -359,13 +360,13 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotUnusedInternalManagedDependency()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
             createDescriptorFromProjects( "unused-internal-managed-snapshot-dependency" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -375,13 +376,13 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotUnusedExternalManagedDependency()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
             createDescriptorFromProjects( "unused-external-managed-snapshot-dependency" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -391,14 +392,14 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotExternalManagedDependency()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-managed-snapshot-dependency" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        releaseDescriptor.setInteractive( false );
+        builder.setInteractive( false );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -409,7 +410,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -423,14 +424,14 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotDependenciesOutsideProjectOnlyNonInteractive()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        releaseDescriptor.setInteractive( false );
+        builder.setInteractive( false );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -441,7 +442,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -455,14 +456,14 @@ public class CheckDependencySnapshotsPhaseTest
     public void testRangeSnapshotDependenciesOutsideProjectOnlyNonInteractive()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-range-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        releaseDescriptor.setInteractive( false );
+        builder.setInteractive( false );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -473,7 +474,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -490,26 +491,25 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0", "1.1-SNAPSHOT" ),
                                                new VersionPair( "1.0", "1.0" ) ) );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
  
         // validate
-        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
+        
+        assertEquals( "1.0", descriptor.getDependencyReleaseVersion( "external:artifactId" ) );
+        assertEquals( "1.1-SNAPSHOT", descriptor.getDependencyDevelopmentVersion( "external:artifactId" ) );
 
-        assertNotNull( versionsMap );
-        assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
-
-        releaseDescriptor = new ReleaseDescriptor();
+        builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0", "1.1-SNAPSHOT" ) ) );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
     }
 
     @Test
@@ -519,20 +519,19 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "0.9", "1.0-SNAPSHOT" ),
                                                new VersionPair( "1.0", "1.0-SNAPSHOT" ) ) );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
 
-        assertNotNull( versionsMap );
-        assertEquals( "1.0-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
-        assertEquals( "0.9", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+        assertEquals( "0.9", descriptor.getDependencyReleaseVersion( "external:artifactId" ) );
+        assertEquals( "1.0-SNAPSHOT", descriptor.getDependencyDevelopmentVersion( "external:artifactId" )  );
     }
 
     @Test
@@ -542,19 +541,18 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0", "1.0" ) ) );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
 
-        assertNotNull( versionsMap );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+        assertEquals( "1.0", descriptor.getDependencyReleaseVersion( "external:artifactId" ) );
+        assertEquals( "1.0", descriptor.getDependencyDevelopmentVersion( "external:artifactId" )  );
     }
 
     @Test
@@ -564,19 +562,18 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createMockPrompter( YES, "0", new VersionPair( "1.0", "1.0" ) ) );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
 
-        assertNotNull( versionsMap );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+        assertEquals( "1.0", descriptor.getDependencyReleaseVersion( "external:artifactId" ) );
+        assertEquals( "1.0", descriptor.getDependencyDevelopmentVersion( "external:artifactId" )  );
     }
 
     @Test
@@ -586,8 +583,8 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-all" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         Prompter mockPrompter =
             createMockPrompter( YES, "0",
@@ -595,14 +592,13 @@ public class CheckDependencySnapshotsPhaseTest
                                                new VersionPair( "1.2", "1.2" ), new VersionPair( "1.3", "1.3" ) ) );
         phase.setPrompter( mockPrompter );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
 
-        assertNotNull( versionsMap );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+        assertEquals( "1.0", descriptor.getDependencyReleaseVersion( "external:artifactId" ) );
+        assertEquals( "1.0", descriptor.getDependencyDevelopmentVersion( "external:artifactId" )  );
     }
 
     // MRELEASE-589
@@ -613,9 +609,9 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
             createDescriptorFromProjects( "multimodule-external-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         VersionPair pair = new VersionPair( "1.0", "1.1-SNAPSHOT" );
         VersionPair defaultPair = new VersionPair( "1.0", "1.0" );
@@ -623,27 +619,15 @@ public class CheckDependencySnapshotsPhaseTest
             createMockPrompter( "yes", "1", Arrays.asList( pair, pair ), Arrays.asList( defaultPair, defaultPair ) );
         phase.setPrompter( mockPrompter );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        Map<String, Map<String, String>> resolvedDependencies = releaseDescriptor.getResolvedSnapshotDependencies();
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
 
-        assertNotNull( resolvedDependencies );
-        assertEquals( 2, resolvedDependencies.size() );
+        assertEquals( "1.0", descriptor.getDependencyReleaseVersion( "external:artifactId" ) );
+        assertEquals( "1.1-SNAPSHOT", descriptor.getDependencyDevelopmentVersion( "external:artifactId" ) );
 
-        assertTrue( resolvedDependencies.containsKey( "external:artifactId" ) );
-        assertTrue( resolvedDependencies.containsKey( "external:artifactId2" ) );
-
-        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId" );
-
-        assertNotNull( versionsMap );
-        assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
-
-        versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "external:artifactId2" );
-
-        assertNotNull( versionsMap );
-        assertEquals( "1.1-SNAPSHOT", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
-        assertEquals( "1.0", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+        assertEquals( "1.0", descriptor.getDependencyReleaseVersion( "external:artifactId2" ) );
+        assertEquals( "1.1-SNAPSHOT", descriptor.getDependencyDevelopmentVersion( "external:artifactId2" ) );
     }
 
     @Test
@@ -653,15 +637,15 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
             createDescriptorFromProjects( "internal-and-external-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -674,7 +658,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -688,12 +672,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testNoSnapshotReportPlugins()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();;
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-report-plugins" );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -703,12 +687,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotReportPluginsInProjectOnly()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-report-plugins" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -721,14 +705,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-report-plugins" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -741,7 +725,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -758,15 +742,15 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
             createDescriptorFromProjects( "internal-and-external-snapshot-report-plugins" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -779,7 +763,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -793,12 +777,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testNoSnapshotPlugins()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();;
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "no-snapshot-plugins" );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -808,12 +792,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotPluginsInProjectOnly()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-plugins" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -823,12 +807,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotManagedPluginInProjectOnly()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-managed-snapshot-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -838,12 +822,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotUnusedInternalManagedPlugin()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "unused-internal-managed-snapshot-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -853,12 +837,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotUnusedExternalManagedPlugin()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "unused-external-managed-snapshot-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -871,14 +855,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-managed-snapshot-plugin" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -891,7 +875,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -908,14 +892,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-plugins" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -928,7 +912,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -945,14 +929,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-and-external-snapshot-plugins" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -965,7 +949,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -982,14 +966,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -1002,7 +986,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -1019,33 +1003,32 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-parent/child" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         Prompter mockPrompter = createMockPrompter( YES, DEFAULT_CHOICE, new VersionPair( "1.0-test", "1.0-test" ),
                                                     new VersionPair( "1.0", "1.0-test" ) );
         phase.setPrompter( mockPrompter );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // validate
-        Map<String, String> versionsMap = releaseDescriptor.getResolvedSnapshotDependencies().get( "groupId:parent-external" );
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
 
-        assertNotNull( versionsMap );
-        assertEquals( "1.0-test", versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY ) );
-        assertEquals( "1.0-test", versionsMap.get( ReleaseDescriptor.RELEASE_KEY ) );
+        assertEquals( "1.0-test", descriptor.getDependencyReleaseVersion( "groupId:parent-external" ) );
+        assertEquals( "1.0-test", descriptor.getDependencyDevelopmentVersion( "groupId:parent-external" )  );
     }
 
     @Test
     public void testReleaseExternalParent()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();;
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-parent/child" );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -1058,14 +1041,14 @@ public class CheckDependencySnapshotsPhaseTest
         CheckDependencySnapshotsPhase phase =
             (CheckDependencySnapshotsPhase) lookup( ReleasePhase.class, "check-dependency-snapshots" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-snapshot-extension" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
         phase.setPrompter( createNoMockPrompter() );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -1078,7 +1061,7 @@ public class CheckDependencySnapshotsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -1092,12 +1075,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testSnapshotInternalExtension()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-extension" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -1107,12 +1090,12 @@ public class CheckDependencySnapshotsPhaseTest
     public void testReleaseExternalExtension()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();;
         List<MavenProject> reactorProjects = createDescriptorFromProjects( "external-extension" );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -1122,16 +1105,16 @@ public class CheckDependencySnapshotsPhaseTest
     public void testAllowTimestampedSnapshots()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
         List<MavenProject> reactorProjects =
             createDescriptorFromProjects( "external-timestamped-snapshot-dependencies" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
 
-        releaseDescriptor.setInteractive( false );
+        builder.setInteractive( false );
 
         // confirm POM fails without allowTimestampedSnapshots
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
             fail( "Should have failed execution" );
         }
@@ -1141,11 +1124,11 @@ public class CheckDependencySnapshotsPhaseTest
         }
 
         // check whether flag allows
-        releaseDescriptor.setAllowTimestampedSnapshots( true );
+        builder.setAllowTimestampedSnapshots( true );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // successful execution is verification enough
         assertTrue( true );

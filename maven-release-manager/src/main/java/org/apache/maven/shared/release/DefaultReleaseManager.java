@@ -28,8 +28,11 @@ import java.util.Set;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.strategy.Strategy;
 import org.codehaus.plexus.component.annotations.Component;
@@ -99,15 +102,36 @@ public class DefaultReleaseManager
     private void prepare( ReleasePrepareRequest prepareRequest, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseDescriptor config;
+
+        final ReleaseDescriptorBuilder builder = prepareRequest.getReleaseDescriptorBuilder();
+
+        // Create a config containing values from the session properties (ie command line properties with cli).
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( prepareRequest.getUserProperties(),
+                                        new ReleaseDescriptorBuilder()
+                                        {
+                                            public ReleaseDescriptorBuilder addDevelopmentVersion( String key,
+                                                                                                   String value )
+                                            {
+                                                builder.addDevelopmentVersion( key, value );
+                                                return this;
+                                            }
+
+                                            public ReleaseDescriptorBuilder addReleaseVersion( String key,
+                                                                                               String value )
+                                            {
+                                                builder.addReleaseVersion( key, value );
+                                                return this;
+                                            };
+                                        } );
+
+        BuilderReleaseDescriptor config;
         if ( BooleanUtils.isNotFalse( prepareRequest.getResume() ) )
         {
-            config = loadReleaseDescriptor( prepareRequest.getReleaseDescriptor(),
-                                            prepareRequest.getReleaseManagerListener() );
+            config = loadReleaseDescriptor( builder, prepareRequest.getReleaseManagerListener() );
         }
         else
         {
-            config = prepareRequest.getReleaseDescriptor();
+            config = ReleaseUtils.buildReleaseDescriptor( prepareRequest.getReleaseDescriptorBuilder() );
         }
 
         Strategy releaseStrategy = getStrategy( config.getReleaseStrategyId() );
@@ -196,7 +220,8 @@ public class DefaultReleaseManager
     public void rollback( ReleaseRollbackRequest rollbackRequest )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( rollbackRequest.getReleaseDescriptor(), null );
+        ReleaseDescriptor releaseDescriptor =
+            loadReleaseDescriptor( rollbackRequest.getReleaseDescriptorBuilder(), null );
 
         Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
 
@@ -260,8 +285,9 @@ public class DefaultReleaseManager
     private void perform( ReleasePerformRequest performRequest, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( performRequest.getReleaseDescriptor(),
-                                                                     performRequest.getReleaseManagerListener() );
+        ReleaseDescriptor releaseDescriptor =
+            loadReleaseDescriptor( performRequest.getReleaseDescriptorBuilder(),
+                                   performRequest.getReleaseManagerListener() );
 
         Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
 
@@ -320,8 +346,28 @@ public class DefaultReleaseManager
     public void branch( ReleaseBranchRequest branchRequest )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( branchRequest.getReleaseDescriptor(),
-                                                                     branchRequest.getReleaseManagerListener() );
+        final ReleaseDescriptorBuilder builder = branchRequest.getReleaseDescriptorBuilder();
+        
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( branchRequest.getUserProperties(),
+                    new ReleaseDescriptorBuilder()
+                    {
+                        public ReleaseDescriptorBuilder addDevelopmentVersion( String key,
+                                                                               String value )
+                        {
+                            builder.addDevelopmentVersion( key, value );
+                            return this;
+                        }
+
+                        public ReleaseDescriptorBuilder addReleaseVersion( String key,
+                                                                           String value )
+                        {
+                            builder.addReleaseVersion( key, value );
+                            return this;
+                        };
+                    } );
+        
+        ReleaseDescriptor releaseDescriptor =
+            loadReleaseDescriptor( builder, branchRequest.getReleaseManagerListener() );
 
         boolean dryRun = BooleanUtils.isTrue( branchRequest.getDryRun() );
 
@@ -369,8 +415,29 @@ public class DefaultReleaseManager
     public void updateVersions( ReleaseUpdateVersionsRequest updateVersionsRequest )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseDescriptor releaseDescriptor = loadReleaseDescriptor( updateVersionsRequest.getReleaseDescriptor(),
-                                                                   updateVersionsRequest.getReleaseManagerListener() );
+        final ReleaseDescriptorBuilder builder = updateVersionsRequest.getReleaseDescriptorBuilder();
+        
+        // Create a config containing values from the session properties (ie command line properties with cli).
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( updateVersionsRequest.getUserProperties(),
+                                    new ReleaseDescriptorBuilder()
+                                    {
+                                        public ReleaseDescriptorBuilder addDevelopmentVersion( String key,
+                                                                                               String value )
+                                        {
+                                            builder.addDevelopmentVersion( key, value );
+                                            return this;
+                                        }
+
+                                        public ReleaseDescriptorBuilder addReleaseVersion( String key,
+                                                                                           String value )
+                                        {
+                                            builder.addReleaseVersion( key, value );
+                                            return this;
+                                        };
+                                    } );
+
+        ReleaseDescriptor releaseDescriptor =
+            loadReleaseDescriptor( builder, updateVersionsRequest.getReleaseManagerListener() );
 
         Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
 
@@ -421,14 +488,14 @@ public class DefaultReleaseManager
         }
     }
 
-    private ReleaseDescriptor loadReleaseDescriptor( ReleaseDescriptor releaseDescriptor,
+    private BuilderReleaseDescriptor loadReleaseDescriptor( ReleaseDescriptorBuilder builder,
                                                      ReleaseManagerListener listener )
         throws ReleaseExecutionException
     {
         try
         {
             updateListener( listener, "verify-release-configuration", PHASE_START );
-            ReleaseDescriptor descriptor = configStore.read( releaseDescriptor );
+            BuilderReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( configStore.read( builder ) );
             updateListener( listener, "verify-release-configuration", PHASE_END );
             return descriptor;
         }
@@ -444,7 +511,7 @@ public class DefaultReleaseManager
     protected void clean( AbstractReleaseRequest releaseRequest  ) throws ReleaseFailureException
     {
         ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();
-        cleanRequest.setReleaseDescriptor( releaseRequest.getReleaseDescriptor() );
+        cleanRequest.setReleaseDescriptorBuilder( releaseRequest.getReleaseDescriptorBuilder() );
         cleanRequest.setReleaseManagerListener( releaseRequest.getReleaseManagerListener() );
         cleanRequest.setReactorProjects( releaseRequest.getReactorProjects() );
 
@@ -458,7 +525,8 @@ public class DefaultReleaseManager
 
         getLogger().info( "Cleaning up after release..." );
 
-        ReleaseDescriptor releaseDescriptor = cleanRequest.getReleaseDescriptor();
+        ReleaseDescriptor releaseDescriptor =
+            ReleaseUtils.buildReleaseDescriptor( cleanRequest.getReleaseDescriptorBuilder() );
 
         configStore.delete( releaseDescriptor );
 

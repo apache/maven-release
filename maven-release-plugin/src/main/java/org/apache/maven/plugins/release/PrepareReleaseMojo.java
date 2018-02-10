@@ -28,8 +28,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.config.ReleaseUtils;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
  * Prepare for a release in SCM. Steps through several phases to ensure the POM is ready to be released and then
@@ -259,7 +258,7 @@ public class PrepareReleaseMojo
         // above
         super.execute();
 
-        ReleaseDescriptor config = createReleaseDescriptor();
+        final ReleaseDescriptorBuilder config = createReleaseDescriptor();
         config.setAddSchema( addSchema );
         config.setGenerateReleasePoms( generateReleasePoms );
         config.setScmUseEditMode( useEditMode );
@@ -288,18 +287,14 @@ public class PrepareReleaseMojo
         {
             config.setCheckModificationExcludes( Arrays.asList( checkModificationExcludes ) );
         }
-
-        // Create a config containing values from the session properties (ie command line properties with cli).
-        ReleaseDescriptor sysPropertiesConfig =
-            ReleaseUtils.copyPropertiesToReleaseDescriptor( session.getExecutionProperties() );
-        mergeCommandLineConfig( config, sysPropertiesConfig );
         
         ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
-        prepareRequest.setReleaseDescriptor( config );
+        prepareRequest.setReleaseDescriptorBuilder( config );
         prepareRequest.setReleaseEnvironment( getReleaseEnvironment() );
         prepareRequest.setReactorProjects( getReactorProjects() );
         prepareRequest.setResume( resume );
         prepareRequest.setDryRun( dryRun );
+        prepareRequest.setUserProperties( session.getUserProperties() );
 
         try
         {

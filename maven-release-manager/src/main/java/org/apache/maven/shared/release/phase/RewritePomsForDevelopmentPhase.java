@@ -19,9 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
@@ -59,9 +56,8 @@ public class RewritePomsForDevelopmentPhase
             Scm scmRoot = modelTarget.getScm();
             if ( scmRoot != null )
             {
-                Map<String, Scm> originalScmInfo = releaseDescriptor.getOriginalScmInfo();
                 // check containsKey, not == null, as we store null as a value
-                if ( !originalScmInfo.containsKey( projectId ) )
+                if ( releaseDescriptor.getOriginalScmInfo( projectId ) == null )
                 {
                     throw new ReleaseExecutionException(
                         "Unable to find original SCM info for '" + project.getName() + "'" );
@@ -70,7 +66,7 @@ public class RewritePomsForDevelopmentPhase
                 ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
                 if ( translator != null )
                 {
-                    Scm scm = originalScmInfo.get( projectId );
+                    Scm scm = releaseDescriptor.getOriginalScmInfo( projectId );
 
                     if ( scm != null )
                     {
@@ -96,33 +92,23 @@ public class RewritePomsForDevelopmentPhase
     }
 
     @Override
-    protected Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
-                                                         List<MavenProject> reactorProjects, boolean simulate )
+    protected String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate )
     {
         return simulate
-            ? releaseDescriptor.getOriginalVersions( reactorProjects )
-            : releaseDescriptor.getReleaseVersions();
+                        ? releaseDescriptor.getProjectOriginalVersion( projectKey )
+                        : releaseDescriptor.getProjectReleaseVersion( projectKey );
     }
 
     @Override
-    protected Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor )
+    protected String getNextVersion( ReleaseDescriptor releaseDescriptor, String key )
     {
-        return releaseDescriptor.getDevelopmentVersions();
+        return releaseDescriptor.getProjectDevelopmentVersion( key );
     }
 
     @Override
     protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                 Map<String, Map<String, String>> resolvedSnapshotsMap )
+                                                 ReleaseDescriptor releaseDescriptor )
     {
-        Map<String, String> versionsMap = resolvedSnapshotsMap.get( artifactVersionlessKey );
-
-        if ( versionsMap != null )
-        {
-            return versionsMap.get( ReleaseDescriptor.DEVELOPMENT_KEY );
-        }
-        else
-        {
-            return null;
-        }
+        return releaseDescriptor.getDependencyDevelopmentVersion( artifactVersionlessKey );
     }
 }

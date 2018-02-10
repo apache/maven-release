@@ -35,7 +35,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.ModelBase;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
-import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -49,7 +48,6 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
@@ -239,51 +237,42 @@ public abstract class AbstractRewritePomsPhase
                                     ReleaseResult result, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        Map<String, String> mappedVersions = getNextVersionMap( releaseDescriptor );
-        Map<String, String> originalVersions = getOriginalVersionMap( releaseDescriptor, reactorProjects, simulate );
-        Map<String, Map<String, String>> resolvedSnapshotDependencies =
-            releaseDescriptor.getResolvedSnapshotDependencies();
         Model model = project.getModel();
 
         Properties properties = modelTarget.getProperties();
 
-        String parentVersion = rewriteParent( project, modelTarget, mappedVersions,
-                                              resolvedSnapshotDependencies, originalVersions );
+        String parentVersion = rewriteParent( project, modelTarget, releaseDescriptor, simulate );
 
         String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-        rewriteVersion( modelTarget, mappedVersions, projectId, project, parentVersion );
+        rewriteVersion( modelTarget, releaseDescriptor, projectId, project, parentVersion );
 
         Build buildTarget = modelTarget.getBuild();
         if ( buildTarget != null )
         {
             // profile.build.extensions doesn't exist, so only rewrite project.build.extensions
-            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getExtensions() ), mappedVersions,
-                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                     releaseDescriptor );
+            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getExtensions() ), 
+                                     model, properties, result, releaseDescriptor, simulate );
 
-            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPlugins() ), mappedVersions,
-                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                     releaseDescriptor );
+            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPlugins() ), 
+                                     model, properties, result, releaseDescriptor, simulate );
 
             for ( Plugin plugin : buildTarget.getPlugins() )
             {
                 rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
-                                         mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
-                                         properties, result, releaseDescriptor );
+                                         model, properties,
+                                         result, releaseDescriptor, simulate );
             }
 
             if ( buildTarget.getPluginManagement() != null )
             {
-                rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPluginManagement().getPlugins() ),
-                                         mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
-                                         properties, result, releaseDescriptor );
+                rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPluginManagement().getPlugins() ), model,
+                                         properties, result, releaseDescriptor, simulate );
 
                 for ( Plugin plugin : buildTarget.getPluginManagement().getPlugins() )
                 {
-                    rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), mappedVersions,
-                                             resolvedSnapshotDependencies, originalVersions, model, properties,
-                                             result, releaseDescriptor );
+                    rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties, result,
+                                             releaseDescriptor, simulate );
                 }
             }
         }
@@ -293,28 +282,24 @@ public abstract class AbstractRewritePomsPhase
             BuildBase profileBuild = profile.getBuild();
             if ( profileBuild != null )
             {
-                rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPlugins() ), mappedVersions,
-                                         resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                         releaseDescriptor );
+                rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPlugins() ), model, properties, result,
+                                         releaseDescriptor, simulate );
 
                 for ( Plugin plugin : profileBuild.getPlugins() )
                 {
-                    rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
-                                             mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
-                                             properties, result, releaseDescriptor );
+                    rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties, result,
+                                             releaseDescriptor, simulate );
                 }
 
                 if ( profileBuild.getPluginManagement() != null )
                 {
                     rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPluginManagement().getPlugins() ),
-                                             mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
-                                             properties, result, releaseDescriptor );
+                                             model, properties, result, releaseDescriptor, simulate );
 
                     for ( Plugin plugin : profileBuild.getPluginManagement().getPlugins() )
                     {
-                        rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), mappedVersions,
-                                                 resolvedSnapshotDependencies, originalVersions, model, properties,
-                                                 result, releaseDescriptor );
+                        rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties,
+                                                 result, releaseDescriptor, simulate );
                     }
                 }
             }
@@ -326,22 +311,19 @@ public abstract class AbstractRewritePomsPhase
 
         for ( ModelBase modelBase : modelBases )
         {
-            rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencies() ), mappedVersions,
-                                     resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                     releaseDescriptor );
+            rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencies() ), model, properties, result,
+                                     releaseDescriptor, simulate );
 
             if ( modelBase.getDependencyManagement() != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencyManagement().getDependencies() ),
-                                         mappedVersions, resolvedSnapshotDependencies, originalVersions, model,
-                                         properties, result, releaseDescriptor );
+                                         model, properties, result, releaseDescriptor, simulate );
             }
 
             if ( modelBase.getReporting() != null )
             {
-                rewriteArtifactVersions( toMavenCoordinates( modelBase.getReporting().getPlugins() ), mappedVersions,
-                                         resolvedSnapshotDependencies, originalVersions, model, properties, result,
-                                         releaseDescriptor );
+                rewriteArtifactVersions( toMavenCoordinates( modelBase.getReporting().getPlugins() ), model, properties,
+                                         result, releaseDescriptor, simulate );
             }
         }
 
@@ -360,11 +342,11 @@ public abstract class AbstractRewritePomsPhase
                       commonBasedir );
     }
 
-    private void rewriteVersion( Model modelTarget, Map<String, String> mappedVersions, String projectId,
+    private void rewriteVersion( Model modelTarget, ReleaseDescriptor releaseDescriptor, String projectId,
                                  MavenProject project, String parentVersion )
         throws ReleaseFailureException
     {
-        String version = mappedVersions.get( projectId );
+        String version = getNextVersion( releaseDescriptor, projectId );
         if ( version == null )
         {
             throw new ReleaseFailureException( "Version for '" + project.getName() + "' was not mapped" );
@@ -373,9 +355,8 @@ public abstract class AbstractRewritePomsPhase
         modelTarget.setVersion( version );
     }
 
-    private String rewriteParent( MavenProject project, Model targetModel, Map<String, String> mappedVersions,
-                                  Map<String, Map<String, String>> resolvedSnapshotDependencies,
-                                  Map<String, String> originalVersions )
+    private String rewriteParent( MavenProject project, Model targetModel, 
+                                  ReleaseDescriptor releaseDescriptor, boolean simulate )
         throws ReleaseFailureException
     {
         String parentVersion = null;
@@ -383,15 +364,16 @@ public abstract class AbstractRewritePomsPhase
         {
             MavenProject parent = project.getParent();
             String key = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
-            parentVersion = mappedVersions.get( key );
+            parentVersion = getNextVersion( releaseDescriptor, key );
             if ( parentVersion == null )
             {
                 //MRELEASE-317
-                parentVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
+                parentVersion = getResolvedSnapshotVersion( key, releaseDescriptor );
             }
             if ( parentVersion == null )
             {
-                if ( parent.getVersion().equals( originalVersions.get( key ) ) )
+                String original = getOriginalVersion( releaseDescriptor, key, simulate );
+                if ( parent.getVersion().equals( original ) )
                 {
                     throw new ReleaseFailureException( "Version for parent '" + parent.getName() + "' was not mapped" );
                 }
@@ -404,11 +386,9 @@ public abstract class AbstractRewritePomsPhase
         return parentVersion;
     }
 
-    private void rewriteArtifactVersions( Collection<MavenCoordinate> elements, Map<String, String> mappedVersions,
-                                          Map<String, Map<String, String>> resolvedSnapshotDependencies,
-                                          Map<String, String> originalVersions, Model projectModel,
+    private void rewriteArtifactVersions( Collection<MavenCoordinate> elements, Model projectModel,
                                           Properties properties, ReleaseResult result,
-                                          ReleaseDescriptor releaseDescriptor )
+                                          ReleaseDescriptor releaseDescriptor, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( elements == null )
@@ -449,12 +429,12 @@ public abstract class AbstractRewritePomsPhase
             String artifactId = ReleaseUtil.interpolate( rawArtifactId, projectModel );
 
             String key = ArtifactUtils.versionlessKey( groupId, artifactId );
-            String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
-            String mappedVersion = mappedVersions.get( key );
-            String originalVersion = originalVersions.get( key );
+            String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, releaseDescriptor );
+            String mappedVersion = getNextVersion( releaseDescriptor, key );
+            String originalVersion = getOriginalVersion( releaseDescriptor, key, simulate );
             if ( originalVersion == null )
             {
-                originalVersion = getOriginalResolvedSnapshotVersion( key, resolvedSnapshotDependencies );
+                originalVersion = getOriginalResolvedSnapshotVersion( key, releaseDescriptor );
             }
 
             // MRELEASE-220
@@ -478,7 +458,7 @@ public abstract class AbstractRewritePomsPhase
                     if ( expression.startsWith( "project." ) || expression.startsWith( "pom." )
                         || "version".equals( expression ) )
                     {
-                        if ( !mappedVersion.equals( mappedVersions.get( projectId ) ) )
+                        if ( !mappedVersion.equals( getNextVersion( releaseDescriptor, projectId ) ) )
                         {
                             logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
                             coordinate.setVersion( mappedVersion );
@@ -579,13 +559,12 @@ public abstract class AbstractRewritePomsPhase
 
 
     protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                          Map<String, Map<String, String>> resolvedSnapshots );
+                                                          ReleaseDescriptor releaseDscriptor );
 
-    protected abstract Map<String, String> getOriginalVersionMap( ReleaseDescriptor releaseDescriptor,
-                                                                  List<MavenProject> reactorProjects,
-                                                                  boolean simulate );
+    protected abstract String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey,
+                                                  boolean simulate );
 
-    protected abstract Map<String, String> getNextVersionMap( ReleaseDescriptor releaseDescriptor );
+    protected abstract String getNextVersion( ReleaseDescriptor releaseDescriptor, String key );
 
     protected abstract void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                           String projectId, ScmRepository scmRepository,
@@ -603,37 +582,9 @@ public abstract class AbstractRewritePomsPhase
     }
 
     protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                         Map<String, Map<String, String>> resolvedSnapshots )
+                                                         ReleaseDescriptor releaseDescriptor )
     {
-        Map<String, String> versionsMap = resolvedSnapshots.get( artifactVersionlessKey );
-
-        if ( versionsMap != null )
-        {
-            return versionsMap.get( ReleaseDescriptor.ORIGINAL_VERSION );
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    protected Scm buildScm( MavenProject project )
-    {
-        IdentifiedScm scm;
-        if ( project.getOriginalModel().getScm() == null )
-        {
-            scm = null;
-        }
-        else
-        {
-            scm = new IdentifiedScm();
-            scm.setConnection( project.getOriginalModel().getScm().getConnection() );
-            scm.setDeveloperConnection( project.getOriginalModel().getScm().getDeveloperConnection() );
-            scm.setTag( project.getOriginalModel().getScm().getTag() );
-            scm.setUrl( project.getOriginalModel().getScm().getUrl() );
-            scm.setId( project.getProperties().getProperty( "project.scm.id" ) );
-        }
-        return scm;
+        return releaseDescriptor.getDependencyOriginalVersion( artifactVersionlessKey );
     }
 
     /**

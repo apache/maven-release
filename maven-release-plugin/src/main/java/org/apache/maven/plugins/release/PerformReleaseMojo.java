@@ -31,7 +31,7 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePerformRequest;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
@@ -166,7 +166,7 @@ public class PerformReleaseMojo
         {
             setDeploymentRepository();
             // Note that the working directory here is not the same as in the release configuration, so don't reuse that
-            ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+            ReleaseDescriptorBuilder releaseDescriptor = createReleaseDescriptor();
             if ( connectionUrl != null )
             {
                 releaseDescriptor.setScmSourceUrl( connectionUrl );
@@ -191,7 +191,7 @@ public class PerformReleaseMojo
             releaseDescriptor.setPerformGoals( goals );
 
             ReleasePerformRequest performRequest  = new ReleasePerformRequest();
-            performRequest.setReleaseDescriptor( releaseDescriptor );
+            performRequest.setReleaseDescriptorBuilder( releaseDescriptor );
             performRequest.setReleaseEnvironment( getReleaseEnvironment() );
             performRequest.setReactorProjects( getReactorProjects() );
             performRequest.setDryRun( dryRun );

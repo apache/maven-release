@@ -36,7 +36,6 @@ import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.junit.Test;
@@ -156,7 +155,7 @@ public class InvokerMavenExecutorTest
         proxy.setPassword( "proxy_password" );
         settings.addProxy( proxy );
 
-        ReleaseEnvironment releaseEnvironment = new DefaultReleaseEnvironment();
+        DefaultReleaseEnvironment releaseEnvironment = new DefaultReleaseEnvironment();
         releaseEnvironment.setSettings( settings );
         releaseEnvironment.setMavenHome( new File( System.getProperty( "injectedMavenHome" ) ) );
 

@@ -33,7 +33,7 @@ public interface ReleaseDescriptorStore
      *                        while others are used to override
      * @return the configuration
      */
-    ReleaseDescriptor read( ReleaseDescriptor mergeDescriptor )
+    ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor )
         throws ReleaseDescriptorStoreException;
 
     /**

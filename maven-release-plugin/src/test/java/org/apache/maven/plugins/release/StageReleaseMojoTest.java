@@ -31,7 +31,7 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePerformRequest;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.mockito.ArgumentCaptor;
 
 /**
@@ -49,15 +49,15 @@ public class StageReleaseMojoTest
     {
         StageReleaseMojo mojo = getMojoWithProjectSite( "stage.xml" );
 
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setWorkingDirectory( workingDirectory.getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setWorkingDirectory( workingDirectory.getAbsolutePath() );
         File checkoutDirectory = getTestFile( "target/checkout" );
-        releaseDescriptor.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
-        releaseDescriptor.setPerformGoals( "deploy site:stage-deploy" );
-        releaseDescriptor.setAdditionalArguments( "-DaltDeploymentRepository=\"staging\"" );
+        builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setPerformGoals( "deploy site:stage-deploy" );
+        builder.setAdditionalArguments( "-DaltDeploymentRepository=\"staging\"" );
 
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
-        performRequest.setReleaseDescriptor( releaseDescriptor );
+        performRequest.setReleaseDescriptorBuilder( builder );
         performRequest.setReleaseEnvironment( mojo.getReleaseEnvironment() );
         performRequest.setReactorProjects( mojo.getReactorProjects() );
         performRequest.setDryRun( false );
@@ -70,9 +70,9 @@ public class StageReleaseMojoTest
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
         verify( mock ).perform( argument.capture() );
-        assertEquals( releaseDescriptor, argument.getValue().getReleaseDescriptor() );
+        assertNotNull( argument.getValue().getReleaseDescriptorBuilder() );
         assertNotNull( argument.getValue().getReleaseEnvironment() );
-        assertNull( argument.getValue().getReactorProjects() );
+        assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
         verifyNoMoreInteractions( mock );
     }

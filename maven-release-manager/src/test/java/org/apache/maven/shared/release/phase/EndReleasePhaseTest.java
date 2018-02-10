@@ -25,7 +25,8 @@ import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.junit.Test;
 
@@ -45,14 +46,14 @@ public class EndReleasePhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.class, "end-release" );
+        phase = lookup( ReleasePhase.class, "end-release" );
     }
 
     @Test
     public void testExecute()
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseResult result = phase.execute( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+        ReleaseResult result = phase.execute( ReleaseUtils.buildReleaseDescriptor( new ReleaseDescriptorBuilder() ), new DefaultReleaseEnvironment(), null );
 
         assertEquals( ReleaseResult.SUCCESS, result.getResultCode() );
     }
@@ -61,7 +62,7 @@ public class EndReleasePhaseTest
     public void testSimulate()
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        ReleaseResult result = phase.simulate( new ReleaseDescriptor(), new DefaultReleaseEnvironment(), null );
+        ReleaseResult result = phase.simulate( ReleaseUtils.buildReleaseDescriptor( new ReleaseDescriptorBuilder() ), new DefaultReleaseEnvironment(), null );
 
         assertEquals( ReleaseResult.SUCCESS, result.getResultCode() );
     }

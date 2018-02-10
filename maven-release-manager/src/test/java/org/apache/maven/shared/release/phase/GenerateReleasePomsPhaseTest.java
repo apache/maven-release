@@ -45,7 +45,8 @@ import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
@@ -100,9 +101,9 @@ public class GenerateReleasePomsPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "external-range-dependency" );
-        ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
+        ReleaseDescriptorBuilder builder = createMappedConfiguration( reactorProjects );
 
-        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         comparePomFiles( reactorProjects );
     }
@@ -113,13 +114,13 @@ public class GenerateReleasePomsPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setGenerateReleasePoms( true );
-        config.setSuppressCommitBeforeTagOrBranch( true );
-        config.setRemoteTagging( false );
-        mapNextVersion( config, "groupId:artifactId" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setGenerateReleasePoms( true );
+        builder.setSuppressCommitBeforeTagOrBranch( true );
+        builder.setRemoteTagging( false );
+        mapNextVersion( builder, "groupId:artifactId" );
 
-        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         verify( scmProviderMock ).add( isA( ScmRepository.class ), isA( ScmFileSet.class ) );
 
@@ -131,13 +132,13 @@ public class GenerateReleasePomsPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
-        ReleaseDescriptor config = new ReleaseDescriptor();
-        config.setGenerateReleasePoms( true );
-        config.setSuppressCommitBeforeTagOrBranch( true );
-        config.setRemoteTagging( true );
-        mapNextVersion( config, "groupId:artifactId" );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setGenerateReleasePoms( true );
+        builder.setSuppressCommitBeforeTagOrBranch( true );
+        builder.setRemoteTagging( true );
+        mapNextVersion( builder, "groupId:artifactId" );
 
-        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         verify( scmProviderMock ).add( isA( ScmRepository.class ), isA( ScmFileSet.class ) );
 
@@ -150,10 +151,10 @@ public class GenerateReleasePomsPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "pom-with-finalname" );
-        ReleaseDescriptor config = createConfigurationForWithParentNextVersion( reactorProjects );
-        config.setGenerateReleasePoms( true );
+        ReleaseDescriptorBuilder builder = createConfigurationForWithParentNextVersion( reactorProjects );
+        builder.setGenerateReleasePoms( true );
 
-        phase.execute( config, new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( comparePomFiles( reactorProjects ) );
     }
@@ -164,12 +165,12 @@ public class GenerateReleasePomsPhaseTest
      * util.List)
      */
     @Override
-    protected ReleaseDescriptor createDescriptorFromProjects( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createDescriptorFromProjects( List<MavenProject> reactorProjects )
     {
-        ReleaseDescriptor descriptor = super.createDescriptorFromProjects( reactorProjects );
-        descriptor.setScmReleaseLabel( "release-label" );
-        descriptor.setGenerateReleasePoms( true );
-        return descriptor;
+        ReleaseDescriptorBuilder builder = super.createDescriptorFromProjects( reactorProjects );
+        builder.setScmReleaseLabel( "release-label" );
+        builder.setGenerateReleasePoms( true );
+        return builder;
     }
 
     /*
@@ -230,14 +231,10 @@ public class GenerateReleasePomsPhaseTest
         verifyNoMoreInteractions( scmProviderMock );
     }
 
-    /*
-     * @see org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#mapNextVersion(org.apache.maven.
-     * shared.release.config.ReleaseDescriptor, java.lang.String)
-     */
     @Override
-    protected void mapNextVersion( ReleaseDescriptor config, String projectId )
+    protected void mapNextVersion( ReleaseDescriptorBuilder config, String projectId )
     {
-        config.mapReleaseVersion( projectId, NEXT_VERSION );
+        config.addReleaseVersion( projectId, NEXT_VERSION );
     }
 
     /*
@@ -246,9 +243,9 @@ public class GenerateReleasePomsPhaseTest
      * maven.shared.release.config.ReleaseDescriptor, java.lang.String)
      */
     @Override
-    protected void mapAlternateNextVersion( ReleaseDescriptor config, String projectId )
+    protected void mapAlternateNextVersion( ReleaseDescriptorBuilder config, String projectId )
     {
-        config.mapReleaseVersion( projectId, ALTERNATIVE_NEXT_VERSION );
+        config.addReleaseVersion( projectId, ALTERNATIVE_NEXT_VERSION );
     }
 
     /*
@@ -257,7 +254,7 @@ public class GenerateReleasePomsPhaseTest
      * shared.release.config.ReleaseDescriptor, java.lang.String)
      */
     @Override
-    protected void unmapNextVersion( ReleaseDescriptor config, String projectId )
+    protected void unmapNextVersion( ReleaseDescriptorBuilder config, String projectId )
     {
         // nothing to do
     }
@@ -267,15 +264,15 @@ public class GenerateReleasePomsPhaseTest
      * createConfigurationForPomWithParentAlternateNextVersion(java.util.List)
      */
     @Override
-    protected ReleaseDescriptor createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {
-        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
 
-        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
-        config.mapReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+        builder.addReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+        builder.addReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
 
-        return config;
+        return builder;
     }
 
     /*
@@ -283,15 +280,15 @@ public class GenerateReleasePomsPhaseTest
      * createConfigurationForWithParentNextVersion(java.util.List)
      */
     @Override
-    protected ReleaseDescriptor createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects )
         throws Exception
     {
-        ReleaseDescriptor config = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
 
-        config.mapReleaseVersion( "groupId:artifactId", NEXT_VERSION );
-        config.mapReleaseVersion( "groupId:subproject1", NEXT_VERSION );
+        builder.addReleaseVersion( "groupId:artifactId", NEXT_VERSION );
+        builder.addReleaseVersion( "groupId:subproject1", NEXT_VERSION );
 
-        return config;
+        return builder;
     }
 
     /*

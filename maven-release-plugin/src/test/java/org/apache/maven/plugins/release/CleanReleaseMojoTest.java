@@ -68,8 +68,6 @@ public class CleanReleaseMojoTest
         // verify
         verify( mock ).clean( request.capture() );
         
-        assertEquals( workingDirectory.getAbsolutePath(),
-                      request.getValue().getReleaseDescriptor().getWorkingDirectory() );
         assertEquals( mojo.getReactorProjects(), request.getValue().getReactorProjects() );
         
         verifyNoMoreInteractions( mock );

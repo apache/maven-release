@@ -24,7 +24,8 @@ import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.PlexusTestCase;
 
@@ -38,7 +39,7 @@ public class MapDevelopmentVersionPhaseIT
         throws Exception
     {
         super.setUp();
-        mapVersionsPhase = (MapVersionsPhase) lookup( ReleasePhase.class.getName(), "map-development-versions" );
+        mapVersionsPhase = (MapVersionsPhase) lookup( ReleasePhase.class, "map-development-versions" );
     }
 
     private static MavenProject createProject( String artifactId, String version )
@@ -52,13 +53,13 @@ public class MapDevelopmentVersionPhaseIT
 
     public void testNoUpdateWorkingCopyVersions() throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setInteractive( false );
-        releaseDescriptor.setUpdateWorkingCopyVersions( false );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setInteractive( false );
+        builder.setUpdateWorkingCopyVersions( false );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
-        mapVersionsPhase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
+        mapVersionsPhase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
-        assertEquals( "1.0", releaseDescriptor.getDevelopmentVersions().get( "groupId:artifactId" ) );
+        assertEquals( "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }
 }

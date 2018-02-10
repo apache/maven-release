@@ -51,7 +51,8 @@ import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
@@ -82,9 +83,9 @@ public class ScmCheckModificationsPhaseTest
         throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
@@ -92,7 +93,7 @@ public class ScmCheckModificationsPhaseTest
         // execute
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -103,7 +104,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -119,9 +120,9 @@ public class ScmCheckModificationsPhaseTest
         throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
         ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
         scmManagerStub.setException( new ScmRepositoryException( "..." )  );
@@ -129,7 +130,7 @@ public class ScmCheckModificationsPhaseTest
         // execute
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -140,7 +141,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -155,9 +156,9 @@ public class ScmCheckModificationsPhaseTest
         throws Exception
     {
         // prepare
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm-url" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.status( isA( ScmRepository.class ),
@@ -169,7 +170,7 @@ public class ScmCheckModificationsPhaseTest
         // execute
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -180,7 +181,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -198,17 +199,17 @@ public class ScmCheckModificationsPhaseTest
     public void testScmResultFailure()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
+        ScmManager scmManager = lookup( ScmManager.class );
         ScmProviderStub providerStub =
-            (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
+            (ScmProviderStub) scmManager.getProviderByUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         providerStub.setStatusScmResult( new StatusScmResult( "", "", "", false ) );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -219,7 +220,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -233,13 +234,13 @@ public class ScmCheckModificationsPhaseTest
     public void testNoModifications()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        setChangedFiles( releaseDescriptor, Collections.<String>emptyList() );
+        setChangedFiles( builder, Collections.<String>emptyList() );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -249,14 +250,14 @@ public class ScmCheckModificationsPhaseTest
     public void testModificationsToExcludedFilesOnly()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        setChangedFiles( releaseDescriptor,
+        setChangedFiles( builder,
                          Arrays.asList( "release.properties", "pom.xml.backup", "pom.xml.tag", "pom.xml.next" ) );
 
-        phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
-        phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
         // successful execution is verification enough
         assertTrue( true );
@@ -267,32 +268,32 @@ public class ScmCheckModificationsPhaseTest
     public void testModificationsToCustomExcludedFilesOnly()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "**/keep.me" ) );
+        builder.setCheckModificationExcludes( Collections.singletonList( "**/keep.me" ) );
 
-        setChangedFiles( releaseDescriptor,
+        setChangedFiles( builder,
                          Arrays.asList( "release.properties", "pom.xml.backup", "pom.xml.tag", "pom.xml.next",
                                         "keep.me", "src/app/keep.me", "config\\keep.me" ) );
 
         assertEquals( ReleaseResult.SUCCESS,
-                      phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+                      phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null ).getResultCode() );
 
         assertEquals( ReleaseResult.SUCCESS,
-                      phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+                      phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null ).getResultCode() );
     }
 
     @Test
     public void testModificationsToPoms()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( "pom.xml", "module/pom.xml" ) );
+        setChangedFiles( builder, Arrays.asList( "pom.xml", "module/pom.xml" ) );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -303,7 +304,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -317,13 +318,13 @@ public class ScmCheckModificationsPhaseTest
     public void testModificationsToIncludedFilesOnly()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        setChangedFiles( releaseDescriptor, Collections.singletonList( "something.txt" ) );
+        setChangedFiles( builder, Collections.singletonList( "something.txt" ) );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -334,7 +335,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -348,14 +349,14 @@ public class ScmCheckModificationsPhaseTest
     public void testModificationsToIncludedAndExcludedFiles()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties", "pom.xml.backup", "pom.xml.tag",
+        setChangedFiles( builder, Arrays.asList( "release.properties", "pom.xml.backup", "pom.xml.tag",
                                                            "pom.xml.release", "something.txt" ) );
 
         try
         {
-            phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -366,7 +367,7 @@ public class ScmCheckModificationsPhaseTest
 
         try
         {
-            phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null );
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null );
 
             fail( "Status check should have failed" );
         }
@@ -380,16 +381,16 @@ public class ScmCheckModificationsPhaseTest
     public void testModificationsToAdditionalExcludedFiles()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
-        releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "something.*" ) );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
+        builder.setCheckModificationExcludes( Collections.singletonList( "something.*" ) );
 
-        setChangedFiles( releaseDescriptor, Collections.singletonList( "something.txt" ) );
-
-        assertEquals( ReleaseResult.SUCCESS,
-                      phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+        setChangedFiles( builder, Collections.singletonList( "something.txt" ) );
 
         assertEquals( ReleaseResult.SUCCESS,
-                      phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+                      phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null ).getResultCode() );
+
+        assertEquals( ReleaseResult.SUCCESS,
+                      phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null ).getResultCode() );
     }
 
     // MRELEASE-775
@@ -397,25 +398,25 @@ public class ScmCheckModificationsPhaseTest
     public void testMultipleExclusionPatternMatch()
         throws Exception
     {
-        ReleaseDescriptor releaseDescriptor = createReleaseDescriptor();
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        releaseDescriptor.setCheckModificationExcludes( Collections.singletonList( "release.properties" ) );
+        builder.setCheckModificationExcludes( Collections.singletonList( "release.properties" ) );
 
-        setChangedFiles( releaseDescriptor, Arrays.asList( "release.properties" ) );
-
-        assertEquals( ReleaseResult.SUCCESS,
-                      phase.execute( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+        setChangedFiles( builder, Arrays.asList( "release.properties" ) );
 
         assertEquals( ReleaseResult.SUCCESS,
-                      phase.simulate( releaseDescriptor, new DefaultReleaseEnvironment(), null ).getResultCode() );
+                      phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null ).getResultCode() );
+
+        assertEquals( ReleaseResult.SUCCESS,
+                      phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), null ).getResultCode() );
     }
 
-    private void setChangedFiles( ReleaseDescriptor releaseDescriptor, List<String> changedFiles )
+    private void setChangedFiles( ReleaseDescriptorBuilder builder, List<String> changedFiles )
         throws Exception
     {
         ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =
-            (ScmProviderStub) scmManager.getProviderByUrl( releaseDescriptor.getScmSourceUrl() );
+            (ScmProviderStub) scmManager.getProviderByUrl( "scm:svn:file://localhost/tmp/scm-repo" );
 
         providerStub.setStatusScmResult( new StatusScmResult( "", createScmFiles( changedFiles ) ) );
     }
@@ -431,11 +432,11 @@ public class ScmCheckModificationsPhaseTest
         return files;
     }
 
-    private static ReleaseDescriptor createReleaseDescriptor()
+    private static ReleaseDescriptorBuilder createReleaseDescriptorBuilder()
     {
-        ReleaseDescriptor releaseDescriptor = new ReleaseDescriptor();
-        releaseDescriptor.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
-        return releaseDescriptor;
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
+        return builder;
     }
 }
