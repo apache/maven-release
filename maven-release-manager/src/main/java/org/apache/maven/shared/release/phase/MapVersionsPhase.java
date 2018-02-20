@@ -117,20 +117,17 @@ public class MapVersionsPhase
 
             String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, result );
 
-            if ( convertToSnapshot )
+            if ( !convertToSnapshot )
             {
-                if ( releaseDescriptor.isBranchCreation() && convertToBranch )
-                {
-                    releaseDescriptor.addReleaseVersion( projectId, nextVersion );
-                }
-                else
-                {
-                    releaseDescriptor.addDevelopmentVersion( projectId, nextVersion );
-                }
+                releaseDescriptor.addReleaseVersion( projectId, nextVersion );
+            }
+            else if ( releaseDescriptor.isBranchCreation() && convertToBranch )
+            {
+                releaseDescriptor.addReleaseVersion( projectId, nextVersion );
             }
             else
             {
-                releaseDescriptor.addReleaseVersion( projectId, nextVersion );
+                releaseDescriptor.addDevelopmentVersion( projectId, nextVersion );
             }
 
             for ( MavenProject subProject : reactorProjects )
@@ -173,20 +170,17 @@ public class MapVersionsPhase
 
                 String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, result );
 
-                if ( convertToSnapshot )
+                if ( !convertToSnapshot )
                 {
-                    if ( releaseDescriptor.isBranchCreation() && convertToBranch )
-                    {
-                        releaseDescriptor.addReleaseVersion( projectId, nextVersion );
-                    }
-                    else
-                    {
-                        releaseDescriptor.addDevelopmentVersion( projectId, nextVersion );
-                    }
+                    releaseDescriptor.addReleaseVersion( projectId, nextVersion );
+                }
+                else if ( releaseDescriptor.isBranchCreation() && convertToBranch )
+                {
+                    releaseDescriptor.addReleaseVersion( projectId, nextVersion );
                 }
                 else
                 {
-                    releaseDescriptor.addReleaseVersion( projectId, nextVersion );
+                    releaseDescriptor.addDevelopmentVersion( projectId, nextVersion );
                 }
             }
         }
@@ -356,20 +350,17 @@ public class MapVersionsPhase
         {
             messageKey = "mapversion.branch.prompt";
         }
-        else if ( convertToSnapshot )
+        else if ( !convertToSnapshot )
         {
-            if ( releaseDescriptor.isBranchCreation() )
-            {
-                messageKey = "mapversion.workingcopy.prompt";
-            }
-            else
-            {
-                messageKey = "mapversion.development.prompt";
-            }
+            messageKey = "mapversion.release.prompt";
+        }
+        else if ( releaseDescriptor.isBranchCreation() )
+        {
+            messageKey = "mapversion.workingcopy.prompt";
         }
         else
         {
-            messageKey = "mapversion.release.prompt";
+            messageKey = "mapversion.development.prompt";
         }
         return messageKey;
     }
