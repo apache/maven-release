@@ -169,16 +169,27 @@ public abstract class AbstractRewritePomsPhase
                             List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        String commonBasedir;
+        try
+        {
+            commonBasedir = ReleaseUtil.getCommonBasedir( reactorProjects );
+        }
+        catch ( IOException e )
+        {
+            throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
+                + e.getMessage(), e );
+        }
+
         for ( MavenProject project : reactorProjects )
         {
             logInfo( result, "Transforming '" + project.getName() + "'..." );
 
-            transformProject( project, releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result );
+            transformProject( project, releaseDescriptor, releaseEnvironment, commonBasedir, simulate, result );
         }
     }
 
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor,
-                                   ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
+                                   ReleaseEnvironment releaseEnvironment, String commonBasedir,
                                    boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -215,7 +226,7 @@ public abstract class AbstractRewritePomsPhase
             }
         }
 
-        transformDocument( project, etl.getModel(), releaseDescriptor, reactorProjects, scmRepository,
+        transformDocument( project, etl.getModel(), releaseDescriptor, commonBasedir, scmRepository,
                            result, simulate );
 
         File outputFile;
@@ -233,7 +244,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformDocument( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                    List<MavenProject> reactorProjects, ScmRepository scmRepository,
+                                    String commonBasedir, ScmRepository scmRepository,
                                     ReleaseResult result, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -325,17 +336,6 @@ public abstract class AbstractRewritePomsPhase
                 rewriteArtifactVersions( toMavenCoordinates( modelBase.getReporting().getPlugins() ), model, properties,
                                          result, releaseDescriptor, simulate );
             }
-        }
-
-        String commonBasedir;
-        try
-        {
-            commonBasedir = ReleaseUtil.getCommonBasedir( reactorProjects );
-        }
-        catch ( IOException e )
-        {
-            throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
-                + e.getMessage(), e );
         }
 
         transformScm( project, modelTarget, releaseDescriptor, projectId, scmRepository, result,
