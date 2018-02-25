@@ -2139,6 +2139,79 @@ public class MapVersionsPhaseTest
         // test
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
     }
+    
+    @Test
+    public void testUpdateBranchInvalidDefaultReleaseVersion_NonInteractive()
+        throws Exception
+    {
+        // prepare
+        ReleasePhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultReleaseVersion( "3.0" );
+        builder.setInteractive( false );
+        builder.setUpdateBranchVersions( true );
+
+        // test
+        try {
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+            fail( "Should fail due to invalid version" );
+        }
+        catch( ReleaseExecutionException e )
+        {
+            assertEquals( "3.0 is invalid, expected a snapshot", e.getMessage() );
+        }
+    }
+    
+    @Test
+    public void testUpdateReleaseInvalidDefaultReleaseVersion_NonInteractive()
+        throws Exception
+    {
+        // prepare
+        ReleasePhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultReleaseVersion( "3.0-SNAPSHOT" );
+        builder.setInteractive( false );
+
+        // test
+        try {
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+            fail( "Should fail due to invalid version" );
+        }
+        catch( ReleaseExecutionException e )
+        {
+            assertEquals( "3.0-SNAPSHOT is invalid, expected a non-snapshot", e.getMessage() );
+        }
+    }
+    
+    @Test
+    public void testUpdateDevelopmentInvalidDefaultDevelopmentVersion_NonInteractive()
+        throws Exception
+    {
+        // prepare
+        ReleasePhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+
+        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setDefaultDevelopmentVersion( "3.0" );
+        builder.setInteractive( false );
+
+        // test
+        try {
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+            fail( "Should fail due to invalid version" );
+        }
+        catch( ReleaseExecutionException e )
+        {
+            assertEquals( "3.0 is invalid, expected a snapshot", e.getMessage() );
+        }
+    }
 
     private static MavenProject createProject( String artifactId, String version )
     {

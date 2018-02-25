@@ -281,7 +281,7 @@ public class MapVersionsPhase
                     {
                         throw new ReleaseExecutionException( e.getMessage(), e );
                     }
-               }
+                }
 
                 if ( releaseDescriptor.isInteractive() )
                 {
@@ -295,9 +295,17 @@ public class MapVersionsPhase
 
                   //@todo validate next version, maybe with DefaultArtifactVersion
                 }
-                else
+                else if ( defaultVersion == null )
                 {
                     nextVersion = suggestedVersion;
+                }
+                else if ( convertToSnapshot )
+                {
+                    throw new ReleaseExecutionException( defaultVersion + " is invalid, expected a snapshot" );
+                }
+                else
+                {
+                    throw new ReleaseExecutionException( defaultVersion + " is invalid, expected a non-snapshot" );
                 }
             }
         }
