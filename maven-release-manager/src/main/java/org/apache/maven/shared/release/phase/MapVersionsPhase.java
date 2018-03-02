@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import java.text.MessageFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 
@@ -386,5 +387,10 @@ public class MapVersionsPhase
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
+    }
+    
+    private ResourceBundle getResourceBundle( Locale locale )
+    {
+        return ResourceBundle.getBundle( "release-messages", locale, MapVersionsPhase.class.getClassLoader() );
     }
 }

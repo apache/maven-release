@@ -24,8 +24,6 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
 
 import java.util.List;
-import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Base class for all phases.
@@ -36,11 +34,6 @@ public abstract class AbstractReleasePhase
     extends AbstractLogEnabled
     implements ReleasePhase
 {
-    protected ResourceBundle getResourceBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "release-messages", locale, AbstractReleasePhase.class.getClassLoader() );
-    }
-
     @Override
     public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
