@@ -22,7 +22,6 @@ package org.apache.maven.shared.release.phase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -32,7 +31,6 @@ import java.util.List;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
@@ -153,34 +151,6 @@ public class RewritePomsForDevelopmentPhaseTest
         phase.clean( reactorProjects );
 
         assertFalse( testFile.exists() );
-    }
-
-    @Test
-    public void testRewriteBasicPomUnmappedScm()
-        throws Exception
-    {
-        List<MavenProject> reactorProjects = prepareReactorProjects( "basic-pom", true );
-
-        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder() {
-            public ReleaseDescriptorBuilder addOriginalScmInfo(String key, Scm value) {
-                // do nothing
-                return this;
-            };
-        }; 
-        builder = createDescriptorFromProjects( builder, reactorProjects );
-
-        mapNextVersion( builder, "groupId:artifactId" );
-
-        try
-        {
-            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
-
-            fail( "Expected failure" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            verifyReactorProjects( "basic-pom", true );
-        }
     }
 
     @Override

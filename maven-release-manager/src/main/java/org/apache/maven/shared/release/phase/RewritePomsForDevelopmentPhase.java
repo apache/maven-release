@@ -56,13 +56,6 @@ public class RewritePomsForDevelopmentPhase
             Scm scmRoot = modelTarget.getScm();
             if ( scmRoot != null )
             {
-                // check containsKey, not == null, as we store null as a value
-                if ( releaseDescriptor.getOriginalScmInfo( projectId ) == null )
-                {
-                    throw new ReleaseExecutionException(
-                        "Unable to find original SCM info for '" + project.getName() + "'" );
-                }
-
                 ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
                 if ( translator != null )
                 {
