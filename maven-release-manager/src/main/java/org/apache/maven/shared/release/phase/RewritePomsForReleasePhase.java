@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.phase;
  */
 
 import java.io.IOException;
+import java.nio.file.Path;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
@@ -51,7 +52,7 @@ public class RewritePomsForReleasePhase
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,
-                                 String commonBasedir )
+                                 Path commonBasedir )
     throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
@@ -103,7 +104,7 @@ public class RewritePomsForReleasePhase
     }
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Scm scmTarget,
-                                  ScmRepository scmRepository, ReleaseResult relResult, String commonBasedir )
+                                  ScmRepository scmRepository, ReleaseResult relResult, Path commonBasedir )
         throws IOException
     {
         ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
@@ -125,9 +126,8 @@ public class RewritePomsForReleasePhase
                 tagBase = "scm:svn:" + tagBase;
             }
 
-            String workingDirectory =
-                ReleaseUtil.isSymlink( project.getBasedir() ) ? project.getBasedir().getCanonicalPath()
-                                : project.getBasedir().getAbsolutePath();
+            Path workingDirectory = project.getBasedir().toPath().toRealPath();
+
             int count =
                 ReleaseUtil.getBaseWorkingDirectoryParentCount( commonBasedir, workingDirectory );
             if ( scm.getConnection() != null )

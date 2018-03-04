@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.nio.file.Path;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -45,7 +47,7 @@ public class RewritePomVersionsPhase
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,
-                                 String commonBasedir )
+                                 Path commonBasedir )
         throws ReleaseExecutionException
     {
         // We are only updating versions no mods to scm needed
