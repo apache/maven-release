@@ -21,6 +21,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderRe
  * under the License.
  */
 
+import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.PlexusTestCase;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
@@ -65,7 +66,7 @@ public class PropertiesReleaseDescriptorStoreTest
         throws Exception
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setWorkingDirectory( getTestFile( "target/test-classes" ).getAbsolutePath() );
+        builder.setWorkingDirectory( AbstractReleaseTestCase.getPath(  getTestFile( "target/test-classes" ) ) );
         ReleaseDescriptor config = store.read( builder ).build();
 
         ReleaseDescriptorBuilder expected = createExpectedReleaseConfiguration();
@@ -144,12 +145,12 @@ public class PropertiesReleaseDescriptorStoreTest
         file.getParentFile().mkdirs();
 
         ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
-        config.setWorkingDirectory( file.getParentFile().getAbsolutePath() );
+        config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
         store.write( config.build() );
 
         ReleaseDescriptorBuilder rereadDescriptorBuilder = store.read( file );
-        rereadDescriptorBuilder.setWorkingDirectory( file.getParentFile().getAbsolutePath() );
+        rereadDescriptorBuilder.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
         assertAndAdjustScmPassword( config, rereadDescriptorBuilder.build() );
         assertAndAdjustScmPrivateKeyPassPhrase( config, rereadDescriptorBuilder.build() );
@@ -257,7 +258,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertTrue( "Check file already exists", file.exists() );
 
         ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
-        config.setWorkingDirectory( file.getParentFile().getAbsolutePath() );
+        config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
         store.delete( config.build() );
 
@@ -273,7 +274,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertFalse( "Check file already exists", file.exists() );
 
         ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
-        config.setWorkingDirectory( file.getParentFile().getAbsolutePath() );
+        config.setWorkingDirectory( AbstractReleaseTestCase.getPath( file.getParentFile() ) );
 
         store.delete( config.build() );
 
@@ -358,7 +359,7 @@ public class PropertiesReleaseDescriptorStoreTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setScmUsername( "username" );
         // Not setting other optional SCM settings for brevity
-        releaseDescriptor.setWorkingDirectory( getTestFile( "target/test-working-directory" ).getAbsolutePath() );
+        releaseDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath( getTestFile( "target/test-working-directory" ) ) );
         // Not setting non-override setting completedPhase
 
         return releaseDescriptor;
