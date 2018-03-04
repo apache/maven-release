@@ -24,7 +24,6 @@ import junit.framework.TestCase;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
-import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,7 +133,7 @@ public class ReleaseUtilsTest
 
         if ( otherFile != null )
         {
-            configBuilder.setWorkingDirectory( AbstractReleaseTestCase.getPath( otherFile ) );
+            configBuilder.setWorkingDirectory( otherFile.getAbsolutePath() );
             assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
         }
 
@@ -265,7 +264,7 @@ public class ReleaseUtilsTest
     {
         File workingDirectory = new File( "." );
 
-        return createReleaseDescriptor(AbstractReleaseTestCase.getPath( workingDirectory ) );
+        return createReleaseDescriptor( workingDirectory.getAbsolutePath() );
     }
 
     private static ReleaseDescriptorBuilder createReleaseDescriptor( String workingDirectory )

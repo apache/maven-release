@@ -690,9 +690,8 @@ public class DefaultReleaseManagerTest
 
             fail( "commit should have failed" );
         }
-        catch ( ReleaseScmCommandException e )
+        catch ( ReleaseExecutionException e )
         {
-            assertNull( "check no other cause", e.getCause() );
         }
     }
 

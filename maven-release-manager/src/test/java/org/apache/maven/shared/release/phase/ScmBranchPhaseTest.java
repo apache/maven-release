@@ -31,7 +31,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -78,12 +77,6 @@ public class ScmBranchPhaseTest
         phase = lookup( ReleasePhase.class, "scm-branch" );
     }
 
-    public static String getPath( File file )
-        throws IOException
-    {
-        return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();
-    }
-
     @Test
     public void testBranch()
         throws Exception
@@ -93,7 +86,7 @@ public class ScmBranchPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -103,7 +96,7 @@ public class ScmBranchPhaseTest
         when( scmProviderMock.branch( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                       eq( "release-label" ),
                                       argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
-                                                                                                                                                                                                Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
+                                                                                                                                                                                                Collections.singletonList( new ScmFile( rootProject.getFile().getAbsolutePath(),
                                                                                                                                                                                                                                         ScmFileStatus.TAGGED ) ) ) );
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
@@ -131,7 +124,7 @@ public class ScmBranchPhaseTest
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( scmUrl );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
         builder.setScmBranchBase( "http://svn.example.com/repos/project/branches/" );
@@ -145,7 +138,7 @@ public class ScmBranchPhaseTest
         when( scmProviderMock.branch( eq( repository ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                       eq( "release-label" ),
                                       argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
-                                                                                                                                                                                                Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
+                                                                                                                                                                                                Collections.singletonList( new ScmFile( rootProject.getFile().getAbsolutePath(),
                                                                                                                                                                                                                                         ScmFileStatus.TAGGED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -172,7 +165,7 @@ public class ScmBranchPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( rootProject.getScm().getConnection() );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -186,7 +179,7 @@ public class ScmBranchPhaseTest
         when( scmProviderMock.branch( eq( repository ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                       eq( "release-label" ),
                                       argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
-                                                                                                                                                                                                Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
+                                                                                                                                                                                                Collections.singletonList( new ScmFile( rootProject.getFile().getAbsolutePath(),
                                                                                                                                                                                                                                         ScmFileStatus.TAGGED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -213,7 +206,7 @@ public class ScmBranchPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -223,7 +216,7 @@ public class ScmBranchPhaseTest
         when( scmProviderMock.branch( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                       eq( "release-label" ),
                                       argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
-                                                                                                                                                                                                Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
+                                                                                                                                                                                                Collections.singletonList( new ScmFile( rootProject.getFile().getAbsolutePath(),
                                                                                                                                                                                                                                         ScmFileStatus.TAGGED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -265,7 +258,7 @@ public class ScmBranchPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
@@ -421,7 +414,7 @@ public class ScmBranchPhaseTest
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( "scm-url" );
         builder.setScmReleaseLabel( "release-label" );
-        builder.setWorkingDirectory( getPath( getTestFile( "target/test/checkout" ) ) );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
         return builder;
     }
 }

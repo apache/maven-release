@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
@@ -221,10 +222,10 @@ public class CheckoutProjectFromScm
         String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();
         if ( StringUtils.isEmpty( scmRelativePathProjectDirectory ) )
         {
-            String basedir;
+            Path basedir;
             try
             {
-                basedir = ReleaseUtil.getCommonBasedir( reactorProjects ).toString();
+                basedir = ReleaseUtil.getCommonBasedir( reactorProjects );
             }
             catch ( IOException e )
             {
@@ -232,22 +233,17 @@ public class CheckoutProjectFromScm
                     + e.getMessage(), e );
             }
 
-            String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();
+            Path rootProjectBasedir;
             try
             {
-                if ( ReleaseUtil.isSymlink( rootProject.getBasedir() ) )
-                {
-                    rootProjectBasedir = rootProject.getBasedir().getCanonicalPath();
-                }
+                rootProjectBasedir = rootProject.getBasedir().toPath().toRealPath();
             }
             catch ( IOException e )
             {
                 throw new ReleaseExecutionException( e.getMessage(), e );
             }
-            if ( rootProjectBasedir.length() > basedir.length() )
-            {
-                scmRelativePathProjectDirectory = rootProjectBasedir.substring( basedir.length() + 1 );
-            }
+
+            scmRelativePathProjectDirectory = basedir.relativize( rootProjectBasedir ).toString();
         }
         releaseDescriptor.setScmRelativePathProjectDirectory( scmRelativePathProjectDirectory );
 

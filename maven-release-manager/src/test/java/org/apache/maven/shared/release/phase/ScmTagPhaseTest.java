@@ -31,7 +31,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -78,12 +77,6 @@ public class ScmTagPhaseTest
         phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-tag" );
     }
 
-    public static String getPath( File file )
-        throws IOException
-    {
-        return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();
-    }
-
     @Test
     public void testTag()
         throws Exception
@@ -93,7 +86,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -103,7 +96,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                    eq( "release-label" ),
                                    argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult( "...",
-                                                                                                                                                                                 Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
+                                                                                                                                                                                 Collections.singletonList( new ScmFile( rootProject.getFile().getAbsolutePath(),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
@@ -130,7 +123,7 @@ public class ScmTagPhaseTest
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( scmUrl );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
         builder.setScmTagBase( "http://svn.example.com/repos/project/releases/" );
@@ -144,7 +137,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( eq( repository ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                    eq( "release-label" ),
                                    argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult( "...",
-                                                                                                                                                                                 Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
+                                                                                                                                                                                 Collections.singletonList( new ScmFile( rootProject.getFile().getAbsolutePath(),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -171,7 +164,7 @@ public class ScmTagPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( rootProject.getScm().getConnection() );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -185,7 +178,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( eq( repository ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                    eq( "release-label" ),
                                    argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult( "...",
-                                                                                                                                                                                 Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
+                                                                                                                                                                                 Collections.singletonList( new ScmFile( rootProject.getFile().getAbsolutePath(),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -212,7 +205,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -222,7 +215,7 @@ public class ScmTagPhaseTest
         when( scmProviderMock.tag( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                    eq( "release-label" ),
                                    argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult( "...",
-                                                                                                                                                                                 Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
+                                                                                                                                                                                 Collections.singletonList( new ScmFile( rootProject.getFile().getAbsolutePath(),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -264,7 +257,7 @@ public class ScmTagPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
         builder.setScmReleaseLabel( "release-label" );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
@@ -418,7 +411,7 @@ public class ScmTagPhaseTest
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( "scm-url" );
         builder.setScmReleaseLabel( "release-label" );
-        builder.setWorkingDirectory( getPath( getTestFile( "target/test/checkout" ) ) );
+        builder.setWorkingDirectory( getTestFile( "target/test/checkout" ).getAbsolutePath() );
         return builder;
     }
 }
