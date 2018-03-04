@@ -19,8 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.nio.file.Path;
-
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
@@ -49,7 +47,7 @@ public class RewritePomsForDevelopmentPhase
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result,
-                                 Path commonBasedir )
+                                 String commonBasedir )
         throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed

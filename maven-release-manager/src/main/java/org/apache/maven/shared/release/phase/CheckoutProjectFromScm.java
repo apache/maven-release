@@ -224,7 +224,7 @@ public class CheckoutProjectFromScm
             String basedir;
             try
             {
-                basedir = ReleaseUtil.getCommonBasedir( reactorProjects ).toString();
+                basedir = ReleaseUtil.getCommonBasedir( reactorProjects );
             }
             catch ( IOException e )
             {

@@ -21,7 +21,6 @@ package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -170,7 +169,7 @@ public abstract class AbstractRewritePomsPhase
                             List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        Path commonBasedir;
+        String commonBasedir;
         try
         {
             commonBasedir = ReleaseUtil.getCommonBasedir( reactorProjects );
@@ -190,7 +189,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor,
-                                   ReleaseEnvironment releaseEnvironment, Path commonBasedir,
+                                   ReleaseEnvironment releaseEnvironment, String commonBasedir,
                                    boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -245,7 +244,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void transformDocument( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                    Path commonBasedir, ScmRepository scmRepository,
+                                    String commonBasedir, ScmRepository scmRepository,
                                     ReleaseResult result, boolean simulate )
         throws ReleaseExecutionException, ReleaseFailureException
     {
@@ -569,7 +568,7 @@ public abstract class AbstractRewritePomsPhase
 
     protected abstract void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                           String projectId, ScmRepository scmRepository,
-                                          ReleaseResult result, Path commonBasedir )
+                                          ReleaseResult result, String commonBasedir )
         throws ReleaseExecutionException;
 
     /**
