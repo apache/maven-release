@@ -34,6 +34,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.phase.ReleasePhase;
+import org.apache.maven.shared.release.phase.ResourceGenerator;
 import org.apache.maven.shared.release.strategy.Strategy;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
@@ -539,8 +540,11 @@ public class DefaultReleaseManager
         for ( String name : phases )
         {
             ReleasePhase phase = releasePhases.get( name );
-
-            phase.clean( cleanRequest.getReactorProjects() );
+            
+            if ( phase instanceof ResourceGenerator )
+            {
+                ( (ResourceGenerator) phase ).clean( cleanRequest.getReactorProjects() );
+            }
         }
 
         updateListener( cleanRequest.getReleaseManagerListener(), "cleanup", PHASE_END );

@@ -32,7 +32,7 @@ import java.util.List;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ReleasePhaseStub
-    implements ReleasePhase
+    implements ReleasePhase, ResourceGenerator
 {
     /**
      * Whether the phase was simulated.

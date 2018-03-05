@@ -31,7 +31,6 @@ import java.util.Objects;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.apache.maven.shared.release.config.ReleaseStageVersions;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
@@ -131,7 +130,7 @@ public class RewritePomsForReleasePhaseTest
 
         assertTrue( testFile.exists() );
 
-        phase.clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( reactorProjects );
 
         assertFalse( testFile.exists() );
     }
@@ -146,7 +145,7 @@ public class RewritePomsForReleasePhaseTest
         testFile.delete();
         assertFalse( testFile.exists() );
 
-        phase.clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( reactorProjects );
 
         assertFalse( testFile.exists() );
     }

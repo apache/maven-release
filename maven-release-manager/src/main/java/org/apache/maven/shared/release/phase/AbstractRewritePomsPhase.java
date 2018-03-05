@@ -67,7 +67,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public abstract class AbstractRewritePomsPhase
-    extends AbstractReleasePhase
+    extends AbstractReleasePhase implements ResourceGenerator
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
@@ -140,8 +140,6 @@ public abstract class AbstractRewritePomsPhase
     public ReleaseResult clean( List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
-
-        super.clean( reactorProjects );
 
         if ( reactorProjects != null )
         {

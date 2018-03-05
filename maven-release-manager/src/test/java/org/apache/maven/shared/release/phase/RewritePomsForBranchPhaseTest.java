@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
@@ -130,7 +129,7 @@ public class RewritePomsForBranchPhaseTest
 
         assertTrue( testFile.exists() );
 
-        phase.clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( reactorProjects );
 
         assertFalse( testFile.exists() );
     }
@@ -147,7 +146,7 @@ public class RewritePomsForBranchPhaseTest
         testFile.delete();
         assertFalse( testFile.exists() );
 
-        phase.clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( reactorProjects );
 
         assertFalse( testFile.exists() );
     }

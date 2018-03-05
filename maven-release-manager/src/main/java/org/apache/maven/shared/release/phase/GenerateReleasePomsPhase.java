@@ -74,7 +74,7 @@ import org.codehaus.plexus.util.WriterFactory;
  */
 @Component( role = ReleasePhase.class, hint = "generate-release-poms" )
 public class GenerateReleasePomsPhase
-    extends AbstractReleasePomsPhase
+    extends AbstractReleasePomsPhase implements ResourceGenerator
 {
     private static final String FINALNAME_EXPRESSION = "${project.artifactId}-${project.version}";
 

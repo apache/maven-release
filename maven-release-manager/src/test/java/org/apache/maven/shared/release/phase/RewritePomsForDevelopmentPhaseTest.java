@@ -133,7 +133,7 @@ public class RewritePomsForDevelopmentPhaseTest
 
         assertTrue( testFile.exists() );
 
-        phase.clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( reactorProjects );
 
         assertFalse( testFile.exists() );
     }
@@ -148,7 +148,7 @@ public class RewritePomsForDevelopmentPhaseTest
         testFile.delete();
         assertFalse( testFile.exists() );
 
-        phase.clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( reactorProjects );
 
         assertFalse( testFile.exists() );
     }

@@ -37,7 +37,7 @@ import org.codehaus.plexus.util.FileUtils;
  */
 @Component( role = ReleasePhase.class, hint = "create-backup-poms" )
 public class CreateBackupPomsPhase
-    extends AbstractBackupPomsPhase
+    extends AbstractBackupPomsPhase implements ResourceGenerator
 {
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,

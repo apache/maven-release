@@ -19,11 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
-
-import java.util.List;
 
 /**
  * Base class for all phases.
@@ -34,14 +31,6 @@ public abstract class AbstractReleasePhase
     extends AbstractLogEnabled
     implements ReleasePhase
 {
-    @Override
-    public ReleaseResult clean( List<MavenProject> reactorProjects )
-    {
-        // nothing to do by default
-
-        return getReleaseResultSuccess();
-    }
-
     protected void logInfo( ReleaseResult result, String message )
     {
         result.appendInfo( message );

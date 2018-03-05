@@ -101,7 +101,7 @@ public class CreateBackupPomsPhaseTest
     {
         List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
 
-        phase.clean( projects );
+        ( (ResourceGenerator) phase ).clean( projects );
 
         testProjectBackups( projects, false );
     }

@@ -653,7 +653,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         throws Exception
     {
         // This occurs when it is release:perform run standalone. Just check there are no errors.
-        phase.clean( Collections.<MavenProject>emptyList() );
+        ( (ResourceGenerator) phase ).clean( Collections.<MavenProject>emptyList() );
     }
 
     protected ReleaseDescriptorBuilder createUnmappedConfiguration( List<MavenProject> reactorProjects )

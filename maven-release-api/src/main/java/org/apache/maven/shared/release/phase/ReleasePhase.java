@@ -63,11 +63,4 @@ public interface ReleasePhase
                             List<MavenProject> reactorProjects )
         throws ReleaseExecutionException, ReleaseFailureException;
 
-    /**
-     * Clean up after a phase if it leaves any additional files in the checkout.
-     *
-     * @param reactorProjects the reactor projects
-     * @return the release result
-     */
-    ReleaseResult clean( List<MavenProject> reactorProjects );
 }
