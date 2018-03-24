@@ -29,7 +29,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.maven.model.Model;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.transform.ModelETL;
@@ -57,7 +56,7 @@ public class JDomModelETL implements ModelETL
 {
     private ReleaseDescriptor releaseDescriptor;
 
-    private MavenProject project;
+    private String modelVersion;
 
     private Document document;
 
@@ -76,11 +75,11 @@ public class JDomModelETL implements ModelETL
         this.releaseDescriptor = releaseDescriptor;
     }
 
-    public void setProject( MavenProject project )
+    public void setModelVersion( String modelVersion )
     {
-        this.project = project;
+        this.modelVersion = modelVersion;
     }
-
+    
     @Override
     public void extract( File pomFile ) throws ReleaseExecutionException
     {
@@ -156,7 +155,7 @@ public class JDomModelETL implements ModelETL
     @Override
     public void load( File targetFile ) throws ReleaseExecutionException
     {
-        writePom( targetFile, document, releaseDescriptor, project.getModelVersion(), intro, outtro );
+        writePom( targetFile, document, releaseDescriptor, modelVersion, intro, outtro );
     }
 
     @Override

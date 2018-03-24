@@ -38,7 +38,7 @@ public class JDomModelETLFactory implements ModelETLFactory
         JDomModelETL result = new JDomModelETL();
 
         result.setLs( request.getLineSeparator() );
-        result.setProject( request.getProject() );
+        result.setModelVersion( request.getModelVersion() );
         result.setReleaseDescriptor( request.getReleaseDescriptor() );
 
         return result;

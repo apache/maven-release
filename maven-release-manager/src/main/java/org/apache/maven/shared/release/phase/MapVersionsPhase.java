@@ -23,9 +23,11 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -107,16 +109,13 @@ public class MapVersionsPhase
 
         resourceBundle = getResourceBundle( releaseEnvironment.getLocale() );
 
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        final Model rootModel = ReleaseUtil.getRootProject( reactorProjects ).getModel();
 
-        if ( releaseDescriptor.isAutoVersionSubmodules() && ArtifactUtils.isSnapshot( rootProject.getVersion() ) )
+        if ( releaseDescriptor.isAutoVersionSubmodules() && ArtifactUtils.isSnapshot( rootModel.getVersion() ) )
         {
-            // get the root project
-            MavenProject project = rootProject;
+            String projectId = ArtifactUtils.versionlessKey( rootModel.getGroupId(), rootModel.getArtifactId() );
 
-            String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-
-            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, result );
+            String nextVersion = resolveNextVersion( rootModel, projectId, releaseDescriptor, result );
 
             if ( !convertToSnapshot )
             {
@@ -133,19 +132,20 @@ public class MapVersionsPhase
 
             for ( MavenProject subProject : reactorProjects )
             {
-                String subProjectId =
-                    ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
+                Model subModel = subProject.getModel();
+                
+                String subProjectId = ArtifactUtils.versionlessKey( subModel.getGroupId(), subModel.getArtifactId() );
 
                 if ( convertToSnapshot )
                 {
                     String v;
-                    if ( ArtifactUtils.isSnapshot( subProject.getVersion() ) )
+                    if ( ArtifactUtils.isSnapshot( subModel.getVersion() ) )
                     {
                         v = nextVersion;
                     }
                     else
                     {
-                        v = subProject.getVersion();
+                        v = subModel.getVersion();
                     }
 
                     if ( releaseDescriptor.isBranchCreation() && convertToBranch )
@@ -167,9 +167,11 @@ public class MapVersionsPhase
         {
             for ( MavenProject project : reactorProjects )
             {
-                String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+                Model model = project.getModel();
+                
+                String projectId = ArtifactUtils.versionlessKey( model.getGroupId(), model.getArtifactId() );
 
-                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, result );
+                String nextVersion = resolveNextVersion( model, projectId, releaseDescriptor, result );
 
                 if ( !convertToSnapshot )
                 {
@@ -191,7 +193,7 @@ public class MapVersionsPhase
         return result;
     }
 
-    private String resolveNextVersion( MavenProject project,
+    private String resolveNextVersion( Model model,
                                    String projectId,
                                    ReleaseDescriptor releaseDescriptor,
                                    ReleaseResult result )
@@ -202,10 +204,10 @@ public class MapVersionsPhase
         {
             // no branch modification
             if ( !( releaseDescriptor.isUpdateBranchVersions()
-                            && ( ArtifactUtils.isSnapshot( project.getVersion() )
+                            && ( ArtifactUtils.isSnapshot( model.getVersion() )
                                             || releaseDescriptor.isUpdateVersionsToSnapshot() ) ) )
             {
-                return project.getVersion();
+                return model.getVersion();
             }
 
             defaultVersion = getReleaseVersion( projectId, releaseDescriptor );
@@ -217,10 +219,10 @@ public class MapVersionsPhase
         else if ( releaseDescriptor.isBranchCreation() )
         {
             // no working copy modification
-            if ( !( ArtifactUtils.isSnapshot( project.getVersion() )
+            if ( !( ArtifactUtils.isSnapshot( model.getVersion() )
                           && releaseDescriptor.isUpdateWorkingCopyVersions() ) )
             {
-                return project.getVersion();
+                return model.getVersion();
             }
 
             defaultVersion = getDevelopmentVersion( projectId, releaseDescriptor );
@@ -230,7 +232,7 @@ public class MapVersionsPhase
             // no working copy modification
             if ( !( releaseDescriptor.isUpdateWorkingCopyVersions() ) )
             {
-                return project.getVersion();
+                return model.getVersion();
             }
 
             defaultVersion = getDevelopmentVersion( projectId, releaseDescriptor );
@@ -254,7 +256,7 @@ public class MapVersionsPhase
                     // unspecified and unmapped version, so use project version
                     if ( baseVersion == null )
                     {
-                        baseVersion = project.getVersion();
+                        baseVersion = model.getVersion();
                     }
 
                     try
@@ -290,11 +292,15 @@ public class MapVersionsPhase
                     {
                         messageKey = getMapversionPromptKey( releaseDescriptor );
                     }
-                    String message =
-                        MessageFormat.format( resourceBundle.getString( messageKey ), project.getName(), projectId );
+                    
+                    // As defined in MavenProject.getName();
+                    String name = Objects.toString( model.getName(), model.getArtifactId() );
+                    
+                    String message = MessageFormat.format( resourceBundle.getString( messageKey ), name, projectId );
+                    
                     nextVersion = prompter.prompt( message, suggestedVersion );
 
-                  //@todo validate next version, maybe with DefaultArtifactVersion
+                    //@todo validate next version, maybe with DefaultArtifactVersion
                 }
                 else if ( defaultVersion == null )
                 {

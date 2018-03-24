@@ -68,7 +68,7 @@ public class ScmBranchPhase
         validateConfiguration( releaseDescriptor );
 
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor );
 
         logInfo( relResult, "Branching release with the label " + basedirAlignedReleaseDescriptor.getScmReleaseLabel()
             + "..." );
@@ -133,7 +133,7 @@ public class ScmBranchPhase
 
         validateConfiguration( releaseDescriptor );
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor );
 
         logInfo( result, "Full run would be branching " + basedirAlignedReleaseDescriptor.getWorkingDirectory() );
         if ( releaseDescriptor.getScmBranchBase() != null )

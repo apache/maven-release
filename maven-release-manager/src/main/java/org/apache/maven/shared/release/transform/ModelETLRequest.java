@@ -19,7 +19,6 @@ package org.apache.maven.shared.release.transform;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
@@ -31,7 +30,7 @@ public class ModelETLRequest
 {
     private String lineSeparator;
 
-    private MavenProject project;
+    private String modelVersion;
 
     private ReleaseDescriptor releaseDescriptor;
 
@@ -45,14 +44,14 @@ public class ModelETLRequest
         this.lineSeparator = lineSeparator;
     }
 
-    public MavenProject getProject()
+    public String getModelVersion()
     {
-        return project;
+        return modelVersion;
     }
-
-    public void setProject( MavenProject project )
+    
+    public void setModelVersion( String modelVersion )
     {
-        this.project = project;
+        this.modelVersion = modelVersion;
     }
 
     public ReleaseDescriptor getReleaseDescriptor()

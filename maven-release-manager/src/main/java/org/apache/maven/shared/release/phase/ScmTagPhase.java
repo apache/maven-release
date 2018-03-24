@@ -84,7 +84,7 @@ public class ScmTagPhase
         logInfo( relResult, "Tagging release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
 
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor );
 
         ScmRepository repository;
         ScmProvider provider;
@@ -153,7 +153,7 @@ public class ScmTagPhase
         validateConfiguration( releaseDescriptor );
 
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor );
 
         if ( releaseDescriptor.isRemoteTagging() )
         {

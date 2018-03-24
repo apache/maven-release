@@ -163,8 +163,7 @@ public class ReleaseUtil
         return norm;
     }
 
-    public static ReleaseDescriptor createBasedirAlignedReleaseDescriptor( ReleaseDescriptor releaseDescriptor,
-                                                                           List<MavenProject> reactorProjects )
+    public static ReleaseDescriptor createBasedirAlignedReleaseDescriptor( ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException
     {
         int parentLevels = Paths.get( releaseDescriptor.getPomFileName() ).getNameCount() - 1;
