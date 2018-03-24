@@ -117,6 +117,7 @@ public class PerformReleaseMojoTest
         PerformReleaseMojo mojo =
             (PerformReleaseMojo) lookupMojo( "perform", new File( testFileDirectory, "perform-without-site.xml" ) );
         mojo.setBasedir( testFileDirectory );
+        mojo.setPomFileName( "pom.xml" );
         
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
         setVariableValueToObject( mojo, "session", newMavenSession( project ) );
@@ -148,6 +149,7 @@ public class PerformReleaseMojoTest
     {
         PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo( "perform", new File( workingDirectory, fileName ) );
         mojo.setBasedir( workingDirectory );
+        mojo.setPomFileName( fileName );
 
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
         DistributionManagement distributionManagement = new DistributionManagement();

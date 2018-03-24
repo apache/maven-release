@@ -72,7 +72,7 @@ public class FlatMultiModuleMavenProjectStub
     
     public File getBasedir()
     {
-        return new File( "/flat-multi-module/root-project" );
+        return new File( "/flat-multi-module/root-project" ).getAbsoluteFile();
     }
     
     public Scm getScm()

@@ -70,6 +70,7 @@ public class PrepareReleaseMojoTest
         final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
+        mojo.setPomFileName( "pom.xml" );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
             public Properties getExecutionProperties()
@@ -114,6 +115,7 @@ public class PrepareReleaseMojoTest
         final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
+        mojo.setPomFileName( "pom.xml" );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
           public Properties getExecutionProperties(){
@@ -155,6 +157,7 @@ public class PrepareReleaseMojoTest
         final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
+        mojo.setPomFileName( "pom.xml" );
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
           public Properties getExecutionProperties(){

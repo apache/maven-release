@@ -95,6 +95,7 @@ public class ScmBranchPhaseTest
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( "pom.xml" );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -133,6 +134,7 @@ public class ScmBranchPhaseTest
         builder.setScmSourceUrl( scmUrl );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( "pom.xml" );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
         builder.setScmBranchBase( "http://svn.example.com/repos/project/branches/" );
@@ -173,7 +175,8 @@ public class ScmBranchPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( rootProject.getScm().getConnection() );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( getWorkingDirectory( "rewrite-for-release/pom-with-parent-flat" ).toRealPath( LinkOption.NOFOLLOW_LINKS ).toString() );
+        builder.setPomFileName( "root-project/pom.xml" );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -215,6 +218,7 @@ public class ScmBranchPhaseTest
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( "pom.xml" );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -267,6 +271,7 @@ public class ScmBranchPhaseTest
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( "pom.xml" );
         builder.setScmReleaseLabel( "release-label" );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
@@ -431,6 +436,7 @@ public class ScmBranchPhaseTest
         }
         
         builder.setWorkingDirectory( getPath( workingDir ) );
+        builder.setPomFileName( "pom.xml" );
         return builder;
     }
 }

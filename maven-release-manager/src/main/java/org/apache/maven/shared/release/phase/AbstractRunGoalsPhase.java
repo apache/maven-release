@@ -66,11 +66,23 @@ public abstract class AbstractRunGoalsPhase
                         "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId() );
                 }
 
-                File wd =
-                    determineWorkingDirectory( workingDirectory,
-                                               releaseDescriptor.getScmRelativePathProjectDirectory() );
-                mavenExecutor.executeGoals( wd, goals, releaseEnvironment, releaseDescriptor.isInteractive(),
-                                            additionalArguments, releaseDescriptor.getPomFileName(), result );
+                File executionRoot;
+                String pomFileName;
+                if ( releaseDescriptor.getPomFileName() != null )
+                {
+                    File rootPom = new File( workingDirectory, releaseDescriptor.getPomFileName() );
+                    executionRoot = rootPom.getParentFile();
+                    pomFileName = rootPom.getName();
+                }
+                else
+                {
+                    executionRoot = workingDirectory;
+                    pomFileName = null;
+                }
+                
+                mavenExecutor.executeGoals( executionRoot, goals, releaseEnvironment,
+                                            releaseDescriptor.isInteractive(), additionalArguments,
+                                            pomFileName, result );
             }
         }
         catch ( MavenExecutorException e )

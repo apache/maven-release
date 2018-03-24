@@ -27,8 +27,6 @@ import static org.junit.Assume.assumeTrue;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
 
 import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.Os;
@@ -47,137 +45,6 @@ public class ReleaseUtilTest
     {
         assertNull( ReleaseUtil.getReleasePom( null ) );
         assertNull( ReleaseUtil.getStandardPom( null ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirSingleProject() throws Exception
-    {
-        assertEquals( Paths.get( "/working/directory/flat-multi-module/project" ),
-                      ReleaseUtil.getCommonBasedir( Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirSingleProjectWindows() throws Exception
-    {
-        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
-
-        assertEquals( Paths.get( "C:\\working\\directory\\flat-multi-module\\project" ),
-                      ReleaseUtil.getCommonBasedir( Collections.singletonList( createProject( "C:\\working\\directory\\flat-multi-module\\project" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfFlatMultiModule()
-        throws Exception
-    {
-        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/root-project" ),
-                                                                   createProject( "/working/directory/flat-multi-module/core" ),
-                                                                   createProject( "/working/directory/flat-multi-module/webapp" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfFlatMultiModuleWindows()
-        throws Exception
-    {
-        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
-
-        assertEquals( Paths.get( "C:\\working\\directory\\flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "C:\\working\\directory\\flat-multi-module\\root-project" ),
-                                                                   createProject( "C:\\working\\directory\\flat-multi-module\\core" ),
-                                                                   createProject( "C:\\working\\directory\\flat-multi-module\\webapp" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirUppercaseLowerCaseWindows()
-        throws Exception
-    {
-        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
-
-        assertEquals( Paths.get( "C:\\WORKING\\root" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "c:\\WORKING\\root",
-                                                                                  "C:\\WORKING\\root" ),
-                                                                   createProject( "c:\\working\\root\\project1",
-                                                                                  "C:\\WORKING\\root\\project1" ),
-                                                                   createProject( "C:\\WORKING\\root\\project2",
-                                                                                  "C:\\WORKING\\root\\project2" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIds()
-        throws Exception
-    {
-        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/release-parent" ),
-                                                                   createProject( "/working/directory/flat-multi-module/release-module1" ),
-                                                                   createProject( "/working/directory/flat-multi-module/release-module2" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIdsWindows()
-        throws Exception
-    {
-        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
-
-        assertEquals( Paths.get( "c:\\working\\directory\\flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "c:\\working\\directory\\flat-multi-module\\release-parent" ),
-                                                                   createProject( "c:\\working\\directory\\flat-multi-module\\release-module1" ),
-                                                                   createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfRegularMultiModule()
-        throws Exception
-    {
-        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module" ),
-                                                                   createProject( "/working/directory/flat-multi-module/core" ),
-                                                                   createProject( "/working/directory/flat-multi-module/webapp" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfRegularMultiModuleParentNotBeeingFirstInReactor()
-        throws Exception
-    {
-        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/core" ),
-                                                                   createProject( "/working/directory/flat-multi-module" ),
-                                                                   createProject( "/working/directory/flat-multi-module/webapp" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfRegularMultiModuleWindowsPath()
-        throws Exception
-    {
-        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
-
-        assertEquals( Paths.get( "c:\\working\\directory\\flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
-                                                                   createProject( "c:\\working\\directory\\flat-multi-module" ),
-                                                                   createProject( "c:\\working\\directory\\flat-multi-module\\webapp" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfFlatMultiModuleWithMultipleLevels()
-        throws Exception
-    {
-        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/root-project" ),
-                                                                   createProject( "/working/directory/flat-multi-module/core" ),
-                                                                   createProject( "/working/directory/flat-multi-module/common/utils" ),
-                                                                   createProject( "/working/directory/flat-multi-module/common/xml" ),
-                                                                   createProject( "/working/directory/flat-multi-module/webapp" ) ) ) );
-    }
-
-    @Test
-    public void testGetCommonBasedirOfFlatMultiModuleWithDescendingHierarchy()
-        throws Exception
-    {
-        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
-                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/level/1/2/3" ),
-                                                                   createProject( "/working/directory/flat-multi-module/level/1/2" ),
-                                                                   createProject( "/working/directory/flat-multi-module/level/1" ),
-                                                                   createProject( "/working/directory/flat-multi-module/level" ),
-                                                                   createProject( "/working/directory/flat-multi-module/other" ) ) ) );
     }
 
     @Test
@@ -359,7 +226,7 @@ public class ReleaseUtilTest
 
     private static MavenProject createProject( String basedir )
     {
-    	return createProject( basedir, basedir );
+        return createProject( basedir, basedir );
     }
 
     private static MavenProject createProject( final String basedirPath, final String basedirCanonicalPath )
@@ -371,11 +238,11 @@ public class ReleaseUtilTest
             {
                 return new File( basedirPath )
                 {
-                	@Override
+                    @Override
                     public String getCanonicalPath()
-                	{
-                		return basedirCanonicalPath;
-                	}
+                    {
+                        return basedirCanonicalPath;
+                    }
                 };
             }
         };

@@ -93,6 +93,7 @@ public class StageReleaseMojoTest
     {
         StageReleaseMojo mojo = (StageReleaseMojo) lookupMojo( "stage", new File( workingDirectory, fileName ) );
         mojo.setBasedir( workingDirectory );
+        mojo.setPomFileName( "pom.xml" );
         
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
         DistributionManagement distributionManagement = new DistributionManagement();

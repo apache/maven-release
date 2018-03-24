@@ -34,6 +34,7 @@ import static org.mockito.Mockito.when;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.LinkOption;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
@@ -84,6 +85,13 @@ public class ScmTagPhaseTest
     {
         return file.toPath().toRealPath( LinkOption.NOFOLLOW_LINKS ).toString();
     }
+    
+    public static String getPath( String file )
+                    throws IOException
+    {
+        return Paths.get( file ).toRealPath( LinkOption.NOFOLLOW_LINKS ).toString();
+    }
+
 
     @Test
     public void testTag()
@@ -95,6 +103,7 @@ public class ScmTagPhaseTest
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( rootProject.getFile().getName() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -132,6 +141,7 @@ public class ScmTagPhaseTest
         builder.setScmSourceUrl( scmUrl );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( rootProject.getFile().getName() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
         builder.setScmTagBase( "http://svn.example.com/repos/project/releases/" );
@@ -172,7 +182,8 @@ public class ScmTagPhaseTest
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( rootProject.getScm().getConnection() );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setWorkingDirectory( getWorkingDirectory( "rewrite-for-release/pom-with-parent-flat" ).toRealPath( LinkOption.NOFOLLOW_LINKS ).toString() );
+        builder.setPomFileName( "root-project/pom.xml" );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -214,6 +225,7 @@ public class ScmTagPhaseTest
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( rootProject.getFile().getName() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
 
@@ -266,6 +278,7 @@ public class ScmTagPhaseTest
         builder.setScmSourceUrl( "scm-url" );
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( rootProject.getFile().getName() );
         builder.setScmReleaseLabel( "release-label" );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
@@ -426,6 +439,7 @@ public class ScmTagPhaseTest
                         workingDir.mkdirs() );
         }
         builder.setWorkingDirectory( getPath( workingDir ) );
+        builder.setPomFileName( "pom.xml" );
         return builder;
     }
 }

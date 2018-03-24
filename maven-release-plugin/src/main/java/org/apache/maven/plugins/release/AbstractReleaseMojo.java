@@ -20,6 +20,8 @@ package org.apache.maven.plugins.release;
  */
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
 
@@ -156,9 +158,26 @@ public abstract class AbstractReleaseMojo
         
         descriptor.setInteractive( settings.isInteractiveMode() );
 
-        descriptor.setWorkingDirectory( basedir.getAbsolutePath() );
+        Path workingDirectory;
+        try
+        {
+            workingDirectory = getCommonBasedir( reactorProjects );
+        }
+        catch ( IOException e )
+        {
+            throw new RuntimeException( e.getMessage() );
+        }
+        descriptor.setWorkingDirectory( workingDirectory.toFile().getAbsolutePath() );
 
-        descriptor.setPomFileName( pomFileName );
+        Path rootBasedir = basedir.toPath();
+        if ( rootBasedir.equals( workingDirectory ) )
+        {
+            descriptor.setPomFileName( pomFileName );
+        }
+        else
+        {
+            descriptor.setPomFileName( workingDirectory.relativize( rootBasedir ).resolve( pomFileName ).toString() );
+        }
 
         for ( MavenProject project : reactorProjects )
         {
@@ -251,6 +270,11 @@ public abstract class AbstractReleaseMojo
         this.basedir = basedir;
     }
 
+    public void setPomFileName( String pomFileName )
+    {
+        this.pomFileName = pomFileName;
+    }
+    
     /**
      * Gets the list of projects in the build reactor.
      *
@@ -276,5 +300,23 @@ public abstract class AbstractReleaseMojo
         {
             arguments = argument;
         }
+    }
+    
+    static Path getCommonBasedir( List<MavenProject> reactorProjects )
+                    throws IOException
+    {
+        Path basePath = reactorProjects.get( 0 ).getBasedir().toPath();
+        
+        for ( MavenProject reactorProject : reactorProjects )
+        {
+            Path matchPath = reactorProject.getBasedir().toPath();
+            while ( !basePath.startsWith( matchPath ) )
+            {
+                matchPath = matchPath.getParent();
+            }
+            basePath = matchPath;
+        }
+        
+        return basePath;
     }
 }

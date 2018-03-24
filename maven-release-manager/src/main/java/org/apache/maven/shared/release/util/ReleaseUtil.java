@@ -167,46 +167,16 @@ public class ReleaseUtil
                                                                            List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
-        Path basedir;
-        try
-        {
-            basedir = getCommonBasedir( reactorProjects );
-        }
-        catch ( IOException e )
-        {
-            throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
-                + e.getMessage(), e );
-        }
-
-        int parentLevels =
-            getBaseWorkingDirectoryParentCount( basedir, Paths.get( releaseDescriptor.getWorkingDirectory() ) );
+        int parentLevels = Paths.get( releaseDescriptor.getPomFileName() ).getNameCount() - 1;
 
         String url = releaseDescriptor.getScmSourceUrl();
         url = realignScmUrl( parentLevels, url );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setWorkingDirectory( basedir.toString() );
+        builder.setWorkingDirectory( releaseDescriptor.getWorkingDirectory() );
         builder.setScmSourceUrl( url );
 
         return ReleaseUtils.buildReleaseDescriptor( builder );
-    }
-
-    static Path getCommonBasedir( List<MavenProject> reactorProjects )
-        throws IOException
-    {
-        Path basePath = reactorProjects.get( 0 ).getBasedir().toPath();
-        
-        for ( MavenProject reactorProject : reactorProjects )
-        {
-            Path matchPath = reactorProject.getBasedir().toPath();
-            while ( !basePath.startsWith( matchPath ) )
-            {
-                matchPath = matchPath.getParent();
-            }
-            basePath = matchPath;
-        }
-        
-        return basePath;
     }
 
     public static int getBaseWorkingDirectoryParentCount( final Path baseDirectory, final Path workingDirectory )
