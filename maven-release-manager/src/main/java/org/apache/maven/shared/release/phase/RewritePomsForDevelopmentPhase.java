@@ -46,8 +46,7 @@ public class RewritePomsForDevelopmentPhase
 
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                 String projectId, ScmRepository scmRepository, ReleaseResult result,
-                                 String commonBasedir )
+                                 String projectId, ScmRepository scmRepository, ReleaseResult result )
         throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed

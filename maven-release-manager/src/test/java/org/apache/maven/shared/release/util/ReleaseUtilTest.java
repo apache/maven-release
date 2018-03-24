@@ -22,9 +22,11 @@ package org.apache.maven.shared.release.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.*;
+import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 
@@ -50,122 +52,132 @@ public class ReleaseUtilTest
     @Test
     public void testGetCommonBasedirSingleProject() throws Exception
     {
-        assertEquals( "/working/directory/flat-multi-module/project", ReleaseUtil.getCommonBasedir(
-            Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ), "/" ) );
+        assertEquals( Paths.get( "/working/directory/flat-multi-module/project" ),
+                      ReleaseUtil.getCommonBasedir( Collections.singletonList( createProject( "/working/directory/flat-multi-module/project" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirSingleProjectWindows() throws Exception
     {
-        assertEquals( "C:\\working\\directory\\flat-multi-module\\project", ReleaseUtil.getCommonBasedir(
-            Collections.singletonList( createProject( "C:\\working\\directory\\flat-multi-module\\project" ) ),
-            "\\" ) );
+        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
+
+        assertEquals( Paths.get( "C:\\working\\directory\\flat-multi-module\\project" ),
+                      ReleaseUtil.getCommonBasedir( Collections.singletonList( createProject( "C:\\working\\directory\\flat-multi-module\\project" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfFlatMultiModule()
         throws Exception
     {
-        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "/working/directory/flat-multi-module/root-project" ),
-                createProject( "/working/directory/flat-multi-module/core" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
+        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/root-project" ),
+                                                                   createProject( "/working/directory/flat-multi-module/core" ),
+                                                                   createProject( "/working/directory/flat-multi-module/webapp" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfFlatMultiModuleWindows()
         throws Exception
     {
-        assertEquals( "C:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "C:\\working\\directory\\flat-multi-module\\root-project" ),
-                createProject( "C:\\working\\directory\\flat-multi-module\\core" ),
-                createProject( "C:\\working\\directory\\flat-multi-module\\webapp" )} ), "\\" ) );
+        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
+
+        assertEquals( Paths.get( "C:\\working\\directory\\flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "C:\\working\\directory\\flat-multi-module\\root-project" ),
+                                                                   createProject( "C:\\working\\directory\\flat-multi-module\\core" ),
+                                                                   createProject( "C:\\working\\directory\\flat-multi-module\\webapp" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirUppercaseLowerCaseWindows()
         throws Exception
     {
-        assertEquals( "C:\\WORKING\\root", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "c:\\WORKING\\root", "C:\\WORKING\\root" ),
-                createProject( "c:\\working\\root\\project1", "C:\\WORKING\\root\\project1" ),
-                createProject( "C:\\WORKING\\root\\project2", "C:\\WORKING\\root\\project2" )} ), "\\" ) );
+        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
+
+        assertEquals( Paths.get( "C:\\WORKING\\root" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "c:\\WORKING\\root",
+                                                                                  "C:\\WORKING\\root" ),
+                                                                   createProject( "c:\\working\\root\\project1",
+                                                                                  "C:\\WORKING\\root\\project1" ),
+                                                                   createProject( "C:\\WORKING\\root\\project2",
+                                                                                  "C:\\WORKING\\root\\project2" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIds()
         throws Exception
     {
-        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "/working/directory/flat-multi-module/release-parent" ),
-                createProject( "/working/directory/flat-multi-module/release-module1" ),
-                createProject( "/working/directory/flat-multi-module/release-module2" )} ), "/" ) );
+        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/release-parent" ),
+                                                                   createProject( "/working/directory/flat-multi-module/release-module1" ),
+                                                                   createProject( "/working/directory/flat-multi-module/release-module2" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfFlatMultiModuleSimilarArtifactIdsWindows()
         throws Exception
     {
-        assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "c:\\working\\directory\\flat-multi-module\\release-parent" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\release-module1" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" )} ), "\\" ) );
+        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
+
+        assertEquals( Paths.get( "c:\\working\\directory\\flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "c:\\working\\directory\\flat-multi-module\\release-parent" ),
+                                                                   createProject( "c:\\working\\directory\\flat-multi-module\\release-module1" ),
+                                                                   createProject( "c:\\working\\directory\\flat-multi-module\\release-module2" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfRegularMultiModule()
         throws Exception
     {
-        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "/working/directory/flat-multi-module" ),
-                createProject( "/working/directory/flat-multi-module/core" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
+        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module" ),
+                                                                   createProject( "/working/directory/flat-multi-module/core" ),
+                                                                   createProject( "/working/directory/flat-multi-module/webapp" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfRegularMultiModuleParentNotBeeingFirstInReactor()
         throws Exception
     {
-        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{
-                createProject( "/working/directory/flat-multi-module/core" ),
-                createProject( "/working/directory/flat-multi-module" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
+        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/core" ),
+                                                                   createProject( "/working/directory/flat-multi-module" ),
+                                                                   createProject( "/working/directory/flat-multi-module/webapp" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfRegularMultiModuleWindowsPath()
         throws Exception
     {
-        assertEquals( "c:\\working\\directory\\flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{
-                createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
-                createProject( "c:\\working\\directory\\flat-multi-module" ),
-                createProject( "c:\\working\\directory\\flat-multi-module\\webapp" )} ), "\\" ) );
+        assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) ); 
+
+        assertEquals( Paths.get( "c:\\working\\directory\\flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "c:\\working\\directory\\flat-multi-module\\core" ),
+                                                                   createProject( "c:\\working\\directory\\flat-multi-module" ),
+                                                                   createProject( "c:\\working\\directory\\flat-multi-module\\webapp" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfFlatMultiModuleWithMultipleLevels()
         throws Exception
     {
-        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "/working/directory/flat-multi-module/root-project" ),
-                createProject( "/working/directory/flat-multi-module/core" ),
-                createProject( "/working/directory/flat-multi-module/common/utils" ),
-                createProject( "/working/directory/flat-multi-module/common/xml" ),
-                createProject( "/working/directory/flat-multi-module/webapp" )} ), "/" ) );
+        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/root-project" ),
+                                                                   createProject( "/working/directory/flat-multi-module/core" ),
+                                                                   createProject( "/working/directory/flat-multi-module/common/utils" ),
+                                                                   createProject( "/working/directory/flat-multi-module/common/xml" ),
+                                                                   createProject( "/working/directory/flat-multi-module/webapp" ) ) ) );
     }
 
     @Test
     public void testGetCommonBasedirOfFlatMultiModuleWithDescendingHierarchy()
         throws Exception
     {
-        assertEquals( "/working/directory/flat-multi-module", ReleaseUtil.getCommonBasedir( Arrays.asList(
-            new MavenProject[]{createProject( "/working/directory/flat-multi-module/level/1/2/3" ),
-                createProject( "/working/directory/flat-multi-module/level/1/2" ),
-                createProject( "/working/directory/flat-multi-module/level/1" ),
-                createProject( "/working/directory/flat-multi-module/level" ),
-                createProject( "/working/directory/flat-multi-module/other" )} ), "/" ) );
+        assertEquals( Paths.get( "/working/directory/flat-multi-module" ),
+                      ReleaseUtil.getCommonBasedir( Arrays.asList( createProject( "/working/directory/flat-multi-module/level/1/2/3" ),
+                                                                   createProject( "/working/directory/flat-multi-module/level/1/2" ),
+                                                                   createProject( "/working/directory/flat-multi-module/level/1" ),
+                                                                   createProject( "/working/directory/flat-multi-module/level" ),
+                                                                   createProject( "/working/directory/flat-multi-module/other" ) ) ) );
     }
 
     @Test
@@ -232,90 +244,90 @@ public class ReleaseUtilTest
     @Test
     public void testGetBaseWorkingDirectoryParentCountSameDirectory()
     {
-        String workingDirectory = "/working/directory/maven/release";
-        String basedir = "/working/directory/maven/release";
+        Path workingDirectory = Paths.get( "/working/directory/maven/release" );
+        Path basedir = Paths.get( "/working/directory/maven/release" );
         assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountSameDirectoryDotCharacter()
     {
-        String workingDirectory = new File( "/working/directory/maven/release/." ).getAbsolutePath();
-        assertTrue( workingDirectory.contains( "." ) );
-        String basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        Path workingDirectory = Paths.get( "/working/directory/maven/release/." ).toAbsolutePath();
+        assertTrue( workingDirectory.toString().contains( "." ) );
+        Path basedir = Paths.get( "/working/directory/maven/release" ).toAbsolutePath();
         assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
 
         // finish with slash
-        workingDirectory = new File( "/working/directory/maven/release/./" ).getAbsolutePath();
-        assertTrue( workingDirectory.contains( "." ) );
-        basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        workingDirectory = Paths.get( "/working/directory/maven/release/./" ).toAbsolutePath();
+        assertTrue( workingDirectory.toString().contains( "." ) );
+        basedir = Paths.get( "/working/directory/maven/release" ).toAbsolutePath();
         assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountSubdirectory()
     {
-        String workingDirectory = new File( "/working/directory/maven/release" ).getAbsolutePath();
-        String basedir = new File( "/working/directory/maven/release/maven-release-manager" ).getAbsolutePath();
+        Path workingDirectory = Paths.get( "/working/directory/maven/release" ).toAbsolutePath();
+        Path basedir = Paths.get( "/working/directory/maven/release/maven-release-manager" ).toAbsolutePath();
         assertEquals( 0, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountParentDirectory()
     {
-        String workingDirectory =
-            new File( "/working/directory/maven/release/maven-release-manager" ).getAbsolutePath();
-        String basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        Path workingDirectory =
+            Paths.get( "/working/directory/maven/release/maven-release-manager" ).toAbsolutePath();
+        Path basedir = Paths.get( "/working/directory/maven/release" ).toAbsolutePath();
         assertEquals( 1, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountParentDirectoryDotCharacter()
     {
-        String workingDirectory =
-            new File( "/working/directory/maven/release/maven-release-manager/." ).getAbsolutePath();
-        assertTrue( workingDirectory.contains( "." ) );
-        String basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        Path workingDirectory =
+            Paths.get( "/working/directory/maven/release/maven-release-manager/." ).toAbsolutePath();
+        assertTrue( workingDirectory.toString().contains( "." ) );
+        Path basedir = Paths.get( "/working/directory/maven/release" ).toAbsolutePath();
         assertEquals( 1, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
 
         // finish with slash
-        workingDirectory = new File( "/working/directory/maven/release/maven-release-manager/./" ).getAbsolutePath();
-        assertTrue( workingDirectory.contains( "." ) );
-        basedir = new File( "/working/directory/maven/release" ).getAbsolutePath();
+        workingDirectory = Paths.get( "/working/directory/maven/release/maven-release-manager/./" ).toAbsolutePath();
+        assertTrue( workingDirectory.toString().contains( "." ) );
+        basedir = Paths.get( "/working/directory/maven/release" ).toAbsolutePath();
         assertEquals( 1, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountParentDirectoryMultiple()
     {
-        String workingDirectory =
-            new File( "/working/directory/maven/release/maven-release-manager" ).getAbsolutePath();
-        String basedir = new File( "/working/directory" ).getAbsolutePath();
+        Path workingDirectory =
+            Paths.get( "/working/directory/maven/release/maven-release-manager" ).toAbsolutePath();
+        Path basedir = Paths.get( "/working/directory" ).toAbsolutePath();
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountParentDirectoryMultipleDotCharacter()
     {
-        String workingDirectory =
-            new File( "/working/directory/maven/release/maven-release-manager/./." ).getAbsolutePath();
-        assertTrue( workingDirectory.contains( "." ) );
-        String basedir = new File( "/working/directory" ).getAbsolutePath();
+        Path workingDirectory =
+            Paths.get( "/working/directory/maven/release/maven-release-manager/./." ).toAbsolutePath();
+        assertTrue( workingDirectory.toString().contains( "." ) );
+        Path basedir = Paths.get( "/working/directory" ).toAbsolutePath();
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
 
         // finish with slash
-        workingDirectory = new File( "/working/directory/maven/release/maven-release-manager/././" ).getAbsolutePath();
-        assertTrue( workingDirectory.contains( "." ) );
-        basedir = new File( "/working/directory" ).getAbsolutePath();
+        workingDirectory = Paths.get( "/working/directory/maven/release/maven-release-manager/././" ).toAbsolutePath();
+        assertTrue( workingDirectory.toString().contains( "." ) );
+        basedir = Paths.get( "/working/directory" ).toAbsolutePath();
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
     @Test
     public void testGetBaseWorkingDirectoryParentCountDifferentCase()
     {
-        String workingDirectory =
-            new File( "/Working/Directory/maven/release/maven-release-manager" ).getAbsolutePath();
-        String basedir = new File( "/working/directory" ).getAbsolutePath();
+        Path workingDirectory =
+            Paths.get( "/Working/Directory/maven/release/maven-release-manager" ).toAbsolutePath();
+        Path basedir = Paths.get( "/working/directory" ).toAbsolutePath();
         assertEquals( 3, ReleaseUtil.getBaseWorkingDirectoryParentCount( basedir, workingDirectory ) );
     }
 
@@ -327,10 +339,22 @@ public class ReleaseUtilTest
     {
         assumeTrue( Os.isFamily( Os.FAMILY_WINDOWS ) );
 
-        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:", "C:\\working\\directory" ) );
-        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:", "C:\\working\\directory\\" ) );
-        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:\\", "C:\\working\\directory" ) );
-        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( "C:\\", "C:\\working\\directory\\" ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( Paths.get( "C:" ),
+                                                                         Paths.get( "C:\\working\\directory" ) ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( Paths.get( "C:" ),
+                                                                         Paths.get( "C:\\working\\directory\\" ) ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( Paths.get( "C:\\" ),
+                                                                         Paths.get( "C:\\working\\directory" ) ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( Paths.get( "C:\\" ),
+                                                                         Paths.get( "C:\\working\\directory\\" ) ) );
+        
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( Paths.get( "c:" ),
+                                                                         Paths.get( "C:\\working\\directory" ) ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( Paths.get( "C:" ),
+                                                                         Paths.get( "c:\\working\\directory" ) ) );
+        assertEquals( 2, ReleaseUtil.getBaseWorkingDirectoryParentCount( Paths.get( "c:" ),
+                                                                         Paths.get( "c:\\working\\directory" ) ) );
+
     }
 
     private static MavenProject createProject( String basedir )

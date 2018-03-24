@@ -20,6 +20,9 @@ package org.apache.maven.shared.release.phase;
  */
 
 import java.io.IOException;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
@@ -51,8 +54,7 @@ public class RewritePomsForBranchPhase
 
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                 String projectId, ScmRepository scmRepository, ReleaseResult result,
-                                 String commonBasedir )
+                                 String projectId, ScmRepository scmRepository, ReleaseResult result )
     throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
@@ -64,7 +66,7 @@ public class RewritePomsForBranchPhase
             {
                 try
                 {
-                    translateScm( project, releaseDescriptor, scmRoot, scmRepository, result, commonBasedir );
+                    translateScm( project, releaseDescriptor, scmRoot, scmRepository, result );
                 }
                 catch ( IOException e )
                 {
@@ -88,8 +90,7 @@ public class RewritePomsForBranchPhase
 
                         try
                         {
-                            if ( translateScm( project, releaseDescriptor, scmRoot, scmRepository, result,
-                                               commonBasedir ) )
+                            if ( translateScm( project, releaseDescriptor, scmRoot, scmRepository, result ) )
                             {
                                 modelTarget.setScm( scmRoot );
                             }
@@ -105,7 +106,7 @@ public class RewritePomsForBranchPhase
     }
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Scm scmTarget,
-                                  ScmRepository scmRepository, ReleaseResult relResult, String commonBasedir )
+                                  ScmRepository scmRepository, ReleaseResult relResult )
     throws IOException
     {
         ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
@@ -127,12 +128,11 @@ public class RewritePomsForBranchPhase
                 branchBase = "scm:svn:" + branchBase;
             }
 
-            String workingDirectory =
-                ReleaseUtil.isSymlink( project.getBasedir() ) ? project.getBasedir().getCanonicalPath()
-                                : project.getBasedir().getAbsolutePath();
+            Path projectBasedir = project.getBasedir().toPath().toRealPath( LinkOption.NOFOLLOW_LINKS );
+            Path workingDirectory = Paths.get( releaseDescriptor.getWorkingDirectory() );
 
-            int count =
-                ReleaseUtil.getBaseWorkingDirectoryParentCount( commonBasedir, workingDirectory );
+            int count = ReleaseUtil.getBaseWorkingDirectoryParentCount( workingDirectory, projectBasedir );
+            
             if ( scm.getConnection() != null )
             {
                 String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getConnection() );

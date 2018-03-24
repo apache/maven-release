@@ -33,6 +33,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.LinkOption;
 import java.util.Collections;
 import java.util.List;
 
@@ -81,7 +82,7 @@ public class ScmBranchPhaseTest
     public static String getPath( File file )
         throws IOException
     {
-        return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();
+        return file.toPath().toRealPath( LinkOption.NOFOLLOW_LINKS ).toString();
     }
 
     @Test
@@ -421,7 +422,15 @@ public class ScmBranchPhaseTest
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( "scm-url" );
         builder.setScmReleaseLabel( "release-label" );
-        builder.setWorkingDirectory( getPath( getTestFile( "target/test/checkout" ) ) );
+        
+        File workingDir = getTestFile( "target/test/checkout" );
+        if ( !workingDir.exists() )
+        {
+            assertTrue( "Failed to create the directory, along with all necessary parent directories",
+                        workingDir.mkdirs() );
+        }
+        
+        builder.setWorkingDirectory( getPath( workingDir ) );
         return builder;
     }
 }

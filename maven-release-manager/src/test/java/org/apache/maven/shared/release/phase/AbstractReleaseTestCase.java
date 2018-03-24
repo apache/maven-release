@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
@@ -58,7 +59,6 @@ import org.apache.maven.project.ProjectSorter;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
 import org.sonatype.aether.repository.WorkspaceReader;
 import org.sonatype.aether.repository.WorkspaceRepository;
@@ -98,6 +98,11 @@ public abstract class AbstractReleaseTestCase
         localRepository = new MavenArtifactRepository( "local", "file://" + localRepoPath, layout, null, null );
     }
 
+    protected Path getWorkingDirectory( String workingDir )
+    {
+        return Paths.get( getBasedir(), "target/test-classes" ).resolve( Paths.get( "projects", workingDir ) ) ;
+    }
+
     protected List<MavenProject> createReactorProjects( String path, String subpath )
         throws Exception
     {
@@ -127,7 +132,7 @@ public abstract class AbstractReleaseTestCase
     {
         final Path testCaseRootFrom = Paths.get( getBasedir(), "src/test/resources" ).resolve( Paths.get( "projects", sourcePath ) ) ;
 
-        final Path testCaseRootTo = Paths.get( getBasedir(), "target/test-classes" ).resolve( Paths.get( "projects", targetPath ) ) ;
+        final Path testCaseRootTo = getWorkingDirectory( targetPath );
 
         // Recopy the test resources since they are modified in some tests
         Files.walkFileTree( testCaseRootFrom, new SimpleFileVisitor<Path>() {
@@ -339,7 +344,7 @@ public abstract class AbstractReleaseTestCase
     public static String getPath( File file )
         throws IOException
     {
-        return ReleaseUtil.isSymlink( file ) ? file.getCanonicalPath() : file.getAbsolutePath();
+        return file.toPath().toRealPath( LinkOption.NOFOLLOW_LINKS ).toString();
     }
 
     /**

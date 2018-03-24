@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -63,13 +64,19 @@ public class RewritePomsForDevelopmentPhaseTest
     {
         return "rewrite-poms-for-development";
     }
+    
+    @Override
+    protected Path getWorkingDirectory( String workingDir )
+    {
+        return super.getWorkingDirectory( "rewrite-for-development/" + workingDir );
+    }
 
     @Test
     public void testSimulateRewrite()
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjectsWhenSimulated( "basic-pom" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects, "basic-pom" );
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
 
@@ -88,7 +95,7 @@ public class RewritePomsForDevelopmentPhaseTest
     private List<MavenProject> createReactorProjectsWhenSimulated( String name )
         throws Exception
     {
-        return createReactorProjects( "rewrite-for-release/" + name, "rewrite-for-development/" + name, null );
+        return createReactorProjects( "rewrite-for-release/" + name, name, null );
     }
 
     @Test
@@ -98,7 +105,7 @@ public class RewritePomsForDevelopmentPhaseTest
         List<MavenProject> reactorProjects =
             new LinkedList<>( createReactorProjects( "basic-pom-ejb-client-dep/project" ) );
         reactorProjects.addAll( createReactorProjects( "basic-pom-ejb-client-dep/ejb" ) );
-        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects, "basic-pom-ejb-client-dep" );
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
         builder.addDevelopmentVersion( ArtifactUtils.versionlessKey( "groupId", "artifactId1" ), NEXT_VERSION );
@@ -121,7 +128,7 @@ public class RewritePomsForDevelopmentPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjectsWhenSimulated( "basic-pom" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects, "basic-pom" );
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
 
@@ -142,7 +149,7 @@ public class RewritePomsForDevelopmentPhaseTest
     public void testCleanNotExists()
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
 
         File testFile = getTestFile( "target/test-classes/projects/rewrite-for-development/basic-pom/pom.xml.next" );
         testFile.delete();
@@ -167,18 +174,18 @@ public class RewritePomsForDevelopmentPhaseTest
     }
 
     @Override
-    protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
+    protected List<MavenProject> prepareReactorProjects( String path )
         throws Exception
     {
         String dir = "rewrite-for-development/" + path;
-        return createReactorProjects( dir, dir, null );
+        return createReactorProjects( dir, path, null );
     }
 
     @Override
-    protected ReleaseDescriptorBuilder createDescriptorFromBasicPom( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createDescriptorFromBasicPom( List<MavenProject> reactorProjects, String workingDirectory )
         throws Exception
     {
-        ReleaseDescriptorBuilder builder = super.createDescriptorFromBasicPom( reactorProjects );
+        ReleaseDescriptorBuilder builder = super.createDescriptorFromProjects( reactorProjects, workingDirectory );
 
         mapScm( builder );
 
@@ -215,10 +222,10 @@ public class RewritePomsForDevelopmentPhaseTest
     }
 
     @Override
-    protected ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects, String workingDirectory )
         throws Exception
     {
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, workingDirectory );
 
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
@@ -230,10 +237,10 @@ public class RewritePomsForDevelopmentPhaseTest
     }
 
     @Override
-    protected ReleaseDescriptorBuilder createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects, String workingDirectory )
         throws Exception
     {
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, workingDirectory );
 
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
@@ -250,7 +257,7 @@ public class RewritePomsForDevelopmentPhaseTest
     {
 
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-cvs" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-cvs" );
         mapNextVersion( builder, "groupId:artifactId" );
 
         Scm scm = new Scm();
@@ -270,7 +277,7 @@ public class RewritePomsForDevelopmentPhaseTest
     {
 
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-cvs-from-tag" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-cvs-from-tag" );
         mapNextVersion( builder, "groupId:artifactId" );
 
         Scm scm = new Scm();
@@ -291,7 +298,7 @@ public class RewritePomsForDevelopmentPhaseTest
     {
 
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-inherited-scm" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-inherited-scm" );
 
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
@@ -340,7 +347,7 @@ public class RewritePomsForDevelopmentPhaseTest
     {
         List<MavenProject> reactorProjects = createReactorProjects( path );
 
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, path );
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
         builder.addReleaseVersion( "groupId:subproject1", ALTERNATIVE_RELEASE_VERSION );
@@ -362,7 +369,7 @@ public class RewritePomsForDevelopmentPhaseTest
         // use the original ones since simulation didn't modify them
         List<MavenProject> reactorProjects = createReactorProjects( "pom-with-parent-and-properties-sim" );
 
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "pom-with-parent-and-properties-sim" );
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
         builder.addReleaseVersion( "groupId:subproject1", ALTERNATIVE_RELEASE_VERSION );
@@ -391,7 +398,7 @@ public class RewritePomsForDevelopmentPhaseTest
     {
         List<MavenProject> reactorProjects = createReactorProjects( "pom-with-property-dependency-coordinate" );
 
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "pom-with-property-dependency-coordinate" );
         builder.addReleaseVersion( "groupId:artifactId", RELEASE_VERSION );
         builder.addDevelopmentVersion( "groupId:artifactId", NEXT_VERSION );
         builder.addReleaseVersion( "groupId:subproject1-3.4", ALTERNATIVE_RELEASE_VERSION );
@@ -412,7 +419,7 @@ public class RewritePomsForDevelopmentPhaseTest
     {
         List<MavenProject> reactorProjects =
             createReactorProjects( "internal-snapshot-dependencies-without-dependencies-version-update" );
-        ReleaseDescriptorBuilder builder = createDefaultConfiguration( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDefaultConfiguration( reactorProjects, "internal-snapshot-dependencies-without-dependencies-version-update" );
         builder.setUpdateDependencies( false );
         mapNextVersion( builder, "groupId:subsubproject" );
 

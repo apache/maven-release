@@ -44,8 +44,7 @@ public class RewritePomVersionsPhase
 
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                 String projectId, ScmRepository scmRepository, ReleaseResult result,
-                                 String commonBasedir )
+                                 String projectId, ScmRepository scmRepository, ReleaseResult result )
         throws ReleaseExecutionException
     {
         // We are only updating versions no mods to scm needed

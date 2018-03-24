@@ -21,6 +21,9 @@ package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.LinkOption;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
@@ -221,33 +224,19 @@ public class CheckoutProjectFromScm
         String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();
         if ( StringUtils.isEmpty( scmRelativePathProjectDirectory ) )
         {
-            String basedir;
-            try
-            {
-                basedir = ReleaseUtil.getCommonBasedir( reactorProjects );
-            }
-            catch ( IOException e )
-            {
-                throw new ReleaseExecutionException( "Exception occurred while calculating common basedir: "
-                    + e.getMessage(), e );
-            }
+            Path workingDirectory = Paths.get( releaseDescriptor.getWorkingDirectory() );
 
-            String rootProjectBasedir = rootProject.getBasedir().getAbsolutePath();
+            Path rootProjectBasedir;
             try
             {
-                if ( ReleaseUtil.isSymlink( rootProject.getBasedir() ) )
-                {
-                    rootProjectBasedir = rootProject.getBasedir().getCanonicalPath();
-                }
+                rootProjectBasedir = rootProject.getBasedir().toPath().toRealPath( LinkOption.NOFOLLOW_LINKS );
             }
             catch ( IOException e )
             {
                 throw new ReleaseExecutionException( e.getMessage(), e );
             }
-            if ( rootProjectBasedir.length() > basedir.length() )
-            {
-                scmRelativePathProjectDirectory = rootProjectBasedir.substring( basedir.length() + 1 );
-            }
+            
+            scmRelativePathProjectDirectory = workingDirectory.relativize( rootProjectBasedir ).toString();
         }
         releaseDescriptor.setScmRelativePathProjectDirectory( scmRelativePathProjectDirectory );
 

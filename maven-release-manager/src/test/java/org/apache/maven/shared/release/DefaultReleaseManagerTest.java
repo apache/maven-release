@@ -458,12 +458,17 @@ public class DefaultReleaseManagerTest
         verifyNoMoreInteractions( configStoreMock );
     }
 
-
-
-    private static List<MavenProject> createReactorProjects()
+    private static List<MavenProject> createReactorProjects() throws IOException
     {
         MavenProject project = new MavenProject();
-        project.setFile( getTestFile( "target/dummy-project/pom.xml" ) );
+        
+        File projectFile = getTestFile( "target/dummy-project/pom.xml" );
+        if ( !projectFile.exists() )
+        {
+            projectFile.getParentFile().mkdirs();
+            projectFile.createNewFile();
+        }
+        project.setFile( projectFile );
         return Collections.singletonList( project );
     }
 
@@ -476,6 +481,7 @@ public class DefaultReleaseManagerTest
         builder.setScmSourceUrl( "scm-url" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
         builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setWorkingDirectory( getTestPath( "target/dummy-project" ) );
         
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setReleaseDescriptorBuilder( builder );
@@ -672,6 +678,7 @@ public class DefaultReleaseManagerTest
         builder.setScmSourceUrl( "scm-url" );
         File checkoutDirectory = getTestFile( "target/checkout-directory" );
         builder.setCheckoutDirectory( checkoutDirectory.getAbsolutePath() );
+        builder.setWorkingDirectory( getTestPath( "target/dummy-project" ) );
 
         ScmManager scmManager = (ScmManager) lookup( ScmManager.class );
         ScmProviderStub providerStub =

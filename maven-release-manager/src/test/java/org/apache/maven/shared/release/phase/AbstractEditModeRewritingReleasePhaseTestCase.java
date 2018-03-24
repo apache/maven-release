@@ -66,8 +66,8 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
     public void testRewriteBasicPomWithEditMode()
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
-        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects, "basic-pom" );
         builder.setScmUseEditMode( true );
         mapNextVersion( builder, "groupId:artifactId" );
 
@@ -80,8 +80,8 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
     public void testRewriteBasicPomWithEditModeFailure()
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
-        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom" );
         builder.setScmUseEditMode( true );
         mapNextVersion( builder, "groupId:artifactId" );
 
@@ -110,8 +110,8 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         throws Exception
     {
         // prepare
-        List<MavenProject> reactorProjects = createReactorProjectsFromBasicPom();
-        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom" );
         builder.setScmUseEditMode( true );
         mapNextVersion( builder, "groupId:artifactId" );
 
@@ -146,7 +146,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "internal-snapshot-plugin-deps" );
-        ReleaseDescriptorBuilder builder = createDefaultConfiguration( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDefaultConfiguration( reactorProjects, "internal-snapshot-plugin-deps" );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -158,7 +158,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "internal-snapshot-plugin-deps" );
-        ReleaseDescriptorBuilder builder = createUnmappedConfiguration( reactorProjects );
+        ReleaseDescriptorBuilder builder = createUnmappedConfiguration( reactorProjects, "internal-snapshot-plugin-deps" );
 
         try
         {
@@ -177,7 +177,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "internal-snapshot-profile" );
-        ReleaseDescriptorBuilder builder = createDefaultConfiguration( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDefaultConfiguration( reactorProjects, "internal-snapshot-profile" );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -189,7 +189,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "internal-snapshot-profile" );
-        ReleaseDescriptorBuilder builder = createUnmappedConfiguration( reactorProjects );
+        ReleaseDescriptorBuilder builder = createUnmappedConfiguration( reactorProjects, "internal-snapshot-profile" );
 
         try
         {

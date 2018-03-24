@@ -97,6 +97,7 @@ public class CheckoutProjectFromScmTest
 
         String dir = "scm-commit/single-pom";
         List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
+        builder.setWorkingDirectory( getWorkingDirectory( dir ).toString() );
 
         // execute
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -138,8 +139,8 @@ public class CheckoutProjectFromScmTest
         stub.addScmRepositoryForUrl( scmUrl, repository );
 
         String dir = "scm-commit/multimodule-with-deep-subprojects";
-        List<MavenProject> reactorProjects =
-            createReactorProjects( dir, dir, null );
+        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
+        builder.setWorkingDirectory( getWorkingDirectory( dir ).toString() );
 
         // execute
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -182,6 +183,7 @@ public class CheckoutProjectFromScmTest
 
         List<MavenProject> reactorProjects =
             createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "root-project" );
+        builder.setWorkingDirectory( getWorkingDirectory( "rewrite-for-release/pom-with-parent-flat" ) .toString() );
 
         // execute
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );

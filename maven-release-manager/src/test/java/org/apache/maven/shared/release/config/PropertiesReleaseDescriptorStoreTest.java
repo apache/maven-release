@@ -359,7 +359,15 @@ public class PropertiesReleaseDescriptorStoreTest
         releaseDescriptor.setScmSourceUrl( "scm-url" );
         releaseDescriptor.setScmUsername( "username" );
         // Not setting other optional SCM settings for brevity
-        releaseDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath( getTestFile( "target/test-working-directory" ) ) );
+        
+        File workingDir = getTestFile( "target/test-working-directory" );
+        if ( !workingDir.exists() )
+        {
+            assertTrue( "Failed to create the directory, along with all necessary parent directories",
+                        workingDir.mkdirs() );
+        }
+        
+        releaseDescriptor.setWorkingDirectory( AbstractReleaseTestCase.getPath( workingDir ) );
         // Not setting non-override setting completedPhase
 
         return releaseDescriptor;

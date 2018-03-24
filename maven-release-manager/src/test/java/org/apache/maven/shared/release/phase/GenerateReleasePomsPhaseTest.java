@@ -101,7 +101,7 @@ public class GenerateReleasePomsPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "external-range-dependency" );
-        ReleaseDescriptorBuilder builder = createMappedConfiguration( reactorProjects );
+        ReleaseDescriptorBuilder builder = createMappedConfiguration( reactorProjects, "external-range-dependency" );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
@@ -151,7 +151,7 @@ public class GenerateReleasePomsPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "pom-with-finalname" );
-        ReleaseDescriptorBuilder builder = createConfigurationForWithParentNextVersion( reactorProjects );
+        ReleaseDescriptorBuilder builder = createConfigurationForWithParentNextVersion( reactorProjects, "pom-with-finalname" );
         builder.setGenerateReleasePoms( true );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -165,9 +165,9 @@ public class GenerateReleasePomsPhaseTest
      * util.List)
      */
     @Override
-    protected ReleaseDescriptorBuilder createDescriptorFromProjects( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createDescriptorFromProjects( List<MavenProject> reactorProjects, String workingDirectory )
     {
-        ReleaseDescriptorBuilder builder = super.createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = super.createDescriptorFromProjects( reactorProjects, workingDirectory );
         builder.setScmReleaseLabel( "release-label" );
         builder.setGenerateReleasePoms( true );
         return builder;
@@ -178,7 +178,7 @@ public class GenerateReleasePomsPhaseTest
      * String, boolean)
      */
     @Override
-    protected List<MavenProject> prepareReactorProjects( String path, boolean copyFiles )
+    protected List<MavenProject> prepareReactorProjects( String path )
         throws Exception
     {
         String dir = "generate-release-poms/" + path;
@@ -188,10 +188,8 @@ public class GenerateReleasePomsPhaseTest
 
         List<File> releasePoms = new ArrayList<>();
 
-        for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = iterator.next();
-
             releasePoms.add( ReleaseUtil.getReleasePom( project ) );
         }
 
@@ -264,10 +262,10 @@ public class GenerateReleasePomsPhaseTest
      * createConfigurationForPomWithParentAlternateNextVersion(java.util.List)
      */
     @Override
-    protected ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects, String workingDirectory )
         throws Exception
     {
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, workingDirectory );
 
         builder.addReleaseVersion( "groupId:artifactId", NEXT_VERSION );
         builder.addReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
@@ -280,10 +278,10 @@ public class GenerateReleasePomsPhaseTest
      * createConfigurationForWithParentNextVersion(java.util.List)
      */
     @Override
-    protected ReleaseDescriptorBuilder createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects, String workingDirectory )
         throws Exception
     {
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, workingDirectory );
 
         builder.addReleaseVersion( "groupId:artifactId", NEXT_VERSION );
         builder.addReleaseVersion( "groupId:subproject1", NEXT_VERSION );

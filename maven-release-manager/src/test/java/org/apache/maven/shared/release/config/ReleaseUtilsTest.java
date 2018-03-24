@@ -43,10 +43,10 @@ public class ReleaseUtilsTest
     {
         ReleaseDescriptorBuilder originalReleaseDescriptor = createReleaseDescriptor();
         ReleaseDescriptorBuilder builder = copyReleaseDescriptor( originalReleaseDescriptor.build() );
-        doEqualsAssertions( builder, originalReleaseDescriptor, "other", new File( "f" ) );
+        doEqualsAssertions( builder, originalReleaseDescriptor, "other", new File( "target/test-working-directory" ) );
         originalReleaseDescriptor = createReleaseDescriptor();
         builder = copyReleaseDescriptor( originalReleaseDescriptor.build() );
-        doEqualsAssertions( originalReleaseDescriptor, builder, "other", new File( "f" ) );
+        doEqualsAssertions( originalReleaseDescriptor, builder, "other", new File( "target/test-working-directory" ) );
 
         originalReleaseDescriptor = createReleaseDescriptor();
         builder = copyReleaseDescriptor( originalReleaseDescriptor.build() );
@@ -134,6 +134,11 @@ public class ReleaseUtilsTest
 
         if ( otherFile != null )
         {
+            if ( !otherFile.exists() )
+            {
+                assertTrue( "Failed to create the directory, along with all necessary parent directories",
+                            otherFile.mkdirs() );
+            }
             configBuilder.setWorkingDirectory( AbstractReleaseTestCase.getPath( otherFile ) );
             assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
         }

@@ -26,9 +26,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
@@ -42,7 +40,6 @@ import org.codehaus.plexus.interpolation.ObjectBasedValueSource;
 import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
 import org.codehaus.plexus.interpolation.PrefixedObjectValueSource;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
-import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.IOUtil;
 import org.codehaus.plexus.util.ReaderFactory;
 
@@ -57,8 +54,6 @@ public class ReleaseUtil
 
     @SuppressWarnings( "checkstyle:constantname" )
     public static final String POMv4 = "pom.xml";
-
-    private static final String FS = File.separator;
 
     /**
      * The line separator to use.
@@ -172,7 +167,7 @@ public class ReleaseUtil
                                                                            List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
-        String basedir;
+        Path basedir;
         try
         {
             basedir = getCommonBasedir( reactorProjects );
@@ -184,83 +179,39 @@ public class ReleaseUtil
         }
 
         int parentLevels =
-            getBaseWorkingDirectoryParentCount( basedir,
-                                                FileUtils.normalize( releaseDescriptor.getWorkingDirectory() ) );
+            getBaseWorkingDirectoryParentCount( basedir, Paths.get( releaseDescriptor.getWorkingDirectory() ) );
 
         String url = releaseDescriptor.getScmSourceUrl();
         url = realignScmUrl( parentLevels, url );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setWorkingDirectory( basedir );
+        builder.setWorkingDirectory( basedir.toString() );
         builder.setScmSourceUrl( url );
+
         return ReleaseUtils.buildReleaseDescriptor( builder );
     }
 
-    public static String getCommonBasedir( List<MavenProject> reactorProjects )
+    static Path getCommonBasedir( List<MavenProject> reactorProjects )
         throws IOException
     {
-        return getCommonBasedir( reactorProjects, FS );
+        Path basePath = reactorProjects.get( 0 ).getBasedir().toPath();
+        
+        for ( MavenProject reactorProject : reactorProjects )
+        {
+            Path matchPath = reactorProject.getBasedir().toPath();
+            while ( !basePath.startsWith( matchPath ) )
+            {
+                matchPath = matchPath.getParent();
+            }
+            basePath = matchPath;
+        }
+        
+        return basePath;
     }
 
-    public static String getCommonBasedir( List<MavenProject> reactorProjects, String separator )
-        throws IOException
+    public static int getBaseWorkingDirectoryParentCount( final Path baseDirectory, final Path workingDirectory )
     {
-        String[] baseDirs = new String[reactorProjects.size()];
-        int idx = 0;
-        for ( MavenProject p : reactorProjects )
-        {
-            String dir = p.getBasedir().getCanonicalPath();
-
-            // always end with separator so that we know what is a path and what is a partial directory name in the
-            // next call
-            if ( !dir.endsWith( separator ) )
-            {
-                dir = dir + separator;
-            }
-            baseDirs[idx++] = dir;
-        }
-
-        String basedir = StringUtils.getCommonPrefix( baseDirs );
-
-        int separatorPos = basedir.lastIndexOf( separator );
-        if ( !basedir.endsWith( separator ) && separatorPos >= 0 )
-        {
-            basedir = basedir.substring( 0, separatorPos );
-        }
-
-        if ( basedir.endsWith( separator ) && basedir.length() > 1 )
-        {
-            basedir = basedir.substring( 0, basedir.length() - 1 );
-        }
-
-        return basedir;
-    }
-
-    public static int getBaseWorkingDirectoryParentCount( String basedir, String workingDirectory )
-    {
-        int num = 0;
-
-        // we can safely assume case-insensitivity as we are just backtracking, not comparing. This helps with issues
-        // on Windows with C: vs c:
-        workingDirectory = FilenameUtils.normalize( workingDirectory.toLowerCase( Locale.ENGLISH ) );
-        basedir = FilenameUtils.normalize( basedir.toLowerCase( Locale.ENGLISH ) );
-
-        // MRELEASE-663
-        // For Windows is does matter if basedir ends with a file-separator or not to be able to compare.
-        // Using the parent of a dummy file makes it possible to compare them OS-independent
-        Path workingDirectoryFile = Paths.get( workingDirectory, ".tmp" ).getParent();
-        Path basedirFile = Paths.get( basedir, ".tmp" ).getParent();
-
-        if ( !workingDirectoryFile.equals( basedirFile ) && workingDirectory.startsWith( basedir ) )
-        {
-            do
-            {
-                workingDirectoryFile = workingDirectoryFile.getParent();
-                num++;
-            }
-            while ( !workingDirectoryFile.equals( basedirFile ) );
-        }
-        return num;
+        return Math.max( 0, workingDirectory.normalize().getNameCount() - baseDirectory.normalize().getNameCount() );
     }
 
     public static String realignScmUrl( int parentLevels, String url )
@@ -291,12 +242,6 @@ public class ReleaseUtil
 
         }
         return url;
-    }
-
-    public static boolean isSymlink( File file )
-        throws IOException
-    {
-        return !file.getAbsolutePath().equals( file.getCanonicalPath() );
     }
 
     public static String interpolate( String value, Model model )
