@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -35,7 +36,6 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.FileUtils;
@@ -86,7 +86,11 @@ public class RestoreBackupPomsPhase
                                      MavenProject project )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        File pomBackup = getPomBackup( project );
+        String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+        
+        String pomLocation = releaseDescriptor.getProjectPomFile( projectKey );
+        
+        File pomBackup = getPomBackup( pomLocation );
 
         if ( !pomBackup.exists() )
         {
@@ -133,7 +137,7 @@ public class RestoreBackupPomsPhase
 
         try
         {
-            FileUtils.copyFile( getPomBackup( project ), ReleaseUtil.getStandardPom( project ) );
+            FileUtils.copyFile( getPomBackup( pomLocation ), new File( pomLocation ) );
         }
         catch ( IOException e )
         {

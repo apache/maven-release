@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
  * Additional interface for ReleasePhase if the phase generates resources, which should be cleaned up afterwards.
@@ -38,5 +39,5 @@ public interface ResourceGenerator
      * @param reactorProjects the reactor projects
      * @return the release result
      */
-    ReleaseResult clean( List<MavenProject> reactorProjects );
+    ReleaseResult clean( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects );
 }

@@ -65,6 +65,12 @@ public class ReleaseUtil
         // noop
     }
 
+    /**
+     * Get the MavenProject from the reactorProjects that is marked as executionRoot
+     * 
+     * @param reactorProjects should not be {@code null} or empty
+     * @return the MavenProject of the executionRoot
+     */
     public static MavenProject getRootProject( List<MavenProject> reactorProjects )
     {
         MavenProject project = reactorProjects.get( 0 );

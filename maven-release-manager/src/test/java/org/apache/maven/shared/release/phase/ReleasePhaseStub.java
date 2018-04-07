@@ -74,7 +74,7 @@ public class ReleasePhaseStub
     }
 
     @Override
-    public ReleaseResult clean( List<MavenProject> reactorProjects )
+    public ReleaseResult clean( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 

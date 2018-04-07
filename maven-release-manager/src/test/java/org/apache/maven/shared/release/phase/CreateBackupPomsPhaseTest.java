@@ -23,10 +23,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
@@ -80,8 +81,10 @@ public class CreateBackupPomsPhaseTest
         throws Exception
     {
         List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+        
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects );
 
-        phase.execute( null, new DefaultReleaseEnvironment(), projects );
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), projects );
 
         testProjectBackups( projects, true );
     }
@@ -91,7 +94,9 @@ public class CreateBackupPomsPhaseTest
     {
         List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
 
-        phase.simulate( null, new DefaultReleaseEnvironment(), projects );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects );
+
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), projects );
 
         testProjectBackups( projects, true );
     }
@@ -101,7 +106,9 @@ public class CreateBackupPomsPhaseTest
     {
         List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
 
-        ( (ResourceGenerator) phase ).clean( projects );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects );
+
+        ( (ResourceGenerator) phase ).clean( ReleaseUtils.buildReleaseDescriptor( builder ), projects );
 
         testProjectBackups( projects, false );
     }
@@ -109,10 +116,8 @@ public class CreateBackupPomsPhaseTest
     protected void testProjectBackups( List<MavenProject> reactorProjects, boolean created )
         throws Exception
     {
-        for( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
+        for ( MavenProject project : reactorProjects )
         {
-            MavenProject project = projects.next();
-
             File pomFile = project.getFile();
 
             File backupFile = new File( pomFile.getAbsolutePath() + releaseBackupSuffix );

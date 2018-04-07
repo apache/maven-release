@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
@@ -131,12 +132,14 @@ public class RewritePomsForBranchPhaseTest
         File testFile = getTestFile( "target/test-classes/projects/rewrite-for-branch/basic-pom/pom.xml.branch" );
         testFile.delete();
         assertFalse( testFile.exists() );
+        
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
 
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( testFile.exists() );
 
-        ( (ResourceGenerator) phase ).clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( descriptor, reactorProjects );
 
         assertFalse( testFile.exists() );
     }
@@ -153,7 +156,7 @@ public class RewritePomsForBranchPhaseTest
         testFile.delete();
         assertFalse( testFile.exists() );
 
-        ( (ResourceGenerator) phase ).clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( ReleaseUtils.buildReleaseDescriptor( builder ), reactorProjects );
 
         assertFalse( testFile.exists() );
     }

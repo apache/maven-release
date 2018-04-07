@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.phase;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -47,11 +48,11 @@ public class CreateBackupPomsPhase
         ReleaseResult result = new ReleaseResult();
 
         // remove previous backups, if any
-        clean( reactorProjects );
+        clean( releaseDescriptor, reactorProjects );
 
         for ( MavenProject project : reactorProjects )
         {
-            createPomBackup( project );
+            createPomBackup( releaseDescriptor, project );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );
@@ -60,13 +61,15 @@ public class CreateBackupPomsPhase
     }
 
     @Override
-    public ReleaseResult clean( List<MavenProject> reactorProjects )
+    public ReleaseResult clean( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 
         for ( MavenProject project : reactorProjects )
         {
-            deletePomBackup( project );
+            String versionlessKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+            deletePomBackup( releaseDescriptor.getProjectPomFile( versionlessKey ) );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );
@@ -82,15 +85,19 @@ public class CreateBackupPomsPhase
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
     }
 
-    private void createPomBackup( MavenProject project )
+    private void createPomBackup( ReleaseDescriptor releaseDescriptor, MavenProject project )
         throws ReleaseExecutionException
     {
+        String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+        
+        String pomLocation = releaseDescriptor.getProjectPomFile( projectKey );
+        
         // delete any existing backup first
-        deletePomBackup( project );
+        deletePomBackup( pomLocation );
 
         try
         {
-            FileUtils.copyFile( ReleaseUtil.getStandardPom( project ), getPomBackup( project ) );
+            FileUtils.copyFile( ReleaseUtil.getStandardPom( project ), getPomBackup( pomLocation ) );
         }
         catch ( IOException e )
         {

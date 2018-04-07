@@ -673,7 +673,7 @@ public class GenerateReleasePomsPhase
      * @see org.apache.maven.shared.release.phase.AbstractReleasePhase#clean(java.util.List)
      */
     @Override
-    public ReleaseResult clean( List<MavenProject> reactorProjects )
+    public ReleaseResult clean( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects )
     {
         ReleaseResult result = new ReleaseResult();
 

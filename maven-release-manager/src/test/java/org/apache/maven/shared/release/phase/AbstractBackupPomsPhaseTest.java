@@ -1,5 +1,7 @@
 package org.apache.maven.shared.release.phase;
 
+import org.apache.maven.artifact.ArtifactUtils;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -23,6 +25,9 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
@@ -88,6 +93,22 @@ public abstract class AbstractBackupPomsPhaseTest
         project.setFile( pomFile );
 
         return project;
+    }
+
+    protected ReleaseDescriptorBuilder createReleaseDescriptorBuilder( List<MavenProject> reactorProjects )
+    {
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        
+        for ( MavenProject reactorProject : reactorProjects )
+        {
+            String projectKey =
+                ArtifactUtils.versionlessKey( reactorProject.getGroupId(), reactorProject.getArtifactId() );
+            
+            // would normally be relative to workingdirectory
+            builder.addProjectPomFile( projectKey, reactorProject.getFile().getAbsolutePath() );
+        }
+        
+        return builder;
     }
 
 }

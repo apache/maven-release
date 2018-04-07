@@ -652,8 +652,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     public void testCleanNoProjects()
         throws Exception
     {
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects(  Collections.<MavenProject>emptyList(), "" );
+        
         // This occurs when it is release:perform run standalone. Just check there are no errors.
-        ( (ResourceGenerator) phase ).clean( Collections.<MavenProject>emptyList() );
+        ( (ResourceGenerator) phase ).clean( ReleaseUtils.buildReleaseDescriptor( builder ),
+                                             Collections.<MavenProject>emptyList() );
     }
 
     protected ReleaseDescriptorBuilder createUnmappedConfiguration( List<MavenProject> reactorProjects, String workingDirectory )
@@ -746,6 +749,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     
     private ReleaseDescriptorBuilder createDescriptorFromProjects( ReleaseDescriptorBuilder builder, List<MavenProject> reactorProjects )
     {
+        if ( reactorProjects.isEmpty() )
+        {
+            return builder;
+        }
+
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
         
         for ( MavenProject project : reactorProjects )

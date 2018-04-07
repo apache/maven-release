@@ -32,6 +32,7 @@ import java.util.List;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
@@ -136,11 +137,12 @@ public class RewritePomsForDevelopmentPhaseTest
         testFile.delete();
         assertFalse( testFile.exists() );
 
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
+        phase.simulate( descriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         assertTrue( testFile.exists() );
 
-        ( (ResourceGenerator) phase ).clean( reactorProjects );
+        ( (ResourceGenerator) phase ).clean( descriptor, reactorProjects );
 
         assertFalse( testFile.exists() );
     }
@@ -150,12 +152,15 @@ public class RewritePomsForDevelopmentPhaseTest
         throws Exception
     {
         List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
-
+        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom( reactorProjects, "basic-pom" );
+        
         File testFile = getTestFile( "target/test-classes/projects/rewrite-for-development/basic-pom/pom.xml.next" );
         testFile.delete();
         assertFalse( testFile.exists() );
 
-        ( (ResourceGenerator) phase ).clean( reactorProjects );
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
+        
+        ( (ResourceGenerator) phase ).clean( descriptor, reactorProjects );
 
         assertFalse( testFile.exists() );
     }

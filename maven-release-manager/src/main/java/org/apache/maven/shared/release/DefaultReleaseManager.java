@@ -529,8 +529,6 @@ public class DefaultReleaseManager
         ReleaseDescriptor releaseDescriptor =
             ReleaseUtils.buildReleaseDescriptor( cleanRequest.getReleaseDescriptorBuilder() );
 
-        configStore.delete( releaseDescriptor );
-
         Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
 
         Set<String> phases = new LinkedHashSet<>();
@@ -543,9 +541,11 @@ public class DefaultReleaseManager
             
             if ( phase instanceof ResourceGenerator )
             {
-                ( (ResourceGenerator) phase ).clean( cleanRequest.getReactorProjects() );
+                ( (ResourceGenerator) phase ).clean( releaseDescriptor, cleanRequest.getReactorProjects() );
             }
         }
+
+        configStore.delete( releaseDescriptor );
 
         updateListener( cleanRequest.getReleaseManagerListener(), "cleanup", PHASE_END );
     }

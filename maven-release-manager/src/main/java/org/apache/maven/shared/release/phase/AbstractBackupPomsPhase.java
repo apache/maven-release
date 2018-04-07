@@ -19,9 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.util.ReleaseUtil;
-
 import java.io.File;
 
 /**
@@ -32,23 +29,14 @@ public abstract class AbstractBackupPomsPhase
 {
     private final String backupSuffix = ".releaseBackup";
 
-    protected File getPomBackup( MavenProject project )
+    protected File getPomBackup( String pomLocation )
     {
-        File pomFile = ReleaseUtil.getStandardPom( project );
-
-        if ( pomFile != null )
-        {
-            return new File( pomFile.getAbsolutePath() + backupSuffix );
-        }
-        else
-        {
-            return null;
-        }
+            return new File( pomLocation + backupSuffix );
     }
 
-    protected void deletePomBackup( MavenProject project )
+    protected void deletePomBackup( String pomLocation )
     {
-        File pomBackup = getPomBackup( project );
+        File pomBackup = getPomBackup( pomLocation );
 
         if ( pomBackup != null && pomBackup.exists() )
         {
