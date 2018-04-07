@@ -183,6 +183,8 @@ public abstract class AbstractReleaseMojo
         {
             String versionlessKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
             descriptor.putOriginalVersion( versionlessKey, project.getVersion() );
+            descriptor.addProjectPomFile( versionlessKey,
+                                          workingDirectory.relativize( project.getFile().toPath() ).toString() );
         }
 
         List<String> profileIds = session.getRequest().getActiveProfiles();

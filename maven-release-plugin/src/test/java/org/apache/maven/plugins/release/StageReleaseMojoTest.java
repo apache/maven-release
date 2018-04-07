@@ -95,6 +95,11 @@ public class StageReleaseMojoTest
         mojo.setBasedir( workingDirectory );
         mojo.setPomFileName( "pom.xml" );
         
+        for ( MavenProject reactorProject : mojo.getReactorProjects() )
+        {
+            reactorProject.setFile( new File( workingDirectory, "pom.xml" ) );
+        }
+        
         MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
         DistributionManagement distributionManagement = new DistributionManagement();
         distributionManagement.setSite( new Site() );

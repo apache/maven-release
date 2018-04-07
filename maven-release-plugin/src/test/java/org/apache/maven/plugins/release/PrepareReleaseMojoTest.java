@@ -71,6 +71,12 @@ public class PrepareReleaseMojoTest
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.setPomFileName( "pom.xml" );
+        
+        for ( MavenProject reactorProject : mojo.getReactorProjects() )
+        {
+            reactorProject.setFile( testFile );
+        }
+
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
             public Properties getExecutionProperties()
@@ -116,6 +122,12 @@ public class PrepareReleaseMojoTest
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.setPomFileName( "pom.xml" );
+
+        for ( MavenProject reactorProject : mojo.getReactorProjects() )
+        {
+            reactorProject.setFile( testFile );
+        }
+
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
           public Properties getExecutionProperties(){
@@ -158,6 +170,12 @@ public class PrepareReleaseMojoTest
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.setPomFileName( "pom.xml" );
+        
+        for ( MavenProject reactorProject : mojo.getReactorProjects() )
+        {
+            reactorProject.setFile( testFile );
+        }
+        
         mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
         {
           public Properties getExecutionProperties(){

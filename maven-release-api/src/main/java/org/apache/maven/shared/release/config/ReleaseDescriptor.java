@@ -389,6 +389,8 @@ public interface ReleaseDescriptor
 
     String getProjectReleaseVersion( String key );
 
+    String getProjectPomFile( String projectKey );
+
     /**
      * Method getOriginalScmInfo.
      * 

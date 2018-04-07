@@ -373,6 +373,11 @@ public class ReleaseDescriptorBuilder
         releaseDescriptor.addOriginalVersion( projectKey, version );
     }
     
+    public void addProjectPomFile( String projectKey, String pomFile )
+    {
+        releaseDescriptor.addProjectPomFile( projectKey, pomFile );
+    }
+
     public ReleaseDescriptorBuilder addDependencyOriginalVersion( String dependencyKey, String version )
     {
         releaseDescriptor.addDependencyOriginalVersion( dependencyKey, version );

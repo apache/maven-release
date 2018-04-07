@@ -217,18 +217,6 @@
             If set to true, this will set the property "performRelease" to true.
           </description>
         </field>
-<!--         <field> -->
-<!--           <name>originalScmInfo</name> -->
-<!--           <version>1.0.0+</version> -->
-<!--           <type>Map</type> -->
-<!--           <association> -->
-<!--             <type>String</type> -->
-<!--             <multiplicity>*</multiplicity> -->
-<!--           </association> -->
-<!--           <description> -->
-<!--             A map of projects to original SCM information. -->
-<!--           </description> -->
-<!--         </field> -->
         <field>
           <name>workingDirectory</name>
           <version>1.0.0+</version>
@@ -536,14 +524,19 @@
           <version>2.1.0+</version>
           <code><![CDATA[
     /**
-     * Field resolvedSnapshotDependencies.
+     * Field projectVersions
      */
-    private java.util.Map<String, ReleaseStageVersions> resolvedSnapshotDependencies = new java.util.HashMap<>();
+    private java.util.Map<String, ReleaseStageVersions> projectVersions = new java.util.HashMap<>();
 
     /**
      * Field projectVersions
      */
-    private java.util.Map<String, ReleaseStageVersions> projectVersions = new java.util.HashMap<>();
+    private java.util.Map<String, String> projectPomFiles = new java.util.HashMap<>();
+
+    /**
+     * Field resolvedSnapshotDependencies.
+     */
+    private java.util.Map<String, ReleaseStageVersions> resolvedSnapshotDependencies = new java.util.HashMap<>();
     
     /**
      * Field originalScmInfo.
@@ -712,6 +705,16 @@
             map.put( key, value );
         }
         return value;
+    }
+    
+    public void addProjectPomFile( String projectKey, String relativePath )
+    {
+        projectPomFiles.put( projectKey, relativePath );
+    }
+    
+    public String getProjectPomFile( String projectKey )
+    {
+        return projectPomFiles.get( projectKey );
     }
 
     @Override
