@@ -88,9 +88,11 @@ public class RestoreBackupPomsPhase
     {
         String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
         
+        File workingDirectory = new File( releaseDescriptor.getWorkingDirectory() );
+        
         String pomLocation = releaseDescriptor.getProjectPomFile( projectKey );
         
-        File pomBackup = getPomBackup( pomLocation );
+        File pomBackup = getPomBackup( workingDirectory, pomLocation );
 
         if ( !pomBackup.exists() )
         {
@@ -137,7 +139,8 @@ public class RestoreBackupPomsPhase
 
         try
         {
-            FileUtils.copyFile( getPomBackup( pomLocation ), new File( pomLocation ) );
+            FileUtils.copyFile( getPomBackup( workingDirectory, pomLocation ),
+                                new File( workingDirectory, pomLocation ) );
         }
         catch ( IOException e )
         {

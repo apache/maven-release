@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -29,7 +30,6 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.FileUtils;
 
@@ -65,11 +65,13 @@ public class CreateBackupPomsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
+        File workingDirectory = new File( releaseDescriptor.getWorkingDirectory() ); 
+
         for ( MavenProject project : reactorProjects )
         {
             String versionlessKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-            deletePomBackup( releaseDescriptor.getProjectPomFile( versionlessKey ) );
+            deletePomBackup( workingDirectory, releaseDescriptor.getProjectPomFile( versionlessKey ) );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );
@@ -91,13 +93,16 @@ public class CreateBackupPomsPhase
         String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
         
         String pomLocation = releaseDescriptor.getProjectPomFile( projectKey );
-        
+
+        File workingDirectory = new File( releaseDescriptor.getWorkingDirectory() ); 
+
         // delete any existing backup first
-        deletePomBackup( pomLocation );
+        deletePomBackup( workingDirectory, pomLocation );
 
         try
         {
-            FileUtils.copyFile( ReleaseUtil.getStandardPom( project ), getPomBackup( pomLocation ) );
+            FileUtils.copyFile( new File( workingDirectory, pomLocation ),
+                                getPomBackup( workingDirectory, pomLocation ) );
         }
         catch ( IOException e )
         {

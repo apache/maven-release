@@ -80,9 +80,9 @@ public class CreateBackupPomsPhaseTest
     private void runExecuteOnProjects( String path )
         throws Exception
     {
-        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+        List<MavenProject> projects = getReactorProjects( path );
         
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects, path );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), projects );
 
@@ -92,9 +92,9 @@ public class CreateBackupPomsPhaseTest
     private void runSimulateOnProjects( String path )
         throws Exception
     {
-        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+        List<MavenProject> projects = getReactorProjects( path );
 
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects, path );
 
         phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), projects );
 
@@ -104,9 +104,9 @@ public class CreateBackupPomsPhaseTest
     private void runCleanOnProjects( String path )
         throws Exception
     {
-        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+        List<MavenProject> projects = getReactorProjects( path );
 
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects, path );
 
         ( (ResourceGenerator) phase ).clean( ReleaseUtils.buildReleaseDescriptor( builder ), projects );
 

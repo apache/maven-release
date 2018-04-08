@@ -31,6 +31,8 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.codehaus.plexus.util.ReaderFactory;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -63,7 +65,9 @@ public abstract class AbstractBackupPomsPhaseTest
     {
         List<MavenProject> reactorProjects = new ArrayList<>();
 
-        File pomFile = new File( projectPath, pomFilename );
+        File workingDirectory = getTestFile( projectPath );
+
+        File pomFile = new File( workingDirectory, pomFilename );
 
         MavenProject mainProject = createMavenProject( pomFile );
 
@@ -71,7 +75,7 @@ public abstract class AbstractBackupPomsPhaseTest
 
         for ( String module : mainProject.getModel().getModules() )
         {
-            File modulePom = new File( projectPath + "/" + module, pomFilename );
+            File modulePom = new File( projectPath + "/" + module, pomFilename ).getAbsoluteFile();
 
             MavenProject subproject = createMavenProject( modulePom );
 
@@ -95,17 +99,21 @@ public abstract class AbstractBackupPomsPhaseTest
         return project;
     }
 
-    protected ReleaseDescriptorBuilder createReleaseDescriptorBuilder( List<MavenProject> reactorProjects )
+    protected ReleaseDescriptorBuilder createReleaseDescriptorBuilder( List<MavenProject> reactorProjects,
+                                                                       String workingDirectory )
     {
+        Path workingPath = Paths.get( workingDirectory ).toAbsolutePath();
+
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setWorkingDirectory( workingPath.toString() );
         
         for ( MavenProject reactorProject : reactorProjects )
         {
             String projectKey =
                 ArtifactUtils.versionlessKey( reactorProject.getGroupId(), reactorProject.getArtifactId() );
             
-            // would normally be relative to workingdirectory
-            builder.addProjectPomFile( projectKey, reactorProject.getFile().getAbsolutePath() );
+            Path pomPath = reactorProject.getFile().toPath();
+            builder.addProjectPomFile( projectKey, workingPath.relativize( pomPath ).toString() );
         }
         
         return builder;

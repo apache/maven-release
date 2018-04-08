@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -198,7 +199,11 @@ public abstract class AbstractScmCommitPhase
     {
         List<File> pomFiles = new ArrayList<>();
 
-        pomFiles.add( ReleaseUtil.getStandardPom( project ) );
+        String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+        String pomLocation = releaseDescriptor.getProjectPomFile( projectKey );
+
+        pomFiles.add( new File( pomLocation ) );
 
         if ( releaseDescriptor.isGenerateReleasePoms() && !releaseDescriptor.isSuppressCommitBeforeTagOrBranch() )
         {

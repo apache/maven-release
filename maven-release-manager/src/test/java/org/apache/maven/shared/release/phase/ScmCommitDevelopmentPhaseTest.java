@@ -32,6 +32,7 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -80,6 +81,12 @@ public class ScmCommitDevelopmentPhaseTest
         reactorProjects = createReactorProjects();
         rootProject = ReleaseUtil.getRootProject( reactorProjects );
         builder = createReleaseDescriptorBuilder( rootProject );
+        
+        for ( MavenProject project : reactorProjects )
+        {
+            String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+            builder.addProjectPomFile( projectKey, project.getFile().getPath() );
+        }
     }
 
     @Test

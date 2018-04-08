@@ -27,6 +27,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -742,13 +744,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase
 
     protected ReleaseDescriptorBuilder createDescriptorFromProjects( List<MavenProject> reactorProjects, String workingDirectory )
     {
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( new ReleaseDescriptorBuilder(), reactorProjects );
-        builder.setWorkingDirectory( getWorkingDirectory( workingDirectory ).toString() );
-        return builder;
-    }
-    
-    private ReleaseDescriptorBuilder createDescriptorFromProjects( ReleaseDescriptorBuilder builder, List<MavenProject> reactorProjects )
-    {
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        Path workingPath = getWorkingDirectory( workingDirectory );
+        builder.setWorkingDirectory( workingPath.toString() );
+        
         if ( reactorProjects.isEmpty() )
         {
             return builder;
@@ -761,6 +760,8 @@ public abstract class AbstractRewritingReleasePhaseTestCase
             String key = project.getGroupId() + ':' + project.getArtifactId();
             builder.putOriginalVersion( key, project.getVersion() );
             builder.addOriginalScmInfo( key, project.getScm() );
+            
+            builder.addProjectPomFile( key, workingPath.relativize( project.getFile().toPath() ).toString() );
         }
         
         if ( rootProject.getScm() == null )

@@ -146,11 +146,14 @@ public abstract class AbstractRewritePomsPhase
         {
             for ( MavenProject project : reactorProjects )
             {
-                File pomFile = ReleaseUtil.getStandardPom( project );
+                String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+                String pomLocation = releaseDescriptor.getProjectPomFile( projectKey );
+                
                 // MRELEASE-273 : if no pom
-                if ( pomFile != null )
+                if ( pomLocation != null )
                 {
-                    File file = new File( pomFile.getParentFile(), pomFile.getName() + "." + getPomSuffix() );
+                    File file = new File( releaseDescriptor.getWorkingDirectory(), pomLocation + "." + getPomSuffix() );
                     if ( file.exists() )
                     {
                         file.delete();
@@ -181,7 +184,11 @@ public abstract class AbstractRewritePomsPhase
                                    ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
-        File pomFile = ReleaseUtil.getStandardPom( project );
+        String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+
+        String pomLocation = releaseDescriptor.getProjectPomFile( projectKey );
+
+        File pomFile = new File( releaseDescriptor.getWorkingDirectory(), pomLocation );
 
         ModelETLRequest request = new ModelETLRequest();
         request.setLineSeparator( ls );

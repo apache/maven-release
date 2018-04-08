@@ -82,9 +82,9 @@ public class RestoreBackupPomsPhaseTest
     private void runExecuteOnProjects( String path )
         throws Exception
     {
-        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+        List<MavenProject> projects = getReactorProjects( path );
         
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( projects, path );
         builder.setScmSourceUrl( "scm:svn:http://myhost/myrepo" );
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), projects );
 

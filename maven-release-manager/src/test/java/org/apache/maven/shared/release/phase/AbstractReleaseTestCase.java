@@ -114,7 +114,9 @@ public abstract class AbstractReleaseTestCase
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         for ( MavenProject project : reactorProjects )
         {
-            builder.putOriginalVersion( project.getGroupId() + ':' + project.getArtifactId(), project.getVersion() );
+            String projectKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+            builder.putOriginalVersion( projectKey, project.getVersion() );
+            builder.addProjectPomFile( projectKey, project.getFile().getPath() );
         }
         return builder;
     }

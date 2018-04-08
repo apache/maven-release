@@ -29,16 +29,16 @@ public abstract class AbstractBackupPomsPhase
 {
     private final String backupSuffix = ".releaseBackup";
 
-    protected File getPomBackup( String pomLocation )
+    protected File getPomBackup( File workingDirectory, String pomLocation )
     {
-            return new File( pomLocation + backupSuffix );
+        return new File( workingDirectory, pomLocation + backupSuffix );
     }
 
-    protected void deletePomBackup( String pomLocation )
+    protected void deletePomBackup( File workingDirectory, String pomLocation )
     {
-        File pomBackup = getPomBackup( pomLocation );
+        File pomBackup = getPomBackup( workingDirectory, pomLocation );
 
-        if ( pomBackup != null && pomBackup.exists() )
+        if ( pomBackup.exists() )
         {
             pomBackup.delete();
         }
