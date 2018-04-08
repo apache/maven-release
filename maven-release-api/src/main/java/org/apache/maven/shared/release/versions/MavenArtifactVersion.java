@@ -27,7 +27,7 @@ class MavenArtifactVersion
 {
     private final ArtifactVersion version;
 
-    public MavenArtifactVersion( String version )
+    MavenArtifactVersion( String version )
     {
         this.version = new DefaultArtifactVersion( version );
     }
