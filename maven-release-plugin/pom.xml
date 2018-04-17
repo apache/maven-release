@@ -261,7 +261,7 @@
                 <id>integration-test-perform</id>
                 <configuration>
                   <pomIncludes>
-                    <pomInclude>projects/perform/*/pom.xml</pomInclude>
+                    <pomInclude>projects/perform/*</pomInclude>
                   </pomIncludes>
                   <goals>
                     <goal>clean</goal>

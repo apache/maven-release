@@ -20,7 +20,6 @@ package org.apache.maven.plugins.release;
  */
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.List;
@@ -159,13 +158,13 @@ public abstract class AbstractReleaseMojo
         descriptor.setInteractive( settings.isInteractiveMode() );
 
         Path workingDirectory;
-        try
+        if ( reactorProjects == null || reactorProjects.size() <= 1 )
+        {
+            workingDirectory = basedir.toPath();
+        }
+        else
         {
             workingDirectory = getCommonBasedir( reactorProjects );
-        }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e.getMessage() );
         }
         descriptor.setWorkingDirectory( workingDirectory.toFile().getAbsolutePath() );
 
@@ -183,8 +182,12 @@ public abstract class AbstractReleaseMojo
         {
             String versionlessKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
             descriptor.putOriginalVersion( versionlessKey, project.getVersion() );
-            descriptor.addProjectPomFile( versionlessKey,
-                                          workingDirectory.relativize( project.getFile().toPath() ).toString() );
+            
+            if ( project.getFile() != null )
+            {
+                descriptor.addProjectPomFile( versionlessKey,
+                                              workingDirectory.relativize( project.getFile().toPath() ).toString() );
+            }
         }
 
         List<String> profileIds = session.getRequest().getActiveProfiles();
@@ -305,9 +308,11 @@ public abstract class AbstractReleaseMojo
     }
     
     static Path getCommonBasedir( List<MavenProject> reactorProjects )
-                    throws IOException
     {
-        Path basePath = reactorProjects.get( 0 ).getBasedir().toPath();
+        Path basePath = reactorProjects
+                        .get( 0 )
+                        .getBasedir()
+                        .toPath();
         
         for ( MavenProject reactorProject : reactorProjects )
         {
