@@ -76,6 +76,10 @@ public class ReleaseUtilsTest
         assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
         configBuilder.setAdditionalArguments( origConfig.getAdditionalArguments() );
 
+        configBuilder.setAdditionalCommittedIncludes( other );
+        assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
+        configBuilder.setAdditionalCommittedIncludes( origConfig.getAdditionalCommittedIncludes() );
+        
         configBuilder.setAddSchema( !origConfig.isAddSchema() );
         assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
         configBuilder.setAddSchema( origConfig.isAddSchema() );
@@ -288,6 +292,7 @@ public class ReleaseUtilsTest
         releaseDescriptor.setAdditionalArguments( "additional-arguments" );
         releaseDescriptor.setPomFileName( "pom-file-name" );
         releaseDescriptor.setPreparationGoals( "preparation-goals" );
+        releaseDescriptor.setAdditionalCommittedIncludes( "foo.txt, bar.txt" );
 
         return releaseDescriptor;
     }

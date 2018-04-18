@@ -83,9 +83,10 @@ public class ScmCommitDevelopmentPhase
             }
             if ( simulating )
             {
-                Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
+                Collection<File> files = createPomFiles( releaseDescriptor, reactorProjects );
+                files.addAll(createAdditionalFiles(releaseDescriptor, reactorProjects));
                 logInfo( result,
-                         "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
+                         "Full run would be commit " + files.size() + " files with message: '" + message + "'" );
             }
             else
             {

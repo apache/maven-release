@@ -134,6 +134,12 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "commitByProject", "true" );
         }
+        
+        if (config.getAdditionalCommittedIncludes() != null)
+        {
+            properties.setProperty("additionalCommittedIncludes", config.getAdditionalCommittedIncludes());
+        }
+        
         properties.setProperty( "scm.url", config.getScmSourceUrl() );
         if ( config.getScmId() != null )
         {

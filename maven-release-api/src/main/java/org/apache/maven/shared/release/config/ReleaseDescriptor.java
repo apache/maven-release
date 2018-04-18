@@ -415,5 +415,5 @@ public interface ReleaseDescriptor
 
     void setScmSourceUrl( String scmUrl );
 
-
+    String getAdditionalCommittedIncludes();
 }

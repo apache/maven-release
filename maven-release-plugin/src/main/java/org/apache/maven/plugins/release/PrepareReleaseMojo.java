@@ -29,6 +29,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.utils.StringUtils;
 
 /**
  * Prepare for a release in SCM. Steps through several phases to ensure the POM is ready to be released and then
@@ -238,6 +239,22 @@ public class PrepareReleaseMojo
     @Parameter( property = "projectNamingPolicyId" )
     private String projectTagNamingPolicyId;
 
+    /**
+     * A list of additional include filters that will be commited with pom files. 
+     * 
+     * @since 3.0.0
+     */
+    @Parameter
+    private String[] additionalCommittedIncludes;
+    
+    /**
+     * Command-line version of additionalCommittedIncludes.
+     * 
+     * @since 3.0.0
+     */
+    @Parameter( property = "additionalCommittedIncludeList" )
+    private String additionalCommittedIncludeList;     
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -286,6 +303,16 @@ public class PrepareReleaseMojo
         if ( checkModificationExcludes != null )
         {
             config.setCheckModificationExcludes( Arrays.asList( checkModificationExcludes ) );
+        }
+        
+        if (additionalCommittedIncludeList != null)
+        {
+            additionalCommittedIncludes = additionalCommittedIncludeList.replaceAll( "\\s", "" ).split( "," );
+        }
+
+        if (additionalCommittedIncludes != null)
+        {
+            config.setAdditionalCommittedIncludes(StringUtils.join( additionalCommittedIncludes, "," ) );
         }
         
         ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();

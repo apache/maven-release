@@ -145,6 +145,11 @@ public class ReleaseUtils
             String pushChanges = properties.getProperty( "pushChanges" );
             builder.setPushChanges( Boolean.valueOf( pushChanges ) );
         }
+        
+        if ( properties.containsKey( "additionalCommittedIncludes" ) )
+        {
+            builder.setAdditionalCommittedIncludes(properties.getProperty( "additionalCommittedIncludes" ));
+        }
 
         loadResolvedDependencies( properties, builder );
 

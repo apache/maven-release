@@ -315,6 +315,7 @@ public class PropertiesReleaseDescriptorStoreTest
         scm.setConnection( "connection-write" );
         // omit optional elements
         builder.addOriginalScmInfo( "groupId:subproject1", scm );
+        builder.setAdditionalCommittedIncludes( "foo.txt" );
 
         return builder;
     }
@@ -449,6 +450,7 @@ public class PropertiesReleaseDescriptorStoreTest
         builder.addOriginalScmInfo( "groupId:artifactId2", scm );
         builder.addDependencyReleaseVersion( "external:artifactId",  "1.0" );
         builder.addDependencyDevelopmentVersion( "external:artifactId", "1.1-SNAPSHOT" );
+        builder.setAdditionalCommittedIncludes( "foo.txt" );
 
         return builder;
     }

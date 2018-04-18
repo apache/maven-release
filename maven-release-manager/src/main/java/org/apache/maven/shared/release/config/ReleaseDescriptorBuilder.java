@@ -391,6 +391,12 @@ public class ReleaseDescriptorBuilder
         releaseDescriptor.addDependencyDevelopmentVersion( dependencyKey, version );
         return this;
     }
+    
+    public ReleaseDescriptorBuilder setAdditionalCommittedIncludes( String additionalCommittedIncludes )
+    {
+        releaseDescriptor.setAdditionalCommittedIncludes(additionalCommittedIncludes);
+        return this;
+    }
 
     BuilderReleaseDescriptor build()
     {

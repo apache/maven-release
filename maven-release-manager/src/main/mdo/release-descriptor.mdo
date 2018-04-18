@@ -518,6 +518,16 @@
           </description>
         </field>
 
+        <field>
+          <name>additionalCommittedIncludes</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <description>
+            In some exceptions you want to commit some changes to the repository in addition to pom files. Changes
+            to files listed here will be committed.
+          </description>
+        </field> 
+
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.
@@ -867,6 +877,10 @@
         {
             return false;
         }
+        if ( !java.util.Objects.equals( additionalCommittedIncludes, that.getAdditionalCommittedIncludes() ) )
+        {
+            return false;
+        }
         if ( !java.util.Objects.deepEquals( projectVersions, that.getProjectVersions() ) )
         {
             return false;
@@ -991,6 +1005,7 @@
         result = 29 * result + java.util.Objects.hashCode( performGoals );
         result = 29 * result + java.util.Objects.hashCode( defaultReleaseVersion );
         result = 29 * result + java.util.Objects.hashCode( scmReleasedPomRevision );
+        result = 29 * result + java.util.Objects.hashCode( additionalCommittedIncludes );
 
         return result;
     }
