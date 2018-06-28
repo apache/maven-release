@@ -105,7 +105,7 @@ public class JDomPropertiesTest
     public void testStoreToXMLEncoded()
         throws Exception
     {
-        new JDomProperties( null ).storeToXML( null, null, null );
+        new JDomProperties( null ).storeToXML( (OutputStream) null, null, (String) null );
     }
 
     @Test
