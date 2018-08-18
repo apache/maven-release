@@ -35,7 +35,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.maven.Maven;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -86,7 +85,7 @@ public class RemoveReleasePomsPhaseTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                       isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...",
-                                                                                               Collections.singletonList( new ScmFile( Maven.POMv4,
+                                                                                               Collections.singletonList( new ScmFile( "pom.xml",
                                                                                                                                        ScmFileStatus.DELETED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -123,7 +122,7 @@ public class RemoveReleasePomsPhaseTest
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.remove( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                       isA( String.class ) ) ).thenReturn( new RemoveScmResult( "...",
-                                                                                               Collections.singletonList( new ScmFile( Maven.POMv4,
+                                                                                               Collections.singletonList( new ScmFile( "pom.xml",
                                                                                                                                        ScmFileStatus.DELETED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );

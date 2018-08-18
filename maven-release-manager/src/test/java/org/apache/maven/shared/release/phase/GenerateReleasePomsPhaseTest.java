@@ -35,7 +35,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.maven.Maven;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -198,7 +197,7 @@ public class GenerateReleasePomsPhaseTest
 
         when( scmProviderMock.add( isA( ScmRepository.class ),
                argThat( new IsScmFileSetEquals( fileSet ) ) ) ).thenReturn( new AddScmResult( "...",
-                              Collections.singletonList( new ScmFile( Maven.POMv4, ScmFileStatus.ADDED ) ) ) );
+                              Collections.singletonList( new ScmFile( "pom.xml", ScmFileStatus.ADDED ) ) ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
