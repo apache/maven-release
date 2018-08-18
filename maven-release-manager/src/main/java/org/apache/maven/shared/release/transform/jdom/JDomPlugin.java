@@ -180,7 +180,7 @@ public class JDomPlugin extends Plugin implements MavenCoordinate
     }
 
     @Override
-    public Map getExecutionsAsMap()
+    public Map<String, PluginExecution>  getExecutionsAsMap()
     {
         throw new UnsupportedOperationException();
     }

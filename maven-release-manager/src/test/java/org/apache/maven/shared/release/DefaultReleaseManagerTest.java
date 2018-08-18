@@ -563,7 +563,6 @@ public class DefaultReleaseManagerTest
     }
 
     // MRELEASE-758: release:perform no longer removes release.properties
-    @SuppressWarnings( "unchecked" )
     public void testPerformWithDefaultClean()
         throws Exception
     {
