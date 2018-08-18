@@ -24,11 +24,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.util.Os;
 import org.junit.Test;
 
@@ -224,27 +222,4 @@ public class ReleaseUtilTest
 
     }
 
-    private static MavenProject createProject( String basedir )
-    {
-        return createProject( basedir, basedir );
-    }
-
-    private static MavenProject createProject( final String basedirPath, final String basedirCanonicalPath )
-    {
-        return new MavenProject()
-        {
-            @Override
-            public File getBasedir()
-            {
-                return new File( basedirPath )
-                {
-                    @Override
-                    public String getCanonicalPath()
-                    {
-                        return basedirCanonicalPath;
-                    }
-                };
-            }
-        };
-    }
 }
