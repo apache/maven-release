@@ -104,7 +104,7 @@ public class JDomReporting extends Reporting
     }
 
     @Override
-    public Map getReportPluginsAsMap()
+    public Map<String, ReportPlugin> getReportPluginsAsMap()
     {
         throw new UnsupportedOperationException();
     }
