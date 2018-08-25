@@ -35,6 +35,7 @@ import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.codehaus.plexus.util.StringUtils;
 import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
 import org.sonatype.plexus.components.cipher.PlexusCipherException;
 import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
@@ -200,6 +201,11 @@ public class PropertiesReleaseDescriptorStore
         if ( config.getPomFileName() != null )
         {
             properties.setProperty( "exec.pomFileName", config.getPomFileName() );
+        }
+        if ( !config.getActivateProfiles().isEmpty() )
+        {
+            properties.setProperty( "exec.activateProfiles",
+                                    StringUtils.join( config.getActivateProfiles().iterator(), "," ) );
         }
         if ( config.getPreparationGoals() != null )
         {

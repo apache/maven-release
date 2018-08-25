@@ -97,6 +97,24 @@ public abstract class AbstractRunGoalsPhase
 
     protected abstract String getGoals( ReleaseDescriptor releaseDescriptor );
 
+    protected String getAdditionalArguments( ReleaseDescriptor releaseDescriptor )
+    {
+        StringBuilder builder = new StringBuilder();
+
+        if ( releaseDescriptor.getAdditionalArguments() != null )
+        {
+            builder.append( releaseDescriptor.getAdditionalArguments() );
+        }
+
+        if ( !releaseDescriptor.getActivateProfiles().isEmpty() )
+        {
+            builder.append( " -P " )
+                   .append( StringUtils.join( releaseDescriptor.getActivateProfiles().iterator(), "," ) );
+        }
+
+        return builder.length() > 0 ? builder.toString().trim() : null;
+    }
+
     /**
      * Determines the path of the working directory. By default, this is the
      * checkout directory. For some SCMs, the project root directory is not the

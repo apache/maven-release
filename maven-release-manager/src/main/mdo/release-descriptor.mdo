@@ -217,18 +217,16 @@
             If set to true, this will set the property "performRelease" to true.
           </description>
         </field>
-<!--         <field> -->
-<!--           <name>originalScmInfo</name> -->
-<!--           <version>1.0.0+</version> -->
-<!--           <type>Map</type> -->
-<!--           <association> -->
-<!--             <type>String</type> -->
-<!--             <multiplicity>*</multiplicity> -->
-<!--           </association> -->
-<!--           <description> -->
-<!--             A map of projects to original SCM information. -->
-<!--           </description> -->
-<!--         </field> -->
+        <field>
+          <name>activateProfiles</name>
+          <version>3.0.0+</version>
+          <type>List</type>
+          <association>
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+          <description>List of profiles to activate.</description>
+        </field>
         <field>
           <name>workingDirectory</name>
           <version>1.0.0+</version>

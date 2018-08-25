@@ -56,6 +56,12 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
+    public ReleaseDescriptorBuilder setActivateProfiles( List<String> profiles )
+    {
+        releaseDescriptor.setActivateProfiles( profiles );
+        return this;
+    }
+
     public ReleaseDescriptorBuilder setAddSchema( boolean addSchema )
     {
         releaseDescriptor.setAddSchema( addSchema );

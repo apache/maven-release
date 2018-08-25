@@ -52,7 +52,7 @@ public class RunPerformGoalsPhase
                                   List<MavenProject> reactorProjects, boolean simulate )
         throws ReleaseExecutionException
     {
-        String additionalArguments = releaseDescriptor.getAdditionalArguments();
+        String additionalArguments = getAdditionalArguments( releaseDescriptor );
 
         if ( releaseDescriptor.isUseReleaseProfile() )
         {

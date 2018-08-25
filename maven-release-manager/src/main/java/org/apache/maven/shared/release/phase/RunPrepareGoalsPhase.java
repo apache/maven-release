@@ -44,7 +44,7 @@ public class RunPrepareGoalsPhase
         throws ReleaseExecutionException
     {
         return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getWorkingDirectory() ),
-                        releaseDescriptor.getAdditionalArguments() );
+                        getAdditionalArguments( releaseDescriptor ) );
     }
 
     @Override

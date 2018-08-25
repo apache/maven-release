@@ -24,8 +24,8 @@
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>27</version>
-    <relativePath>../pom/maven/pom.xml</relativePath>
+    <version>32</version>
+    <relativePath/>
   </parent>
 
   <groupId>org.apache.maven.release</groupId>
@@ -84,7 +84,7 @@
   </contributors>
 
   <properties>
-    <scmVersion>1.9.6-SNAPSHOT</scmVersion>
+    <scmVersion>1.10.0</scmVersion>
     <javaVersion>7</javaVersion>
     <mavenVersion>3.0</mavenVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>

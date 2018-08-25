@@ -27,7 +27,7 @@ class AetherVersion
 {
     private final org.eclipse.aether.version.Version version;
 
-    public AetherVersion( String version )
+    AetherVersion( String version )
         throws VersionParseException
     {
         try

@@ -208,6 +208,12 @@ public interface ReleaseDescriptor
     boolean isScmUseEditMode();
 
     /**
+     * 
+     * @return list of profiles to activate
+     */
+    List<String> getActivateProfiles();
+
+    /**
      * Get the last completed phase.
      * 
      * @return String

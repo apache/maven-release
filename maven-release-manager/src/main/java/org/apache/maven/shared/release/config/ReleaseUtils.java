@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.config;
  * under the License.
  */
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -109,6 +110,10 @@ public class ReleaseUtils
         if ( properties.containsKey( "exec.pomFileName" ) )
         {
             builder.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
+        }
+        if ( properties.containsKey( "exec.activateProfiles" ) )
+        {
+            builder.setActivateProfiles( Arrays.asList( properties.getProperty( "exec.pomFileName" ).split( "," ) ) );
         }
         if ( properties.containsKey( "preparationGoals" ) )
         {

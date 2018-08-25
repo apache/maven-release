@@ -21,7 +21,7 @@ File releaseProperties = new File( basedir, 'release.properties' )
 assert releaseProperties.exists()
 
 def String execArgs = releaseProperties.filterLine { line ->
-   line.startsWith( 'exec.additionalArguments=' )
+   line.startsWith( 'exec.activateProfiles=' )
 }
 
-assert execArgs.contains( "-P mrelease571" )
+assert execArgs.contains( "mrelease571" )

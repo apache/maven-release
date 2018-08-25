@@ -37,7 +37,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <arguments>-Prelease,!mrelease-677 </arguments>
+          <arguments>-Prelease,!mrelease-677 ${arguments}</arguments>
           <preparationGoals>help:all-profiles</preparationGoals>
         </configuration>
       </plugin>

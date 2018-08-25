@@ -22,7 +22,8 @@ package org.apache.maven.plugins.release;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.maven.artifact.ArtifactUtils;
@@ -185,40 +186,22 @@ public abstract class AbstractReleaseMojo
             descriptor.putOriginalVersion( versionlessKey, project.getVersion() );
         }
 
+        descriptor.setAdditionalArguments( this.arguments );
+
         List<String> profileIds = session.getRequest().getActiveProfiles();
         String additionalProfiles = getAdditionalProfiles();
 
-        String args = this.arguments;
         if ( !profileIds.isEmpty() || StringUtils.isNotBlank( additionalProfiles ) )
         {
-            if ( !StringUtils.isEmpty( args ) )
-            {
-                args += " -P ";
-            }
-            else
-            {
-                args = "-P ";
-            }
-
-            for ( Iterator<String> it = profileIds.iterator(); it.hasNext(); )
-            {
-                args += it.next();
-                if ( it.hasNext() )
-                {
-                    args += ",";
-                }
-            }
-
+            List<String> profiles = new ArrayList<>( profileIds );
+            
             if ( additionalProfiles != null )
             {
-                if ( !profileIds.isEmpty() )
-                {
-                    args += ",";
-                }
-                args += additionalProfiles;
+                profiles.addAll( Arrays.asList( additionalProfiles.split( "," ) ) );
             }
+
+            descriptor.setActivateProfiles( profiles );
         }
-        descriptor.setAdditionalArguments( args );
         
         descriptor.setReleaseStrategyId( releaseStrategyId );
 
