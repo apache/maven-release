@@ -84,7 +84,7 @@
   </contributors>
 
   <properties>
-    <scmVersion>1.10.0</scmVersion>
+    <scmVersion>1.11.1</scmVersion>
     <javaVersion>7</javaVersion>
     <mavenVersion>3.0</mavenVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>

@@ -516,6 +516,15 @@
           </description>
         </field>
 
+        <field>
+          <name>scmSignTags</name>
+          <version>3.0.0+</version>
+          <type>boolean</type>
+          <description>
+            If the scm provider should use sign tags, for example for git-exe the '--sign' argument would be used.
+          </description>
+        </field>
+
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.

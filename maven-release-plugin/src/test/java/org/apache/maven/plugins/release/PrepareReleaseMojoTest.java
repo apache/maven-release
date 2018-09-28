@@ -28,8 +28,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.util.Collections;
@@ -48,6 +50,8 @@ import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.mockito.ArgumentCaptor;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 /**
  * Test release:prepare.
@@ -67,7 +71,7 @@ public class PrepareReleaseMojoTest
         throws Exception
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
-        final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        final PrepareReleaseMojo mojo = spy((PrepareReleaseMojo) lookupMojo( "prepare", testFile ));
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.setPomFileName( "pom.xml" );
@@ -92,6 +96,14 @@ public class PrepareReleaseMojoTest
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
 
+        when(mojo.createReleaseDescriptor()).thenAnswer(new Answer<ReleaseDescriptorBuilder>() {
+            @Override
+            public ReleaseDescriptorBuilder answer(InvocationOnMock invocationOnMock) throws Throwable {
+                ReleaseDescriptorBuilder original = (ReleaseDescriptorBuilder) invocationOnMock.callRealMethod();
+                return spy(original);
+            }
+        });
+
         // execute
         mojo.execute();
 
@@ -106,6 +118,8 @@ public class PrepareReleaseMojoTest
         assertThat( prepareRequest.getValue().getReactorProjects(), is( notNullValue() ) );
         assertThat( prepareRequest.getValue().getResume(), is( true ) );
         assertThat( prepareRequest.getValue().getDryRun(), is( false ) );
+
+        verify(prepareRequest.getValue().getReleaseDescriptorBuilder()).setScmSignTags(false);
     }
 
     public void testPrepareWithExecutionException()

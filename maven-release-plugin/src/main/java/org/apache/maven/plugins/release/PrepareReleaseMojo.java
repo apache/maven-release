@@ -188,6 +188,14 @@ public class PrepareReleaseMojo
     private boolean remoteTagging;
 
     /**
+     * Signs SCM tag when possible, for example when using the git-exe the '--sign' argument is used.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( property = "signTag" )
+    private boolean signTag = false;
+
+    /**
      * Whether to bump the working copy versions to <code>developmentVersion</code>.
      *
      * @since 2.1
@@ -272,6 +280,7 @@ public class PrepareReleaseMojo
         config.setDefaultReleaseVersion( releaseVersion );
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setRemoteTagging( remoteTagging );
+        config.setScmSignTags( signTag );
         config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );
         config.setWaitBeforeTagging( waitBeforeTagging );

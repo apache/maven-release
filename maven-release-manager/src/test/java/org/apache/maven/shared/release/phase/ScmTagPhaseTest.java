@@ -106,13 +106,17 @@ public class ScmTagPhaseTest
         builder.setPomFileName( rootProject.getFile().getName() );
         builder.setScmReleaseLabel( "release-label" );
         builder.setScmCommentPrefix( "[my prefix] " );
+        builder.setScmSignTags(true);
+
+        ScmTagParameters expectedTagParameters = new ScmTagParameters( "[my prefix] copy for tag release-label" );
+        expectedTagParameters.setSign(true);
 
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );
         when( scmProviderMock.tag( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                    eq( "release-label" ),
-                                   argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) ) ).thenReturn( new TagScmResult( "...",
+                                   argThat( new IsScmTagParametersEquals( expectedTagParameters ) ) ) ).thenReturn( new TagScmResult( "...",
                                                                                                                                                                                  Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
                                                                                                                                                                                                                          ScmFileStatus.TAGGED ) ) ) );
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -124,7 +128,7 @@ public class ScmTagPhaseTest
         // verify
         verify( scmProviderMock ).tag( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                        eq( "release-label" ),
-                                       argThat( new IsScmTagParametersEquals( new ScmTagParameters( "[my prefix] copy for tag release-label" ) ) ) );
+                                       argThat( new IsScmTagParametersEquals( expectedTagParameters ) ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
