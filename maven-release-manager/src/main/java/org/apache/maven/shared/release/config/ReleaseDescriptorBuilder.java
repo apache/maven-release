@@ -206,6 +206,12 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
+    public ReleaseDescriptorBuilder setWorkItem( String workItem )
+    {
+        releaseDescriptor.setWorkItem( workItem );
+        return this;
+    }
+
     public ReleaseDescriptorBuilder setReleaseStrategyId( String releaseStrategyId )
     {
         releaseDescriptor.setReleaseStrategyId( releaseStrategyId );

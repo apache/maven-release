@@ -136,6 +136,18 @@ public interface ReleaseDescriptor
     /**
      * Get default version to use for new working copy.
      * 
+     * Some SCMs may require a Work Item or a Task to allow the
+     * changes to be pushed or delivered.
+     * This field allows you to specify that Work Item
+     * or Task. It is optional, and only relevant if pushChanges is true.
+     *  
+     * @return String
+     */
+    String getWorkItem();
+
+    /**
+     * Get default version to use for new working copy.
+     * 
      * @return String
      */
     String getDefaultDevelopmentVersion();

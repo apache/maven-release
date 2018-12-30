@@ -235,6 +235,11 @@ public class PropertiesReleaseDescriptorStore
 
         properties.setProperty( "pushChanges", Boolean.toString( config.isPushChanges() ) );
 
+        if ( config.getWorkItem() != null )
+        {
+            properties.setProperty( "workItem", config.getWorkItem() );
+        }
+
         // others boolean properties are not written to the properties file because the value from the caller is always
         // used
 

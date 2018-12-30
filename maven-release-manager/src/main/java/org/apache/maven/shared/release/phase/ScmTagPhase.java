@@ -97,6 +97,8 @@ public class ScmTagPhase
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
 
+            repository.getProviderRepository().setWorkItem( releaseDescriptor.getWorkItem() );
+
             provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
         }
         catch ( ScmRepositoryException e )

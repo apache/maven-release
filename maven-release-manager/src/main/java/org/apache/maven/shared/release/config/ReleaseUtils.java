@@ -150,6 +150,10 @@ public class ReleaseUtils
             String pushChanges = properties.getProperty( "pushChanges" );
             builder.setPushChanges( Boolean.valueOf( pushChanges ) );
         }
+        if ( properties.containsKey( "workItem" ) )
+        {
+            builder.setWorkItem( properties.getProperty( "workItem" ) );
+        }
 
         loadResolvedDependencies( properties, builder );
 

@@ -516,6 +516,17 @@
           </description>
         </field>
 
+        <field>
+          <name>workItem</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <description>
+            Some SCMs may require a Work Item or a Task to allow the changes to be pushed or delivered.
+            This field allows you to specify that Work Item or Task. It is optional, and only relevant
+            if pushChanges is true.
+          </description>
+        </field>
+
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.
@@ -750,6 +761,7 @@
              !java.util.Objects.equals( checkoutDirectory, that.getCheckoutDirectory() ) ||
              !java.util.Objects.equals( performGoals, that.getPerformGoals() ) ||
              !java.util.Objects.equals( defaultReleaseVersion, that.getDefaultReleaseVersion() ) ||
+             !java.util.Objects.equals( workItem, that.getWorkItem() ) ||
              !java.util.Objects.equals( scmReleasedPomRevision, that.getScmReleasedPomRevision() )
            )
         {
@@ -854,10 +866,6 @@
             return false;
         }
         if ( !java.util.Objects.equals( workingDirectory, that.getWorkingDirectory() ) )
-        {
-            return false;
-        }
-        if ( !java.util.Objects.equals( scmTagNameFormat, that.getScmTagNameFormat() ) )
         {
             return false;
         }
@@ -989,6 +997,7 @@
         result = 29 * result + java.util.Objects.hashCode( performGoals );
         result = 29 * result + java.util.Objects.hashCode( defaultReleaseVersion );
         result = 29 * result + java.util.Objects.hashCode( scmReleasedPomRevision );
+        result = 29 * result + java.util.Objects.hashCode( workItem );
 
         return result;
     }
