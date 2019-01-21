@@ -21,7 +21,7 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-assert 3 == buildLog.getText().count("[INFO] Building mrelease-966-my-pom 1.0-SNAPSHOT")
+assert 2 == buildLog.getText().count("[INFO] Building mrelease-966-my-pom 1.0-SNAPSHOT")
 assert 0 == buildLog.getText().count("[INFO] Building mrelease-966-pom 1.0-SNAPSHOT")
 assert 1 == buildLog.getText().count("[INFO] [INFO] Building mrelease-966-my-pom 1.0-SNAPSHOT")
 assert 1 == buildLog.getText().count("[DEBUG] Specified POM file is not named 'pom.xml'. Using the '-f' command-line option to accommodate non-standard filename...")
