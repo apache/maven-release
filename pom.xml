@@ -56,7 +56,7 @@
   </issueManagement>
   <ciManagement>
     <system>Jenkins</system>
-    <url>https://builds.apache.org/job/maven-release/</url>
+    <url>https://builds.apache.org/job/maven-box/job/maven-release/</url>
   </ciManagement>
   <distributionManagement>
     <site>
