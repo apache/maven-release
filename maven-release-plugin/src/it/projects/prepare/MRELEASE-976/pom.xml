@@ -32,7 +32,9 @@
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
+        <version>@project.version@</version>
         <configuration>
           <projectVersionPolicyId>StubVersionPolicy</projectVersionPolicyId>
         </configuration>
