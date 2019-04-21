@@ -305,20 +305,25 @@ public class CheckDependencySnapshotsPhase
     private static boolean checkArtifact( Artifact artifact, ReleaseDescriptor releaseDescriptor )
     {
         String versionlessKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
+        String releaseDescriptorResolvedVersion = releaseDescriptor.getDependencyReleaseVersion( versionlessKey );
+
+        boolean releaseDescriptorResolvedVersionIsSnapshot = releaseDescriptorResolvedVersion == null
+                        || releaseDescriptorResolvedVersion.contains( Artifact.SNAPSHOT_VERSION );
         
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
-        boolean result = artifact.isSnapshot()
-                && !artifact.getBaseVersion().equals( releaseDescriptor.getProjectOriginalVersion( versionlessKey ) );
+        boolean bannedVersion = artifact.isSnapshot()
+                && !artifact.getBaseVersion().equals( releaseDescriptor.getProjectOriginalVersion( versionlessKey ) )
+                        && releaseDescriptorResolvedVersionIsSnapshot;
 
         // If we have a snapshot but allowTimestampedSnapshots is true, accept the artifact if the version
         // indicates that it is a timestamped snapshot.
-        if ( result && releaseDescriptor.isAllowTimestampedSnapshots() )
+        if ( bannedVersion && releaseDescriptor.isAllowTimestampedSnapshots() )
         {
-            result = artifact.getVersion().indexOf( Artifact.SNAPSHOT_VERSION ) >= 0;
+            bannedVersion = artifact.getVersion().indexOf( Artifact.SNAPSHOT_VERSION ) >= 0;
         }
 
-        return result;
+        return bannedVersion;
     }
 
     @Override

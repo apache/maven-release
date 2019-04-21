@@ -108,22 +108,36 @@ public class DefaultReleaseManager
 
         // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseUtils.copyPropertiesToReleaseDescriptor( prepareRequest.getUserProperties(),
-                                        new ReleaseDescriptorBuilder()
-                                        {
-                                            public ReleaseDescriptorBuilder addDevelopmentVersion( String key,
-                                                                                                   String value )
-                                            {
-                                                builder.addDevelopmentVersion( key, value );
-                                                return this;
-                                            }
+                new ReleaseDescriptorBuilder()
+                {
+                    public ReleaseDescriptorBuilder addDevelopmentVersion( String key,
+                                                                           String value )
+                    {
+                        builder.addDevelopmentVersion( key, value );
+                        return this;
+                    }
 
-                                            public ReleaseDescriptorBuilder addReleaseVersion( String key,
-                                                                                               String value )
-                                            {
-                                                builder.addReleaseVersion( key, value );
-                                                return this;
-                                            };
-                                        } );
+                    public ReleaseDescriptorBuilder addReleaseVersion( String key,
+                                                                       String value )
+                    {
+                        builder.addReleaseVersion( key, value );
+                        return this;
+                    }
+
+                    public ReleaseDescriptorBuilder addDependencyReleaseVersion( String dependencyKey,
+                                                                                String version )
+                    {
+                        builder.addDependencyReleaseVersion( dependencyKey, version );
+                        return this;
+                    }
+
+                    public ReleaseDescriptorBuilder addDependencyDevelopmentVersion( String dependencyKey,
+                                                                                    String version )
+                    {
+                        builder.addDependencyDevelopmentVersion( dependencyKey, version );
+                        return this;
+                    }
+                } );
 
         BuilderReleaseDescriptor config;
         if ( BooleanUtils.isNotFalse( prepareRequest.getResume() ) )
@@ -132,7 +146,7 @@ public class DefaultReleaseManager
         }
         else
         {
-            config = ReleaseUtils.buildReleaseDescriptor( prepareRequest.getReleaseDescriptorBuilder() );
+            config = ReleaseUtils.buildReleaseDescriptor( builder );
         }
 
         Strategy releaseStrategy = getStrategy( config.getReleaseStrategyId() );
