@@ -30,7 +30,9 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import org.apache.maven.project.MavenProject;
@@ -106,6 +108,35 @@ public class CheckDependencySnapshotsPhaseTest
 
         // successful execution is verification enough
         assertTrue( true );
+    }
+
+    // MRELEASE-985
+    @Test
+    public void testSnapshotDependenciesInProjectAndResolveFromCommandLine() throws Exception {
+        List<MavenProject> reactorProjects = createDescriptorFromProjects( "internal-snapshot-dependencies-no-reactor" );
+        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( reactorProjects );
+        builder.addDependencyReleaseVersion("groupId:test", "1.0");
+        builder.addDependencyDevelopmentVersion("groupId:test", "1.1");
+
+        try
+        {
+            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+            assertTrue( true );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            fail( "There should be no failed execution" );
+        }
+
+        try
+        {
+            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+            assertTrue( true );
+        }
+        catch ( ReleaseFailureException e )
+        {
+            fail( "There should be no failed execution" );
+        }
     }
 
     @Test
@@ -498,10 +529,10 @@ public class CheckDependencySnapshotsPhaseTest
                                                new VersionPair( "1.0", "1.0" ) ) );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
- 
+
         // validate
         ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( builder );
-        
+
         assertEquals( "1.0", descriptor.getDependencyReleaseVersion( "external:artifactId" ) );
         assertEquals( "1.1-SNAPSHOT", descriptor.getDependencyDevelopmentVersion( "external:artifactId" ) );
 
