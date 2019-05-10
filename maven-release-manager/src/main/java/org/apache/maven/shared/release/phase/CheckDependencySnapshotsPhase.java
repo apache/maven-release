@@ -123,7 +123,7 @@ public class CheckDependencySnapshotsPhase
             }
         }
 
-        Set<Artifact> dependencyArtifacts = project.getArtifacts();
+        Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
         usedSnapshotDependencies.addAll( checkDependencies( releaseDescriptor, artifactMap, dependencyArtifacts ) );
 
         //@todo check dependencyManagement

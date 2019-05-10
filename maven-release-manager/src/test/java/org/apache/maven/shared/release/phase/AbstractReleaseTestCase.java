@@ -1,6 +1,5 @@
 package org.apache.maven.shared.release.phase;
 
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -42,11 +41,13 @@ import java.util.Objects;
 
 import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.repository.DefaultArtifactRepository;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
+import org.apache.maven.lifecycle.LifecycleExecutionException;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Repository;
 import org.apache.maven.project.DefaultProjectBuildingRequest;
@@ -54,6 +55,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
 import org.apache.maven.project.ProjectBuildingRequest.RepositoryMerging;
+import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.project.ProjectSorter;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
@@ -82,6 +84,8 @@ public abstract class AbstractReleaseTestCase
     protected ProjectBuilder projectBuilder;
 
     protected ArtifactRepository localRepository;
+    
+    private ArtifactFactory artifactFactory;
 
     protected ReleasePhase phase;
 
@@ -92,6 +96,7 @@ public abstract class AbstractReleaseTestCase
         super.setUp();
 
         projectBuilder = lookup( ProjectBuilder.class );
+        artifactFactory = lookup( ArtifactFactory.class ); 
 
         ArtifactRepositoryLayout layout = lookup( ArtifactRepositoryLayout.class, "default" );
         String localRepoPath = getTestFile( "target/local-repository" ).getAbsolutePath().replace( '\\', '/' );
@@ -207,7 +212,22 @@ public abstract class AbstractReleaseTestCase
         List<MavenProject> resolvedProjects = new ArrayList<>( reactorProjects.size() );
         for ( MavenProject project  : reactorProjects )
         {
-            resolvedProjects.add( projectBuilder.build( project.getFile(), buildingRequest ).getProject() );
+            MavenProject resolvedProject = projectBuilder.build( project.getFile(), buildingRequest ).getProject();
+            
+            // from LifecycleDependencyResolver
+            if ( project.getDependencyArtifacts() == null )
+            {
+                try
+                {
+                    resolvedProject.setDependencyArtifacts( resolvedProject.createArtifacts( artifactFactory, null, null ) );
+                }
+                catch ( InvalidDependencyVersionException e )
+                {
+                    throw new LifecycleExecutionException( e );
+                }
+            }
+            
+            resolvedProjects.add( resolvedProject );
         }
         return resolvedProjects;
     }

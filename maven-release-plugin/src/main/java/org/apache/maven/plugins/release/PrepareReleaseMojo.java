@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
@@ -44,7 +45,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * @version $Id$
  * @todo [!] check how this works with version ranges
  */
-@Mojo( name = "prepare", aggregator = true )
+@Mojo( name = "prepare", aggregator = true, requiresDependencyCollection = ResolutionScope.TEST )
 public class PrepareReleaseMojo
     extends AbstractScmReleaseMojo
 {
