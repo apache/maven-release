@@ -172,6 +172,16 @@ public class ReleaseUtils
                 builder.addDevelopmentVersion( property.substring( "project.dev.".length() ),
                                                          properties.getProperty( property ) );
             }
+            else if ( property.startsWith( "dependency.rel." ) )
+            {
+                builder.addDependencyReleaseVersion( property.substring( "dependency.rel.".length() ),
+                                                     properties.getProperty( property ) );
+            }
+            else if ( property.startsWith( "dependency.dev." ) )
+            {
+                builder.addDependencyDevelopmentVersion( property.substring( "dependency.dev.".length() ),
+                                                         properties.getProperty( property ) );
+            }
             else if ( property.startsWith( "project.scm." ) )
             {
                 int index = property.lastIndexOf( '.' );
