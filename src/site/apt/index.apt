@@ -32,9 +32,15 @@ Maven Release
 *----------------------------------------------------------+----------------+
 || Module                                                  || Description   ||
 *----------------------------------------------------------+----------------+
+| {{{./maven-release-api/}maven-release-api}}              | APIs to implement to extend maven-release-plugin,
+*----------------------------------------------------------+----------------+
 | {{{./maven-release-manager/}maven-release-manager}}      | core classes,
 *----------------------------------------------------------+----------------+
-| {{{/plugins/maven-release-plugin/}maven-release-plugin}} | release plugin to use from Maven.
+| {{{./maven-release-plugin/}maven-release-plugin}}        | release plugin to use from Maven,
+*----------------------------------------------------------+----------------+
+| {{{./maven-release-policies/maven-release-oddeven-policy/}maven-release-oddeven-policy}} | a version policy that proposes even version numbers only for releases and odd numbers for development,
+*----------------------------------------------------------+----------------+
+| {{{./maven-release-policies/maven-release-semver-policy/}maven-release-semver-policy}} | a version policy that enforce SemVer format and upgrades minor element for next development version.
 *----------------------------------------------------------+----------------+
 
 Notes for Developers

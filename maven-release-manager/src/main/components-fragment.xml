@@ -20,6 +20,7 @@
 
 <component-set>
   <components>
+<!-- START SNIPPET: default-strategy -->
     <component>
       <role>org.apache.maven.shared.release.strategy.Strategy</role>
       <role-hint>default</role-hint>
@@ -76,6 +77,7 @@
         </updateVersionsPhases>
       </configuration>
     </component>
+<!-- END SNIPPET: default-strategy -->
     <component>
       <role>org.apache.maven.shared.release.phase.ReleasePhase</role>
       <role-hint>map-release-versions</role-hint>
