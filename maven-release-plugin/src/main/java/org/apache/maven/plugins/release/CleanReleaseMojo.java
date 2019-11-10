@@ -22,6 +22,7 @@ package org.apache.maven.plugins.release;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseCleanRequest;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
@@ -50,6 +51,7 @@ public class CleanReleaseMojo
         ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();
         cleanRequest.setReleaseDescriptorBuilder( releaseDescriptor );
         cleanRequest.setReactorProjects( getReactorProjects() );
+        cleanRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog() ) );
         
         try
         {

@@ -25,6 +25,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseBranchRequest;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -250,6 +251,7 @@ public class BranchReleaseMojo
             branchRequest.setReleaseDescriptorBuilder( config );
             branchRequest.setReleaseEnvironment( getReleaseEnvironment() );
             branchRequest.setReactorProjects( getReactorProjects() );
+            branchRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog(), dryRun ) );
             branchRequest.setDryRun( dryRun );
             branchRequest.setUserProperties( session.getUserProperties() );
 

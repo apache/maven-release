@@ -22,6 +22,7 @@ package org.apache.maven.plugins.release;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseRollbackRequest;
@@ -52,6 +53,7 @@ public class RollbackReleaseMojo
             rollbackRequest.setReleaseDescriptorBuilder( createReleaseDescriptor() );
             rollbackRequest.setReleaseEnvironment( getReleaseEnvironment() );
             rollbackRequest.setReactorProjects( getReactorProjects()  );
+            rollbackRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog() ) );
             
             releaseManager.rollback( rollbackRequest );
         }

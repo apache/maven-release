@@ -28,6 +28,7 @@ import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePerformRequest;
@@ -194,6 +195,7 @@ public class PerformReleaseMojo
             performRequest.setReleaseDescriptorBuilder( releaseDescriptor );
             performRequest.setReleaseEnvironment( getReleaseEnvironment() );
             performRequest.setReactorProjects( getReactorProjects() );
+            performRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog(), dryRun ) );
             performRequest.setDryRun( dryRun );
 
             releaseManager.perform( performRequest );

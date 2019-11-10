@@ -26,6 +26,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
@@ -293,6 +294,7 @@ public class PrepareReleaseMojo
         prepareRequest.setReleaseDescriptorBuilder( config );
         prepareRequest.setReleaseEnvironment( getReleaseEnvironment() );
         prepareRequest.setReactorProjects( getReactorProjects() );
+        prepareRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog(), dryRun ) );
         prepareRequest.setResume( resume );
         prepareRequest.setDryRun( dryRun );
         prepareRequest.setUserProperties( session.getUserProperties() );
