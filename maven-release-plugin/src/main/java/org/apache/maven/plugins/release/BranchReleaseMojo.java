@@ -32,8 +32,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
  * Branch a project in SCM, using the same steps as the <tt>release:prepare</tt> goal, creating a branch instead of a
- * tag. For more info see <a href="http://maven.apache.org/plugins/maven-release-plugin/examples/branch.html"
- * >http://maven.apache.org/plugins/maven-release-plugin/examples/branch.html</a>.
+ * tag. For more info see <a href="https://maven.apache.org/plugins/maven-release-plugin/examples/branch.html"
+ * >https://maven.apache.org/plugins/maven-release-plugin/examples/branch.html</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @version $Id$
