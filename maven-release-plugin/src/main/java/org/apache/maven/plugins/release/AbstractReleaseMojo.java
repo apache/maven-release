@@ -135,7 +135,7 @@ public abstract class AbstractReleaseMojo
     private String releaseStrategyId;
     
     /**
-     * Gets the enviroment settings configured for this release.
+     * Gets the environment settings configured for this release.
      *
      * @return The release environment, never <code>null</code>.
      */

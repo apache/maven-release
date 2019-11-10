@@ -35,8 +35,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * Prepare for a release in SCM. Steps through several phases to ensure the POM is ready to be released and then
  * prepares SCM to eventually contain a tagged version of the release and a record in the local copy of the parameters
  * used. This can be followed by a call to <tt>release:perform</tt>. For more info see <a
- * href="http://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html"
- * >http://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html</a>.
+ * href="https://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html"
+ * >https://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html</a>.
  *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -178,7 +178,7 @@ public class PrepareReleaseMojo
      * Currently only implemented with svn scm.
      * <ul>
      * <li>Enables a workaround to prevent issue due to svn client > 1.5.0 (fixed in 1.6.5)
-     * (http://jira.codehaus.org/browse/SCM-406)</li>
+     * (https://issues.apache.org/jira/browse/SCM-406)</li>
      * <li>You may not want to use this in conjunction with <code>suppressCommitBeforeTag</code>, such that no poms with
      * released versions are committed to the working copy ever.</li>
      * </ul>
