@@ -195,7 +195,7 @@ public class JDomModelETL implements ModelETL
             if ( rootElement.getAttribute( "schemaLocation", xsiNamespace ) == null )
             {
                 rootElement.setAttribute( "schemaLocation", "http://maven.apache.org/POM/" + modelVersion
-                    + " http://maven.apache.org/maven-v" + modelVersion.replace( '.', '_' ) + ".xsd", xsiNamespace );
+                    + " https://maven.apache.org/xsd/maven-" + modelVersion + ".xsd", xsiNamespace );
             }
 
             // the empty namespace is considered equal to the POM namespace, so match them up to avoid extra xmlns=""
