@@ -25,7 +25,15 @@
 
 Maven Release Manager
 
- Maven Release Manager implements the release management engine with its default release strategy:
+ Maven Release Manager implements:
  
+ * the release management engine ({{{./apidocs/org/apache/maven/shared/release/ReleaseManager.html}ReleaseManager}} API
+   with {{{./xref/org/apache/maven/shared/release/DefaultReleaseManager.html}DefaultReleaseManager}} implementation),
+
+ * default release phases (in {{{./apidocs/org/apache/maven/shared/release/phase/package-summary.html}phase package}}),
+
+ * and the default release strategy ({{{./apidocs/org/apache/maven/shared/release/strategies/DefaultStrategy.html}DefaultStrategy}})
+   with its phases configuration:
+
 %{snippet|id=default-strategy|file=${project.build.sourceDirectory}/../components-fragment.xml}
  
