@@ -20,11 +20,15 @@ package org.apache.maven.shared.release.phase;
  */
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TimeZone;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -105,6 +109,13 @@ public abstract class AbstractRewritePomsPhase
         this.modelETL = modelETL;
     }
 
+    private long startTime = -1 * 1000;
+
+    public void setStartTime( long startTime )
+    {
+        this.startTime = startTime;
+    }
+
     protected abstract String getPomSuffix();
 
     @Override
@@ -166,6 +177,8 @@ public abstract class AbstractRewritePomsPhase
                             List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        result.setStartTime( ( startTime >= 0 ) ? startTime : System.currentTimeMillis() );
+
         for ( MavenProject project : reactorProjects )
         {
             logInfo( result, "Transforming '" + project.getName() + "'..." );
@@ -325,6 +338,40 @@ public abstract class AbstractRewritePomsPhase
         }
 
         transformScm( project, modelTarget, releaseDescriptor, projectId, scmRepository, result );
+
+        if ( properties != null )
+        {
+            rewriteBuildOutputTimestampProperty( properties, result );
+        }
+    }
+
+    private void rewriteBuildOutputTimestampProperty( Properties properties, ReleaseResult result )
+    {
+        String buildOutputTimestamp = properties.getProperty( "project.build.outputTimestamp" );
+        if ( buildOutputTimestamp == null )
+        {
+            // no Reproducible Builds output timestamp defined
+            return;
+        }
+        if ( buildOutputTimestamp.length() <= 1 )
+        {
+            // value length == 1 means disable Reproducible Builds
+            return;
+        }
+
+        if ( StringUtils.isNumeric( buildOutputTimestamp ) )
+        {
+            // int representing seconds since the epoch, like SOURCE_DATE_EPOCH
+            buildOutputTimestamp = String.valueOf( result.getStartTime() / 1000 );
+        }
+        else
+        {
+            // ISO-8601
+            DateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'" );
+            df.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
+            buildOutputTimestamp = df.format( new Date( result.getStartTime() ) );
+        }
+        properties.setProperty( "project.build.outputTimestamp", buildOutputTimestamp );
     }
 
     private void rewriteVersion( Model modelTarget, ReleaseDescriptor releaseDescriptor, String projectId,

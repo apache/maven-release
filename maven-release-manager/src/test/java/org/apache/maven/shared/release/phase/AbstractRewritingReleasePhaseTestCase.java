@@ -87,6 +87,7 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         if( phase instanceof AbstractRewritePomsPhase)
         {
             ((AbstractRewritePomsPhase) phase).setModelETL( modelETL );
+            ((AbstractRewritePomsPhase) phase).setStartTime( 0 );
         }
     }
 
