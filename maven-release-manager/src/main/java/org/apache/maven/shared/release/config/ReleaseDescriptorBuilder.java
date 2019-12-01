@@ -236,6 +236,42 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
+    /**
+     * @since 3.0.0-M1
+     */
+    public ReleaseDescriptorBuilder setScmReleaseCommitComment( String scmReleaseCommitComment )
+    {
+        releaseDescriptor.setScmReleaseCommitComment( scmReleaseCommitComment );
+        return this;
+    }
+
+    /**
+     * @since 3.0.0-M1
+     */
+    public ReleaseDescriptorBuilder setScmDevelopmentCommitComment( String scmDevelopmentCommitComment )
+    {
+        releaseDescriptor.setScmDevelopmentCommitComment( scmDevelopmentCommitComment );
+        return this;
+    }
+
+    /**
+     * @since 3.0.0-M1
+     */
+    public ReleaseDescriptorBuilder setScmBranchCommitComment( String scmBranchCommitComment )
+    {
+        releaseDescriptor.setScmBranchCommitComment( scmBranchCommitComment );
+        return this;
+    }
+
+    /**
+     * @since 3.0.0-M1
+     */
+    public ReleaseDescriptorBuilder setScmRollbackCommitComment( String scmRollbackCommitComment )
+    {
+        releaseDescriptor.setScmRollbackCommitComment( scmRollbackCommitComment );
+        return this;
+    }
+
     public ReleaseDescriptorBuilder setScmId( String scmId )
     {
         releaseDescriptor.setScmId( scmId );

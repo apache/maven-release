@@ -275,6 +275,38 @@ public interface ReleaseDescriptor
     String getScmCommentPrefix();
 
     /**
+     * Get the SCM commit comment when setting pom.xml to release.
+     * 
+     * @return String
+     * @since 3.0.0-M1
+     */
+    String getScmReleaseCommitComment();
+
+    /**
+     * Get the SCM commit comment when setting pom.xml back to development.
+     * 
+     * @return String
+     * @since 3.0.0-M1
+     */
+    String getScmDevelopmentCommitComment();
+
+    /**
+     * Get the SCM commit comment when branching.
+     * 
+     * @return String
+     * @since 3.0.0-M1
+     */
+    String getScmBranchCommitComment();
+
+    /**
+     * Get the SCM commit comment when rolling back.
+     * 
+     * @return String
+     * @since 3.0.0-M1
+     */
+    String getScmRollbackCommitComment();
+
+    /**
      * Get pass phrase for the private key.
      * 
      * @return String
@@ -432,6 +464,4 @@ public interface ReleaseDescriptor
     void setScmRelativePathProjectDirectory( String scmRelativePathProjectDirectory );
 
     void setScmSourceUrl( String scmUrl );
-
-
 }

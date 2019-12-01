@@ -240,6 +240,46 @@ public class PrepareReleaseMojo
     @Parameter( property = "projectNamingPolicyId" )
     private String projectTagNamingPolicyId;
 
+    /**
+     * The SCM commit comment when setting pom.xml to release.
+     * Defaults to "@{prefix} prepare release @{releaseLabel}".
+     * <p>
+     * Property interpolation is performed on the value, but in order to ensure that the interpolation occurs
+     * during release, you must use <code>@{...}</code> to reference the properties rather than <code>${...}</code>.
+     * The following properties are available:
+     * <ul>
+     *     <li><code>prefix</code> - The comment prefix.
+     *     <li><code>groupId</code> - The groupId of the root project.
+     *     <li><code>artifactId</code> - The artifactId of the root project.
+     *     <li><code>releaseLabel</code> - The release version of the root project.
+     * </ul>
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "@{prefix} prepare release @{releaseLabel}", property = "scmReleaseCommitComment" )
+    private String scmReleaseCommitComment = "@{prefix} prepare release @{releaseLabel}";
+
+    /**
+     * The SCM commit comment when setting pom.xml back to development.
+     * Defaults to "@{prefix} prepare for next development iteration".
+     * <p>
+     * Property interpolation is performed on the value, but in order to ensure that the interpolation occurs
+     * during release, you must use <code>@{...}</code> to reference the properties rather than <code>${...}</code>.
+     * The following properties are available:
+     * <ul>
+     *     <li><code>prefix</code> - The comment prefix.
+     *     <li><code>groupId</code> - The groupId of the root project.
+     *     <li><code>artifactId</code> - The artifactId of the root project.
+     *     <li><code>releaseLabel</code> - The release version of the root project.
+     * </ul>
+     *
+     * @since 3.0.0
+     */
+    @Parameter( 
+            defaultValue = "@{prefix} prepare for next development iteration", 
+            property = "scmDevelopmentCommitComment" )
+    private String scmDevelopmentCommitComment = "@{prefix} prepare for next development iteration";
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -279,6 +319,8 @@ public class PrepareReleaseMojo
         config.setWaitBeforeTagging( waitBeforeTagging );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
         config.setProjectNamingPolicyId( projectTagNamingPolicyId );
+        config.setScmDevelopmentCommitComment( scmDevelopmentCommitComment );
+        config.setScmReleaseCommitComment( scmReleaseCommitComment );
 
         if ( checkModificationExcludeList != null )
         {

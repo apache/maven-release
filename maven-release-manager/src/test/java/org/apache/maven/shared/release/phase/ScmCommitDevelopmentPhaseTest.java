@@ -120,6 +120,21 @@ public class ScmCommitDevelopmentPhaseTest
     }
 
     @Test
+    public void testCommitsNextVersionsAlternateMessage()
+        throws Exception
+    {
+        builder.setUpdateWorkingCopyVersions( true );
+        builder.setScmCommentPrefix("[release]");
+        builder.setScmDevelopmentCommitComment("@{prefix} Development of @{groupId}:@{artifactId}");
+
+        prepareCheckin( "[release] Development of groupId:artifactId" );
+
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+
+        verifyCheckin( "[release] Development of groupId:artifactId" );
+    }
+
+    @Test
     public void testCommitsRollbackPrepare()
         throws Exception
     {

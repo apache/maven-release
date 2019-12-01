@@ -211,6 +211,25 @@ public class BranchReleaseMojo
     @Parameter( property = "projectNamingPolicyId" )
     private String projectBranchNamingPolicyId;
 
+    /**
+     * The SCM commit comment when branching.
+     * Defaults to "@{prefix} prepare branch @{releaseLabel}".
+     * <p>
+     * Property interpolation is performed on the value, but in order to ensure that the interpolation occurs
+     * during release, you must use <code>@{...}</code> to reference the properties rather than <code>${...}</code>.
+     * The following properties are available:
+     * <ul>
+     *     <li><code>prefix</code> - The comment prefix.
+     *     <li><code>groupId</code> - The groupId of the root project.
+     *     <li><code>artifactId</code> - The artifactId of the root project.
+     *     <li><code>releaseLabel</code> - The release version of the root project.
+     * </ul>
+     *
+     * @since 3.0.0-M1
+     */
+    @Parameter( defaultValue = "@{prefix} prepare branch @{releaseLabel}", property = "scmBranchCommitComment" )
+    private String scmBranchCommitComment = "@{prefix} prepare branch @{releaseLabel}";
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -234,6 +253,7 @@ public class BranchReleaseMojo
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeBranch );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
         config.setProjectNamingPolicyId( projectBranchNamingPolicyId );
+        config.setScmBranchCommitComment( scmBranchCommitComment );
 
         if ( checkModificationExcludeList != null )
         {

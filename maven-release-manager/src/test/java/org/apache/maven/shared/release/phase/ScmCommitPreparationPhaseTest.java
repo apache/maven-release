@@ -129,6 +129,41 @@ public class ScmCommitPreparationPhaseTest
     }
 
     @Test
+    public void testCommitAlternateMessage()
+        throws Exception
+    {
+        // prepare
+        List<MavenProject> reactorProjects = createReactorProjects();
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmCommentPrefix("[release]");
+        builder.setScmReleaseCommitComment("@{prefix} Release of @{groupId}:@{artifactId} @{releaseLabel}");
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
+
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                       isNull( ScmVersion.class ),
+                                       eq( "[release] Release of groupId:artifactId release-label" ) ) ).thenReturn( new CheckInScmResult( "...",
+                                                                                                     Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
+                                                                                                                                             ScmFileStatus.CHECKED_IN ) ) ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+
+        // execute
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                           isNull( ScmVersion.class ), eq( "[release] Release of groupId:artifactId release-label" ) );
+        verifyNoMoreInteractions( scmProviderMock );
+    }
+
+    @Test
     public void testCommitMultiModule()
         throws Exception
     {
@@ -201,6 +236,44 @@ public class ScmCommitPreparationPhaseTest
         verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
                                            isNull( ScmVersion.class ),
                                            eq( "[maven-release-manager] prepare for next development iteration" ) );
+        verifyNoMoreInteractions( scmProviderMock );
+    }
+
+    @Test
+    public void testCommitDevelopmentAlternateMessage()
+        throws Exception
+    {
+        // prepare
+        phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-commit-development" );
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        List<MavenProject> reactorProjects = createReactorProjects();
+        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmCommentPrefix("[release]");
+        builder.setScmDevelopmentCommitComment("@{prefix} Bump version of @{groupId}:@{artifactId} after @{releaseLabel}");
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        builder.setWorkingDirectory( rootProject.getFile().getParentFile().getAbsolutePath() );
+        builder.setScmReleaseLabel( "release-label" );
+
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), rootProject.getFile() );
+
+        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        when( scmProviderMock.checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                       isNull( ScmVersion.class ),
+                                       eq( "[release] Bump version of groupId:artifactId after release-label" ) ) ).thenReturn( new CheckInScmResult( "...",
+                                                                                                                                                    Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
+                                                                                                                                                                                            ScmFileStatus.CHECKED_IN ) ) ) );
+
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        stub.setScmProvider( scmProviderMock );
+
+        // execute
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        verify( scmProviderMock ).checkIn( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
+                                           isNull( ScmVersion.class ),
+                                           eq( "[release] Bump version of groupId:artifactId after release-label" ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 

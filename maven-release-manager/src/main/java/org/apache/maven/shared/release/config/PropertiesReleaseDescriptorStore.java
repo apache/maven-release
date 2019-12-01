@@ -194,6 +194,22 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "scm.commentPrefix", config.getScmCommentPrefix() );
         }
+        if ( config.getScmDevelopmentCommitComment() != null )
+        {
+            properties.setProperty( "scm.developmentCommitComment", config.getScmDevelopmentCommitComment() );
+        }
+        if ( config.getScmReleaseCommitComment() != null )
+        {
+            properties.setProperty( "scm.releaseCommitComment", config.getScmReleaseCommitComment() );
+        }
+        if ( config.getScmBranchCommitComment() != null )
+        {
+            properties.setProperty( "scm.branchCommitComment", config.getScmBranchCommitComment() );
+        }
+        if ( config.getScmRollbackCommitComment() != null )
+        {
+            properties.setProperty( "scm.rollbackCommitComment", config.getScmRollbackCommitComment() );
+        }
         if ( config.getAdditionalArguments() != null )
         {
             properties.setProperty( "exec.additionalArguments", config.getAdditionalArguments() );

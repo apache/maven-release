@@ -103,6 +103,22 @@ public class ReleaseUtils
         {
             builder.setScmCommentPrefix( properties.getProperty( "scm.commentPrefix" ) );
         }
+        if ( properties.containsKey( "scm.developmentCommitComment" ) )
+        {
+            builder.setScmDevelopmentCommitComment( properties.getProperty( "scm.developmentCommitComment" ) );
+        }
+        if ( properties.containsKey( "scm.releaseCommitComment" ) )
+        {
+            builder.setScmReleaseCommitComment( properties.getProperty( "scm.releaseCommitComment" ) );
+        }
+        if ( properties.containsKey( "scm.branchCommitComment" ) )
+        {
+            builder.setScmBranchCommitComment( properties.getProperty( "scm.branchCommitComment" ) );
+        }
+        if ( properties.containsKey( "scm.rollbackCommitComment" ) )
+        {
+            builder.setScmRollbackCommitComment( properties.getProperty( "scm.rollbackCommitComment" ) );
+        }
         if ( properties.containsKey( "exec.additionalArguments" ) )
         {
             builder.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );

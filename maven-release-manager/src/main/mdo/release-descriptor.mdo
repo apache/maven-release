@@ -69,6 +69,42 @@
           </description>
         </field>
         <field>
+          <name>scmReleaseCommitComment</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>@{prefix} prepare release @{releaseLabel}</defaultValue>
+          <description>
+            The SCM commit comment when setting pom.xml to release
+          </description>
+        </field>
+        <field>
+          <name>scmDevelopmentCommitComment</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>@{prefix} prepare for next development iteration</defaultValue>
+          <description>
+            The SCM commit comment when setting pom.xml back to development
+          </description>
+        </field>
+        <field>
+          <name>scmBranchCommitComment</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>@{prefix} prepare branch @{releaseLabel}</defaultValue>
+          <description>
+            The SCM commit comment when branching
+          </description>
+        </field>
+        <field>
+          <name>scmRollbackCommitComment</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <defaultValue>@{prefix} rollback the release of @{releaseLabel}</defaultValue>
+          <description>
+            The SCM commit comment when rolling back
+          </description>
+        </field>
+        <field>
           <name>scmSourceUrl</name>
           <version>1.0.0+</version>
           <type>String</type>
@@ -829,6 +865,22 @@
         {
             return false;
         }
+        if ( !java.util.Objects.equals( scmDevelopmentCommitComment, that.getScmDevelopmentCommitComment() ) )
+        {
+            return false;
+        }
+        if ( !java.util.Objects.equals( scmReleaseCommitComment, that.getScmReleaseCommitComment() ) )
+        {
+            return false;
+        }
+        if ( !java.util.Objects.equals( scmBranchCommitComment, that.getScmBranchCommitComment() ) )
+        {
+            return false;
+        }
+        if ( !java.util.Objects.equals( scmRollbackCommitComment, that.getScmRollbackCommitComment() ) )
+        {
+            return false;
+        }
         if ( !java.util.Objects.equals( scmPrivateKeyPassPhrase, that.getScmPrivateKeyPassPhrase() ) )
         {
             return false;
@@ -962,6 +1014,10 @@
         result = 29 * result + java.util.Objects.hashCode( completionGoals );
         result = 29 * result + java.util.Objects.hashCode( pomFileName );
         result = 29 * result + java.util.Objects.hashCode( checkModificationExcludes );
+        result = 29 * result + java.util.Objects.hashCode( scmDevelopmentCommitComment );
+        result = 29 * result + java.util.Objects.hashCode( scmReleaseCommitComment );
+        result = 29 * result + java.util.Objects.hashCode( scmBranchCommitComment );
+        result = 29 * result + java.util.Objects.hashCode( scmRollbackCommitComment );
         result = 29 * result + java.util.Objects.hashCode( scmTagBase );
         result = 29 * result + java.util.Objects.hashCode( scmBranchBase );
         result = 29 * result + java.util.Objects.hashCode( scmUsername );

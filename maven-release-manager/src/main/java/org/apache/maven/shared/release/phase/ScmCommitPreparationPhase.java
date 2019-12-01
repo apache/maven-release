@@ -28,7 +28,6 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 
-import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -40,12 +39,6 @@ public class ScmCommitPreparationPhase
     extends AbstractScmCommitPhase
 {
 
-    /**
-     * The format for the
-     */
-    private String rollbackMessageFormat;
-
-    @Override
     protected void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                              List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
         throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException
@@ -66,8 +59,7 @@ public class ScmCommitPreparationPhase
         // commit development versions required
         else
         {
-            String message = createMessage( releaseDescriptor );
-
+            String message = createMessage( reactorProjects, releaseDescriptor );
             if ( simulating )
             {
                 simulateCheckins( releaseDescriptor, reactorProjects, result, message );
@@ -79,13 +71,6 @@ public class ScmCommitPreparationPhase
         }
     }
 
-    private String createRollbackMessage( ReleaseDescriptor releaseDescriptor )
-    {
-        return MessageFormat.format( releaseDescriptor.getScmCommentPrefix() + rollbackMessageFormat,
-                                     new Object[]{releaseDescriptor.getScmReleaseLabel()} );
-    }
-
-    @Override
     protected void validateConfiguration( ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException
     {

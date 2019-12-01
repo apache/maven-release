@@ -79,13 +79,13 @@ public class ScmCommitDevelopmentPhase
             else
             {
                 // a normal commit
-                message = createMessage( releaseDescriptor );
+                message = createMessage( reactorProjects, releaseDescriptor );
             }
             if ( simulating )
             {
                 Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
                 logInfo( result,
-                         "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
+                         "Full run would commit " + pomFiles.size() + " files with message: '" + message + "'" );
             }
             else
             {
