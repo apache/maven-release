@@ -36,6 +36,7 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -72,7 +73,7 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
         builder.setPomFileName( rootProject.getFile().getName() );
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
-        // mock, only real mather is the file set
+        // mock, only real matcher is the file set
         ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
         Mockito.when( scmProviderMock.untag( Matchers.isA( ScmRepository.class ),
                 Matchers.argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -104,7 +105,7 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
         builder.setPomFileName( rootProject.getFile().getName() );
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
-        // mock, only real mather is the file set
+        // mock, only real matcher is the file set
         ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
         Mockito.when( scmProviderMock.untag( Matchers.isA( ScmRepository.class ),
                 Matchers.argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -126,6 +127,7 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
     public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
+    @Ignore( "We changed the behaviour to warning instead of error." )
     public void testExecuteError() throws Exception
     {
 
@@ -139,7 +141,7 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
         builder.setPomFileName( rootProject.getFile().getName() );
         ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
 
-        // mock, only real mather is the file set
+        // mock, only real matcher is the file set
         ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
         Mockito.when( scmProviderMock.untag( Matchers.isA( ScmRepository.class ),
                 Matchers.argThat( new IsScmFileSetEquals( fileSet ) ),
@@ -156,6 +158,39 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
         // execute
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ),
                 new DefaultReleaseEnvironment(), reactorProjects );
+
+    }
+
+    @Test
+    public void testExecuteNoError() throws Exception
+    {
+
+        // prepare
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmReleaseLabel( "release-label" );
+        builder.setScmSourceUrl( "scm-url" );
+        List<MavenProject> reactorProjects = createReactorProjects();
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
+        builder.setPomFileName( rootProject.getFile().getName() );
+        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+
+        // mock, only real matcher is the file set
+        ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
+        Mockito.when( scmProviderMock.untag( Matchers.isA( ScmRepository.class ),
+                Matchers.argThat( new IsScmFileSetEquals( fileSet ) ),
+                Matchers.isA( CommandParameters.class ) ) )
+                .thenReturn( new UntagScmResult( "command-line", "provider-message", "command-output", false ) );
+        ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
+        stub.setScmProvider( scmProviderMock );
+
+        // execute
+        ReleaseResult actual = phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ),
+                new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        Assert.assertEquals( 0, actual.getResultCode() );
+
 
     }
 
