@@ -110,19 +110,21 @@ public class RemoveScmTagPhase
                     "RemoveScmTagPhase :: scmUntagParameters tagName " + tagName );
                 getLogger().debug(
                     "RemoveScmTagPhase :: scmUntagParameters message " + message );
-                getLogger().debug( "ScmTagPhase :: fileSet  " + fileSet );
+                getLogger().debug(
+                    "RemoveScmTagPhase :: fileSet  " + fileSet );
             }
             untagScmResult = provider.untag( repository, fileSet, commandParameters );
         }
         catch ( ScmException e )
         {
-            throw new ReleaseExecutionException( "An error is occurred in the remove tag process: "
+            throw new ReleaseExecutionException( "An error has occurred in the remove tag process: "
                 + e.getMessage(), e );
         }
 
         if ( !untagScmResult.isSuccess() )
         {
-            throw new ReleaseScmCommandException( "Unable to remove tag ", untagScmResult );
+            getLogger().warn( String.format( "Unable to remove tag%nProvider message: %s%nCommand output: %s",
+                    untagScmResult.getProviderMessage(), untagScmResult.getCommandOutput() ) );
         }
 
         releaseResult.setResultCode( ReleaseResult.SUCCESS );
