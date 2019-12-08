@@ -88,7 +88,7 @@
     <javaVersion>7</javaVersion>
     <mavenVersion>3.0</mavenVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
-    <project.build.outputTimestamp>2019-11-23T17:28:05Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2019-12-08T19:56:05Z</project.build.outputTimestamp>
   </properties>
 
   <build>
@@ -102,6 +102,19 @@
               <exclude>.repository</exclude>
             </excludes>
           </configuration>
+        </plugin>
+        <!-- Reproducible Builds plugins: to be removed once parent POM updated to 34 -->
+        <plugin>
+          <artifactId>maven-source-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.2.0</version>
+        </plugin>
+        <plugin>
+          <artifactId>maven-assembly-plugin</artifactId>
+          <version>3.2.0</version>
         </plugin>
       </plugins>
     </pluginManagement>
