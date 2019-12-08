@@ -38,7 +38,6 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
