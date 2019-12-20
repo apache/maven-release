@@ -108,6 +108,7 @@ public class ScmBranchPhase
             scmBranchParameters.setMessage( releaseDescriptor.getScmCommentPrefix() + "copy for branch " + branchName );
             scmBranchParameters.setRemoteBranching( releaseDescriptor.isRemoteTagging() );
             scmBranchParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
+            scmBranchParameters.setPinExternals( releaseDescriptor.isPinExternals() );
 
             result = provider.branch( repository, fileSet, branchName, scmBranchParameters );
         }
@@ -137,12 +138,16 @@ public class ScmBranchPhase
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
             ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
 
-        logInfo( result, "Full run would be branching " + basedirAlignedReleaseDescriptor.getWorkingDirectory() );
+        logInfo( result, "Full run would branch " + basedirAlignedReleaseDescriptor.getWorkingDirectory() );
         if ( releaseDescriptor.getScmBranchBase() != null )
         {
-            logInfo( result, "  To SCM URL: " + releaseDescriptor.getScmBranchBase() );
+            logInfo( result, "  to SCM URL " + releaseDescriptor.getScmBranchBase() );
         }
-        logInfo( result, "  with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
+        logInfo( result, "  with label '" + releaseDescriptor.getScmReleaseLabel() + "'" );
+        if ( releaseDescriptor.isPinExternals() )
+        {
+            logInfo( result, "  and pinned externals" );
+        }
 
         result.setResultCode( ReleaseResult.SUCCESS );
 

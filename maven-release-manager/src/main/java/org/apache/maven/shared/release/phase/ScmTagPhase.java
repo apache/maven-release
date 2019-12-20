@@ -120,12 +120,15 @@ public class ScmTagPhase
                 new ScmTagParameters( releaseDescriptor.getScmCommentPrefix() + "copy for tag " + tagName );
             scmTagParameters.setRemoteTagging( releaseDescriptor.isRemoteTagging() );
             scmTagParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
+            scmTagParameters.setPinExternals( releaseDescriptor.isPinExternals() );
             if ( getLogger().isDebugEnabled() )
             {
                 getLogger().debug(
                     "ScmTagPhase :: scmTagParameters remotingTag " + releaseDescriptor.isRemoteTagging() );
                 getLogger().debug(
                     "ScmTagPhase :: scmTagParameters scmRevision " + releaseDescriptor.getScmReleasedPomRevision() );
+                getLogger().debug(
+                        "ScmTagPhase :: scmTagParameters pinExternals " + releaseDescriptor.isPinExternals() );
                 getLogger().debug( "ScmTagPhase :: fileSet  " + fileSet );
             }
             result = provider.tag( repository, fileSet, tagName, scmTagParameters );
@@ -160,13 +163,18 @@ public class ScmTagPhase
         if ( releaseDescriptor.isRemoteTagging() )
         {
             logInfo( result,
-                     "Full run would be tagging working copy " + basedirAlignedReleaseDescriptor.getWorkingDirectory()
-                         + " with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
+                     "Full run would tag working copy '"
+                     + basedirAlignedReleaseDescriptor.getWorkingDirectory() + "'" );
         }
         else
         {
-            logInfo( result, "Full run would be tagging remotely " + basedirAlignedReleaseDescriptor.getScmSourceUrl()
-                + " with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
+            logInfo( result, "Full run would tag remotely '"
+                     + basedirAlignedReleaseDescriptor.getScmSourceUrl() + "'" );
+        }
+        logInfo( result, "  with label '" + releaseDescriptor.getScmReleaseLabel() + "'" );
+        if ( releaseDescriptor.isPinExternals() )
+        {
+            logInfo( result, "  and pinned externals" );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );

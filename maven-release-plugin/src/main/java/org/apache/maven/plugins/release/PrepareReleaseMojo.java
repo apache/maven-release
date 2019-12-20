@@ -299,6 +299,15 @@ public class PrepareReleaseMojo
     private String autoResolveSnapshots;
 
     /**
+     * Currently only implemented with svn scm. Enable the {@code --pin-externals} option in
+     * {@code svn copy} command which is new in Subversion 1.9.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "false", property = "pinExternals" )
+    private boolean pinExternals;
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -343,6 +352,7 @@ public class PrepareReleaseMojo
         config.setScmDevelopmentCommitComment( scmDevelopmentCommitComment );
         config.setScmReleaseCommitComment( scmReleaseCommitComment );
         config.setAutoResolveSnapshots( autoResolveSnapshots );
+        config.setPinExternals( pinExternals );
 
         if ( checkModificationExcludeList != null )
         {
