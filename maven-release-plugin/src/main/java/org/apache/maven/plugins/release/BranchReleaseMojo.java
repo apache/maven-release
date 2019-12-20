@@ -230,6 +230,15 @@ public class BranchReleaseMojo
     @Parameter( defaultValue = "@{prefix} prepare branch @{releaseLabel}", property = "scmBranchCommitComment" )
     private String scmBranchCommitComment = "@{prefix} prepare branch @{releaseLabel}";
 
+    /**
+     * Currently only implemented with svn scm. Enable the "--pin-externals" option in svn
+     * copy commands which is new in Subversion 1.9.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "false", property = "pinExternals" )
+    private boolean pinExternals;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -254,6 +263,7 @@ public class BranchReleaseMojo
         config.setProjectVersionPolicyId( projectVersionPolicyId );
         config.setProjectNamingPolicyId( projectBranchNamingPolicyId );
         config.setScmBranchCommitComment( scmBranchCommitComment );
+        config.setPinExternals( pinExternals );
 
         if ( checkModificationExcludeList != null )
         {

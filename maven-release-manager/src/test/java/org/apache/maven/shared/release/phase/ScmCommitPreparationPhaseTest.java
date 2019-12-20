@@ -488,6 +488,7 @@ public class ScmCommitPreparationPhaseTest
         List<MavenProject> reactorProjects = createReactorProjects();
 
         builder.setRemoteTagging( true );
+        builder.setPinExternals( false );
         builder.setSuppressCommitBeforeTagOrBranch( true );
 
         ScmProvider scmProviderMock = mock( ScmProvider.class );

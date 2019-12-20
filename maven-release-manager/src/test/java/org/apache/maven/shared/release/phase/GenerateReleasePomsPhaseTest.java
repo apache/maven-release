@@ -117,6 +117,7 @@ public class GenerateReleasePomsPhaseTest
         builder.setGenerateReleasePoms( true );
         builder.setSuppressCommitBeforeTagOrBranch( true );
         builder.setRemoteTagging( false );
+        builder.setPinExternals( false );
         mapNextVersion( builder, "groupId:artifactId" );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -135,6 +136,7 @@ public class GenerateReleasePomsPhaseTest
         builder.setGenerateReleasePoms( true );
         builder.setSuppressCommitBeforeTagOrBranch( true );
         builder.setRemoteTagging( true );
+        builder.setPinExternals( false );
         mapNextVersion( builder, "groupId:artifactId" );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );

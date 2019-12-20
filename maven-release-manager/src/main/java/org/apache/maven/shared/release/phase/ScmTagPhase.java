@@ -120,6 +120,7 @@ public class ScmTagPhase
                 new ScmTagParameters( releaseDescriptor.getScmCommentPrefix() + "copy for tag " + tagName );
             scmTagParameters.setRemoteTagging( releaseDescriptor.isRemoteTagging() );
             scmTagParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
+            scmTagParameters.setPinExternals( releaseDescriptor.isPinExternals() );
             if ( getLogger().isDebugEnabled() )
             {
                 getLogger().debug(
@@ -127,6 +128,8 @@ public class ScmTagPhase
                 getLogger().debug(
                     "ScmTagPhase :: scmTagParameters scmRevision " + releaseDescriptor.getScmReleasedPomRevision() );
                 getLogger().debug( "ScmTagPhase :: fileSet  " + fileSet );
+                getLogger().debug(
+                    "ScmTagPhase :: scmTagParameters pinExternals " + releaseDescriptor.isPinExternals() );
             }
             result = provider.tag( repository, fileSet, tagName, scmTagParameters );
         }
@@ -167,6 +170,10 @@ public class ScmTagPhase
         {
             logInfo( result, "Full run would be tagging remotely " + basedirAlignedReleaseDescriptor.getScmSourceUrl()
                 + " with label: '" + releaseDescriptor.getScmReleaseLabel() + "'" );
+        }
+        if ( releaseDescriptor.isPinExternals() )
+        {
+            logInfo( result, "Full run would pin externals" );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );

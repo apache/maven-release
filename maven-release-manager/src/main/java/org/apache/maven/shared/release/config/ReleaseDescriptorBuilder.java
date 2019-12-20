@@ -440,6 +440,12 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
+    public ReleaseDescriptorBuilder setPinExternals( boolean pinExternals )
+    {
+        releaseDescriptor.setPinExternals( pinExternals );
+        return this;
+    }
+
     BuilderReleaseDescriptor build()
     {
         return releaseDescriptor;

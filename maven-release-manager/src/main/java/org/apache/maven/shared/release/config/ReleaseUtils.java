@@ -161,6 +161,11 @@ public class ReleaseUtils
             String remoteTaggingStr = properties.getProperty( "remoteTagging" );
             builder.setRemoteTagging( Boolean.valueOf( remoteTaggingStr ) );
         }
+        if ( properties.containsKey( "pinExternals" ) )
+        {
+            String pinExternals = properties.getProperty( "pinExternals" );
+            builder.setPinExternals( Boolean.valueOf( pinExternals ) );
+        }
         if ( properties.containsKey( "pushChanges" ) )
         {
             String pushChanges = properties.getProperty( "pushChanges" );

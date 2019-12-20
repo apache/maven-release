@@ -464,4 +464,12 @@ public interface ReleaseDescriptor
     void setScmRelativePathProjectDirectory( String scmRelativePathProjectDirectory );
 
     void setScmSourceUrl( String scmUrl );
+
+    /**
+     * Get whether the "--pin-externals" option in svn copy commands is enabled
+     * which is new in Subversion 1.9.
+     * 
+     * @return boolean
+     */
+    boolean isPinExternals();
 }

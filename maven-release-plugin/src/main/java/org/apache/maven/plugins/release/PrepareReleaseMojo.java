@@ -280,6 +280,15 @@ public class PrepareReleaseMojo
             property = "scmDevelopmentCommitComment" )
     private String scmDevelopmentCommitComment = "@{prefix} prepare for next development iteration";
 
+    /**
+     * Currently only implemented with svn scm. Enable the "--pin-externals" option in svn
+     * copy commands which is new in Subversion 1.9.
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "false", property = "pinExternals" )
+    private boolean pinExternals;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -321,6 +330,7 @@ public class PrepareReleaseMojo
         config.setProjectNamingPolicyId( projectTagNamingPolicyId );
         config.setScmDevelopmentCommitComment( scmDevelopmentCommitComment );
         config.setScmReleaseCommitComment( scmReleaseCommitComment );
+        config.setPinExternals( pinExternals );
 
         if ( checkModificationExcludeList != null )
         {
