@@ -249,6 +249,8 @@ public class PropertiesReleaseDescriptorStore
 
         properties.setProperty( "remoteTagging", Boolean.toString( config.isRemoteTagging() ) );
 
+        properties.setProperty( "pinExternals", Boolean.toString( config.isPinExternals() ) );
+
         properties.setProperty( "pushChanges", Boolean.toString( config.isPushChanges() ) );
 
         if ( config.getWorkItem() != null )

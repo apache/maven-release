@@ -40,7 +40,7 @@ public class IsScmBranchParametersEquals extends ArgumentMatcher<ScmBranchParame
     {
         ScmBranchParameters sbp = (ScmBranchParameters) argument;
         return sbp.getMessage().equals( this.scmBranchParameters.getMessage() )
-            //&& stp.isRemoteTagging() == this.scmBranchParameters.isRemoteTagging()
-            ;
+            && sbp.isRemoteBranching() == this.scmBranchParameters.isRemoteBranching()
+            && sbp.isPinExternals() == this.scmBranchParameters.isPinExternals();
     }
 }

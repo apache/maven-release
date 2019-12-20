@@ -484,4 +484,12 @@ public interface ReleaseDescriptor
      * @return String
      */
     String getAutoResolveSnapshots();
+
+    /**
+     * Determines whether the <code>--pin-externals</code> option in svn copy commands is enabled
+     * which is new in Subversion 1.9.
+     * 
+     * @return boolean
+     */
+    boolean isPinExternals();
 }

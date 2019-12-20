@@ -39,6 +39,7 @@ public class IsScmTagParametersEquals extends ArgumentMatcher<ScmTagParameters>
     {
         ScmTagParameters stp = (ScmTagParameters) argument;
         return stp.getMessage().equals( this.scmTagParameters.getMessage() )
-            && stp.isRemoteTagging() == this.scmTagParameters.isRemoteTagging();
+            && stp.isRemoteTagging() == this.scmTagParameters.isRemoteTagging()
+            && stp.isPinExternals() == this.scmTagParameters.isPinExternals();
     }
 }

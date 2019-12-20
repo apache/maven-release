@@ -583,6 +583,18 @@
           </description>
         </field>
 
+        <field>
+          <name>pinExternals</name>
+          <version>3.0.0+</version>
+          <type>boolean</type>
+          <defaultValue>false</defaultValue>
+          <description>
+            Enable the "--pin-externals" option in svn copy commands which is new in Subversion 1.9.
+            NOTE : Currently only implemented with Subversion.
+            (https://issues.apache.org/jira/browse/SCM-805)
+          </description>
+        </field>
+
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.
@@ -805,6 +817,7 @@
              updateVersionsToSnapshot         != that.isUpdateVersionsToSnapshot()         ||
              allowTimestampedSnapshots        != that.isAllowTimestampedSnapshots()        ||
              remoteTagging                    != that.isRemoteTagging()                    ||
+             pinExternals                     != that.isPinExternals()                     ||
              localCheckout                    != that.isLocalCheckout()                    ||
              pushChanges                      != that.isPushChanges()
            )
@@ -1076,6 +1089,7 @@
         result = 29 * result + java.util.Objects.hashCode( scmReleasedPomRevision );
         result = 29 * result + java.util.Objects.hashCode( workItem );
         result = 29 * result + java.util.Objects.hashCode( autoResolveSnapshots );
+        result = 29 * result + java.util.Objects.hashCode( pinExternals );
 
         return result;
     }
