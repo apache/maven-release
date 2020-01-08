@@ -32,37 +32,27 @@ import java.util.List;
 public interface Strategy
 {
     /**
-     * The release phases to execute the calling the prepare goal 
-     * 
-     * @return
+     * @return The release phases to execute the calling the prepare goal
      */
     List<String> getPreparePhases();
     
     /**
-     * The release phases to execute the calling the perform goal 
-     * 
-     * @return
+     * @return The release phases to execute the calling the perform goal 
      */
     List<String> getPerformPhases();
     
     /**
-     * The release phases to execute the calling the branch goal 
-     * 
-     * @return
+     * @return The release phases to execute the calling the branch goal 
      */
     List<String> getBranchPhases();
     
     /**
-     * The release phases to execute the calling the rollback goal 
-     * 
-     * @return
+     * @return The release phases to execute the calling the rollback goal 
      */
     List<String> getRollbackPhases();
     
     /**
-     * The release phases to execute the calling the update-versions goal 
-     * 
-     * @return
+     * @return The release phases to execute the calling the update-versions goal 
      */
     List<String> getUpdateVersionsPhases();
 }

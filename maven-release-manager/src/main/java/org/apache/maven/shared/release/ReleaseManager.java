@@ -55,7 +55,7 @@ public interface ReleaseManager
      * Clean a release.
      *
      * @param cleanRequest all clean arguments
-     * @throws ReleaseFailureException 
+     * @throws ReleaseFailureException if exception when releasing
      * @since 2.3
      */
     void clean( ReleaseCleanRequest cleanRequest ) throws ReleaseFailureException;

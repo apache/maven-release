@@ -260,6 +260,15 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+          <!-- Excluding this package to avoid running doclint 
+          in generated sources for Modello -->
+          <excludePackageNames>org.apache.maven.shared.release.config</excludePackageNames>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

@@ -49,9 +49,9 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
  * Check the dependencies of all projects being released to see if there are any unreleased snapshots.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @todo plugins with no version will be resolved to RELEASE which is not a snapshot, but remains unresolved to this point. This is a potential hole in the check, and should be revisited after the release pom writing is done and resolving versions to verify whether it is.
- * @todo plugins injected by the lifecycle are not tested here. They will be injected with a RELEASE version so are covered under the above point.
  */
+ // TODO plugins with no version will be resolved to RELEASE which is not a snapshot, but remains unresolved to this point. This is a potential hole in the check, and should be revisited after the release pom writing is done and resolving versions to verify whether it is.
+ // TODO plugins injected by the lifecycle are not tested here. They will be injected with a RELEASE version so are covered under the above point.
 @Component( role = ReleasePhase.class, hint = "check-dependency-snapshots" )
 public class CheckDependencySnapshotsPhase
     extends AbstractReleasePhase

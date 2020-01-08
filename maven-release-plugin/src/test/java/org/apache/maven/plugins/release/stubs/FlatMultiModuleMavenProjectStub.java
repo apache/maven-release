@@ -34,6 +34,8 @@ import org.apache.maven.model.Scm;
  * Just overriding the ones I need for this plugin.
  *
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
+ */
+/*
  * @noinspection ClassNameSameAsAncestorName
  */
 public class FlatMultiModuleMavenProjectStub

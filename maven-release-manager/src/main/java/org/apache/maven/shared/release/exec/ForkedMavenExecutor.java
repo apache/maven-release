@@ -50,7 +50,7 @@ public class ForkedMavenExecutor
     @Requirement
     private CommandLineFactory commandLineFactory;
 
-    /**
+    /*
      * @noinspection UseOfSystemOutOrSystemErr
      */
     @Override

@@ -50,8 +50,8 @@ import org.codehaus.plexus.util.StringUtils;
  *  <dt>release:update-versions</dt><dd>map-development-versions; RD.isBranchCreation() = false</dd>
  * </dl>
  *
- * <p>
  * <table>
+ *   <caption>MapVersionsPhase</caption>
  *   <tr>
  *     <th>MapVersionsPhase field</th><th>map-release-versions</th><th>map-branch-versions</th>
  *     <th>map-development-versions</th>

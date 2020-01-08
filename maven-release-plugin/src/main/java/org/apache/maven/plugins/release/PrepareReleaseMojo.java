@@ -44,8 +44,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * @author <a href="mailto:jason@maven.org">Jason van Zyl</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @version $Id$
- * @todo [!] check how this works with version ranges
  */
+// TODO [!] check how this works with version ranges
 @Mojo( name = "prepare", aggregator = true, requiresDependencyCollection = ResolutionScope.TEST )
 public class PrepareReleaseMojo
     extends AbstractScmReleaseMojo
