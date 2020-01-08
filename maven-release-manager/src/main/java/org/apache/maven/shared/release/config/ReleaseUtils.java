@@ -170,6 +170,11 @@ public class ReleaseUtils
         {
             builder.setWorkItem( properties.getProperty( "workItem" ) );
         }
+        if ( properties.containsKey( "autoResolveSnapshots" ) )
+        {
+            String resolve = properties.getProperty( "autoResolveSnapshots" );
+            builder.setAutoResolveSnapshots( resolve );
+        }
 
         loadResolvedDependencies( properties, builder );
 

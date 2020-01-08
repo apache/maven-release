@@ -280,6 +280,27 @@ public class PrepareReleaseMojo
             property = "scmDevelopmentCommitComment" )
     private String scmDevelopmentCommitComment = "@{prefix} prepare for next development iteration";
 
+    /**
+     * Specifies whether unresolved SNAPSHOT dependencies should automatically be resolved.
+     * If this is set, then this specifies the default answer to be used when unresolved SNAPSHOT
+     * dependencies should automatically be resolved ( 0:All 1:Project Dependencies 2:Plugins
+     * 3:Reports 4:Extensions ). Possible values are:
+     * <ul>
+     * <li>"all" or "0": resolve all kinds of snapshots, ie. project, plugin, report and extension dependencies </li>
+     * <li>"dependencies" or "1": resolve project dependencies</li>
+     * <li>"plugins" or "2": resolve plugin dependencis</li>
+     * <li>"reports" or "3": resolve report dependencies</li>
+     * <li>"extensions" or "4": resolve extension dependencies</li>
+     * </ul>
+     * 
+     * @since 3.0.0
+     */
+    @Parameter( property = "autoResolveSnapshots" )
+    private String autoResolveSnapshots;
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -321,6 +342,7 @@ public class PrepareReleaseMojo
         config.setProjectNamingPolicyId( projectTagNamingPolicyId );
         config.setScmDevelopmentCommitComment( scmDevelopmentCommitComment );
         config.setScmReleaseCommitComment( scmReleaseCommitComment );
+        config.setAutoResolveSnapshots( autoResolveSnapshots );
 
         if ( checkModificationExcludeList != null )
         {

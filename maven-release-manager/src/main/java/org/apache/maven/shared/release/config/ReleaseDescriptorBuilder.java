@@ -440,6 +440,12 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
+    public ReleaseDescriptorBuilder setAutoResolveSnapshots( String autoResolveSnapshots )
+    {
+        releaseDescriptor.setAutoResolveSnapshots( autoResolveSnapshots );
+        return this;
+    }
+
     BuilderReleaseDescriptor build()
     {
         return releaseDescriptor;

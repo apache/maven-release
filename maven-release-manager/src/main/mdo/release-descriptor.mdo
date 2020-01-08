@@ -563,6 +563,26 @@
           </description>
         </field>
 
+        <field>
+          <name>autoResolveSnapshots</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <description>
+            <![CDATA[Specifies whether unresolved SNAPSHOT dependencies are automatically resolved.
+            If set, it is used as the answer to use when being asked how unresolved SNAPSHOT 
+            dependencies should be resolved:
+            <ul>
+            <li>"all" or "0": resolve all kinds of snapshots, ie. project, plugin, report and extension dependencies</li>
+            <li>"dependencies" or "1": resolve project dependencies</li>
+            <li>"plugins" or "2": resolve plugin dependencies</li>
+            <li>"reports" or "3": resolve report dependencies</li>
+            <li>"extensions" or "4": resolve extension dependencies</li>
+            </ul>
+            Additionally this implies that the default values for the dependency's release and next
+            development version are used.]]>
+          </description>
+        </field>
+
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.
@@ -798,7 +818,8 @@
              !java.util.Objects.equals( performGoals, that.getPerformGoals() ) ||
              !java.util.Objects.equals( defaultReleaseVersion, that.getDefaultReleaseVersion() ) ||
              !java.util.Objects.equals( workItem, that.getWorkItem() ) ||
-             !java.util.Objects.equals( scmReleasedPomRevision, that.getScmReleasedPomRevision() )
+             !java.util.Objects.equals( scmReleasedPomRevision, that.getScmReleasedPomRevision() ) ||
+             !java.util.Objects.equals( autoResolveSnapshots, that.getAutoResolveSnapshots() )
            )
         {
             return false;
@@ -1054,6 +1075,7 @@
         result = 29 * result + java.util.Objects.hashCode( defaultReleaseVersion );
         result = 29 * result + java.util.Objects.hashCode( scmReleasedPomRevision );
         result = 29 * result + java.util.Objects.hashCode( workItem );
+        result = 29 * result + java.util.Objects.hashCode( autoResolveSnapshots );
 
         return result;
     }

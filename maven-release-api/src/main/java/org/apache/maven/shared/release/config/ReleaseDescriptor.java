@@ -464,4 +464,21 @@ public interface ReleaseDescriptor
     void setScmRelativePathProjectDirectory( String scmRelativePathProjectDirectory );
 
     void setScmSourceUrl( String scmUrl );
+
+    /**
+     * Returns whether unresolved SNAPSHOT dependencies should automatically be resolved.
+     * If this is set, then this specifies the default answer to be used when unresolved SNAPSHOT
+     * dependencies should automatically be resolved ( 0:All 1:Project Dependencies 2:Plugins
+     * 3:Reports 4:Extensions ). Possible values are:
+     * <ul>
+     * <li>"all" or "0": resolve all kinds of snapshots, ie. project, plugin, report and extension dependencies </li>
+     * <li>"dependencies" or "1": resolve project dependencies</li>
+     * <li>"plugins" or "2": resolve plugin dependencis</li>
+     * <li>"reports" or "3": resolve report dependencies</li>
+     * <li>"extensions" or "4": resolve extension dependencies</li>
+     * </ul>
+     * 
+     * @return String
+     */
+    String getAutoResolveSnapshots();
 }

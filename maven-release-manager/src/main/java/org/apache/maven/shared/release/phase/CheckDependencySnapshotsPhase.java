@@ -144,7 +144,7 @@ public class CheckDependencySnapshotsPhase
         if ( !usedSnapshotDependencies.isEmpty() || !usedSnapshotReports.isEmpty()
                         || !usedSnapshotExtensions.isEmpty() || !usedSnapshotPlugins.isEmpty() )
         {
-            if ( releaseDescriptor.isInteractive() )
+            if ( releaseDescriptor.isInteractive() || null != releaseDescriptor.getAutoResolveSnapshots() )
             {
                 resolveSnapshots( usedSnapshotDependencies, usedSnapshotReports, usedSnapshotExtensions,
                                   usedSnapshotPlugins, releaseDescriptor );
@@ -365,10 +365,19 @@ public class CheckDependencySnapshotsPhase
     {
         try
         {
+            String autoResolveSnapshots = releaseDescriptor.getAutoResolveSnapshots();
             if ( resolveSnapshot == null )
             {
                 prompter.showMessage( RESOLVE_SNAPSHOT_MESSAGE );
-                resolveSnapshot = prompter.prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( "yes", "no" ), "no" );
+                if ( autoResolveSnapshots != null )
+                {
+                    resolveSnapshot = "yes";
+                    prompter.showMessage( RESOLVE_SNAPSHOT_PROMPT + " " + resolveSnapshot );
+                }
+                else
+                {
+                    resolveSnapshot = prompter.prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( "yes", "no" ), "no" );
+                }
             }
 
             if ( resolveSnapshot.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
@@ -376,38 +385,81 @@ public class CheckDependencySnapshotsPhase
                 if ( resolveSnapshotType == null )
                 {
                     prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
-                    resolveSnapshotType =
-                        prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT, Arrays.asList( "0", "1", "2", "3" ), "1" );
+                    int defaultAnswer = -1;
+                    if ( autoResolveSnapshots != null )
+                    {
+                        if ( "all".equalsIgnoreCase( autoResolveSnapshots ) )
+                        {
+                            defaultAnswer = 0;
+                        }
+                        else if ( "dependencies".equalsIgnoreCase( autoResolveSnapshots ) )
+                        {
+                            defaultAnswer = 1;
+                        }
+                        else if ( "plugins".equalsIgnoreCase( autoResolveSnapshots ) )
+                        {
+                            defaultAnswer = 2;
+                        }
+                        else if ( "reports".equalsIgnoreCase( autoResolveSnapshots ) )
+                        {
+                            defaultAnswer = 3;
+                        }
+                        else if ( "extensions".equalsIgnoreCase( autoResolveSnapshots ) )
+                        {
+                            defaultAnswer = 4;
+                        }
+                        else
+                        {
+                            try
+                            {
+                                defaultAnswer = Integer.parseInt( autoResolveSnapshots );
+                            }
+                            catch ( NumberFormatException e )
+                            {
+                                throw new ReleaseExecutionException( e.getMessage(), e );
+                            }
+                        }
+                    }
+                    if ( defaultAnswer >= 0 && defaultAnswer <= 4 )
+                    {
+                        prompter.showMessage( RESOLVE_SNAPSHOT_TYPE_PROMPT + " " + autoResolveSnapshots );
+                        resolveSnapshotType = Integer.toString( defaultAnswer );
+                    }
+                    else
+                    {
+                        resolveSnapshotType =
+                            prompter.prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT, Arrays.asList( "0", "1", "2", "3" ), "1" );
+                    }
                 }
 
                 switch ( Integer.parseInt( resolveSnapshotType.toLowerCase( Locale.ENGLISH ) ) )
                 {
                     // all
                     case 0:
-                        processSnapshot( projectDependencies, releaseDescriptor );
-                        processSnapshot( pluginDependencies, releaseDescriptor );
-                        processSnapshot( reportDependencies, releaseDescriptor );
-                        processSnapshot( extensionDependencies, releaseDescriptor );
+                        processSnapshot( projectDependencies, releaseDescriptor, autoResolveSnapshots );
+                        processSnapshot( pluginDependencies, releaseDescriptor, autoResolveSnapshots );
+                        processSnapshot( reportDependencies, releaseDescriptor, autoResolveSnapshots );
+                        processSnapshot( extensionDependencies, releaseDescriptor, autoResolveSnapshots );
                         break;
 
                         // project dependencies
                     case 1:
-                        processSnapshot( projectDependencies, releaseDescriptor );
+                        processSnapshot( projectDependencies, releaseDescriptor, autoResolveSnapshots );
                         break;
 
                         // plugins
                     case 2:
-                        processSnapshot( pluginDependencies, releaseDescriptor );
+                        processSnapshot( pluginDependencies, releaseDescriptor, autoResolveSnapshots );
                         break;
 
                         // reports
                     case 3:
-                        processSnapshot( reportDependencies, releaseDescriptor );
+                        processSnapshot( reportDependencies, releaseDescriptor, autoResolveSnapshots );
                         break;
 
                         // extensions
                     case 4:
-                        processSnapshot( extensionDependencies, releaseDescriptor );
+                        processSnapshot( extensionDependencies, releaseDescriptor, autoResolveSnapshots );
                         break;
 
                     default:
@@ -420,7 +472,8 @@ public class CheckDependencySnapshotsPhase
         }
     }
 
-    private void processSnapshot( Set<Artifact> snapshotSet, ReleaseDescriptor releaseDescriptor )
+    private void processSnapshot( Set<Artifact> snapshotSet, ReleaseDescriptor releaseDescriptor,
+                                  String autoResolveSnapshots )
         throws PrompterException, VersionParseException
     {
         Iterator<Artifact> iterator = snapshotSet.iterator();
@@ -435,8 +488,17 @@ public class CheckDependencySnapshotsPhase
 
             prompter.showMessage(
                 "Dependency '" + versionlessKey + "' is a snapshot (" + currentArtifact.getVersion() + ")\n" );
-            String result = prompter.prompt( "Which release version should it be set to?",
-                                             versionInfo.getReleaseVersionString() );
+            String message = "Which release version should it be set to?";
+            String result;
+            if ( null != autoResolveSnapshots )
+            {
+                result = versionInfo.getReleaseVersionString();
+                prompter.showMessage( message + " " + result );
+            }
+            else
+            {
+                result = prompter.prompt( message, versionInfo.getReleaseVersionString() );
+            }
             
             releaseDescriptor.addDependencyReleaseVersion( versionlessKey, result );
 
@@ -456,7 +518,16 @@ public class CheckDependencySnapshotsPhase
                 nextVersion = versionInfo.toString();
             }
 
-            result = prompter.prompt( "What version should the dependency be reset to for development?", nextVersion );
+            message = "What version should the dependency be reset to for development?";
+            if ( null != autoResolveSnapshots )
+            {
+                result = nextVersion;
+                prompter.showMessage( message + " " + result );
+            }
+            else
+            {
+                result = prompter.prompt( message, nextVersion );
+            }
             
             releaseDescriptor.addDependencyDevelopmentVersion( versionlessKey, result );
         }
