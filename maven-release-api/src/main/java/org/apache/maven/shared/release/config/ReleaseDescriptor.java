@@ -109,7 +109,7 @@ public interface ReleaseDescriptor
     boolean isUpdateVersionsToSnapshot();
 
     /**
-     * Get nOTE : currently only implemented with svn scm. Enable a workaround to prevent issue due to svn client >
+     * Get nOTE : currently only implemented with svn scm. Enable a workaround to prevent issue due to svn client &gt;
      * 1.5.0 (https://issues.apache.org/jira/browse/SCM-406).
      * 
      * @return boolean
@@ -415,20 +415,23 @@ public interface ReleaseDescriptor
     String getReleaseStrategyId();
 
     /**
-     * Retrieve the original version for the resolved snapshot dependency.
+     * @return {@code String} The original version for the resolved snapshot dependency.
      *
+     * @param artifactKey the artifact key {@code String}
      */
     String getDependencyOriginalVersion( String artifactKey );
     
     /**
-     * Retrieve the release version for the resolved snapshot dependency.
+     * @return {@code String} the release version for the resolved snapshot dependency.
      *
+     * @param artifactKey the artifact key {@code String}
      */
     String getDependencyReleaseVersion( String artifactKey ); 
 
     /**
-     * Retrieve the release version for the resolved snapshot dependency.
+     * @return {@code String} the release version for the resolved snapshot dependency.
      *
+     * @param artifactKey the artifact key {@code String}
      */
     String getDependencyDevelopmentVersion( String artifactKey ); 
 
@@ -440,9 +443,9 @@ public interface ReleaseDescriptor
     String getProjectReleaseVersion( String key );
 
     /**
-     * Method getOriginalScmInfo.
+     * @return the original {@code Scm} information.
      * 
-     * @return Map
+     * @param projectKey the project key {@code String}
      */
     Scm getOriginalScmInfo( String projectKey );
 

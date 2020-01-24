@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * <h3>Usage:</h3>
  * <p>PomFinder is a statefull class. One instance of this class intended
  * for a singular use! You need to create a new instance if you like
- * to search for another pom.</p
+ * to search for another pom.</p>
  * <ol>
  *   <li>
  *     Parse an origin pom in a given directory with {@link #parsePom(java.io.File)}
@@ -98,9 +98,9 @@ public class PomFinder
     /**
      * Search for the previously with {@link #parsePom(java.io.File)}
      * parsed pom in the given directory.
-     * @param startDirectory
+     * @param startDirectory the initial directory
      * @return the pom file which matches the previously parsed pom or <code>null</code>
-     *         if no matching pom file could have been found.
+     * if no matching pom file could have been found.
      */
     public File findMatchingPom( File startDirectory )
     {

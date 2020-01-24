@@ -23,8 +23,8 @@ package org.apache.maven.shared.release.scm;
  * Translate the SCM information after tagging/reverting to trunk.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @todo move this API into SCM?
  */
+// TODO move this API into SCM?
 public interface ScmTranslator
 {
     /**
@@ -58,7 +58,7 @@ public interface ScmTranslator
     /**
      * Translates an ScmFile path to a path relative to the working directory.
      *
-     * @param path
+     * @param path the ScmFile path
      * @return the relative path with OS specific File separator
      * @since 2.3.1
      */

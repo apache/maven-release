@@ -216,7 +216,8 @@ public class Version
     /**
      * Simply joins the items in the list with "." period
      * 
-     * @param digits
+     * @return a {@code String} containing the items in the list joined by "." period
+     * @param digits the list of digits {@code List<String>}
      */
     protected static String joinDigitString( List<String> digits )
     {

@@ -33,27 +33,24 @@ import java.util.regex.Pattern;
 
 /**
  * This compares and increments versions for a common java versioning scheme.
- * <p/>
+ * <p>
  * The supported version scheme has the following parts.<br>
  * <code><i>component-digits-annotation-annotationRevision-buildSpecifier</i></code><br>
  * Example:<br>
  * <code>my-component-1.0.1-alpha-2-SNAPSHOT</code>
- * <p/>
- * <ul>Terms:
+ * <b>Terms:</b>
+ * <ul>
  * <li><i>component</i> - name of the versioned component (log4j, commons-lang, etc)
  * <li><i>digits</i> - Numeric digits with at least one "." period. (1.0, 1.1, 1.01, 1.2.3, etc)
  * <li><i>annotationRevision</i> - Integer qualifier for the annotation. (4 as in RC-4)
  * <li><i>buildSpecifier</i> - Additional specifier for build. (SNAPSHOT, or build number like "20041114.081234-2")
  * </ul>
  * <b>Digits is the only required piece of the version string, and must contain at lease one "." period.</b>
- * <p/>
  * Implementation details:<br>
  * The separators "_" and "-" between components are also optional (though they are usually recommended).<br>
  * Example:<br>
  * <code>log4j-1.2.9-beta-9-SNAPSHOT == log4j1.2.9beta9SNAPSHOT == log4j_1.2.9_beta_9_SNAPSHOT</code>
- * <p/>
  * Leading zeros are significant when performing comparisons.
- * <p/>
  * TODO: this parser is better than DefaultArtifactVersion - replace it with this (but align naming) and then remove
  * this from here.
  */
@@ -116,7 +113,8 @@ public class DefaultVersionInfo
     /**
      * Constructs this object and parses the supplied version string.
      *
-     * @param version
+     * @param version the version string
+     * @throws VersionParseException if an exception during parsing the input
      */
     public DefaultVersionInfo( String version )
         throws VersionParseException
@@ -274,7 +272,9 @@ public class DefaultVersionInfo
      * Takes a string and increments it as an integer.
      * Preserves any lpad of "0" zeros.
      *
-     * @param s
+     * @return {@code String} increments the input {@code String} as an integer 
+     * and Preserves any lpad of "0" zeros.
+     * @param s the version number
      */
     protected String incrementVersionString( String s )
     {
@@ -374,7 +374,8 @@ public class DefaultVersionInfo
     /**
      * Simply joins the items in the list with "." period
      *
-     * @param digits
+     * @return a single {@code String} of the items in the passed list, joined with a "."
+     * @param digits {@code List<String>} of digits
      */
     protected static String joinDigitString( List<String> digits )
     {
