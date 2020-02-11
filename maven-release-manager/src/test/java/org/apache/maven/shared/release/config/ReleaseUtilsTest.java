@@ -28,6 +28,7 @@ import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Properties;
 
 /**
@@ -248,6 +249,17 @@ public class ReleaseUtilsTest
         Properties properties = new Properties();
         properties.setProperty( "dependency.locations.enabled", "false" );
         ReleaseUtils.copyPropertiesToReleaseDescriptor( properties, new ReleaseDescriptorBuilder() );
+    }
+    
+    // MRELEASE-1038
+    public void testActiveProfilesProperty()
+    {
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        Properties properties = new Properties();
+        properties.setProperty( "exec.activateProfiles", "aProfile,anotherOne" );
+        ReleaseUtils.copyPropertiesToReleaseDescriptor( properties, builder );
+
+        assertEquals( Arrays.asList("aProfile", "anotherOne"), builder.build().getActivateProfiles() );
     }
 
     private static ReleaseDescriptorBuilder copyReleaseDescriptor( ReleaseDescriptor originalReleaseDescriptor )
