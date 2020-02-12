@@ -1,7 +1,7 @@
 # see https://s.apache.org/asfyaml
 github:
   description: "Apache Maven Release (Plugin)"
-  homepage: https://maven.apache.org/release/
+  homepage: https://maven.apache.org/maven-release/
   labels:
     - java
     - build-management
