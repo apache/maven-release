@@ -1,3 +1,10 @@
+Issue Tracking
+--------------
+
+https://issues.apache.org/jira/projects/MRELEASE/summary
+
+GitHub is provided only for Pull Requests.
+
 Deploying web site
 -------------------
 
