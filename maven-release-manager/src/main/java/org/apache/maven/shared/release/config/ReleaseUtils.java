@@ -129,7 +129,8 @@ public class ReleaseUtils
         }
         if ( properties.containsKey( "exec.activateProfiles" ) )
         {
-            builder.setActivateProfiles( Arrays.asList( properties.getProperty( "exec.activateProfiles" ).split( "," ) ) );
+            builder.setActivateProfiles( 
+                         Arrays.asList( properties.getProperty( "exec.activateProfiles" ).split( "," ) ) );
         }
         if ( properties.containsKey( "preparationGoals" ) )
         {
