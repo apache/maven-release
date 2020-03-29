@@ -1,5 +1,13 @@
 package org.apache.maven.shared.release.config;
 
+import static org.junit.Assert.assertNotEquals;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 
 /*
@@ -25,9 +33,6 @@ import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.codehaus.plexus.PlexusTestCase;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * Test the properties store.
@@ -248,7 +253,7 @@ public class PropertiesReleaseDescriptorStoreTest
 
         assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
-
+    
     public void testDeleteFile()
         throws ReleaseDescriptorStoreException, IOException
     {
@@ -279,6 +284,44 @@ public class PropertiesReleaseDescriptorStoreTest
         store.delete( config.build() );
 
         assertFalse( "Check file already exists", file.exists() );
+    }
+    
+    public void testWriteEncryptedProperties()
+        throws Exception
+    {
+        final String scmPassword = "s3cr3t_SCMPASSWORD";
+        final String scmPassPhrase = "s3cr3t_SCMPASSPHRASE";
+
+        ReleaseDescriptorBuilder config = new ReleaseDescriptorBuilder();
+        config.setCompletedPhase( "completed-phase-write" );
+        config.setScmSourceUrl( "url-write" );
+        
+        config.setScmPassword( scmPassword );
+        config.setScmPrivateKeyPassPhrase( scmPassPhrase );
+
+        File file = getTestFile( "target/test-classes/encrypt/release.properties" );
+        file.getParentFile().mkdirs();
+        
+        store.write( config.build(), file );
+        
+        Properties persistedProperties = new Properties();
+        try ( InputStream is = new FileInputStream( file ) )
+        {
+            persistedProperties.load( is );
+        }
+
+        String persistedPassword = persistedProperties.getProperty( "scm.password" );
+        assertNotNull( persistedPassword );
+        assertNotEquals( scmPassword, persistedPassword );        
+
+        String persistedPassPhrase = persistedProperties.getProperty( "scm.passphrase" );
+        assertNotNull( persistedPassPhrase );
+        assertNotEquals( scmPassPhrase, persistedPassPhrase );
+        
+        ReleaseDescriptorBuilder builder = store.read( file );
+        BuilderReleaseDescriptor descriptor = builder.build();
+        assertEquals( scmPassword, descriptor.getScmPassword() );
+        assertEquals( scmPassPhrase, descriptor.getScmPrivateKeyPassPhrase() );
     }
 
     private ReleaseDescriptorBuilder createReleaseConfigurationForWriting()

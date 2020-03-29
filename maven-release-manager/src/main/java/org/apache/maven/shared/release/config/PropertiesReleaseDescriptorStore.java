@@ -93,6 +93,15 @@ public class PropertiesReleaseDescriptorStore
             throw new ReleaseDescriptorStoreException(
                 "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
+        
+        try
+        {
+            decryptProperties( properties );
+        }
+        catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
+        {
+            getLogger().debug( e.getMessage() );
+        }
 
         ReleaseDescriptorBuilder builder;
         if ( mergeDescriptor != null )
@@ -350,10 +359,43 @@ public class PropertiesReleaseDescriptorStore
     {
         return new File( mergeDescriptor.getWorkingDirectory(), "release.properties" );
     }
+    
+    private void decryptProperties( Properties properties )
+        throws IllegalStateException, SecDispatcherException, PlexusCipherException
+    {
+        String[] keys = new String[] { "scm.password", "scm.passphrase" };
+
+        for ( String key : keys )
+        {
+            String value = properties.getProperty( key );
+            if ( value != null )
+            {
+                properties.put( key, decrypt( value ) );
+            }
+        }
+    }
 
     // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
     private String encryptAndDecorate( String passwd )
         throws IllegalStateException, SecDispatcherException, PlexusCipherException
+    {
+        final String master = getMaster();
+
+        DefaultPlexusCipher cipher = new DefaultPlexusCipher();
+        String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
+        return cipher.encryptAndDecorate( passwd, masterPasswd );
+    }
+    
+    private String decrypt( String value ) throws IllegalStateException, SecDispatcherException, PlexusCipherException
+    {
+        final String master = getMaster();
+
+        DefaultPlexusCipher cipher = new DefaultPlexusCipher();
+        String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
+        return cipher.decryptDecorated( value, masterPasswd );
+    }
+    
+    private String getMaster() throws SecDispatcherException 
     {
         String configurationFile = secDispatcher.getConfigurationFile();
 
@@ -376,10 +418,8 @@ public class PropertiesReleaseDescriptorStore
         {
             throw new IllegalStateException( "Master password is not set in the setting security file: " + file );
         }
-
-        DefaultPlexusCipher cipher = new DefaultPlexusCipher();
-        String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
-        return cipher.encryptAndDecorate( passwd, masterPasswd );
+        
+        return master;
     }
 
 }
