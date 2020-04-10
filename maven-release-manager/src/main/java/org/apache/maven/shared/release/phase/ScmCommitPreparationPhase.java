@@ -48,12 +48,13 @@ public class ScmCommitPreparationPhase
         {
             if ( simulating )
             {
-                logInfo( result, "Full run would not commit changes, because suppressCommitBeforeTagOrBranch is set." );
+                logInfo( result, "Full run would not commit changes, "
+                    + "because suppressCommitBeforeTagOrBranch is set to true." );
             }
             else
             {
                 logInfo( result,
-                         "Modified POMs are not committed because suppressCommitBeforeTagOrBranch is set to false." );
+                         "Modified POMs are not committed because suppressCommitBeforeTagOrBranch is set to true." );
             }
         }
         // commit development versions required
