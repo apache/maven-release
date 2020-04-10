@@ -26,9 +26,9 @@ under the License.
   <body>
     <breadcrumbs>
       <!-- TODO: This breadcrumb should be removed when it has been solved in the parent -->
-      <item name="Maven" href="http://maven.apache.org/index.html" />
-      <item name="Plugins" href="http://maven.apache.org/plugins/index.html" />
-      <item name="Maven Release Plugin" href="http://maven.apache.org/plugins/maven-release-plugin/index.html" />
+      <item name="Maven" href="https://maven.apache.org/index.html" />
+      <item name="Plugins" href="https://maven.apache.org/plugins/index.html" />
+      <item name="Maven Release Plugin" href="https://maven.apache.org/maven-release/maven-release-plugin/index.html" />
     </breadcrumbs>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
