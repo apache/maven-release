@@ -106,24 +106,6 @@
             </excludes>
           </configuration>
         </plugin>
-        <!-- Reproducible Builds plugins: to be removed once parent POM updated to 34 -->
-        <plugin>
-          <artifactId>maven-source-plugin</artifactId>
-          <version>3.2.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.2.0</version>
-        </plugin>
-        <plugin>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>3.2.0</version>
-        </plugin>
-        <plugin>
-          <groupId>org.codehaus.plexus</groupId>
-          <artifactId>plexus-component-metadata</artifactId>
-          <version>2.1.0</version>
-        </plugin>
       </plugins>
     </pluginManagement>
   </build>
