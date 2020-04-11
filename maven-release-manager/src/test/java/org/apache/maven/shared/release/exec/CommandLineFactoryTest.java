@@ -46,7 +46,7 @@ public class CommandLineFactoryTest
     {
         Commandline cl = factory.createCommandLine( "exec" );
 
-        assertEquals( "Check executable", "exec", cl.getExecutable() );
+        assertEquals( "Check executable", "'exec'", cl.getExecutable() );
         assertNotNull( "Check environment", cl.getEnvironmentVariables() );
         assertFalse( "Check environment", cl.getEnvironmentVariables().length == 0 );
     }
