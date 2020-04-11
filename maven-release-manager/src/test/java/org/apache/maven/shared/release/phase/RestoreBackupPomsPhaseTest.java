@@ -29,7 +29,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.apache.maven.shared.utils.io.FileUtils;
+import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 
 /**
@@ -56,7 +56,7 @@ public class RestoreBackupPomsPhaseTest
         // copy poms so tests are valid without clean
         File sourceDir = getTestFile( "src/test/resources" + projectPath );
         File testDir = getTestFile( "target/test-classes" + projectPath );
-        FileUtils.copyDirectoryStructure( sourceDir, testDir );
+        FileUtils.copyDirectory( sourceDir, testDir );
 
         String testPath = "target/test-classes" + projectPath;
 
