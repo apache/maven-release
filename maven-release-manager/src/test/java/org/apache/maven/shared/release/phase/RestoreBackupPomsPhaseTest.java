@@ -72,7 +72,7 @@ public class RestoreBackupPomsPhaseTest
         // copy poms so tests are valid without clean
         File sourceDir = getTestFile( "src/test/resources" + projectPath );
         File testDir = getTestFile( "target/test-classes" + projectPath );
-        FileUtils.copyDirectoryStructure( sourceDir, testDir );
+        FileUtils.copyDirectory( sourceDir, testDir );
 
         String testPath = "target/test-classes" + projectPath;
 
