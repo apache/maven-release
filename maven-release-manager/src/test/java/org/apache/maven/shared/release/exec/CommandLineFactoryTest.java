@@ -22,6 +22,8 @@ package org.apache.maven.shared.release.exec;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.cli.Commandline;
 
+import java.util.Locale;
+
 /**
  * Test the command line factory.
  *
@@ -46,7 +48,8 @@ public class CommandLineFactoryTest
     {
         Commandline cl = factory.createCommandLine( "exec" );
 
-        assertEquals( "Check executable", "exec", cl.getExecutable() );
+        String expected = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win") ? "exec" : "'exec'";
+        assertEquals( "Check executable", expected, cl.getExecutable() );
         assertNotNull( "Check environment", cl.getEnvironmentVariables() );
         assertFalse( "Check environment", cl.getEnvironmentVariables().length == 0 );
     }
