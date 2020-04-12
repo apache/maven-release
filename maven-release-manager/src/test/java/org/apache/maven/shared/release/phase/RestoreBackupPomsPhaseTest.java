@@ -24,6 +24,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.util.List;
 
+import org.apache.commons.io.file.PathUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
@@ -56,7 +57,7 @@ public class RestoreBackupPomsPhaseTest
         // copy poms so tests are valid without clean
         File sourceDir = getTestFile( "src/test/resources" + projectPath );
         File testDir = getTestFile( "target/test-classes" + projectPath );
-        FileUtils.copyDirectoryStructure( sourceDir, testDir );
+        PathUtils.copyDirectory( sourceDir, testDir );
 
         String testPath = "target/test-classes" + projectPath;
 
@@ -72,7 +73,7 @@ public class RestoreBackupPomsPhaseTest
         // copy poms so tests are valid without clean
         File sourceDir = getTestFile( "src/test/resources" + projectPath );
         File testDir = getTestFile( "target/test-classes" + projectPath );
-        FileUtils.copyDirectoryStructure( sourceDir, testDir );
+        PathUtils.copyDirectory( sourceDir, testDir );
 
         String testPath = "target/test-classes" + projectPath;
 
