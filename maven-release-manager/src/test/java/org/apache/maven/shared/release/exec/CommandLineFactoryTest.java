@@ -48,8 +48,8 @@ public class CommandLineFactoryTest
     {
         Commandline cl = factory.createCommandLine( "exec" );
 
-        String expected = System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("win") ? "exec" : "'exec'";
-        assertEquals( "Check executable", expected, cl.getExecutable() );
+        String executable = cl.getExecutable();
+        assertTrue( "Check executable " + executable, executable.contains("exec") );
         assertNotNull( "Check environment", cl.getEnvironmentVariables() );
         assertFalse( "Check environment", cl.getEnvironmentVariables().length == 0 );
     }
