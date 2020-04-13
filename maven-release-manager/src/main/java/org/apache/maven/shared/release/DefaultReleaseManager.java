@@ -300,9 +300,24 @@ public class DefaultReleaseManager
     private void perform( ReleasePerformRequest performRequest, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+        List<String> specificProfiles =
+            ReleaseUtils.buildReleaseDescriptor( performRequest.getReleaseDescriptorBuilder() )
+            .getActivateProfiles();
+
         ReleaseDescriptor releaseDescriptor =
             loadReleaseDescriptor( performRequest.getReleaseDescriptorBuilder(),
                                    performRequest.getReleaseManagerListener() );
+
+        if ( specificProfiles != null && !specificProfiles.isEmpty() )
+        {
+            for ( String specificProfile : specificProfiles )
+            {
+                if ( !releaseDescriptor.getActivateProfiles().contains( specificProfile ) )
+                {
+                    releaseDescriptor.getActivateProfiles().add( specificProfile );
+                }
+            }
+        }
 
         Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
 

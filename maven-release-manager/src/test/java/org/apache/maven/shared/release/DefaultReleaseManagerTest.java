@@ -30,6 +30,8 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -50,9 +52,11 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreStub;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.phase.ReleasePhaseStub;
+import org.apache.maven.shared.release.phase.RunPerformGoalsPhase;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
@@ -700,6 +704,38 @@ public class DefaultReleaseManagerTest
         {
             assertNull( "check no other cause", e.getCause() );
         }
+    }
+
+    // MRELEASE-1042
+    public void testKeepProfilesOnPerform()
+            throws Exception
+    {
+        // prepare
+        ReleasePerformRequest performRequest = new ReleasePerformRequest();
+        performRequest.setDryRun( true );
+
+        ReleaseManagerListener managerListener = mock( ReleaseManagerListener.class );
+        performRequest.setReleaseManagerListener( managerListener );
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setActivateProfiles( Arrays.asList("aProfile", "anotherOne") );
+        builder.setWorkingDirectory( getTestFile( "target/working-directory" ).getAbsolutePath() );
+        performRequest.setReleaseDescriptorBuilder( builder );
+
+        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.class, "test" );
+
+        ReleaseDescriptorBuilder secondBuilder = new ReleaseDescriptorBuilder();
+        secondBuilder.setActivateProfiles( new ArrayList( Arrays.asList("aProfile", "bProfile") ) );
+        secondBuilder.setScmSourceUrl( "scm-url" );
+        ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
+        when( configStoreMock.read( any( ReleaseDescriptorBuilder.class ) ) ).thenReturn( secondBuilder );
+        releaseManager.setConfigStore( configStoreMock );
+
+        // test
+        ReleaseResult result = releaseManager.performWithResult( performRequest );
+
+        // verify
+        assertTrue( result.getOutput().contains( "-P aProfile,bProfile,anotherOne" ) );
     }
 
     public void testDetermineWorkingDirectory()
