@@ -378,7 +378,7 @@ public class DefaultReleaseManager
                         {
                             builder.addReleaseVersion( key, value );
                             return this;
-                        };
+                        }
                     } );
         
         ReleaseDescriptor releaseDescriptor =
@@ -448,7 +448,7 @@ public class DefaultReleaseManager
                                         {
                                             builder.addReleaseVersion( key, value );
                                             return this;
-                                        };
+                                        }
                                     } );
 
         ReleaseDescriptor releaseDescriptor =
