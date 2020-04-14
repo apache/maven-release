@@ -280,7 +280,7 @@ public abstract class AbstractRewritePomsPhase
 
         String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-        rewriteVersion( modelTarget, releaseDescriptor, projectId, project, parentVersion );
+        rewriteVersion( modelTarget, releaseDescriptor, projectId, project );
 
         Build buildTarget = modelTarget.getBuild();
         if ( buildTarget != null )
@@ -400,7 +400,7 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void rewriteVersion( Model modelTarget, ReleaseDescriptor releaseDescriptor, String projectId,
-                                 MavenProject project, String parentVersion )
+                                 MavenProject project )
         throws ReleaseFailureException
     {
         String version = getNextVersion( releaseDescriptor, projectId );

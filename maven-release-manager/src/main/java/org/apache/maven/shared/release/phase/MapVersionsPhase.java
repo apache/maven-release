@@ -116,7 +116,7 @@ public class MapVersionsPhase
 
             String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, result );
+            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor );
 
             if ( !convertToSnapshot )
             {
@@ -169,7 +169,7 @@ public class MapVersionsPhase
             {
                 String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, result );
+                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor );
 
                 if ( !convertToSnapshot )
                 {
@@ -193,8 +193,7 @@ public class MapVersionsPhase
 
     private String resolveNextVersion( MavenProject project,
                                    String projectId,
-                                   ReleaseDescriptor releaseDescriptor,
-                                   ReleaseResult result )
+                                   ReleaseDescriptor releaseDescriptor )
         throws ReleaseExecutionException
     {
         String defaultVersion;

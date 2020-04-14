@@ -45,11 +45,11 @@ public class RunPerformGoalsPhase
                                   List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
-        return runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, false );
+        return runLogic( releaseDescriptor, releaseEnvironment, false );
     }
 
     private ReleaseResult runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects, boolean simulate )
+                                  boolean simulate )
         throws ReleaseExecutionException
     {
         String additionalArguments = getAdditionalArguments( releaseDescriptor );
@@ -134,7 +134,7 @@ public class RunPerformGoalsPhase
                                    List<MavenProject> reactorProjects )
         throws ReleaseExecutionException
     {
-        return runLogic( releaseDescriptor, releaseEnvironment, reactorProjects, true );
+        return runLogic( releaseDescriptor, releaseEnvironment, true );
     }
 
     @Override
