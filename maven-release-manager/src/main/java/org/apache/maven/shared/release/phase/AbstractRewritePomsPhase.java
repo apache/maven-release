@@ -294,7 +294,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
 
         Properties properties = modelTarget.getProperties();
 
-        String parentVersion = rewriteParent(project, modelTarget, result, releaseDescriptor, simulate);
+        rewriteParent(project, modelTarget, result, releaseDescriptor, simulate);
 
         String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
