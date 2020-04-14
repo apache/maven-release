@@ -134,22 +134,20 @@ public class GenerateReleasePomsPhase
         {
             logInfo( result, "Generating release POM for '" + project.getName() + "'..." );
 
-            releasePoms.add( generateReleasePom( project, releaseDescriptor, releaseEnvironment, reactorProjects,
-                                                 simulate, result ) );
+            releasePoms.add( generateReleasePom( project, releaseDescriptor, releaseEnvironment, result ) );
         }
 
         addReleasePomsToScm( releaseDescriptor, releaseEnvironment, reactorProjects, simulate, result, releasePoms );
     }
 
     private File generateReleasePom( MavenProject project, ReleaseDescriptor releaseDescriptor,
-                                     ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
-                                     boolean simulate, ReleaseResult result )
+                                     ReleaseEnvironment releaseEnvironment,
+                                     ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
         // create release pom
 
-        Model releasePom = createReleaseModel( project, releaseDescriptor, releaseEnvironment, reactorProjects,
-                                               result );
+        Model releasePom = createReleaseModel( project, releaseDescriptor, releaseEnvironment, result );
 
         // write release pom to file
 
@@ -212,7 +210,7 @@ public class GenerateReleasePomsPhase
     }
 
     private Model createReleaseModel( MavenProject project, ReleaseDescriptor releaseDescriptor,
-                                      ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects,
+                                      ReleaseEnvironment releaseEnvironment,
                                       ReleaseResult result )
         throws ReleaseFailureException, ReleaseExecutionException
     {
@@ -229,7 +227,7 @@ public class GenerateReleasePomsPhase
         // update project version
         String projectVersion = releaseModel.getVersion();
         String releaseVersion =
-            getNextVersion( releaseDescriptor, project.getGroupId(), project.getArtifactId(), projectVersion );
+            getNextVersion( releaseDescriptor, project.getGroupId(), project.getArtifactId() );
         releaseModel.setVersion( releaseVersion );
 
         String originalFinalName = releaseModel.getBuild().getFinalName();
@@ -416,8 +414,7 @@ public class GenerateReleasePomsPhase
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
     }
 
-    private String getNextVersion( ReleaseDescriptor releaseDescriptor, String groupId, String artifactId,
-                                   String version )
+    private String getNextVersion( ReleaseDescriptor releaseDescriptor, String groupId, String artifactId )
         throws ReleaseFailureException
     {
         // TODO: share with RewritePomsForReleasePhase.rewriteVersion
