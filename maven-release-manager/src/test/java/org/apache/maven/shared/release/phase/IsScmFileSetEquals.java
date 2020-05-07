@@ -30,7 +30,7 @@ import org.mockito.ArgumentMatcher;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @todo add an equals() method
  */
-public class IsScmFileSetEquals extends ArgumentMatcher<ScmFileSet>
+public class IsScmFileSetEquals implements ArgumentMatcher<ScmFileSet>
 {
     private final ScmFileSet fileSet;
 
@@ -40,7 +40,7 @@ public class IsScmFileSetEquals extends ArgumentMatcher<ScmFileSet>
     }
 
     @Override
-    public boolean matches( Object argument )
+    public boolean matches( ScmFileSet argument )
     {
         ScmFileSet fs = (ScmFileSet) argument;
 

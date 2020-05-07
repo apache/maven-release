@@ -25,7 +25,7 @@ import org.mockito.ArgumentMatcher;
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  */
-public class IsScmTagParametersEquals extends ArgumentMatcher<ScmTagParameters>
+public class IsScmTagParametersEquals implements ArgumentMatcher<ScmTagParameters>
 {
     private final ScmTagParameters scmTagParameters;
 
@@ -35,7 +35,7 @@ public class IsScmTagParametersEquals extends ArgumentMatcher<ScmTagParameters>
     }
 
     @Override
-    public boolean matches( Object argument )
+    public boolean matches( ScmTagParameters argument )
     {
         ScmTagParameters stp = (ScmTagParameters) argument;
         return stp.getMessage().equals( this.scmTagParameters.getMessage() )

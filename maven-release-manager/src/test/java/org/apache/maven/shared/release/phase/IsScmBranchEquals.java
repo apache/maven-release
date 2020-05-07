@@ -27,7 +27,7 @@ import org.mockito.ArgumentMatcher;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class IsScmBranchEquals extends ArgumentMatcher<ScmBranch>
+public class IsScmBranchEquals implements ArgumentMatcher<ScmBranch>
 {
     private final ScmBranch branch;
 
@@ -37,7 +37,7 @@ public class IsScmBranchEquals extends ArgumentMatcher<ScmBranch>
     }
 
     @Override
-    public boolean matches( Object argument )
+    public boolean matches( ScmBranch argument )
     {
         ScmBranch sb = (ScmBranch) argument;
 
