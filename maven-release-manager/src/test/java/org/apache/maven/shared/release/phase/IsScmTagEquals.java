@@ -28,7 +28,7 @@ import org.mockito.ArgumentMatcher;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @todo add an equals() method
  */
-public class IsScmTagEquals extends ArgumentMatcher<ScmTag>
+public class IsScmTagEquals implements ArgumentMatcher<ScmTag>
 {
     private final ScmTag tag;
 
@@ -38,10 +38,12 @@ public class IsScmTagEquals extends ArgumentMatcher<ScmTag>
     }
 
     @Override
-    public boolean matches( Object argument )
+    public boolean matches( ScmTag argument )
     {
         ScmTag tag = (ScmTag) argument;
 
         return tag.getName().equals( this.tag.getName() );
     }
+
+
 }

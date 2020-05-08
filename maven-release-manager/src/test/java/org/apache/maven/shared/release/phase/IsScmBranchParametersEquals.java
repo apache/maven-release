@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmBranchParameters;
 
 import org.mockito.ArgumentMatcher;
@@ -26,7 +27,7 @@ import org.mockito.ArgumentMatcher;
 /**
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  */
-public class IsScmBranchParametersEquals extends ArgumentMatcher<ScmBranchParameters>
+public class IsScmBranchParametersEquals implements ArgumentMatcher<ScmBranchParameters>
 {
     private final ScmBranchParameters scmBranchParameters;
 
@@ -36,7 +37,7 @@ public class IsScmBranchParametersEquals extends ArgumentMatcher<ScmBranchParame
     }
 
     @Override
-    public boolean matches( Object argument )
+    public boolean matches( ScmBranchParameters argument )
     {
         ScmBranchParameters sbp = (ScmBranchParameters) argument;
         return sbp.getMessage().equals( this.scmBranchParameters.getMessage() )
