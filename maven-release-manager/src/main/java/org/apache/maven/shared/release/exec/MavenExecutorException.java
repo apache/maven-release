@@ -29,17 +29,11 @@ public class MavenExecutorException
 {
     private int exitCode;
 
-    public MavenExecutorException( String message, int exitCode, String stdOut, String stdErr )
+    public MavenExecutorException( String message, int exitCode )
     {
         super( message );
 
         this.exitCode = exitCode;
-    }
-
-    public MavenExecutorException( String message, String stdOut, String stdErr, Exception e )
-    {
-        super( message, e );
-
     }
 
     public MavenExecutorException( String message, Throwable cause )

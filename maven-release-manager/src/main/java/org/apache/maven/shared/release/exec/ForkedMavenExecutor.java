@@ -141,13 +141,12 @@ public class ForkedMavenExecutor
 
                 if ( result != 0 )
                 {
-                    throw new MavenExecutorException( "Maven execution failed, exit code: \'" + result + "\'", result,
-                                                      stdOut.toString(), stdErr.toString() );
+                    throw new MavenExecutorException( "Maven execution failed, exit code: \'" + result + "\'", result );
                 }
             }
             catch ( CommandLineException e )
             {
-                throw new MavenExecutorException( "Can't run goal " + goals, stdOut.toString(), stdErr.toString(), e );
+                throw new MavenExecutorException( "Can't run goal " + goals, e );
             }
             finally
             {

@@ -392,7 +392,7 @@ public class InvokerMavenExecutor
                 {
                     throw new MavenExecutorException(
                         "Maven execution failed, exit code: \'" + invocationResult.getExitCode() + "\'",
-                        invocationResult.getExitCode(), "", "" );
+                        invocationResult.getExitCode() );
                 }
             }
             catch ( MavenInvocationException e )
