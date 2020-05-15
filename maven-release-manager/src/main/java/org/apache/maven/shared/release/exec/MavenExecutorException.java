@@ -27,27 +27,13 @@ package org.apache.maven.shared.release.exec;
 public class MavenExecutorException
     extends Exception
 {
-    private String stdErr;
-
-    private String stdOut;
-
     private int exitCode;
 
-    public MavenExecutorException( String message, int exitCode, String stdOut, String stdErr )
+    public MavenExecutorException( String message, int exitCode )
     {
         super( message );
 
         this.exitCode = exitCode;
-        this.stdOut = stdOut;
-        this.stdErr = stdErr;
-    }
-
-    public MavenExecutorException( String message, String stdOut, String stdErr, Exception e )
-    {
-        super( message, e );
-
-        this.stdOut = stdOut;
-        this.stdErr = stdErr;
     }
 
     public MavenExecutorException( String message, Throwable cause )
