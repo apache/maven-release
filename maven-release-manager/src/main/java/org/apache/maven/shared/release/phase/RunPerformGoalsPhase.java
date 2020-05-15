@@ -110,15 +110,7 @@ public class RunPerformGoalsPhase
             foundPom = pomFinder.parsePom( pomFile );
         }
 
-        File workDirectory;
-        if ( simulate )
-        {
-            workDirectory = new File( releaseDescriptor.getWorkingDirectory() );
-        }
-        else
-        {
-            workDirectory = new File( releaseDescriptor.getCheckoutDirectory() );
-        }
+        File workDirectory = new File( releaseDescriptor.getCheckoutDirectory() );
 
         if ( foundPom )
         {
