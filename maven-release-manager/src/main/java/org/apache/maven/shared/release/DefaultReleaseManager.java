@@ -20,6 +20,7 @@ package org.apache.maven.shared.release;
  */
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -304,20 +305,25 @@ public class DefaultReleaseManager
             ReleaseUtils.buildReleaseDescriptor( performRequest.getReleaseDescriptorBuilder() )
             .getActivateProfiles();
 
-        ReleaseDescriptor releaseDescriptor =
-            loadReleaseDescriptor( performRequest.getReleaseDescriptorBuilder(),
-                                   performRequest.getReleaseManagerListener() );
+        ReleaseDescriptorBuilder builder =
+            loadReleaseDescriptorBuilder( performRequest.getReleaseDescriptorBuilder(),
+                                          performRequest.getReleaseManagerListener() );
 
         if ( specificProfiles != null && !specificProfiles.isEmpty() )
         {
+            List<String> allProfiles = new ArrayList<>();
+            allProfiles.addAll( ReleaseUtils.buildReleaseDescriptor( builder ).getActivateProfiles() );
             for ( String specificProfile : specificProfiles )
             {
-                if ( !releaseDescriptor.getActivateProfiles().contains( specificProfile ) )
+                if ( !allProfiles.contains( specificProfile ) )
                 {
-                    releaseDescriptor.getActivateProfiles().add( specificProfile );
+                    allProfiles.add( specificProfile );
                 }
             }
+            builder.setActivateProfiles( allProfiles );
         }
+
+        ReleaseDescriptor releaseDescriptor = ReleaseUtils.buildReleaseDescriptor( builder );
 
         Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
 
@@ -522,12 +528,19 @@ public class DefaultReleaseManager
                                                      ReleaseManagerListener listener )
         throws ReleaseExecutionException
     {
+        return ReleaseUtils.buildReleaseDescriptor( loadReleaseDescriptorBuilder( builder, listener ) );
+    }
+
+    private ReleaseDescriptorBuilder loadReleaseDescriptorBuilder( ReleaseDescriptorBuilder builder,
+                                                     ReleaseManagerListener listener )
+        throws ReleaseExecutionException
+    {
         try
         {
             updateListener( listener, "verify-release-configuration", PHASE_START );
-            BuilderReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor( configStore.read( builder ) );
+            ReleaseDescriptorBuilder result = configStore.read( builder );
             updateListener( listener, "verify-release-configuration", PHASE_END );
-            return descriptor;
+            return result;
         }
         catch ( ReleaseDescriptorStoreException e )
         {
@@ -537,7 +550,6 @@ public class DefaultReleaseManager
         }
     }
 
-    
     protected void clean( AbstractReleaseRequest releaseRequest  ) throws ReleaseFailureException
     {
         ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();

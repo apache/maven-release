@@ -725,7 +725,7 @@ public class DefaultReleaseManagerTest
         DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup( ReleaseManager.class, "test" );
 
         ReleaseDescriptorBuilder secondBuilder = new ReleaseDescriptorBuilder();
-        secondBuilder.setActivateProfiles( new ArrayList( Arrays.asList("aProfile", "bProfile") ) );
+        secondBuilder.setActivateProfiles( Arrays.asList("aProfile", "bProfile") );
         secondBuilder.setScmSourceUrl( "scm-url" );
         ReleaseDescriptorStore configStoreMock = mock( ReleaseDescriptorStore.class );
         when( configStoreMock.read( any( ReleaseDescriptorBuilder.class ) ) ).thenReturn( secondBuilder );
