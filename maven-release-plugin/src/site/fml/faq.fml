@@ -75,7 +75,7 @@ mvn -N -Darguments=-N release:perform
         </p>
         <p>
         When using the plugin-configuration, you can't end with a space, because Plexus will trim the content.
-        But you can end with a linebreak just like the example above:
+        But you can end with a linebreak just like the example below:
         </p>
 <source>
 <![CDATA[
