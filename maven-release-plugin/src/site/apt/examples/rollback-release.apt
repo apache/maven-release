@@ -28,7 +28,7 @@ Rollback a Release
   To rollback a release, the following requirement must be met:
 
   * You haven't run <<<release:clean>>> on the project. This means that the backup files and the release descriptor from the previous
-  release command still exists.
+  release command still exist.
 
   []
 
