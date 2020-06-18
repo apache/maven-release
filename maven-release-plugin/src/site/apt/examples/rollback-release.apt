@@ -39,7 +39,7 @@ Rollback a Release
   <<<release:prepare>>>.
 
   * The created branch/tag in SCM for the release is removed.
-    <<Note:>> This is not yet implemented so you will need to manually remove the branch/tag from your SCM.
+    <<Note:>> This is available from version 3.0.0-M1 . Before this version you will need to manually remove the branch/tag from your SCM.
     For more info see {{{https://issues.apache.org/jira/browse/MRELEASE-229}MRELEASE-229}}.
 
   []
