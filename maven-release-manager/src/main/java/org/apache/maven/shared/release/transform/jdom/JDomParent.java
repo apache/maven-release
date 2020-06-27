@@ -20,7 +20,7 @@ package org.apache.maven.shared.release.transform.jdom;
  */
 
 import org.apache.maven.model.Parent;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * JDom implementation of poms PARENT element

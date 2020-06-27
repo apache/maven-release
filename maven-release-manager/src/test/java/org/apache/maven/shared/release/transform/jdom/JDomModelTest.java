@@ -27,9 +27,9 @@ import java.io.StringReader;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 import org.junit.Test;
 
 public class JDomModelTest

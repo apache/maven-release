@@ -31,7 +31,7 @@ import java.util.InvalidPropertiesFormatException;
 import java.util.Properties;
 import java.util.Set;
 
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * JDom implementation of poms PROPERTIES element

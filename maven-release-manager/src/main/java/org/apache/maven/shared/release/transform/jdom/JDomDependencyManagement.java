@@ -25,7 +25,7 @@ import java.util.List;
 
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * JDom implementation of poms DEPENDENCYMANAGEMENT element

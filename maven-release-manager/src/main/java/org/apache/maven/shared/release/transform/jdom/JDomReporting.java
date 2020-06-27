@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Reporting;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * JDom implementation of poms REPORTING element
