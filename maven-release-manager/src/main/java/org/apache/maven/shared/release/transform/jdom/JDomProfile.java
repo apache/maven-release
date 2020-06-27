@@ -25,7 +25,7 @@ import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
 import org.apache.maven.model.Profile;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
  * JDom implementation of poms PROFILE element

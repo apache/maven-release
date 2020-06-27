@@ -29,7 +29,7 @@ import org.apache.maven.model.Extension;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Resource;
-import org.jdom.Element;
+import org.jdom2.Element;
 /**
  * JDom implementation of poms BUILD element
  *

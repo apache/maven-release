@@ -32,9 +32,9 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Text;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Text;
 
 /**
  * JDom implementation of poms PROJECT element

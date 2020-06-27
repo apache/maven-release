@@ -23,8 +23,8 @@ import static org.junit.Assert.*;
 
 import java.io.StringReader;
 
-import org.jdom.Element;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 import org.junit.Test;
 
 public class JDomParentTest
