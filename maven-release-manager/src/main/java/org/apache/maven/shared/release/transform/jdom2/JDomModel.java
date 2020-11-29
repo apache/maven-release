@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -32,12 +32,12 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Text;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Text;
 
 /**
- * JDom implementation of poms PROJECT element
+ * JDOM2 implementation of poms PROJECT element
  *
  * @author Robert Scholte
  * @since 3.0
@@ -163,7 +163,7 @@ public class JDomModel extends Model
             Element scmRoot = new Element( "scm" );
             scmRoot.addContent( "\n  " );
 
-            // Write current values to JDom tree
+            // Write current values to JDOM2 tree
             Scm jdomScm = new JDomScm( scmRoot );
             jdomScm.setConnection( scm.getConnection() );
             jdomScm.setDeveloperConnection( scm.getDeveloperConnection() );

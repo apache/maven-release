@@ -47,7 +47,7 @@ import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
-import org.apache.maven.shared.release.transform.jdom.JDomModelETLFactory;
+import org.apache.maven.shared.release.transform.jdom2.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Ignore;
 import org.junit.Test;

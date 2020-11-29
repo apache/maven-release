@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -35,20 +35,20 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.WriterFactory;
-import org.jdom.CDATA;
-import org.jdom.Comment;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.JDOMException;
-import org.jdom.Namespace;
-import org.jdom.filter.ContentFilter;
-import org.jdom.filter.ElementFilter;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+import org.jdom2.CDATA;
+import org.jdom2.Comment;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.Namespace;
+import org.jdom2.filter.ContentFilter;
+import org.jdom2.filter.ElementFilter;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 /**
- * JDom implementation for extracting, transform, loading the Model (pom.xml)
+ * JDOM2 implementation for extracting, transform, loading the Model (pom.xml)
  *
  * @author Robert Scholte
  * @since 3.0
@@ -87,14 +87,14 @@ public class JDomModelETL implements ModelETL
         try
         {
             String content = ReleaseUtil.readXmlFile( pomFile, ls );
-            // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
+            // we need to eliminate any extra whitespace inside elements, as JDOM2 will nuke it
             content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
             content = content.replaceAll( "(\\s{2,})/>", "$1 />" );
 
             SAXBuilder builder = new SAXBuilder();
             document = builder.build( new StringReader( content ) );
 
-            // Normalize line endings to platform's style (XML processors like JDOM normalize line endings to "\n" as
+            // Normalize line endings to platform's style (XML processors like JDOM2 normalize line endings to "\n" as
             // per section 2.11 of the XML spec)
             normaliseLineEndings( document );
 
@@ -115,7 +115,7 @@ public class JDomModelETL implements ModelETL
             {
                 /*
                  * NOTE: Due to whitespace, attribute reordering or entity expansion the above indexOf test can easily
-                 * fail. So let's try harder. Maybe some day, when JDOM offers a StaxBuilder and this builder employes
+                 * fail. So let's try harder. Maybe some day, when JDOM2 offers a StaxBuilder and this builder employes
                  * XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE, this whole mess can be avoided.
                  */
                 // CHECKSTYLE_OFF: LocalFinalVariableName

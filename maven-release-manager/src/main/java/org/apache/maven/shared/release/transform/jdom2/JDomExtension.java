@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,64 +19,64 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
+import org.apache.maven.model.Extension;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
+ * JDOM2 implementation of poms EXTENSION element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomMavenCoordinate implements MavenCoordinate
+public class JDomExtension extends Extension implements MavenCoordinate
 {
-    private final Element element;
+    private final MavenCoordinate coordinate;
 
-    public JDomMavenCoordinate( Element elm )
+    public JDomExtension( Element extension )
     {
-        this.element = elm;
-    }
-
-    @Override
-    public String getGroupId()
-    {
-        return element.getChildTextTrim( "groupId", element.getNamespace() );
+        this.coordinate = new JDomMavenCoordinate( extension );
     }
 
     @Override
     public String getArtifactId()
     {
-        return element.getChildTextTrim( "artifactId", element.getNamespace() );
+        return coordinate.getArtifactId();
+    }
+
+    @Override
+    public String getGroupId()
+    {
+        return coordinate.getGroupId();
     }
 
     @Override
     public String getVersion()
     {
-        Element version = getVersionElement();
-        if ( version == null )
-        {
-            return null;
-        }
-        else
-        {
-            return version.getTextTrim();
-        }
-
+        return coordinate.getVersion();
     }
 
-    private Element getVersionElement()
+    @Override
+    public void setArtifactId( String artifactId )
     {
-        return element.getChild( "version", element.getNamespace() );
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setGroupId( String groupId )
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setVersion( String version )
     {
-        JDomUtils.rewriteValue( getVersionElement(), version );
+        coordinate.setVersion( version );
     }
 
     @Override
     public String getName()
     {
-        return element.getName();
+        return "extension";
     }
 }

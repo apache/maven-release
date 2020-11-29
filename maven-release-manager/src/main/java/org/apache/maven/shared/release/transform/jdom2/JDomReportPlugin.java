@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,42 +19,32 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.PluginExecution;
+import org.apache.maven.model.ReportPlugin;
+import org.apache.maven.model.ReportSet;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
- * JDom implementation of poms PLUGIN element
+ * JDOM2 implementation of poms reports PLUGIN element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomPlugin extends Plugin implements MavenCoordinate
+public class JDomReportPlugin
+    extends ReportPlugin implements MavenCoordinate
 {
-    private Element plugin;
     private final MavenCoordinate coordinate;
 
-    public JDomPlugin( Element plugin )
+    public JDomReportPlugin( Element reportPlugin )
     {
-        this.plugin = plugin;
-        this.coordinate = new JDomMavenCoordinate( plugin );
+        this.coordinate = new JDomMavenCoordinate( reportPlugin );
     }
 
     @Override
-    public void addDependency( Dependency dependency )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void addExecution( PluginExecution pluginExecution )
+    public void addReportSet( ReportSet reportSet )
     {
         throw new UnsupportedOperationException();
     }
@@ -66,37 +56,7 @@ public class JDomPlugin extends Plugin implements MavenCoordinate
     }
 
     @Override
-    public List<Dependency> getDependencies()
-    {
-        Element dependenciesElm = plugin.getChild( "dependencies", plugin.getNamespace() );
-        if ( dependenciesElm == null )
-        {
-            return Collections.emptyList();
-        }
-        else
-        {
-            List<Element> dependencyElms =
-                dependenciesElm.getChildren( "dependency", plugin.getNamespace() );
-
-            List<Dependency> dependencies = new ArrayList<>( dependencyElms.size() );
-
-            for ( Element dependencyElm : dependencyElms )
-            {
-                dependencies.add( new JDomDependency( dependencyElm ) );
-            }
-
-            return dependencies;
-        }
-    }
-
-    @Override
-    public List<PluginExecution> getExecutions()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Object getGoals()
+    public Object getConfiguration()
     {
         throw new UnsupportedOperationException();
     }
@@ -108,25 +68,25 @@ public class JDomPlugin extends Plugin implements MavenCoordinate
     }
 
     @Override
+    public String getInherited()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<ReportSet> getReportSets()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getVersion()
     {
         return coordinate.getVersion();
     }
 
     @Override
-    public boolean isExtensions()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void removeDependency( Dependency dependency )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void removeExecution( PluginExecution pluginExecution )
+    public void removeReportSet( ReportSet reportSet )
     {
         throw new UnsupportedOperationException();
     }
@@ -138,25 +98,7 @@ public class JDomPlugin extends Plugin implements MavenCoordinate
     }
 
     @Override
-    public void setDependencies( List<Dependency> dependencies )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setExecutions( List<PluginExecution> executions )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setExtensions( boolean extensions )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setGoals( Object goals )
+    public void setConfiguration( Object configuration )
     {
         throw new UnsupportedOperationException();
     }
@@ -168,19 +110,49 @@ public class JDomPlugin extends Plugin implements MavenCoordinate
     }
 
     @Override
+    public void setInherited( String inherited )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setReportSets( List<ReportSet> reportSets )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public void setVersion( String version )
     {
         coordinate.setVersion( version );
     }
 
     @Override
-    public void flushExecutionMap()
+    public void flushReportSetMap()
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Map<String, PluginExecution>  getExecutionsAsMap()
+    public Map<String, ReportSet> getReportSetsAsMap()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getKey()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void unsetInheritanceApplied()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isInheritanceApplied()
     {
         throw new UnsupportedOperationException();
     }

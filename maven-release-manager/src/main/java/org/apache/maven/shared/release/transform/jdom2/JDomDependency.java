@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,31 +20,29 @@ package org.apache.maven.shared.release.transform.jdom;
  */
 
 import java.util.List;
-import java.util.Map;
 
-import org.apache.maven.model.ReportPlugin;
-import org.apache.maven.model.ReportSet;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Exclusion;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
- * JDom implementation of poms reports PLUGIN element
+ * JDOM2 implementation of poms DEPENDENCY element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomReportPlugin
-    extends ReportPlugin implements MavenCoordinate
+public class JDomDependency extends Dependency implements MavenCoordinate
 {
     private final MavenCoordinate coordinate;
 
-    public JDomReportPlugin( Element reportPlugin )
+    public JDomDependency( Element dependency )
     {
-        this.coordinate = new JDomMavenCoordinate( reportPlugin );
+        this.coordinate = new JDomMavenCoordinate( dependency );
     }
 
     @Override
-    public void addReportSet( ReportSet reportSet )
+    public void addExclusion( Exclusion exclusion )
     {
         throw new UnsupportedOperationException();
     }
@@ -56,7 +54,13 @@ public class JDomReportPlugin
     }
 
     @Override
-    public Object getConfiguration()
+    public String getClassifier()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public List<Exclusion> getExclusions()
     {
         throw new UnsupportedOperationException();
     }
@@ -68,13 +72,19 @@ public class JDomReportPlugin
     }
 
     @Override
-    public String getInherited()
+    public String getScope()
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<ReportSet> getReportSets()
+    public String getSystemPath()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getType()
     {
         throw new UnsupportedOperationException();
     }
@@ -86,7 +96,13 @@ public class JDomReportPlugin
     }
 
     @Override
-    public void removeReportSet( ReportSet reportSet )
+    public boolean isOptional()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeExclusion( Exclusion exclusion )
     {
         throw new UnsupportedOperationException();
     }
@@ -98,7 +114,13 @@ public class JDomReportPlugin
     }
 
     @Override
-    public void setConfiguration( Object configuration )
+    public void setClassifier( String classifier )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setExclusions( List<Exclusion> exclusions )
     {
         throw new UnsupportedOperationException();
     }
@@ -110,13 +132,25 @@ public class JDomReportPlugin
     }
 
     @Override
-    public void setInherited( String inherited )
+    public void setOptional( boolean optional )
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setReportSets( List<ReportSet> reportSets )
+    public void setScope( String scope )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setSystemPath( String systemPath )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setType( String type )
     {
         throw new UnsupportedOperationException();
     }
@@ -128,38 +162,8 @@ public class JDomReportPlugin
     }
 
     @Override
-    public void flushReportSetMap()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Map<String, ReportSet> getReportSetsAsMap()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getKey()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void unsetInheritanceApplied()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isInheritanceApplied()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getName()
     {
-        return "plugin";
+        return "dependency";
     }
 }

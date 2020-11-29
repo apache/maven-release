@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,41 +19,52 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
-import org.apache.maven.model.Extension;
-import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.jdom.Element;
+import org.apache.maven.model.Parent;
+import org.jdom2.Element;
 
 /**
- * JDom implementation of poms EXTENSION element
+ * JDOM2 implementation of poms PARENT element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomExtension extends Extension implements MavenCoordinate
+public class JDomParent extends Parent
 {
-    private final MavenCoordinate coordinate;
+    private Element parent;
 
-    public JDomExtension( Element extension )
+    public JDomParent( Element parent )
     {
-        this.coordinate = new JDomMavenCoordinate( extension );
-    }
-
-    @Override
-    public String getArtifactId()
-    {
-        return coordinate.getArtifactId();
-    }
-
-    @Override
-    public String getGroupId()
-    {
-        return coordinate.getGroupId();
+        this.parent = parent;
     }
 
     @Override
     public String getVersion()
     {
-        return coordinate.getVersion();
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setVersion( String version )
+    {
+        JDomUtils.rewriteElement( "version", version, parent, parent.getNamespace() );
+    }
+
+    @Override
+    public String getArtifactId()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getGroupId()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getRelativePath()
+    {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -69,14 +80,14 @@ public class JDomExtension extends Extension implements MavenCoordinate
     }
 
     @Override
-    public void setVersion( String version )
+    public void setRelativePath( String relativePath )
     {
-        coordinate.setVersion( version );
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getName()
+    public String getId()
     {
-        return "extension";
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -20,10 +20,10 @@ package org.apache.maven.shared.release.transform.jdom;
  */
 
 import org.apache.maven.model.Scm;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
- * JDom implementation of poms SCM element
+ * JDOM2 implementation of poms SCM element
  *
  * @author Robert Scholte
  * @since 3.0

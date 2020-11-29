@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,30 +19,42 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.model.Dependency;
-import org.apache.maven.model.Exclusion;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginExecution;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
- * JDom implementation of poms DEPENDENCY element
+ * JDOM2 implementation of poms PLUGIN element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomDependency extends Dependency implements MavenCoordinate
+public class JDomPlugin extends Plugin implements MavenCoordinate
 {
+    private Element plugin;
     private final MavenCoordinate coordinate;
 
-    public JDomDependency( Element dependency )
+    public JDomPlugin( Element plugin )
     {
-        this.coordinate = new JDomMavenCoordinate( dependency );
+        this.plugin = plugin;
+        this.coordinate = new JDomMavenCoordinate( plugin );
     }
 
     @Override
-    public void addExclusion( Exclusion exclusion )
+    public void addDependency( Dependency dependency )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void addExecution( PluginExecution pluginExecution )
     {
         throw new UnsupportedOperationException();
     }
@@ -54,13 +66,37 @@ public class JDomDependency extends Dependency implements MavenCoordinate
     }
 
     @Override
-    public String getClassifier()
+    public List<Dependency> getDependencies()
+    {
+        Element dependenciesElm = plugin.getChild( "dependencies", plugin.getNamespace() );
+        if ( dependenciesElm == null )
+        {
+            return Collections.emptyList();
+        }
+        else
+        {
+            List<Element> dependencyElms =
+                dependenciesElm.getChildren( "dependency", plugin.getNamespace() );
+
+            List<Dependency> dependencies = new ArrayList<>( dependencyElms.size() );
+
+            for ( Element dependencyElm : dependencyElms )
+            {
+                dependencies.add( new JDomDependency( dependencyElm ) );
+            }
+
+            return dependencies;
+        }
+    }
+
+    @Override
+    public List<PluginExecution> getExecutions()
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Exclusion> getExclusions()
+    public Object getGoals()
     {
         throw new UnsupportedOperationException();
     }
@@ -72,37 +108,25 @@ public class JDomDependency extends Dependency implements MavenCoordinate
     }
 
     @Override
-    public String getScope()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getSystemPath()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getType()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public String getVersion()
     {
         return coordinate.getVersion();
     }
 
     @Override
-    public boolean isOptional()
+    public boolean isExtensions()
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeExclusion( Exclusion exclusion )
+    public void removeDependency( Dependency dependency )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeExecution( PluginExecution pluginExecution )
     {
         throw new UnsupportedOperationException();
     }
@@ -114,13 +138,25 @@ public class JDomDependency extends Dependency implements MavenCoordinate
     }
 
     @Override
-    public void setClassifier( String classifier )
+    public void setDependencies( List<Dependency> dependencies )
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setExclusions( List<Exclusion> exclusions )
+    public void setExecutions( List<PluginExecution> executions )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setExtensions( boolean extensions )
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setGoals( Object goals )
     {
         throw new UnsupportedOperationException();
     }
@@ -132,38 +168,26 @@ public class JDomDependency extends Dependency implements MavenCoordinate
     }
 
     @Override
-    public void setOptional( boolean optional )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setScope( String scope )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setSystemPath( String systemPath )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setType( String type )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public void setVersion( String version )
     {
         coordinate.setVersion( version );
     }
 
     @Override
+    public void flushExecutionMap()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<String, PluginExecution>  getExecutionsAsMap()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public String getName()
     {
-        return "dependency";
+        return "plugin";
     }
 }

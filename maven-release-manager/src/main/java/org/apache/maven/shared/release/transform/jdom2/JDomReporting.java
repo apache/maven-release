@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -26,10 +26,10 @@ import java.util.Map;
 
 import org.apache.maven.model.ReportPlugin;
 import org.apache.maven.model.Reporting;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
- * JDom implementation of poms REPORTING element
+ * JDOM2 implementation of poms REPORTING element
  *
  * @author Robert Scholte
  * @since 3.0

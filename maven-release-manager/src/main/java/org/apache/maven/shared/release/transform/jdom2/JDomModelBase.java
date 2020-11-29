@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -23,43 +23,49 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
-import org.jdom.Element;
+import org.jdom2.Element;
 
 /**
- * JDom implementation of poms DEPENDENCYMANAGEMENT element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomDependencyManagement extends DependencyManagement
+public class JDomModelBase
 {
-    private final Element dependencyManagement;
+    private final Element modelBase;
 
-    public JDomDependencyManagement( Element dependencyManagement )
+    public JDomModelBase( Element modelBase )
     {
-        this.dependencyManagement = dependencyManagement;
+        this.modelBase = modelBase;
     }
 
-    @Override
-    public void addDependency( Dependency dependency )
+    public Build getBuild()
     {
-        throw new UnsupportedOperationException();
+        Element elm = modelBase.getChild( "build", modelBase.getNamespace() );
+        if ( elm == null )
+        {
+            return null;
+        }
+        else
+        {
+            // this way build setters change DOM tree immediately
+            return new JDomBuild( elm );
+        }
     }
 
-    @Override
     public List<Dependency> getDependencies()
     {
-        Element dependenciesElm = dependencyManagement.getChild( "dependencies", dependencyManagement.getNamespace() );
+        Element dependenciesElm = modelBase.getChild( "dependencies", modelBase.getNamespace() );
         if ( dependenciesElm == null )
         {
             return Collections.emptyList();
         }
         else
         {
-            List<Element> dependencyElms =
-                dependenciesElm.getChildren( "dependency", dependencyManagement.getNamespace() );
+            List<Element> dependencyElms = dependenciesElm.getChildren( "dependency", modelBase.getNamespace() );
 
             List<Dependency> dependencies = new ArrayList<>( dependencyElms.size() );
 
@@ -72,16 +78,17 @@ public class JDomDependencyManagement extends DependencyManagement
         }
     }
 
-    @Override
-    public void removeDependency( Dependency dependency )
+    public DependencyManagement getDependencyManagement()
     {
-        throw new UnsupportedOperationException();
+        Element elm = modelBase.getChild( "dependencyManagement", modelBase.getNamespace() );
+        if ( elm == null )
+        {
+            return null;
+        }
+        else
+        {
+            // this way build setters change DOM tree immediately
+            return new JDomDependencyManagement( elm );
+        }
     }
-
-    @Override
-    public void setDependencies( List<Dependency> dependencies )
-    {
-        throw new UnsupportedOperationException();
-    }
-
 }

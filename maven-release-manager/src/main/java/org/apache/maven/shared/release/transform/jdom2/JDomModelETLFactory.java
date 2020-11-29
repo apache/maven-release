@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,45 +19,28 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
-import java.util.List;
-
-import org.apache.maven.model.BuildBase;
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
-import org.apache.maven.model.Profile;
-import org.jdom.Element;
+import org.apache.maven.shared.release.transform.ModelETLRequest;
+import org.apache.maven.shared.release.transform.ModelETLFactory;
+import org.codehaus.plexus.component.annotations.Component;
 
 /**
- * JDom implementation of poms PROFILE element
- *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomProfile
-    extends Profile
+@Component( role = ModelETLFactory.class, hint = JDomModelETLFactory.ROLE_HINT )
+public class JDomModelETLFactory implements ModelETLFactory
 {
-    private final JDomModelBase modelBase;
-
-    public JDomProfile( Element profile )
-    {
-        this.modelBase = new JDomModelBase( profile ) ;
-    }
+    public static final String ROLE_HINT = "jdom2-sax";
 
     @Override
-    public BuildBase getBuild()
+    public JDomModelETL newInstance( ModelETLRequest request )
     {
-        return modelBase.getBuild();
-    }
+        JDomModelETL result = new JDomModelETL();
 
-    @Override
-    public List<Dependency> getDependencies()
-    {
-        return modelBase.getDependencies();
-    }
+        result.setLs( request.getLineSeparator() );
+        result.setProject( request.getProject() );
+        result.setReleaseDescriptor( request.getReleaseDescriptor() );
 
-    @Override
-    public DependencyManagement getDependencyManagement()
-    {
-        return modelBase.getDependencyManagement();
+        return result;
     }
 }

@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -21,12 +21,12 @@ package org.apache.maven.shared.release.transform.jdom;
 
 import java.util.Iterator;
 
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.Text;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.Text;
 
 /**
- * Common JDom functions
+ * Common JDOM2 functions
  *
  * @author Robert Scholte
  * @since 3.0
