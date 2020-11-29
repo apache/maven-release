@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -30,7 +30,7 @@ import org.codehaus.plexus.component.annotations.Component;
 @Component( role = ModelETLFactory.class, hint = JDomModelETLFactory.ROLE_HINT )
 public class JDomModelETLFactory implements ModelETLFactory
 {
-    public static final String ROLE_HINT = "jdom-sax";
+    public static final String ROLE_HINT = "jdom2-sax";
 
     @Override
     public JDomModelETL newInstance( ModelETLRequest request )

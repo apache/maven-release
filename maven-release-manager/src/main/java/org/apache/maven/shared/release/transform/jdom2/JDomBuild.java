@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -31,7 +31,7 @@ import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Resource;
 import org.jdom2.Element;
 /**
- * JDom implementation of poms BUILD element
+ * JDom2 implementation of poms BUILD element
  *
  * @author Robert Scholte
  * @since 3.0
@@ -322,7 +322,7 @@ public class JDomBuild
     }
 
     @Override
-    public Map getPluginsAsMap()
+    public Map<String, Plugin> getPluginsAsMap()
     {
         throw new UnsupportedOperationException();
     }

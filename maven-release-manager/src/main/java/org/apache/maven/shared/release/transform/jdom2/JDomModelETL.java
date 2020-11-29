@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -48,7 +48,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 /**
- * JDom implementation for extracting, transform, loading the Model (pom.xml)
+ * JDom2 implementation for extracting, transform, loading the Model (pom.xml)
  *
  * @author Robert Scholte
  * @since 3.0

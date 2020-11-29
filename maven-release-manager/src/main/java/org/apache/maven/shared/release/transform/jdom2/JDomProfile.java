@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -28,7 +28,7 @@ import org.apache.maven.model.Profile;
 import org.jdom2.Element;
 
 /**
- * JDom implementation of poms PROFILE element
+ * JDom2 implementation of poms PROFILE element
  *
  * @author Robert Scholte
  * @since 3.0

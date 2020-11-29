@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -22,66 +22,77 @@ package org.apache.maven.shared.release.transform.jdom;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.maven.model.Dependency;
-import org.apache.maven.model.DependencyManagement;
+import org.apache.maven.model.Plugin;
+import org.apache.maven.model.PluginManagement;
 import org.jdom2.Element;
 
 /**
- * JDom implementation of poms DEPENDENCYMANAGEMENT element
+ * JDom2 implementation of poms PLUGINMANAGEMENT element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomDependencyManagement extends DependencyManagement
+public class JDomPluginManagement extends PluginManagement
 {
-    private final Element dependencyManagement;
+    private final Element pluginManagement;
 
-    public JDomDependencyManagement( Element dependencyManagement )
+    public JDomPluginManagement( Element pluginManagement )
     {
-        this.dependencyManagement = dependencyManagement;
+        this.pluginManagement = pluginManagement;
     }
 
     @Override
-    public void addDependency( Dependency dependency )
+    public void addPlugin( Plugin plugin )
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Dependency> getDependencies()
+    public List<Plugin> getPlugins()
     {
-        Element dependenciesElm = dependencyManagement.getChild( "dependencies", dependencyManagement.getNamespace() );
-        if ( dependenciesElm == null )
+        Element pluginsElm = pluginManagement.getChild( "plugins", pluginManagement.getNamespace() );
+        if ( pluginsElm == null )
         {
             return Collections.emptyList();
         }
         else
         {
-            List<Element> dependencyElms =
-                dependenciesElm.getChildren( "dependency", dependencyManagement.getNamespace() );
+            List<Element> pluginElms = pluginsElm.getChildren( "plugin", pluginManagement.getNamespace() );
 
-            List<Dependency> dependencies = new ArrayList<>( dependencyElms.size() );
+            List<Plugin> plugins = new ArrayList<>( pluginElms.size() );
 
-            for ( Element dependencyElm : dependencyElms )
+            for ( Element pluginElm : pluginElms )
             {
-                dependencies.add( new JDomDependency( dependencyElm ) );
+                plugins.add( new JDomPlugin( pluginElm ) );
             }
 
-            return dependencies;
+            return plugins;
         }
     }
 
     @Override
-    public void removeDependency( Dependency dependency )
+    public void removePlugin( Plugin plugin )
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setDependencies( List<Dependency> dependencies )
+    public void setPlugins( List<Plugin> plugins )
     {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void flushPluginMap()
+    {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Map<String, Plugin> getPluginsAsMap()
+    {
+        throw new UnsupportedOperationException();
+    }
 }

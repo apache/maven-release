@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -27,7 +27,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.jdom2.Element;
 
 /**
- * JDom implementation of poms DEPENDENCY element
+ * JDom2 implementation of poms DEPENDENCY element
  *
  * @author Robert Scholte
  * @since 3.0

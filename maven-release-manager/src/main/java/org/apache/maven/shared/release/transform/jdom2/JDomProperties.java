@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -34,7 +34,7 @@ import java.util.Set;
 import org.jdom2.Element;
 
 /**
- * JDom implementation of poms PROPERTIES element
+ * JDom2 implementation of poms PROPERTIES element
  *
  * @author Robert Scholte
  * @since 3.0
@@ -73,6 +73,7 @@ public class JDomProperties extends Properties
         throw new UnsupportedOperationException();
     }
 
+    @SuppressWarnings( "deprecation" )
     @Override
     public void save( OutputStream out, String comments )
     {

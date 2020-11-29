@@ -59,7 +59,7 @@ import org.apache.maven.shared.release.transform.ModelETLRequest;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
-import org.apache.maven.shared.release.transform.jdom.JDomModelETLFactory;
+import org.apache.maven.shared.release.transform.jdom2.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.StringUtils;
@@ -82,7 +82,7 @@ public abstract class AbstractRewritePomsPhase
     private Map<String, ModelETLFactory> modelETLFactories;
 
     /**
-     * Use jdom-sax as default
+     * Use jdom2-sax as default
      */
     private String modelETL = JDomModelETLFactory.ROLE_HINT;
 

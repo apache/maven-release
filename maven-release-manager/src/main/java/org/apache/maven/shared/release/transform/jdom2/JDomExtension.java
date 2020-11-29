@@ -1,4 +1,4 @@
-package org.apache.maven.shared.release.transform.jdom;
+package org.apache.maven.shared.release.transform.jdom2;
 
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
@@ -19,69 +19,64 @@ package org.apache.maven.shared.release.transform.jdom;
  * under the License.
  */
 
-import org.apache.maven.model.Scm;
+import org.apache.maven.model.Extension;
+import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.jdom2.Element;
 
 /**
- * JDom implementation of poms SCM element
+ * JDom2 implementation of poms EXTENSION element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomScm extends Scm
+public class JDomExtension extends Extension implements MavenCoordinate
 {
-    private Element scm;
+    private final MavenCoordinate coordinate;
 
-    JDomScm( Element scm )
+    public JDomExtension( Element extension )
     {
-        this.scm = scm;
+        this.coordinate = new JDomMavenCoordinate( extension );
     }
 
     @Override
-    public String getConnection()
+    public String getArtifactId()
+    {
+        return coordinate.getArtifactId();
+    }
+
+    @Override
+    public String getGroupId()
+    {
+        return coordinate.getGroupId();
+    }
+
+    @Override
+    public String getVersion()
+    {
+        return coordinate.getVersion();
+    }
+
+    @Override
+    public void setArtifactId( String artifactId )
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setConnection( String connection )
-    {
-        JDomUtils.rewriteElement( "connection", connection, scm, scm.getNamespace() );
-    }
-
-    @Override
-    public String getDeveloperConnection()
+    public void setGroupId( String groupId )
     {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setDeveloperConnection( String developerConnection )
+    public void setVersion( String version )
     {
-        JDomUtils.rewriteElement( "developerConnection", developerConnection, scm, scm.getNamespace() );
+        coordinate.setVersion( version );
     }
 
     @Override
-    public String getTag()
+    public String getName()
     {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setTag( String tag )
-    {
-        JDomUtils.rewriteElement( "tag", tag, scm, scm.getNamespace() );
-    }
-
-    @Override
-    public String getUrl()
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setUrl( String url )
-    {
-        JDomUtils.rewriteElement( "url", url, scm, scm.getNamespace() );
+        return "extension";
     }
 }
