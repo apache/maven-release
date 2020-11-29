@@ -24,7 +24,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.jdom2.Element;
 
 /**
- * JDom2 implementation of poms EXTENSION element
+ * JDOM2 implementation of poms EXTENSION element
  *
  * @author Robert Scholte
  * @since 3.0

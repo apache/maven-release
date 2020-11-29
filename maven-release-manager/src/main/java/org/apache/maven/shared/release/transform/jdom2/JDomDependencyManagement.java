@@ -28,7 +28,7 @@ import org.apache.maven.model.DependencyManagement;
 import org.jdom2.Element;
 
 /**
- * JDom2 implementation of poms DEPENDENCYMANAGEMENT element
+ * JDOM2 implementation of poms DEPENDENCYMANAGEMENT element
  *
  * @author Robert Scholte
  * @since 3.0

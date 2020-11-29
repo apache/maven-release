@@ -48,7 +48,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 /**
- * JDom2 implementation for extracting, transform, loading the Model (pom.xml)
+ * JDOM2 implementation for extracting, transform, loading the Model (pom.xml)
  *
  * @author Robert Scholte
  * @since 3.0
@@ -87,14 +87,14 @@ public class JDomModelETL implements ModelETL
         try
         {
             String content = ReleaseUtil.readXmlFile( pomFile, ls );
-            // we need to eliminate any extra whitespace inside elements, as JDOM will nuke it
+            // we need to eliminate any extra whitespace inside elements, as JDOM2 will nuke it
             content = content.replaceAll( "<([^!][^>]*?)\\s{2,}([^>]*?)>", "<$1 $2>" );
             content = content.replaceAll( "(\\s{2,})/>", "$1 />" );
 
             SAXBuilder builder = new SAXBuilder();
             document = builder.build( new StringReader( content ) );
 
-            // Normalize line endings to platform's style (XML processors like JDOM normalize line endings to "\n" as
+            // Normalize line endings to platform's style (XML processors like JDOM2 normalize line endings to "\n" as
             // per section 2.11 of the XML spec)
             normaliseLineEndings( document );
 
@@ -115,7 +115,7 @@ public class JDomModelETL implements ModelETL
             {
                 /*
                  * NOTE: Due to whitespace, attribute reordering or entity expansion the above indexOf test can easily
-                 * fail. So let's try harder. Maybe some day, when JDOM offers a StaxBuilder and this builder employes
+                 * fail. So let's try harder. Maybe some day, when JDOM2 offers a StaxBuilder and this builder employes
                  * XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE, this whole mess can be avoided.
                  */
                 // CHECKSTYLE_OFF: LocalFinalVariableName

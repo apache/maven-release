@@ -31,7 +31,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.jdom2.Element;
 
 /**
- * JDom2 implementation of poms PLUGIN element
+ * JDOM2 implementation of poms PLUGIN element
  *
  * @author Robert Scholte
  * @since 3.0

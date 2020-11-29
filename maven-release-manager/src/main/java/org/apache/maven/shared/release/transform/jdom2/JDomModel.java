@@ -37,7 +37,7 @@ import org.jdom2.Element;
 import org.jdom2.Text;
 
 /**
- * JDom2 implementation of poms PROJECT element
+ * JDOM2 implementation of poms PROJECT element
  *
  * @author Robert Scholte
  * @since 3.0
@@ -163,7 +163,7 @@ public class JDomModel extends Model
             Element scmRoot = new Element( "scm" );
             scmRoot.addContent( "\n  " );
 
-            // Write current values to JDom2 tree
+            // Write current values to JDOM2 tree
             Scm jdomScm = new JDomScm( scmRoot );
             jdomScm.setConnection( scm.getConnection() );
             jdomScm.setDeveloperConnection( scm.getDeveloperConnection() );

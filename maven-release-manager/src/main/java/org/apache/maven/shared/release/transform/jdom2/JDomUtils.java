@@ -26,7 +26,7 @@ import org.jdom2.Namespace;
 import org.jdom2.Text;
 
 /**
- * Common JDom2 functions
+ * Common JDOM2 functions
  *
  * @author Robert Scholte
  * @since 3.0

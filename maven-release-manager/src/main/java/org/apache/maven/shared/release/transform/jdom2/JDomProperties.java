@@ -34,7 +34,7 @@ import java.util.Set;
 import org.jdom2.Element;
 
 /**
- * JDom2 implementation of poms PROPERTIES element
+ * JDOM2 implementation of poms PROPERTIES element
  *
  * @author Robert Scholte
  * @since 3.0

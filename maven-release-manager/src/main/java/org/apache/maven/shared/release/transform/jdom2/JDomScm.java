@@ -23,7 +23,7 @@ import org.apache.maven.model.Scm;
 import org.jdom2.Element;
 
 /**
- * JDom2 implementation of poms SCM element
+ * JDOM2 implementation of poms SCM element
  *
  * @author Robert Scholte
  * @since 3.0

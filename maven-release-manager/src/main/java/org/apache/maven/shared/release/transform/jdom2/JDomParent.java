@@ -23,7 +23,7 @@ import org.apache.maven.model.Parent;
 import org.jdom2.Element;
 
 /**
- * JDom2 implementation of poms PARENT element
+ * JDOM2 implementation of poms PARENT element
  *
  * @author Robert Scholte
  * @since 3.0
