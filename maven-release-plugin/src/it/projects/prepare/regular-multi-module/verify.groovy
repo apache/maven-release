@@ -6,9 +6,9 @@
  * to you under the Apache License, Version 2.0 (the
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
@@ -16,10 +16,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
 
 try
 {
@@ -40,34 +36,12 @@ try
     reader.close();
     String contents = data.toString();
 
-    String expected = "Executing preparation goals";
-    int index = 0;
+    String expected1 = "Full run would tag working copy '" + basedir + "'";
+    String expected2 = "  with label 'regular-multi-module-project-1.0'";
 
-    if( ( index = contents.indexOf( expected, index ) ) == -1 )
+    if( contents.indexOf( expected1 ) != -1 && contents.indexOf( expected2 ) != -1 )
     {
-        System.out.println( "FAILED!" );
-        return false;
-    }
-    expected = "Executing goals 'validate'";
-
-    if( ( index = contents.indexOf( expected, index ) ) == -1 )
-    {
-        System.out.println( "FAILED!" );
-        return false;
-    }
-    expected = "Executing completion goals";
-
-    if( ( index = contents.indexOf( expected, index ) ) == -1 )
-    {
-        System.out.println( "FAILED!" );
-        return false;
-    }
-    expected = "Executing goals 'verify'";
-
-    if( ( index = contents.indexOf( expected, index ) ) == -1 )
-    {
-        System.out.println( "FAILED!" );
-        return false;
+        return true;
     }
 }
 catch( Throwable t )
@@ -76,4 +50,5 @@ catch( Throwable t )
     return false;
 }
 
-return true;
+System.out.println( "FAILED!" );
+return false;

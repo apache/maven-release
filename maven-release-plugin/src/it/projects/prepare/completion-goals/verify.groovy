@@ -17,16 +17,12 @@
  * under the License.
  */
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-
 try
-{   
+{
     File buildLog = new File( basedir, "build.log" );
-    
-    System.out.println( "Checking logs..." );
-    
+
+    System.out.println( "Checking logs.." );
+
     StringBuffer data = new StringBuffer( 1024 );
     BufferedReader reader = new BufferedReader( new FileReader( buildLog ) );
     char[] buf = new char[1024];
@@ -40,14 +36,35 @@ try
     reader.close();
     String contents = data.toString();
 
-    String one_expected = "Checking in modified POMs";
-    
-    int pos = contents.indexOf( one_expected );
-    
-    if( contents.indexOf( one_expected, pos ) == -1 )
+    String expected = "Executing preparation goals";
+    int index = 0;
+
+    if( ( index = contents.indexOf( expected, index ) ) == -1 )
     {
-        return true;
-    }            
+        System.out.println( "FAILED!" );
+        return false;
+    }
+    expected = "Executing goals 'validate'";
+
+    if( ( index = contents.indexOf( expected, index ) ) == -1 )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+    expected = "Executing completion goals";
+
+    if( ( index = contents.indexOf( expected, index ) ) == -1 )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
+    expected = "Executing goals 'verify'";
+
+    if( ( index = contents.indexOf( expected, index ) ) == -1 )
+    {
+        System.out.println( "FAILED!" );
+        return false;
+    }
 }
 catch( Throwable t )
 {
@@ -55,5 +72,4 @@ catch( Throwable t )
     return false;
 }
 
-System.out.println( "FAILED!" );
-return false;
+return true;

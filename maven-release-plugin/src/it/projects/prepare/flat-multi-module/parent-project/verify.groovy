@@ -17,10 +17,6 @@
  * under the License.
  */
 
-import java.io.*;
-import java.util.*;
-import java.util.regex.*;
-
 try
 {
     File buildLog = new File( basedir, "build.log" );
@@ -40,10 +36,22 @@ try
     reader.close();
     String contents = data.toString();
 
-    String expected1 = "Full run would tag working copy '" + basedir + "'";
-    String expected2 = "  with label 'regular-multi-module-project-1.0'";
+    String expected1 = "Full run would tag working copy '" + basedir.getParentFile() + "'";
+    String expected2 = "  with label 'parent-project-1.0'";
 
     if( contents.indexOf( expected1 ) != -1 && contents.indexOf( expected2 ) != -1 )
+    {
+        return true;
+    }
+    expected2 = "module-b with label 'module-b-1.0'";
+
+    if( contents.indexOf( expected2 ) != -1 )
+    {
+        return true;
+    }
+    expected2 = "module-a with label 'module-a-1.0'";
+
+    if( contents.indexOf( expected2 ) != -1 )
     {
         return true;
     }
