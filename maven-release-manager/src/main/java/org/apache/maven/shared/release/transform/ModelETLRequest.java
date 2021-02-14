@@ -29,7 +29,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  */
 public class ModelETLRequest
 {
-    private String lineSeparator;
 
     private MavenProject project;
 
@@ -37,12 +36,7 @@ public class ModelETLRequest
 
     public String getLineSeparator()
     {
-        return lineSeparator;
-    }
-
-    public void setLineSeparator( String lineSeparator )
-    {
-        this.lineSeparator = lineSeparator;
+        return releaseDescriptor.getLineSeparator();
     }
 
     public MavenProject getProject()

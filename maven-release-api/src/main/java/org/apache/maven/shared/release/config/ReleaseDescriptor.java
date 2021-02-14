@@ -486,6 +486,15 @@ public interface ReleaseDescriptor
     String getAutoResolveSnapshots();
 
     /**
+     * Get the line separator to use in the pom.xml.
+     *
+     * (https://issues.apache.org/jira/browse/MRELEASE-899).
+     *
+     * @return String
+     */
+    String getLineSeparator();
+
+    /**
      * Determines whether the {@code --pin-externals} option in {@code svn copy} command is enabled
      * which is new in Subversion 1.9.
      *

@@ -433,8 +433,9 @@ public class RewritePomsForBranchPhaseTest
         mapNextVersion( builder, "groupId:artifactId" );
 
         AbstractRewritePomsPhase phase = (AbstractRewritePomsPhase) this.phase;
-        phase.setLs( "\r\n" );
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor builderReleaseDescriptor = ReleaseUtils.buildReleaseDescriptor( builder );
+        builderReleaseDescriptor.setLineSeparator("\r\n");
+        phase.execute( builderReleaseDescriptor, new DefaultReleaseEnvironment(), reactorProjects );
 
         // compare POMS without line ending normalization
         assertTrue( comparePomFiles( reactorProjects, false ) );

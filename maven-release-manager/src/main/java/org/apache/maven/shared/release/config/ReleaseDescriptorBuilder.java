@@ -152,6 +152,12 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
+    public ReleaseDescriptorBuilder setLineSeparator( String ls )
+    {
+        releaseDescriptor.setLineSeparator( ls );
+        return this;
+    }
+
     public ReleaseDescriptorBuilder setLocalCheckout( boolean localCheckout )
     {
         releaseDescriptor.setLocalCheckout( localCheckout );
@@ -452,7 +458,7 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
-    BuilderReleaseDescriptor build()
+    public BuilderReleaseDescriptor build()
     {
         return releaseDescriptor;
     }

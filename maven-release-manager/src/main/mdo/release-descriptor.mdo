@@ -595,6 +595,16 @@
           </description>
         </field>
 
+        <field>
+          <name>lineSeparator</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <description>
+            Specifies the line separator to use in the pom.xml.
+            (https://issues.apache.org/jira/browse/MRELEASE-899)
+          </description>
+        </field>
+
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.
@@ -832,7 +842,8 @@
              !java.util.Objects.equals( defaultReleaseVersion, that.getDefaultReleaseVersion() ) ||
              !java.util.Objects.equals( workItem, that.getWorkItem() ) ||
              !java.util.Objects.equals( scmReleasedPomRevision, that.getScmReleasedPomRevision() ) ||
-             !java.util.Objects.equals( autoResolveSnapshots, that.getAutoResolveSnapshots() )
+             !java.util.Objects.equals( autoResolveSnapshots, that.getAutoResolveSnapshots() ) ||
+             !java.util.Objects.equals( lineSeparator, that.getLineSeparator() )
            )
         {
             return false;
@@ -1090,6 +1101,7 @@
         result = 29 * result + java.util.Objects.hashCode( workItem );
         result = 29 * result + java.util.Objects.hashCode( autoResolveSnapshots );
         result = 29 * result + java.util.Objects.hashCode( pinExternals );
+        result = 29 * result + java.util.Objects.hashCode( lineSeparator );
 
         return result;
     }

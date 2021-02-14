@@ -19,6 +19,8 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -308,6 +310,22 @@ public class PrepareReleaseMojo
     private boolean pinExternals;
 
     /**
+     * Specifies the line separator to format pom.xml. The default value is system. The following properties are
+     * available:
+     * <ul>
+     * <li><code>system</code> - Use the system line separator.</li>
+     * <li><code>lf</code> - Use \n as line separator.</li>
+     * <li><code>cr</code> - Use \r as line separator.</li>
+     * <li><code>crlf</code> - Use \r\n as line separator.</li>
+     * <li><code>source</code> - Use the same line separator as it is specified in the current pom.xml.</li>
+     * </ul>
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "source", property = "lineSeparator" )
+    private String lineSeparator;
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -353,7 +371,11 @@ public class PrepareReleaseMojo
         config.setScmReleaseCommitComment( scmReleaseCommitComment );
         config.setAutoResolveSnapshots( autoResolveSnapshots );
         config.setPinExternals( pinExternals );
-
+        if ( generateReleasePoms )
+        {
+            config.setLineSeparator( resolveLineSeparator() );
+        }
+        
         if ( checkModificationExcludeList != null )
         {
             checkModificationExcludes = checkModificationExcludeList.replaceAll( "\\s", "" ).split( "," );
@@ -385,6 +407,65 @@ public class PrepareReleaseMojo
         {
             throw new MojoFailureException( e.getMessage(), e );
         }
+    }
+
+    private String resolveLineSeparator() throws MojoExecutionException
+    {
+        if ( lineSeparator  == null )
+        {
+            return getLineSeparatorFromPom();
+        }
+
+        switch ( lineSeparator )
+        {
+            case "lf":
+                return "\n";
+            case "cr":
+                return "\r";
+            case "crlf":
+                return "\r\n"; 
+            case "system":
+                return System.getProperty( "line.separator" );
+            case "source":
+                return getLineSeparatorFromPom();
+            default:
+                throw new IllegalArgumentException( String.format( "Unknown property lineSeparator: '%s'. Use one of" 
+                  + " the following: 'source', 'system', 'lf', 'cr', 'crlf'.", lineSeparator ) );
+        }
+    }
+
+    private String getLineSeparatorFromPom()
+      throws MojoExecutionException
+    {
+        char current;
+        String lineSeparator = "";
+        try ( FileInputStream fis = new FileInputStream( this.project.getFile() ) )
+        {
+            while ( fis.available() > 0 )
+            {
+                current = ( char ) fis.read();
+                if ( ( current == '\n' ) || ( current == '\r' ) )
+                {
+                    lineSeparator += current;
+                    if ( fis.available() > 0 ) 
+                    {
+                        char next = ( char ) fis.read();
+                        if ( ( next != current )
+                          && ( ( next == '\r' ) || ( next == '\n' ) ) )
+                        {
+                            lineSeparator += next;
+                        }
+                    }
+                    return lineSeparator;
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( e.getMessage(), e );
+        }
+
+        return lineSeparator;
     }
 
 }
