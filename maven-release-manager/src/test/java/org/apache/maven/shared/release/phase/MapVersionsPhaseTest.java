@@ -19,12 +19,14 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.startsWith;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.startsWith;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -46,9 +48,7 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.hamcrest.CoreMatchers;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -65,9 +65,6 @@ public class MapVersionsPhaseTest
     private static final String TEST_MAP_DEVELOPMENT_VERSIONS = "test-map-development-versions";
 
     private static final String TEST_MAP_RELEASE_VERSIONS = "test-map-release-versions";
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Mock
     private Prompter mockPrompter;
@@ -2125,9 +2122,6 @@ public class MapVersionsPhaseTest
     public void testNonExistentVersionPolicy()
         throws Exception
     {
-        expectedException.expect( ReleaseExecutionException.class );
-        expectedException.expectCause( CoreMatchers.isA( PolicyException.class ) );
-
         // prepare
         MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
 
@@ -2137,7 +2131,9 @@ public class MapVersionsPhaseTest
         builder.setProjectVersionPolicyId( "UNKNOWN" );
 
         // test
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseExecutionException e = assertThrows( ReleaseExecutionException.class, 
+                () -> phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects ) );
+        assertThat( e.getCause(), CoreMatchers.instanceOf( PolicyException.class ) );
     }
     
     @Test

@@ -19,6 +19,12 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.argThat;
+
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
@@ -37,10 +43,7 @@ import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Assert;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 /**
@@ -75,9 +78,9 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
 
         // mock, only real matcher is the file set
         ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
-        Mockito.when( scmProviderMock.untag( Matchers.isA( ScmRepository.class ),
-                Matchers.argThat( new IsScmFileSetEquals( fileSet ) ),
-                Matchers.isA( CommandParameters.class ) ) )
+        Mockito.when( scmProviderMock.untag( isA( ScmRepository.class ),
+                argThat( new IsScmFileSetEquals( fileSet ) ),
+                isA( CommandParameters.class ) ) )
                 .thenReturn( new UntagScmResult( "...", "...", "...", true ) );
         ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
@@ -107,9 +110,9 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
 
         // mock, only real matcher is the file set
         ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
-        Mockito.when( scmProviderMock.untag( Matchers.isA( ScmRepository.class ),
-                Matchers.argThat( new IsScmFileSetEquals( fileSet ) ),
-                Matchers.isA( CommandParameters.class ) ) )
+        Mockito.when( scmProviderMock.untag( isA( ScmRepository.class ),
+                argThat( new IsScmFileSetEquals( fileSet ) ),
+                isA( CommandParameters.class ) ) )
                 .thenReturn( new UntagScmResult( "...", "...", "...", true ) );
         ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
@@ -122,9 +125,6 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
         Assert.assertEquals( 0, actual.getResultCode() );
 
     }
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
     @Ignore( "We changed the behaviour to warning instead of error." )
@@ -143,22 +143,18 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
 
         // mock, only real matcher is the file set
         ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
-        Mockito.when( scmProviderMock.untag( Matchers.isA( ScmRepository.class ),
-                Matchers.argThat( new IsScmFileSetEquals( fileSet ) ),
-                Matchers.isA( CommandParameters.class ) ) )
+        Mockito.when( scmProviderMock.untag( isA( ScmRepository.class ),
+                argThat( new IsScmFileSetEquals( fileSet ) ),
+                isA( CommandParameters.class ) ) )
                 .thenReturn( new UntagScmResult( "command-line", "provider-message", "command-output", false ) );
         ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
-        // set up exception rule
-        exceptionRule.expect( ReleaseScmCommandException.class );
-        exceptionRule.expectMessage(
-                "Unable to remove tag \nProvider message:\nprovider-message\nCommand output:\ncommand-output" );
-
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ),
-                new DefaultReleaseEnvironment(), reactorProjects );
-
+        ReleaseScmCommandException e = assertThrows( ReleaseScmCommandException.class, 
+                     () -> phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects ) );
+        
+        assertThat( e.getMessage(), equalTo( "Unable to remove tag \nProvider message:\nprovider-message\nCommand output:\ncommand-output" ) );
     }
 
     @Test
@@ -177,9 +173,9 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
 
         // mock, only real matcher is the file set
         ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
-        Mockito.when( scmProviderMock.untag( Matchers.isA( ScmRepository.class ),
-                Matchers.argThat( new IsScmFileSetEquals( fileSet ) ),
-                Matchers.isA( CommandParameters.class ) ) )
+        Mockito.when( scmProviderMock.untag( isA( ScmRepository.class ),
+                argThat( new IsScmFileSetEquals( fileSet ) ),
+                isA( CommandParameters.class ) ) )
                 .thenReturn( new UntagScmResult( "command-line", "provider-message", "command-output", false ) );
         ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
@@ -235,7 +231,6 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
                 new DefaultReleaseEnvironment(), reactorProjects );
 
         Assert.assertEquals( 0, actual.getResultCode() );
-
     }
 
     private List<MavenProject> createReactorProjects() throws Exception

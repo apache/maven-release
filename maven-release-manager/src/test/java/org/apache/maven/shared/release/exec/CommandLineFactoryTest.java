@@ -22,8 +22,6 @@ package org.apache.maven.shared.release.exec;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.cli.Commandline;
 
-import java.util.Locale;
-
 /**
  * Test the command line factory.
  *

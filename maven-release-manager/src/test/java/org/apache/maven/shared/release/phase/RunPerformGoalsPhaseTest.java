@@ -21,10 +21,10 @@ package org.apache.maven.shared.release.phase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -104,7 +104,7 @@ public class RunPerformGoalsPhaseTest
                                                                                                    isA( ReleaseEnvironment.class ),
                                                                                                    eq( true ),
                                                                                                    eq( "-DperformRelease=true -f pom.xml" ),
-                                                                                                   isNull( String.class ),
+                                                                                                   isNull(),
                                                                                                    isA( ReleaseResult.class ) );
 
         mavenExecutorWrapper.setMavenExecutor( mock );
@@ -127,7 +127,7 @@ public class RunPerformGoalsPhaseTest
                                      isA( ReleaseEnvironment.class ),
                                      eq( true ),
                                      eq( "-DperformRelease=true -f pom.xml" ),
-                                     isNull( String.class ),
+                                     isNull(),
                                      isA( ReleaseResult.class ) );
         verifyNoMoreInteractions( mock );
     }
@@ -194,7 +194,7 @@ public class RunPerformGoalsPhaseTest
                                      isA( ReleaseEnvironment.class ),
                                      eq( true ),
                                      eq( "-Dmaven.test.skip=true -f pom.xml" ),
-                                     isNull( String.class ),
+                                     isNull(),
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
@@ -235,7 +235,7 @@ public class RunPerformGoalsPhaseTest
                                      isA( ReleaseEnvironment.class ),
                                      eq( true ),
                                      eq( "-DperformRelease=true -f pom.xml" ),
-                                     isNull( String.class ),
+                                     isNull(),
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
@@ -278,7 +278,7 @@ public class RunPerformGoalsPhaseTest
                                      isA( ReleaseEnvironment.class ),
                                      eq( true ),
                                      eq( "-f pom.xml" ),
-                                     isNull( String.class ),
+                                     isNull(),
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
@@ -320,7 +320,7 @@ public class RunPerformGoalsPhaseTest
                                      isA( ReleaseEnvironment.class),
                                      eq( true),
                                      eq( "-Dmaven.test.skip=true -DperformRelease=true -f pom.xml" ),
-                                     isNull( String.class ),
+                                     isNull(),
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
@@ -363,7 +363,7 @@ public class RunPerformGoalsPhaseTest
                                      isA( ReleaseEnvironment.class ),
                                      eq( true ),
                                      eq( "-DperformRelease=true -f pom.xml" ),
-                                     isNull( String.class ),
+                                     isNull(),
                                      isA( ReleaseResult.class ) );
         verify( scmProviderMock ).checkOut( isA( ScmRepository.class ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),

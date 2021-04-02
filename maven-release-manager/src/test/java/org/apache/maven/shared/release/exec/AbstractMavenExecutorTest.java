@@ -19,9 +19,9 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNull;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -31,11 +31,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+
+import junit.framework.TestCase;
 
 public class AbstractMavenExecutorTest
     extends TestCase
@@ -47,51 +47,51 @@ public class AbstractMavenExecutorTest
         AbstractMavenExecutor executor = spy( new AbstractMavenExecutorSpy() );
 
         executor.executeGoals( null, (String) null, new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull( File.class ), eq( new ArrayList<String>() ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
-                                         isNull( String.class ), isNull( ReleaseResult.class ) );
+        verify( executor ).executeGoals( isNull(), eq( new ArrayList<String>() ),
+                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
+                                         isNull(), isNull() );
         reset( executor );
 
         executor.executeGoals( null, " clean verify ", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull( File.class ),
+        verify( executor ).executeGoals( isNull(),
                                          eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
-                                         isNull( String.class ), isNull( ReleaseResult.class ) );
+                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
+                                         isNull(), isNull() );
         reset( executor );
 
         executor.executeGoals( null, ",clean,verify,", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull( File.class ),
+        verify( executor ).executeGoals( isNull(),
                                          eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
-                                         isNull( String.class ), isNull( ReleaseResult.class ) );
+                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
+                                         isNull(), isNull() );
         reset( executor );
 
         executor.executeGoals( null, "\nclean\nverify\n", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull( File.class ),
+        verify( executor ).executeGoals( isNull(),
                                          eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
-                                         isNull( String.class ), isNull( ReleaseResult.class ) );
+                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
+                                         isNull(), isNull() );
         reset( executor );
 
         executor.executeGoals( null, "\rclean\rverify\r", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull( File.class ),
+        verify( executor ).executeGoals( isNull(),
                                          eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
-                                         isNull( String.class ), isNull( ReleaseResult.class ) );
+                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
+                                         isNull(), isNull() );
         reset( executor );
 
         executor.executeGoals( null, "\r\nclean\r\nverify\r\n", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull( File.class ),
+        verify( executor ).executeGoals( isNull(),
                                          eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
-                                         isNull( String.class ), isNull( ReleaseResult.class ) );
+                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
+                                         isNull(), isNull() );
         reset( executor );
 
         executor.executeGoals( null, "\tclean\tverify\t", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull( File.class ),
+        verify( executor ).executeGoals( isNull(),
                                          eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull( String.class ),
-                                         isNull( String.class ), isNull( ReleaseResult.class ) );
+                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
+                                         isNull(), isNull() );
         reset( executor );
     }
 

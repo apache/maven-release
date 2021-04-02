@@ -19,8 +19,8 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -30,7 +30,6 @@ import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -52,11 +51,9 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorStoreStub;
-import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.phase.ReleasePhaseStub;
-import org.apache.maven.shared.release.phase.RunPerformGoalsPhase;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.util.FileUtils;
@@ -596,7 +593,7 @@ public class DefaultReleaseManagerTest
         verify( managerListener, times( 5 ) ).phaseEnd();
 
         // not part of actual test, but required to confirm 'no more interactions'
-        verify( managerListener ).goalStart( anyString(), any( List.class ) );
+        verify( managerListener ).goalStart( anyString(), any() );
         verify( managerListener ).goalEnd();
 
         verifyNoMoreInteractions( managerListener );

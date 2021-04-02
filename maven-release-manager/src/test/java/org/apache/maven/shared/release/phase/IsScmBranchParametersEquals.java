@@ -19,7 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmBranchParameters;
 
 import org.mockito.ArgumentMatcher;

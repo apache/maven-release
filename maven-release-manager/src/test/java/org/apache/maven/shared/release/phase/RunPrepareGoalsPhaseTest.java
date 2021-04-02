@@ -94,7 +94,7 @@ public class RunPrepareGoalsPhaseTest
 
         // verify
         verify( mock ).executeGoals( eq( testFile ), eq( "clean integration-test" ), isA( ReleaseEnvironment.class ),
-                                     eq( true ), isNull( String.class ), isNull( String.class ),
+                                     eq( true ), isNull(), isNull(),
                                      isA( ReleaseResult.class ) );
         verifyNoMoreInteractions( mock );
     }
@@ -119,7 +119,7 @@ public class RunPrepareGoalsPhaseTest
 
         // verify
         verify( mock ).executeGoals( eq( testFile ), eq( "clean integration-test" ), isA( ReleaseEnvironment.class ),
-                                     eq( true ), isNull( String.class ), isNull( String.class ),
+                                     eq( true ), isNull(), isNull(),
                                      isA( ReleaseResult.class ) );
         verifyNoMoreInteractions( mock );
     }
@@ -141,8 +141,8 @@ public class RunPrepareGoalsPhaseTest
                                                                                             eq( "clean integration-test" ),
                                                                                             isA( ReleaseEnvironment.class ),
                                                                                             eq( true ),
-                                                                                            isNull( String.class ),
-                                                                                            isNull( String.class ),
+                                                                                            isNull(),
+                                                                                            isNull(),
                                                                                             isA( ReleaseResult.class ) );
 
         mavenExecutorWrapper.setMavenExecutor( mock );
@@ -161,7 +161,7 @@ public class RunPrepareGoalsPhaseTest
 
         // verify
         verify( mock ).executeGoals( eq( testFile ), eq( "clean integration-test" ), isA( ReleaseEnvironment.class ),
-                                     eq( true ), isNull( String.class ), isNull( String.class ),
+                                     eq( true ), isNull(), isNull(),
                                      isA( ReleaseResult.class ) );
         verifyNoMoreInteractions( mock );
     }
@@ -183,8 +183,8 @@ public class RunPrepareGoalsPhaseTest
                                                                                             eq( "clean integration-test" ),
                                                                                             isA( ReleaseEnvironment.class ),
                                                                                             eq( true ),
-                                                                                            isNull( String.class ),
-                                                                                            isNull( String.class ),
+                                                                                            isNull(),
+                                                                                            isNull(),
                                                                                             isA( ReleaseResult.class ) );
 
         mavenExecutorWrapper.setMavenExecutor( mock );
@@ -203,7 +203,7 @@ public class RunPrepareGoalsPhaseTest
 
         // verify
         verify( mock ).executeGoals( eq( testFile ), eq( "clean integration-test" ), isA( ReleaseEnvironment.class ),
-                                     eq( true ), isNull( String.class ), isNull( String.class ),
+                                     eq( true ), isNull(), isNull(),
                                      isA( ReleaseResult.class ) );
         verifyNoMoreInteractions( mock );
 
