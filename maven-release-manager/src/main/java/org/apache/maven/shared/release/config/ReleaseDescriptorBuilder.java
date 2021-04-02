@@ -332,6 +332,12 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
+    public ReleaseDescriptorBuilder setScmSignTags( boolean signTags )
+    {
+        releaseDescriptor.setScmSignTags( signTags );
+        return this;
+    }
+
     public ReleaseDescriptorBuilder setScmUseEditMode( boolean scmUseEditMode )
     {
         releaseDescriptor.setScmUseEditMode( scmUseEditMode );

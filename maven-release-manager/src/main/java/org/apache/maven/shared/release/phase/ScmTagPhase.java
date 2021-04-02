@@ -119,6 +119,7 @@ public class ScmTagPhase
             ScmTagParameters scmTagParameters =
                 new ScmTagParameters( releaseDescriptor.getScmCommentPrefix() + "copy for tag " + tagName );
             scmTagParameters.setRemoteTagging( releaseDescriptor.isRemoteTagging() );
+            scmTagParameters.setSign( releaseDescriptor.isScmSignTags() );
             scmTagParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
             scmTagParameters.setPinExternals( releaseDescriptor.isPinExternals() );
             if ( getLogger().isDebugEnabled() )

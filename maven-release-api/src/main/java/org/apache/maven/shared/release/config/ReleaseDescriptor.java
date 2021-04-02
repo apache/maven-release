@@ -116,6 +116,13 @@ public interface ReleaseDescriptor
      */
     boolean isRemoteTagging();
 
+
+    /**
+     * Get if the scm provider should sign the tag. NOTE: currently only implemented with git-exe.
+     * @return boolean true if SCM tag should be signed
+     */
+    boolean isScmSignTags();
+
     /**
      * Get if the scm provider should use local checkouts via file://${basedir} instead of doing a clean checkout over
      * the network. This is very helpful for releasing large projects!
