@@ -23,7 +23,7 @@ import org.apache.maven.scm.ScmBranch;
 import org.mockito.ArgumentMatcher;
 
 /**
- * JMock constraint to compare tags since it has no equals method.
+ * Mockito constraint to compare tags since it has no equals method.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */

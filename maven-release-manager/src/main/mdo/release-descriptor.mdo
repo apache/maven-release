@@ -503,7 +503,7 @@
           <type>boolean</type>
           <defaultValue>false</defaultValue>
           <description>
-            NOTE : currently only implemented with svn scm. Enable a workaround to prevent issue due to svn client > 1.5.0
+            NOTE : currently only implemented with svn scm. Enable a workaround to prevent issue due to svn client &amp;gt; 1.5.0
             (http://jira.codehaus.org/browse/SCM-406)
           </description>
         </field>
@@ -669,8 +669,8 @@
     /**
      * Method addReleaseVersion.
      * 
-     * @param key
-     * @param value
+     * @param projectId
+     * @param version
      */
     public void addReleaseVersion( String projectId, String version )
     {
@@ -689,8 +689,8 @@
     /**
      * Method addDevelopmentVersion.
      * 
-     * @param key
-     * @param value
+     * @param projectId
+     * @param version
      */
     public void addDevelopmentVersion( String projectId, String version )
     {

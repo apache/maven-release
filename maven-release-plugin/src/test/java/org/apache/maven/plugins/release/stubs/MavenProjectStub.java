@@ -23,13 +23,12 @@ import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
 
 /**
- * Stub for MavenProject.
- * <p/>
- * TODO: shouldn't need to do this, but the "stub" in the harness just throws away values you set.
- * Just overriding the ones I need for this plugin.
+ * <p>Stub for MavenProject.</p>
+ * 
+ * <p>TODO: shouldn't need to do this, but the "stub" in the harness just throws away values you set.
+ * Just overriding the ones I need for this plugin.</p>
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @noinspection ClassNameSameAsAncestorName
  */
 public class MavenProjectStub
     extends org.apache.maven.plugin.testing.stubs.MavenProjectStub

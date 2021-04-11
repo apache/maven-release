@@ -23,6 +23,8 @@ import org.apache.maven.scm.ScmTagParameters;
 import org.mockito.ArgumentMatcher;
 
 /**
+ * Mockito constraint to compare tags since it has no equals method.
+ * 
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  */
 public class IsScmTagParametersEquals implements ArgumentMatcher<ScmTagParameters>

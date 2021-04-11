@@ -28,10 +28,10 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 
 /**
- * Stub for a MavenProject with a flat structure.
- * <p/>
- * TODO: shouldn't need to do this, but the "stub" in the harness just throws away values you set.
- * Just overriding the ones I need for this plugin.
+ * <p>Stub for a MavenProject with a flat structure.</p>
+ * 
+ * <p>TODO: shouldn't need to do this, but the "stub" in the harness just throws away values you set.
+ * Just overriding the ones I need for this plugin.</p>
  *
  * @author <a href="mailto:oching@apache.org">Maria Odea Ching</a>
  */

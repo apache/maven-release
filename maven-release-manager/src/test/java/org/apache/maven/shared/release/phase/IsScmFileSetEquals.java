@@ -25,10 +25,9 @@ import org.apache.maven.scm.ScmFileSet;
 import org.mockito.ArgumentMatcher;
 
 /**
- * JMock constraint to compare file sets since it has no equals method.
+ * Mockito constraint to compare file sets since it has no equals method.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @todo add an equals() method
  */
 public class IsScmFileSetEquals implements ArgumentMatcher<ScmFileSet>
 {
@@ -55,4 +54,6 @@ public class IsScmFileSetEquals implements ArgumentMatcher<ScmFileSet>
             throw new RuntimeException(e.getMessage(), e);
         }
     }
+    
+    
 }
