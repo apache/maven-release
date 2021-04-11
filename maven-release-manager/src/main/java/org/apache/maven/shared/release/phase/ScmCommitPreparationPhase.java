@@ -46,15 +46,25 @@ public class ScmCommitPreparationPhase
         // no prepare-commit required
         if ( releaseDescriptor.isSuppressCommitBeforeTagOrBranch() )
         {
+            String parameterName;
+            if ( releaseDescriptor.isBranchCreation() ) 
+            {
+                parameterName = "suppressCommitBeforeBranch";
+            }
+            else 
+            {
+                parameterName = "suppressCommitBeforeTag";
+            }
+
             if ( simulating )
             {
-                logInfo( result, "Full run would not commit changes, "
-                    + "because suppressCommitBeforeTagOrBranch is set to true." );
+                logInfo( result,
+                         "Full run would not commit changes, " + "because " + parameterName + " is set to true." );
             }
             else
             {
                 logInfo( result,
-                         "Modified POMs are not committed because suppressCommitBeforeTagOrBranch is set to true." );
+                         "Modified POMs are not committed because " + parameterName + " is set to true." );
             }
         }
         // commit development versions required

@@ -67,11 +67,10 @@ public class ScmBranchPhase
 
         validateConfiguration( releaseDescriptor );
 
+        logInfo( relResult, "Branching release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
+
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
             ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
-
-        logInfo( relResult, "Branching release with the label " + basedirAlignedReleaseDescriptor.getScmReleaseLabel()
-            + "..." );
 
         ScmRepository repository;
         ScmProvider provider;
