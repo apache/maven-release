@@ -180,7 +180,7 @@
     <dependency>
       <groupId>org.sonatype.aether</groupId>
       <artifactId>aether-connector-wagon</artifactId>
-      <version>1.7</version>
+      <version>1.13.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
