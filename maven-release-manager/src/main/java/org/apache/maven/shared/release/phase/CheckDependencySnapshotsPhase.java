@@ -101,7 +101,7 @@ public class CheckDependencySnapshotsPhase
         }
         else
         {
-            logInfo( result, "Ignoring SNAPSHOT depenedencies and plugins ..." );
+            logInfo( result, "Ignoring SNAPSHOT dependencies and plugins ..." );
         }
         result.setResultCode( ReleaseResult.SUCCESS );
 
