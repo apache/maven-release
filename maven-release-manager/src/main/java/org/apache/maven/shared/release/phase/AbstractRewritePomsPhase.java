@@ -348,14 +348,9 @@ public abstract class AbstractRewritePomsPhase
     private void rewriteBuildOutputTimestampProperty( Properties properties, ReleaseResult result )
     {
         String buildOutputTimestamp = properties.getProperty( "project.build.outputTimestamp" );
-        if ( buildOutputTimestamp == null )
+        if ( buildOutputTimestamp == null || StringUtils.isEmpty( buildOutputTimestamp ) )
         {
             // no Reproducible Builds output timestamp defined
-            return;
-        }
-        if ( buildOutputTimestamp.length() <= 1 )
-        {
-            // value length == 1 means disable Reproducible Builds
             return;
         }
 
@@ -363,6 +358,11 @@ public abstract class AbstractRewritePomsPhase
         {
             // int representing seconds since the epoch, like SOURCE_DATE_EPOCH
             buildOutputTimestamp = String.valueOf( result.getStartTime() / 1000 );
+        }
+        else if ( buildOutputTimestamp.length() <= 1 )
+        {
+            // value length == 1 means disable Reproducible Builds
+            return;
         }
         else
         {
