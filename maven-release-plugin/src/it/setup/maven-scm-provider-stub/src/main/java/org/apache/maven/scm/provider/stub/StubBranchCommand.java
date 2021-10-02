@@ -33,7 +33,6 @@ import org.apache.maven.scm.provider.ScmProviderRepository;
  * A dummy branch command.
  * 
  * @author Peter Janes
- * @version $Id$
  */
 class StubBranchCommand
     extends AbstractCommand

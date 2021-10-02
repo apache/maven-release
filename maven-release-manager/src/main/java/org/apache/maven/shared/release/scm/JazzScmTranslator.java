@@ -32,9 +32,6 @@ import org.codehaus.plexus.component.annotations.Component;
 public class JazzScmTranslator
     implements ScmTranslator
 {
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )
     {
@@ -53,9 +50,6 @@ public class JazzScmTranslator
         return url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String translateTagUrl( String url, String tag, String tagBase )
     {
@@ -74,9 +68,6 @@ public class JazzScmTranslator
         return url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String resolveTag( String tag )
     {
@@ -84,9 +75,6 @@ public class JazzScmTranslator
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toRelativePath( String path )
     {

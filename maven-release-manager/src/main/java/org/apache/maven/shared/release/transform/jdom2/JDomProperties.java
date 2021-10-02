@@ -43,6 +43,11 @@ public class JDomProperties extends Properties
 {
     private final Element properties;
 
+    /**
+     * <p>Constructor for JDomProperties.</p>
+     *
+     * @param properties a {@link org.jdom2.Element} object
+     */
     public JDomProperties( Element properties )
     {
         this.properties = properties;

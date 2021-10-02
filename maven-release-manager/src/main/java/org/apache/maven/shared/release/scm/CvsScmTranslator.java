@@ -30,27 +30,18 @@ import org.codehaus.plexus.component.annotations.Component;
 public class CvsScmTranslator
     implements ScmTranslator
 {
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )
     {
         return url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         return url;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String resolveTag( String tag )
     {
@@ -64,9 +55,6 @@ public class CvsScmTranslator
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toRelativePath( String path )
     {

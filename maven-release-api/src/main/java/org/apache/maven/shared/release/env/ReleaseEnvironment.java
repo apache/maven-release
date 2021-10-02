@@ -25,24 +25,52 @@ import java.util.Locale;
 import org.apache.maven.settings.Settings;
 
 /**
+ * <p>ReleaseEnvironment interface.</p>
  *
  */
 public interface ReleaseEnvironment
 {
 
+    /** Constant <code>DEFAULT_MAVEN_EXECUTOR_ID="forked-path"</code> */
     String DEFAULT_MAVEN_EXECUTOR_ID = "forked-path";
 
+    /**
+     * <p>getMavenExecutorId.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     String getMavenExecutorId();
 
+    /**
+     * <p>getLocalRepositoryDirectory.</p>
+     *
+     * @return a {@link java.io.File} object
+     */
     File getLocalRepositoryDirectory();
 
+    /**
+     * <p>getSettings.</p>
+     *
+     * @return a {@link org.apache.maven.settings.Settings} object
+     */
     Settings getSettings();
 
+    /**
+     * <p>getMavenHome.</p>
+     *
+     * @return a {@link java.io.File} object
+     */
     File getMavenHome();
 
+    /**
+     * <p>getJavaHome.</p>
+     *
+     * @return a {@link java.io.File} object
+     */
     File getJavaHome();
 
     /**
+     * <p>getLocale.</p>
      *
      * @return the locale
      * @since 2.4

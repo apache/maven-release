@@ -29,6 +29,12 @@ public class MavenExecutorException
 {
     private int exitCode;
 
+    /**
+     * <p>Constructor for MavenExecutorException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param exitCode a int
+     */
     public MavenExecutorException( String message, int exitCode )
     {
         super( message );
@@ -36,11 +42,22 @@ public class MavenExecutorException
         this.exitCode = exitCode;
     }
 
+    /**
+     * <p>Constructor for MavenExecutorException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param cause a {@link java.lang.Throwable} object
+     */
     public MavenExecutorException( String message, Throwable cause )
     {
         super( message, cause );
     }
 
+    /**
+     * <p>Getter for the field <code>exitCode</code>.</p>
+     *
+     * @return a int
+     */
     public int getExitCode()
     {
         return exitCode;

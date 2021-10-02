@@ -66,16 +66,31 @@ public class JDomModelETL implements ModelETL
 
     private String ls = ReleaseUtil.LS;
 
+    /**
+     * <p>Setter for the field <code>ls</code>.</p>
+     *
+     * @param ls a {@link java.lang.String} object
+     */
     public void setLs( String ls )
     {
         this.ls = ls;
     }
 
+    /**
+     * <p>Setter for the field <code>releaseDescriptor</code>.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     */
     public void setReleaseDescriptor( ReleaseDescriptor releaseDescriptor )
     {
         this.releaseDescriptor = releaseDescriptor;
     }
 
+    /**
+     * <p>Setter for the field <code>project</code>.</p>
+     *
+     * @param project a {@link org.apache.maven.project.MavenProject} object
+     */
     public void setProject( MavenProject project )
     {
         this.project = project;

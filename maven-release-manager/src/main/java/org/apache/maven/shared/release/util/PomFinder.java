@@ -42,7 +42,7 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
  * 'right' sub directory in this case.
  * subdirectory </p>
  *
- * <h3>Usage:</h3>
+ * Usage:
  * <p>PomFinder is a statefull class. One instance of this class intended
  * for a singular use! You need to create a new instance if you like
  * to search for another pom.</p>

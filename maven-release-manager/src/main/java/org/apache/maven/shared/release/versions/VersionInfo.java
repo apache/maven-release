@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.versions;
 
 /**
  * Represent the different version representations during the release-prepare phase
+ *
  */
 public interface VersionInfo
     extends Comparable<VersionInfo>
@@ -41,7 +42,8 @@ public interface VersionInfo
     String getReleaseVersionString();
 
     /**
-     * Returns a {@link VersionInfo} object which represents the next version of this object.
+     * Returns a {@link org.apache.maven.shared.release.versions.VersionInfo} object which represents the next version
+     *    of this object.
      *
      * @return the next VersionInfo
      */

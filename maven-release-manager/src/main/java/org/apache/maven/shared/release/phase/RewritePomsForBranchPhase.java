@@ -40,7 +40,6 @@ import org.codehaus.plexus.component.annotations.Component;
  * Rewrite POMs for branch.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
- * @version $Id$
  */
 @Component( role = ReleasePhase.class, hint = "rewrite-poms-for-branch" )
 public class RewritePomsForBranchPhase

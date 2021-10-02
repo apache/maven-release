@@ -40,7 +40,6 @@ import org.codehaus.plexus.util.FileUtils;
  * A dummy check-in command.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  */
 class StubCheckInCommand
     extends AbstractCommand

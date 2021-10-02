@@ -36,6 +36,7 @@ import org.codehaus.plexus.component.annotations.Component;
 public class RewritePomVersionsPhase
     extends AbstractRewritePomsPhase
 {
+
     @Override
     protected final String getPomSuffix()
     {

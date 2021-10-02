@@ -69,12 +69,27 @@ public class PropertiesReleaseDescriptorStore
         return read( mergeDescriptor, getDefaultReleasePropertiesFile( mergeDescriptor.build() ) );
     }
 
+    /**
+     * <p>read.</p>
+     *
+     * @param file a {@link java.io.File} object
+     * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
+     */
     public ReleaseDescriptorBuilder read( File file )
         throws ReleaseDescriptorStoreException
     {
         return read( null, file );
     }
 
+    /**
+     * <p>read.</p>
+     *
+     * @param mergeDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @param file a {@link java.io.File} object
+     * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
+     */
     public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor, File file )
         throws ReleaseDescriptorStoreException
     {
@@ -135,6 +150,14 @@ public class PropertiesReleaseDescriptorStore
         }
     }
 
+    /**
+     * <p>write.</p>
+     *
+     * @param config a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor}
+     *               object
+     * @param file a {@link java.io.File} object
+     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
+     */
     public void write( BuilderReleaseDescriptor config, File file )
         throws ReleaseDescriptorStoreException
     {

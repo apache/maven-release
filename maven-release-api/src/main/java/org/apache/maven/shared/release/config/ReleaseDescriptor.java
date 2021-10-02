@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.maven.model.Scm;
 
 /**
+ * <p>ReleaseDescriptor interface.</p>
  *
  * @author Robert Scholte
  */
@@ -119,6 +120,7 @@ public interface ReleaseDescriptor
 
     /**
      * Get if the scm provider should sign the tag. NOTE: currently only implemented with git-exe.
+     *
      * @return boolean true if SCM tag should be signed
      */
     boolean isScmSignTags();
@@ -227,6 +229,7 @@ public interface ReleaseDescriptor
     boolean isScmUseEditMode();
 
     /**
+     * <p>getActivateProfiles.</p>
      *
      * @return list of profiles to activate
      */
@@ -422,57 +425,129 @@ public interface ReleaseDescriptor
     String getReleaseStrategyId();
 
     /**
-     * @return {@code String} The original version for the resolved snapshot dependency.
+     * <p>getDependencyOriginalVersion.</p>
      *
+     * @return {@code String} The original version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
      */
     String getDependencyOriginalVersion( String artifactKey );
 
     /**
-     * @return {@code String} the release version for the resolved snapshot dependency.
+     * <p>getDependencyReleaseVersion.</p>
      *
+     * @return {@code String} the release version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
      */
     String getDependencyReleaseVersion( String artifactKey );
 
     /**
-     * @return {@code String} the release version for the resolved snapshot dependency.
+     * <p>getDependencyDevelopmentVersion.</p>
      *
+     * @return {@code String} the release version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
      */
     String getDependencyDevelopmentVersion( String artifactKey );
 
 
+    /**
+     * <p>getProjectOriginalVersion.</p>
+     *
+     * @param projectKey a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     String getProjectOriginalVersion( String projectKey );
 
+    /**
+     * <p>getProjectDevelopmentVersion.</p>
+     *
+     * @param projectKey a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     String getProjectDevelopmentVersion( String projectKey );
 
+    /**
+     * <p>getProjectReleaseVersion.</p>
+     *
+     * @param key a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     String getProjectReleaseVersion( String key );
 
     /**
-     * @return the original {@code Scm} information.
+     * <p>getOriginalScmInfo.</p>
      *
+     * @return the original {@code Scm} information.
      * @param projectKey the project key {@code String}
      */
     Scm getOriginalScmInfo( String projectKey );
 
     // Modifiable
+    /**
+     * <p>addDependencyOriginalVersion.</p>
+     *
+     * @param versionlessKey a {@link java.lang.String} object
+     * @param string a {@link java.lang.String} object
+     */
     void addDependencyOriginalVersion( String versionlessKey, String string );
 
+    /**
+     * <p>addDependencyReleaseVersion.</p>
+     *
+     * @param versionlessKey a {@link java.lang.String} object
+     * @param version a {@link java.lang.String} object
+     */
     void addDependencyReleaseVersion( String versionlessKey, String version );
 
+    /**
+     * <p>addDependencyDevelopmentVersion.</p>
+     *
+     * @param versionlessKey a {@link java.lang.String} object
+     * @param version a {@link java.lang.String} object
+     */
     void addDependencyDevelopmentVersion( String versionlessKey, String version );
 
+    /**
+     * <p>addReleaseVersion.</p>
+     *
+     * @param projectId a {@link java.lang.String} object
+     * @param nextVersion a {@link java.lang.String} object
+     */
     void addReleaseVersion( String projectId, String nextVersion );
 
+    /**
+     * <p>addDevelopmentVersion.</p>
+     *
+     * @param projectId a {@link java.lang.String} object
+     * @param nextVersion a {@link java.lang.String} object
+     */
     void addDevelopmentVersion( String projectId, String nextVersion );
 
+    /**
+     * <p>setScmReleaseLabel.</p>
+     *
+     * @param tag a {@link java.lang.String} object
+     */
     void setScmReleaseLabel( String tag );
 
+    /**
+     * <p>setScmReleasedPomRevision.</p>
+     *
+     * @param scmRevision a {@link java.lang.String} object
+     */
     void setScmReleasedPomRevision( String scmRevision );
 
+    /**
+     * <p>setScmRelativePathProjectDirectory.</p>
+     *
+     * @param scmRelativePathProjectDirectory a {@link java.lang.String} object
+     */
     void setScmRelativePathProjectDirectory( String scmRelativePathProjectDirectory );
 
+    /**
+     * <p>setScmSourceUrl.</p>
+     *
+     * @param scmUrl a {@link java.lang.String} object
+     */
     void setScmSourceUrl( String scmUrl );
 
     /**

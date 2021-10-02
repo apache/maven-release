@@ -207,6 +207,11 @@ public class DefaultScmRepositoryConfigurator
         return scmManager.getProviderByRepository( repository );
     }
 
+    /**
+     * <p>Setter for the field <code>scmManager</code>.</p>
+     *
+     * @param scmManager a {@link org.apache.maven.scm.manager.ScmManager} object
+     */
     public void setScmManager( ScmManager scmManager )
     {
         this.scmManager = scmManager;

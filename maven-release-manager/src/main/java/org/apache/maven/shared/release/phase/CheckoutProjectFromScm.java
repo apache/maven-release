@@ -53,7 +53,6 @@ import org.codehaus.plexus.util.StringUtils;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
- * @version $Id$
  */
 @Component( role = ReleasePhase.class, hint = "checkout-project-from-scm" )
 public class CheckoutProjectFromScm

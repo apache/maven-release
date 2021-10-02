@@ -33,6 +33,11 @@ public class JDomExtension extends Extension implements MavenCoordinate
 {
     private final MavenCoordinate coordinate;
 
+    /**
+     * <p>Constructor for JDomExtension.</p>
+     *
+     * @param extension a {@link org.jdom2.Element} object
+     */
     public JDomExtension( Element extension )
     {
         this.coordinate = new JDomMavenCoordinate( extension );

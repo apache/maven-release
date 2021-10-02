@@ -41,6 +41,11 @@ public class JDomPlugin extends Plugin implements MavenCoordinate
     private Element plugin;
     private final MavenCoordinate coordinate;
 
+    /**
+     * <p>Constructor for JDomPlugin.</p>
+     *
+     * @param plugin a {@link org.jdom2.Element} object
+     */
     public JDomPlugin( Element plugin )
     {
         this.plugin = plugin;

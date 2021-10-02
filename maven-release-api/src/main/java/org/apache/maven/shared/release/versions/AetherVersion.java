@@ -46,6 +46,12 @@ class AetherVersion
         return this.version.toString();
     }
 
+    /**
+     * <p>compareTo.</p>
+     *
+     * @param other a {@link org.eclipse.aether.version.Version} object
+     * @return a int
+     */
     public int compareTo( org.eclipse.aether.version.Version other )
     {
         return this.version.compareTo( other );

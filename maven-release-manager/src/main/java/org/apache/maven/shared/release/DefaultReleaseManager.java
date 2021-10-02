@@ -550,6 +550,12 @@ public class DefaultReleaseManager
         }
     }
 
+    /**
+     * <p>clean.</p>
+     *
+     * @param releaseRequest a {@link org.apache.maven.shared.release.AbstractReleaseRequest} object
+     * @throws org.apache.maven.shared.release.ReleaseFailureException if any.
+     */
     protected void clean( AbstractReleaseRequest releaseRequest  ) throws ReleaseFailureException
     {
         ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();

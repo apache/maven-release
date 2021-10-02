@@ -23,6 +23,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.jdom2.Element;
 
 /**
+ * <p>JDomMavenCoordinate class.</p>
  *
  * @author Robert Scholte
  * @since 3.0
@@ -31,6 +32,11 @@ public class JDomMavenCoordinate implements MavenCoordinate
 {
     private final Element element;
 
+    /**
+     * <p>Constructor for JDomMavenCoordinate.</p>
+     *
+     * @param elm a {@link org.jdom2.Element} object
+     */
     public JDomMavenCoordinate( Element elm )
     {
         this.element = elm;

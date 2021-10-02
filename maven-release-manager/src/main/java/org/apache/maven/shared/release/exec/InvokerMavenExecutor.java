@@ -94,6 +94,7 @@ public class InvokerMavenExecutor
 
     private static final String BATCH_MODE = "B";
     
+    /** Constant <code>ALTERNATE_USER_TOOLCHAINS='t'</code> */
     public static final char ALTERNATE_USER_TOOLCHAINS = 't';
     
     static
@@ -163,6 +164,14 @@ public class InvokerMavenExecutor
     }
 
     // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
+    /**
+     * <p>setupRequest.</p>
+     *
+     * @param req a {@link org.apache.maven.shared.invoker.InvocationRequest} object
+     * @param bridge a {@link org.apache.maven.shared.invoker.InvokerLogger} object
+     * @param additionalArguments a {@link java.lang.String} object
+     * @throws org.apache.maven.shared.release.exec.MavenExecutorException if any.
+     */
     protected void setupRequest( InvocationRequest req,
                                  InvokerLogger bridge,
                                String additionalArguments )
@@ -409,11 +418,21 @@ public class InvokerMavenExecutor
         }
     }
 
+    /**
+     * <p>getInvokerLogger.</p>
+     *
+     * @return a {@link org.apache.maven.shared.invoker.InvokerLogger} object
+     */
     protected InvokerLogger getInvokerLogger()
     {
         return new LoggerBridge( getLogger() );
     }
 
+    /**
+     * <p>getOutputHandler.</p>
+     *
+     * @return a {@link org.apache.maven.shared.invoker.InvocationOutputHandler} object
+     */
     protected InvocationOutputHandler getOutputHandler()
     {
         return new Handler( getLogger() );

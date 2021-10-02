@@ -24,7 +24,8 @@ import java.util.List;
 import org.apache.maven.shared.release.strategy.Strategy;
 
 /**
- * 
+ * <p>DefaultStrategy class.</p>
+ *
  * @author Robert Scholte
  * @since 3.0.0
  */
@@ -61,6 +62,11 @@ public class DefaultStrategy implements Strategy
         return preparePhases;
     }
 
+    /**
+     * <p>Setter for the field <code>preparePhases</code>.</p>
+     *
+     * @param preparePhases a {@link java.util.List} object
+     */
     public void setPreparePhases( List<String> preparePhases )
     {
         this.preparePhases = preparePhases;
@@ -72,6 +78,11 @@ public class DefaultStrategy implements Strategy
         return performPhases;
     }
 
+    /**
+     * <p>Setter for the field <code>performPhases</code>.</p>
+     *
+     * @param performPhases a {@link java.util.List} object
+     */
     public void setPerformPhases( List<String> performPhases )
     {
         this.performPhases = performPhases;
@@ -83,6 +94,11 @@ public class DefaultStrategy implements Strategy
         return rollbackPhases;
     }
 
+    /**
+     * <p>Setter for the field <code>rollbackPhases</code>.</p>
+     *
+     * @param rollbackPhases a {@link java.util.List} object
+     */
     public void setRollbackPhases( List<String> rollbackPhases )
     {
         this.rollbackPhases = rollbackPhases;
@@ -94,6 +110,11 @@ public class DefaultStrategy implements Strategy
         return branchPhases;
     }
 
+    /**
+     * <p>Setter for the field <code>branchPhases</code>.</p>
+     *
+     * @param branchPhases a {@link java.util.List} object
+     */
     public void setBranchPhases( List<String> branchPhases )
     {
         this.branchPhases = branchPhases;
@@ -105,6 +126,11 @@ public class DefaultStrategy implements Strategy
         return updateVersionsPhases;
     }
 
+    /**
+     * <p>Setter for the field <code>updateVersionsPhases</code>.</p>
+     *
+     * @param updateVersionsPhases a {@link java.util.List} object
+     */
     public void setUpdateVersionsPhases( List<String> updateVersionsPhases )
     {
         this.updateVersionsPhases = updateVersionsPhases;

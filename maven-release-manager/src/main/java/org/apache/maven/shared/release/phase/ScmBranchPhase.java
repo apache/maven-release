@@ -58,6 +58,7 @@ public class ScmBranchPhase
     @Requirement
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
+
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )

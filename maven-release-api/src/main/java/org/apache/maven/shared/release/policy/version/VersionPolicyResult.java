@@ -20,18 +20,30 @@ package org.apache.maven.shared.release.policy.version;
  */
 
 /**
- * 
+ * <p>VersionPolicyResult class.</p>
+ *
  * @since 2.5.1 (MRELEASE-431)
  */
 public class VersionPolicyResult
 {
     private String version;
 
+    /**
+     * <p>Getter for the field <code>version</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getVersion()
     {
         return version;
     }
 
+    /**
+     * <p>Setter for the field <code>version</code>.</p>
+     *
+     * @param version a {@link java.lang.String} object
+     * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyResult} object
+     */
     public VersionPolicyResult setVersion( String version )
     {
         this.version = version;

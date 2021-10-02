@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.scm;
 import org.codehaus.plexus.component.annotations.Component;
 
 /**
+ * <p>HgScmTranslator class.</p>
  */
 @Component( role = ScmTranslator.class, hint = "hg" )
 public class HgScmTranslator

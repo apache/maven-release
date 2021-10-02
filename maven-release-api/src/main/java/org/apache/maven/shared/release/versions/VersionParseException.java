@@ -20,11 +20,16 @@ package org.apache.maven.shared.release.versions;
  */
 
 /**
- * 
+ * <p>VersionParseException class.</p>
  */
 public class VersionParseException
     extends Exception
 {
+    /**
+     * <p>Constructor for VersionParseException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     */
     public VersionParseException( String message )
     {
         super( message );

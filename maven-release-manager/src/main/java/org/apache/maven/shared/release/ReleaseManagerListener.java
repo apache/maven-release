@@ -22,19 +22,48 @@ package org.apache.maven.shared.release;
 import java.util.List;
 
 /**
+ * <p>ReleaseManagerListener interface.</p>
+ *
  * @author Edwin Punzalan
  */
 public interface ReleaseManagerListener
 {
+    /**
+     * <p>goalStart.</p>
+     *
+     * @param goal a {@link java.lang.String} object
+     * @param phases a {@link java.util.List} object
+     */
     void goalStart( String goal, List<String> phases );
 
+    /**
+     * <p>phaseStart.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     */
     void phaseStart( String name );
 
+    /**
+     * <p>phaseEnd.</p>
+     */
     void phaseEnd();
 
+    /**
+     * <p>phaseSkip.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     */
     void phaseSkip( String name );
 
+    /**
+     * <p>goalEnd.</p>
+     */
     void goalEnd();
 
+    /**
+     * <p>error.</p>
+     *
+     * @param reason a {@link java.lang.String} object
+     */
     void error( String reason );
 }

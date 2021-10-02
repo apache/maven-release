@@ -32,6 +32,11 @@ public class JDomParent extends Parent
 {
     private Element parent;
 
+    /**
+     * <p>Constructor for JDomParent.</p>
+     *
+     * @param parent a {@link org.jdom2.Element} object
+     */
     public JDomParent( Element parent )
     {
         this.parent = parent;

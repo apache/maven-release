@@ -37,6 +37,11 @@ public class JDomDependencyManagement extends DependencyManagement
 {
     private final Element dependencyManagement;
 
+    /**
+     * <p>Constructor for JDomDependencyManagement.</p>
+     *
+     * @param dependencyManagement a {@link org.jdom2.Element} object
+     */
     public JDomDependencyManagement( Element dependencyManagement )
     {
         this.dependencyManagement = dependencyManagement;

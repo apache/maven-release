@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
+ * <p>TeeOutputStream class.</p>
  *
  */
 public class TeeOutputStream
@@ -34,11 +35,22 @@ public class TeeOutputStream
     private byte indent[];
     private int last = '\n';
 
+    /**
+     * <p>Constructor for TeeOutputStream.</p>
+     *
+     * @param out a {@link java.io.OutputStream} object
+     */
     public TeeOutputStream( OutputStream out )
     {
         this( out, "    " );
     }
 
+    /**
+     * <p>Constructor for TeeOutputStream.</p>
+     *
+     * @param out a {@link java.io.OutputStream} object
+     * @param i a {@link java.lang.String} object
+     */
     public TeeOutputStream( OutputStream out, String i )
     {
         super( out );
@@ -86,6 +98,11 @@ public class TeeOutputStream
         return bout.toString();
     }
 
+    /**
+     * <p>getContent.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getContent()
     {
         return bout.toString();

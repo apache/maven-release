@@ -41,6 +41,11 @@ public class JDomBuild
 {
     private final Element build;
 
+    /**
+     * <p>Constructor for JDomBuild.</p>
+     *
+     * @param build a {@link org.jdom2.Element} object
+     */
     public JDomBuild( Element build )
     {
         this.build = build;

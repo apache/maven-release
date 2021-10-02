@@ -30,22 +30,34 @@ public interface ReleaseManager
      * Prepare a release.
      *
      * @param prepareRequest             all prepare arguments
-     * @throws ReleaseExecutionException if there is a problem performing the release
-     * @throws ReleaseFailureException   if there is a problem performing the release
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem performing the release
+     * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem performing the release
      * @since 2.3
      */
     void prepare( ReleasePrepareRequest prepareRequest ) throws ReleaseExecutionException, ReleaseFailureException;
 
+    /**
+     * <p>prepareWithResult.</p>
+     *
+     * @param prepareRequest a {@link org.apache.maven.shared.release.ReleasePrepareRequest} object
+     * @return a {@link org.apache.maven.shared.release.ReleaseResult} object
+     */
     ReleaseResult prepareWithResult( ReleasePrepareRequest prepareRequest );
 
+    /**
+     * <p>performWithResult.</p>
+     *
+     * @param performRequest a {@link org.apache.maven.shared.release.ReleasePerformRequest} object
+     * @return a {@link org.apache.maven.shared.release.ReleaseResult} object
+     */
     ReleaseResult performWithResult( ReleasePerformRequest performRequest );
 
     /**
      * Perform a release
      *
      * @param performRequest   all perform arguments
-     * @throws ReleaseExecutionException if there is a problem performing the release
-     * @throws ReleaseFailureException   if there is a problem performing the release
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem performing the release
+     * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem performing the release
      * @since 2.3
      */
     void perform( ReleasePerformRequest performRequest )
@@ -55,7 +67,7 @@ public interface ReleaseManager
      * Clean a release.
      *
      * @param cleanRequest all clean arguments
-     * @throws ReleaseFailureException if exception when releasing
+     * @throws org.apache.maven.shared.release.ReleaseFailureException if exception when releasing
      * @since 2.3
      */
     void clean( ReleaseCleanRequest cleanRequest ) throws ReleaseFailureException;
@@ -64,8 +76,8 @@ public interface ReleaseManager
      * Rollback changes made by the previous release
      *
      * @param rollbackRequest            all rollback arguments
-     * @throws ReleaseExecutionException if there is a problem during release rollback
-     * @throws ReleaseFailureException   if there is a problem during release rollback
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem during release rollback
+     * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem during release rollback
      * @since 2.3
      */
     void rollback( ReleaseRollbackRequest rollbackRequest )
@@ -75,8 +87,8 @@ public interface ReleaseManager
      * Branch a project
      *
      * @param branchRequest              all branch arguments
-     * @throws ReleaseExecutionException if there is a problem during release branch
-     * @throws ReleaseFailureException   if there is a problem during release branch
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem during release branch
+     * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem during release branch
      * @since 2.3
      */
     void branch( ReleaseBranchRequest branchRequest ) throws ReleaseExecutionException, ReleaseFailureException;
@@ -85,8 +97,8 @@ public interface ReleaseManager
      * Update version numbers for a project
      *
      * @param updateVersionsRequest      all update versions arguments
-     * @throws ReleaseExecutionException if there is a problem during update versions
-     * @throws ReleaseFailureException   if there is a problem during update versions
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem during update versions
+     * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem during update versions
      * @since 2.3
      */
     void updateVersions( ReleaseUpdateVersionsRequest updateVersionsRequest )

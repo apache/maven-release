@@ -44,6 +44,7 @@ import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
 import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
 
 /**
+ * <p>Abstract AbstractMavenExecutor class.</p>
  *
  */
 public abstract class AbstractMavenExecutor
@@ -65,6 +66,9 @@ public abstract class AbstractMavenExecutor
     @Requirement
     private PlexusCipher cipher;
 
+    /**
+     * <p>Constructor for AbstractMavenExecutor.</p>
+     */
     protected AbstractMavenExecutor()
     {
     }
@@ -95,6 +99,11 @@ public abstract class AbstractMavenExecutor
                                           String additionalArguments, String pomFileName, ReleaseResult result )
         throws MavenExecutorException;
 
+    /**
+     * <p>Getter for the field <code>logger</code>.</p>
+     *
+     * @return a {@link org.codehaus.plexus.logging.Logger} object
+     */
     protected final Logger getLogger()
     {
         return logger;
@@ -107,6 +116,12 @@ public abstract class AbstractMavenExecutor
     }
 
 
+    /**
+     * <p>encryptSettings.</p>
+     *
+     * @param settings a {@link org.apache.maven.settings.Settings} object
+     * @return a {@link org.apache.maven.settings.Settings} object
+     */
     protected Settings encryptSettings( Settings settings )
     {
         Settings encryptedSettings = SettingsUtils.copySettings( settings );
@@ -195,6 +210,11 @@ public abstract class AbstractMavenExecutor
         return cipher.isEncryptedString( str );
     }
 
+    /**
+     * <p>getSettingsWriter.</p>
+     *
+     * @return a {@link org.apache.maven.settings.io.xpp3.SettingsXpp3Writer} object
+     */
     protected SettingsXpp3Writer getSettingsWriter()
     {
         return new SettingsXpp3Writer();

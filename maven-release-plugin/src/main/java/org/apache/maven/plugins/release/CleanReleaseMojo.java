@@ -28,14 +28,13 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
- * Clean up after a release preparation. This is done automatically after a successful <tt>release:perform</tt>,
+ * Clean up after a release preparation. This is done automatically after a successful <code>release:perform</code>,
  * so is best served for cleaning up a failed or abandoned release, or a dry run. Note that only the working copy
  * is cleaned up, no previous steps are rolled back.
  * For more info see <a href="https://maven.apache.org/plugins/maven-release-plugin/examples/clean-release.html"
  * >https://maven.apache.org/plugins/maven-release-plugin/examples/clean-release.html</a>.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 @Mojo( name = "clean", aggregator = true )
 public class CleanReleaseMojo

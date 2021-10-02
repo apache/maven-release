@@ -25,19 +25,40 @@ import org.apache.maven.model.Model;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 
 /**
+ * <p>ModelETL interface.</p>
  *
  * @author Robert Scholte
  * @since 3.0
  */
 public interface ModelETL
 {
+    /**
+     * <p>extract.</p>
+     *
+     * @param pomFile a {@link java.io.File} object
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     */
     void extract( File pomFile ) throws ReleaseExecutionException;
 
+    /**
+     * <p>transform.</p>
+     */
     void transform();
 
+    /**
+     * <p>load.</p>
+     *
+     * @param pomFile a {@link java.io.File} object
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     */
     void load( File pomFile ) throws ReleaseExecutionException;
 
     // will be removed once transform() is implemented
+    /**
+     * <p>getModel.</p>
+     *
+     * @return a {@link org.apache.maven.model.Model} object
+     */
     @Deprecated
     Model getModel();
 }

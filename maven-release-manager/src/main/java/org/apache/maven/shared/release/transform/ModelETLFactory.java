@@ -20,11 +20,18 @@ package org.apache.maven.shared.release.transform;
  */
 
 /**
+ * <p>ModelETLFactory interface.</p>
  *
  * @author Robert Scholte
  * @since 3.0
  */
 public interface ModelETLFactory
 {
+    /**
+     * <p>newInstance.</p>
+     *
+     * @param request a {@link org.apache.maven.shared.release.transform.ModelETLRequest} object
+     * @return a {@link org.apache.maven.shared.release.transform.ModelETL} object
+     */
     ModelETL newInstance( ModelETLRequest request );
 }

@@ -31,7 +31,6 @@ import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
- * @version $Id$
  */
 @Component( role = ReleasePhase.class, hint = "verify-completed-prepare-phases" )
 public class CheckCompletedPreparePhasesPhase

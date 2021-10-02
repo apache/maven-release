@@ -44,7 +44,6 @@ import org.codehaus.plexus.util.FileUtils;
  * A dummy check-out command.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  */
 class StubCheckOutCommand
     extends AbstractCommand

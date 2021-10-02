@@ -42,11 +42,22 @@ public class TeeConsumer
 
     private String indent;
 
+    /**
+     * <p>Constructor for TeeConsumer.</p>
+     *
+     * @param stream a {@link java.io.PrintStream} object
+     */
     public TeeConsumer( PrintStream stream )
     {
         this( stream, "    " );
     }
 
+    /**
+     * <p>Constructor for TeeConsumer.</p>
+     *
+     * @param stream a {@link java.io.PrintStream} object
+     * @param indent a {@link java.lang.String} object
+     */
     public TeeConsumer( PrintStream stream, String indent )
     {
         this.stream = stream;
@@ -63,6 +74,11 @@ public class TeeConsumer
         content.append( LS );
     }
 
+    /**
+     * <p>Getter for the field <code>content</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getContent()
     {
         return content.toString();

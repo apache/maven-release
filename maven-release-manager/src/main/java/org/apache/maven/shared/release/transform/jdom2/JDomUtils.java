@@ -89,6 +89,15 @@ public final class JDomUtils
         }
     }
 
+    /**
+     * <p>rewriteElement.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     * @param value a {@link java.lang.String} object
+     * @param root a {@link org.jdom2.Element} object
+     * @param namespace a {@link org.jdom2.Namespace} object
+     * @return a {@link org.jdom2.Element} object
+     */
     public static Element rewriteElement( String name, String value, Element root, Namespace namespace )
     {
         Element tagElement = root.getChild( name, namespace );

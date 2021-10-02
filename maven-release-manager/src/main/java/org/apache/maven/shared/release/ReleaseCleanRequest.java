@@ -20,6 +20,7 @@ package org.apache.maven.shared.release;
  */
 
 /**
+ * <p>ReleaseCleanRequest class.</p>
  *
  * @author Robert Scholte
  * @since 2.3

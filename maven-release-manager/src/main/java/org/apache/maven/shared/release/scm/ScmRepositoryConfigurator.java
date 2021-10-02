@@ -39,8 +39,9 @@ public interface ScmRepositoryConfigurator
      * @param releaseDescriptor the configuration to insert into the repository
      * @param settings          the settings.xml configuraiton
      * @return the repository created
-     * @throws ScmRepositoryException     if it is not possible to create a suitable SCM repository
-     * @throws NoSuchScmProviderException if the requested SCM provider is not available
+     * @throws org.apache.maven.scm.repository.ScmRepositoryException     if it is not possible to create a suitable
+     *         SCM repository
+     * @throws org.apache.maven.scm.manager.NoSuchScmProviderException if the requested SCM provider is not available
      */
     ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
         throws ScmRepositoryException, NoSuchScmProviderException;
@@ -50,7 +51,7 @@ public interface ScmRepositoryConfigurator
      *
      * @param repository the SCM repository
      * @return the SCM provider
-     * @throws NoSuchScmProviderException if the requested SCM provider is not available
+     * @throws org.apache.maven.scm.manager.NoSuchScmProviderException if the requested SCM provider is not available
      */
     ScmProvider getRepositoryProvider( ScmRepository repository )
         throws NoSuchScmProviderException;
@@ -62,8 +63,9 @@ public interface ScmRepositoryConfigurator
      * @param releaseDescriptor the configuration to insert into the repository
      * @param settings          the settings.xml configuraiton
      * @return the repository created
-     * @throws ScmRepositoryException     if it is not possible to create a suitable SCM repository
-     * @throws NoSuchScmProviderException if the requested SCM provider is not available
+     * @throws org.apache.maven.scm.repository.ScmRepositoryException     if it is not possible to create a suitable
+     *         SCM repository
+     * @throws org.apache.maven.scm.manager.NoSuchScmProviderException if the requested SCM provider is not available
      */
     ScmRepository getConfiguredRepository( String url, ReleaseDescriptor releaseDescriptor, Settings settings )
         throws ScmRepositoryException, NoSuchScmProviderException;

@@ -44,26 +44,51 @@ class MavenArtifactVersion
         }
     }
 
+    /**
+     * <p>getMajorVersion.</p>
+     *
+     * @return a int
+     */
     public int getMajorVersion()
     {
         return version.getMajorVersion();
     }
 
+    /**
+     * <p>getMinorVersion.</p>
+     *
+     * @return a int
+     */
     public int getMinorVersion()
     {
         return version.getMinorVersion();
     }
 
+    /**
+     * <p>getIncrementalVersion.</p>
+     *
+     * @return a int
+     */
     public int getIncrementalVersion()
     {
         return version.getIncrementalVersion();
     }
 
+    /**
+     * <p>getBuildNumber.</p>
+     *
+     * @return a int
+     */
     public int getBuildNumber()
     {
         return version.getBuildNumber();
     }
 
+    /**
+     * <p>getQualifier.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getQualifier()
     {
         return version.getQualifier();

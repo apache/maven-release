@@ -27,6 +27,12 @@ package org.apache.maven.shared.release.config;
 public class ReleaseDescriptorStoreException
     extends Exception
 {
+    /**
+     * <p>Constructor for ReleaseDescriptorStoreException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param t a {@link java.lang.Throwable} object
+     */
     public ReleaseDescriptorStoreException( String message, Throwable t )
     {
         super( message, t );

@@ -20,7 +20,7 @@ package org.apache.maven.shared.release.versions;
  */
 
 /**
- * 
+ * <p>VersionComparisonConflictException class.</p>
  */
 public class VersionComparisonConflictException
     extends RuntimeException
@@ -34,6 +34,14 @@ public class VersionComparisonConflictException
 
     private int mavenComparisonResult;
 
+    /**
+     * <p>Constructor for VersionComparisonConflictException.</p>
+     *
+     * @param lhsVersion a {@link java.lang.String} object
+     * @param rhsVersion a {@link java.lang.String} object
+     * @param aetherComparisonResult a int
+     * @param mavenComparisonResult a int
+     */
     public VersionComparisonConflictException( String lhsVersion, String rhsVersion, int aetherComparisonResult,
                                                int mavenComparisonResult )
     {

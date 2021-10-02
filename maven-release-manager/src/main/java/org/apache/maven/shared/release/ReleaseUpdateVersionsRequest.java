@@ -24,6 +24,7 @@ import java.util.Properties;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 /**
+ * <p>ReleaseUpdateVersionsRequest class.</p>
  *
  * @author Robert Scholte
  * @since 2.3
@@ -36,6 +37,8 @@ public class ReleaseUpdateVersionsRequest
     private Properties userProperties;
 
     /**
+     * <p>Getter for the field <code>releaseEnvironment</code>.</p>
+     *
      * @return the releaseEnvironment
      */
     public ReleaseEnvironment getReleaseEnvironment()
@@ -44,6 +47,8 @@ public class ReleaseUpdateVersionsRequest
     }
 
     /**
+     * <p>Setter for the field <code>releaseEnvironment</code>.</p>
+     *
      * @param releaseEnvironment the releaseEnvironment to set
      */
     public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )
@@ -51,11 +56,21 @@ public class ReleaseUpdateVersionsRequest
         this.releaseEnvironment = releaseEnvironment;
     }
     
+    /**
+     * <p>Getter for the field <code>userProperties</code>.</p>
+     *
+     * @return a {@link java.util.Properties} object
+     */
     public Properties getUserProperties()
     {
         return userProperties;
     }
     
+    /**
+     * <p>Setter for the field <code>userProperties</code>.</p>
+     *
+     * @param userProperties a {@link java.util.Properties} object
+     */
     public void setUserProperties( Properties userProperties )
     {
         this.userProperties = userProperties;

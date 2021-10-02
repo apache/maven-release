@@ -24,12 +24,15 @@ import org.apache.maven.shared.release.transform.ModelETLFactory;
 import org.codehaus.plexus.component.annotations.Component;
 
 /**
+ * <p>JDomModelETLFactory class.</p>
+ *
  * @author Robert Scholte
  * @since 3.0
  */
 @Component( role = ModelETLFactory.class, hint = JDomModelETLFactory.ROLE_HINT )
 public class JDomModelETLFactory implements ModelETLFactory
 {
+    /** Constant <code>ROLE_HINT="jdom2-sax"</code> */
     public static final String ROLE_HINT = "jdom2-sax";
 
     @Override

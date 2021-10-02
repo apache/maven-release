@@ -30,23 +30,23 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 public interface VersionPolicy
 {
     /**
+     * <p>getReleaseVersion.</p>
+     *
      * @return the calculation of the release version from development state.
-     * 
      * @param request the {@code VersionPolicyRequest}
-     *                
-     * @throws PolicyException if exception in the policy
-     * @throws VersionParseException if exception parsing the version
+     * @throws org.apache.maven.shared.release.policy.PolicyException if exception in the policy
+     * @throws org.apache.maven.shared.release.versions.VersionParseException if exception parsing the version
      */
     VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
         throws PolicyException, VersionParseException;
 
     /**
+     * <p>getDevelopmentVersion.</p>
+     *
      * @return the calculation of the next development version from release state.
-     *
      * @param request the {@code VersionPolicyRequest}
-     *
-     * @throws PolicyException if exception in the policy
-     * @throws VersionParseException if exception parsing the version
+     * @throws org.apache.maven.shared.release.policy.PolicyException if exception in the policy
+     * @throws org.apache.maven.shared.release.versions.VersionParseException if exception parsing the version
      */
     VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
         throws PolicyException, VersionParseException;

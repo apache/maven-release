@@ -29,7 +29,7 @@ import org.apache.maven.artifact.ArtifactUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * 
+ * <p>Version class.</p>
  */
 public class Version
     implements Comparable<Version>, Cloneable
@@ -76,6 +76,7 @@ public class Version
 
     private static final String DEFAULT_BUILD_SEPARATOR = "-";
 
+    /** Constant <code>STANDARD_PATTERN</code> */
     public static final Pattern STANDARD_PATTERN = Pattern.compile( "^((?:\\d+\\.)*\\d+)" // digit(s) and '.' repeated -
                                                                                           // followed by digit (version
                                                                                           // digits 1.22.0, etc)
@@ -90,6 +91,7 @@ public class Version
      * supports version numbers like: trunk-SNAPSHOT branchName-SNAPSHOT SNAPSHOT
      */
     // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
+    /** Constant <code>ALTERNATE_PATTERN</code> */
     public static final Pattern ALTERNATE_PATTERN = Pattern.compile( "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)" );
     
     private Version( List<String> digits, String annotation, String annotationRevision, String buildSpecifier,
@@ -109,6 +111,12 @@ public class Version
         this.mavenArtifactVersion = null;
     }
 
+    /**
+     * <p>Constructor for Version.</p>
+     *
+     * @param version a {@link java.lang.String} object
+     * @throws org.apache.maven.shared.release.versions.VersionParseException if any.
+     */
     public Version( String version )
         throws VersionParseException
     {
@@ -166,16 +174,34 @@ public class Version
         }
     }
 
+    /**
+     * <p>isSnapshot.</p>
+     *
+     * @return a boolean
+     */
     public boolean isSnapshot()
     {
         return ArtifactUtils.isSnapshot( strVersion );
     }
 
+    /**
+     * <p>toString.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String toString()
     {
         return strVersion;
     }
 
+    /**
+     * <p>getVersionString.</p>
+     *
+     * @param info a {@link org.apache.maven.shared.release.versions.Version} object
+     * @param buildSpecifier a {@link java.lang.String} object
+     * @param buildSeparator a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     protected static String getVersionString( Version info, String buildSpecifier, String buildSeparator )
     {
         StringBuilder sb = new StringBuilder();
@@ -215,7 +241,7 @@ public class Version
 
     /**
      * Simply joins the items in the list with "." period
-     * 
+     *
      * @return a {@code String} containing the items in the list joined by "." period
      * @param digits the list of digits {@code List<String>}
      */
@@ -239,38 +265,69 @@ public class Version
         return StringUtils.isEmpty( s ) ? null : s;
     }
 
+    /**
+     * <p>Getter for the field <code>digits</code>.</p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public List<String> getDigits()
     {
         return digits;
     }
     
+    /**
+     * <p>Getter for the field <code>annotation</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getAnnotation()
     {
         return annotation;
     }
 
+    /**
+     * <p>Getter for the field <code>annotationRevSeparator</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getAnnotationRevSeparator()
     {
         return annotationRevSeparator;
     }
 
+    /**
+     * <p>Getter for the field <code>annotationRevision</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getAnnotationRevision()
     {
         return annotationRevision;
     }
 
+    /**
+     * <p>Getter for the field <code>buildSeparator</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getBuildSeparator()
     {
         return buildSeparator;
     }
 
+    /**
+     * <p>Getter for the field <code>buildSpecifier</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getBuildSpecifier()
     {
         return buildSpecifier;
     }
     
     /**
-     * 
+     * <p>Setter for the field <code>digits</code>.</p>
+     *
      * @param newDigits the new list of digits
      * @return a new instance of Version
      */
@@ -281,7 +338,8 @@ public class Version
     }
     
     /**
-     * 
+     * <p>Setter for the field <code>annotationRevision</code>.</p>
+     *
      * @param newAnnotationRevision the new annotation revision
      * @return a new instance of Version
      */
@@ -294,7 +352,8 @@ public class Version
     }
     
     /**
-     * 
+     * <p>Setter for the field <code>buildSpecifier</code>.</p>
+     *
      * @param newBuildSpecifier the new build specifier
      * @return a new instance of Version
      */
@@ -304,10 +363,15 @@ public class Version
                             this.annotationSeparator, this.annotationRevSeparator,
                             Objects.toString( this.buildSeparator, DEFAULT_BUILD_SEPARATOR ) );
     }
-    
+
     /**
-     * @throws VersionComparisonConflictException if {@link org.eclipse.aether.version.Version} and
+     * <p>compareTo.</p>
+     *
+     * @throws org.apache.maven.shared.release.versions.VersionComparisonConflictException
+     *              if {@link org.eclipse.aether.version.Version} and
      *             {@link org.apache.maven.artifact.versioning.ArtifactVersion ArtifactVersion} give different results
+     * @param other a {@link org.apache.maven.shared.release.versions.Version} object
+     * @return a int
      */
     public int compareTo( Version other )
         throws VersionComparisonConflictException

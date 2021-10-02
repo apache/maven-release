@@ -25,6 +25,8 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import java.io.File;
 
 /**
+ * <p>Abstract AbstractBackupPomsPhase class.</p>
+ *
  * @author Edwin Punzalan
  */
 public abstract class AbstractBackupPomsPhase
@@ -32,6 +34,12 @@ public abstract class AbstractBackupPomsPhase
 {
     private final String backupSuffix = ".releaseBackup";
 
+    /**
+     * <p>getPomBackup.</p>
+     *
+     * @param project a {@link org.apache.maven.project.MavenProject} object
+     * @return a {@link java.io.File} object
+     */
     protected File getPomBackup( MavenProject project )
     {
         File pomFile = ReleaseUtil.getStandardPom( project );
@@ -46,6 +54,11 @@ public abstract class AbstractBackupPomsPhase
         }
     }
 
+    /**
+     * <p>deletePomBackup.</p>
+     *
+     * @param project a {@link org.apache.maven.project.MavenProject} object
+     */
     protected void deletePomBackup( MavenProject project )
     {
         File pomBackup = getPomBackup( project );

@@ -41,7 +41,6 @@ import org.codehaus.plexus.util.FileUtils;
  * A dummy tag command.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  */
 class StubTagCommand
     extends AbstractCommand

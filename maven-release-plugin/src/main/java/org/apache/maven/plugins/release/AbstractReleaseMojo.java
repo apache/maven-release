@@ -43,7 +43,6 @@ import org.codehaus.plexus.util.StringUtils;
  * Base class with shared configuration.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
- * @version $Id$
  */
 public abstract class AbstractReleaseMojo
     extends AbstractMojo

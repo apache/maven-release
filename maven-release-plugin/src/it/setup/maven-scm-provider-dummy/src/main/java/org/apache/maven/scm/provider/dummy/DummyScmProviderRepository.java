@@ -26,7 +26,6 @@ import org.apache.maven.scm.provider.ScmProviderRepository;
  * run for integration testing.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  */
 public class DummyScmProviderRepository
     extends ScmProviderRepository

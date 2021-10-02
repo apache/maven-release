@@ -162,12 +162,27 @@ public class ForkedMavenExecutor
         }
     }
 
+    /**
+     * <p>Setter for the field <code>commandLineFactory</code>.</p>
+     *
+     * @param commandLineFactory a {@link org.apache.maven.shared.release.exec.CommandLineFactory} object
+     */
     public void setCommandLineFactory( CommandLineFactory commandLineFactory )
     {
         this.commandLineFactory = commandLineFactory;
     }
 
 
+    /**
+     * <p>executeCommandLine.</p>
+     *
+     * @param cl a {@link org.codehaus.plexus.util.cli.Commandline} object
+     * @param systemIn a {@link java.io.InputStream} object
+     * @param systemOut a {@link java.io.OutputStream} object
+     * @param systemErr a {@link java.io.OutputStream} object
+     * @return a int
+     * @throws org.codehaus.plexus.util.cli.CommandLineException if any.
+     */
     public static int executeCommandLine( Commandline cl, InputStream systemIn, OutputStream systemOut,
                                           OutputStream systemErr )
         throws CommandLineException

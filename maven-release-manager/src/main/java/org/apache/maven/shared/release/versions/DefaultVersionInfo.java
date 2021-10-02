@@ -91,6 +91,7 @@ public class DefaultVersionInfo
 
     private static final String DIGIT_SEPARATOR_STRING = ".";
 
+    /** Constant <code>STANDARD_PATTERN</code> */
     public static final Pattern STANDARD_PATTERN = Pattern.compile(
         "^((?:\\d+\\.)*\\d+)"      // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
         + "([-_])?"                // optional - or _  (annotation separator)
@@ -108,13 +109,14 @@ public class DefaultVersionInfo
      * SNAPSHOT
      */
     // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
+    /** Constant <code>ALTERNATE_PATTERN</code> */
     public static final Pattern ALTERNATE_PATTERN = Pattern.compile( "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)" );
 
     /**
      * Constructs this object and parses the supplied version string.
      *
      * @param version the version string
-     * @throws VersionParseException if an exception during parsing the input
+     * @throws org.apache.maven.shared.release.versions.VersionParseException if an exception during parsing the input
      */
     public DefaultVersionInfo( String version )
         throws VersionParseException
@@ -171,6 +173,17 @@ public class DefaultVersionInfo
         }
     }
 
+    /**
+     * <p>Constructor for DefaultVersionInfo.</p>
+     *
+     * @param digits a {@link java.util.List} object
+     * @param annotation a {@link java.lang.String} object
+     * @param annotationRevision a {@link java.lang.String} object
+     * @param buildSpecifier a {@link java.lang.String} object
+     * @param annotationSeparator a {@link java.lang.String} object
+     * @param annotationRevSeparator a {@link java.lang.String} object
+     * @param buildSeparator a {@link java.lang.String} object
+     */
     public DefaultVersionInfo( List<String> digits, String annotation, String annotationRevision, String buildSpecifier,
                                String annotationSeparator, String annotationRevSeparator, String buildSeparator )
     {
@@ -214,13 +227,10 @@ public class DefaultVersionInfo
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Compares this {@link DefaultVersionInfo} to the supplied {@link DefaultVersionInfo} to determine which version is
      * greater.
-     *
-     * @param obj the comparison version
-     * @return the comparison value
-     * @throws IllegalArgumentException if the components differ between the objects or if either of the annotations can
-     *             not be determined.
      */
     @Override
     public int compareTo( VersionInfo obj )
@@ -272,9 +282,9 @@ public class DefaultVersionInfo
      * Takes a string and increments it as an integer.
      * Preserves any lpad of "0" zeros.
      *
-     * @return {@code String} increments the input {@code String} as an integer 
-     * and Preserves any lpad of "0" zeros.
      * @param s the version number
+     * @return {@code String} increments the input {@code String} as an integer
+     * and Preserves any lpad of "0" zeros.
      */
     protected String incrementVersionString( String s )
     {
@@ -334,6 +344,14 @@ public class DefaultVersionInfo
         return strVersion;
     }
 
+    /**
+     * <p>getVersionString.</p>
+     *
+     * @param info a {@link org.apache.maven.shared.release.versions.DefaultVersionInfo} object
+     * @param buildSpecifier a {@link java.lang.String} object
+     * @param buildSeparator a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     protected static String getVersionString( DefaultVersionInfo info, String buildSpecifier, String buildSeparator )
     {
         StringBuilder sb = new StringBuilder();
@@ -402,21 +420,41 @@ public class DefaultVersionInfo
         return StringUtils.isEmpty( s ) ? null : s;
     }
 
+    /**
+     * <p>Getter for the field <code>digits</code>.</p>
+     *
+     * @return a {@link java.util.List} object
+     */
     public List<String> getDigits()
     {
         return digits;
     }
 
+    /**
+     * <p>Getter for the field <code>annotation</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getAnnotation()
     {
         return annotation;
     }
 
+    /**
+     * <p>Getter for the field <code>annotationRevision</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getAnnotationRevision()
     {
         return annotationRevision;
     }
 
+    /**
+     * <p>Getter for the field <code>buildSpecifier</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getBuildSpecifier()
     {
         return buildSpecifier;

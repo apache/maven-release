@@ -97,10 +97,33 @@ public abstract class AbstractScmCommitPhase
         return result;
     }
 
+    /**
+     * <p>runLogic.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param releaseEnvironment a {@link org.apache.maven.shared.release.env.ReleaseEnvironment} object
+     * @param reactorProjects a {@link java.util.List} object
+     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @param simulating a boolean
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmCommandException if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmRepositoryException if any.
+     */
     protected abstract void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                       List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
         throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException;
 
+    /**
+     * <p>performCheckins.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param releaseEnvironment a {@link org.apache.maven.shared.release.env.ReleaseEnvironment} object
+     * @param reactorProjects a {@link java.util.List} object
+     * @param message a {@link java.lang.String} object
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmRepositoryException if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmCommandException if any.
+     */
     protected void performCheckins( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                     List<MavenProject> reactorProjects, String message )
         throws ReleaseScmRepositoryException, ReleaseExecutionException, ReleaseScmCommandException
@@ -173,6 +196,14 @@ public abstract class AbstractScmCommitPhase
         }
     }
 
+    /**
+     * <p>simulateCheckins.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param reactorProjects a {@link java.util.List} object
+     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @param message a {@link java.lang.String} object
+     */
     protected void simulateCheckins( ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects,
                                      ReleaseResult result, String message )
     {
@@ -180,6 +211,12 @@ public abstract class AbstractScmCommitPhase
         logInfo( result, "Full run would be commit " + pomFiles.size() + " files with message: '" + message + "'" );
     }
 
+    /**
+     * <p>validateConfiguration.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @throws org.apache.maven.shared.release.ReleaseFailureException if any.
+     */
     protected void validateConfiguration( ReleaseDescriptor releaseDescriptor )
         throws ReleaseFailureException
     {
@@ -189,6 +226,14 @@ public abstract class AbstractScmCommitPhase
         }
     }
 
+    /**
+     * <p>createMessage.</p>
+     *
+     * @param reactorProjects a {@link java.util.List} object
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @return a {@link java.lang.String} object
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     */
     protected String createMessage( List<MavenProject> reactorProjects,
                                     ReleaseDescriptor releaseDescriptor )
                                     throws ReleaseExecutionException
@@ -232,6 +277,13 @@ public abstract class AbstractScmCommitPhase
         return comment;
     }
 
+    /**
+     * <p>createPomFiles.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param project a {@link org.apache.maven.project.MavenProject} object
+     * @return a {@link java.util.List} object
+     */
     protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor, MavenProject project )
     {
         List<File> pomFiles = new ArrayList<>();
@@ -246,6 +298,13 @@ public abstract class AbstractScmCommitPhase
         return pomFiles;
     }
 
+    /**
+     * <p>createPomFiles.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param reactorProjects a {@link java.util.List} object
+     * @return a {@link java.util.List} object
+     */
     protected static List<File> createPomFiles( ReleaseDescriptor releaseDescriptor,
                                                 List<MavenProject> reactorProjects )
     {

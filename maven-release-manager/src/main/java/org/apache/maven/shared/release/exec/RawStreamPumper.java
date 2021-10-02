@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * <p>RawStreamPumper class.</p>
  *
  */
 public class RawStreamPumper
@@ -39,6 +40,13 @@ public class RawStreamPumper
 
     byte buffer[] = new byte[256];
 
+    /**
+     * <p>Constructor for RawStreamPumper.</p>
+     *
+     * @param in a {@link java.io.InputStream} object
+     * @param out a {@link java.io.OutputStream} object
+     * @param poll a boolean
+     */
     public RawStreamPumper( InputStream in , OutputStream out, boolean poll )
     {
         this.in = in;
@@ -46,6 +54,12 @@ public class RawStreamPumper
         this.poll = poll;
     }
 
+    /**
+     * <p>Constructor for RawStreamPumper.</p>
+     *
+     * @param in a {@link java.io.InputStream} object
+     * @param out a {@link java.io.OutputStream} object
+     */
     public RawStreamPumper( InputStream in , OutputStream out )
     {
         this.in = in;
@@ -53,17 +67,30 @@ public class RawStreamPumper
         this.poll = false;
     }
 
+    /**
+     * <p>Setter for the field <code>done</code>.</p>
+     */
     public void setDone()
     {
         done = true;
     }
 
+    /**
+     * <p>closeInput.</p>
+     *
+     * @throws java.io.IOException if any.
+     */
     public void closeInput()
         throws IOException
     {
         in.close();
     }
 
+    /**
+     * <p>closeOutput.</p>
+     *
+     * @throws java.io.IOException if any.
+     */
     public void closeOutput()
         throws IOException
     {

@@ -20,20 +20,28 @@ package org.apache.maven.shared.release;
  */
 
 /**
- * Exception occuring during release execution.
+ * Exception occurring during release execution.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ReleaseExecutionException
     extends Exception
 {
+    /**
+     * Creates a new instance of <code>ReleaseExecutionException</code> without detail message.
+     */
     public ReleaseExecutionException( String message )
     {
         super( message );
     }
 
-    public ReleaseExecutionException( String message, Throwable t )
+    /**
+     * Constructs an instance of <code>ReleaseExecutionException</code> with the specified detail message.
+     *
+     * @param message the detail message.
+     */
+    public ReleaseExecutionException( String message, Throwable cause )
     {
-        super( message, t );
+        super( message, cause );
     }
 }

@@ -38,6 +38,11 @@ public class JDomReportPlugin
 {
     private final MavenCoordinate coordinate;
 
+    /**
+     * <p>Constructor for JDomReportPlugin.</p>
+     *
+     * @param reportPlugin a {@link org.jdom2.Element} object
+     */
     public JDomReportPlugin( Element reportPlugin )
     {
         this.coordinate = new JDomMavenCoordinate( reportPlugin );

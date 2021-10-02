@@ -31,6 +31,12 @@ import java.util.List;
 public class ReleaseScmRepositoryException
     extends ReleaseFailureException
 {
+    /**
+     * <p>Constructor for ReleaseScmRepositoryException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param validationMessages a {@link java.util.List} object
+     */
     public ReleaseScmRepositoryException( String message, List<String> validationMessages )
     {
         super( message + listValidationMessages( validationMessages ) );

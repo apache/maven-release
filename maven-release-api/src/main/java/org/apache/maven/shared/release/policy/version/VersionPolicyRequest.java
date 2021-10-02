@@ -22,7 +22,8 @@ package org.apache.maven.shared.release.policy.version;
 import org.apache.maven.artifact.repository.metadata.Metadata;
 
 /**
- * 
+ * <p>VersionPolicyRequest class.</p>
+ *
  * @since 2.5.1 (MRELEASE-431)
  */
 public class VersionPolicyRequest
@@ -32,22 +33,44 @@ public class VersionPolicyRequest
     
     private Metadata metaData;
 
+    /**
+     * <p>Getter for the field <code>version</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getVersion()
     {
         return version;
     }
 
+    /**
+     * <p>Setter for the field <code>version</code>.</p>
+     *
+     * @param version a {@link java.lang.String} object
+     * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
+     */
     public VersionPolicyRequest setVersion( String version )
     {
         this.version = version;
         return this;
     }
     
+    /**
+     * <p>Getter for the field <code>metaData</code>.</p>
+     *
+     * @return a {@link org.apache.maven.artifact.repository.metadata.Metadata} object
+     */
     public Metadata getMetaData()
     {
         return metaData;
     }
     
+    /**
+     * <p>Setter for the field <code>metaData</code>.</p>
+     *
+     * @param metaData a {@link org.apache.maven.artifact.repository.metadata.Metadata} object
+     * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
+     */
     public VersionPolicyRequest setMetaData( Metadata metaData )
     {
         this.metaData = metaData;

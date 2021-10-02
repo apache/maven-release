@@ -48,11 +48,21 @@ public class JDomModel extends Model
 
     private final JDomModelBase modelBase;
 
+    /**
+     * <p>Constructor for JDomModel.</p>
+     *
+     * @param document a {@link org.jdom2.Document} object
+     */
     public JDomModel( Document document )
     {
         this( document.getRootElement() );
     }
 
+    /**
+     * <p>Constructor for JDomModel.</p>
+     *
+     * @param project a {@link org.jdom2.Element} object
+     */
     public JDomModel( Element project )
     {
         this.project = project;

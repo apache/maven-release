@@ -39,6 +39,11 @@ public class JDomReporting extends Reporting
 
     private final Element reporting;
 
+    /**
+     * <p>Constructor for JDomReporting.</p>
+     *
+     * @param reporting a {@link org.jdom2.Element} object
+     */
     public JDomReporting( Element reporting )
     {
         this.reporting = reporting;

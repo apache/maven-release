@@ -34,7 +34,6 @@ import org.apache.maven.scm.provider.ScmProviderRepository;
  * A dummy status command.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  */
 class StubStatusCommand
     extends AbstractCommand

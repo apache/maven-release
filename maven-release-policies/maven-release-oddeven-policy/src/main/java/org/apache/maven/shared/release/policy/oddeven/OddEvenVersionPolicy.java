@@ -32,12 +32,13 @@ import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * A {@link VersionPolicy} implementation that propose even version numbers only for releases and odd
+ * A {@link org.apache.maven.shared.release.policy.version.VersionPolicy} implementation that propose even version numbers only for releases and odd
  * numbers for development. For example:<ul>
  * <li><code>1.0.0-SNAPSHOT</code> gets <code>1.0.0</code> for next release,</li>
  * <li><code>1.0.1-SNAPSHOT</code> gets <code>1.0.2</code> for next release,</li>
  * <li><code>1.0.2</code> gets <code>1.0.3-SNAPSHOT</code> for next development version.</li>
  * </ul>
+ *
  */
 @Component(
     role = VersionPolicy.class,

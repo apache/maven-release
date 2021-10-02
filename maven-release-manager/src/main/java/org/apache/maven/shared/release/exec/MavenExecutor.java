@@ -41,7 +41,7 @@ public interface MavenExecutor
      * @param additionalArguments additional arguments to pass to the Maven command
      * @param pomFileName         the file name of the POM to execute on
      * @param result              holds all results of the execution
-     * @throws MavenExecutorException if an error occurred executing Maven
+     * @throws org.apache.maven.shared.release.exec.MavenExecutorException if an error occurred executing Maven
      */
     void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
                        boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )

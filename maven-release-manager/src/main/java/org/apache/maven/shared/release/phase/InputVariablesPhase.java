@@ -96,6 +96,15 @@ public class InputVariablesPhase
         return branchOperation;
     }
 
+    /**
+     * <p>getScmProvider.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param releaseEnvironment a {@link org.apache.maven.shared.release.env.ReleaseEnvironment} object
+     * @return a {@link org.apache.maven.scm.provider.ScmProvider} object
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmRepositoryException if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     */
     protected ScmProvider getScmProvider( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment )
         throws ReleaseScmRepositoryException, ReleaseExecutionException
     {

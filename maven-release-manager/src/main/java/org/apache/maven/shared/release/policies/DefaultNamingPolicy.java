@@ -26,6 +26,7 @@ import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
 import org.codehaus.plexus.component.annotations.Component;
 
 /**
+ * <p>DefaultNamingPolicy class.</p>
  *
  * @author Robert Scholte
  * @since 3.0.0

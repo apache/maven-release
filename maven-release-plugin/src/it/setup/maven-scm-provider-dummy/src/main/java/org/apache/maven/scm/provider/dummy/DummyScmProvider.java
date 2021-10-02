@@ -33,7 +33,6 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
  * 
  * @plexus.component role="org.apache.maven.scm.provider.ScmProvider" role-hint="dummy"
  * @author Benjamin Bentmann
- * @version $Id$
  */
 public class DummyScmProvider
     extends AbstractScmProvider

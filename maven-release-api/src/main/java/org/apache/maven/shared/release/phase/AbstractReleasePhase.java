@@ -31,36 +31,72 @@ public abstract class AbstractReleasePhase
     extends AbstractLogEnabled
     implements ReleasePhase
 {
+    /**
+     * <p>logInfo.</p>
+     *
+     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @param message a {@link java.lang.String} object
+     */
     protected void logInfo( ReleaseResult result, String message )
     {
         result.appendInfo( message );
         getLogger().info( message );
     }
 
+    /**
+     * <p>logWarn.</p>
+     *
+     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @param message a {@link java.lang.String} object
+     */
     protected void logWarn( ReleaseResult result, String message )
     {
         result.appendWarn( message );
         getLogger().warn( message );
     }
 
+    /**
+     * <p>logError.</p>
+     *
+     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @param message a {@link java.lang.String} object
+     */
     protected void logError( ReleaseResult result, String message )
     {
         result.appendWarn( message );
         getLogger().error( message );
     }
 
+    /**
+     * <p>logDebug.</p>
+     *
+     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @param message a {@link java.lang.String} object
+     */
     protected void logDebug( ReleaseResult result, String message )
     {
         result.appendDebug( message );
         getLogger().debug( message );
     }
 
+    /**
+     * <p>logDebug.</p>
+     *
+     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @param message a {@link java.lang.String} object
+     * @param e a {@link java.lang.Exception} object
+     */
     protected void logDebug( ReleaseResult result, String message, Exception e )
     {
         result.appendDebug( message, e );
         getLogger().debug( message, e );
     }
 
+    /**
+     * <p>getReleaseResultSuccess.</p>
+     *
+     * @return a {@link org.apache.maven.shared.release.ReleaseResult} object
+     */
     protected ReleaseResult getReleaseResultSuccess()
     {
         ReleaseResult result = new ReleaseResult();

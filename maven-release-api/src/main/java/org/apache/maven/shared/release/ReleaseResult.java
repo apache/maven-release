@@ -27,7 +27,12 @@ import java.io.PrintStream;
  */
 public class ReleaseResult
 {
-    public static final int UNDEFINED = -1, SUCCESS = 0, ERROR = 1;
+    /** The result of the release. */
+    public static final int UNDEFINED = -1;
+    /** The release was successful. */
+    public static final int SUCCESS = 0;
+    /** The release failed. */
+    public static final int ERROR = 1;
 
     private StringBuilder stdOut = new StringBuilder();
 
@@ -39,21 +44,37 @@ public class ReleaseResult
 
     private static final String LS = System.getProperty( "line.separator" );
 
+    /**
+     * Append Info message to the output.
+     * @param message the message to append
+     */
     public void appendInfo( String message )
     {
         stdOut.append( "[INFO] " ).append( message ).append( LS );
     }
-
+    /**
+     * Append warning message to the output.
+     * @param message the message to append
+     */
     public void appendWarn( String message )
     {
         stdOut.append( "[WARN] " ).append( message ).append( LS );
     }
 
+    /**
+     * Append debug message to the output.
+     * @param message the message to append
+     */
     public void appendDebug( String message )
     {
         stdOut.append( "[DEBUG] " ).append( message ).append( LS );
     }
 
+    /**
+     * Append error message to the output.
+     * @param message the message to append
+     * @param e the exception to append
+     */
     public void appendDebug( String message, Exception e )
     {
         appendDebug( message );
@@ -61,6 +82,11 @@ public class ReleaseResult
         stdOut.append( getStackTrace( e ) ).append( LS );
     }
 
+    /**
+     * Append error message to the output.
+     *
+     * @param message the message to append
+     */
     public void appendError( String message )
     {
         stdOut.append( "[ERROR] " ).append( message ).append( LS );
@@ -68,11 +94,22 @@ public class ReleaseResult
         setResultCode( ERROR );
     }
 
+    /**
+     * Append error exception to the output
+     *
+     * @param e the exception to append
+     */
     public void appendError( Exception e )
     {
         appendError( getStackTrace( e ) );
     }
 
+    /**
+     * Append stack trace to the output
+     *
+     * @param message the message to append
+     * @param e the exception to append
+     */
     public void appendError( String message, Exception e )
     {
         appendError( message );
@@ -80,6 +117,11 @@ public class ReleaseResult
         stdOut.append( getStackTrace( e ) ).append( LS );
     }
 
+    /**
+     * Append message to the output.
+     *
+     * @param message the message to append
+     */
     public void appendOutput( String message )
     {
         stdOut.append( message );

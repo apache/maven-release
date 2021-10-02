@@ -25,6 +25,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
+ * <p>Abstract AbstractReleaseRequest class.</p>
  *
  * @author Robert Scholte
  * @since 2.3
@@ -38,6 +39,8 @@ public abstract class AbstractReleaseRequest
     private ReleaseManagerListener releaseManagerListener;
 
     /**
+     * <p>Getter for the field <code>releaseDescriptorBuilder</code>.</p>
+     *
      * @return the releaseDescriptor
      */
     public ReleaseDescriptorBuilder getReleaseDescriptorBuilder()
@@ -46,6 +49,8 @@ public abstract class AbstractReleaseRequest
     }
 
     /**
+     * <p>Setter for the field <code>releaseDescriptorBuilder</code>.</p>
+     *
      * @param releaseDescriptor the releaseDescriptor to set
      */
     public void setReleaseDescriptorBuilder( ReleaseDescriptorBuilder releaseDescriptor )
@@ -54,6 +59,8 @@ public abstract class AbstractReleaseRequest
     }
 
     /**
+     * <p>Getter for the field <code>reactorProjects</code>.</p>
+     *
      * @return the reactorProjects
      */
     public List<MavenProject> getReactorProjects()
@@ -62,6 +69,8 @@ public abstract class AbstractReleaseRequest
     }
 
     /**
+     * <p>Setter for the field <code>reactorProjects</code>.</p>
+     *
      * @param reactorProjects the reactorProjects to set
      */
     public void setReactorProjects( List<MavenProject> reactorProjects )
@@ -70,6 +79,8 @@ public abstract class AbstractReleaseRequest
     }
 
     /**
+     * <p>Getter for the field <code>releaseManagerListener</code>.</p>
+     *
      * @return the releaseManagerListener
      */
     public ReleaseManagerListener getReleaseManagerListener()
@@ -78,6 +89,8 @@ public abstract class AbstractReleaseRequest
     }
 
     /**
+     * <p>Setter for the field <code>releaseManagerListener</code>.</p>
+     *
      * @param releaseManagerListener the releaseManagerListener to set
      */
     public void setReleaseManagerListener( ReleaseManagerListener releaseManagerListener )

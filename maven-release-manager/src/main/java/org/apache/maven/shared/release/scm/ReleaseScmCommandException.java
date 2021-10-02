@@ -30,6 +30,12 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 public class ReleaseScmCommandException
     extends ReleaseFailureException
 {
+    /**
+     * <p>Constructor for ReleaseScmCommandException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param result a {@link org.apache.maven.scm.ScmResult} object
+     */
     public ReleaseScmCommandException( String message, ScmResult result )
     {
         super( message + "\nProvider message:\n" + result.getProviderMessage() + "\nCommand output:\n"

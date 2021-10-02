@@ -25,6 +25,7 @@ import java.util.Locale;
 import org.apache.maven.settings.Settings;
 
 /**
+ * <p>DefaultReleaseEnvironment class.</p>
  *
  */
 public class DefaultReleaseEnvironment
@@ -55,12 +56,24 @@ public class DefaultReleaseEnvironment
         return settings;
     }
 
+    /**
+     * <p>Setter for the field <code>mavenHome</code>.</p>
+     *
+     * @param mavenHome a {@link java.io.File} object
+     * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
+     */
     public DefaultReleaseEnvironment setMavenHome( File mavenHome )
     {
         this.mavenHome = mavenHome;
         return this;
     }
 
+    /**
+     * <p>Setter for the field <code>settings</code>.</p>
+     *
+     * @param settings a {@link org.apache.maven.settings.Settings} object
+     * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
+     */
     public DefaultReleaseEnvironment setSettings( Settings settings )
     {
         this.settings = settings;
@@ -73,6 +86,12 @@ public class DefaultReleaseEnvironment
         return mavenExecutorId;
     }
 
+    /**
+     * <p>Setter for the field <code>mavenExecutorId</code>.</p>
+     *
+     * @param mavenExecutorId a {@link java.lang.String} object
+     * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
+     */
     public DefaultReleaseEnvironment setMavenExecutorId( String mavenExecutorId )
     {
         this.mavenExecutorId = mavenExecutorId;
@@ -85,6 +104,12 @@ public class DefaultReleaseEnvironment
         return javaHome;
     }
 
+    /**
+     * <p>Setter for the field <code>javaHome</code>.</p>
+     *
+     * @param javaHome a {@link java.io.File} object
+     * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
+     */
     public DefaultReleaseEnvironment setJavaHome( File javaHome )
     {
         this.javaHome = javaHome;
@@ -104,6 +129,12 @@ public class DefaultReleaseEnvironment
         return localRepo;
     }
 
+    /**
+     * <p>Setter for the field <code>localRepositoryDirectory</code>.</p>
+     *
+     * @param localRepositoryDirectory a {@link java.io.File} object
+     * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
+     */
     public DefaultReleaseEnvironment setLocalRepositoryDirectory( File localRepositoryDirectory )
     {
         this.localRepositoryDirectory = localRepositoryDirectory;
@@ -116,6 +147,12 @@ public class DefaultReleaseEnvironment
         return locale;
     }
 
+    /**
+     * <p>Setter for the field <code>locale</code>.</p>
+     *
+     * @param locale a {@link java.util.Locale} object
+     * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
+     */
     public DefaultReleaseEnvironment setLocale( Locale locale )
     {
         this.locale = locale;

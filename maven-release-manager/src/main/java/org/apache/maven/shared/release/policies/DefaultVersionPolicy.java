@@ -28,6 +28,7 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.component.annotations.Component;
 
 /**
+ * <p>DefaultVersionPolicy class.</p>
  *
  * @author Robert Scholte
  */

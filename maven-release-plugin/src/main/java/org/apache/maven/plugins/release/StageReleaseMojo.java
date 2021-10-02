@@ -33,7 +33,6 @@ import org.codehaus.plexus.util.StringUtils;
  * are overridden with <code>site:stage-deploy</code>.
  *
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
- * @version $Id$
  * @since 2.0-beta-8
  */
 @Mojo( name = "stage", aggregator = true, requiresProject = false )

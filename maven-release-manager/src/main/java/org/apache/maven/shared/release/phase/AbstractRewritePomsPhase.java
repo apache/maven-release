@@ -92,6 +92,11 @@ public abstract class AbstractRewritePomsPhase
     @Requirement( role = ScmTranslator.class )
     private Map<String, ScmTranslator> scmTranslators;
 
+    /**
+     * <p>Getter for the field <code>scmTranslators</code>.</p>
+     *
+     * @return a {@link java.util.Map} object
+     */
     protected final Map<String, ScmTranslator> getScmTranslators()
     {
         return scmTranslators;
@@ -99,11 +104,21 @@ public abstract class AbstractRewritePomsPhase
 
     private String ls = ReleaseUtil.LS;
 
+    /**
+     * <p>Setter for the field <code>ls</code>.</p>
+     *
+     * @param ls a {@link java.lang.String} object
+     */
     public void setLs( String ls )
     {
         this.ls = ls;
     }
 
+    /**
+     * <p>Setter for the field <code>modelETL</code>.</p>
+     *
+     * @param modelETL a {@link java.lang.String} object
+     */
     public void setModelETL( String modelETL )
     {
         this.modelETL = modelETL;
@@ -111,11 +126,21 @@ public abstract class AbstractRewritePomsPhase
 
     private long startTime = -1 * 1000;
 
+    /**
+     * <p>Setter for the field <code>startTime</code>.</p>
+     *
+     * @param startTime a long
+     */
     public void setStartTime( long startTime )
     {
         this.startTime = startTime;
     }
 
+    /**
+     * <p>getPomSuffix.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     protected abstract String getPomSuffix();
 
     @Override
@@ -590,20 +615,54 @@ public abstract class AbstractRewritePomsPhase
     }
 
 
+    /**
+     * <p>getResolvedSnapshotVersion.</p>
+     *
+     * @param artifactVersionlessKey a {@link java.lang.String} object
+     * @param releaseDscriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @return a {@link java.lang.String} object
+     */
     protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey,
                                                           ReleaseDescriptor releaseDscriptor );
 
+    /**
+     * <p>getOriginalVersion.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param projectKey a {@link java.lang.String} object
+     * @param simulate a boolean
+     * @return a {@link java.lang.String} object
+     */
     protected abstract String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey,
                                                   boolean simulate );
 
+    /**
+     * <p>getNextVersion.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param key a {@link java.lang.String} object
+     * @return a {@link java.lang.String} object
+     */
     protected abstract String getNextVersion( ReleaseDescriptor releaseDescriptor, String key );
 
+    /**
+     * <p>transformScm.</p>
+     *
+     * @param project a {@link org.apache.maven.project.MavenProject} object
+     * @param modelTarget a {@link org.apache.maven.model.Model} object
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param projectId a {@link java.lang.String} object
+     * @param scmRepository a {@link org.apache.maven.scm.repository.ScmRepository} object
+     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     */
     protected abstract void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                           String projectId, ScmRepository scmRepository,
                                           ReleaseResult result )
         throws ReleaseExecutionException;
 
     /**
+     * <p>isUpdateScm.</p>
      *
      * @return {@code true} if the SCM-section should be updated, otherwise {@code false}
      * @since 2.4
@@ -613,6 +672,13 @@ public abstract class AbstractRewritePomsPhase
         return true;
     }
 
+    /**
+     * <p>getOriginalResolvedSnapshotVersion.</p>
+     *
+     * @param artifactVersionlessKey a {@link java.lang.String} object
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @return a {@link java.lang.String} object
+     */
     protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey,
                                                          ReleaseDescriptor releaseDescriptor )
     {

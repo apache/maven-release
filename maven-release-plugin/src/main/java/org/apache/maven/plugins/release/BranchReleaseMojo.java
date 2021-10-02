@@ -32,12 +32,11 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
- * Branch a project in SCM, using the same steps as the <tt>release:prepare</tt> goal, creating a branch instead of a
- * tag. For more info see <a href="https://maven.apache.org/plugins/maven-release-plugin/examples/branch.html"
+ * Branch a project in SCM, using the same steps as the <code>release:prepare</code> goal, creating a branch instead of
+ * a tag. For more info see <a href="https://maven.apache.org/plugins/maven-release-plugin/examples/branch.html"
  * >https://maven.apache.org/plugins/maven-release-plugin/examples/branch.html</a>.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
- * @version $Id$
  * @since 2.0-beta-6
  */
 @Mojo( name = "branch", aggregator = true )

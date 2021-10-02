@@ -22,6 +22,7 @@ package org.apache.maven.shared.release;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 /**
+ * <p>ReleaseRollbackRequest class.</p>
  *
  * @author Robert Scholte
  * @since 2.3
@@ -32,6 +33,8 @@ public class ReleaseRollbackRequest
     private ReleaseEnvironment releaseEnvironment;
 
     /**
+     * <p>Getter for the field <code>releaseEnvironment</code>.</p>
+     *
      * @return the releaseEnvironment
      */
     public ReleaseEnvironment getReleaseEnvironment()
@@ -40,6 +43,8 @@ public class ReleaseRollbackRequest
     }
 
     /**
+     * <p>Setter for the field <code>releaseEnvironment</code>.</p>
+     *
      * @param releaseEnvironment the releaseEnvironment to set
      */
     public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )

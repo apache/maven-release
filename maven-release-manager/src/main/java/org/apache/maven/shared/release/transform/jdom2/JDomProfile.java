@@ -38,6 +38,11 @@ public class JDomProfile
 {
     private final JDomModelBase modelBase;
 
+    /**
+     * <p>Constructor for JDomProfile.</p>
+     *
+     * @param profile a {@link org.jdom2.Element} object
+     */
     public JDomProfile( Element profile )
     {
         this.modelBase = new JDomModelBase( profile ) ;

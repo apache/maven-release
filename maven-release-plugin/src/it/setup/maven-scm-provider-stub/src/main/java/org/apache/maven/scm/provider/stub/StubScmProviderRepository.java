@@ -32,7 +32,6 @@ import org.apache.maven.scm.provider.ScmProviderRepository;
  * A stub SCM repository used for the Maven Release Plugin when doing integration testing.
  * 
  * @author Benjamin Bentmann
- * @version $Id$
  */
 class StubScmProviderRepository
     extends ScmProviderRepository

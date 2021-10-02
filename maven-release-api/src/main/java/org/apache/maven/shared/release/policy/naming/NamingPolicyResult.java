@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.policy.naming;
  */
 
 /**
+ * <p>NamingPolicyResult class.</p>
  *
  * @since 3.0.0 (MRELEASE-979)
  */
@@ -30,11 +31,22 @@ public class NamingPolicyResult
      */
     private String name;
 
+    /**
+     * <p>Getter for the field <code>name</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getName()
     {
         return name;
     }
 
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object
+     * @return a {@link org.apache.maven.shared.release.policy.naming.NamingPolicyResult} object
+     */
     public NamingPolicyResult setName( String name )
     {
         this.name = name;

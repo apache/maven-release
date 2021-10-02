@@ -23,6 +23,7 @@ import java.util.Properties;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 /**
+ * <p>ReleaseBranchRequest class.</p>
  *
  * @author Robert Scholte
  * @since 2.3
@@ -37,6 +38,8 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
     private Properties userProperties;
 
     /**
+     * <p>Getter for the field <code>dryRun</code>.</p>
+     *
      * @return the dryRun
      */
     public Boolean getDryRun()
@@ -45,6 +48,8 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
     }
 
     /**
+     * <p>Setter for the field <code>dryRun</code>.</p>
+     *
      * @param dryRun the dryRun to set
      */
     public void setDryRun( Boolean dryRun )
@@ -53,6 +58,8 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
     }
 
     /**
+     * <p>Getter for the field <code>releaseEnvironment</code>.</p>
+     *
      * @return the releaseEnvironment
      */
     public ReleaseEnvironment getReleaseEnvironment()
@@ -61,6 +68,8 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
     }
 
     /**
+     * <p>Setter for the field <code>releaseEnvironment</code>.</p>
+     *
      * @param releaseEnvironment the releaseEnvironment to set
      */
     public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )
@@ -68,11 +77,21 @@ public class ReleaseBranchRequest extends AbstractReleaseRequest
         this.releaseEnvironment = releaseEnvironment;
     }
     
+    /**
+     * <p>Getter for the field <code>userProperties</code>.</p>
+     *
+     * @return a {@link java.util.Properties} object
+     */
     public Properties getUserProperties()
     {
         return userProperties;
     }
     
+    /**
+     * <p>Setter for the field <code>userProperties</code>.</p>
+     *
+     * @param userProperties a {@link java.util.Properties} object
+     */
     public void setUserProperties( Properties userProperties )
     {
         this.userProperties = userProperties;

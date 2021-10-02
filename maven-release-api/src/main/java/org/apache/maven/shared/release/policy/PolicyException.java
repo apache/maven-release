@@ -20,18 +20,30 @@ package org.apache.maven.shared.release.policy;
  */
 
 /**
- * 
+ * <p>PolicyException class.</p>
+ *
  * @since 2.5.1 (MRELEASE-431)
  */
 public class PolicyException
     extends Exception
 {
 
+    /**
+     * <p>Constructor for PolicyException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     */
     public PolicyException( String message )
     {
         super( message );
     }
     
+    /**
+     * <p>Constructor for PolicyException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     * @param exception a {@link java.lang.Exception} object
+     */
     public PolicyException( String message, Exception exception )
     {
         super( message, exception );

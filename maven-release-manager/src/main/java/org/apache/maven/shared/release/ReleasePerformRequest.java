@@ -22,6 +22,7 @@ package org.apache.maven.shared.release;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 /**
+ * <p>ReleasePerformRequest class.</p>
  *
  * @author Robert Scholte
  * @since 2.3
@@ -38,6 +39,8 @@ public class ReleasePerformRequest
     private ReleaseEnvironment releaseEnvironment;
 
     /**
+     * <p>Getter for the field <code>dryRun</code>.</p>
+     *
      * @return the dryRun
      */
     public Boolean getDryRun()
@@ -46,6 +49,8 @@ public class ReleasePerformRequest
     }
 
     /**
+     * <p>Setter for the field <code>dryRun</code>.</p>
+     *
      * @param dryRun the dryRun to set
      */
     public void setDryRun( Boolean dryRun )
@@ -54,6 +59,8 @@ public class ReleasePerformRequest
     }
 
     /**
+     * <p>Getter for the field <code>clean</code>.</p>
+     *
      * @return the clean
      */
     public Boolean getClean()
@@ -62,6 +69,8 @@ public class ReleasePerformRequest
     }
 
     /**
+     * <p>Setter for the field <code>clean</code>.</p>
+     *
      * @param clean the clean to set
      */
     public void setClean( Boolean clean )
@@ -70,6 +79,8 @@ public class ReleasePerformRequest
     }
 
     /**
+     * <p>Getter for the field <code>releaseEnvironment</code>.</p>
+     *
      * @return the releaseEnvironment
      */
     public ReleaseEnvironment getReleaseEnvironment()
@@ -78,6 +89,8 @@ public class ReleasePerformRequest
     }
 
     /**
+     * <p>Setter for the field <code>releaseEnvironment</code>.</p>
+     *
      * @param releaseEnvironment the releaseEnvironment to set
      */
     public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )

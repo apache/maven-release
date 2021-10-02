@@ -23,6 +23,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 
 /**
+ * <p>ModelETLRequest class.</p>
  *
  * @author Robert Scholte
  * @since 3.0
@@ -35,31 +36,61 @@ public class ModelETLRequest
 
     private ReleaseDescriptor releaseDescriptor;
 
+    /**
+     * <p>Getter for the field <code>lineSeparator</code>.</p>
+     *
+     * @return a {@link java.lang.String} object
+     */
     public String getLineSeparator()
     {
         return lineSeparator;
     }
 
+    /**
+     * <p>Setter for the field <code>lineSeparator</code>.</p>
+     *
+     * @param lineSeparator a {@link java.lang.String} object
+     */
     public void setLineSeparator( String lineSeparator )
     {
         this.lineSeparator = lineSeparator;
     }
 
+    /**
+     * <p>Getter for the field <code>project</code>.</p>
+     *
+     * @return a {@link org.apache.maven.project.MavenProject} object
+     */
     public MavenProject getProject()
     {
         return project;
     }
 
+    /**
+     * <p>Setter for the field <code>project</code>.</p>
+     *
+     * @param project a {@link org.apache.maven.project.MavenProject} object
+     */
     public void setProject( MavenProject project )
     {
         this.project = project;
     }
 
+    /**
+     * <p>Getter for the field <code>releaseDescriptor</code>.</p>
+     *
+     * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     */
     public ReleaseDescriptor getReleaseDescriptor()
     {
         return releaseDescriptor;
     }
 
+    /**
+     * <p>Setter for the field <code>releaseDescriptor</code>.</p>
+     *
+     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     */
     public void setReleaseDescriptor( ReleaseDescriptor releaseDescriptor )
     {
         this.releaseDescriptor = releaseDescriptor;

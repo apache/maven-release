@@ -33,9 +33,6 @@ import org.codehaus.plexus.component.annotations.Component;
 public class SubversionScmTranslator
     implements ScmTranslator
 {
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )
     {
@@ -43,27 +40,18 @@ public class SubversionScmTranslator
                                              new ScmBranch( branchName ) );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String translateTagUrl( String url, String tag, String tagBase )
     {
         return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, new ScmTag( tag ) );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String resolveTag( String tag )
     {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toRelativePath( String path )
     {

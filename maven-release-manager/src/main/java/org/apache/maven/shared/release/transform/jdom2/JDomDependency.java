@@ -36,6 +36,11 @@ public class JDomDependency extends Dependency implements MavenCoordinate
 {
     private final MavenCoordinate coordinate;
 
+    /**
+     * <p>Constructor for JDomDependency.</p>
+     *
+     * @param dependency a {@link org.jdom2.Element} object
+     */
     public JDomDependency( Element dependency )
     {
         this.coordinate = new JDomMavenCoordinate( dependency );

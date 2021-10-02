@@ -182,6 +182,12 @@ public abstract class AbstractScmReleaseMojo
         return descriptor;
     }
     
+    /**
+     * <p>buildScm.</p>
+     *
+     * @param project a {@link org.apache.maven.project.MavenProject} object
+     * @return a {@link org.apache.maven.model.Scm} object
+     */
     protected Scm buildScm( MavenProject project )
     {
         Scm scm;

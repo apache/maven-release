@@ -27,6 +27,8 @@ import org.codehaus.plexus.util.StringUtils;
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
+ * <p>DefaultReleaseManagerListener class.</p>
+ *
  * @author Hervé Boutemy
  */
 public class DefaultReleaseManagerListener
@@ -42,11 +44,22 @@ public class DefaultReleaseManagerListener
 
     private int currentPhase;
 
+    /**
+     * <p>Constructor for DefaultReleaseManagerListener.</p>
+     *
+     * @param log a {@link org.apache.maven.plugin.logging.Log} object
+     */
     public DefaultReleaseManagerListener( Log log )
     {
         this( log, false );
     }
 
+    /**
+     * <p>Constructor for DefaultReleaseManagerListener.</p>
+     *
+     * @param log a {@link org.apache.maven.plugin.logging.Log} object
+     * @param dryRun a boolean
+     */
     public DefaultReleaseManagerListener( Log log, boolean dryRun )
     {
         this.log = log;
@@ -85,6 +98,9 @@ public class DefaultReleaseManagerListener
             + "/" + phases.size() + " " + buffer().strong( name ) );
     }
 
+    /**
+     * <p>phaseEnd.</p>
+     */
     public void phaseEnd()
     {
         // NOOP
@@ -95,6 +111,9 @@ public class DefaultReleaseManagerListener
         nextPhase( name );
     }
 
+    /**
+     * <p>goalEnd.</p>
+     */
     public void goalEnd()
     {
         goal = null;

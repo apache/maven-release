@@ -44,11 +44,23 @@ public class ReleaseUtils
         // nothing to see here
     }
 
+    /**
+     * <p>buildReleaseDescriptor.</p>
+     *
+     * @param builder a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor} object
+     */
     public static BuilderReleaseDescriptor buildReleaseDescriptor( ReleaseDescriptorBuilder builder )
     {
         return builder.build();
     }
 
+    /**
+     * <p>copyPropertiesToReleaseDescriptor.</p>
+     *
+     * @param properties a {@link java.util.Properties} object
+     * @param builder a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     */
     public static void copyPropertiesToReleaseDescriptor( Properties properties, ReleaseDescriptorBuilder builder )
     {
         if ( properties.containsKey( "completedPhase" ) )

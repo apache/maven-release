@@ -38,6 +38,11 @@ public class JDomPluginManagement extends PluginManagement
 {
     private final Element pluginManagement;
 
+    /**
+     * <p>Constructor for JDomPluginManagement.</p>
+     *
+     * @param pluginManagement a {@link org.jdom2.Element} object
+     */
     public JDomPluginManagement( Element pluginManagement )
     {
         this.pluginManagement = pluginManagement;
