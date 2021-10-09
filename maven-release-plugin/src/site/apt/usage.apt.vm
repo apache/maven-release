@@ -139,7 +139,7 @@ mvn --batch-mode release:prepare
   create release candidates versions using the <<<release:perform>>> goal, but the final deployed artifact will NOT
   be the exact one that has been approved as RCx.
 
-  A common solution is to use a staging repository, where a test-version is deployed with it's documentation for
+  A common solution is to use a staging repository, where a test-version is deployed with its documentation for
   review. If all is fine, it is then copied to the public repository. Using this strategy, the artifact that has
   been tested IS the one that is deployed.
 
