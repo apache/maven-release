@@ -175,7 +175,7 @@ public abstract class AbstractScmReleaseMojo
                 String projectId =
                     ArtifactUtils.versionlessKey( reactorProject.getGroupId(), reactorProject.getArtifactId() );
                 
-                descriptor.addOriginalScmInfo( projectId, buildScm( project ) );
+                descriptor.addOriginalScmInfo( projectId, buildScm( reactorProject ) );
             }
         }
 
