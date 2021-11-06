@@ -80,7 +80,19 @@ public class RewritePomsForDevelopmentPhase
                         scmRoot.setConnection( scm.getConnection() );
                         scmRoot.setDeveloperConnection( scm.getDeveloperConnection() );
                         scmRoot.setUrl( scm.getUrl() );
-                        scmRoot.setTag( translator.resolveTag( scm.getTag() ) );
+                        String tag = translator.resolveTag( scm.getTag() );
+                        // reuse unresolved tag from original in case ScmTranslator does not support tags
+                        if ( tag == null )
+                        {
+                            tag = scm.getTag();
+                            // never give out default value as there is no way to distinguish it from an the
+                            // explicitly set tag with the same value
+                            if ( "HEAD".equals( tag ) )
+                            {
+                                tag = null;
+                            }
+                        }
+                        scmRoot.setTag( tag );
                     }
                     else
                     {

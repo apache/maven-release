@@ -293,6 +293,26 @@ public class RewritePomsForDevelopmentPhaseTest
     }
 
     @Test
+    public void testRewriteBasicPomWithSvnFromTag()
+        throws Exception
+    {
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-svn-from-tag" );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-svn-from-tag" );
+        mapNextVersion( builder, "groupId:artifactId" );
+
+        Scm scm = new Scm();
+        scm.setConnection( "scm:svn:file://localhost/svnroot/trunk/" );
+        scm.setDeveloperConnection( "scm:svn:file://localhost/svnroot/trunk/" );
+        scm.setUrl( "http://localhost/svn" );
+        scm.setTag( "trunk" );
+        builder.addOriginalScmInfo( "groupId:artifactId", scm );
+
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+
+        assertTrue( comparePomFiles( reactorProjects ) );
+    }
+
+    @Test
     public void testRewriteBasicPomWithInheritedScm()
         throws Exception
     {
