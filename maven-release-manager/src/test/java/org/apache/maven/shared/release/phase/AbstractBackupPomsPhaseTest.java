@@ -24,6 +24,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.codehaus.plexus.util.ReaderFactory;
+import org.codehaus.plexus.util.xml.XmlStreamReader;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -79,15 +80,18 @@ public abstract class AbstractBackupPomsPhaseTest
     private MavenProject createMavenProject( File pomFile )
         throws Exception
     {
-        MavenXpp3Reader reader = new MavenXpp3Reader();
+        try (XmlStreamReader xmlReader = ReaderFactory.newXmlReader( pomFile ))
+        {
+            MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        Model model = reader.read( ReaderFactory.newXmlReader( pomFile ) );
+            Model model = reader.read( xmlReader );
 
-        MavenProject project = new MavenProject( model );
+            MavenProject project = new MavenProject( model );
 
-        project.setFile( pomFile );
+            project.setFile( pomFile );
 
-        return project;
+            return project;
+        }
     }
 
 }
