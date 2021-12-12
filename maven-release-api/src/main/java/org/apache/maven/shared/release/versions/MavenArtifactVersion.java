@@ -23,7 +23,7 @@ import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
 class MavenArtifactVersion
-    implements ArtifactVersion
+    implements Comparable<MavenArtifactVersion>
 {
     private final ArtifactVersion version;
 
@@ -32,71 +32,9 @@ class MavenArtifactVersion
         this.version = new DefaultArtifactVersion( version );
     }
 
-    public int compareTo( Object o )
+    public int compareTo( MavenArtifactVersion o )
     {
-        if ( o instanceof MavenArtifactVersion )
-        {
-            return version.compareTo( ( (MavenArtifactVersion) o ).version );
-        }
-        else
-        {
-            return version.compareTo( version );
-        }
-    }
-
-    /**
-     * <p>getMajorVersion.</p>
-     *
-     * @return a int
-     */
-    public int getMajorVersion()
-    {
-        return version.getMajorVersion();
-    }
-
-    /**
-     * <p>getMinorVersion.</p>
-     *
-     * @return a int
-     */
-    public int getMinorVersion()
-    {
-        return version.getMinorVersion();
-    }
-
-    /**
-     * <p>getIncrementalVersion.</p>
-     *
-     * @return a int
-     */
-    public int getIncrementalVersion()
-    {
-        return version.getIncrementalVersion();
-    }
-
-    /**
-     * <p>getBuildNumber.</p>
-     *
-     * @return a int
-     */
-    public int getBuildNumber()
-    {
-        return version.getBuildNumber();
-    }
-
-    /**
-     * <p>getQualifier.</p>
-     *
-     * @return a {@link java.lang.String} object
-     */
-    public String getQualifier()
-    {
-        return version.getQualifier();
-    }
-
-    public void parseVersion( String version )
-    {
-        this.version.parseVersion( version );
+        return version.compareTo( o.version );
     }
 
     @Override
