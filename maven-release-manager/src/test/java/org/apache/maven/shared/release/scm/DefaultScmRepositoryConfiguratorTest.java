@@ -41,8 +41,6 @@ public class DefaultScmRepositoryConfiguratorTest
 {
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    private static final int CVS_PORT = 2401;
-
     @Override
     protected void setUp()
         throws Exception
@@ -59,8 +57,8 @@ public class DefaultScmRepositoryConfiguratorTest
 
         ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( ReleaseUtils.buildReleaseDescriptor( builder ), null );
 
-        assertEquals( "check provider", "cvs", repository.getProvider() );
-        assertEquals( "check username", "anoncvs", repository.getProviderRepository().getUser() );
+        assertEquals( "check provider", "svn", repository.getProvider() );
+        assertNull( "check username", repository.getProviderRepository().getUser() );
         assertNull( "check password", repository.getProviderRepository().getPassword() );
     }
 
@@ -93,7 +91,7 @@ public class DefaultScmRepositoryConfiguratorTest
     {
         Settings settings = new Settings();
         Server server = new Server();
-        server.setId( "localhost:" + CVS_PORT );
+        server.setId( "localhost" );
         server.setUsername( "settings-username" );
         server.setPassword( "settings-password" );
         server.setPrivateKey( "settings-private-key" );
@@ -101,14 +99,14 @@ public class DefaultScmRepositoryConfiguratorTest
         settings.addServer( server );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/home/cvs:module" );
+        builder.setScmSourceUrl( "scm:svn:http://localhost/repo" );
 
         ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( ReleaseUtils.buildReleaseDescriptor( builder ), settings );
 
         ScmProviderRepositoryWithHost providerRepository =
             (ScmProviderRepositoryWithHost) repository.getProviderRepository();
         assertEquals( "check host", "localhost", providerRepository.getHost() );
-        assertEquals( "check port", CVS_PORT, providerRepository.getPort() );
+        assertEquals( "check port", 0, providerRepository.getPort() );
         assertEquals( "check username", "settings-username", providerRepository.getUser() );
         assertEquals( "check password", "settings-password", providerRepository.getPassword() );
         assertEquals( "check private key", "settings-private-key", providerRepository.getPrivateKey() );
@@ -179,7 +177,7 @@ public class DefaultScmRepositoryConfiguratorTest
         throws NoSuchScmProviderException
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmSourceUrl( "scm:cvs:" );
+        builder.setScmSourceUrl( "scm:svn:" );
 
         try
         {
@@ -201,13 +199,13 @@ public class DefaultScmRepositoryConfiguratorTest
         ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository( ReleaseUtils.buildReleaseDescriptor( builder ), null );
 
         ScmProvider provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
-        assertEquals( "Check SCM provider", "cvs", provider.getScmType() );
+        assertEquals( "Check SCM provider", "svn", provider.getScmType() );
     }
 
     private static ReleaseDescriptorBuilder createReleaseDescriptorBuilder()
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/home/cvs:module" );
+        builder.setScmSourceUrl( "scm:svn:http://localhost/repo" );
         return builder;
     }
 

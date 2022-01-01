@@ -64,7 +64,7 @@ public class RewritePomsForDevelopmentPhaseTest
     {
         return "rewrite-poms-for-development";
     }
-    
+
     @Override
     protected Path getWorkingDirectory( String workingDir )
     {
@@ -252,18 +252,18 @@ public class RewritePomsForDevelopmentPhaseTest
     }
 
     @Test
-    public void testRewriteBasicPomWithCvs()
+    public void testRewriteBasicPomWithGit()
         throws Exception
     {
 
-        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-cvs" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-cvs" );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-git" );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-git" );
         mapNextVersion( builder, "groupId:artifactId" );
 
         Scm scm = new Scm();
-        scm.setConnection( "${scm.base}:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
-        scm.setDeveloperConnection( "${scm.base}:ext:${username}@localhost:/tmp/scm-repo:module" );
-        scm.setUrl( "${baseUrl}/module" );
+        scm.setConnection( "${scm.base}:git://localhost/repo" );
+        scm.setDeveloperConnection( "${scm.base}:git+ssh://${username}@localhost/tmp/repo" );
+        scm.setUrl( "${baseUrl}/repo" );
         builder.addOriginalScmInfo( "groupId:artifactId", scm );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -272,18 +272,18 @@ public class RewritePomsForDevelopmentPhaseTest
     }
 
     @Test
-    public void testRewriteBasicPomWithCvsFromTag()
+    public void testRewriteBasicPomWithGitFromTag()
         throws Exception
     {
 
-        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-cvs-from-tag" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-cvs-from-tag" );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-git-from-tag" );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-git-from-tag" );
         mapNextVersion( builder, "groupId:artifactId" );
 
         Scm scm = new Scm();
-        scm.setConnection( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
-        scm.setDeveloperConnection( "scm:cvs:ext:${username}@localhost:/tmp/scm-repo:module" );
-        scm.setUrl( "http://localhost/viewcvs.cgi/module" );
+        scm.setConnection( "scm:git:git://localhost/repo" );
+        scm.setDeveloperConnection( "scm:git:git+ssh://${username}@localhost/tmp/repo" );
+        scm.setUrl( "http://localhost/viewgit.cgi/repo" );
         scm.setTag( "original-label" );
         builder.addOriginalScmInfo( "groupId:artifactId", scm );
 

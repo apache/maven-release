@@ -95,7 +95,7 @@ public class CheckPomPhaseTest
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl( "scm:svn:https://localhost/tmp/repo" );
-        
+
         MavenProject project = createProject( "1.0-SNAPSHOT" );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), Collections.singletonList( project ) );
@@ -120,7 +120,7 @@ public class CheckPomPhaseTest
         throws Exception
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmSourceUrl( "scm:cvs:" );
+        builder.setScmSourceUrl( "scm:svn:" );
 
         MavenProject project = createProject( "1.0-SNAPSHOT" );
 

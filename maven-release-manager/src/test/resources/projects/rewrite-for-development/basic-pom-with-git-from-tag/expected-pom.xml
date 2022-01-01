@@ -20,20 +20,16 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>groupId</groupId>
   <artifactId>artifactId</artifactId>
-  <version>1.0</version>
+  <version>1.1-SNAPSHOT</version>
 
   <prerequisites>
     <maven>2.0.4</maven>
   </prerequisites>
 
   <scm>
-    <connection>${scm.base}:pserver:anoncvs@localhost:/tmp/scm-repo:module</connection>
-    <developerConnection>${scm.base}:ext:${username}@localhost:/tmp/scm-repo:module</developerConnection>
-    <url>${baseUrl}/module</url>
-    <tag>release-label</tag>
+    <connection>scm:git:git://localhost/repo</connection>
+    <developerConnection>scm:git:git+ssh://${username}@localhost/tmp/repo</developerConnection>
+    <url>http://localhost/viewgit.cgi/repo</url>
+    <tag>original-label</tag>
   </scm>
-  <properties>
-    <scm.base>scm:cvs</scm.base>
-    <baseUrl>http://localhost/viewcvs.cgi</baseUrl>
-  </properties>
 </project>

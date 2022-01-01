@@ -289,7 +289,7 @@ public class InputVariablesPhaseTest
 
     // MRELEASE-110
     @Test
-    public void testCvsTag()
+    public void testSvnTag()
         throws Exception
     {
         // prepare
@@ -301,25 +301,25 @@ public class InputVariablesPhaseTest
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setInteractive( false );
         builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
+        builder.setScmSourceUrl( "scm:svn:svn://localhost/repo" );
 
         // execute
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check tag", "artifactId-1_0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
         builder.setInteractive( false );
         builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:cvs:pserver:anoncvs@localhost:/tmp/scm-repo:module" );
+        builder.setScmSourceUrl( "scm:svn:svn://localhost/repo" );
 
         // execute
         phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check tag", "artifactId-1_0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
 
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );

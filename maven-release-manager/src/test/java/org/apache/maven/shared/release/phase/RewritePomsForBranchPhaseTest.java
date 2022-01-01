@@ -213,12 +213,12 @@ public class RewritePomsForBranchPhaseTest
     }
 
     @Test
-    public void testRewriteBasicPomWithCvs()
+    public void testRewriteBasicPomWithGit()
         throws Exception
     {
 
-        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-cvs" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-cvs" );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-git" );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-git" );
         mapNextVersion( builder, "groupId:artifactId" );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -270,11 +270,11 @@ public class RewritePomsForBranchPhaseTest
     }
 
     @Test
-    public void testRewriteBasicPomWithCvsFromTag()
+    public void testRewriteBasicPomWithGitFromTag()
         throws Exception
     {
-        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-cvs-from-tag" );
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-cvs-from-tag" );
+        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom-with-git-from-tag" );
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, "basic-pom-with-git-from-tag" );
         mapNextVersion( builder, "groupId:artifactId" );
 
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
