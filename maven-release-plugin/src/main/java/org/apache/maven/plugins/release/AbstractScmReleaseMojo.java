@@ -101,7 +101,7 @@ public abstract class AbstractScmReleaseMojo
      * A workItem for SCMs like RTC, TFS etc, that may require additional
      * information to perform a pushChange operation.
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter( property = "workItem" )
     private String workItem;

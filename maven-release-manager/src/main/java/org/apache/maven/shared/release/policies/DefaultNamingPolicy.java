@@ -29,7 +29,7 @@ import org.codehaus.plexus.component.annotations.Component;
  * <p>DefaultNamingPolicy class.</p>
  *
  * @author Robert Scholte
- * @since 3.0.0
+ * @since 3.0.0-M5
  */
 @Component( role = NamingPolicy.class, hint = "default" )
 public class DefaultNamingPolicy implements NamingPolicy

@@ -57,7 +57,7 @@ public class RollbackReleaseMojo
      *     <li><code>releaseLabel</code> - The release version of the root project.
      * </ul>
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter(
             defaultValue = "@{prefix} rollback the release of @{releaseLabel}", 

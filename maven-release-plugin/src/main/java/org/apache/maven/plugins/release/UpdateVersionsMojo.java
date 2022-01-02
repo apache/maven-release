@@ -88,7 +88,7 @@ public class UpdateVersionsMojo
     /**
      * The role-hint for the VersionPolicy implementation used to calculate the project versions.
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
     private String projectVersionPolicyId;

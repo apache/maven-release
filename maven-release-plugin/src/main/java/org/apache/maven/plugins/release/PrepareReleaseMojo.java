@@ -191,7 +191,7 @@ public class PrepareReleaseMojo
     /**
      * Signs SCM tag when possible, for example when using the git-exe the '--sign' argument is used.
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter( property = "signTag" )
     private boolean signTag = false;
@@ -241,7 +241,7 @@ public class PrepareReleaseMojo
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project branch and tag names.
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.policies.DefaultNamingPolicy
      */
     @Parameter( property = "projectNamingPolicyId" )
@@ -261,7 +261,7 @@ public class PrepareReleaseMojo
      *     <li><code>releaseLabel</code> - The release version of the root project.
      * </ul>
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter( defaultValue = "@{prefix} prepare release @{releaseLabel}", property = "scmReleaseCommitComment" )
     private String scmReleaseCommitComment = "@{prefix} prepare release @{releaseLabel}";
@@ -280,7 +280,7 @@ public class PrepareReleaseMojo
      *     <li><code>releaseLabel</code> - The release version of the root project.
      * </ul>
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter( 
             defaultValue = "@{prefix} prepare for next development iteration", 
@@ -300,7 +300,7 @@ public class PrepareReleaseMojo
      * <li>"extensions" or "4": resolve extension dependencies</li>
      * </ul>
      * 
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter( property = "autoResolveSnapshots" )
     private String autoResolveSnapshots;
@@ -309,7 +309,7 @@ public class PrepareReleaseMojo
      * Currently only implemented with svn scm. Enable the {@code --pin-externals} option in
      * {@code svn copy} command which is new in Subversion 1.9.
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter( defaultValue = "false", property = "pinExternals" )
     private boolean pinExternals;

@@ -27,7 +27,7 @@ import org.apache.maven.model.Scm;
  * <p>ReleaseDescriptorBuilder class.</p>
  *
  * @author Robert Scholte
- * @since 3.0.0
+ * @since 3.0.0-M5
  */
 public class ReleaseDescriptorBuilder
 {

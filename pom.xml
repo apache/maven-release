@@ -30,7 +30,7 @@
 
   <groupId>org.apache.maven.release</groupId>
   <artifactId>maven-release</artifactId>
-  <version>3.0.0-SNAPSHOT</version>
+  <version>3.0.0-M5-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Maven Release</name>

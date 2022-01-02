@@ -194,7 +194,7 @@ public class BranchReleaseMojo
      * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy}
      * implementation used to calculate the project versions.
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.policies.DefaultVersionPolicy
      */
     @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
@@ -204,7 +204,7 @@ public class BranchReleaseMojo
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project names.
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.policies.DefaultNamingPolicy
      */
     @Parameter( property = "projectNamingPolicyId" )
@@ -233,7 +233,7 @@ public class BranchReleaseMojo
      * Currently only implemented with svn scm. Enable the {@code --pin-externals} option in
      * {@code svn copy} command which is new in Subversion 1.9.
      *
-     * @since 3.0.0
+     * @since 3.0.0-M5
      */
     @Parameter( defaultValue = "false", property = "pinExternals" )
     private boolean pinExternals;

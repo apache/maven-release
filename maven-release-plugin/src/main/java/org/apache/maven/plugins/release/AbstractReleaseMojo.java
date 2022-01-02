@@ -127,7 +127,7 @@ public abstract class AbstractReleaseMojo
      * The role-hint for the {@link org.apache.maven.shared.release.strategy.Strategy}
      * implementation used to specify the phases per goal.
      * 
-     * @since 3.0.0
+     * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.strategies.DefaultStrategy
      */
     @Parameter( defaultValue = "default", property = "releaseStrategyId" )

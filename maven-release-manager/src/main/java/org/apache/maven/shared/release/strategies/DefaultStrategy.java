@@ -27,7 +27,7 @@ import org.apache.maven.shared.release.strategy.Strategy;
  * <p>DefaultStrategy class.</p>
  *
  * @author Robert Scholte
- * @since 3.0.0
+ * @since 3.0.0-M5
  */
 public class DefaultStrategy implements Strategy
 {

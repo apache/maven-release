@@ -28,7 +28,7 @@ import org.apache.maven.shared.release.ReleaseResult;
  * Additional interface for ReleasePhase if the phase generates resources, which should be cleaned up afterwards.
  *
  * @author Robert Scholte
- * @since 3.0.0
+ * @since 3.0.0-M5
  */
 public interface ResourceGenerator
 {

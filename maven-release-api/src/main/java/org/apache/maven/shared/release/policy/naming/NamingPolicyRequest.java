@@ -23,7 +23,7 @@ package org.apache.maven.shared.release.policy.naming;
  * <p>NamingPolicyRequest class.</p>
  *
  * @author Robert Scholte
- * @since 3.0.0
+ * @since 3.0.0-M5
  */
 public class NamingPolicyRequest
 {
