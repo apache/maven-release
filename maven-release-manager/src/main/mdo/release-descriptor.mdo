@@ -604,6 +604,15 @@
           </description>
         </field>
 
+        <field>
+          <name>lineSeparator</name>
+          <version>3.0.0+</version>
+          <type>String</type>
+          <description>
+            Specifies the line separator to use in the pom.xml.
+          </description>
+        </field>
+
         <!-- Announcement Information
 
         Announcement related info, this can be a second part of the process.

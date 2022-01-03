@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.config;
 import java.util.List;
 
 import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 
 /**
  * <p>ReleaseDescriptorBuilder class.</p>
@@ -52,6 +53,7 @@ public class ReleaseDescriptorBuilder
     public ReleaseDescriptorBuilder()
     {
         this.releaseDescriptor = new BuilderReleaseDescriptor();
+        this.releaseDescriptor.setLineSeparator( ReleaseUtil.LS );
     }
 
     /**
@@ -255,6 +257,18 @@ public class ReleaseDescriptorBuilder
     public ReleaseDescriptorBuilder setInteractive( boolean interactive )
     {
         releaseDescriptor.setInteractive( interactive );
+        return this;
+    }
+
+    /**
+     * <p>setLineSeparator.</p>
+     *
+     * @param ls a {@link java.lang.String} object
+     * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     */
+    public ReleaseDescriptorBuilder setLineSeparator( String ls )
+    {
+        releaseDescriptor.setLineSeparator( ls );
         return this;
     }
 
@@ -856,7 +870,7 @@ public class ReleaseDescriptorBuilder
         return this;
     }
 
-    BuilderReleaseDescriptor build()
+    public BuilderReleaseDescriptor build()
     {
         return releaseDescriptor;
     }

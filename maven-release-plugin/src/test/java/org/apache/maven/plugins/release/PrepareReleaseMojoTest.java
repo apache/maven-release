@@ -27,6 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -65,7 +66,7 @@ public class PrepareReleaseMojoTest
     {
         setVariableValueToObject( mojo, "updateWorkingCopyVersions", Boolean.TRUE );
     }
-    
+
     public void testPrepare()
         throws Exception
     {
@@ -87,11 +88,11 @@ public class PrepareReleaseMojoTest
                 return Collections.singletonList( mojo.project );
             }
         };
-        
+
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setWorkingDirectory( testFile.getParentFile().getAbsolutePath() );
         builder.setUpdateDependencies( false );
-        
+
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
 
@@ -107,10 +108,10 @@ public class PrepareReleaseMojoTest
         mojo.execute();
 
         ArgumentCaptor<ReleasePrepareRequest> prepareRequest = ArgumentCaptor.forClass( ReleasePrepareRequest.class );
-        
+
         // verify
         verify( mock ).prepare( prepareRequest.capture() );
-        
+
         assertThat( prepareRequest.getValue().getReleaseDescriptorBuilder(),
                     is( instanceOf( ReleaseDescriptorBuilder.class ) ) );
         assertThat( prepareRequest.getValue().getReleaseEnvironment(), is( instanceOf( ReleaseEnvironment.class ) ) );
@@ -157,7 +158,7 @@ public class PrepareReleaseMojoTest
         {
             assertEquals( "Check cause", ReleaseExecutionException.class, e.getCause().getClass() );
         }
-        
+
         // verify
         verify( mock ).prepare( isA( ReleasePrepareRequest.class ) );
         verifyNoMoreInteractions( mock );
@@ -176,14 +177,14 @@ public class PrepareReleaseMojoTest
           public Properties getExecutionProperties(){
               return new Properties();
           };
-          
+
           @Override
           public List<MavenProject> getProjects()
           {
               return Collections.singletonList( mojo.project );
           }
         };
-        
+
         ReleaseManager mock = mock( ReleaseManager.class );
         ReleaseFailureException cause = new ReleaseFailureException( "..." );
         doThrow( cause ).when( mock ).prepare( isA( ReleasePrepareRequest.class ) );
@@ -203,6 +204,57 @@ public class PrepareReleaseMojoTest
         // verify
         verify( mock ).prepare( isA( ReleasePrepareRequest.class ) );
         verifyNoMoreInteractions( mock );
+    }
+
+    public void testLineSeparatorInPrepareWithPom()
+      throws Exception
+    {
+        File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
+        final PrepareWithPomReleaseMojo mojo = (PrepareWithPomReleaseMojo) lookupMojo( "prepare-with-pom", testFile );
+        setDefaults( mojo );
+        setVariableValueToObject( mojo, "generateReleasePoms", Boolean.TRUE );
+        mojo.setBasedir( testFile.getParentFile() );
+        mojo.setPomFileName( "pom.xml" );
+        mojo.project.setFile( testFile );
+        mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
+        {
+            public Properties getExecutionProperties()
+            {
+                return new Properties();
+            };
+
+            @Override
+            public List<MavenProject> getProjects()
+            {
+                return Collections.singletonList( mojo.project );
+            }
+        };
+
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
+
+        int times = 1;
+        testLineSeparator(null, "\n", mojo, mock, times++);
+        testLineSeparator("source", "\n", mojo, mock, times++);
+        testLineSeparator("cr", "\r", mojo, mock, times++);
+        testLineSeparator("lf", "\n", mojo, mock, times++);
+        testLineSeparator("crlf", "\r\n", mojo, mock, times++);
+        testLineSeparator("system", System.lineSeparator(), mojo, mock, times++);
+    }
+
+    private void testLineSeparator( String lineSeparator, String expected, PrepareWithPomReleaseMojo mojo,
+                                   ReleaseManager releaseManager, int times )
+      throws Exception
+    {
+
+        setVariableValueToObject( mojo, "lineSeparator", lineSeparator );
+
+        mojo.execute();
+
+        ArgumentCaptor<ReleasePrepareRequest> prepareRequest = ArgumentCaptor.forClass( ReleasePrepareRequest.class );
+        verify( releaseManager , times( times ) ).prepare( prepareRequest.capture() );
+
+        assertEquals( expected, prepareRequest.getValue().getReleaseDescriptorBuilder().build().getLineSeparator() );
     }
 
 /*

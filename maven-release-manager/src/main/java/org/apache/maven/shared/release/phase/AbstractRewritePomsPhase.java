@@ -102,18 +102,6 @@ public abstract class AbstractRewritePomsPhase
         return scmTranslators;
     }
 
-    private String ls = ReleaseUtil.LS;
-
-    /**
-     * <p>Setter for the field <code>ls</code>.</p>
-     *
-     * @param ls a {@link java.lang.String} object
-     */
-    public void setLs( String ls )
-    {
-        this.ls = ls;
-    }
-
     /**
      * <p>Setter for the field <code>modelETL</code>.</p>
      *
@@ -220,7 +208,6 @@ public abstract class AbstractRewritePomsPhase
         File pomFile = ReleaseUtil.getStandardPom( project );
 
         ModelETLRequest request = new ModelETLRequest();
-        request.setLineSeparator( ls );
         request.setProject( project );
         request.setReleaseDescriptor( releaseDescriptor );
 
