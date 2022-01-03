@@ -30,30 +30,19 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  */
 public class ModelETLRequest
 {
-    private String lineSeparator;
 
     private MavenProject project;
 
     private ReleaseDescriptor releaseDescriptor;
 
     /**
-     * <p>Getter for the field <code>lineSeparator</code>.</p>
+     * <p>Getter for the field <code>releaseDescriptor.lineSeparator</code>.</p>
      *
      * @return a {@link java.lang.String} object
      */
     public String getLineSeparator()
     {
-        return lineSeparator;
-    }
-
-    /**
-     * <p>Setter for the field <code>lineSeparator</code>.</p>
-     *
-     * @param lineSeparator a {@link java.lang.String} object
-     */
-    public void setLineSeparator( String lineSeparator )
-    {
-        this.lineSeparator = lineSeparator;
+        return releaseDescriptor.getLineSeparator();
     }
 
     /**

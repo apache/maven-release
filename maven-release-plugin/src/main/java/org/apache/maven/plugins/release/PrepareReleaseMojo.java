@@ -19,6 +19,9 @@ package org.apache.maven.plugins.release;
  * under the License.
  */
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
@@ -282,8 +285,8 @@ public class PrepareReleaseMojo
      *
      * @since 3.0.0-M5
      */
-    @Parameter( 
-            defaultValue = "@{prefix} prepare for next development iteration", 
+    @Parameter(
+            defaultValue = "@{prefix} prepare for next development iteration",
             property = "scmDevelopmentCommitComment" )
     private String scmDevelopmentCommitComment = "@{prefix} prepare for next development iteration";
 
@@ -299,7 +302,7 @@ public class PrepareReleaseMojo
      * <li>"reports" or "3": resolve report dependencies</li>
      * <li>"extensions" or "4": resolve extension dependencies</li>
      * </ul>
-     * 
+     *
      * @since 3.0.0-M5
      */
     @Parameter( property = "autoResolveSnapshots" )
@@ -314,6 +317,25 @@ public class PrepareReleaseMojo
     @Parameter( defaultValue = "false", property = "pinExternals" )
     private boolean pinExternals;
 
+    /**
+     * Specifies the line separator to format pom.xml. The default value is system. The following properties are
+     * available:
+     * <ul>
+     * <li><code>system</code> - Use the system line separator.</li>
+     * <li><code>lf</code> - Use \n as line separator.</li>
+     * <li><code>cr</code> - Use \r as line separator.</li>
+     * <li><code>crlf</code> - Use \r\n as line separator.</li>
+     * <li><code>source</code> - Use the same line separator as it is specified in the current pom.xml.</li>
+     * </ul>
+     *
+     * @since 3.0.0
+     */
+    @Parameter( defaultValue = "source", property = "lineSeparator" )
+    private String lineSeparator;
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -365,6 +387,10 @@ public class PrepareReleaseMojo
         config.setScmReleaseCommitComment( scmReleaseCommitComment );
         config.setAutoResolveSnapshots( autoResolveSnapshots );
         config.setPinExternals( pinExternals );
+        if ( generateReleasePoms )
+        {
+            config.setLineSeparator( resolveLineSeparator() );
+        }
 
         if ( checkModificationExcludeList != null )
         {
@@ -375,7 +401,7 @@ public class PrepareReleaseMojo
         {
             config.setCheckModificationExcludes( Arrays.asList( checkModificationExcludes ) );
         }
-        
+
         ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
         prepareRequest.setReleaseDescriptorBuilder( config );
         prepareRequest.setReleaseEnvironment( getReleaseEnvironment() );
@@ -397,6 +423,65 @@ public class PrepareReleaseMojo
         {
             throw new MojoFailureException( e.getMessage(), e );
         }
+    }
+
+    private String resolveLineSeparator() throws MojoExecutionException
+    {
+        if ( lineSeparator  == null )
+        {
+            return getLineSeparatorFromPom();
+        }
+
+        switch ( lineSeparator )
+        {
+            case "lf":
+                return "\n";
+            case "cr":
+                return "\r";
+            case "crlf":
+                return "\r\n";
+            case "system":
+                return System.lineSeparator();
+            case "source":
+                return getLineSeparatorFromPom();
+            default:
+                throw new IllegalArgumentException( String.format( "Unknown property lineSeparator: '%s'. Use one of"
+                  + " the following: 'source', 'system', 'lf', 'cr', 'crlf'.", lineSeparator ) );
+        }
+    }
+
+    private String getLineSeparatorFromPom()
+      throws MojoExecutionException
+    {
+        char current;
+        String lineSeparator = "";
+        try ( InputStream is = new FileInputStream( this.project.getFile() ) )
+        {
+            while ( is.available() > 0 )
+            {
+                current = ( char ) is.read();
+                if ( ( current == '\n' ) || ( current == '\r' ) )
+                {
+                    lineSeparator += current;
+                    if ( is.available() > 0 )
+                    {
+                        char next = ( char ) is.read();
+                        if ( ( next != current )
+                          && ( ( next == '\r' ) || ( next == '\n' ) ) )
+                        {
+                            lineSeparator += next;
+                        }
+                    }
+                    return lineSeparator;
+                }
+            }
+        }
+        catch ( IOException e )
+        {
+            throw new MojoExecutionException( "Failed to detect line separator of " + this.project.getFile(), e );
+        }
+
+        return lineSeparator;
     }
 
 }
