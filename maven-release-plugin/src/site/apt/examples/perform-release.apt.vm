@@ -27,7 +27,7 @@
 
 Perform a Release
 
-  Performing a release runs the following release phases {{{../maven-release-manager/#perform}by default}}:
+  Performing a release runs the following release phases {{{../../maven-release-manager/#perform}by default}}:
 
    * Checkout from an SCM URL with optional tag
 

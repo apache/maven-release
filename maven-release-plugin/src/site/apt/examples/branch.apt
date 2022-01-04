@@ -25,7 +25,7 @@
 
 Create a Branch
 
-  Creating a branch involves the following release phases {{{../maven-release-manager/#branch}by default}}:
+  Creating a branch involves the following release phases {{{../../maven-release-manager/#branch}by default}}:
 
    * Check that there are no uncommitted changes in the sources
 
