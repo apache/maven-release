@@ -30,10 +30,27 @@ Maven Release Manager
  * the release management engine ({{{./apidocs/org/apache/maven/shared/release/ReleaseManager.html}ReleaseManager}} API
    with {{{./xref/org/apache/maven/shared/release/DefaultReleaseManager.html}DefaultReleaseManager}} implementation),
 
- * default release phases (in {{{./apidocs/org/apache/maven/shared/release/phase/package-summary.html}phase package}}),
+ * available release phases (in {{{./apidocs/org/apache/maven/shared/release/phase/package-summary.html}phase package}})
+   to be used in {{{./apidocs/org/apache/maven/shared/release/strategies/DefaultStrategy.html}Strategy}} configuration,
 
- * and the default release strategy ({{{./apidocs/org/apache/maven/shared/release/strategies/DefaultStrategy.html}DefaultStrategy}})
-   with its phases configuration:
+ * and the default phases configuration for each release goal:
 
-%{snippet|id=default-strategy|file=${project.build.sourceDirectory}/../components-fragment.xml}
- 
+   * {<<<prepare>>>}:
+
+%{snippet|id=default-strategy-prepare-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+
+   * {<<<perform>>>}:
+
+%{snippet|id=default-strategy-perform-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+
+   * {<<<rollback>>>}:
+
+%{snippet|id=default-strategy-rollback-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+
+   * {<<<branch>>>}:
+
+%{snippet|id=default-strategy-branch-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+
+   * {<<<update-versions>>>}:
+
+%{snippet|id=default-strategy-update-versions-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}

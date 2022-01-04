@@ -26,7 +26,9 @@
       <role-hint>default</role-hint>
       <implementation>org.apache.maven.shared.release.strategies.DefaultStrategy</implementation>
       <configuration>
+
         <preparePhases>
+<!-- START SNIPPET: default-strategy-prepare-phases -->
           <phase>check-poms</phase>
           <phase>scm-check-modifications</phase>
           <phase>check-dependency-snapshots</phase>
@@ -44,18 +46,27 @@
           <phase>run-completion-goals</phase>
           <phase>scm-commit-development</phase>
           <phase>end-release</phase>
+<!-- END SNIPPET: default-strategy-prepare-phases -->
         </preparePhases>
+
         <performPhases>
+<!-- START SNIPPET: default-strategy-perform-phases -->
           <phase>verify-completed-prepare-phases</phase>
           <phase>checkout-project-from-scm</phase>
           <phase>run-perform-goals</phase>
+<!-- END SNIPPET: default-strategy-perform-phases -->
         </performPhases>
+
         <rollbackPhases>
+<!-- START SNIPPET: default-strategy-rollback-phases -->
           <phase>restore-backup-poms</phase>
           <phase>scm-commit-rollback</phase>
           <phase>remove-scm-tag</phase>
+<!-- END SNIPPET: default-strategy-rollback-phases -->
         </rollbackPhases>
+
         <branchPhases>
+<!-- START SNIPPET: default-strategy-branch-phases -->
           <phase>check-poms</phase>
           <phase>scm-check-modifications</phase>
           <phase>create-backup-poms</phase>
@@ -68,12 +79,16 @@
           <phase>rewrite-poms-for-development</phase>
           <phase>scm-commit-development</phase>
           <phase>end-release</phase>
+<!-- END SNIPPET: default-strategy-branch-phases -->
         </branchPhases>
+
         <updateVersionsPhases>
+<!-- START SNIPPET: default-strategy-update-versions-phases -->
           <phase>check-poms-updateversions</phase>
           <phase>create-backup-poms</phase>
           <phase>map-development-versions</phase>
           <phase>rewrite-pom-versions</phase>
+<!-- END SNIPPET: default-strategy-update-versions-phases -->
         </updateVersionsPhases>
       </configuration>
     </component>

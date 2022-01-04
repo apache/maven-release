@@ -28,7 +28,7 @@
 
 Prepare a Release
 
-  Preparing a release goes through the following release phases:
+  Preparing a release goes through the following release phases {{{../maven-release-manager/#prepare}by default}}:
 
    * Check that there are no uncommitted changes in the sources
 
