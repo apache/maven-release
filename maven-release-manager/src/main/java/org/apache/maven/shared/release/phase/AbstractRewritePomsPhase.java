@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.TimeZone;
 
@@ -557,19 +558,42 @@ public abstract class AbstractRewritePomsPhase
                                 }
                                 else
                                 {
-                                    // the value of the expression conflicts with what the user wanted to release
-                                    throw new ReleaseFailureException( "The artifact (" + key + ") requires a "
-                                        + "different version (" + mappedVersion + ") than what is found ("
-                                        + propertyValue + ") for the expression (" + expression + ") in the "
-                                        + "project (" + projectId + ")." );
+                                    if ( Objects.equals( projectModel.getPackaging(), "maven-plugin" )
+                                        && "org.apache.maven.plugins:maven-plugin-plugin"
+                                        .equals( groupId + ":" + artifactId ) )
+                                    {
+
+                                        // edge case: to build a maven-plugin you MUST USE maven-plugin but
+                                        // with different version, that MAY be defined as a property
+                                        logInfo( result, "  Ignoring artifact version update for maven-plugin-plugin" );
+                                    }
+                                    else
+                                    {
+                                        // the value of the expression conflicts with what the user wanted to release
+                                        throw new ReleaseFailureException( "The artifact (" + key + ") requires a "
+                                            + "different version (" + mappedVersion + ") than what is found ("
+                                            + propertyValue + ") for the expression (" + expression + ") in the "
+                                            + "project (" + projectId + ")." );
+                                    }
                                 }
                             }
                         }
                         else
                         {
-                            // the expression used to define the version of this artifact may be inherited
-                            // TODO needs a better error message, what pom? what dependency?
-                            throw new ReleaseFailureException( "The version could not be updated: " + rawVersion );
+                            if ( Objects.equals( projectModel.getPackaging(), "maven-plugin" )
+                                 && "org.apache.maven.plugins:maven-plugin-plugin"
+                                              .equals( groupId + ":" + artifactId ) )
+                            {
+                                // edge case: to build a maven-plugin you MUST USE maven-plugin but
+                                // with different version, that MAY be defined as a property
+                                logInfo( result, "  Ignoring artifact version update for maven-plugin-plugin" );
+                            }
+                            else
+                            {
+                                // the expression used to define the version of this artifact may be inherited
+                                // TODO needs a better error message, what pom? what dependency?
+                                throw new ReleaseFailureException( "The version could not be updated: " + rawVersion );
+                            }
                         }
                     }
                 }
