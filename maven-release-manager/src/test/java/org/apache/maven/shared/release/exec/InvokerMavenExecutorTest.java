@@ -92,14 +92,14 @@ public class InvokerMavenExecutorTest
         // bug: assertEquals( true, req.isInteractive() );
 
         req = new DefaultInvocationRequest();
-        req.setInteractive( true );
+        req.setBatchMode( false );
         executor.setupRequest( req, null, "-B" );
-        assertEquals( false, req.isInteractive() );
+        assertEquals( true, req.isBatchMode() );
 
         req = new DefaultInvocationRequest();
-        req.setInteractive( true );
+        req.setBatchMode( false );
         executor.setupRequest( req, null, "\"-B\"" );
-        assertEquals( false, req.isInteractive() );
+        assertEquals( true, req.isBatchMode() );
     }
 
     @Test

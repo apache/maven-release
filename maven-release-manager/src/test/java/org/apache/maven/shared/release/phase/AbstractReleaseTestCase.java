@@ -58,12 +58,15 @@ import org.apache.maven.project.ProjectBuildingRequest.RepositoryMerging;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.project.ProjectSorter;
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
+import org.apache.maven.repository.internal.MavenRepositorySystemUtils;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
-import org.sonatype.aether.repository.WorkspaceReader;
-import org.sonatype.aether.repository.WorkspaceRepository;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.artifact.Artifact;
+import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
+import org.eclipse.aether.repository.LocalRepository;
+import org.eclipse.aether.repository.WorkspaceReader;
+import org.eclipse.aether.repository.WorkspaceRepository;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -187,8 +190,10 @@ public abstract class AbstractReleaseTestCase
         buildingRequest.setRemoteRepositories( repos );
         buildingRequest.setPluginArtifactRepositories( repos );
         buildingRequest.setRepositoryMerging( RepositoryMerging.REQUEST_DOMINANT );
-        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
-        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepository.getBasedir() ) );
+        DefaultRepositorySystemSession repositorySession = MavenRepositorySystemUtils.newSession();
+        LocalRepository localRepo = new LocalRepository( localRepository.getBasedir() );
+        repositorySession.setLocalRepositoryManager(
+                new SimpleLocalRepositoryManagerFactory().newInstance( repositorySession, localRepo ) );
         buildingRequest.setRepositorySession( repositorySession );
         buildingRequest.addProfile( profile );
         buildingRequest.setActiveProfileIds( Arrays.asList( profile.getId() ) );
@@ -387,7 +392,7 @@ public abstract class AbstractReleaseTestCase
         }
 
         @Override
-        public List<String> findVersions( org.sonatype.aether.artifact.Artifact artifact )
+        public List<String> findVersions( Artifact artifact )
         {
             for ( MavenProject mavenProject : reactorProjects )
             {
@@ -400,7 +405,7 @@ public abstract class AbstractReleaseTestCase
         }
 
         @Override
-        public File findArtifact( org.sonatype.aether.artifact.Artifact artifact )
+        public File findArtifact( Artifact artifact )
         {
             for ( MavenProject mavenProject : reactorProjects )
             {
