@@ -103,6 +103,12 @@ public class PrepareReleaseMojo extends AbstractScmReleaseMojo {
     private boolean addSchema;
 
     /**
+     * Comma separated profiles to enable on release prepare, in addition to active profiles for project execution.
+     */
+    @Parameter(property = "preparationProfiles")
+    private String preparationProfiles;
+
+    /**
      * Goals to run as part of the preparation step, after transformation but before committing. Space delimited.
      */
     @Parameter(defaultValue = "clean verify", property = "preparationGoals")
@@ -322,6 +328,14 @@ public class PrepareReleaseMojo extends AbstractScmReleaseMojo {
      */
     @Parameter(defaultValue = "false", property = "pinExternals")
     private boolean pinExternals;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected String getAdditionalProfiles() {
+        return preparationProfiles;
+    }
 
     /**
      * Specifies the line separator to format pom.xml. The following properties are
