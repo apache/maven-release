@@ -34,4 +34,14 @@ public class VersionParseException
     {
         super( message );
     }
+
+    /**
+     * <p>Constructor for VersionParseException.</p>
+     *
+     * @param message a {@link java.lang.String} object
+     */
+    public VersionParseException( String message, Throwable e )
+    {
+        super( message, e );
+    }
 }

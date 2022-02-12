@@ -367,6 +367,9 @@ public class PropertiesReleaseDescriptorStoreTest
         builder.addReleaseVersion( "groupId:artifactId", "1.0" );
         builder.addDevelopmentVersion( "groupId:artifactId", "1.1-SNAPSHOT" );
 
+        // The actual kind of string you will get when setting the projectVersionPolicyConfig
+        builder.setProjectVersionPolicyConfig("<projectVersionPolicyConfig><foo>bar</foo></projectVersionPolicyConfig>");
+
         IdentifiedScm scm = new IdentifiedScm();
         scm.setId( "id-write" );
         scm.setConnection( "connection-write" );

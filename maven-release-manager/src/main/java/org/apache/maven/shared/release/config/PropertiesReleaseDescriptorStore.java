@@ -269,6 +269,10 @@ public class PropertiesReleaseDescriptorStore
         {
             properties.setProperty( "projectVersionPolicyId", config.getProjectVersionPolicyId() );
         }
+        if ( config.getProjectVersionPolicyConfig() != null )
+        {
+            properties.setProperty( "projectVersionPolicyConfig", config.getProjectVersionPolicyConfig().toString() );
+        }
         if ( config.getProjectNamingPolicyId() != null )
         {
             properties.setProperty( "projectNamingPolicyId", config.getProjectNamingPolicyId() );

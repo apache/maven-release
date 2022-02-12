@@ -20,6 +20,8 @@ package org.apache.maven.shared.release.policy.version;
  */
 
 import org.apache.maven.artifact.repository.metadata.Metadata;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
 
 /**
  * <p>VersionPolicyRequest class.</p>
@@ -32,6 +34,12 @@ public class VersionPolicyRequest
     private String version;
     
     private Metadata metaData;
+
+    private ScmRepository scmRepository;
+    private ScmProvider scmProvider;
+    private String workingDirectory;
+
+    private String config;
 
     /**
      * <p>Getter for the field <code>version</code>.</p>
@@ -76,5 +84,93 @@ public class VersionPolicyRequest
         this.metaData = metaData;
         return this;
     }
-    
+
+    /**
+     * <p>Getter for the field <code>scmRepository</code>.</p>
+     *
+     * @return a {@link ScmRepository} object
+     */
+    public ScmRepository getScmRepository()
+    {
+        return scmRepository;
+    }
+
+    /**
+     * <p>Setter for the field <code>scmRepository</code>.</p>
+     *
+     * @param scmRepository The {@link ScmRepository} where the history can be retrieved.
+     * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
+     */
+    public VersionPolicyRequest setScmRepository( ScmRepository scmRepository )
+    {
+        this.scmRepository = scmRepository;
+        return this;
+    }
+
+    /**
+     * <p>Getter for the field <code>scmProvider</code>.</p>
+     *
+     * @return a {@link ScmProvider} object
+     */
+    public ScmProvider getScmProvider()
+    {
+        return scmProvider;
+    }
+
+    /**
+     * <p>Setter for the field <code>scmProvider</code>.</p>
+     *
+     * @param scmProvider The {@link ScmProvider} where the history can be retrieved.
+     * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
+     */
+    public VersionPolicyRequest setScmProvider( ScmProvider scmProvider )
+    {
+        this.scmProvider = scmProvider;
+        return this;
+    }
+
+    /**
+     * <p>Getter for the field <code>workingDirectory</code>.</p>
+     *
+     * @return the {@link String} that contains the workingDirectory (can be null or empty).
+     */
+    public String getWorkingDirectory()
+    {
+        return workingDirectory;
+    }
+
+    /**
+     * <p>Setter for the field <code>workingDirectory</code>.</p>
+     *
+     * @param workingDirectory The {@link String} that contains the workingDirectory (can be null or empty).
+     * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
+     */
+    public VersionPolicyRequest setWorkingDirectory( String workingDirectory )
+    {
+        this.workingDirectory = workingDirectory;
+        return this;
+    }
+
+    /**
+     * <p>Getter for the field <code>config</code>.</p>
+     *
+     * @return the {@link String} that contains the config (can be null or empty).
+     */
+    public String getConfig()
+    {
+        return config;
+    }
+
+    /**
+     * <p>Setter for the field <code>config</code>.</p>
+     *
+     * @param config The {@link String} that contains the config (can be null or empty).
+     * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
+     */
+    public VersionPolicyRequest setConfig( String config )
+    {
+        this.config = config;
+        return this;
+    }
+
 }

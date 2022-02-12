@@ -29,6 +29,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseUpdateVersionsRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 
 /**
  * Update the POM versions for a project. This performs the normal version updates of the <code>release:prepare</code>
@@ -93,6 +94,14 @@ public class UpdateVersionsMojo
     @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
     private String projectVersionPolicyId;
 
+    /**
+     * Optional config for the VersionPolicy implementation used to calculate the project versions.
+     *
+     * @since 3.0.0-M8
+     */
+    @Parameter( property = "projectVersionPolicyConfig" )
+    private XmlPlexusConfiguration projectVersionPolicyConfig;
+
     @Override
     public void execute()
         throws MojoExecutionException, MojoFailureException
@@ -104,7 +113,10 @@ public class UpdateVersionsMojo
         config.setScmUseEditMode( useEditMode );
         config.setUpdateDependencies( updateDependencies );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
-
+        if ( projectVersionPolicyConfig != null )
+        {
+            config.setProjectVersionPolicyConfig( projectVersionPolicyConfig.toString() );
+        }
         config.addOriginalScmInfo( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
                                    project.getScm() );
 

@@ -24,6 +24,10 @@ import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.manager.NoSuchScmProviderException;
+import org.apache.maven.scm.provider.ScmProvider;
+import org.apache.maven.scm.repository.ScmRepository;
+import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -31,11 +35,13 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.codehaus.plexus.util.StringUtils;
+import org.slf4j.Logger;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
@@ -71,6 +77,11 @@ public abstract class AbstractMapVersionsPhase
         extends AbstractReleasePhase
 {
     /**
+     * Tool that gets a configured SCM repository from release configuration.
+     */
+    private final ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    /**
      * Component used to prompt for input.
      */
     private final Prompter prompter;
@@ -90,9 +101,11 @@ public abstract class AbstractMapVersionsPhase
      */
     private final boolean convertToBranch;
 
-    public AbstractMapVersionsPhase( Prompter prompter, Map<String, VersionPolicy> versionPolicies,
+    public AbstractMapVersionsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
+                                     Prompter prompter, Map<String, VersionPolicy> versionPolicies,
                                      boolean convertToSnapshot, boolean convertToBranch )
     {
+        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
         this.prompter = requireNonNull( prompter );
         this.versionPolicies = requireNonNull( versionPolicies );
         this.convertToSnapshot = convertToSnapshot;
@@ -116,7 +129,7 @@ public abstract class AbstractMapVersionsPhase
 
             String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor );
+            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, releaseEnvironment );
 
             if ( !convertToSnapshot )
             {
@@ -182,7 +195,7 @@ public abstract class AbstractMapVersionsPhase
             {
                 String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor );
+                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, releaseEnvironment );
 
                 if ( !convertToSnapshot )
                 {
@@ -206,7 +219,8 @@ public abstract class AbstractMapVersionsPhase
 
     private String resolveNextVersion( MavenProject project,
                                        String projectId,
-                                       ReleaseDescriptor releaseDescriptor )
+                                       ReleaseDescriptor releaseDescriptor,
+                                       ReleaseEnvironment releaseEnvironment )
             throws ReleaseExecutionException
     {
         String defaultVersion;
@@ -275,14 +289,15 @@ public abstract class AbstractMapVersionsPhase
                         {
                             suggestedVersion =
                                     resolveSuggestedVersion( baseVersion,
-                                            releaseDescriptor.getProjectVersionPolicyId() );
+                                            releaseDescriptor,
+                                            releaseEnvironment );
                         }
                         catch ( VersionParseException e )
                         {
                             if ( releaseDescriptor.isInteractive() )
                             {
                                 suggestedVersion =
-                                        resolveSuggestedVersion( "1.0", releaseDescriptor.getProjectVersionPolicyId() );
+                                        resolveSuggestedVersion( "1.0", releaseDescriptor, releaseEnvironment );
                             }
                             else
                             {
@@ -347,9 +362,12 @@ public abstract class AbstractMapVersionsPhase
         return "new development";
     }
 
-    private String resolveSuggestedVersion( String baseVersion, String policyId )
+    private String resolveSuggestedVersion( String baseVersion,
+                                            ReleaseDescriptor releaseDescriptor,
+                                            ReleaseEnvironment releaseEnvironment )
             throws PolicyException, VersionParseException
     {
+        String policyId = releaseDescriptor.getProjectVersionPolicyId();
         VersionPolicy policy = versionPolicies.get( policyId );
         if ( policy == null )
         {
@@ -357,6 +375,42 @@ public abstract class AbstractMapVersionsPhase
         }
 
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
+
+        if ( releaseDescriptor.getProjectVersionPolicyConfig() != null )
+        {
+            request.setConfig( releaseDescriptor.getProjectVersionPolicyConfig().toString() );
+        }
+        request.setWorkingDirectory( releaseDescriptor.getWorkingDirectory() );
+
+        if ( scmRepositoryConfigurator != null && releaseDescriptor.getScmSourceUrl() != null )
+        {
+            try
+            {
+                ScmRepository repository = scmRepositoryConfigurator
+                        .getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+
+                ScmProvider provider = scmRepositoryConfigurator
+                        .getRepositoryProvider( repository );
+
+                request.setScmRepository( repository );
+                request.setScmProvider( provider );
+            }
+            catch ( ScmRepositoryException | NoSuchScmProviderException e )
+            {
+                Logger logger = getLogger();
+                if ( logger.isWarnEnabled() )
+                {
+                    logger.warn( "Next Version will NOT be based on the version control: {}", e.getMessage() );
+                }
+                else
+                {
+                    if ( logger.isDebugEnabled() )
+                    {
+                        logger.warn( "Next Version will NOT be based on the version control", e );
+                    }
+                }
+            }
+        }
         return convertToSnapshot ? policy.getDevelopmentVersion( request ).getVersion()
                 : policy.getReleaseVersion( request ).getVersion();
     }

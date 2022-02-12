@@ -30,6 +30,7 @@ import org.apache.maven.shared.release.ReleaseBranchRequest;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 
 /**
  * Branch a project in SCM, using the same steps as the <code>release:prepare</code> goal, creating a branch instead of
@@ -201,6 +202,14 @@ public class BranchReleaseMojo
     private String projectVersionPolicyId;
 
     /**
+     * Optional config for the VersionPolicy implementation used to calculate the project versions.
+     *
+     * @since 3.0.0-M8
+     */
+    @Parameter( property = "projectVersionPolicyConfig" )
+    private XmlPlexusConfiguration projectVersionPolicyConfig;
+
+    /**
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project names.
      *
@@ -260,6 +269,10 @@ public class BranchReleaseMojo
         config.setDefaultDevelopmentVersion( developmentVersion );
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeBranch );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
+        if ( projectVersionPolicyConfig != null )
+        {
+            config.setProjectVersionPolicyConfig( projectVersionPolicyConfig.toString() );
+        }
         config.setProjectNamingPolicyId( projectBranchNamingPolicyId );
         config.setScmBranchCommitComment( scmBranchCommitComment );
         config.setPinExternals( pinExternals );

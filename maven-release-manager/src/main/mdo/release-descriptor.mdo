@@ -489,6 +489,15 @@
           </description>
         </field>
         <field>
+          <name>projectVersionPolicyConfig</name>
+          <version>3.0.0+</version>
+          <type>DOM</type>
+          <description>
+            The optional config string for the VersionPolicy implementation used to calculate the project versions.
+            The format of this depends on the specific VersionPolicy that is used.
+          </description>
+        </field>
+        <field>
           <name>projectNamingPolicyId</name>
           <version>3.0.0+</version>
           <type>String</type>

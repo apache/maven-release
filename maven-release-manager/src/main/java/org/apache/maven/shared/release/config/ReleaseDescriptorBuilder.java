@@ -402,6 +402,18 @@ public class ReleaseDescriptorBuilder
     }
 
     /**
+     * <p>setProjectVersionPolicyConfig.</p>
+     *
+     * @param setProjectVersionPolicyConfig a {@link java.lang.String} object
+     * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     */
+    public ReleaseDescriptorBuilder setProjectVersionPolicyConfig( String setProjectVersionPolicyConfig )
+    {
+        releaseDescriptor.setProjectVersionPolicyConfig( setProjectVersionPolicyConfig );
+        return this;
+    }
+
+    /**
      * <p>setPushChanges.</p>
      *
      * @param pushChanges a boolean

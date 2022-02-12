@@ -156,6 +156,10 @@ public class ReleaseUtils
         {
             builder.setProjectVersionPolicyId( properties.getProperty( "projectVersionPolicyId" ) );
         }
+        if ( properties.containsKey( "projectVersionPolicyConfig" ) )
+        {
+            builder.setProjectVersionPolicyConfig( properties.getProperty( "projectVersionPolicyConfig" ) );
+        }
         if ( properties.containsKey( "projectNamingPolicyId" ) )
         {
             builder.setProjectNamingPolicyId( properties.getProperty( "projectNamingPolicyId" ) );

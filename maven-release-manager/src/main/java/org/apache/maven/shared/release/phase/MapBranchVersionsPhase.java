@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 import java.util.Map;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.components.interactivity.Prompter;
 
 /**
@@ -61,8 +62,9 @@ public class MapBranchVersionsPhase
         extends AbstractMapVersionsPhase
 {
     @Inject
-    public MapBranchVersionsPhase( Prompter prompter, Map<String, VersionPolicy> versionPolicies )
+    public MapBranchVersionsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
+                                   Prompter prompter, Map<String, VersionPolicy> versionPolicies )
     {
-        super( prompter, versionPolicies, true, true );
+        super( scmRepositoryConfigurator, prompter, versionPolicies, true, true );
     }
 }

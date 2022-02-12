@@ -34,6 +34,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
 
 /**
  * Prepare for a release in SCM. Steps through several phases to ensure the POM is ready to be released and then
@@ -241,6 +242,14 @@ public class PrepareReleaseMojo
     private String projectVersionPolicyId;
 
     /**
+     * Optional config for the VersionPolicy implementation used to calculate the project versions.
+     *
+     * @since 3.0.0-M8
+     */
+    @Parameter( property = "projectVersionPolicyConfig" )
+    private XmlPlexusConfiguration projectVersionPolicyConfig;
+
+    /**
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project branch and tag names.
      *
@@ -382,6 +391,10 @@ public class PrepareReleaseMojo
         config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );
         config.setWaitBeforeTagging( waitBeforeTagging );
         config.setProjectVersionPolicyId( projectVersionPolicyId );
+        if ( projectVersionPolicyConfig != null )
+        {
+            config.setProjectVersionPolicyConfig( projectVersionPolicyConfig.toString() );
+        }
         config.setProjectNamingPolicyId( projectTagNamingPolicyId );
         config.setScmDevelopmentCommitComment( scmDevelopmentCommitComment );
         config.setScmReleaseCommitComment( scmReleaseCommitComment );
