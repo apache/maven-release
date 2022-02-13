@@ -49,14 +49,14 @@ public class PerformReleaseMojo
     extends AbstractReleaseMojo
 {
     /**
-     * A space separated list of goals to execute on deployment. Default value is either <code>deploy</code> or
+     * A space separated list of goals to execute on release perform. Default value is either <code>deploy</code> or
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
      */
     @Parameter( property = "goals" )
     String goals;
 
     /**
-     * Comma separated profiles to enable on deployment, in addition to active profiles for project execution.
+     * Comma separated profiles to enable on release perform, in addition to active profiles for project execution.
      *
      * @since 2.0-beta-8
      */
