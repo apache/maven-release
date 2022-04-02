@@ -101,11 +101,12 @@ public class PerformReleaseMojo
     private String password;
 
     /**
-     * Whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
-     * If set to true, the release plugin sets the property "performRelease" to true, which activates the profile
-     * "release-profile", which is inherited from the super pom.
+     * Whether to use the default release profile (Maven 2 and 3) that adds sources and javadocs to the released
+     * artifact, if appropriate. If set to true, the release plugin sets the property "<code>performRelease</code>" to
+     * true, which activates the profile "<code>release-profile</code>" as inherited from
+     * <a href="/ref/3.8.5/maven-model-builder/super-pom.html">the super pom</a>.
      *
-     * @deprecated The release profile will be removed from future versions of the super POM
+     * @deprecated The <code>release-profile</code> profile will be removed from future versions of the super POM
      */
     @Parameter( defaultValue = "false", property = "useReleaseProfile" )
     @Deprecated
