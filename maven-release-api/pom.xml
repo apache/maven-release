@@ -53,9 +53,9 @@
       <artifactId>maven-settings</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.eclipse.aether</groupId>
-      <artifactId>aether-util</artifactId>
-      <version>1.0.0.v20140518</version>
+      <groupId>org.apache.maven.resolver</groupId>
+      <artifactId>maven-resolver-util</artifactId>
+      <version>${resolverVersion}</version>
       <optional>true</optional>
     </dependency>
     
