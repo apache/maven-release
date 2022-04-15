@@ -61,9 +61,9 @@ import org.apache.maven.project.ProjectSorter;
 import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.sonatype.aether.impl.internal.SimpleLocalRepositoryManager;
-import org.sonatype.aether.repository.WorkspaceReader;
-import org.sonatype.aether.repository.WorkspaceRepository;
+import org.eclipse.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.eclipse.aether.repository.WorkspaceReader;
+import org.eclipse.aether.repository.WorkspaceRepository;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -387,7 +387,7 @@ public abstract class AbstractReleaseTestCase
         }
 
         @Override
-        public List<String> findVersions( org.sonatype.aether.artifact.Artifact artifact )
+        public List<String> findVersions( org.eclipse.aether.artifact.Artifact artifact )
         {
             for ( MavenProject mavenProject : reactorProjects )
             {
@@ -400,7 +400,7 @@ public abstract class AbstractReleaseTestCase
         }
 
         @Override
-        public File findArtifact( org.sonatype.aether.artifact.Artifact artifact )
+        public File findArtifact( org.eclipse.aether.artifact.Artifact artifact )
         {
             for ( MavenProject mavenProject : reactorProjects )
             {
