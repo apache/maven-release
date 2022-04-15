@@ -10,3 +10,4 @@ target
 build
 .checkstyle
 .DS_Store
+.factorypath
