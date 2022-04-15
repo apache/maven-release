@@ -27,6 +27,7 @@ import java.io.InputStream;
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -86,7 +87,8 @@ public abstract class PlexusJUnit4TestCase
         final String config = getCustomConfigurationName();
 
         final ContainerConfiguration containerConfiguration =
-            new DefaultContainerConfiguration().setName( "test" ).setContext( context.getContextData() ).setClassPathCaching( true );
+            new DefaultContainerConfiguration().setName( "test" ).setContext( context.getContextData() )
+            .setClassPathScanning( PlexusConstants.SCANNING_CACHE );
 
         if ( config != null )
         {

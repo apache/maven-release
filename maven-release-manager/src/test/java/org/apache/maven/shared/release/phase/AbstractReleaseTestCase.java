@@ -58,12 +58,13 @@ import org.apache.maven.project.ProjectBuildingRequest.RepositoryMerging;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.project.ProjectSorter;
-import org.apache.maven.repository.internal.MavenRepositorySystemSession;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.eclipse.aether.impl.internal.SimpleLocalRepositoryManager;
+import org.eclipse.aether.DefaultRepositorySystemSession;
+import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.WorkspaceReader;
 import org.eclipse.aether.repository.WorkspaceRepository;
+import org.eclipse.aether.spi.localrepo.LocalRepositoryManagerFactory;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -84,8 +85,10 @@ public abstract class AbstractReleaseTestCase
     protected ProjectBuilder projectBuilder;
 
     protected ArtifactRepository localRepository;
-    
+
     private ArtifactFactory artifactFactory;
+
+    private LocalRepositoryManagerFactory lrmFactory;
 
     protected ReleasePhase phase;
 
@@ -96,11 +99,13 @@ public abstract class AbstractReleaseTestCase
         super.setUp();
 
         projectBuilder = lookup( ProjectBuilder.class );
-        artifactFactory = lookup( ArtifactFactory.class ); 
+        artifactFactory = lookup( ArtifactFactory.class );
 
         ArtifactRepositoryLayout layout = lookup( ArtifactRepositoryLayout.class, "default" );
         String localRepoPath = getTestFile( "target/local-repository" ).getAbsolutePath().replace( '\\', '/' );
         localRepository = new MavenArtifactRepository( "local", "file://" + localRepoPath, layout, null, null );
+
+        lrmFactory = lookup( LocalRepositoryManagerFactory.class, "simple" );
     }
 
     protected Path getWorkingDirectory( String workingDir )
@@ -113,7 +118,7 @@ public abstract class AbstractReleaseTestCase
     {
         return createReactorProjects( path, path, subpath );
     }
-    
+
     protected ReleaseDescriptorBuilder createReleaseDescriptorBuilder( List<MavenProject> reactorProjects )
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
@@ -187,8 +192,9 @@ public abstract class AbstractReleaseTestCase
         buildingRequest.setRemoteRepositories( repos );
         buildingRequest.setPluginArtifactRepositories( repos );
         buildingRequest.setRepositoryMerging( RepositoryMerging.REQUEST_DOMINANT );
-        MavenRepositorySystemSession repositorySession = new MavenRepositorySystemSession();
-        repositorySession.setLocalRepositoryManager( new SimpleLocalRepositoryManager( localRepository.getBasedir() ) );
+        DefaultRepositorySystemSession repositorySession = new DefaultRepositorySystemSession();
+        repositorySession.setLocalRepositoryManager( lrmFactory.newInstance( repositorySession,
+                                                     new LocalRepository( "target/local-repository" ) ) );
         buildingRequest.setRepositorySession( repositorySession );
         buildingRequest.addProfile( profile );
         buildingRequest.setActiveProfileIds( Arrays.asList( profile.getId() ) );
@@ -213,7 +219,7 @@ public abstract class AbstractReleaseTestCase
         for ( MavenProject project  : reactorProjects )
         {
             MavenProject resolvedProject = projectBuilder.build( project.getFile(), buildingRequest ).getProject();
-            
+
             // from LifecycleDependencyResolver
             if ( project.getDependencyArtifacts() == null )
             {
@@ -226,7 +232,7 @@ public abstract class AbstractReleaseTestCase
                     throw new LifecycleExecutionException( e );
                 }
             }
-            
+
             resolvedProjects.add( resolvedProject );
         }
         return resolvedProjects;
