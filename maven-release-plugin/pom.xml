@@ -39,7 +39,7 @@
   </prerequisites>
 
   <properties>
-    <mavenPluginPluginVersion>3.6.1</mavenPluginPluginVersion>
+    <mavenPluginPluginVersion>3.6.4</mavenPluginPluginVersion>
   </properties>
 
   <dependencies>
