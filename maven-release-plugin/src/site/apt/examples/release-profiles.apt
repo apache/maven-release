@@ -1,0 +1,42 @@
+  ------
+  Release Profiles
+  ------
+  ------
+  2022-04-24
+  ------
+
+~~ Licensed to the Apache Software Foundation (ASF) under one
+~~ or more contributor license agreements.  See the NOTICE file
+~~ distributed with this work for additional information
+~~ regarding copyright ownership.  The ASF licenses this file
+~~ to you under the Apache License, Version 2.0 (the
+~~ "License"); you may not use this file except in compliance
+~~ with the License.  You may obtain a copy of the License at
+~~
+~~   http://www.apache.org/licenses/LICENSE-2.0
+~~
+~~ Unless required by applicable law or agreed to in writing,
+~~ software distributed under the License is distributed on an
+~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+~~ KIND, either express or implied.  See the License for the
+~~ specific language governing permissions and limitations
+~~ under the License.
+
+~~ NOTE: For help with the syntax of this file, see:
+~~ http://maven.apache.org/doxia/references/apt-format.html
+
+Release Profiles
+
+  Maven 3 provides a default release profile named <<<release-profile>>> that builds and attaches source and javadoc jar:
+  this is defined in {{{/ref/3.8.5/maven-model-builder/super-pom.html}the super POM}}. This profile is activated by default during <<<release:perform>>>
+  with Maven Release Plugin 2.x, unless deactivated by configuring <<<useReleaseProfile>>> parameter to <<<false>>>.
+
+  In Maven 4, this default profile will be removed from super POM (see {{{https://issues.apache.org/jira/browse/MNG-7029}MNG-7029}}).
+
+  To prepare for this removal, Maven Release Plugin 3.0 stopped invoking this profile by default: <<<useReleaseProfile>>> parameter is <<<false>>> by default.
+
+  When upgrading Maven Release Plugin from 2 to 3, configuring explicitely <<<useReleaseProfile>>> parameter to <<<true>>> will provide a
+  temporary solution, working only with Maven 3.
+
+  In order to prepare for Maven 4, each project will instead require to define their own release profile that they'll be able to customise
+  to match their needs.
