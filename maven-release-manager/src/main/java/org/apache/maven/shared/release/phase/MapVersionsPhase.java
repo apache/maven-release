@@ -93,6 +93,10 @@ public class MapVersionsPhase
      */
     private Map<String, VersionPolicy> versionPolicies;
 
+    void setConvertToSnapshot( boolean convertToSnapshot )
+    {
+        this.convertToSnapshot = convertToSnapshot;
+    }
     void setPrompter( Prompter prompter )
     {
         this.prompter = prompter;
@@ -138,8 +142,13 @@ public class MapVersionsPhase
 
                 if ( convertToSnapshot )
                 {
+                    String subProjectNextVersion = releaseDescriptor.getProjectDevelopmentVersion( subProjectId );
                     String v;
-                    if ( ArtifactUtils.isSnapshot( subProject.getVersion() ) )
+                    if ( subProjectNextVersion != null )
+                    {
+                        v = subProjectNextVersion;
+                    }
+                    else if ( ArtifactUtils.isSnapshot( subProject.getVersion() ) )
                     {
                         v = nextVersion;
                     }
@@ -159,7 +168,15 @@ public class MapVersionsPhase
                 }
                 else
                 {
-                    releaseDescriptor.addReleaseVersion( subProjectId, nextVersion );
+                    String subProjectNextVersion = releaseDescriptor.getProjectReleaseVersion( subProjectId );
+                    if ( subProjectNextVersion != null )
+                    {
+                        releaseDescriptor.addReleaseVersion( subProjectId, subProjectNextVersion );
+                    }
+                    else
+                    {
+                        releaseDescriptor.addReleaseVersion( subProjectId, nextVersion );
+                    }
                 }
             }
         }
@@ -332,22 +349,36 @@ public class MapVersionsPhase
 
     private String getDevelopmentVersion( String projectId, ReleaseDescriptor releaseDescriptor )
     {
-        String defaultVersion = releaseDescriptor.getDefaultDevelopmentVersion();
-        if ( StringUtils.isEmpty( defaultVersion ) )
+        String projectVersion = releaseDescriptor.getProjectDevelopmentVersion( projectId );
+
+        if ( StringUtils.isEmpty( projectVersion ) )
         {
-            defaultVersion = releaseDescriptor.getProjectDevelopmentVersion( projectId );
+            projectVersion = releaseDescriptor.getDefaultDevelopmentVersion();
         }
-        return defaultVersion;
+
+        if ( StringUtils.isEmpty( projectVersion ) )
+        {
+            return null;
+        }
+
+        return projectVersion;
     }
 
     private String getReleaseVersion( String projectId, ReleaseDescriptor releaseDescriptor )
     {
-        String nextVersion = releaseDescriptor.getDefaultReleaseVersion();
-        if ( StringUtils.isEmpty( nextVersion ) )
+        String projectVersion = releaseDescriptor.getProjectReleaseVersion( projectId );
+
+        if ( StringUtils.isEmpty( projectVersion ) )
         {
-            nextVersion = releaseDescriptor.getProjectReleaseVersion( projectId );
+            projectVersion = releaseDescriptor.getDefaultReleaseVersion();
         }
-        return nextVersion;
+
+        if ( StringUtils.isEmpty( projectVersion ) )
+        {
+            return null;
+        }
+
+        return projectVersion;
     }
 
 
@@ -387,7 +418,7 @@ public class MapVersionsPhase
 
         return result;
     }
-    
+
     private ResourceBundle getResourceBundle( Locale locale )
     {
         return ResourceBundle.getBundle( "release-messages", locale, MapVersionsPhase.class.getClassLoader() );
