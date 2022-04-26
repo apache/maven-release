@@ -203,7 +203,6 @@
         <configuration>
           <version>3.0.0</version>
           <packageWithVersion>false</packageWithVersion>
-          <useJava5>true</useJava5>
           <models>
             <model>src/main/mdo/release-descriptor.mdo</model>
           </models>
