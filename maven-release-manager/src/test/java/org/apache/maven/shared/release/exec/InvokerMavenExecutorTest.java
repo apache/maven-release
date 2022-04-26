@@ -89,17 +89,15 @@ public class InvokerMavenExecutorTest
         executor.enableLogging( logger );
 
         InvocationRequest req = new DefaultInvocationRequest();
-        // bug: assertEquals( true, req.isInteractive() );
 
-        req = new DefaultInvocationRequest();
-        req.setInteractive( true );
+        req.setBatchMode( false );
         executor.setupRequest( req, null, "-B" );
-        assertEquals( false, req.isInteractive() );
+        assertTrue( req.isBatchMode() );
 
         req = new DefaultInvocationRequest();
-        req.setInteractive( true );
+        req.setBatchMode( false );
         executor.setupRequest( req, null, "\"-B\"" );
-        assertEquals( false, req.isInteractive() );
+        assertTrue( req.isBatchMode() );
     }
 
     @Test

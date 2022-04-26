@@ -214,8 +214,7 @@ public class InvokerMavenExecutor
 
             if ( cli.hasOption( QUIET ) )
             {
-                // TODO: setQuiet() currently not supported by InvocationRequest
-                req.setDebug( false );
+                req.setQuiet( true );
             }
             else if ( cli.hasOption( DEBUG ) )
             {
@@ -252,11 +251,11 @@ public class InvokerMavenExecutor
 
             if ( cli.hasOption( CHECKSUM_FAILURE_POLICY ) )
             {
-                req.setGlobalChecksumPolicy( InvocationRequest.CHECKSUM_POLICY_FAIL );
+                req.setGlobalChecksumPolicy( InvocationRequest.CheckSumPolicy.Fail );
             }
             else if ( cli.hasOption( CHECKSUM_WARNING_POLICY ) )
             {
-                req.setGlobalChecksumPolicy( InvocationRequest.CHECKSUM_POLICY_WARN );
+                req.setGlobalChecksumPolicy( InvocationRequest.CheckSumPolicy.Warn );
             }
 
             if ( cli.hasOption( ALTERNATE_USER_SETTINGS ) )
@@ -271,15 +270,15 @@ public class InvokerMavenExecutor
 
             if ( cli.hasOption( FAIL_AT_END ) )
             {
-                req.setFailureBehavior( InvocationRequest.REACTOR_FAIL_AT_END );
+                req.setReactorFailureBehavior( InvocationRequest.ReactorFailureBehavior.FailAtEnd );
             }
             else if ( cli.hasOption( FAIL_FAST ) )
             {
-                req.setFailureBehavior( InvocationRequest.REACTOR_FAIL_FAST );
+                req.setReactorFailureBehavior( InvocationRequest.ReactorFailureBehavior.FailFast );
             }
             if ( cli.hasOption( FAIL_NEVER ) )
             {
-                req.setFailureBehavior( InvocationRequest.REACTOR_FAIL_NEVER );
+                req.setReactorFailureBehavior( InvocationRequest.ReactorFailureBehavior.FailNever );
             }
             if ( cli.hasOption( ALTERNATE_POM_FILE ) )
             {
@@ -300,7 +299,7 @@ public class InvokerMavenExecutor
             
             if ( cli.hasOption( BATCH_MODE ) )
             {
-                req.setInteractive( false );
+                req.setBatchMode( true );
             }
             
             if ( cli.hasOption( ALTERNATE_USER_TOOLCHAINS ) )
@@ -343,13 +342,17 @@ public class InvokerMavenExecutor
             }
             mavenPath = mavenHome == null ? null : new File( mavenHome );
         }
-        Invoker invoker =
-            new DefaultInvoker().setMavenHome( mavenPath ).setLogger( bridge )
-                .setOutputHandler( handler ).setErrorHandler( handler );
 
-        InvocationRequest req =
-            new DefaultInvocationRequest().setDebug( getLogger().isDebugEnabled() )
-                .setBaseDirectory( workingDirectory ).setInteractive( interactive );
+        Invoker invoker = new DefaultInvoker()
+                .setMavenHome( mavenPath )
+                .setLogger( bridge );
+
+        InvocationRequest req = new DefaultInvocationRequest()
+                .setDebug( getLogger().isDebugEnabled() )
+                .setBaseDirectory( workingDirectory )
+                .setBatchMode( !interactive )
+                .setOutputHandler( handler )
+                .setErrorHandler( handler );
 
         if ( pomFileName != null )
         {
