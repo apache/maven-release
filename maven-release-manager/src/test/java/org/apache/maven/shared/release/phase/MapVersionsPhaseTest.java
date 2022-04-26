@@ -33,6 +33,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -251,6 +252,97 @@ public class MapVersionsPhaseTest
         // verify
         assertEquals( "Check mapped versions", "2.0",
                       ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
+    }
+
+    /**
+     * MRELEASE-1022: don't ignore command line (or release.properties) versions when auto-versioning sub-modules
+     */
+    @Test
+    public void testMapReleaseVersionsForSubModuleWithExplicitVersion()
+        throws Exception
+    {
+        // prepare
+        MavenProject rootProject = createProject("rootArtifactId", "SNAPSHOT");
+        rootProject.setExecutionRoot(true);
+
+        final MavenProject moduleProject = createProject("artifactId", "SNAPSHOT");
+        moduleProject.setParent(rootProject);
+
+        List<MavenProject> reactorProjects = Arrays.asList( rootProject, moduleProject );
+
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder()
+            .setInteractive(false) // batch mode
+            .setAutoVersionSubmodules( true )
+            .addReleaseVersion( "groupId:artifactId", "2.0" );
+
+        phase.setPrompter( mockPrompter );
+
+        // execute
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        assertEquals( "Check mapped versions", "1.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:rootArtifactId") );
+        assertEquals( "Check mapped versions", "2.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
+
+        // execute
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        assertEquals( "Check mapped versions", "1.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:rootArtifactId") );
+        assertEquals( "Check mapped versions", "2.0",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectReleaseVersion("groupId:artifactId") );
+    }
+
+    /**
+     * MRELEASE-1022: don't ignore command line (or release.properties) versions when auto-versioning sub-modules
+     */
+    @Test
+    public void testMapDevelopmentVersionsForSubModuleWithExplicitVersion()
+        throws Exception
+    {
+        // prepare
+        MavenProject rootProject = createProject("rootArtifactId", "1.0");
+        rootProject.setExecutionRoot(true);
+
+        final MavenProject moduleProject = createProject("artifactId", "1.0");
+        moduleProject.setParent(rootProject);
+
+        List<MavenProject> reactorProjects = Arrays.asList( rootProject, moduleProject );
+
+        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder()
+            .setInteractive( false ) // batch mode
+            .setAutoVersionSubmodules( true )
+            .setDefaultDevelopmentVersion( "1.1-SNAPSHOT" )
+            .addDevelopmentVersion( "groupId:artifactId", "2.0-SNAPSHOT" );
+
+        phase.setConvertToSnapshot( true );
+        phase.setPrompter( mockPrompter );
+
+
+        // execute
+        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        assertEquals( "Check mapped versions", "1.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:rootArtifactId") );
+        assertEquals( "Check mapped versions", "2.0-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
+
+        // execute
+        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+
+        // verify
+        assertEquals( "Check mapped versions", "1.1-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:rootArtifactId") );
+        assertEquals( "Check mapped versions", "2.0-SNAPSHOT",
+                      ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion("groupId:artifactId") );
     }
 
     @Test
@@ -2131,11 +2223,11 @@ public class MapVersionsPhaseTest
         builder.setProjectVersionPolicyId( "UNKNOWN" );
 
         // test
-        ReleaseExecutionException e = assertThrows( ReleaseExecutionException.class, 
+        ReleaseExecutionException e = assertThrows( ReleaseExecutionException.class,
                 () -> phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects ) );
         assertThat( e.getCause(), CoreMatchers.instanceOf( PolicyException.class ) );
     }
-    
+
     @Test
     public void testUpdateBranchInvalidDefaultReleaseVersion_NonInteractive()
         throws Exception
@@ -2160,7 +2252,7 @@ public class MapVersionsPhaseTest
             assertEquals( "3.0 is invalid, expected a snapshot", e.getMessage() );
         }
     }
-    
+
     @Test
     public void testUpdateReleaseInvalidDefaultReleaseVersion_NonInteractive()
         throws Exception
@@ -2184,7 +2276,7 @@ public class MapVersionsPhaseTest
             assertEquals( "3.0-SNAPSHOT is invalid, expected a non-snapshot", e.getMessage() );
         }
     }
-    
+
     @Test
     public void testUpdateDevelopmentInvalidDefaultDevelopmentVersion_NonInteractive()
         throws Exception
