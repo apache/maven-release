@@ -378,6 +378,9 @@ public class InputVariablesPhaseTest
     public void testBranchOperation()
         throws Exception
     {
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
         assertFalse( phase.isBranchOperation() );
     }
 

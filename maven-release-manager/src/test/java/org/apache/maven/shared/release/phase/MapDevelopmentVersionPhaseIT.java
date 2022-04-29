@@ -24,18 +24,21 @@ import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.codehaus.plexus.PlexusTestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class MapDevelopmentVersionPhaseIT
-    extends PlexusTestCase
+        extends PlexusJUnit4TestCase
 {
     private MapDevelopmentVersionsPhase mapDevelopmentVersionsPhase;
 
     @Override
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
@@ -51,6 +54,7 @@ public class MapDevelopmentVersionPhaseIT
         return new MavenProject( model );
     }
 
+    @Test
     public void testNoUpdateWorkingCopyVersions() throws Exception
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();

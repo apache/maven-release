@@ -22,9 +22,9 @@ package org.apache.maven.shared.release.phase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -48,10 +48,8 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
-import org.apache.maven.shared.release.util.MavenCrypto;
 import org.junit.Test;
 
 /**
@@ -60,19 +58,13 @@ import org.junit.Test;
 public class CheckoutProjectFromScmTest
     extends AbstractReleaseTestCase
 {
-    private ScmManager scmManager;
-
-    private MavenCrypto mavenCrypto;
-
     @Override
     public void setUp()
         throws Exception
     {
         super.setUp();
 
-        mavenCrypto = lookup( MavenCrypto.class );
-        scmManager = new ScmManagerStub();
-        phase = new CheckoutProjectFromScm( new DefaultScmRepositoryConfigurator( scmManager, mavenCrypto ) );
+        phase = lookup( ReleasePhase.class, "checkout-project-from-scm" );
     }
 
     @Test

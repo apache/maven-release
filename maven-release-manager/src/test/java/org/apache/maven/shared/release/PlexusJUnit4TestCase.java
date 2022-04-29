@@ -25,7 +25,12 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Map;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
+import org.apache.maven.shared.release.config.ReleaseDescriptorStoreStub;
+import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
@@ -124,7 +129,16 @@ public abstract class PlexusJUnit4TestCase
      */
     protected Module[] getCustomModules()
     {
-        return new Module[0];
+        return new Module[] {
+                new AbstractModule()
+                {
+                    @Override
+                    protected void configure()
+                    {
+                        bind( ScmManager.class ).toInstance( new ScmManagerStub() );
+                    }
+                }
+        };
     }
 
     /**

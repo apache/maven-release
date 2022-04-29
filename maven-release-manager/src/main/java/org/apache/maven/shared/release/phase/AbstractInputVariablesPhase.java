@@ -93,7 +93,7 @@ public abstract class AbstractInputVariablesPhase
         this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
         this.namingPolicies = requireNonNull( namingPolicies );
         this.branchOperation = branchOperation;
-        this.defaultNamingPolicy = requireNonNull( defaultNamingPolicy );
+        this.defaultNamingPolicy = defaultNamingPolicy;
     }
 
     /**

@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.isA;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -32,13 +32,17 @@ import static org.mockito.Mockito.when;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.junit.Test;
@@ -101,7 +105,6 @@ public class BranchInputVariablesPhaseTest
 
     @Test
     public void testUnmappedVersion()
-        throws Exception
     {
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -252,14 +255,12 @@ public class BranchInputVariablesPhaseTest
 
     @Test
     public void testBranchOperation()
-        throws Exception
     {
         assertTrue( phase.isBranchOperation() );
     }
 
     @Test
     public void testEmptyBranchName()
-        throws Exception
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );

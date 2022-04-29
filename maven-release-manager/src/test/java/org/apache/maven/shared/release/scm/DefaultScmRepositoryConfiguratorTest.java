@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
+import com.google.inject.Module;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;
@@ -52,6 +53,12 @@ public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase
         super.setUp();
 
         scmRepositoryConfigurator = lookup( ScmRepositoryConfigurator.class );
+    }
+
+    @Override
+    protected Module[] getCustomModules()
+    {
+        return new Module[0]; // real SCM needed
     }
 
     @Test

@@ -33,7 +33,7 @@ import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
  *
  */
 @Singleton
-@Named
+@Named( "stub" )
 public class NamingPolicyStub implements NamingPolicy
 {
     @Override

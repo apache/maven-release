@@ -19,17 +19,23 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import com.google.inject.Module;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.codehaus.plexus.PlexusTestCase;
+import org.junit.Test;
 
 import java.util.Collections;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * Test the POM verification check phase.
@@ -37,19 +43,26 @@ import java.util.Collections;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class CheckPomPhaseTest
-    extends PlexusTestCase
+        extends PlexusJUnit4TestCase
 {
     private ReleasePhase phase;
 
     @Override
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.class, "check-poms" );
+        phase = lookup( ReleasePhase.class, "check-poms" );
     }
 
+    @Override
+    protected Module[] getCustomModules()
+    {
+        return new Module[0]; // real SCM needed
+    }
+
+    @Test
     public void testCorrectlyConfigured()
         throws Exception
     {
@@ -64,6 +77,7 @@ public class CheckPomPhaseTest
         assertTrue( true );
     }
 
+    @Test
     public void testGetUrlFromProjectConnection()
         throws Exception
     {
@@ -77,6 +91,7 @@ public class CheckPomPhaseTest
         assertEquals( "Check URL", "scm:svn:file://localhost/tmp/repo", ReleaseUtils.buildReleaseDescriptor( builder ).getScmSourceUrl() );
     }
 
+    @Test
     public void testGetUrlFromProjectConnectionSimulate()
         throws Exception
     {
@@ -90,6 +105,7 @@ public class CheckPomPhaseTest
         assertEquals( "Check URL", "scm:svn:file://localhost/tmp/repo", ReleaseUtils.buildReleaseDescriptor( builder ).getScmSourceUrl() );
     }
 
+    @Test
     public void testGetUrlFromProjectDevConnection()
         throws Exception
     {
@@ -103,6 +119,7 @@ public class CheckPomPhaseTest
         assertEquals( "Check URL", "scm:svn:https://localhost/tmp/repo", ReleaseUtils.buildReleaseDescriptor( builder ).getScmSourceUrl() );
     }
 
+    @Test
     public void testGetUrlFromProjectDevConnectionSimulate()
         throws Exception
     {
@@ -116,6 +133,7 @@ public class CheckPomPhaseTest
         assertEquals( "Check URL", "scm:svn:https://localhost/tmp/repo", ReleaseUtils.buildReleaseDescriptor( builder ).getScmSourceUrl() );
     }
 
+    @Test
     public void testGetInvalidUrl()
         throws Exception
     {
@@ -136,6 +154,7 @@ public class CheckPomPhaseTest
         }
     }
 
+    @Test
     public void testGetInvalidProvider()
         throws Exception
     {
@@ -157,6 +176,7 @@ public class CheckPomPhaseTest
         }
     }
 
+    @Test
     public void testMissingUrl()
         throws Exception
     {
@@ -185,6 +205,7 @@ public class CheckPomPhaseTest
         }
     }
 
+    @Test
     public void testReleasingNonSnapshot()
         throws Exception
     {

@@ -30,10 +30,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
 

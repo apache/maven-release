@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.inject.Module;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -76,6 +77,12 @@ public class GenerateReleasePomsPhaseTest
         super.setUp();
 
         scmProviderMock = null;
+    }
+
+    @Override
+    protected Module[] getCustomModules()
+    {
+        return new Module[0]; // real SCM needed
     }
 
     @Override

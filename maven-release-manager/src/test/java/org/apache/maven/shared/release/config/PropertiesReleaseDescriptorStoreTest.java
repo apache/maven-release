@@ -58,7 +58,7 @@ public class PropertiesReleaseDescriptorStoreTest
     {
         super.setUp();
         store = (PropertiesReleaseDescriptorStore) lookup( ReleaseDescriptorStore.class, "properties" );
-        secDispatcher = lookup( SecDispatcher.class, "mng-4384" );
+        secDispatcher = lookup( SecDispatcher.class );
     }
 
     @Test

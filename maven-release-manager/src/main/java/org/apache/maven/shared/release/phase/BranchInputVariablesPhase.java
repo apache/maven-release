@@ -43,6 +43,6 @@ public class BranchInputVariablesPhase
     public BranchInputVariablesPhase( Prompter prompter, ScmRepositoryConfigurator scmRepositoryConfigurator,
                                       Map<String, NamingPolicy> namingPolicies )
     {
-        super( prompter, scmRepositoryConfigurator, namingPolicies, true, "default" );
+        super( prompter, scmRepositoryConfigurator, namingPolicies, true, null );
     }
 }

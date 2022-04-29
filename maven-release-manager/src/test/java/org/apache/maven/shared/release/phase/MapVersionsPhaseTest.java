@@ -376,7 +376,7 @@ public class MapVersionsPhaseTest
         MavenProject project = createProject( "artifactId", "1.0" );
         when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName()
                 + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
@@ -1877,7 +1877,7 @@ public class MapVersionsPhaseTest
         // prepare
         when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
                 eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 

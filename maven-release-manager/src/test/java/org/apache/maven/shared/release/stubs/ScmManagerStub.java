@@ -34,10 +34,10 @@ import org.eclipse.sisu.Priority;
  * Override the makeRepository methods to honour the URL passed in.
  */
 @Singleton
-@Named
-@Priority( 1 )
+@Named( "default" )
+@Priority( 100 )
 public class ScmManagerStub
-    extends org.apache.maven.scm.manager.ScmManagerStub
+        extends org.apache.maven.scm.manager.ScmManagerStub
 {
     private Exception e;
 
@@ -45,7 +45,7 @@ public class ScmManagerStub
 
     @Override
     public ScmRepository makeScmRepository( String scmUrl )
-        throws ScmRepositoryException, NoSuchScmProviderException
+            throws ScmRepositoryException, NoSuchScmProviderException
     {
         if ( e != null )
         {
