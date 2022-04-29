@@ -55,14 +55,15 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
-import org.apache.maven.shared.release.transform.ModelETLRequest;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
+import org.apache.maven.shared.release.transform.ModelETLRequest;
 import org.apache.maven.shared.release.transform.jdom2.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.StringUtils;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Base class for rewriting phases.
@@ -70,27 +71,35 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public abstract class AbstractRewritePomsPhase
-    extends AbstractReleasePhase implements ResourceGenerator
+        extends AbstractReleasePhase implements ResourceGenerator
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
-    @Requirement
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    @Requirement( role = ModelETLFactory.class )
-    private Map<String, ModelETLFactory> modelETLFactories;
-
-    /**
-     * Use jdom2-sax as default
-     */
-    private String modelETL = JDomModelETLFactory.ROLE_HINT;
+    private final Map<String, ModelETLFactory> modelETLFactories;
 
     /**
      * SCM URL translators mapped by provider name.
      */
-    @Requirement( role = ScmTranslator.class )
     private Map<String, ScmTranslator> scmTranslators;
+
+    /**
+     * Use jdom2-sax as default
+     */
+    private String modelETL = JDomModelETLFactory.NAME;
+
+    private long startTime = -1 * 1000;
+
+    protected AbstractRewritePomsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
+                                        Map<String, ModelETLFactory> modelETLFactories,
+                                        Map<String, ScmTranslator> scmTranslators )
+    {
+        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
+        this.modelETLFactories = requireNonNull( modelETLFactories );
+        this.scmTranslators = requireNonNull( scmTranslators );
+    }
 
     /**
      * <p>Getter for the field <code>scmTranslators</code>.</p>
@@ -112,8 +121,6 @@ public abstract class AbstractRewritePomsPhase
         this.modelETL = modelETL;
     }
 
-    private long startTime = -1 * 1000;
-
     /**
      * <p>Setter for the field <code>startTime</code>.</p>
      *
@@ -134,7 +141,7 @@ public abstract class AbstractRewritePomsPhase
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -148,7 +155,7 @@ public abstract class AbstractRewritePomsPhase
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -188,7 +195,7 @@ public abstract class AbstractRewritePomsPhase
 
     private void transform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                             List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         result.setStartTime( ( startTime >= 0 ) ? startTime : System.currentTimeMillis() );
 
@@ -203,7 +210,7 @@ public abstract class AbstractRewritePomsPhase
     private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor,
                                    ReleaseEnvironment releaseEnvironment, boolean simulate,
                                    ReleaseResult result )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         File pomFile = ReleaseUtil.getStandardPom( project );
 
@@ -223,7 +230,7 @@ public abstract class AbstractRewritePomsPhase
             try
             {
                 scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                                                                                   releaseEnvironment.getSettings() );
+                        releaseEnvironment.getSettings() );
 
                 provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
             }
@@ -238,7 +245,7 @@ public abstract class AbstractRewritePomsPhase
         }
 
         transformDocument( project, etl.getModel(), releaseDescriptor, scmRepository, result,
-                           simulate );
+                simulate );
 
         File outputFile;
         if ( simulate )
@@ -257,7 +264,7 @@ public abstract class AbstractRewritePomsPhase
     private void transformDocument( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                     ScmRepository scmRepository, ReleaseResult result,
                                     boolean simulate )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         Model model = project.getModel();
 
@@ -273,28 +280,28 @@ public abstract class AbstractRewritePomsPhase
         if ( buildTarget != null )
         {
             // profile.build.extensions doesn't exist, so only rewrite project.build.extensions
-            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getExtensions() ), 
-                                     model, properties, result, releaseDescriptor, simulate );
+            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getExtensions() ),
+                    model, properties, result, releaseDescriptor, simulate );
 
-            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPlugins() ), 
-                                     model, properties, result, releaseDescriptor, simulate );
+            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPlugins() ),
+                    model, properties, result, releaseDescriptor, simulate );
 
             for ( Plugin plugin : buildTarget.getPlugins() )
             {
                 rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
-                                         model, properties,
-                                         result, releaseDescriptor, simulate );
+                        model, properties,
+                        result, releaseDescriptor, simulate );
             }
 
             if ( buildTarget.getPluginManagement() != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPluginManagement().getPlugins() ), model,
-                                         properties, result, releaseDescriptor, simulate );
+                        properties, result, releaseDescriptor, simulate );
 
                 for ( Plugin plugin : buildTarget.getPluginManagement().getPlugins() )
                 {
                     rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties, result,
-                                             releaseDescriptor, simulate );
+                            releaseDescriptor, simulate );
                 }
             }
         }
@@ -305,23 +312,23 @@ public abstract class AbstractRewritePomsPhase
             if ( profileBuild != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPlugins() ), model, properties, result,
-                                         releaseDescriptor, simulate );
+                        releaseDescriptor, simulate );
 
                 for ( Plugin plugin : profileBuild.getPlugins() )
                 {
                     rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties, result,
-                                             releaseDescriptor, simulate );
+                            releaseDescriptor, simulate );
                 }
 
                 if ( profileBuild.getPluginManagement() != null )
                 {
                     rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPluginManagement().getPlugins() ),
-                                             model, properties, result, releaseDescriptor, simulate );
+                            model, properties, result, releaseDescriptor, simulate );
 
                     for ( Plugin plugin : profileBuild.getPluginManagement().getPlugins() )
                     {
                         rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties,
-                                                 result, releaseDescriptor, simulate );
+                                result, releaseDescriptor, simulate );
                     }
                 }
             }
@@ -334,18 +341,18 @@ public abstract class AbstractRewritePomsPhase
         for ( ModelBase modelBase : modelBases )
         {
             rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencies() ), model, properties, result,
-                                     releaseDescriptor, simulate );
+                    releaseDescriptor, simulate );
 
             if ( modelBase.getDependencyManagement() != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencyManagement().getDependencies() ),
-                                         model, properties, result, releaseDescriptor, simulate );
+                        model, properties, result, releaseDescriptor, simulate );
             }
 
             if ( modelBase.getReporting() != null )
             {
                 rewriteArtifactVersions( toMavenCoordinates( modelBase.getReporting().getPlugins() ), model, properties,
-                                         result, releaseDescriptor, simulate );
+                        result, releaseDescriptor, simulate );
             }
         }
 
@@ -388,7 +395,7 @@ public abstract class AbstractRewritePomsPhase
 
     private void rewriteVersion( Model modelTarget, ReleaseDescriptor releaseDescriptor, String projectId,
                                  MavenProject project )
-        throws ReleaseFailureException
+            throws ReleaseFailureException
     {
         String version = getNextVersion( releaseDescriptor, projectId );
         if ( version == null )
@@ -399,9 +406,9 @@ public abstract class AbstractRewritePomsPhase
         modelTarget.setVersion( version );
     }
 
-    private String rewriteParent( MavenProject project, Model targetModel, 
+    private String rewriteParent( MavenProject project, Model targetModel,
                                   ReleaseDescriptor releaseDescriptor, boolean simulate )
-        throws ReleaseFailureException
+            throws ReleaseFailureException
     {
         String parentVersion = null;
         if ( project.hasParent() )
@@ -433,7 +440,7 @@ public abstract class AbstractRewritePomsPhase
     private void rewriteArtifactVersions( Collection<MavenCoordinate> elements, Model projectModel,
                                           Properties properties, ReleaseResult result,
                                           ReleaseDescriptor releaseDescriptor, boolean simulate )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         if ( elements == null )
         {
@@ -483,7 +490,7 @@ public abstract class AbstractRewritePomsPhase
 
             // MRELEASE-220
             if ( mappedVersion != null && mappedVersion.endsWith( Artifact.SNAPSHOT_VERSION )
-                && !rawVersion.endsWith( Artifact.SNAPSHOT_VERSION ) && !releaseDescriptor.isUpdateDependencies() )
+                    && !rawVersion.endsWith( Artifact.SNAPSHOT_VERSION ) && !releaseDescriptor.isUpdateDependencies() )
             {
                 continue;
             }
@@ -500,7 +507,7 @@ public abstract class AbstractRewritePomsPhase
                     String expression = rawVersion.substring( 2, rawVersion.length() - 1 );
 
                     if ( expression.startsWith( "project." ) || expression.startsWith( "pom." )
-                        || "version".equals( expression ) )
+                            || "version".equals( expression ) )
                     {
                         if ( !mappedVersion.equals( getNextVersion( releaseDescriptor, projectId ) ) )
                         {
@@ -530,25 +537,25 @@ public abstract class AbstractRewritePomsPhase
                             {
                                 // this property may have been updated during processing a sibling.
                                 logInfo( result, "  Ignoring artifact version update for expression " + rawVersion
-                                    + " because it is already updated" );
+                                        + " because it is already updated" );
                             }
                             else if ( !mappedVersion.equals( rawVersion ) )
                             {
                                 if ( mappedVersion.matches( "\\$\\{project.+\\}" )
-                                    || mappedVersion.matches( "\\$\\{pom.+\\}" )
-                                    || "${version}".equals( mappedVersion ) )
+                                        || mappedVersion.matches( "\\$\\{pom.+\\}" )
+                                        || "${version}".equals( mappedVersion ) )
                                 {
                                     logInfo( result, "  Ignoring artifact version update for expression "
-                                        + mappedVersion );
+                                            + mappedVersion );
                                     // ignore... we cannot update this expression
                                 }
                                 else
                                 {
                                     // the value of the expression conflicts with what the user wanted to release
                                     throw new ReleaseFailureException( "The artifact (" + key + ") requires a "
-                                        + "different version (" + mappedVersion + ") than what is found ("
-                                        + propertyValue + ") for the expression (" + expression + ") in the "
-                                        + "project (" + projectId + ")." );
+                                            + "different version (" + mappedVersion + ") than what is found ("
+                                            + propertyValue + ") for the expression (" + expression + ") in the "
+                                            + "project (" + projectId + ")." );
                                 }
                             }
                         }
@@ -579,15 +586,15 @@ public abstract class AbstractRewritePomsPhase
     }
 
     private void prepareScm( File pomFile, ReleaseDescriptor releaseDescriptor, ScmRepository repository,
-                           ScmProvider provider )
-        throws ReleaseExecutionException, ReleaseScmCommandException
+                             ScmProvider provider )
+            throws ReleaseExecutionException, ReleaseScmCommandException
     {
         try
         {
             if ( isUpdateScm() && ( releaseDescriptor.isScmUseEditMode() || provider.requiresEditMode() ) )
             {
                 EditScmResult result = provider.edit( repository, new ScmFileSet(
-                    new File( releaseDescriptor.getWorkingDirectory() ), pomFile ) );
+                        new File( releaseDescriptor.getWorkingDirectory() ), pomFile ) );
 
                 if ( !result.isSuccess() )
                 {
@@ -606,7 +613,7 @@ public abstract class AbstractRewritePomsPhase
      * <p>getResolvedSnapshotVersion.</p>
      *
      * @param artifactVersionlessKey a {@link java.lang.String} object
-     * @param releaseDscriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param releaseDscriptor       a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
      * @return a {@link java.lang.String} object
      */
     protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey,
@@ -616,8 +623,8 @@ public abstract class AbstractRewritePomsPhase
      * <p>getOriginalVersion.</p>
      *
      * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
-     * @param projectKey a {@link java.lang.String} object
-     * @param simulate a boolean
+     * @param projectKey        a {@link java.lang.String} object
+     * @param simulate          a boolean
      * @return a {@link java.lang.String} object
      */
     protected abstract String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey,
@@ -627,7 +634,7 @@ public abstract class AbstractRewritePomsPhase
      * <p>getNextVersion.</p>
      *
      * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
-     * @param key a {@link java.lang.String} object
+     * @param key               a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
     protected abstract String getNextVersion( ReleaseDescriptor releaseDescriptor, String key );
@@ -635,18 +642,18 @@ public abstract class AbstractRewritePomsPhase
     /**
      * <p>transformScm.</p>
      *
-     * @param project a {@link org.apache.maven.project.MavenProject} object
-     * @param modelTarget a {@link org.apache.maven.model.Model} object
+     * @param project           a {@link org.apache.maven.project.MavenProject} object
+     * @param modelTarget       a {@link org.apache.maven.model.Model} object
      * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
-     * @param projectId a {@link java.lang.String} object
-     * @param scmRepository a {@link org.apache.maven.scm.repository.ScmRepository} object
-     * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
+     * @param projectId         a {@link java.lang.String} object
+     * @param scmRepository     a {@link org.apache.maven.scm.repository.ScmRepository} object
+     * @param result            a {@link org.apache.maven.shared.release.ReleaseResult} object
      * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
      */
     protected abstract void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                           String projectId, ScmRepository scmRepository,
                                           ReleaseResult result )
-        throws ReleaseExecutionException;
+            throws ReleaseExecutionException;
 
     /**
      * <p>isUpdateScm.</p>
@@ -663,7 +670,7 @@ public abstract class AbstractRewritePomsPhase
      * <p>getOriginalResolvedSnapshotVersion.</p>
      *
      * @param artifactVersionlessKey a {@link java.lang.String} object
-     * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
+     * @param releaseDescriptor      a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
      * @return a {@link java.lang.String} object
      */
     protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey,

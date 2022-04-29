@@ -21,35 +21,41 @@ package org.apache.maven.shared.release.scm;
 
 import java.io.File;
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class JazzScmTranslatorTest
-    extends TestCase
 {
 
-    private JazzScmTranslator scmTranslator  = new JazzScmTranslator();
+    private final JazzScmTranslator scmTranslator  = new JazzScmTranslator();
 
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
+    @Test
     public void testResolveTag()
     {
         assertNull( scmTranslator.resolveTag( "HEAD" ) );
         assertNull( scmTranslator.resolveTag( "project-1.0" ) );
     }
 
+    @Test
     public void testTranslateTagUrl()
     {
         assertEquals( "url:tag", scmTranslator.translateTagUrl( "url:module", "tag", null ) );
         assertEquals( "url:tag", scmTranslator.translateTagUrl( "url:module", "tag", "tagBase" ) );
     }
 
+    @Test
     public void testTranslateBranchUrl()
     {
         assertEquals( "url:branchName", scmTranslator.translateBranchUrl( "url:module", "branchName", null ) );
         assertEquals( "url:branchName", scmTranslator.translateBranchUrl( "url:module", "branchName", "tagBase" ) );
     }
 
+    @Test
     public void testGetRelativePath()
     {
         assertEquals( "BogusTest" + File.separator + "release.properties", scmTranslator.toRelativePath( "BogusTest/release.properties" ) );

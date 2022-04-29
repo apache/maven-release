@@ -34,8 +34,8 @@ public interface CommandLineFactory
      * @param executable the executable
      * @return the command line
      * @throws org.apache.maven.shared.release.exec.MavenExecutorException if there was a problem creating
-     *         the command line
+     *                                                                     the command line
      */
     Commandline createCommandLine( String executable )
-        throws MavenExecutorException;
+            throws MavenExecutorException;
 }

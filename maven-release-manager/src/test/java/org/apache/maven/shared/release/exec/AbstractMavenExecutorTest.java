@@ -22,6 +22,7 @@ package org.apache.maven.shared.release.exec;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -36,15 +37,17 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
 import junit.framework.TestCase;
+import org.apache.maven.shared.release.util.MavenCrypto;
+import org.junit.Test;
 
 public class AbstractMavenExecutorTest
-    extends TestCase
 {
 
+    @Test
     public void testGoalSeparation()
         throws MavenExecutorException
     {
-        AbstractMavenExecutor executor = spy( new AbstractMavenExecutorSpy() );
+        AbstractMavenExecutor executor = spy( new AbstractMavenExecutorSpy( mock( MavenCrypto.class ) ) );
 
         executor.executeGoals( null, (String) null, new DefaultReleaseEnvironment(), true, null, null, null );
         verify( executor ).executeGoals( isNull(), eq( new ArrayList<String>() ),
@@ -98,6 +101,10 @@ public class AbstractMavenExecutorTest
     protected class AbstractMavenExecutorSpy
         extends AbstractMavenExecutor
     {
+        public AbstractMavenExecutorSpy( MavenCrypto mavenCrypto )
+        {
+            super( mavenCrypto );
+        }
 
         @Override
         protected void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,

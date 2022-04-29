@@ -19,16 +19,14 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.io.File;
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.ReleaseFailureException;
-import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.codehaus.plexus.component.annotations.Component;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
+import java.io.File;
 import java.util.List;
+
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.CommandParameter;
 import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
@@ -38,28 +36,40 @@ import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseResult;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.component.annotations.Requirement;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Remove tag from SCM repository during rollback
  */
-@Component( role = ReleasePhase.class, hint = "remove-scm-tag" )
+@Singleton
+@Named( "remove-scm-tag" )
 public class RemoveScmTagPhase
-    extends AbstractReleasePhase
+        extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
-    @Requirement
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    private final ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    @Inject
+    public RemoveScmTagPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
+    {
+        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
+    }
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult releaseResult = new ReleaseResult();
 
@@ -68,16 +78,17 @@ public class RemoveScmTagPhase
         logInfo( releaseResult, "Removing tag with the label " + releaseDescriptor.getScmReleaseLabel() + " ..." );
 
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+                ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
 
         ScmRepository repository;
         ScmProvider provider;
         try
         {
             repository =
-                scmRepositoryConfigurator.getConfiguredRepository( basedirAlignedReleaseDescriptor.getScmSourceUrl(),
-                                                                   releaseDescriptor,
-                                                                   releaseEnvironment.getSettings() );
+                    scmRepositoryConfigurator.getConfiguredRepository(
+                            basedirAlignedReleaseDescriptor.getScmSourceUrl(),
+                            releaseDescriptor,
+                            releaseEnvironment.getSettings() );
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
 
@@ -106,18 +117,18 @@ public class RemoveScmTagPhase
             if ( getLogger().isDebugEnabled() )
             {
                 getLogger().debug(
-                    "RemoveScmTagPhase :: scmUntagParameters tagName " + tagName );
+                        "RemoveScmTagPhase :: scmUntagParameters tagName " + tagName );
                 getLogger().debug(
-                    "RemoveScmTagPhase :: scmUntagParameters message " + message );
+                        "RemoveScmTagPhase :: scmUntagParameters message " + message );
                 getLogger().debug(
-                    "RemoveScmTagPhase :: fileSet  " + fileSet );
+                        "RemoveScmTagPhase :: fileSet  " + fileSet );
             }
             untagScmResult = provider.untag( repository, fileSet, commandParameters );
         }
         catch ( ScmException e )
         {
             throw new ReleaseExecutionException( "An error has occurred in the remove tag process: "
-                + e.getMessage(), e );
+                    + e.getMessage(), e );
         }
 
         if ( !untagScmResult.isSuccess() )
@@ -134,7 +145,7 @@ public class RemoveScmTagPhase
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult releaseResult = new ReleaseResult();
 
@@ -149,7 +160,7 @@ public class RemoveScmTagPhase
     }
 
     private void validateConfiguration( ReleaseDescriptor releaseDescriptor )
-        throws ReleaseFailureException
+            throws ReleaseFailureException
     {
         if ( releaseDescriptor.getScmReleaseLabel() == null )
         {

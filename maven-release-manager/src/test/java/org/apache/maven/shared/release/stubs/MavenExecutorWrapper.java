@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.stubs;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.io.File;
 
 import org.apache.maven.shared.release.ReleaseResult;
@@ -26,6 +29,8 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 
+@Singleton
+@Named( "wrapper" )
 public class MavenExecutorWrapper implements MavenExecutor
 {
     private MavenExecutor executor;

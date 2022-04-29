@@ -19,6 +19,11 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -34,8 +39,10 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.invoker.DefaultInvocationRequest;
 import org.apache.maven.shared.invoker.InvocationRequest;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.util.MavenCrypto;
 import org.codehaus.plexus.PlexusTestCase;
 import org.codehaus.plexus.logging.Logger;
 import org.junit.Test;
@@ -43,30 +50,28 @@ import org.mockito.ArgumentCaptor;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
 public class InvokerMavenExecutorTest
-    extends PlexusTestCase
+        extends PlexusJUnit4TestCase
 {
 
-    private InvokerMavenExecutor executor;
+    private MavenCrypto mavenCrypto;
 
     private SecDispatcher secDispatcher;
 
     @Override
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
 
-        executor = (InvokerMavenExecutor) lookup( MavenExecutor.class, "invoker" );
-
-        secDispatcher = (SecDispatcher) lookup( SecDispatcher.class, "mng-4384" );
+        mavenCrypto = lookup( MavenCrypto.class );
+        secDispatcher = lookup( SecDispatcher.class );
     }
 
     @Test
     public void testThreads()
         throws Exception
     {
-        Logger logger = mock( Logger.class );
-        executor.enableLogging( logger );
+        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
 
         InvocationRequest req = new DefaultInvocationRequest();
         executor.setupRequest( req, null, "-T 3" );
@@ -85,8 +90,7 @@ public class InvokerMavenExecutorTest
     public void testBatch()
                   throws Exception
     {
-        Logger logger = mock( Logger.class );
-        executor.enableLogging( logger );
+        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
 
         InvocationRequest req = new DefaultInvocationRequest();
 
@@ -104,8 +108,7 @@ public class InvokerMavenExecutorTest
     public void testUserToolchains()
         throws Exception
     {
-        Logger logger = mock( Logger.class );
-        executor.enableLogging( logger );
+        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
 
         InvocationRequest req = new DefaultInvocationRequest();
         executor.setupRequest( req, null, "-t mytoolchains.xml" );
@@ -124,8 +127,7 @@ public class InvokerMavenExecutorTest
     public void testGlobalSettings()
         throws Exception
     {
-        Logger logger = mock( Logger.class );
-        executor.enableLogging( logger );
+        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
 
         InvocationRequest req = new DefaultInvocationRequest();
         executor.setupRequest( req, null, "-gs custom-settings.xml" );
@@ -139,6 +141,8 @@ public class InvokerMavenExecutorTest
     public void testEncryptSettings()
         throws Exception
     {
+        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
+
         // prepare
         File workingDirectory = getTestFile( "target/working-directory" );
         workingDirectory.mkdirs();
@@ -188,9 +192,9 @@ public class InvokerMavenExecutorTest
         File settingsSecurity = new File( System.getProperty( "user.home" ), ".m2/settings-security.xml" );
         if ( settingsSecurity.exists() )
         {
-            assertFalse( "server_passphrase".equals( encryptedServer.getPassphrase() ) );
-            assertFalse( "server_password".equals( encryptedServer.getPassword() ) );
-            assertFalse( "proxy_password".equals( encryptedProxy.getPassword() ) );
+            assertNotEquals( "server_passphrase", encryptedServer.getPassphrase() );
+            assertNotEquals( "server_password", encryptedServer.getPassword() );
+            assertNotEquals( "proxy_password", encryptedProxy.getPassword() );
         }
     }
 }

@@ -19,17 +19,20 @@ package org.apache.maven.shared.release.config;
  * under the License.
  */
 
-import junit.framework.TestCase;
-
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Properties;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * ReleaseDescriptor Tester.
@@ -37,8 +40,8 @@ import java.util.Properties;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ReleaseUtilsTest
-    extends TestCase
 {
+    @Test
     public void testEquals()
         throws IOException
     {
@@ -202,6 +205,7 @@ public class ReleaseUtilsTest
         assertFalse( "Check original comparison", configBuilder.build().equals( origConfig ) );
     }
 
+    @Test
     public void testHashCode()
         throws IOException
     {
@@ -211,6 +215,7 @@ public class ReleaseUtilsTest
                       createReleaseDescriptor( releaseDescriptor.getWorkingDirectory() ).build().hashCode() );
     }
 
+    @Test
     public void testLoadResolvedDependencies()
     {
         Properties properties = new Properties();
@@ -227,6 +232,7 @@ public class ReleaseUtilsTest
     }
 
     // MRELEASE-750
+    @Test
     public void testArtifactIdEndswithDependency()
     {
         Properties properties = new Properties();
@@ -244,6 +250,7 @@ public class ReleaseUtilsTest
     }
 
     // MRELEASE-834
+    @Test
     public void testSystemPropertyStartingWithDependency()
     {
         Properties properties = new Properties();
@@ -252,6 +259,7 @@ public class ReleaseUtilsTest
     }
     
     // MRELEASE-1038
+    @Test
     public void testActiveProfilesProperty()
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();

@@ -19,6 +19,13 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import java.io.File;
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmBranchParameters;
 import org.apache.maven.scm.ScmException;
@@ -37,32 +44,32 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * Branch the SCM repository.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  */
-@Component( role = ReleasePhase.class, hint = "scm-branch" )
+@Singleton
+@Named( "scm-branch" )
 public class ScmBranchPhase
-    extends AbstractReleasePhase
+        extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
-    @Requirement
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
+    @Inject
+    public ScmBranchPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
+    {
+        this.scmRepositoryConfigurator = scmRepositoryConfigurator;
+    }
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult relResult = new ReleaseResult();
 
@@ -71,16 +78,17 @@ public class ScmBranchPhase
         logInfo( relResult, "Branching release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
 
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+                ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
 
         ScmRepository repository;
         ScmProvider provider;
         try
         {
             repository =
-                scmRepositoryConfigurator.getConfiguredRepository( basedirAlignedReleaseDescriptor.getScmSourceUrl(),
-                                                                   releaseDescriptor,
-                                                                   releaseEnvironment.getSettings() );
+                    scmRepositoryConfigurator.getConfiguredRepository(
+                            basedirAlignedReleaseDescriptor.getScmSourceUrl(),
+                            releaseDescriptor,
+                            releaseEnvironment.getSettings() );
 
             repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
 
@@ -130,13 +138,13 @@ public class ScmBranchPhase
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
         validateConfiguration( releaseDescriptor );
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-            ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+                ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
 
         logInfo( result, "Full run would branch " + basedirAlignedReleaseDescriptor.getWorkingDirectory() );
         if ( releaseDescriptor.getScmBranchBase() != null )
@@ -155,7 +163,7 @@ public class ScmBranchPhase
     }
 
     private static void validateConfiguration( ReleaseDescriptor releaseDescriptor )
-        throws ReleaseFailureException
+            throws ReleaseFailureException
     {
         if ( releaseDescriptor.getScmReleaseLabel() == null )
         {

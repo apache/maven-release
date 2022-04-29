@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
@@ -27,29 +30,29 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  */
-@Component( role = ReleasePhase.class, hint = "verify-completed-prepare-phases" )
+@Singleton
+@Named( "verify-completed-prepare-phases" )
 public class CheckCompletedPreparePhasesPhase
-    extends AbstractReleasePhase
+        extends AbstractReleasePhase
 {
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
                                   ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
         // if we stopped mid-way through preparation - don't perform
         if ( releaseDescriptor.getCompletedPhase() != null
-             && !"end-release".equals( releaseDescriptor.getCompletedPhase() ) )
+                && !"end-release".equals( releaseDescriptor.getCompletedPhase() ) )
         {
             String message = "Cannot perform release - the preparation step was stopped mid-way. Please re-run "
-                             + "release:prepare to continue, or perform the release from an SCM tag.";
+                    + "release:prepare to continue, or perform the release from an SCM tag.";
 
             result.setResultCode( ReleaseResult.ERROR );
 
@@ -78,7 +81,7 @@ public class CheckCompletedPreparePhasesPhase
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor,
                                    ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
     }

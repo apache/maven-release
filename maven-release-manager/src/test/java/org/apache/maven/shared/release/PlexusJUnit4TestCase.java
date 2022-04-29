@@ -23,10 +23,13 @@ import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.Map;
 
+import com.google.inject.Module;
 import org.codehaus.plexus.ContainerConfiguration;
 import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.DefaultPlexusContainer;
+import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -86,7 +89,11 @@ public abstract class PlexusJUnit4TestCase
         final String config = getCustomConfigurationName();
 
         final ContainerConfiguration containerConfiguration =
-            new DefaultContainerConfiguration().setName( "test" ).setContext( context.getContextData() ).setClassPathCaching( true );
+            new DefaultContainerConfiguration()
+                    .setName( "test" )
+                    .setContext( context.getContextData() )
+                    .setAutoWiring( true )
+                    .setClassPathScanning( PlexusConstants.SCANNING_CACHE );
 
         if ( config != null )
         {
@@ -103,13 +110,21 @@ public abstract class PlexusJUnit4TestCase
 
         try
         {
-            container = new DefaultPlexusContainer( containerConfiguration );
+            container = new DefaultPlexusContainer( containerConfiguration, getCustomModules() );
         }
         catch ( final PlexusContainerException e )
         {
             e.printStackTrace();
             fail( "Failed to create plexus container." );
         }
+    }
+
+    /**
+     * Allows test to define custom modules.
+     */
+    protected Module[] getCustomModules()
+    {
+        return new Module[0];
     }
 
     /**
@@ -219,6 +234,12 @@ public abstract class PlexusJUnit4TestCase
         throws Exception
     {
         return getContainer().lookup( componentClass, roleHint );
+    }
+
+    protected <T> Map<String, T> lookupMap( final Class<T> componentClass )
+            throws Exception
+    {
+        return getContainer().lookupMap( componentClass );
     }
 
     protected void release( final Object component )

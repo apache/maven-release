@@ -19,16 +19,18 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class CvsScmTranslatorTest
-    extends TestCase
 {
-    private CvsScmTranslator scmTranslator = new CvsScmTranslator();
+    private final CvsScmTranslator scmTranslator = new CvsScmTranslator();
 
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
+    @Test
     public void testResolveTag()
     {
         // with current implementation you can't call your tag 'HEAD' (which is the default)
@@ -36,18 +38,21 @@ public class CvsScmTranslatorTest
         assertEquals( "project-1.0", scmTranslator.resolveTag( "project-1.0" ) );
     }
 
+    @Test
     public void testTranslateTagUrl()
     {
         assertEquals( "url", scmTranslator.translateTagUrl( "url", "tag", null )  );
         assertEquals( "url", scmTranslator.translateTagUrl( "url", "tag", "tagBase" )  );
     }
 
+    @Test
     public void testTranslateBranchUrl()
     {
         assertEquals( "url", scmTranslator.translateBranchUrl( "url", "branchName", null )  );
         assertEquals( "url", scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
     }
 
+    @Test
     public void testGetRelativePath()
     {
         assertEquals( "a/b/c", "a/b/c" );

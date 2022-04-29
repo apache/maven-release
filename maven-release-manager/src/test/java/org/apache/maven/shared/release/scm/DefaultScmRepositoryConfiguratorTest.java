@@ -27,29 +27,34 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
-import org.codehaus.plexus.PlexusTestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 /**
  * Test the default SCM repository configurator.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class DefaultScmRepositoryConfiguratorTest
-    extends PlexusTestCase
+public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase
 {
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     @Override
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
 
-        scmRepositoryConfigurator = (ScmRepositoryConfigurator) lookup( ScmRepositoryConfigurator.class );
+        scmRepositoryConfigurator = lookup( ScmRepositoryConfigurator.class );
     }
 
+    @Test
     public void testGetConfiguredRepository()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
@@ -62,6 +67,7 @@ public class DefaultScmRepositoryConfiguratorTest
         assertNull( "check password", repository.getProviderRepository().getPassword() );
     }
 
+    @Test
     public void testGetConfiguredRepositoryWithUsernameAndPassword()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
@@ -73,6 +79,7 @@ public class DefaultScmRepositoryConfiguratorTest
         assertEquals( "check password", "password", repository.getProviderRepository().getPassword() );
     }
 
+    @Test
     public void testGetConfiguredRepositoryWithTagBase()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
@@ -86,6 +93,7 @@ public class DefaultScmRepositoryConfiguratorTest
         assertEquals( "check tag base", "http://localhost/home/svn/module/tags", providerRepository.getTagBase() );
     }
 
+    @Test
     public void testGetConfiguredRepositoryWithHost()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
@@ -113,6 +121,7 @@ public class DefaultScmRepositoryConfiguratorTest
         assertEquals( "check passphrase", "settings-passphrase", providerRepository.getPassphrase() );
     }
 
+    @Test
     public void testGetConfiguredRepositoryWithEncryptedPasswords()
         throws ScmRepositoryException, NoSuchScmProviderException
     {
@@ -137,6 +146,7 @@ public class DefaultScmRepositoryConfiguratorTest
         assertEquals( "check passphrase", "testphrase", providerRepository.getPassphrase() );
     }
 
+    @Test
     public void testGetConfiguredRepositoryInvalidScmUrl()
         throws Exception
     {
@@ -155,6 +165,7 @@ public class DefaultScmRepositoryConfiguratorTest
         }
     }
 
+    @Test
     public void testGetConfiguredRepositoryInvalidScmProvider()
         throws ScmRepositoryException
     {
@@ -173,6 +184,7 @@ public class DefaultScmRepositoryConfiguratorTest
         }
     }
 
+    @Test
     public void testGetConfiguredRepositoryInvalidScmUrlParameters()
         throws NoSuchScmProviderException
     {
@@ -191,6 +203,7 @@ public class DefaultScmRepositoryConfiguratorTest
         }
     }
 
+    @Test
     public void testGetRepositoryProvider()
         throws ScmRepositoryException, NoSuchScmProviderException
     {

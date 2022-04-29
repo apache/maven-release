@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -41,17 +45,18 @@ import org.apache.maven.shared.invoker.InvokerLogger;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.logging.Logger;
+import org.apache.maven.shared.release.util.MavenCrypto;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.slf4j.Logger;
 
 /**
  * Fork Maven using the maven-invoker shared library.
  */
-@Component( role = MavenExecutor.class, hint = "invoker" )
+@Singleton
+@Named( "invoker" )
 @SuppressWarnings( "static-access" )
 public class InvokerMavenExecutor
-    extends AbstractMavenExecutor
+        extends AbstractMavenExecutor
 {
 
     private static final Options OPTIONS = new Options();
@@ -87,95 +92,108 @@ public class InvokerMavenExecutor
     private static final String FAIL_AT_END = "fae";
 
     private static final String FAIL_NEVER = "fn";
-    
+
     private static final String ALTERNATE_POM_FILE = "f";
-    
+
     private static final String THREADS = "T";
 
     private static final String BATCH_MODE = "B";
-    
-    /** Constant <code>ALTERNATE_USER_TOOLCHAINS='t'</code> */
+
+    /**
+     * Constant <code>ALTERNATE_USER_TOOLCHAINS='t'</code>
+     */
     public static final char ALTERNATE_USER_TOOLCHAINS = 't';
-    
+
     static
     {
         OPTIONS.addOption(
-            OptionBuilder.withLongOpt( "define" ).hasArg().withDescription( "Define a system property" ).create(
-                SET_SYSTEM_PROPERTY ) );
+                OptionBuilder.withLongOpt( "define" ).hasArg().withDescription( "Define a system property" ).create(
+                        SET_SYSTEM_PROPERTY ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "offline" ).withDescription( "Work offline" ).create( OFFLINE ) );
 
         OPTIONS.addOption(
-            OptionBuilder.withLongOpt( "quiet" ).withDescription( "Quiet output - only show errors" ).create( QUIET ) );
+                OptionBuilder.withLongOpt( "quiet" ).withDescription( "Quiet output - only show errors" )
+                        .create( QUIET ) );
 
         OPTIONS.addOption(
-            OptionBuilder.withLongOpt( "debug" ).withDescription( "Produce execution debug output" ).create( DEBUG ) );
+                OptionBuilder.withLongOpt( "debug" ).withDescription( "Produce execution debug output" )
+                        .create( DEBUG ) );
 
         OPTIONS.addOption(
-            OptionBuilder.withLongOpt( "errors" ).withDescription( "Produce execution error messages" ).create(
-                ERRORS ) );
+                OptionBuilder.withLongOpt( "errors" ).withDescription( "Produce execution error messages" ).create(
+                        ERRORS ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "reactor" ).withDescription(
-            "Execute goals for project found in the reactor" ).create( REACTOR ) );
+                "Execute goals for project found in the reactor" ).create( REACTOR ) );
 
         OPTIONS.addOption(
-            OptionBuilder.withLongOpt( "non-recursive" ).withDescription( "Do not recurse into sub-projects" ).create(
-                NON_RECURSIVE ) );
+                OptionBuilder.withLongOpt( "non-recursive" ).withDescription( "Do not recurse into sub-projects" )
+                        .create(
+                                NON_RECURSIVE ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "update-snapshots" ).withDescription(
-            "Forces a check for updated releases and snapshots on remote repositories" ).create( UPDATE_SNAPSHOTS ) );
+                        "Forces a check for updated releases and snapshots on remote repositories" )
+                .create( UPDATE_SNAPSHOTS ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "activate-profiles" ).withDescription(
-            "Comma-delimited list of profiles to activate" ).hasArg().create( ACTIVATE_PROFILES ) );
+                "Comma-delimited list of profiles to activate" ).hasArg().create( ACTIVATE_PROFILES ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "strict-checksums" ).withDescription(
-            "Fail the build if checksums don't match" ).create( CHECKSUM_FAILURE_POLICY ) );
+                "Fail the build if checksums don't match" ).create( CHECKSUM_FAILURE_POLICY ) );
 
         OPTIONS.addOption(
-            OptionBuilder.withLongOpt( "lax-checksums" ).withDescription( "Warn if checksums don't match" ).create(
-                CHECKSUM_WARNING_POLICY ) );
+                OptionBuilder.withLongOpt( "lax-checksums" ).withDescription( "Warn if checksums don't match" ).create(
+                        CHECKSUM_WARNING_POLICY ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "settings" ).withDescription(
-            "Alternate path for the user settings file" ).hasArg().create( ALTERNATE_USER_SETTINGS ) );
+                "Alternate path for the user settings file" ).hasArg().create( ALTERNATE_USER_SETTINGS ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "global-settings" ).withDescription(
-            " Alternate path for the global settings file" ).hasArg().create( ALTERNATE_GLOBAL_SETTINGS ) );
+                " Alternate path for the global settings file" ).hasArg().create( ALTERNATE_GLOBAL_SETTINGS ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "fail-fast" ).withDescription(
-            "Stop at first failure in reactorized builds" ).create( FAIL_FAST ) );
+                "Stop at first failure in reactorized builds" ).create( FAIL_FAST ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "fail-at-end" ).withDescription(
-            "Only fail the build afterwards; allow all non-impacted builds to continue" ).create( FAIL_AT_END ) );
+                "Only fail the build afterwards; allow all non-impacted builds to continue" ).create( FAIL_AT_END ) );
 
         OPTIONS.addOption( OptionBuilder.withLongOpt( "fail-never" ).withDescription(
-            "NEVER fail the build, regardless of project result" ).create( FAIL_NEVER ) );
-        
-        OPTIONS.addOption( OptionBuilder.withLongOpt( "file" ).withDescription( 
-            "Force the use of an alternate POM file." ).hasArg().create( ALTERNATE_POM_FILE ) );
-        
-        OPTIONS.addOption( OptionBuilder.withLongOpt( "threads" ).withDescription( 
-            "Thread count, for instance 2.0C where C is core multiplied" ).hasArg().create( THREADS ) );
-        
-        OPTIONS.addOption( OptionBuilder.withLongOpt( "batch-mode" ).withDescription( 
-            "Run in non-interactive (batch) mode" ).create( BATCH_MODE ) );
-        
-        OPTIONS.addOption( OptionBuilder.withLongOpt( "toolchains" ).withDescription( 
-            "Alternate path for the user toolchains file" ).hasArg().create( ALTERNATE_USER_TOOLCHAINS ) );
+                "NEVER fail the build, regardless of project result" ).create( FAIL_NEVER ) );
+
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "file" ).withDescription(
+                "Force the use of an alternate POM file." ).hasArg().create( ALTERNATE_POM_FILE ) );
+
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "threads" ).withDescription(
+                "Thread count, for instance 2.0C where C is core multiplied" ).hasArg().create( THREADS ) );
+
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "batch-mode" ).withDescription(
+                "Run in non-interactive (batch) mode" ).create( BATCH_MODE ) );
+
+        OPTIONS.addOption( OptionBuilder.withLongOpt( "toolchains" ).withDescription(
+                "Alternate path for the user toolchains file" ).hasArg().create( ALTERNATE_USER_TOOLCHAINS ) );
+    }
+
+    @Inject
+    public InvokerMavenExecutor( MavenCrypto mavenCrypto )
+    {
+        super( mavenCrypto );
     }
 
     // TODO: Configuring an invocation request from a command line could as well be part of the Invoker API
+
     /**
      * <p>setupRequest.</p>
      *
-     * @param req a {@link org.apache.maven.shared.invoker.InvocationRequest} object
-     * @param bridge a {@link org.apache.maven.shared.invoker.InvokerLogger} object
+     * @param req                 a {@link org.apache.maven.shared.invoker.InvocationRequest} object
+     * @param bridge              a {@link org.apache.maven.shared.invoker.InvokerLogger} object
      * @param additionalArguments a {@link java.lang.String} object
      * @throws org.apache.maven.shared.release.exec.MavenExecutorException if any.
      */
     protected void setupRequest( InvocationRequest req,
                                  InvokerLogger bridge,
-                               String additionalArguments )
-        throws MavenExecutorException
+                                 String additionalArguments )
+            throws MavenExecutorException
     {
         try
         {
@@ -242,7 +260,7 @@ public class InvokerMavenExecutor
             if ( cli.hasOption( ACTIVATE_PROFILES ) )
             {
                 String[] profiles = cli.getOptionValues( ACTIVATE_PROFILES );
-                
+
                 if ( profiles != null )
                 {
                     req.setProfiles( Arrays.asList( profiles ) );
@@ -262,7 +280,7 @@ public class InvokerMavenExecutor
             {
                 req.setUserSettingsFile( new File( cli.getOptionValue( ALTERNATE_USER_SETTINGS ) ) );
             }
-            
+
             if ( cli.hasOption( ALTERNATE_GLOBAL_SETTINGS ) )
             {
                 req.setGlobalSettingsFile( new File( cli.getOptionValue( ALTERNATE_GLOBAL_SETTINGS ) ) );
@@ -291,22 +309,22 @@ public class InvokerMavenExecutor
                     req.setPomFileName( cli.getOptionValue( ALTERNATE_POM_FILE ) );
                 }
             }
-            
+
             if ( cli.hasOption( THREADS ) )
             {
                 req.setThreads( cli.getOptionValue( THREADS ) );
             }
-            
+
             if ( cli.hasOption( BATCH_MODE ) )
             {
                 req.setBatchMode( true );
             }
-            
+
             if ( cli.hasOption( ALTERNATE_USER_TOOLCHAINS ) )
             {
                 req.setToolchainsFile( new File( cli.getOptionValue( ALTERNATE_USER_TOOLCHAINS ) ) );
             }
-            
+
         }
         catch ( Exception e )
         {
@@ -318,12 +336,12 @@ public class InvokerMavenExecutor
     public void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String additionalArguments, String pomFileName,
                               ReleaseResult result )
-        throws MavenExecutorException
+            throws MavenExecutorException
     {
         InvocationOutputHandler handler = getOutputHandler();
         InvokerLogger bridge = getInvokerLogger();
 
-        File mavenPath = null;
+        File mavenPath;
         // if null we use the current one
         if ( releaseEnvironment.getMavenHome() != null )
         {
@@ -367,7 +385,7 @@ public class InvokerMavenExecutor
             {
                 settingsFile = File.createTempFile( "release-settings", ".xml" );
                 SettingsXpp3Writer writer = getSettingsWriter();
-                
+
                 try ( FileWriter fileWriter = new FileWriter( settingsFile ) )
                 {
                     writer.write( fileWriter, encryptSettings( releaseEnvironment.getSettings() ) );
@@ -398,13 +416,13 @@ public class InvokerMavenExecutor
                 if ( invocationResult.getExecutionException() != null )
                 {
                     throw new MavenExecutorException( "Error executing Maven.",
-                                                      invocationResult.getExecutionException() );
+                            invocationResult.getExecutionException() );
                 }
                 if ( invocationResult.getExitCode() != 0 )
                 {
                     throw new MavenExecutorException(
-                        "Maven execution failed, exit code: \'" + invocationResult.getExitCode() + "\'",
-                        invocationResult.getExitCode() );
+                            "Maven execution failed, exit code: \'" + invocationResult.getExitCode() + "\'",
+                            invocationResult.getExitCode() );
                 }
             }
             catch ( MavenInvocationException e )
@@ -442,7 +460,7 @@ public class InvokerMavenExecutor
     }
 
     private static final class Handler
-        implements InvocationOutputHandler
+            implements InvocationOutputHandler
     {
         private Logger logger;
 
@@ -458,7 +476,7 @@ public class InvokerMavenExecutor
     }
 
     private static final class LoggerBridge
-        implements InvokerLogger
+            implements InvokerLogger
     {
 
         private Logger logger;
@@ -495,19 +513,19 @@ public class InvokerMavenExecutor
         @Override
         public void fatalError( String message, Throwable error )
         {
-            logger.fatalError( message, error );
+            logger.error( message, error );
         }
 
         @Override
         public void fatalError( String message )
         {
-            logger.fatalError( message );
+            logger.error( message );
         }
 
         @Override
         public int getThreshold()
         {
-            return logger.getThreshold();
+            return InvokerLogger.DEBUG;
         }
 
         @Override
@@ -537,7 +555,7 @@ public class InvokerMavenExecutor
         @Override
         public boolean isFatalErrorEnabled()
         {
-            return logger.isFatalErrorEnabled();
+            return logger.isErrorEnabled();
         }
 
         @Override
@@ -556,7 +574,7 @@ public class InvokerMavenExecutor
         public void setThreshold( int level )
         {
             // NOTE:
-            // logger.setThreadhold( level )
+            // logger.setThreshold( level )
             // is not supported in plexus-container-default:1.0-alpha-9 as used in Maven 2.x
         }
 

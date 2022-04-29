@@ -19,17 +19,20 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.scm.ScmBranch;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
-import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Subversion tag translator.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ScmTranslator.class, hint = "svn" )
+@Singleton
+@Named( "svn" )
 public class SubversionScmTranslator
     implements ScmTranslator
 {

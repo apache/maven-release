@@ -19,17 +19,20 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class SubversionScmTranslatorTest
-    extends TestCase
 {
 
-    private SubversionScmTranslator scmTranslator  = new SubversionScmTranslator();
+    private final SubversionScmTranslator scmTranslator  = new SubversionScmTranslator();
 
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
+    @Test
     public void testResolveTag()
     {
         // "HEAD"is default
@@ -37,18 +40,21 @@ public class SubversionScmTranslatorTest
         assertNull( scmTranslator.resolveTag( "project-1.0" ) );
     }
 
+    @Test
     public void testTranslateTagUrl()
     {
         assertEquals( "url/tags/tag", scmTranslator.translateTagUrl( "url", "tag", null )  );
         assertEquals( "tagBase/tag", scmTranslator.translateTagUrl( "url", "tag", "tagBase" )  );
     }
 
+    @Test
     public void testTranslateBranchUrl()
     {
         assertEquals( "url/branches/branchName", scmTranslator.translateBranchUrl( "url", "branchName", null )  );
         assertEquals( "tagBase/branchName", scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
     }
 
+    @Test
     public void testGetRelativePath()
     {
         assertEquals( "a/b/c", "a/b/c" );

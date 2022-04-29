@@ -19,8 +19,13 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
-import org.codehaus.plexus.PlexusTestCase;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.junit.Test;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test the command line factory.
@@ -28,19 +33,20 @@ import org.codehaus.plexus.util.cli.Commandline;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class CommandLineFactoryTest
-    extends PlexusTestCase
+        extends PlexusJUnit4TestCase
 {
     private CommandLineFactory factory;
 
     @Override
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
 
-        factory = (CommandLineFactory) lookup( CommandLineFactory.class );
+        factory = lookup( CommandLineFactory.class );
     }
 
+    @Test
     public void testCreation()
         throws Exception
     {

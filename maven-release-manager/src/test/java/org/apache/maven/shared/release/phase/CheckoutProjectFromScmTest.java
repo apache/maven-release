@@ -48,8 +48,10 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
+import org.apache.maven.shared.release.util.MavenCrypto;
 import org.junit.Test;
 
 /**
@@ -58,7 +60,9 @@ import org.junit.Test;
 public class CheckoutProjectFromScmTest
     extends AbstractReleaseTestCase
 {
-    private CheckoutProjectFromScm phase;
+    private ScmManager scmManager;
+
+    private MavenCrypto mavenCrypto;
 
     @Override
     public void setUp()
@@ -66,7 +70,9 @@ public class CheckoutProjectFromScmTest
     {
         super.setUp();
 
-        phase = (CheckoutProjectFromScm) lookup( ReleasePhase.class, "checkout-project-from-scm" );
+        mavenCrypto = lookup( MavenCrypto.class );
+        scmManager = new ScmManagerStub();
+        phase = new CheckoutProjectFromScm( new DefaultScmRepositoryConfigurator( scmManager, mavenCrypto ) );
     }
 
     @Test

@@ -26,13 +26,12 @@ import java.io.OutputStream;
 
 /**
  * <p>TeeOutputStream class.</p>
- *
  */
 public class TeeOutputStream
-    extends FilterOutputStream
+        extends FilterOutputStream
 {
-    private ByteArrayOutputStream bout = new ByteArrayOutputStream( 1024 * 8 );
-    private byte indent[];
+    private final ByteArrayOutputStream bout = new ByteArrayOutputStream( 1024 * 8 );
+    private final byte[] indent;
     private int last = '\n';
 
     /**
@@ -49,7 +48,7 @@ public class TeeOutputStream
      * <p>Constructor for TeeOutputStream.</p>
      *
      * @param out a {@link java.io.OutputStream} object
-     * @param i a {@link java.lang.String} object
+     * @param i   a {@link java.lang.String} object
      */
     public TeeOutputStream( OutputStream out, String i )
     {
@@ -59,7 +58,7 @@ public class TeeOutputStream
 
     @Override
     public void write( byte[] b, int off, int len )
-        throws IOException
+            throws IOException
     {
         for ( int x = 0; x < len; x++ )
         {
@@ -81,7 +80,7 @@ public class TeeOutputStream
 
     @Override
     public void write( int b )
-        throws IOException
+            throws IOException
     {
         if ( last == '\n' || ( last == '\r' && b != '\n' ) )
         {

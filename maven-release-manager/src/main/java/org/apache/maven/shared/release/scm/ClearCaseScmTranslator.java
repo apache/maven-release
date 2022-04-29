@@ -19,16 +19,18 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
-import org.codehaus.plexus.component.annotations.Component;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * ClearCase tag translator.
  *
  * @author <a href="mailto:arne@degenring.com">Arne Degenring</a>
  */
-@Component( role = ScmTranslator.class, hint = "clearcase" )
+@Singleton
+@Named( "clearcase" )
 public class ClearCaseScmTranslator
-    implements ScmTranslator
+        implements ScmTranslator
 {
     @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )

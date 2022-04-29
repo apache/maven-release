@@ -23,26 +23,12 @@ import static org.junit.Assert.*;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
-public class SemVerVersionPolicyTest
+public final class SemVerVersionPolicyTest
 {
 
-    private VersionPolicy versionPolicy;
-
-    @Before
-    public void setUp()
-    {
-        versionPolicy = new SemVerVersionPolicy();
-    }
-
-    @After
-    public void tearDown()
-    {
-        versionPolicy = null;
-    }
+    private final VersionPolicy versionPolicy = new SemVerVersionPolicy();
 
     @Test
     public void testConvertToSnapshot()

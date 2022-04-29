@@ -19,10 +19,15 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.io.IOException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
@@ -32,19 +37,30 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.ModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Rewrite POMs for release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ReleasePhase.class, hint = "rewrite-poms-for-release" )
+@Singleton
+@Named( "rewrite-poms-for-release" )
 public class RewritePomsForReleasePhase
-    extends AbstractRewritePomsPhase
+        extends AbstractRewritePomsPhase
 {
+    @Inject
+    public RewritePomsForReleasePhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator,
+            Map<String, ModelETLFactory> modelETLFactories,
+            Map<String, ScmTranslator> scmTranslators )
+    {
+        super( scmRepositoryConfigurator, modelETLFactories, scmTranslators );
+    }
+
     @Override
     protected final String getPomSuffix()
     {
@@ -54,7 +70,7 @@ public class RewritePomsForReleasePhase
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result )
-    throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
@@ -105,7 +121,7 @@ public class RewritePomsForReleasePhase
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Scm scmTarget,
                                   ScmRepository scmRepository, ReleaseResult relResult )
-        throws IOException
+            throws IOException
     {
         ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
         boolean result = false;
@@ -130,7 +146,7 @@ public class RewritePomsForReleasePhase
             Path workingDirectory = Paths.get( releaseDescriptor.getWorkingDirectory() );
 
             int count = ReleaseUtil.getBaseWorkingDirectoryParentCount( workingDirectory, projectBasedir );
-            
+
             if ( scm.getConnection() != null )
             {
                 String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getConnection() );
@@ -152,7 +168,7 @@ public class RewritePomsForReleasePhase
                     scmConnectionTag = translateUrlPath( trunkUrl, tagBase, scm.getConnection() );
                 }
                 String value =
-                    translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, scmConnectionTag );
+                        translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, scmConnectionTag );
 
                 if ( !value.equals( scm.getConnection() ) )
                 {
@@ -172,7 +188,7 @@ public class RewritePomsForReleasePhase
                 }
 
                 String value =
-                    translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
+                        translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
 
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {

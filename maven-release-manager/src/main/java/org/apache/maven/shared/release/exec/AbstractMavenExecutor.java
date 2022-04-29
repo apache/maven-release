@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.exec;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.settings.Proxy;
@@ -30,54 +31,34 @@ import org.apache.maven.settings.SettingsUtils;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.logging.LogEnabled;
-import org.codehaus.plexus.logging.Logger;
+import org.apache.maven.shared.release.util.MavenCrypto;
+import org.apache.maven.shared.release.util.MavenCrypto.MavenCryptoException;
 import org.codehaus.plexus.util.StringUtils;
-import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
-import org.sonatype.plexus.components.cipher.PlexusCipher;
-import org.sonatype.plexus.components.cipher.PlexusCipherException;
-import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
-import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
-import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
-import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
-import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * <p>Abstract AbstractMavenExecutor class.</p>
- *
  */
 public abstract class AbstractMavenExecutor
-    implements MavenExecutor, LogEnabled
+        implements MavenExecutor
 {
+    private final Logger logger = LoggerFactory.getLogger( getClass() );
 
-    private Logger logger;
+    private final MavenCrypto mavenCrypto;
 
-    /**
-     * When this plugin requires Maven 3.0 as minimum, this component can be removed and o.a.m.s.c.SettingsDecrypter be
-     * used instead.
-     */
-    @Requirement( role = SecDispatcher.class, hint = "mng-4384" )
-    private DefaultSecDispatcher secDispatcher;
-
-    /**
-     *
-     */
-    @Requirement
-    private PlexusCipher cipher;
-
-    /**
-     * <p>Constructor for AbstractMavenExecutor.</p>
-     */
-    protected AbstractMavenExecutor()
+    protected AbstractMavenExecutor( MavenCrypto mavenCrypto )
     {
+        this.mavenCrypto = requireNonNull( mavenCrypto );
     }
 
     @Override
     public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String additionalArguments, String pomFileName,
                               ReleaseResult result )
-        throws MavenExecutorException
+            throws MavenExecutorException
     {
         List<String> goalsList = new ArrayList<>();
         if ( goals != null )
@@ -85,36 +66,26 @@ public abstract class AbstractMavenExecutor
             // accept both space and comma, so the old way still work
             // also accept line separators, so that goal lists can be spread
             // across multiple lines in the POM.
-            for ( String token : StringUtils.split( goals, ", \n\r\t" ) )
-            {
-                goalsList.add( token );
-            }
+            Collections.addAll( goalsList, StringUtils.split( goals, ", \n\r\t" ) );
         }
         executeGoals( workingDirectory, goalsList, releaseEnvironment, interactive, additionalArguments, pomFileName,
-                      result );
+                result );
     }
 
     protected abstract void executeGoals( File workingDirectory, List<String> goals,
                                           ReleaseEnvironment releaseEnvironment, boolean interactive,
                                           String additionalArguments, String pomFileName, ReleaseResult result )
-        throws MavenExecutorException;
+            throws MavenExecutorException;
 
     /**
      * <p>Getter for the field <code>logger</code>.</p>
      *
-     * @return a {@link org.codehaus.plexus.logging.Logger} object
+     * @return a {@link Logger} object
      */
     protected final Logger getLogger()
     {
         return logger;
     }
-
-    @Override
-    public void enableLogging( Logger logger )
-    {
-        this.logger = logger;
-    }
-
 
     /**
      * <p>encryptSettings.</p>
@@ -129,26 +100,26 @@ public abstract class AbstractMavenExecutor
         for ( Server server : encryptedSettings.getServers() )
         {
             String password = server.getPassword();
-            if ( password != null && !isEncryptedString( password ) )
+            if ( password != null && !mavenCrypto.isEncryptedString( password ) )
             {
                 try
                 {
-                    server.setPassword( encryptAndDecorate( password ) );
+                    server.setPassword( mavenCrypto.encryptAndDecorate( password ) );
                 }
-                catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
+                catch ( MavenCryptoException e )
                 {
                     // ignore
                 }
             }
 
             String passphrase = server.getPassphrase();
-            if ( passphrase != null && !isEncryptedString( passphrase ) )
+            if ( passphrase != null && !mavenCrypto.isEncryptedString( passphrase ) )
             {
                 try
                 {
-                    server.setPassphrase( encryptAndDecorate( passphrase ) );
+                    server.setPassphrase( mavenCrypto.encryptAndDecorate( passphrase ) );
                 }
-                catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
+                catch ( MavenCryptoException e )
                 {
                     // ignore
                 }
@@ -158,13 +129,13 @@ public abstract class AbstractMavenExecutor
         for ( Proxy proxy : encryptedSettings.getProxies() )
         {
             String password = proxy.getPassword();
-            if ( password != null && !isEncryptedString( password ) )
+            if ( password != null && !mavenCrypto.isEncryptedString( password ) )
             {
                 try
                 {
-                    proxy.setPassword( encryptAndDecorate( password ) );
+                    proxy.setPassword( mavenCrypto.encryptAndDecorate( password ) );
                 }
-                catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
+                catch ( MavenCryptoException e )
                 {
                     // ignore
                 }
@@ -172,42 +143,6 @@ public abstract class AbstractMavenExecutor
         }
 
         return encryptedSettings;
-    }
-
-    // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
-    private String encryptAndDecorate( String passwd )
-        throws IllegalStateException, SecDispatcherException, PlexusCipherException
-    {
-        String configurationFile = secDispatcher.getConfigurationFile();
-
-        if ( configurationFile.startsWith( "~" ) )
-        {
-            configurationFile = System.getProperty( "user.home" ) + configurationFile.substring( 1 );
-        }
-
-        String file = System.getProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION, configurationFile );
-
-        String master = null;
-
-        SettingsSecurity sec = SecUtil.read( file, true );
-        if ( sec != null )
-        {
-            master = sec.getMaster();
-        }
-
-        if ( master == null )
-        {
-            throw new IllegalStateException( "Master password is not set in the setting security file: " + file );
-        }
-
-        DefaultPlexusCipher cipher = new DefaultPlexusCipher();
-        String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
-        return cipher.encryptAndDecorate( passwd, masterPasswd );
-    }
-
-    private boolean isEncryptedString( String str )
-    {
-        return cipher.isEncryptedString( str );
     }
 
     /**

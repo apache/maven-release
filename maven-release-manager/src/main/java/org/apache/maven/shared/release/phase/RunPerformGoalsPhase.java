@@ -19,38 +19,50 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import java.io.File;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.util.PomFinder;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * Run the integration tests for the project to verify that it builds before committing.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ReleasePhase.class, hint = "run-perform-goals" )
+@Singleton
+@Named( "run-perform-goals" )
 public class RunPerformGoalsPhase
-    extends AbstractRunGoalsPhase
+        extends AbstractRunGoalsPhase
 {
+    @Inject
+    public RunPerformGoalsPhase( Map<String, MavenExecutor> mavenExecutors )
+    {
+        super( mavenExecutors );
+    }
+
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         return runLogic( releaseDescriptor, releaseEnvironment, false );
     }
 
     private ReleaseResult runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  boolean simulate )
-        throws ReleaseExecutionException
+                                    boolean simulate )
+            throws ReleaseExecutionException
     {
         String additionalArguments = getAdditionalArguments( releaseDescriptor );
 
@@ -132,7 +144,7 @@ public class RunPerformGoalsPhase
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         return runLogic( releaseDescriptor, releaseEnvironment, true );
     }

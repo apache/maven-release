@@ -19,10 +19,15 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.io.IOException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
@@ -32,19 +37,30 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.ModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * Rewrite POMs for branch.
  *
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  */
-@Component( role = ReleasePhase.class, hint = "rewrite-poms-for-branch" )
+@Singleton
+@Named( "rewrite-poms-for-branch" )
 public class RewritePomsForBranchPhase
-    extends AbstractRewritePomsPhase
+        extends AbstractRewritePomsPhase
 {
+    @Inject
+    public RewritePomsForBranchPhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator,
+            Map<String, ModelETLFactory> modelETLFactories,
+            Map<String, ScmTranslator> scmTranslators )
+    {
+        super( scmRepositoryConfigurator, modelETLFactories, scmTranslators );
+    }
+
     @Override
     protected final String getPomSuffix()
     {
@@ -54,7 +70,7 @@ public class RewritePomsForBranchPhase
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result )
-    throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         // If SCM is null in original model, it is inherited, no mods needed
         if ( project.getScm() != null )
@@ -106,7 +122,7 @@ public class RewritePomsForBranchPhase
 
     private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Scm scmTarget,
                                   ScmRepository scmRepository, ReleaseResult relResult )
-    throws IOException
+            throws IOException
     {
         ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
         boolean result = false;
@@ -131,7 +147,7 @@ public class RewritePomsForBranchPhase
             Path workingDirectory = Paths.get( releaseDescriptor.getWorkingDirectory() );
 
             int count = ReleaseUtil.getBaseWorkingDirectoryParentCount( workingDirectory, projectBasedir );
-            
+
             if ( scm.getConnection() != null )
             {
                 String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getConnection() );
@@ -154,8 +170,8 @@ public class RewritePomsForBranchPhase
                 }
 
                 String value =
-                    translator.translateBranchUrl( scm.getConnection(), branchName + subDirectoryBranch,
-                                                   scmConnectionBranch );
+                        translator.translateBranchUrl( scm.getConnection(), branchName + subDirectoryBranch,
+                                scmConnectionBranch );
                 if ( !value.equals( scm.getConnection() ) )
                 {
                     scmTarget.setConnection( value );
@@ -174,8 +190,8 @@ public class RewritePomsForBranchPhase
                 }
 
                 String value =
-                    translator.translateBranchUrl( scm.getDeveloperConnection(), branchName + subDirectoryBranch,
-                                                   branchBase );
+                        translator.translateBranchUrl( scm.getDeveloperConnection(), branchName + subDirectoryBranch,
+                                branchBase );
                 if ( !value.equals( scm.getDeveloperConnection() ) )
                 {
                     scmTarget.setDeveloperConnection( value );
@@ -206,7 +222,7 @@ public class RewritePomsForBranchPhase
 
                 // use original branch base without protocol
                 String value = translator.translateBranchUrl( scm.getUrl(), branchName + subDirectoryBranch,
-                                                              tagScmUrl );
+                        tagScmUrl );
                 if ( !value.equals( scm.getUrl() ) )
                 {
                     scmTarget.setUrl( value );

@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.config;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -32,39 +36,37 @@ import java.util.Properties;
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.apache.maven.shared.release.util.MavenCrypto;
+import org.apache.maven.shared.release.util.MavenCrypto.MavenCryptoException;
 import org.codehaus.plexus.util.StringUtils;
-import org.sonatype.plexus.components.cipher.DefaultPlexusCipher;
-import org.sonatype.plexus.components.cipher.PlexusCipherException;
-import org.sonatype.plexus.components.sec.dispatcher.DefaultSecDispatcher;
-import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
-import org.sonatype.plexus.components.sec.dispatcher.SecDispatcherException;
-import org.sonatype.plexus.components.sec.dispatcher.SecUtil;
-import org.sonatype.plexus.components.sec.dispatcher.model.SettingsSecurity;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Read and write release configuration and state from a properties file.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ReleaseDescriptorStore.class, hint = "properties" )
+@Singleton
+@Named( "properties" )
 public class PropertiesReleaseDescriptorStore
-    extends AbstractLogEnabled
-    implements ReleaseDescriptorStore
+        implements ReleaseDescriptorStore
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger( PropertiesReleaseDescriptorStore.class );
 
-    /**
-     * When this plugin requires Maven 3.0 as minimum, this component can be removed and o.a.m.s.c.SettingsDecrypter be
-     * used instead.
-     */
-    @Requirement( role = SecDispatcher.class, hint = "mng-4384" )
-    private DefaultSecDispatcher secDispatcher;
+    private final MavenCrypto mavenCrypto;
+
+    @Inject
+    public PropertiesReleaseDescriptorStore( MavenCrypto mavenCrypto )
+    {
+        this.mavenCrypto = requireNonNull( mavenCrypto );
+    }
 
     @Override
     public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor )
-        throws ReleaseDescriptorStoreException
+            throws ReleaseDescriptorStoreException
     {
         return read( mergeDescriptor, getDefaultReleasePropertiesFile( mergeDescriptor.build() ) );
     }
@@ -77,7 +79,7 @@ public class PropertiesReleaseDescriptorStore
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
     public ReleaseDescriptorBuilder read( File file )
-        throws ReleaseDescriptorStoreException
+            throws ReleaseDescriptorStoreException
     {
         return read( null, file );
     }
@@ -86,12 +88,12 @@ public class PropertiesReleaseDescriptorStore
      * <p>read.</p>
      *
      * @param mergeDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
-     * @param file a {@link java.io.File} object
+     * @param file            a {@link java.io.File} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
     public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor, File file )
-        throws ReleaseDescriptorStoreException
+            throws ReleaseDescriptorStoreException
     {
         Properties properties = new Properties();
 
@@ -101,21 +103,21 @@ public class PropertiesReleaseDescriptorStore
         }
         catch ( FileNotFoundException e )
         {
-            getLogger().debug( file.getName() + " not found - using empty properties" );
+            LOGGER.debug( file.getName() + " not found - using empty properties" );
         }
         catch ( IOException e )
         {
             throw new ReleaseDescriptorStoreException(
-                "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e );
+                    "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
-        
+
         try
         {
-            decryptProperties( properties );
+            mavenCrypto.decryptProperties( properties );
         }
-        catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
+        catch ( MavenCryptoException e )
         {
-            getLogger().debug( e.getMessage() );
+            LOGGER.debug( e.getMessage() );
         }
 
         ReleaseDescriptorBuilder builder;
@@ -125,9 +127,9 @@ public class PropertiesReleaseDescriptorStore
         }
         else
         {
-           builder = new ReleaseDescriptorBuilder(); 
+            builder = new ReleaseDescriptorBuilder();
         }
-        
+
         ReleaseUtils.copyPropertiesToReleaseDescriptor( properties, builder );
 
         return builder;
@@ -135,7 +137,7 @@ public class PropertiesReleaseDescriptorStore
 
     @Override
     public void write( ReleaseDescriptor config )
-        throws ReleaseDescriptorStoreException
+            throws ReleaseDescriptorStoreException
     {
         write( (BuilderReleaseDescriptor) config, getDefaultReleasePropertiesFile( config ) );
     }
@@ -155,11 +157,11 @@ public class PropertiesReleaseDescriptorStore
      *
      * @param config a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor}
      *               object
-     * @param file a {@link java.io.File} object
+     * @param file   a {@link java.io.File} object
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
     public void write( BuilderReleaseDescriptor config, File file )
-        throws ReleaseDescriptorStoreException
+            throws ReleaseDescriptorStoreException
     {
         Properties properties = new Properties();
         properties.setProperty( "completedPhase", config.getCompletedPhase() );
@@ -181,11 +183,11 @@ public class PropertiesReleaseDescriptorStore
             String password = config.getScmPassword();
             try
             {
-                password = encryptAndDecorate( password );
+                password = mavenCrypto.encryptAndDecorate( password );
             }
-            catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
+            catch ( MavenCryptoException e )
             {
-                getLogger().debug( e.getMessage() );
+                LOGGER.debug( e.getMessage() );
             }
             properties.setProperty( "scm.password", password );
         }
@@ -198,13 +200,13 @@ public class PropertiesReleaseDescriptorStore
             String passPhrase = config.getScmPrivateKeyPassPhrase();
             try
             {
-                passPhrase = encryptAndDecorate( passPhrase );
+                passPhrase = mavenCrypto.encryptAndDecorate( passPhrase );
             }
-            catch ( IllegalStateException | SecDispatcherException | PlexusCipherException e )
+            catch ( MavenCryptoException e )
             {
-                getLogger().debug( e.getMessage() );
+                LOGGER.debug( e.getMessage() );
             }
-            properties.setProperty( "scm.passphrase", passPhrase  );
+            properties.setProperty( "scm.passphrase", passPhrase );
         }
         if ( config.getScmTagBase() != null )
         {
@@ -253,7 +255,7 @@ public class PropertiesReleaseDescriptorStore
         if ( !config.getActivateProfiles().isEmpty() )
         {
             properties.setProperty( "exec.activateProfiles",
-                                    StringUtils.join( config.getActivateProfiles().iterator(), "," ) );
+                    StringUtils.join( config.getActivateProfiles().iterator(), "," ) );
         }
         if ( config.getPreparationGoals() != null )
         {
@@ -277,7 +279,7 @@ public class PropertiesReleaseDescriptorStore
         }
 
         properties.setProperty( "exec.snapshotReleasePluginAllowed",
-                                Boolean.toString( config.isSnapshotReleasePluginAllowed() ) );
+                Boolean.toString( config.isSnapshotReleasePluginAllowed() ) );
 
         properties.setProperty( "remoteTagging", Boolean.toString( config.isRemoteTagging() ) );
 
@@ -298,7 +300,7 @@ public class PropertiesReleaseDescriptorStore
         // others boolean properties are not written to the properties file because the value from the caller is always
         // used
 
-        
+
         for ( Map.Entry<String, ReleaseStageVersions> entry : config.getProjectVersions().entrySet() )
         {
             if ( entry.getValue().getRelease() != null )
@@ -349,7 +351,7 @@ public class PropertiesReleaseDescriptorStore
         }
 
         if ( ( config.getResolvedSnapshotDependencies() != null )
-            && ( config.getResolvedSnapshotDependencies().size() > 0 ) )
+                && ( config.getResolvedSnapshotDependencies().size() > 0 ) )
         {
             processResolvedDependencies( properties, config.getResolvedSnapshotDependencies() );
         }
@@ -361,7 +363,7 @@ public class PropertiesReleaseDescriptorStore
         catch ( IOException e )
         {
             throw new ReleaseDescriptorStoreException(
-                "Error writing properties file '" + file.getName() + "': " + e.getMessage(), e );
+                    "Error writing properties file '" + file.getName() + "': " + e.getMessage(), e );
         }
     }
 
@@ -370,11 +372,11 @@ public class PropertiesReleaseDescriptorStore
         for ( Map.Entry<String, ReleaseStageVersions> currentEntry : resolvedDependencies.entrySet() )
         {
             ReleaseStageVersions versionMap = currentEntry.getValue();
-            
+
             prop.setProperty( "dependency." + currentEntry.getKey() + ".release",
-                              versionMap.getRelease() );
+                    versionMap.getRelease() );
             prop.setProperty( "dependency." + currentEntry.getKey() + ".development",
-                              versionMap.getDevelopment() );
+                    versionMap.getDevelopment() );
         }
     }
 
@@ -382,67 +384,4 @@ public class PropertiesReleaseDescriptorStore
     {
         return new File( mergeDescriptor.getWorkingDirectory(), "release.properties" );
     }
-    
-    private void decryptProperties( Properties properties )
-        throws IllegalStateException, SecDispatcherException, PlexusCipherException
-    {
-        String[] keys = new String[] { "scm.password", "scm.passphrase" };
-
-        for ( String key : keys )
-        {
-            String value = properties.getProperty( key );
-            if ( value != null )
-            {
-                properties.put( key, decrypt( value ) );
-            }
-        }
-    }
-
-    // From org.apache.maven.cli.MavenCli.encryption(CliRequest)
-    private String encryptAndDecorate( String passwd )
-        throws IllegalStateException, SecDispatcherException, PlexusCipherException
-    {
-        final String master = getMaster();
-
-        DefaultPlexusCipher cipher = new DefaultPlexusCipher();
-        String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
-        return cipher.encryptAndDecorate( passwd, masterPasswd );
-    }
-    
-    private String decrypt( String value ) throws IllegalStateException, SecDispatcherException, PlexusCipherException
-    {
-        final String master = getMaster();
-
-        DefaultPlexusCipher cipher = new DefaultPlexusCipher();
-        String masterPasswd = cipher.decryptDecorated( master, DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION );
-        return cipher.decryptDecorated( value, masterPasswd );
-    }
-    
-    private String getMaster() throws SecDispatcherException 
-    {
-        String configurationFile = secDispatcher.getConfigurationFile();
-
-        if ( configurationFile.startsWith( "~" ) )
-        {
-            configurationFile = System.getProperty( "user.home" ) + configurationFile.substring( 1 );
-        }
-
-        String file = System.getProperty( DefaultSecDispatcher.SYSTEM_PROPERTY_SEC_LOCATION, configurationFile );
-
-        String master = null;
-
-        SettingsSecurity sec = SecUtil.read( file, true );
-        if ( sec != null )
-        {
-            master = sec.getMaster();
-        }
-
-        if ( master == null )
-        {
-            throw new IllegalStateException( "Master password is not set in the setting security file: " + file );
-        }
-        
-        return master;
-    }
-
 }

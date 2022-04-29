@@ -35,7 +35,7 @@ public interface ReleaseDescriptorStore
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
     ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor )
-        throws ReleaseDescriptorStoreException;
+            throws ReleaseDescriptorStoreException;
 
     /**
      * Save a configuration.
@@ -44,7 +44,7 @@ public interface ReleaseDescriptorStore
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
     void write( ReleaseDescriptor config )
-        throws ReleaseDescriptorStoreException;
+            throws ReleaseDescriptorStoreException;
 
     /**
      * Remove a configuration.

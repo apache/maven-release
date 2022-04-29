@@ -32,14 +32,14 @@ import org.codehaus.plexus.PlexusTestCase;
 public class MapDevelopmentVersionPhaseIT
     extends PlexusTestCase
 {
-    private MapVersionsPhase mapVersionsPhase;
+    private MapDevelopmentVersionsPhase mapDevelopmentVersionsPhase;
 
     @Override
     protected void setUp()
         throws Exception
     {
         super.setUp();
-        mapVersionsPhase = (MapVersionsPhase) lookup( ReleasePhase.class, "map-development-versions" );
+        mapDevelopmentVersionsPhase = (MapDevelopmentVersionsPhase) lookup( ReleasePhase.class, "map-development-versions" );
     }
 
     private static MavenProject createProject( String artifactId, String version )
@@ -58,7 +58,7 @@ public class MapDevelopmentVersionPhaseIT
         builder.setUpdateWorkingCopyVersions( false );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
-        mapVersionsPhase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        mapDevelopmentVersionsPhase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }

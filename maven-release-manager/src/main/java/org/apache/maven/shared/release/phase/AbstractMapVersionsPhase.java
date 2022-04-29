@@ -40,9 +40,11 @@ import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.codehaus.plexus.util.StringUtils;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Map projects to their new versions after release / into the next development cycle.
- *
+ * <p>
  * The map-phases per goal are:
  * <dl>
  *  <dt>release:prepare</dt><dd>map-release-versions + map-development-versions; RD.isBranchCreation() = false</dd>
@@ -67,49 +69,47 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author Robert Scholte
  */
-public class MapVersionsPhase
-    extends AbstractReleasePhase
+public abstract class AbstractMapVersionsPhase
+        extends AbstractReleasePhase
 {
-    private ResourceBundle resourceBundle;
-
-    /**
-     * Whether to convert to a snapshot or a release.
-     */
-    private boolean convertToSnapshot;
-
-    /**
-     * Whether to convert to a snapshot or a release.
-     */
-    private boolean convertToBranch;
-
     /**
      * Component used to prompt for input.
      */
-    private Prompter prompter;
-
+    private final Prompter prompter;
 
     /**
      * Component used for custom or default version policy
      */
-    private Map<String, VersionPolicy> versionPolicies;
+    private final Map<String, VersionPolicy> versionPolicies;
 
-    void setConvertToSnapshot( boolean convertToSnapshot )
+    /**
+     * Whether to convert to a snapshot or a release.
+     */
+    private final boolean convertToSnapshot;
+
+    /**
+     * Whether to convert to a snapshot or a release.
+     */
+    private final boolean convertToBranch;
+
+    public AbstractMapVersionsPhase( Prompter prompter, Map<String, VersionPolicy> versionPolicies,
+                                     boolean convertToSnapshot, boolean convertToBranch )
     {
+        this.prompter = requireNonNull( prompter );
+        this.versionPolicies = requireNonNull( versionPolicies );
         this.convertToSnapshot = convertToSnapshot;
-    }
-    void setPrompter( Prompter prompter )
-    {
-        this.prompter = prompter;
+        this.convertToBranch = convertToBranch;
+
     }
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
 
-        resourceBundle = getResourceBundle( releaseEnvironment.getLocale() );
+        ResourceBundle resourceBundle = getResourceBundle( releaseEnvironment.getLocale() );
 
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
 
@@ -120,7 +120,7 @@ public class MapVersionsPhase
 
             String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor );
+            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, resourceBundle );
 
             if ( !convertToSnapshot )
             {
@@ -138,7 +138,7 @@ public class MapVersionsPhase
             for ( MavenProject subProject : reactorProjects )
             {
                 String subProjectId =
-                    ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
+                        ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
 
                 if ( convertToSnapshot )
                 {
@@ -186,7 +186,7 @@ public class MapVersionsPhase
             {
                 String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor );
+                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, resourceBundle );
 
                 if ( !convertToSnapshot )
                 {
@@ -209,17 +209,18 @@ public class MapVersionsPhase
     }
 
     private String resolveNextVersion( MavenProject project,
-                                   String projectId,
-                                   ReleaseDescriptor releaseDescriptor )
-        throws ReleaseExecutionException
+                                       String projectId,
+                                       ReleaseDescriptor releaseDescriptor,
+                                       ResourceBundle resourceBundle )
+            throws ReleaseExecutionException
     {
         String defaultVersion;
         if ( convertToBranch )
         {
             // no branch modification
             if ( !( releaseDescriptor.isUpdateBranchVersions()
-                            && ( ArtifactUtils.isSnapshot( project.getVersion() )
-                                            || releaseDescriptor.isUpdateVersionsToSnapshot() ) ) )
+                    && ( ArtifactUtils.isSnapshot( project.getVersion() )
+                    || releaseDescriptor.isUpdateVersionsToSnapshot() ) ) )
             {
                 return project.getVersion();
             }
@@ -234,7 +235,7 @@ public class MapVersionsPhase
         {
             // no working copy modification
             if ( !( ArtifactUtils.isSnapshot( project.getVersion() )
-                          && releaseDescriptor.isUpdateWorkingCopyVersions() ) )
+                    && releaseDescriptor.isUpdateWorkingCopyVersions() ) )
             {
                 return project.getVersion();
             }
@@ -278,19 +279,20 @@ public class MapVersionsPhase
                         try
                         {
                             suggestedVersion =
-                                resolveSuggestedVersion( baseVersion, releaseDescriptor.getProjectVersionPolicyId() );
+                                    resolveSuggestedVersion( baseVersion,
+                                            releaseDescriptor.getProjectVersionPolicyId() );
                         }
                         catch ( VersionParseException e )
                         {
                             if ( releaseDescriptor.isInteractive() )
                             {
                                 suggestedVersion =
-                                    resolveSuggestedVersion( "1.0", releaseDescriptor.getProjectVersionPolicyId() );
+                                        resolveSuggestedVersion( "1.0", releaseDescriptor.getProjectVersionPolicyId() );
                             }
                             else
                             {
                                 throw new ReleaseExecutionException( "Error parsing version, cannot determine next "
-                                    + "version: " + e.getMessage(), e );
+                                        + "version: " + e.getMessage(), e );
                             }
                         }
                     }
@@ -307,10 +309,11 @@ public class MapVersionsPhase
                         messageKey = getMapversionPromptKey( releaseDescriptor );
                     }
                     String message =
-                        MessageFormat.format( resourceBundle.getString( messageKey ), project.getName(), projectId );
+                            MessageFormat.format( resourceBundle.getString( messageKey ), project.getName(),
+                                    projectId );
                     nextVersion = prompter.prompt( message, suggestedVersion );
 
-                  //@todo validate next version, maybe with DefaultArtifactVersion
+                    //@todo validate next version, maybe with DefaultArtifactVersion
                 }
                 else if ( defaultVersion == null )
                 {
@@ -334,7 +337,7 @@ public class MapVersionsPhase
     }
 
     private String resolveSuggestedVersion( String baseVersion, String policyId )
-        throws PolicyException, VersionParseException
+            throws PolicyException, VersionParseException
     {
         VersionPolicy policy = versionPolicies.get( policyId );
         if ( policy == null )
@@ -344,7 +347,7 @@ public class MapVersionsPhase
 
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
         return convertToSnapshot ? policy.getDevelopmentVersion( request ).getVersion()
-                        : policy.getReleaseVersion( request ).getVersion();
+                : policy.getReleaseVersion( request ).getVersion();
     }
 
     private String getDevelopmentVersion( String projectId, ReleaseDescriptor releaseDescriptor )
@@ -407,7 +410,7 @@ public class MapVersionsPhase
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -421,6 +424,6 @@ public class MapVersionsPhase
 
     private ResourceBundle getResourceBundle( Locale locale )
     {
-        return ResourceBundle.getBundle( "release-messages", locale, MapVersionsPhase.class.getClassLoader() );
+        return ResourceBundle.getBundle( "release-messages", locale, AbstractMapVersionsPhase.class.getClassLoader() );
     }
 }

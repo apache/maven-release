@@ -20,7 +20,8 @@ package org.apache.maven.shared.release.phase;
  */
 
 import org.apache.maven.shared.release.ReleaseResult;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all phases.
@@ -28,9 +29,15 @@ import org.codehaus.plexus.logging.AbstractLogEnabled;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public abstract class AbstractReleasePhase
-    extends AbstractLogEnabled
     implements ReleasePhase
 {
+    private final Logger logger = LoggerFactory.getLogger( getClass() );
+
+    protected Logger getLogger()
+    {
+        return logger;
+    }
+
     /**
      * <p>logInfo.</p>
      *

@@ -28,8 +28,9 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.StringUtils;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Run the integration tests for the project to verify that it builds before committing.
@@ -37,17 +38,21 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public abstract class AbstractRunGoalsPhase
-    extends AbstractReleasePhase
+        extends AbstractReleasePhase
 {
     /**
      * Component to assist in executing Maven.
      */
-    @Requirement( role = MavenExecutor.class )
-    private Map<String, MavenExecutor> mavenExecutors;
+    private final Map<String, MavenExecutor> mavenExecutors;
+
+    protected AbstractRunGoalsPhase( Map<String, MavenExecutor> mavenExecutors )
+    {
+        this.mavenExecutors = requireNonNull( mavenExecutors );
+    }
 
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   File workingDirectory, String additionalArguments )
-        throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -63,7 +68,7 @@ public abstract class AbstractRunGoalsPhase
                 if ( mavenExecutor == null )
                 {
                     throw new ReleaseExecutionException(
-                        "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId() );
+                            "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId() );
                 }
 
                 File executionRoot;
@@ -79,10 +84,10 @@ public abstract class AbstractRunGoalsPhase
                     executionRoot = workingDirectory;
                     pomFileName = null;
                 }
-                
+
                 mavenExecutor.executeGoals( executionRoot, goals, releaseEnvironment,
-                                            releaseDescriptor.isInteractive(), additionalArguments,
-                                            pomFileName, result );
+                        releaseDescriptor.isInteractive(), additionalArguments,
+                        pomFileName, result );
             }
         }
         catch ( MavenExecutorException e )
@@ -109,7 +114,7 @@ public abstract class AbstractRunGoalsPhase
         if ( !releaseDescriptor.getActivateProfiles().isEmpty() )
         {
             builder.append( " -P " )
-                   .append( StringUtils.join( releaseDescriptor.getActivateProfiles().iterator(), "," ) );
+                    .append( StringUtils.join( releaseDescriptor.getActivateProfiles().iterator(), "," ) );
         }
 
         return builder.length() > 0 ? builder.toString().trim() : null;

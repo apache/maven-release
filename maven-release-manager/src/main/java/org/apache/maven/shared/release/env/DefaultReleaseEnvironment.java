@@ -26,12 +26,10 @@ import org.apache.maven.settings.Settings;
 
 /**
  * <p>DefaultReleaseEnvironment class.</p>
- *
  */
 public class DefaultReleaseEnvironment
-    implements ReleaseEnvironment
+        implements ReleaseEnvironment
 {
-
     private File mavenHome;
 
     private File javaHome;

@@ -19,7 +19,9 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
-import org.codehaus.plexus.component.annotations.Component;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.codehaus.plexus.util.cli.Commandline;
 
 /**
@@ -27,13 +29,14 @@ import org.codehaus.plexus.util.cli.Commandline;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = CommandLineFactory.class )
+@Singleton
+@Named
 public class DefaultCommandLineFactory
-    implements CommandLineFactory
+        implements CommandLineFactory
 {
     @Override
     public Commandline createCommandLine( String executable )
-        throws MavenExecutorException
+            throws MavenExecutorException
     {
         Commandline commandline = new Commandline();
         commandline.setExecutable( executable );

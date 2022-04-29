@@ -34,9 +34,8 @@ public class ReleaseDescriptorBuilder
 {
     /**
      * Hides inner logic of the release descriptor
-     * 
-     * @author Robert Scholte
      *
+     * @author Robert Scholte
      */
     public static final class BuilderReleaseDescriptor extends ModelloReleaseDescriptor implements ReleaseDescriptor
     {
@@ -44,9 +43,9 @@ public class ReleaseDescriptorBuilder
         {
         }
     }
-    
+
     private final BuilderReleaseDescriptor releaseDescriptor;
-    
+
     /**
      * <p>Constructor for ReleaseDescriptorBuilder.</p>
      */
@@ -443,9 +442,9 @@ public class ReleaseDescriptorBuilder
     /**
      * <p>setScmReleaseCommitComment.</p>
      *
-     * @since 3.0.0-M1
      * @param scmReleaseCommitComment a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @since 3.0.0-M1
      */
     public ReleaseDescriptorBuilder setScmReleaseCommitComment( String scmReleaseCommitComment )
     {
@@ -456,9 +455,9 @@ public class ReleaseDescriptorBuilder
     /**
      * <p>setScmDevelopmentCommitComment.</p>
      *
-     * @since 3.0.0-M1
      * @param scmDevelopmentCommitComment a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @since 3.0.0-M1
      */
     public ReleaseDescriptorBuilder setScmDevelopmentCommitComment( String scmDevelopmentCommitComment )
     {
@@ -469,9 +468,9 @@ public class ReleaseDescriptorBuilder
     /**
      * <p>setScmBranchCommitComment.</p>
      *
-     * @since 3.0.0-M1
      * @param scmBranchCommitComment a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @since 3.0.0-M1
      */
     public ReleaseDescriptorBuilder setScmBranchCommitComment( String scmBranchCommitComment )
     {
@@ -482,9 +481,9 @@ public class ReleaseDescriptorBuilder
     /**
      * <p>setScmRollbackCommitComment.</p>
      *
-     * @since 3.0.0-M1
      * @param scmRollbackCommitComment a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @since 3.0.0-M1
      */
     public ReleaseDescriptorBuilder setScmRollbackCommitComment( String scmRollbackCommitComment )
     {
@@ -759,7 +758,7 @@ public class ReleaseDescriptorBuilder
     /**
      * <p>addReleaseVersion.</p>
      *
-     * @param key a {@link java.lang.String} object
+     * @param key   a {@link java.lang.String} object
      * @param value a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
@@ -772,7 +771,7 @@ public class ReleaseDescriptorBuilder
     /**
      * <p>addDevelopmentVersion.</p>
      *
-     * @param key a {@link java.lang.String} object
+     * @param key   a {@link java.lang.String} object
      * @param value a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
@@ -785,7 +784,7 @@ public class ReleaseDescriptorBuilder
     /**
      * <p>addOriginalScmInfo.</p>
      *
-     * @param key a {@link java.lang.String} object
+     * @param key   a {@link java.lang.String} object
      * @param value a {@link org.apache.maven.model.Scm} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
@@ -799,32 +798,32 @@ public class ReleaseDescriptorBuilder
      * <p>putOriginalVersion.</p>
      *
      * @param projectKey a {@link java.lang.String} object
-     * @param version a {@link java.lang.String} object
+     * @param version    a {@link java.lang.String} object
      */
     public void putOriginalVersion( String projectKey, String version )
     {
         releaseDescriptor.addOriginalVersion( projectKey, version );
     }
-    
+
     /**
      * <p>addDependencyOriginalVersion.</p>
      *
      * @param dependencyKey a {@link java.lang.String} object
-     * @param version a {@link java.lang.String} object
+     * @param version       a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
     public ReleaseDescriptorBuilder addDependencyOriginalVersion( String dependencyKey, String version )
     {
         releaseDescriptor.addDependencyOriginalVersion( dependencyKey, version );
         return this;
-        
+
     }
-    
+
     /**
      * <p>addDependencyReleaseVersion.</p>
      *
      * @param dependencyKey a {@link java.lang.String} object
-     * @param version a {@link java.lang.String} object
+     * @param version       a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
     public ReleaseDescriptorBuilder addDependencyReleaseVersion( String dependencyKey, String version )
@@ -832,12 +831,12 @@ public class ReleaseDescriptorBuilder
         releaseDescriptor.addDependencyReleaseVersion( dependencyKey, version );
         return this;
     }
-    
+
     /**
      * <p>addDependencyDevelopmentVersion.</p>
      *
      * @param dependencyKey a {@link java.lang.String} object
-     * @param version a {@link java.lang.String} object
+     * @param version       a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
     public ReleaseDescriptorBuilder addDependencyDevelopmentVersion( String dependencyKey, String version )

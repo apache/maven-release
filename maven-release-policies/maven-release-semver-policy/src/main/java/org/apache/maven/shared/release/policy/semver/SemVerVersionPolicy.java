@@ -19,12 +19,14 @@ package org.apache.maven.shared.release.policy.semver;
  * under the License.
  */
 
-import org.apache.maven.shared.release.policy.PolicyException;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.codehaus.plexus.component.annotations.Component;
+import org.eclipse.sisu.Description;
 import org.semver.Version;
 import org.semver.Version.Element;
 
@@ -32,16 +34,15 @@ import org.semver.Version.Element;
  *
  * Uses SemVer implementation to increase minor element when resolving the development version
  */
-@Component(
-           role = VersionPolicy.class,
-           hint = "SemVerVersionPolicy",
-           description = "A VersionPolicy following the SemVer rules"
-       )
+@Singleton
+@Named( "SemVerVersionPolicy" )
+@Description( "A VersionPolicy following the SemVer rules" )
 public class SemVerVersionPolicy implements VersionPolicy
 {
 
+    @Override
     public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
-        throws PolicyException, VersionParseException
+        throws VersionParseException
     {
         Version version;
         try 
@@ -58,8 +59,9 @@ public class SemVerVersionPolicy implements VersionPolicy
         return result;
     }
 
+    @Override
     public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
-        throws PolicyException, VersionParseException
+        throws VersionParseException
     {
         Version version;
         try 
@@ -73,7 +75,7 @@ public class SemVerVersionPolicy implements VersionPolicy
         
         version = version.next( Element.MINOR );  
         VersionPolicyResult result = new VersionPolicyResult();
-        result.setVersion( version.toString() + "-SNAPSHOT" );
+        result.setVersion( version + "-SNAPSHOT" );
         return result;
     }
 }

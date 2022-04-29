@@ -19,27 +19,28 @@ package org.apache.maven.shared.release.policies;
  * under the License.
  */
 
-import org.apache.maven.shared.release.policy.PolicyException;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * <p>DefaultVersionPolicy class.</p>
  *
  * @author Robert Scholte
  */
-@Component( role = VersionPolicy.class, hint = "default" )
+@Singleton
+@Named
 public class DefaultVersionPolicy
-    implements VersionPolicy
+        implements VersionPolicy
 {
-
     @Override
     public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
-        throws PolicyException, VersionParseException
+            throws VersionParseException
     {
         String releaseVersion = new DefaultVersionInfo( request.getVersion() ).getReleaseVersionString();
         return new VersionPolicyResult().setVersion( releaseVersion );
@@ -47,10 +48,10 @@ public class DefaultVersionPolicy
 
     @Override
     public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
-        throws PolicyException, VersionParseException
+            throws VersionParseException
     {
         String developmentVersion =
-            new DefaultVersionInfo( request.getVersion() ).getNextVersion().getSnapshotVersionString();
+                new DefaultVersionInfo( request.getVersion() ).getNextVersion().getSnapshotVersionString();
         return new VersionPolicyResult().setVersion( developmentVersion );
     }
 

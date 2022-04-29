@@ -51,14 +51,14 @@ import org.junit.Test;
 public class BranchInputVariablesPhaseTest
     extends PlexusJUnit4TestCase
 {
-    private InputVariablesPhase phase;
+    private BranchInputVariablesPhase phase;
 
     @Override
     public void setUp()
         throws Exception
     {
         super.setUp();
-        phase = (InputVariablesPhase) lookup( ReleasePhase.class, "branch-input-variables" );
+        phase = (BranchInputVariablesPhase) lookup( ReleasePhase.class, "branch-input-variables" );
     }
 
     @Test
@@ -68,6 +68,8 @@ public class BranchInputVariablesPhaseTest
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( isA( String.class ) ) ).thenReturn( "tag-value", "simulated-tag-value" );
+
+
         phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );

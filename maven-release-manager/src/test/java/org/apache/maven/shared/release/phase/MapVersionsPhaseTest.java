@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
@@ -45,6 +46,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.policy.PolicyException;
+import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
@@ -61,14 +63,10 @@ import org.mockito.MockitoAnnotations;
 public class MapVersionsPhaseTest
     extends PlexusJUnit4TestCase
 {
-    private static final String TEST_MAP_BRANCH_VERSIONS = "test-map-branch-versions";
-
-    private static final String TEST_MAP_DEVELOPMENT_VERSIONS = "test-map-development-versions";
-
-    private static final String TEST_MAP_RELEASE_VERSIONS = "test-map-release-versions";
-
     @Mock
     private Prompter mockPrompter;
+
+    private Map<String, VersionPolicy> versionPolicies;
 
     @Override
     public void setUp()
@@ -76,6 +74,7 @@ public class MapVersionsPhaseTest
     {
         super.setUp();
         MockitoAnnotations.initMocks( this );
+        versionPolicies = lookupMap( VersionPolicy.class );
     }
 
     @Override
@@ -91,12 +90,10 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
-
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
-                                   eq( "1.0" ) ) ).thenReturn( "2.0" );
-        phase.setPrompter( mockPrompter );
+                eq( "1.0" ) ) ).thenReturn( "2.0" );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
@@ -118,12 +115,10 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
-
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
-                                   eq( "1.0" ) ) ).thenReturn( "2.0" );
-        phase.setPrompter( mockPrompter );
+                eq( "1.0" ) ) ).thenReturn( "2.0" );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
@@ -145,12 +140,10 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0-SNAPSHOT" );
-
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
-                                   eq( "1.0" ) ) ).thenReturn( "1.0.0" );
-        phase.setPrompter( mockPrompter );
+                eq( "1.0" ) ) ).thenReturn( "1.0.0" );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
@@ -185,12 +178,10 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
         MavenProject project = createProject( "artifactId", "SNAPSHOT" );
-
         when( mockPrompter.prompt( startsWith( "What is the release version for \"" + project.getName() + "\"?" ),
-                                   eq( "1.0" ) ) ).thenReturn( "2.0" );
-        phase.setPrompter( mockPrompter );
+                eq( "1.0" ) ) ).thenReturn( "2.0" );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
@@ -228,12 +219,10 @@ public class MapVersionsPhaseTest
         // prepare
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "SNAPSHOT" ) );
 
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.addReleaseVersion( "groupId:artifactId", "2.0" );
-
-        phase.setPrompter( mockPrompter );
 
         // execute
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -270,14 +259,12 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Arrays.asList( rootProject, moduleProject );
 
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder()
             .setInteractive(false) // batch mode
             .setAutoVersionSubmodules( true )
             .addReleaseVersion( "groupId:artifactId", "2.0" );
-
-        phase.setPrompter( mockPrompter );
 
         // execute
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -314,17 +301,13 @@ public class MapVersionsPhaseTest
 
         List<MavenProject> reactorProjects = Arrays.asList( rootProject, moduleProject );
 
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder()
             .setInteractive( false ) // batch mode
             .setAutoVersionSubmodules( true )
             .setDefaultDevelopmentVersion( "1.1-SNAPSHOT" )
             .addDevelopmentVersion( "groupId:artifactId", "2.0-SNAPSHOT" );
-
-        phase.setConvertToSnapshot( true );
-        phase.setPrompter( mockPrompter );
-
 
         // execute
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -350,7 +333,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
@@ -370,7 +353,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
@@ -390,12 +373,10 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
         MavenProject project = createProject( "artifactId", "1.0" );
-
         when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName()
-            + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
+                + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
@@ -430,10 +411,8 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
         MavenProject project = createProject( "artifactId", "1.0" );
-
-        phase.setPrompter( mockPrompter );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
@@ -464,9 +443,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
-
-        phase.setPrompter( mockPrompter );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -500,10 +477,8 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
-
-        phase.setPrompter( mockPrompter );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setInteractive( false );
@@ -534,11 +509,9 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
-
         when( mockPrompter.prompt( isA( String.class ),
-                                   isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
-        phase.setPrompter( mockPrompter );
+                isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -580,12 +553,11 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
         MavenProject project = createProject( "artifactId", "foo" );
 
         when( mockPrompter.prompt( startsWith( "What is the new development version for \"" + project.getName()
-            + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
+                + "\"?" ), eq( "1.1-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( project );
 
@@ -614,9 +586,8 @@ public class MapVersionsPhaseTest
 
     @Test
     public void testAdjustVersionNonInteractive()
-        throws Exception
     {
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "foo" ) );
 
@@ -654,7 +625,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -676,7 +647,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -698,7 +669,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -721,7 +692,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -744,7 +715,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -766,7 +737,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -788,7 +759,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -809,7 +780,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -830,7 +801,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -852,7 +823,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -874,7 +845,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -895,7 +866,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -916,7 +887,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -938,7 +909,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -960,7 +931,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -982,7 +953,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1004,7 +975,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1027,7 +998,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1050,7 +1021,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1073,7 +1044,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1096,7 +1067,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1119,7 +1090,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1142,7 +1113,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1165,7 +1136,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1188,7 +1159,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1212,7 +1183,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1236,7 +1207,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1265,7 +1236,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1294,7 +1265,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1321,7 +1292,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1348,7 +1319,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1373,7 +1344,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1398,7 +1369,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1422,7 +1393,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1446,20 +1417,18 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setBranchCreation( true );
         builder.setUpdateBranchVersions( true );
-
-        // updateBranchVersions is set to true, so suggest the next snapshot version
-        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
-        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
-                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -1475,20 +1444,18 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setBranchCreation( true );
         builder.setUpdateBranchVersions( true );
-
-        // updateBranchVersions is set to true, so suggest the next snapshot version
-        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
-        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
-                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -1504,7 +1471,12 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1512,13 +1484,6 @@ public class MapVersionsPhaseTest
         builder.setBranchCreation( true );
         builder.setUpdateBranchVersions( true );
         builder.setUpdateVersionsToSnapshot( true );
-
-        // updateBranchVersions is set to true, so suggest the next snapshot version
-        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
-        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
-                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -1538,7 +1503,12 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1546,13 +1516,6 @@ public class MapVersionsPhaseTest
         builder.setBranchCreation( true );
         builder.setUpdateBranchVersions( true );
         builder.setUpdateVersionsToSnapshot( true );
-
-        // updateBranchVersions is set to true, so suggest the next snapshot version
-        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT (yes, one step back!)
-        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
-                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.1-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -1572,7 +1535,12 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1580,13 +1548,6 @@ public class MapVersionsPhaseTest
         builder.setBranchCreation( true );
         builder.setUpdateBranchVersions( true );
         builder.setUpdateVersionsToSnapshot( true );
-
-        // updateBranchVersions is set to true, so suggest the next snapshot version
-        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
-        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
-                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -1602,7 +1563,12 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        // updateBranchVersions is set to true, so suggest the next snapshot version
+        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
+        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
+        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
+                eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1610,13 +1576,6 @@ public class MapVersionsPhaseTest
         builder.setBranchCreation( true );
         builder.setUpdateBranchVersions( true );
         builder.setUpdateVersionsToSnapshot( true );
-
-        // updateBranchVersions is set to true, so suggest the next snapshot version
-        // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
-        // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
-        when( mockPrompter.prompt( startsWith( "What is the branch version for" ),
-                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -1632,7 +1591,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1659,7 +1618,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1686,7 +1645,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1708,7 +1667,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1730,7 +1689,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1752,7 +1711,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1776,7 +1735,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1798,7 +1757,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1820,7 +1779,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1842,7 +1801,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
@@ -1864,7 +1823,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1890,7 +1849,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2" ) );
 
@@ -1916,17 +1875,15 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
+                eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setBranchCreation( true );
         builder.setUpdateWorkingCopyVersions( true );
-
-        when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
-                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -1940,17 +1897,15 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
+                eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.2-SNAPSHOT" ) );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setBranchCreation( true );
         builder.setUpdateWorkingCopyVersions( true );
-
-        when( mockPrompter.prompt( startsWith( "What is the new working copy version for" ),
-                                   eq( "1.3-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -1964,7 +1919,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = new ArrayList<>();
         Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),
@@ -1989,7 +1944,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = new ArrayList<>();
         Collections.addAll( reactorProjects, createProject( "artifactId", "1.2-SNAPSHOT" ),
@@ -2014,7 +1969,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
@@ -2038,7 +1993,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
@@ -2062,7 +2017,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
@@ -2086,7 +2041,7 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // verify
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "1.2.1-SNAPSHOT" ) );
@@ -2110,9 +2065,8 @@ public class MapVersionsPhaseTest
     public void testUnusualVersions1()
         throws Exception
     {
-        MapVersionsPhase mapReleasephase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
-        MapVersionsPhase mapDevelopmentphase =
-            (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapReleaseVersionsPhase mapReleasephase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
+        MapDevelopmentVersionsPhase mapDevelopmentphase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects =
             Collections.singletonList( createProject( "artifactId", "MYB_200909-SNAPSHOT" ) );
@@ -2139,16 +2093,14 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        when( mockPrompter.prompt( startsWith( "What is the new development version for " ),
+                eq( "1.12-SNAPSHOT" ) ) ).thenReturn( "2.0" ) // wrong, expected SNAPSHOT
+                .thenReturn( "2.0-SNAPSHOT" );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-
-        when( mockPrompter.prompt( startsWith( "What is the new development version for " ),
-                                   eq( "1.12-SNAPSHOT" ) ) ).thenReturn( "2.0" ) // wrong, expected SNAPSHOT
-                                                            .thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -2164,16 +2116,14 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        when( mockPrompter.prompt( startsWith( "What is the new development version for " ),
+                eq( "1.12-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setDefaultDevelopmentVersion( "" );
-
-        when( mockPrompter.prompt( startsWith( "What is the new development version for " ),
-                                   eq( "1.12-SNAPSHOT" ) ) ).thenReturn( "2.0-SNAPSHOT" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -2188,16 +2138,14 @@ public class MapVersionsPhaseTest
         throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        when( mockPrompter.prompt( startsWith( "What is the release version for " ),
+                eq( "1.11" ) ) ).thenReturn( "2.0" );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setDefaultReleaseVersion( "" );
-
-        when( mockPrompter.prompt( startsWith( "What is the release version for " ),
-                                   eq( "1.11" ) ) ).thenReturn( "2.0" );
-        phase.setPrompter( mockPrompter );
 
         // test
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -2208,14 +2156,12 @@ public class MapVersionsPhaseTest
 
     /**
      * MRELEASE-975: Test that a PolicyException is thrown when using an unknown policy version hint.
-     * @throws Exception
      */
     @Test
     public void testNonExistentVersionPolicy()
-        throws Exception
     {
         // prepare
-        MapVersionsPhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0-SNAPSHOT" ) );
 
@@ -2230,10 +2176,9 @@ public class MapVersionsPhaseTest
 
     @Test
     public void testUpdateBranchInvalidDefaultReleaseVersion_NonInteractive()
-        throws Exception
     {
         // prepare
-        ReleasePhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_BRANCH_VERSIONS );
+        MapBranchVersionsPhase phase = new MapBranchVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
@@ -2255,10 +2200,9 @@ public class MapVersionsPhaseTest
 
     @Test
     public void testUpdateReleaseInvalidDefaultReleaseVersion_NonInteractive()
-        throws Exception
     {
         // prepare
-        ReleasePhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_RELEASE_VERSIONS );
+        MapReleaseVersionsPhase phase = new MapReleaseVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 
@@ -2279,10 +2223,9 @@ public class MapVersionsPhaseTest
 
     @Test
     public void testUpdateDevelopmentInvalidDefaultDevelopmentVersion_NonInteractive()
-        throws Exception
     {
         // prepare
-        ReleasePhase phase = (MapVersionsPhase) lookup( ReleasePhase.class, TEST_MAP_DEVELOPMENT_VERSIONS );
+        MapDevelopmentVersionsPhase phase = new MapDevelopmentVersionsPhase( mockPrompter, versionPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "bar", "1.11-SNAPSHOT" ) );
 

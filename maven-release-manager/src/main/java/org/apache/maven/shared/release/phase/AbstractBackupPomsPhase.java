@@ -19,10 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-
-import java.io.File;
 
 /**
  * <p>Abstract AbstractBackupPomsPhase class.</p>
@@ -30,7 +30,7 @@ import java.io.File;
  * @author Edwin Punzalan
  */
 public abstract class AbstractBackupPomsPhase
-    extends AbstractReleasePhase
+        extends AbstractReleasePhase
 {
     private final String backupSuffix = ".releaseBackup";
 

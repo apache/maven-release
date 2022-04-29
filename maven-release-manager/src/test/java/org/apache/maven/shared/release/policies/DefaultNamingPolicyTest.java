@@ -26,7 +26,7 @@ import org.junit.Test;
 
 public class DefaultNamingPolicyTest
 {
-    private DefaultNamingPolicy policy = new DefaultNamingPolicy();
+    private final DefaultNamingPolicy policy = new DefaultNamingPolicy();
 
     @Test
     public void testName() throws Exception

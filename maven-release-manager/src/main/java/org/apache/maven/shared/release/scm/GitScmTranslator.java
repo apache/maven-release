@@ -19,14 +19,16 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
-import org.codehaus.plexus.component.annotations.Component;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * <p>GitScmTranslator class.</p>
  */
-@Component( role = ScmTranslator.class, hint = "git" )
+@Singleton
+@Named( "git" )
 public class GitScmTranslator
-    implements ScmTranslator
+        implements ScmTranslator
 {
 
     @Override

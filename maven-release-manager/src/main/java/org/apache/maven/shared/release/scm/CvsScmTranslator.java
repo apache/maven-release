@@ -19,16 +19,18 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
-import org.codehaus.plexus.component.annotations.Component;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
 /**
  * CVS tag translator.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ScmTranslator.class, hint = "cvs" )
+@Singleton
+@Named( "cvs" )
 public class CvsScmTranslator
-    implements ScmTranslator
+        implements ScmTranslator
 {
     @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )

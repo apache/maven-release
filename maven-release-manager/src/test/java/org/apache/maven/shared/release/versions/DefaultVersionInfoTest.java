@@ -23,15 +23,22 @@ import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
  * under the License.
  */
 
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class DefaultVersionInfoTest
-    extends TestCase
 {
     private String mavenVersion;
 
-    @Override
-    protected void setUp()
+    @Before
+    public void setUp()
         throws Exception
     {
         Properties pomProperties = new Properties();
@@ -39,12 +46,14 @@ public class DefaultVersionInfoTest
         mavenVersion = pomProperties.getProperty( "version" );
     }
 
+    @Test
     public void testParse()
         throws Exception
     {
         checkParsing( "1.0", "1.0", null, null, null );
     }
 
+    @Test
     public void testParseWithBadVersion()
         throws Exception
     {
@@ -58,6 +67,7 @@ public class DefaultVersionInfoTest
         }
     }
 
+    @Test
     public void testParseMultiDigit()
         throws Exception
     {
@@ -65,6 +75,7 @@ public class DefaultVersionInfoTest
         checkParsing( "990.990.990", "990.990.990", null, null, null );
     }
 
+    @Test
     public void testParseSnapshotVersion()
         throws Exception
     {
@@ -73,6 +84,7 @@ public class DefaultVersionInfoTest
         checkParsing( "1.0-beta-4_SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT" );
     }
 
+    @Test
     public void testParseAnnotationVersion()
         throws Exception
     {
@@ -84,6 +96,7 @@ public class DefaultVersionInfoTest
         checkParsing( "1.2.3-RC4", "1.2.3", "RC", "4", null );
     }
 
+    @Test
     public void testParseSeparators()
         throws Exception
     {
@@ -93,6 +106,7 @@ public class DefaultVersionInfoTest
         checkParsing( "1.2.9_beta_9_SNAPSHOT", "1.2.9", "beta", "9", "SNAPSHOT" );
     }
 
+    @Test
     public void testParseAnnotationNoVersionButSnapshot()
         throws Exception
     {
@@ -101,6 +115,7 @@ public class DefaultVersionInfoTest
         checkParsing( "1.2.3-RC4-SNAPSHOT", "1.2.3", "RC", "4", "SNAPSHOT" );
     }
 
+    @Test
     public void testParseAnnotationVersionWithRevision()
         throws Exception
     {
@@ -113,6 +128,7 @@ public class DefaultVersionInfoTest
         checkParsing( "1.2.9", "1.2.9", null, null, null );
     }
 
+    @Test
     public void testParseAnnotationVersionWithoutRevision()
         throws Exception
     {
@@ -120,12 +136,14 @@ public class DefaultVersionInfoTest
         checkParsing( "1.0-beta-SNAPSHOT", "1.0", "beta", null, "SNAPSHOT" );
     }
 
+    @Test
     public void testParseAnnotationRevisionOnly()
         throws Exception
     {
         checkParsing( "1.0-4", "1.0", null, "4", null );
     }
 
+    @Test
     public void testParseLeadingZeros()
         throws Exception
     {
@@ -133,12 +151,14 @@ public class DefaultVersionInfoTest
         checkParsing( "01.01.001-beta-04-SNAPSHOT", "01.01.001", "beta", "04", "SNAPSHOT" );
     }
 
+    @Test
     public void testParseBuildNumber()
         throws Exception
     {
         checkParsing( "1.0-alpha-2-20051013.095555-2", "1.0", "alpha", "2", "20051013.095555-2" );
     }
 
+    @Test
     public void testNextVersion()
         throws Exception
     {
@@ -157,6 +177,7 @@ public class DefaultVersionInfoTest
         checkNextVersion( "2.2-SNAPshot", "2.3-SNAPshot" );
     }
 
+    @Test
     public void testNextAnnotationRevision()
         throws Exception
     {
@@ -168,6 +189,7 @@ public class DefaultVersionInfoTest
         checkNextVersion( "9.99.999-beta9-SNAPSHOT", "9.99.999-beta10-SNAPSHOT" );
     }
 
+    @Test
     public void testCompareToDigitsOnly()
         throws Exception
     {
@@ -193,6 +215,7 @@ public class DefaultVersionInfoTest
         checkVersionEqualVersion( "1.001", "1.01" );
     }
 
+    @Test
     public void testCompareToAnnotation()
         throws Exception
     {
@@ -211,6 +234,7 @@ public class DefaultVersionInfoTest
         checkVersionEqualVersion( "1.01-alpha-004-SNAPSHOT", "1.01-alpha-4-SNAPSHOT" );
     }
 
+    @Test
     public void testCompareToAnnotationRevision()
         throws Exception
     {
@@ -224,6 +248,7 @@ public class DefaultVersionInfoTest
         checkVersionEqualVersion( "1.01-beta-0004-SNAPSHOT", "1.01-beta-4-SNAPSHOT" );
     }
 
+    @Test
     public void testCompareToBuildSpecifier()
         throws Exception
     {
@@ -241,6 +266,7 @@ public class DefaultVersionInfoTest
         checkVersionLessThanVersion( "1.01-beta-04-20051112.134500-1", "1.01-beta-04-20051113.134500-1" );
     }
 
+    @Test
     public void testGetReleaseVersion()
         throws Exception
     {
@@ -255,6 +281,7 @@ public class DefaultVersionInfoTest
         checkGetReleaseVersion( "1.01-beta-04-20051112.134500-1", "1.01-beta-04" );
     }
 
+    @Test
     public void testGetSnapshotVersion()
         throws Exception
     {
@@ -271,6 +298,7 @@ public class DefaultVersionInfoTest
         checkGetSnapshotVersion( "1.01-beta-04_20051112.134500-1", "1.01-beta-04_20051112.134500-1-SNAPSHOT" );
     }
 
+    @Test
     public void testSnapshot()
         throws VersionParseException
     {
@@ -285,6 +313,7 @@ public class DefaultVersionInfoTest
     }
 
     //MRELEASE-623 SNAPSHOT is case-insensitive
+    @Test
     public void testCaseInsensitiveSnapshot() throws VersionParseException
     {
         DefaultVersionInfo currentVersionInfo = new DefaultVersionInfo( "2.2-SNAPshot" );

@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -29,26 +33,35 @@ import java.util.List;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
+import org.apache.maven.shared.release.util.MavenCrypto;
 import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 
+import static java.util.Objects.requireNonNull;
+
 /**
- * Fork Maven to executed a series of goals.
+ * Fork Maven to execute a series of goals.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = MavenExecutor.class, hint = "forked-path" )
+@Singleton
+@Named( "forked-path" )
 public class ForkedMavenExecutor
-    extends AbstractMavenExecutor
+        extends AbstractMavenExecutor
 {
     /**
      * Command line factory.
      */
-    @Requirement
-    private CommandLineFactory commandLineFactory;
+    private final CommandLineFactory commandLineFactory;
+
+    @Inject
+    public ForkedMavenExecutor( MavenCrypto mavenCrypto,
+                                CommandLineFactory commandLineFactory )
+    {
+        super( mavenCrypto );
+        this.commandLineFactory = requireNonNull( commandLineFactory );
+    }
 
     /*
      * @noinspection UseOfSystemOutOrSystemErr
@@ -57,9 +70,9 @@ public class ForkedMavenExecutor
     public void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
                               boolean interactive, String additionalArguments, String pomFileName,
                               ReleaseResult relResult )
-        throws MavenExecutorException
+            throws MavenExecutorException
     {
-        String mavenPath = null;
+        String mavenPath;
         // if null we use the current one
         if ( releaseEnvironment.getMavenHome() != null )
         {
@@ -78,7 +91,7 @@ public class ForkedMavenExecutor
             {
                 settingsFile = File.createTempFile( "release-settings", ".xml" );
                 SettingsXpp3Writer writer = getSettingsWriter();
-                
+
                 try ( FileWriter fileWriter = new FileWriter( settingsFile ) )
                 {
                     writer.write( fileWriter, encryptSettings( releaseEnvironment.getSettings() ) );
@@ -93,7 +106,7 @@ public class ForkedMavenExecutor
         {
 
             Commandline cl =
-                commandLineFactory.createCommandLine( mavenPath + File.separator + "bin" + File.separator + "mvn" );
+                    commandLineFactory.createCommandLine( mavenPath + File.separator + "bin" + File.separator + "mvn" );
 
             cl.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
@@ -134,14 +147,14 @@ public class ForkedMavenExecutor
 
             try
             {
-                relResult.appendInfo( "Executing: " + cl.toString() );
-                getLogger().info( "Executing: " + cl.toString() );
+                relResult.appendInfo( "Executing: " + cl );
+                getLogger().info( "Executing: " + cl );
 
                 int result = executeCommandLine( cl, System.in, stdOut, stdErr );
 
                 if ( result != 0 )
                 {
-                    throw new MavenExecutorException( "Maven execution failed, exit code: \'" + result + "\'", result );
+                    throw new MavenExecutorException( "Maven execution failed, exit code: '" + result + "'", result );
                 }
             }
             catch ( CommandLineException e )
@@ -163,21 +176,10 @@ public class ForkedMavenExecutor
     }
 
     /**
-     * <p>Setter for the field <code>commandLineFactory</code>.</p>
-     *
-     * @param commandLineFactory a {@link org.apache.maven.shared.release.exec.CommandLineFactory} object
-     */
-    public void setCommandLineFactory( CommandLineFactory commandLineFactory )
-    {
-        this.commandLineFactory = commandLineFactory;
-    }
-
-
-    /**
      * <p>executeCommandLine.</p>
      *
-     * @param cl a {@link org.codehaus.plexus.util.cli.Commandline} object
-     * @param systemIn a {@link java.io.InputStream} object
+     * @param cl        a {@link org.codehaus.plexus.util.cli.Commandline} object
+     * @param systemIn  a {@link java.io.InputStream} object
      * @param systemOut a {@link java.io.OutputStream} object
      * @param systemErr a {@link java.io.OutputStream} object
      * @return a int
@@ -185,7 +187,7 @@ public class ForkedMavenExecutor
      */
     public static int executeCommandLine( Commandline cl, InputStream systemIn, OutputStream systemOut,
                                           OutputStream systemErr )
-        throws CommandLineException
+            throws CommandLineException
     {
         if ( cl == null )
         {
