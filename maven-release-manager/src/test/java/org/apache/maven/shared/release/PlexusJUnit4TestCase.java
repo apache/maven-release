@@ -19,6 +19,8 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+import javax.inject.Singleton;
+
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -135,7 +137,7 @@ public abstract class PlexusJUnit4TestCase
                     @Override
                     protected void configure()
                     {
-                        bind( ScmManager.class ).toInstance( new ScmManagerStub() );
+                        bind( ScmManager.class ).to( ScmManagerStub.class ).in( Singleton.class );
                     }
                 }
         };

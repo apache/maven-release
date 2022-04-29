@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Singleton;
+
 import static org.junit.Assert.assertTrue;
 
 import static org.mockito.Matchers.argThat;
@@ -35,7 +37,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Module;
+import com.google.inject.name.Names;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -48,6 +52,7 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
 
@@ -82,7 +87,22 @@ public class GenerateReleasePomsPhaseTest
     @Override
     protected Module[] getCustomModules()
     {
-        return new Module[0]; // real SCM needed
+        return new Module[] {
+                new AbstractModule()
+                {
+                    @Override
+                    protected void configure()
+                    {
+                        bind( ScmManager.class )
+                                .to( org.apache.maven.shared.release.stubs.ScmManagerStub.class )
+                                .in( Singleton.class );
+                        bind( ScmTranslator.class )
+                                .annotatedWith( Names.named( "stub-provider" ) )
+                                .to( org.apache.maven.shared.release.scm.SubversionScmTranslator.class )
+                                .in( Singleton.class );
+                    }
+                }
+        };
     }
 
     @Override
