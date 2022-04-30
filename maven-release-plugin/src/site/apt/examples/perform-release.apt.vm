@@ -48,6 +48,12 @@ mvn release:perform
 mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -DconnectionUrl=scm:svn:https://svn.mycompany.com/repos/path/to/myproject/tags/myproject-1.2.3
 -------
 
+  If you are using git the tag is passed a little bit differently:
+
+-------
+mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -DconnectionUrl=scm:git:https://git.mycompany.com/repos/path/to/myproject -Dtag=myproject-1.2.3
+-------
+
   <<<release:perform>>> will fork a new Maven instance to build the checked-out project. This new Maven instance will use the
   same system configuration and Maven profiles used by the one running the <<<release:perform>>> goal. Since there's no pom.xml, 
   you should use the fully qualified name of the goal to ensure the right version of the maven-release-plugin is used.
