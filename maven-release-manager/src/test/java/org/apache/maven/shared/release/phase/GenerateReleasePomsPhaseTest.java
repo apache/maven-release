@@ -54,6 +54,7 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -61,6 +62,7 @@ import org.junit.Test;
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
+@Ignore
 public class GenerateReleasePomsPhaseTest
     extends AbstractRewritingReleasePhaseTestCase
 {
