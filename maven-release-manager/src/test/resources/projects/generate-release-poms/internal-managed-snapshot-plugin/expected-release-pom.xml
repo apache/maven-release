@@ -28,7 +28,7 @@ under the License.
   <packaging>pom</packaging>
   <build>
     <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
-    <scriptSourceDirectory>src/main/scripts</scriptSourceDirectory>
+    <scriptSourceDirectory>${project.basedir}/src/main/scripts</scriptSourceDirectory>
     <testSourceDirectory>${project.basedir}/src/test/java</testSourceDirectory>
     <outputDirectory>${project.build.directory}/classes</outputDirectory>
     <testOutputDirectory>${project.build.directory}/test-classes</testOutputDirectory>
@@ -65,8 +65,8 @@ under the License.
         <enabled>false</enabled>
       </snapshots>
       <id>central</id>
-      <name>Maven Plugin Repository</name>
-      <url>http://repo1.maven.org/maven2</url>
+      <name>Central Repository</name>
+      <url>https://repo.maven.apache.org/maven2</url>
     </pluginRepository>
   </pluginRepositories>
   <reporting>

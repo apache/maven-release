@@ -213,7 +213,13 @@ public abstract class AbstractReleaseTestCase
         for ( MavenProject project  : reactorProjects )
         {
             MavenProject resolvedProject = projectBuilder.build( project.getFile(), buildingRequest ).getProject();
-            
+
+            // FIXME ... setDependencyArtifacts -  set direct dependencies ...
+            // but in org.apache.maven.shared.release.phase.GenerateReleasePomsPhase.createReleaseDependencies
+            // getArtifacts is used ...
+
+            // so we probably also need call setResolvedArtifacts
+
             // from LifecycleDependencyResolver
             if ( project.getDependencyArtifacts() == null )
             {

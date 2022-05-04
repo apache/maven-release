@@ -62,7 +62,6 @@ import org.junit.Test;
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
-@Ignore
 public class GenerateReleasePomsPhaseTest
     extends AbstractRewritingReleasePhaseTestCase
 {
