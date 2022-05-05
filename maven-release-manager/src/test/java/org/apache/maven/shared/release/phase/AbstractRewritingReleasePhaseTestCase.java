@@ -231,7 +231,6 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         throws Exception;
 
     @Test
-    @Ignore("dependency resolve problem in test")
     public void testRewritePomDependencies()
         throws Exception
     {
@@ -264,7 +263,6 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     }
 
     @Test
-    @Ignore("dependency resolve problem in test")
     public void testRewritePomDependenciesDifferentVersion()
         throws Exception
     {
@@ -277,7 +275,6 @@ public abstract class AbstractRewritingReleasePhaseTestCase
     }
 
     @Test
-    @Ignore("dependency resolve problem in test")
     public void testRewriteManagedPomDependencies()
         throws Exception
     {
@@ -722,7 +719,6 @@ public abstract class AbstractRewritingReleasePhaseTestCase
         throws IOException;
 
     @Test
-    @Ignore("dependency resolve problem in test")
     public void testRewritePomDependenciesWithNamespace()
         throws Exception
     {

@@ -214,14 +214,8 @@ public abstract class AbstractReleaseTestCase
         {
             MavenProject resolvedProject = projectBuilder.build( project.getFile(), buildingRequest ).getProject();
 
-            // FIXME ... setDependencyArtifacts -  set direct dependencies ...
-            // but in org.apache.maven.shared.release.phase.GenerateReleasePomsPhase.createReleaseDependencies
-            // getArtifacts is used ...
-
-            // so we probably also need call setResolvedArtifacts
-
             // from LifecycleDependencyResolver
-            if ( project.getDependencyArtifacts() == null )
+            if ( resolvedProject.getDependencyArtifacts() == null )
             {
                 try
                 {
@@ -232,7 +226,15 @@ public abstract class AbstractReleaseTestCase
                     throw new LifecycleExecutionException( e );
                 }
             }
-            
+
+            // TODO .... understand why this is working ... :-)
+            // why projectBuilder doesn't resolve and set in proper way DependencyArtifacts and Artifacts
+            if ( resolvedProject.getDependencyArtifacts().size() >= resolvedProject.getArtifacts().size()
+                && resolvedProject.getDependencyArtifacts().stream().noneMatch( a -> a.getVersion() == null ) )
+            {
+                resolvedProject.setArtifacts( resolvedProject.getDependencyArtifacts() );
+            }
+
             resolvedProjects.add( resolvedProject );
         }
         return resolvedProjects;
