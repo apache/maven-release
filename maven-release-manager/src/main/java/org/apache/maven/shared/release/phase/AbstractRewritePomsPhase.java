@@ -541,6 +541,9 @@ public abstract class AbstractRewritePomsPhase
                             }
                             else if ( !mappedVersion.equals( rawVersion ) )
                             {
+                                // WARNING: ${pom.*} prefix support and ${version} is about to be dropped in mvn4!
+                                // https://issues.apache.org/jira/browse/MNG-7404
+                                // https://issues.apache.org/jira/browse/MNG-7244
                                 if ( mappedVersion.matches( "\\$\\{project.+\\}" )
                                         || mappedVersion.matches( "\\$\\{pom.+\\}" )
                                         || "${version}".equals( mappedVersion ) )
