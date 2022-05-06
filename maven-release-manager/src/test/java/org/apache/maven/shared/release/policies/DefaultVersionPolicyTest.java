@@ -27,7 +27,7 @@ import org.junit.Test;
 
 public class DefaultVersionPolicyTest
 {
-    private VersionPolicy policy = new DefaultVersionPolicy();
+    private final VersionPolicy policy = new DefaultVersionPolicy();
 
     @Test
     public void testOneDigitReleaseVersion() throws Exception

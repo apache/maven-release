@@ -35,7 +35,6 @@ public class AbstractScmCommitPhaseTest
 {
     @Test
     public void testDefaultCreatePomFiles()
-        throws Exception
     {
         List<File> files =
             AbstractScmCommitPhase.createPomFiles( ReleaseUtils.buildReleaseDescriptor( new ReleaseDescriptorBuilder() ),
@@ -48,7 +47,6 @@ public class AbstractScmCommitPhaseTest
 
     @Test
     public void testCreatePomFilesSuppressCommitBeforeTag()
-        throws Exception
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setSuppressCommitBeforeTagOrBranch( true );
@@ -61,7 +59,6 @@ public class AbstractScmCommitPhaseTest
 
     @Test
     public void testCreatePomFilesWithReleasePom()
-        throws Exception
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setGenerateReleasePoms( true );
@@ -75,7 +72,6 @@ public class AbstractScmCommitPhaseTest
 
     @Test
     public void testCreatePomFilesWithReleasePomAndSuppressCommitBeforeTag()
-        throws Exception
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setGenerateReleasePoms( true );

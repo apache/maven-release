@@ -19,18 +19,25 @@ package org.apache.maven.shared.release.stubs;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
+import org.eclipse.sisu.Priority;
 
 /**
  * Override the makeRepository methods to honour the URL passed in.
  */
+@Singleton
+@Named( "default" )
+@Priority( 100 )
 public class ScmManagerStub
-    extends org.apache.maven.scm.manager.ScmManagerStub
+        extends org.apache.maven.scm.manager.ScmManagerStub
 {
     private Exception e;
 
@@ -38,7 +45,7 @@ public class ScmManagerStub
 
     @Override
     public ScmRepository makeScmRepository( String scmUrl )
-        throws ScmRepositoryException, NoSuchScmProviderException
+            throws ScmRepositoryException, NoSuchScmProviderException
     {
         if ( e != null )
         {

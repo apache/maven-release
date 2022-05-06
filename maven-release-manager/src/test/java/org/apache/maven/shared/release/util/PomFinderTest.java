@@ -19,37 +19,32 @@ package org.apache.maven.shared.release.util;
  * under the License.
  */
 
-import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.logging.Logger;
-import org.codehaus.plexus.logging.LoggerManager;
+import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 /**
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  */
-public class PomFinderTest extends PlexusTestCase
+public class PomFinderTest
 {
-    private Logger logger = null;
-
-    @Override
-    protected void setUp() throws Exception
+    @Test
+    public void testPomFinderParser()
     {
-        super.setUp();
-        LoggerManager lm = (LoggerManager) lookup(LoggerManager.class);
-        logger = lm.getLoggerForComponent(LoggerManager.ROLE); //X TODO use a better class!
-    }
-
-    public void testPomFinderParser() throws Exception
-    {
-        PomFinder pf = new PomFinder( logger );
+        PomFinder pf = new PomFinder( LoggerFactory.getLogger( "test" ) );
 
         boolean found = pf.parsePom( new File( "src/test/resources/pomfinder/pomNothere.xml" ) );
         assertFalse( found );
 
-        URL pomUrl = getClassLoader().getResource("pomfinder/pom1.xml");
+        URL pomUrl = getClass().getClassLoader().getResource("pomfinder/pom1.xml");
         assertNotNull( pomUrl );
 
         File pomFile = new File( pomUrl.getFile() );

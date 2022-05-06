@@ -22,9 +22,9 @@ package org.apache.maven.shared.release.phase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -58,15 +58,13 @@ import org.junit.Test;
 public class CheckoutProjectFromScmTest
     extends AbstractReleaseTestCase
 {
-    private CheckoutProjectFromScm phase;
-
     @Override
     public void setUp()
         throws Exception
     {
         super.setUp();
 
-        phase = (CheckoutProjectFromScm) lookup( ReleasePhase.class, "checkout-project-from-scm" );
+        phase = lookup( ReleasePhase.class, "checkout-project-from-scm" );
     }
 
     @Test

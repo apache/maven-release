@@ -19,23 +19,38 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import java.util.Map;
+
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.codehaus.plexus.component.annotations.Component;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.transform.ModelETLFactory;
 
 /**
  * Rewrite POMs for future development
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ReleasePhase.class, hint = "rewrite-pom-versions" )
+@Singleton
+@Named( "rewrite-pom-versions" )
 public class RewritePomVersionsPhase
-    extends AbstractRewritePomsPhase
+        extends AbstractRewritePomsPhase
 {
+    @Inject
+    public RewritePomVersionsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
+                                    Map<String, ModelETLFactory> modelETLFactories,
+                                    Map<String, ScmTranslator> scmTranslators )
+    {
+        super( scmRepositoryConfigurator, modelETLFactories, scmTranslators );
+    }
 
     @Override
     protected final String getPomSuffix()
@@ -46,7 +61,6 @@ public class RewritePomVersionsPhase
     @Override
     protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
                                  String projectId, ScmRepository scmRepository, ReleaseResult result )
-        throws ReleaseExecutionException
     {
         // We are only updating versions no mods to scm needed
     }

@@ -23,26 +23,12 @@ import static org.junit.Assert.assertEquals;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public final class OddEvenVersionPolicyTestCase
 {
 
-    private VersionPolicy versionPolicy;
-
-    @Before
-    public void setUp()
-    {
-        versionPolicy = new OddEvenVersionPolicy();
-    }
-
-    @After
-    public void tearDown()
-    {
-        versionPolicy = null;
-    }
+    private final VersionPolicy versionPolicy = new OddEvenVersionPolicy();
 
     @Test
     public void testConvertToSnapshot()

@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.stubs;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.naming.NamingPolicy;
 import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
@@ -29,6 +32,8 @@ import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
  * @author Robert Scholte
  *
  */
+@Singleton
+@Named( "stub" )
 public class NamingPolicyStub implements NamingPolicy
 {
     @Override

@@ -19,18 +19,20 @@ package org.apache.maven.shared.release.scm;
  * under the License.
  */
 
-import java.io.File;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.codehaus.plexus.component.annotations.Component;
+import java.io.File;
 
 /**
  * Jazz tag translator.
  *
  * @author <a href="mailto:ChrisGWarp@gmail.com">Chris Graham</a>
  */
-@Component( role = ScmTranslator.class, hint = "jazz" )
+@Singleton
+@Named( "jazz" )
 public class JazzScmTranslator
-    implements ScmTranslator
+        implements ScmTranslator
 {
     @Override
     public String translateBranchUrl( String url, String branchName, String branchBase )

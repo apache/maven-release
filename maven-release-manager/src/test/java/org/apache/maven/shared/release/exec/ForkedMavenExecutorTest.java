@@ -19,10 +19,14 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
-import static org.mockito.Matchers.endsWith;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.endsWith;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -39,12 +43,14 @@ import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.codehaus.plexus.PlexusTestCase;
+import org.apache.maven.shared.release.util.MavenCrypto;
 import org.codehaus.plexus.util.cli.Arg;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
@@ -54,23 +60,22 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ForkedMavenExecutorTest
-    extends PlexusTestCase
+        extends PlexusJUnit4TestCase
 {
-    private ForkedMavenExecutor executor;
-
+    private MavenCrypto mavenCrypto;
     private SecDispatcher secDispatcher;
 
     @Override
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
 
-        executor = (ForkedMavenExecutor) lookup( MavenExecutor.class, "forked-path" );
-
-        secDispatcher = (SecDispatcher) lookup( SecDispatcher.class, "mng-4384" );
+        mavenCrypto = lookup( MavenCrypto.class );
+        secDispatcher = lookup( SecDispatcher.class );
     }
 
+    @Test
     public void testExecution()
         throws Exception
     {
@@ -91,7 +96,7 @@ public class ForkedMavenExecutorTest
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( isA( String.class ) /*"mvn"*/ ) ).thenReturn( commandLineMock );
 
-        executor.setCommandLineFactory( commandLineFactoryMock );
+        ForkedMavenExecutor executor = new ForkedMavenExecutor( mavenCrypto, commandLineFactoryMock );
 
         // execute
         executor.executeGoals( workingDirectory, "clean integration-test", new DefaultReleaseEnvironment(), false, null,
@@ -115,6 +120,7 @@ public class ForkedMavenExecutorTest
         verifyNoMoreInteractions( mockProcess, commandLineFactoryMock, commandLineMock, valueArgument );
     }
 
+    @Test
     public void testExecutionWithCustomPomFile()
         throws Exception
     {
@@ -134,7 +140,7 @@ public class ForkedMavenExecutorTest
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( isA( String.class ) /* "mvn" */ ) ).thenReturn( commandLineMock );
 
-        executor.setCommandLineFactory( commandLineFactoryMock );
+        ForkedMavenExecutor executor = new ForkedMavenExecutor( mavenCrypto, commandLineFactoryMock );
 
         // execute
         executor.executeGoals( workingDirectory, "clean integration-test", new DefaultReleaseEnvironment(), false, null, "my-pom.xml",
@@ -159,6 +165,7 @@ public class ForkedMavenExecutorTest
         verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
+    @Test
     public void testExecutionWithArguments()
         throws Exception
     {
@@ -178,7 +185,7 @@ public class ForkedMavenExecutorTest
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( endsWith( "mvn" ) ) ).thenReturn( commandLineMock );
 
-        executor.setCommandLineFactory( commandLineFactoryMock );
+        ForkedMavenExecutor executor = new ForkedMavenExecutor( mavenCrypto, commandLineFactoryMock );
 
         // execute
         String arguments = "-DperformRelease=true -Dmaven.test.skip=true";
@@ -203,6 +210,7 @@ public class ForkedMavenExecutorTest
         verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
+    @Test
     public void testExecutionWithNonZeroExitCode()
         throws Exception
     {
@@ -224,7 +232,7 @@ public class ForkedMavenExecutorTest
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( endsWith( "mvn" ) ) ).thenReturn( commandLineMock );
 
-        executor.setCommandLineFactory( commandLineFactoryMock );
+        ForkedMavenExecutor executor = new ForkedMavenExecutor( mavenCrypto, commandLineFactoryMock );
 
         // execute
         try
@@ -257,6 +265,7 @@ public class ForkedMavenExecutorTest
         verifyNoMoreInteractions( mockProcess, commandLineMock, argMock, commandLineFactoryMock );
     }
 
+    @Test
     public void testExecutionWithCommandLineException()
         throws Exception
     {
@@ -272,7 +281,7 @@ public class ForkedMavenExecutorTest
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( endsWith( "mvn" ) ) ).thenReturn( commandLineMock );
 
-        executor.setCommandLineFactory( commandLineFactoryMock );
+        ForkedMavenExecutor executor = new ForkedMavenExecutor( mavenCrypto, commandLineFactoryMock );
 
         // execute
         try
@@ -300,6 +309,7 @@ public class ForkedMavenExecutorTest
         verifyNoMoreInteractions( commandLineMock, argMock, commandLineFactoryMock );
     }
 
+    @Test
     public void testEncryptSettings()
         throws Exception
     {
@@ -320,7 +330,7 @@ public class ForkedMavenExecutorTest
         CommandLineFactory commandLineFactoryMock = mock( CommandLineFactory.class );
         when( commandLineFactoryMock.createCommandLine( isA( String.class ) /* "mvn" */) ).thenReturn( commandLineMock );
 
-        executor.setCommandLineFactory( commandLineFactoryMock );
+        ForkedMavenExecutor executor = new ForkedMavenExecutor( mavenCrypto, commandLineFactoryMock );
 
         Settings settings = new Settings();
         Server server = new Server();
@@ -357,9 +367,9 @@ public class ForkedMavenExecutorTest
         File settingsSecurity = new File( System.getProperty( "user.home" ), ".m2/settings-security.xml" );
         if ( settingsSecurity.exists() )
         {
-            assertFalse( "server_passphrase".equals( encryptedServer.getPassphrase() ) );
-            assertFalse( "server_password".equals( encryptedServer.getPassword() ) );
-            assertFalse( "proxy_password".equals( encryptedProxy.getPassword() ) );
+            assertNotEquals( "server_passphrase", encryptedServer.getPassphrase() );
+            assertNotEquals( "server_password", encryptedServer.getPassword() );
+            assertNotEquals( "proxy_password", encryptedProxy.getPassword() );
         }
     }
 }

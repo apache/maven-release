@@ -19,9 +19,11 @@ package org.apache.maven.shared.release.transform.jdom2;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.shared.release.transform.ModelETLRequest;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
-import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * <p>JDomModelETLFactory class.</p>
@@ -29,11 +31,11 @@ import org.codehaus.plexus.component.annotations.Component;
  * @author Robert Scholte
  * @since 3.0
  */
-@Component( role = ModelETLFactory.class, hint = JDomModelETLFactory.ROLE_HINT )
+@Singleton
+@Named( JDomModelETLFactory.NAME )
 public class JDomModelETLFactory implements ModelETLFactory
 {
-    /** Constant <code>ROLE_HINT="jdom2-sax"</code> */
-    public static final String ROLE_HINT = "jdom2-sax";
+    public static final String NAME = "jdom2-sax";
 
     @Override
     public JDomModelETL newInstance( ModelETLRequest request )

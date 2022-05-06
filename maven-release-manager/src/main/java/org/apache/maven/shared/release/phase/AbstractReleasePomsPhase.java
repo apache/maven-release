@@ -29,7 +29,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.codehaus.plexus.component.annotations.Requirement;
 
 /**
  * Abstract release POM phase.
@@ -41,17 +40,21 @@ public abstract class AbstractReleasePomsPhase extends AbstractReleasePhase
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
-    @Requirement
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    private final ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    protected AbstractReleasePomsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
+    {
+        this.scmRepositoryConfigurator = scmRepositoryConfigurator;
+    }
 
     protected ScmRepository getScmRepository( ReleaseDescriptor releaseDescriptor,
                                               ReleaseEnvironment releaseEnvironment )
-        throws ReleaseFailureException, ReleaseExecutionException
+            throws ReleaseFailureException, ReleaseExecutionException
     {
         try
         {
             return scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                                                                      releaseEnvironment.getSettings() );
+                    releaseEnvironment.getSettings() );
         }
         catch ( ScmRepositoryException exception )
         {
@@ -60,12 +63,12 @@ public abstract class AbstractReleasePomsPhase extends AbstractReleasePhase
         catch ( NoSuchScmProviderException exception )
         {
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + exception.getMessage(),
-                                                 exception );
+                    exception );
         }
     }
 
     protected ScmProvider getScmProvider( ScmRepository scmRepository )
-        throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         try
         {
@@ -74,7 +77,7 @@ public abstract class AbstractReleasePomsPhase extends AbstractReleasePhase
         catch ( NoSuchScmProviderException exception )
         {
             throw new ReleaseExecutionException( "Unable to configure SCM repository: " + exception.getMessage(),
-                                                 exception );
+                    exception );
         }
     }
 }

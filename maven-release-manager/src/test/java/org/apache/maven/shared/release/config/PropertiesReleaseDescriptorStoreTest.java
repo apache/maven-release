@@ -1,6 +1,11 @@
 package org.apache.maven.shared.release.config;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 
 /*
@@ -31,7 +37,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderRe
 
 import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
-import org.codehaus.plexus.PlexusTestCase;
+import org.junit.Test;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
 /**
@@ -40,21 +46,22 @@ import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class PropertiesReleaseDescriptorStoreTest
-    extends PlexusTestCase
+        extends PlexusJUnit4TestCase
 {
     private PropertiesReleaseDescriptorStore store;
 
     private SecDispatcher secDispatcher;
 
     @Override
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
         store = (PropertiesReleaseDescriptorStore) lookup( ReleaseDescriptorStore.class, "properties" );
-        secDispatcher = lookup( SecDispatcher.class, "mng-4384" );
+        secDispatcher = lookup( SecDispatcher.class );
     }
 
+    @Test
     public void testReadFromFile()
         throws ReleaseDescriptorStoreException
     {
@@ -67,6 +74,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "check matches", expected, config );
     }
 
+    @Test
     public void testReadFromFileUsingWorkingDirectory()
         throws Exception
     {
@@ -80,6 +88,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "check matches", expected.build(), config );
     }
 
+    @Test
     public void testReadFromEmptyFile()
         throws ReleaseDescriptorStoreException
     {
@@ -90,6 +99,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertDefaultReleaseConfiguration( config );
     }
 
+    @Test
     public void testReadMissingFile()
         throws ReleaseDescriptorStoreException
     {
@@ -100,6 +110,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertDefaultReleaseConfiguration( config );
     }
 
+    @Test
     public void testMergeFromEmptyFile()
         throws ReleaseDescriptorStoreException, IOException
     {
@@ -111,6 +122,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "Check configurations merged", mergeDescriptor.build(), config );
     }
 
+    @Test
     public void testMergeFromMissingFile()
         throws ReleaseDescriptorStoreException, IOException
     {
@@ -122,6 +134,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "Check configurations merged", mergeDescriptor.build(), config );
     }
 
+    @Test
     public void testWriteToNewFile()
         throws Exception
     {
@@ -141,6 +154,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
 
+    @Test
     public void testWriteToWorkingDirectory()
         throws Exception
     {
@@ -163,6 +177,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "compare configuration", config.build(), rereadDescriptorBuilder.build() );
     }
 
+    @Test
     public void testWriteToNewFileRequiredOnly()
         throws ReleaseDescriptorStoreException
     {
@@ -181,6 +196,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
 
+    @Test
     public void testWriteToNewFileDottedIds()
         throws ReleaseDescriptorStoreException
     {
@@ -210,6 +226,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
 
+    @Test
     public void testWriteToNewFileNullMappedScm()
         throws ReleaseDescriptorStoreException
     {
@@ -236,6 +253,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertEquals( "compare configuration", builder.build(), rereadDescriptor );
     }
 
+    @Test
     public void testOverwriteFile()
         throws Exception
     {
@@ -253,7 +271,8 @@ public class PropertiesReleaseDescriptorStoreTest
 
         assertEquals( "compare configuration", config.build(), rereadDescriptor );
     }
-    
+
+    @Test
     public void testDeleteFile()
         throws ReleaseDescriptorStoreException, IOException
     {
@@ -270,6 +289,7 @@ public class PropertiesReleaseDescriptorStoreTest
         assertFalse( "Check file already exists", file.exists() );
     }
 
+    @Test
     public void testMissingDeleteFile()
         throws ReleaseDescriptorStoreException, IOException
     {
@@ -285,7 +305,8 @@ public class PropertiesReleaseDescriptorStoreTest
 
         assertFalse( "Check file already exists", file.exists() );
     }
-    
+
+    @Test
     public void testWriteEncryptedProperties()
         throws Exception
     {

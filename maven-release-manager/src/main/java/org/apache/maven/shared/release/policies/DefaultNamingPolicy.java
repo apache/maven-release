@@ -19,11 +19,13 @@ package org.apache.maven.shared.release.policies;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.naming.NamingPolicy;
 import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
 import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
-import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * <p>DefaultNamingPolicy class.</p>
@@ -31,12 +33,13 @@ import org.codehaus.plexus.component.annotations.Component;
  * @author Robert Scholte
  * @since 3.0.0-M5
  */
-@Component( role = NamingPolicy.class, hint = "default" )
+@Singleton
+@Named
 public class DefaultNamingPolicy implements NamingPolicy
 {
     @Override
     public NamingPolicyResult getName( NamingPolicyRequest request )
-        throws PolicyException
+            throws PolicyException
     {
         return new NamingPolicyResult().setName( request.getArtifactId() + "-" + request.getVersion() );
     }

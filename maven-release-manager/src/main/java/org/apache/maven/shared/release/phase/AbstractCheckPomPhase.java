@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.List;
+
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
@@ -32,33 +34,41 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.util.List;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Phase that checks the validity of the POM before release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class CheckPomPhase
-    extends AbstractReleasePhase
+public abstract class AbstractCheckPomPhase
+        extends AbstractReleasePhase
 {
+
+    private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
      * @since 2.4
      */
-    private boolean scmRequired = true;
+    private final boolean scmRequired;
 
     /**
      * @since 2.5.2
      */
-    private boolean snapshotsRequired = true;
+    private final boolean snapshotsRequired;
 
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    public AbstractCheckPomPhase( ScmRepositoryConfigurator scmRepositoryConfigurator, boolean scmRequired,
+                                  boolean snapshotsRequired )
+    {
+        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
+        this.scmRequired = scmRequired;
+        this.snapshotsRequired = snapshotsRequired;
+    }
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -68,13 +78,13 @@ public class CheckPomPhase
             if ( StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
             {
                 throw new ReleaseFailureException(
-                    "Missing required setting: scm connection or developerConnection must be specified." );
+                        "Missing required setting: scm connection or developerConnection must be specified." );
             }
 
             try
             {
                 scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                                                                   releaseEnvironment.getSettings() );
+                        releaseEnvironment.getSettings() );
             }
             catch ( ScmRepositoryException e )
             {
@@ -83,7 +93,7 @@ public class CheckPomPhase
             catch ( NoSuchScmProviderException e )
             {
                 throw new ReleaseFailureException(
-                    "The provider given in the SCM URL could not be found: " + e.getMessage() );
+                        "The provider given in the SCM URL could not be found: " + e.getMessage() );
             }
         }
 
@@ -112,7 +122,7 @@ public class CheckPomPhase
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         // It makes no modifications, so simulate is the same as execute
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );

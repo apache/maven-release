@@ -25,29 +25,28 @@ import java.io.OutputStream;
 
 /**
  * <p>RawStreamPumper class.</p>
- *
  */
 public class RawStreamPumper
-    extends Thread
+        extends Thread
 {
-    private InputStream in;
+    private final InputStream in;
 
-    private OutputStream out;
+    private final OutputStream out;
 
     boolean done;
 
     boolean poll;
 
-    byte buffer[] = new byte[256];
+    byte[] buffer = new byte[256];
 
     /**
      * <p>Constructor for RawStreamPumper.</p>
      *
-     * @param in a {@link java.io.InputStream} object
-     * @param out a {@link java.io.OutputStream} object
+     * @param in   a {@link java.io.InputStream} object
+     * @param out  a {@link java.io.OutputStream} object
      * @param poll a boolean
      */
-    public RawStreamPumper( InputStream in , OutputStream out, boolean poll )
+    public RawStreamPumper( InputStream in, OutputStream out, boolean poll )
     {
         this.in = in;
         this.out = out;
@@ -57,10 +56,10 @@ public class RawStreamPumper
     /**
      * <p>Constructor for RawStreamPumper.</p>
      *
-     * @param in a {@link java.io.InputStream} object
+     * @param in  a {@link java.io.InputStream} object
      * @param out a {@link java.io.OutputStream} object
      */
-    public RawStreamPumper( InputStream in , OutputStream out )
+    public RawStreamPumper( InputStream in, OutputStream out )
     {
         this.in = in;
         this.out = out;
@@ -81,7 +80,7 @@ public class RawStreamPumper
      * @throws java.io.IOException if any.
      */
     public void closeInput()
-        throws IOException
+            throws IOException
     {
         in.close();
     }
@@ -92,7 +91,7 @@ public class RawStreamPumper
      * @throws java.io.IOException if any.
      */
     public void closeOutput()
-        throws IOException
+            throws IOException
     {
         out.close();
     }
@@ -145,7 +144,7 @@ public class RawStreamPumper
         }
         catch ( Throwable e )
         {
-            // Catched everything
+            // Caught everything
         }
         finally
         {

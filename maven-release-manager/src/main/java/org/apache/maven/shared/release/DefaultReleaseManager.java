@@ -19,6 +19,10 @@ package org.apache.maven.shared.release;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +30,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -37,37 +42,55 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.phase.ResourceGenerator;
 import org.apache.maven.shared.release.strategy.Strategy;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
-import org.codehaus.plexus.logging.AbstractLogEnabled;
 import org.codehaus.plexus.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Implementation of the release manager.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ReleaseManager.class )
+@Singleton
+@Named
 public class DefaultReleaseManager
-    extends AbstractLogEnabled
     implements ReleaseManager
 {
-    @Requirement
-    private Map<String, Strategy> strategies;
+    private final Logger logger = LoggerFactory.getLogger( getClass() );
+
+    private final Map<String, Strategy> strategies;
 
     /**
      * The available phases.
      */
-    @Requirement
-    private Map<String, ReleasePhase> releasePhases;
+    private final Map<String, ReleasePhase> releasePhases;
 
     /**
      * The configuration storage.
      */
-    @Requirement( hint = "properties" )
-    private ReleaseDescriptorStore configStore;
+    private final AtomicReference<ReleaseDescriptorStore> configStore;
 
     private static final int PHASE_SKIP = 0, PHASE_START = 1, PHASE_END = 2, GOAL_END = 12, ERROR = 99;
+
+    @Inject
+    public DefaultReleaseManager( Map<String, Strategy> strategies,
+                                  Map<String, ReleasePhase> releasePhases,
+                                  @Named( "properties" ) ReleaseDescriptorStore configStore )
+    {
+        this.strategies = requireNonNull( strategies );
+        this.releasePhases = requireNonNull( releasePhases );
+        this.configStore = new AtomicReference<>( requireNonNull( configStore ) );
+    }
+
+    /**
+     * For easier testing only!
+     */
+    public void setConfigStore( ReleaseDescriptorStore configStore )
+    {
+        this.configStore.set( configStore );
+    }
 
     @Override
     public ReleaseResult prepareWithResult( ReleasePrepareRequest prepareRequest )
@@ -218,7 +241,7 @@ public class DefaultReleaseManager
             config.setCompletedPhase( name );
             try
             {
-                configStore.write( config );
+                configStore.get().write( config );
             }
             catch ( ReleaseDescriptorStoreException e )
             {
@@ -311,8 +334,8 @@ public class DefaultReleaseManager
 
         if ( specificProfiles != null && !specificProfiles.isEmpty() )
         {
-            List<String> allProfiles = new ArrayList<>();
-            allProfiles.addAll( ReleaseUtils.buildReleaseDescriptor( builder ).getActivateProfiles() );
+            List<String> allProfiles =
+                    new ArrayList<>( ReleaseUtils.buildReleaseDescriptor( builder ).getActivateProfiles() );
             for ( String specificProfile : specificProfiles )
             {
                 if ( !allProfiles.contains( specificProfile ) )
@@ -538,7 +561,7 @@ public class DefaultReleaseManager
         try
         {
             updateListener( listener, "verify-release-configuration", PHASE_START );
-            ReleaseDescriptorBuilder result = configStore.read( builder );
+            ReleaseDescriptorBuilder result = configStore.get().read( builder );
             updateListener( listener, "verify-release-configuration", PHASE_END );
             return result;
         }
@@ -571,12 +594,12 @@ public class DefaultReleaseManager
     {
         updateListener( cleanRequest.getReleaseManagerListener(), "cleanup", PHASE_START );
 
-        getLogger().info( "Cleaning up after release..." );
+        logger.info( "Cleaning up after release..." );
 
         ReleaseDescriptor releaseDescriptor =
             ReleaseUtils.buildReleaseDescriptor( cleanRequest.getReleaseDescriptorBuilder() );
 
-        configStore.delete( releaseDescriptor );
+        configStore.get().delete( releaseDescriptor );
 
         Strategy releaseStrategy = getStrategy( releaseDescriptor.getReleaseStrategyId() );
 
@@ -595,11 +618,6 @@ public class DefaultReleaseManager
         }
 
         updateListener( cleanRequest.getReleaseManagerListener(), "cleanup", PHASE_END );
-    }
-
-    void setConfigStore( ReleaseDescriptorStore configStore )
-    {
-        this.configStore = configStore;
     }
 
     void goalStart( ReleaseManagerListener listener, String goal, List<String> phases )
@@ -693,7 +711,7 @@ public class DefaultReleaseManager
             phases = null;
         }
 
-        return Collections.unmodifiableList( phases );
+        return Collections.unmodifiableList( phases ); // TODO: NPE here in phases=null above!
     }
 
     private void logInfo( ReleaseResult result, String message )
@@ -703,7 +721,7 @@ public class DefaultReleaseManager
             result.appendInfo( message );
         }
 
-        getLogger().info( message );
+        logger.info( message );
     }
 
     private void captureException( ReleaseResult result, ReleaseManagerListener listener, Exception e )

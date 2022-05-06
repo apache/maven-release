@@ -19,6 +19,10 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
@@ -37,8 +41,6 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.SelectorUtils;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -50,36 +52,45 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * See if there are any local modifications to the files before proceeding with SCM operations and the release.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Component( role = ReleasePhase.class, hint = "scm-check-modifications" )
+@Singleton
+@Named( "scm-check-modifications" )
 public class ScmCheckModificationsPhase
     extends AbstractReleasePhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
-    @Requirement
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
      * SCM URL translators mapped by provider name.
      */
-    @Requirement( role = ScmTranslator.class )
-    private Map<String, ScmTranslator> scmTranslators;
+    private final Map<String, ScmTranslator> scmTranslators;
 
     /**
      * The filepatterns to exclude from the status check.
      *
      * @todo proper construction of filenames, especially release properties
      */
-    private Set<String> exclusionPatterns = new HashSet<>( Arrays.asList(
+    private final Set<String> exclusionPatterns = new HashSet<>( Arrays.asList(
         "**" + File.separator + "pom.xml.backup", "**" + File.separator + "pom.xml.tag",
         "**" + File.separator + "pom.xml.next", "**" + File.separator + "pom.xml.branch",
         "**" + File.separator + "release.properties", "**" + File.separator + "pom.xml.releaseBackup" ) );
+
+    @Inject
+    public ScmCheckModificationsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
+                                       Map<String, ScmTranslator> scmTranslators )
+    {
+        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
+        this.scmTranslators = requireNonNull( scmTranslators );
+    }
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,

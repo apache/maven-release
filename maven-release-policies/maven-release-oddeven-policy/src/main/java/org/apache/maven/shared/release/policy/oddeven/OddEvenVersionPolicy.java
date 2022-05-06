@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.policy.oddeven;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.util.List;
 
 import org.apache.maven.artifact.Artifact;
@@ -28,8 +31,8 @@ import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.Version;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.StringUtils;
+import org.eclipse.sisu.Description;
 
 /**
  * A {@link org.apache.maven.shared.release.policy.version.VersionPolicy} implementation that propose even version numbers only for releases and odd
@@ -40,11 +43,9 @@ import org.codehaus.plexus.util.StringUtils;
  * </ul>
  *
  */
-@Component(
-    role = VersionPolicy.class,
-    hint = "OddEvenVersionPolicy",
-    description = "A VersionPolicy implementation that selects even version numbers only for releases"
-)
+@Singleton
+@Named( "OddEvenVersionPolicy" )
+@Description( "A VersionPolicy implementation that selects even version numbers only for releases" )
 public final class OddEvenVersionPolicy
     implements VersionPolicy
 {

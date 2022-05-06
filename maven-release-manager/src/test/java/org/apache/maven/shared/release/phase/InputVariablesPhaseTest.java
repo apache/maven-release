@@ -32,6 +32,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
@@ -40,6 +41,8 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.policy.naming.NamingPolicy;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.junit.Test;
@@ -54,12 +57,17 @@ public class InputVariablesPhaseTest
 {
     private InputVariablesPhase phase;
 
+    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    private Map<String, NamingPolicy> namingPolicies;
+
     @Override
     public void setUp()
         throws Exception
     {
         super.setUp();
-        phase = (InputVariablesPhase) lookup( ReleasePhase.class, "input-variables" );
+        scmRepositoryConfigurator = lookup( ScmRepositoryConfigurator.class );
+        namingPolicies = lookupMap( NamingPolicy.class );
     }
 
     @Test
@@ -70,7 +78,7 @@ public class InputVariablesPhaseTest
         Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( isA( String.class ), eq( "artifactId-1.0" ) ) ).thenReturn( "tag-value",
                                                                                                "simulated-tag-value" );
-        phase.setPrompter( mockPrompter );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -107,6 +115,9 @@ public class InputVariablesPhaseTest
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
+        Prompter mockPrompter = mock( Prompter.class );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+
         try
         {
             phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
@@ -138,7 +149,7 @@ public class InputVariablesPhaseTest
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
-        phase.setPrompter( mockPrompter );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -175,7 +186,7 @@ public class InputVariablesPhaseTest
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
-        phase.setPrompter( mockPrompter );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -210,7 +221,7 @@ public class InputVariablesPhaseTest
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
-        phase.setPrompter( mockPrompter );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -245,7 +256,7 @@ public class InputVariablesPhaseTest
         Prompter mockPrompter = mock( Prompter.class );
         when( mockPrompter.prompt( isA( String.class ),
                                    isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
-        phase.setPrompter( mockPrompter );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -294,7 +305,7 @@ public class InputVariablesPhaseTest
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
-        phase.setPrompter( mockPrompter );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
 
@@ -332,7 +343,7 @@ public class InputVariablesPhaseTest
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
-        phase.setPrompter( mockPrompter );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
@@ -367,6 +378,9 @@ public class InputVariablesPhaseTest
     public void testBranchOperation()
         throws Exception
     {
+        // prepare
+        Prompter mockPrompter = mock( Prompter.class );
+        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
         assertFalse( phase.isBranchOperation() );
     }
 

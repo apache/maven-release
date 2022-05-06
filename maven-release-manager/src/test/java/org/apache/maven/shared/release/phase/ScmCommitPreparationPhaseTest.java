@@ -78,20 +78,20 @@ public class ScmCommitPreparationPhaseTest
     {
         super.setUp();
 
-        phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-commit-release" );
+        phase = lookup( ReleasePhase.class, "scm-commit-release" );
     }
 
     @Test
     public void testIsCorrectImplementation()
     {
-        assertEquals( ScmCommitPreparationPhase.class, phase.getClass() );
+        assertEquals( ScmCommitReleasePhase.class, phase.getClass() );
     }
 
     @Test
     public void testResolvesCorrectBranchImplementation()
         throws Exception
     {
-        assertTrue( lookup( ReleasePhase.class, "scm-commit-branch" ) instanceof ScmCommitPreparationPhase );
+        assertTrue( lookup( ReleasePhase.class, "scm-commit-branch" ) instanceof ScmCommitBranchPhase );
     }
 
     @Test

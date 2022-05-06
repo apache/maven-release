@@ -19,6 +19,14 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -36,31 +44,33 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.component.annotations.Component;
-import org.codehaus.plexus.component.annotations.Requirement;
 import org.codehaus.plexus.util.FileUtils;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author Edwin Punzalan
  */
-@Component( role = ReleasePhase.class, hint = "restore-backup-poms" )
+@Singleton
+@Named( "restore-backup-poms" )
 public class RestoreBackupPomsPhase
-    extends AbstractBackupPomsPhase
+        extends AbstractBackupPomsPhase
 {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
-    @Requirement
-    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+    private final ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    @Inject
+    public RestoreBackupPomsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
+    {
+        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
+    }
 
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -77,21 +87,21 @@ public class RestoreBackupPomsPhase
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
     }
 
     protected void restorePomBackup( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                      MavenProject project )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         File pomBackup = getPomBackup( project );
 
         if ( !pomBackup.exists() )
         {
             throw new ReleaseExecutionException(
-                "Cannot restore from a missing backup POM: " + pomBackup.getAbsolutePath() );
+                    "Cannot restore from a missing backup POM: " + pomBackup.getAbsolutePath() );
         }
 
         try
@@ -101,8 +111,8 @@ public class RestoreBackupPomsPhase
             try
             {
                 scmRepository =
-                    scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                                                                       releaseEnvironment.getSettings() );
+                        scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
+                                releaseEnvironment.getSettings() );
 
                 provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
             }
@@ -118,7 +128,7 @@ public class RestoreBackupPomsPhase
             if ( releaseDescriptor.isScmUseEditMode() || provider.requiresEditMode() )
             {
                 EditScmResult result = provider.edit( scmRepository, new ScmFileSet(
-                    new File( releaseDescriptor.getWorkingDirectory() ), project.getFile() ) );
+                        new File( releaseDescriptor.getWorkingDirectory() ), project.getFile() ) );
 
                 if ( !result.isSuccess() )
                 {

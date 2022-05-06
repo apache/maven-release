@@ -19,10 +19,10 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
+import java.io.File;
+
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-
-import java.io.File;
 
 /**
  * Execute Maven. May be implemented as a forked instance, or embedded.
@@ -45,5 +45,5 @@ public interface MavenExecutor
      */
     void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
                        boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )
-        throws MavenExecutorException;
+            throws MavenExecutorException;
 }

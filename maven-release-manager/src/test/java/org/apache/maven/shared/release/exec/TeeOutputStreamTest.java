@@ -19,10 +19,12 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
-import junit.framework.TestCase;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test the output stream that tees output both to a stream and into an internal buffer for later.
@@ -30,26 +32,16 @@ import java.io.PrintStream;
  * @author Benjamin Bentmann
  */
 public class TeeOutputStreamTest
-    extends TestCase
 {
-    private TeeOutputStream stream;
+    private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    private ByteArrayOutputStream out;
+    private final TeeOutputStream stream = new TeeOutputStream( new PrintStream( out ), "xxx " );
 
     private static final String LS = System.getProperty( "line.separator" );
 
-    @Override
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
-
-        out = new ByteArrayOutputStream();
-        stream = new TeeOutputStream( new PrintStream( out ), "xxx " );
-    }
-
+    @Test
     public void testConsumeLine()
-        throws Exception
+            throws Exception
     {
         stream.write( ( "the first line" + LS + "line2" + LS + "3" + LS ).getBytes() );
 

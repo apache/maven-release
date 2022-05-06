@@ -19,85 +19,26 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.io.File;
-import java.text.MessageFormat;
-import java.util.Collection;
-import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 
-import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.ReleaseResult;
-import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.env.ReleaseEnvironment;
-import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
-import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 
 /**
  * Commit the changes that were done to prepare the branch or tag to the SCM.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
+@Singleton
+@Named( "scm-commit-development" )
 public class ScmCommitDevelopmentPhase
-    extends AbstractScmCommitPhase
+        extends AbstractScmCommitDevelopmentPhase
 {
-
-    /**
-     * The format for the
-     */
-    private String rollbackMessageFormat;
-
-    @Override
-    protected void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                             List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
-        throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException
+    @Inject
+    public ScmCommitDevelopmentPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
     {
-        // no rollback required
-        if (
-            // was there no commit that has to be rolled back by a new one
-            releaseDescriptor.isSuppressCommitBeforeTagOrBranch()
-                // and working copy should not be touched
-                && !releaseDescriptor.isUpdateWorkingCopyVersions() )
-        {
-            if ( simulating )
-            {
-                logInfo( result, "Full run would not commit changes, because updateWorkingCopyVersions is false." );
-            }
-            else
-            {
-                logInfo( result, "Modified POMs are not committed because updateWorkingCopyVersions is set to false." );
-            }
-        }
-        // rollback or commit development versions required
-        else
-        {
-            String message;
-            if ( !releaseDescriptor.isUpdateWorkingCopyVersions() )
-            {
-                // the commit is a rollback
-                message = createRollbackMessage( releaseDescriptor );
-            }
-            else
-            {
-                // a normal commit
-                message = createMessage( reactorProjects, releaseDescriptor );
-            }
-            if ( simulating )
-            {
-                Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
-                logInfo( result,
-                         "Full run would commit " + pomFiles.size() + " files with message: '" + message + "'" );
-            }
-            else
-            {
-                performCheckins( releaseDescriptor, releaseEnvironment, reactorProjects, message );
-            }
-        }
+        super( scmRepositoryConfigurator, "getScmDevelopmentCommitComment",
+                "rollback changes from release preparation of {0}" );
     }
-
-    private String createRollbackMessage( ReleaseDescriptor releaseDescriptor )
-    {
-        return MessageFormat.format( releaseDescriptor.getScmCommentPrefix() + rollbackMessageFormat,
-                                     new Object[]{releaseDescriptor.getScmReleaseLabel()} );
-    }
-
 }

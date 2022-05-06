@@ -20,9 +20,12 @@ package org.apache.maven.shared.release.exec;
  */
 
 import junit.framework.TestCase;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test the consumer that tees output both to a stream and into an internal buffer for later.
@@ -30,24 +33,14 @@ import java.io.PrintStream;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class TeeConsumerTest
-    extends TestCase
 {
-    private TeeConsumer consumer;
+    private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    private ByteArrayOutputStream out;
+    private final TeeConsumer consumer = new TeeConsumer( new PrintStream( out ), "xxx " );
 
     private static final String LS = System.getProperty( "line.separator" );
 
-    @Override
-    protected void setUp()
-        throws Exception
-    {
-        super.setUp();
-
-        out = new ByteArrayOutputStream();
-        consumer = new TeeConsumer( new PrintStream( out ), "xxx " );
-    }
-
+    @Test
     public void testConsumeLine()
     {
         consumer.consumeLine( "line" );

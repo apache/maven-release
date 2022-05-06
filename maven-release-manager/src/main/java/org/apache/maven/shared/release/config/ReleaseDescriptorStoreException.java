@@ -25,13 +25,13 @@ package org.apache.maven.shared.release.config;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class ReleaseDescriptorStoreException
-    extends Exception
+        extends Exception
 {
     /**
      * <p>Constructor for ReleaseDescriptorStoreException.</p>
      *
      * @param message a {@link java.lang.String} object
-     * @param t a {@link java.lang.Throwable} object
+     * @param t       a {@link java.lang.Throwable} object
      */
     public ReleaseDescriptorStoreException( String message, Throwable t )
     {

@@ -24,22 +24,25 @@ import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.codehaus.plexus.PlexusTestCase;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class MapDevelopmentVersionPhaseIT
-    extends PlexusTestCase
+        extends PlexusJUnit4TestCase
 {
-    private MapVersionsPhase mapVersionsPhase;
+    private MapDevelopmentVersionsPhase mapDevelopmentVersionsPhase;
 
     @Override
-    protected void setUp()
+    public void setUp()
         throws Exception
     {
         super.setUp();
-        mapVersionsPhase = (MapVersionsPhase) lookup( ReleasePhase.class, "map-development-versions" );
+        mapDevelopmentVersionsPhase = (MapDevelopmentVersionsPhase) lookup( ReleasePhase.class, "map-development-versions" );
     }
 
     private static MavenProject createProject( String artifactId, String version )
@@ -51,6 +54,7 @@ public class MapDevelopmentVersionPhaseIT
         return new MavenProject( model );
     }
 
+    @Test
     public void testNoUpdateWorkingCopyVersions() throws Exception
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
@@ -58,7 +62,7 @@ public class MapDevelopmentVersionPhaseIT
         builder.setUpdateWorkingCopyVersions( false );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
-        mapVersionsPhase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        mapDevelopmentVersionsPhase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         assertEquals( "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
     }

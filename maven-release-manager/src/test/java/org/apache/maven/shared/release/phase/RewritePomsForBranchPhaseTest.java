@@ -186,7 +186,6 @@ public class RewritePomsForBranchPhaseTest
 
     @Override
     protected ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects, String workingDirectory )
-        throws Exception
     {
         ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, workingDirectory );
 
@@ -197,7 +196,6 @@ public class RewritePomsForBranchPhaseTest
 
     @Override
     protected ReleaseDescriptorBuilder createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects, String workingDirectory )
-        throws Exception
     {
         ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, workingDirectory );
 

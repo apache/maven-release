@@ -64,12 +64,12 @@ import org.junit.runners.Parameterized.Parameters;
 public abstract class AbstractRewritingReleasePhaseTestCase
     extends AbstractReleaseTestCase
 {
-    private String modelETL;
+    private final String modelETL;
 
     @Parameters
     public static Collection<Object[]> data()
     {
-        return Arrays.asList( new Object[][] { { JDomModelETLFactory.ROLE_HINT } } );
+        return Arrays.asList( new Object[][] { { JDomModelETLFactory.NAME } } );
     }
 
     public AbstractRewritingReleasePhaseTestCase( String modelETL )

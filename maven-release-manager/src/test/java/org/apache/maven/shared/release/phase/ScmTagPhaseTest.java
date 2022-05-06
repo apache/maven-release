@@ -38,6 +38,8 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Module;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
@@ -55,6 +57,8 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseDescriptorStore;
+import org.apache.maven.shared.release.config.ReleaseDescriptorStoreStub;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
@@ -78,6 +82,22 @@ public class ScmTagPhaseTest
         super.setUp();
 
         phase = (ReleasePhase) lookup( ReleasePhase.class, "scm-tag" );
+    }
+
+    @Override
+    protected Module[] getCustomModules()
+    {
+        return new Module[] {
+                new AbstractModule()
+                {
+                    @Override
+                    protected void configure()
+                    {
+                        bind( ScmManager.class ).toInstance( new ScmManagerStub() );
+                        bind( ReleaseDescriptorStore.class ).toInstance( new ReleaseDescriptorStoreStub() );
+                    }
+                }
+        };
     }
 
     public static String getPath( File file )

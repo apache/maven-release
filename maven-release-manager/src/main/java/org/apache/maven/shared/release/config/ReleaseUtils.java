@@ -59,7 +59,7 @@ public class ReleaseUtils
      * <p>copyPropertiesToReleaseDescriptor.</p>
      *
      * @param properties a {@link java.util.Properties} object
-     * @param builder a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @param builder    a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
     public static void copyPropertiesToReleaseDescriptor( Properties properties, ReleaseDescriptorBuilder builder )
     {
@@ -141,8 +141,8 @@ public class ReleaseUtils
         }
         if ( properties.containsKey( "exec.activateProfiles" ) )
         {
-            builder.setActivateProfiles( 
-                         Arrays.asList( properties.getProperty( "exec.activateProfiles" ).split( "," ) ) );
+            builder.setActivateProfiles(
+                    Arrays.asList( properties.getProperty( "exec.activateProfiles" ).split( "," ) ) );
         }
         if ( properties.containsKey( "preparationGoals" ) )
         {
@@ -167,22 +167,22 @@ public class ReleaseUtils
         if ( properties.containsKey( "exec.snapshotReleasePluginAllowed" ) )
         {
             String snapshotReleasePluginAllowedStr = properties.getProperty( "exec.snapshotReleasePluginAllowed" );
-            builder.setSnapshotReleasePluginAllowed( Boolean.valueOf( snapshotReleasePluginAllowedStr ) );
+            builder.setSnapshotReleasePluginAllowed( Boolean.parseBoolean( snapshotReleasePluginAllowedStr ) );
         }
         if ( properties.containsKey( "remoteTagging" ) )
         {
             String remoteTaggingStr = properties.getProperty( "remoteTagging" );
-            builder.setRemoteTagging( Boolean.valueOf( remoteTaggingStr ) );
+            builder.setRemoteTagging( Boolean.parseBoolean( remoteTaggingStr ) );
         }
         if ( properties.containsKey( "pinExternals" ) )
         {
             String pinExternals = properties.getProperty( "pinExternals" );
-            builder.setPinExternals( Boolean.valueOf( pinExternals ) );
+            builder.setPinExternals( Boolean.parseBoolean( pinExternals ) );
         }
         if ( properties.containsKey( "pushChanges" ) )
         {
             String pushChanges = properties.getProperty( "pushChanges" );
-            builder.setPushChanges( Boolean.valueOf( pushChanges ) );
+            builder.setPushChanges( Boolean.parseBoolean( pushChanges ) );
         }
         if ( properties.containsKey( "workItem" ) )
         {
@@ -198,28 +198,28 @@ public class ReleaseUtils
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
-        for ( Iterator<?> i = properties.keySet().iterator(); i.hasNext(); )
+        for ( Object o : properties.keySet() )
         {
-            String property = (String) i.next();
+            String property = (String) o;
             if ( property.startsWith( "project.rel." ) )
             {
                 builder.addReleaseVersion( property.substring( "project.rel.".length() ),
-                                                     properties.getProperty( property ) );
+                        properties.getProperty( property ) );
             }
             else if ( property.startsWith( "project.dev." ) )
             {
                 builder.addDevelopmentVersion( property.substring( "project.dev.".length() ),
-                                                         properties.getProperty( property ) );
+                        properties.getProperty( property ) );
             }
             else if ( property.startsWith( "dependency.rel." ) )
             {
                 builder.addDependencyReleaseVersion( property.substring( "dependency.rel.".length() ),
-                                                     properties.getProperty( property ) );
+                        properties.getProperty( property ) );
             }
             else if ( property.startsWith( "dependency.dev." ) )
             {
                 builder.addDependencyDevelopmentVersion( property.substring( "dependency.dev.".length() ),
-                                                         properties.getProperty( property ) );
+                        properties.getProperty( property ) );
             }
             else if ( property.startsWith( "project.scm." ) )
             {
@@ -239,7 +239,7 @@ public class ReleaseUtils
                             IdentifiedScm scm = new IdentifiedScm();
                             scm.setConnection( properties.getProperty( "project.scm." + key + ".connection" ) );
                             scm.setDeveloperConnection(
-                                properties.getProperty( "project.scm." + key + ".developerConnection" ) );
+                                    properties.getProperty( "project.scm." + key + ".developerConnection" ) );
                             scm.setUrl( properties.getProperty( "project.scm." + key + ".url" ) );
                             scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
                             scm.setId( properties.getProperty( "project.scm." + key + ".id" ) );
@@ -271,12 +271,12 @@ public class ReleaseUtils
                 int endIndex;
                 String versionType;
 
-                if ( propertyName.indexOf( ".development" ) != -1 )
+                if ( propertyName.contains( ".development" ) )
                 {
                     endIndex = propertyName.lastIndexOf( ".development" );
                     versionType = DEVELOPMENT_KEY;
                 }
-                else if ( propertyName.indexOf( ".release" ) != -1 )
+                else if ( propertyName.contains( ".release" ) )
                 {
                     endIndex = propertyName.lastIndexOf( ".release" );
                     versionType = RELEASE_KEY;

@@ -19,9 +19,9 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
-import org.codehaus.plexus.util.cli.StreamConsumer;
-
 import java.io.PrintStream;
+
+import org.codehaus.plexus.util.cli.StreamConsumer;
 
 /**
  * Consumer that both funnels to System.out/err, and stores in an internal buffer.
@@ -29,18 +29,18 @@ import java.io.PrintStream;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class TeeConsumer
-    implements StreamConsumer
+        implements StreamConsumer
 {
-    private PrintStream stream;
+    private final PrintStream stream;
 
     /**
      * @noinspection StringBufferField
      */
-    private StringBuffer content = new StringBuffer();
+    private final StringBuffer content = new StringBuffer();
 
     private static final String LS = System.getProperty( "line.separator" );
 
-    private String indent;
+    private final String indent;
 
     /**
      * <p>Constructor for TeeConsumer.</p>
@@ -61,7 +61,6 @@ public class TeeConsumer
     public TeeConsumer( PrintStream stream, String indent )
     {
         this.stream = stream;
-
         this.indent = indent;
     }
 

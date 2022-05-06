@@ -25,14 +25,14 @@ package org.apache.maven.shared.release.exec;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class MavenExecutorException
-    extends Exception
+        extends Exception
 {
     private int exitCode;
 
     /**
      * <p>Constructor for MavenExecutorException.</p>
      *
-     * @param message a {@link java.lang.String} object
+     * @param message  a {@link java.lang.String} object
      * @param exitCode a int
      */
     public MavenExecutorException( String message, int exitCode )
@@ -46,7 +46,7 @@ public class MavenExecutorException
      * <p>Constructor for MavenExecutorException.</p>
      *
      * @param message a {@link java.lang.String} object
-     * @param cause a {@link java.lang.Throwable} object
+     * @param cause   a {@link java.lang.Throwable} object
      */
     public MavenExecutorException( String message, Throwable cause )
     {

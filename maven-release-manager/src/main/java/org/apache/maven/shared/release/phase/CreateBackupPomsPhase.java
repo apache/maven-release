@@ -19,6 +19,9 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -29,20 +32,20 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.component.annotations.Component;
 import org.codehaus.plexus.util.FileUtils;
 
 /**
  * @author Edwin Punzalan
  */
-@Component( role = ReleasePhase.class, hint = "create-backup-poms" )
+@Singleton
+@Named( "create-backup-poms" )
 public class CreateBackupPomsPhase
-    extends AbstractBackupPomsPhase implements ResourceGenerator
+        extends AbstractBackupPomsPhase implements ResourceGenerator
 {
     @Override
     public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         ReleaseResult result = new ReleaseResult();
 
@@ -77,13 +80,13 @@ public class CreateBackupPomsPhase
     @Override
     public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                                    List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
+            throws ReleaseExecutionException, ReleaseFailureException
     {
         return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
     }
 
     private void createPomBackup( MavenProject project )
-        throws ReleaseExecutionException
+            throws ReleaseExecutionException
     {
         // delete any existing backup first
         deletePomBackup( project );

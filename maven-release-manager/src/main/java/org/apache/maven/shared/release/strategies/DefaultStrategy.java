@@ -19,6 +19,11 @@ package org.apache.maven.shared.release.strategies;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.shared.release.strategy.Strategy;
@@ -29,47 +34,92 @@ import org.apache.maven.shared.release.strategy.Strategy;
  * @author Robert Scholte
  * @since 3.0.0-M5
  */
+@Singleton
+@Named
 public class DefaultStrategy implements Strategy
 {
     /**
      * The phases of release to run, and in what order.
      */
-    private List<String> preparePhases;
+    private final List<String> preparePhases;
 
     /**
      * The phases of release to run to perform.
      */
-    private List<String> performPhases;
+    private final List<String> performPhases;
 
     /**
      * The phases of release to run to rollback changes
      */
-    private List<String> rollbackPhases;
+    private final List<String> rollbackPhases;
 
     /**
      * The phases to create a branch.
      */
-    private List<String> branchPhases;
+    private final List<String> branchPhases;
 
     /**
      * The phases to create update versions.
      */
-    private List<String> updateVersionsPhases;
+    private final List<String> updateVersionsPhases;
 
-    @Override
-    public List<String> getPreparePhases()
+    public DefaultStrategy()
     {
-        return preparePhases;
+        this.preparePhases = Collections.unmodifiableList( Arrays.asList(
+                "check-poms",
+                "scm-check-modifications",
+                "check-dependency-snapshots",
+                "create-backup-poms",
+                "map-release-versions",
+                "input-variables",
+                "map-development-versions",
+                "rewrite-poms-for-release",
+                "generate-release-poms",
+                "run-preparation-goals",
+                "scm-commit-release",
+                "scm-tag",
+                "rewrite-poms-for-development",
+                "remove-release-poms",
+                "run-completion-goals",
+                "scm-commit-development",
+                "end-release"
+        ) );
+        this.performPhases = Collections.unmodifiableList( Arrays.asList(
+                "verify-completed-prepare-phases",
+                "checkout-project-from-scm",
+                "run-perform-goals"
+        ) );
+        this.rollbackPhases = Collections.unmodifiableList( Arrays.asList(
+                "restore-backup-poms",
+                "scm-commit-rollback",
+                "remove-scm-tag"
+        ) );
+        this.branchPhases = Collections.unmodifiableList( Arrays.asList(
+                "check-poms",
+                "scm-check-modifications",
+                "create-backup-poms",
+                "map-branch-versions",
+                "branch-input-variables",
+                "map-development-versions",
+                "rewrite-poms-for-branch",
+                "scm-commit-branch",
+                "scm-branch",
+                "rewrite-poms-for-development",
+                "scm-commit-development",
+                "end-release"
+        ) );
+        this.updateVersionsPhases = Collections.unmodifiableList( Arrays.asList(
+                "check-poms-updateversions",
+                "create-backup-poms",
+                "map-development-versions",
+                "rewrite-pom-versions"
+        ) );
     }
 
-    /**
-     * <p>Setter for the field <code>preparePhases</code>.</p>
-     *
-     * @param preparePhases a {@link java.util.List} object
-     */
-    public void setPreparePhases( List<String> preparePhases )
+    @Override
+    public final List<String> getPreparePhases()
     {
-        this.preparePhases = preparePhases;
+        return preparePhases;
     }
 
     @Override
@@ -78,30 +128,10 @@ public class DefaultStrategy implements Strategy
         return performPhases;
     }
 
-    /**
-     * <p>Setter for the field <code>performPhases</code>.</p>
-     *
-     * @param performPhases a {@link java.util.List} object
-     */
-    public void setPerformPhases( List<String> performPhases )
-    {
-        this.performPhases = performPhases;
-    }
-
     @Override
     public List<String> getRollbackPhases()
     {
         return rollbackPhases;
-    }
-
-    /**
-     * <p>Setter for the field <code>rollbackPhases</code>.</p>
-     *
-     * @param rollbackPhases a {@link java.util.List} object
-     */
-    public void setRollbackPhases( List<String> rollbackPhases )
-    {
-        this.rollbackPhases = rollbackPhases;
     }
 
     @Override
@@ -110,29 +140,9 @@ public class DefaultStrategy implements Strategy
         return branchPhases;
     }
 
-    /**
-     * <p>Setter for the field <code>branchPhases</code>.</p>
-     *
-     * @param branchPhases a {@link java.util.List} object
-     */
-    public void setBranchPhases( List<String> branchPhases )
-    {
-        this.branchPhases = branchPhases;
-    }
-
     @Override
     public List<String> getUpdateVersionsPhases()
     {
         return updateVersionsPhases;
-    }
-
-    /**
-     * <p>Setter for the field <code>updateVersionsPhases</code>.</p>
-     *
-     * @param updateVersionsPhases a {@link java.util.List} object
-     */
-    public void setUpdateVersionsPhases( List<String> updateVersionsPhases )
-    {
-        this.updateVersionsPhases = updateVersionsPhases;
     }
 }

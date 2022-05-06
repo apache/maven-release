@@ -19,6 +19,8 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.List;
+
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -27,31 +29,37 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-
-import java.util.List;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 
 /**
  * Commit the changes that were done to prepare the branch or tag to the SCM.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ScmCommitPreparationPhase
-    extends AbstractScmCommitPhase
+public abstract class AbstractScmCommitPreparationPhase
+        extends AbstractScmCommitPhase
 {
+    protected AbstractScmCommitPreparationPhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator,
+            String descriptorCommentGetter )
+    {
+        super( scmRepositoryConfigurator, descriptorCommentGetter );
+    }
 
+    @Override
     protected void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
                              List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
-        throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException
+            throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException
     {
         // no prepare-commit required
         if ( releaseDescriptor.isSuppressCommitBeforeTagOrBranch() )
         {
             String parameterName;
-            if ( releaseDescriptor.isBranchCreation() ) 
+            if ( releaseDescriptor.isBranchCreation() )
             {
                 parameterName = "suppressCommitBeforeBranch";
             }
-            else 
+            else
             {
                 parameterName = "suppressCommitBeforeTag";
             }
@@ -59,12 +67,12 @@ public class ScmCommitPreparationPhase
             if ( simulating )
             {
                 logInfo( result,
-                         "Full run would not commit changes, " + "because " + parameterName + " is set to true." );
+                        "Full run would not commit changes, " + "because " + parameterName + " is set to true." );
             }
             else
             {
                 logInfo( result,
-                         "Modified POMs are not committed because " + parameterName + " is set to true." );
+                        "Modified POMs are not committed because " + parameterName + " is set to true." );
             }
         }
         // commit development versions required
@@ -83,14 +91,14 @@ public class ScmCommitPreparationPhase
     }
 
     protected void validateConfiguration( ReleaseDescriptor releaseDescriptor )
-        throws ReleaseFailureException
+            throws ReleaseFailureException
     {
         super.validateConfiguration( releaseDescriptor );
 
         if ( releaseDescriptor.isSuppressCommitBeforeTagOrBranch() && releaseDescriptor.isRemoteTagging() )
         {
             throw new ReleaseFailureException(
-                "Cannot perform a remote tag or branch without committing the working copy first." );
+                    "Cannot perform a remote tag or branch without committing the working copy first." );
         }
     }
 }

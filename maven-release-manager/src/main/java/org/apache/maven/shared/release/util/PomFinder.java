@@ -25,10 +25,12 @@ import java.io.IOException;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.logging.Logger;
 import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.slf4j.Logger;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * <p>This utility class helps with finding a maven pom file
@@ -62,12 +64,12 @@ import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 public class PomFinder
 {
 
-    private Logger log;
+    private final Logger log;
     private PomInfo foundPomInfo;
 
     public PomFinder( Logger log )
     {
-        this.log = log;
+        this.log = requireNonNull( log );
     }
 
     /**
@@ -151,19 +153,20 @@ public class PomFinder
         if ( matchingPom == null )
         {
             String[] childFiles = startDirectory.list();
-            for ( int i = 0; i < childFiles.length; i++ )
+            if ( childFiles != null )
             {
-                String childFile = childFiles[ i ];
-
-                File subDir = new File( startDirectory, childFile );
-                if ( subDir.isDirectory() && !subDir.isHidden() )
+                for ( String childFile : childFiles )
                 {
-                    matchingPom = findMatchingPom( subDir );
-                }
+                    File subDir = new File( startDirectory, childFile );
+                    if ( subDir.isDirectory() && !subDir.isHidden() )
+                    {
+                        matchingPom = findMatchingPom( subDir );
+                    }
 
-                if ( matchingPom != null )
-                {
-                    break;
+                    if ( matchingPom != null )
+                    {
+                        break;
+                    }
                 }
             }
         }
@@ -189,7 +192,7 @@ public class PomFinder
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
         
-        Model model = null;
+        Model model;
         try ( XmlStreamReader xmlReader = ReaderFactory.newXmlReader( pomFile ) )
         {
             model = reader.read( xmlReader );
