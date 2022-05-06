@@ -1,5 +1,5 @@
   ------
-  Release Profiles
+  Upgrading Maven Release Plugin From 2 to 3
   ------
   ------
   2022-04-24
@@ -25,9 +25,11 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Release Profiles
+Upgrading Maven Release Plugin From 2 to 3
 
-  Maven 3 provides a default release profile named <<<release-profile>>> that builds and attaches source and javadoc jar:
+* Context: Maven 3 and Maven 4
+
+  Maven 3 (and previously 2) provides a default release profile named <<<release-profile>>> that builds and attaches source and javadoc jar:
   this is defined in {{{/ref/3.8.5/maven-model-builder/super-pom.html}the super POM}}. This profile is activated by default during <<<release:perform>>>
   with Maven Release Plugin 2.x, unless deactivated by configuring <<<useReleaseProfile>>> parameter to <<<false>>>.
 
@@ -35,8 +37,22 @@ Release Profiles
 
   To prepare for this removal, Maven Release Plugin 3.0 stopped invoking this profile by default: <<<useReleaseProfile>>> parameter is <<<false>>> by default.
 
-  When upgrading Maven Release Plugin from 2 to 3, configuring explicitely <<<useReleaseProfile>>> parameter to <<<true>>> will provide a
-  temporary solution, working only with Maven 3.
+* Upgrading Maven Release Plugin 2 to 3
+
+** Write And Configure Your Own Release Profile 
 
   In order to prepare for Maven 4, each project will instead require to define their own release profile that they'll be able to customise
-  to match their needs.
+  to match their needs:
+
+  * for internal projects, just configure the <<<maven-source-plugin>>> for example
+
+  * for projects published to Maven Central repository, you'll need to add also <<<maven-javadoc-plugin>>> and <<<maven-gpg-plugin>>>: see
+    {{{https://central.sonatype.org/publish/publish-maven/}the documentation}}
+
+   []
+ 
+** Short Term: Force Using Maven 3-only Default Release Profile
+
+  Configuring explicitely <<<useReleaseProfile>>> parameter to <<<true>>> will force Maven Release Plugin 3 to work like version 2.
+
+  It provides an easy but temporary solution, working only with Maven 3, when you can't yet write your own release profile.
