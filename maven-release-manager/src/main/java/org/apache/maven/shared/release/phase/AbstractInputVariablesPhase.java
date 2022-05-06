@@ -19,6 +19,7 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -180,7 +181,7 @@ public abstract class AbstractInputVariablesPhase
             else if ( scmTagNameFormat != null )
             {
                 Interpolator interpolator = new StringSearchInterpolator( "@{", "}" );
-                List<String> possiblePrefixes = java.util.Arrays.asList( "project", "pom" );
+                List<String> possiblePrefixes = Arrays.asList( "project", "pom" );
                 Properties values = new Properties();
                 values.setProperty( "artifactId", project.getArtifactId() );
                 values.setProperty( "groupId", project.getGroupId() );

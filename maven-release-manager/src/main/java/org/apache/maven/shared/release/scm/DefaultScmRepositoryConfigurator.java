@@ -54,7 +54,7 @@ import static java.util.Objects.requireNonNull;
 public class DefaultScmRepositoryConfigurator
     implements ScmRepositoryConfigurator
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger( DefaultScmRepositoryConfigurator.class );
+    private final Logger logger = LoggerFactory.getLogger( getClass() );
 
     private final AtomicReference<ScmManager> scmManager;
 
@@ -203,13 +203,13 @@ public class DefaultScmRepositoryConfigurator
             String msg =
                 "Failed to decrypt password/passphrase for server " + server + ", using auth token as is: "
                     + e.getMessage();
-            if ( LOGGER.isDebugEnabled() )
+            if ( logger.isDebugEnabled() )
             {
-                LOGGER.warn( msg, e );
+                logger.warn( msg, e );
             }
             else
             {
-                LOGGER.warn( msg );
+                logger.warn( msg );
             }
             return str;
         }

@@ -54,7 +54,7 @@ import static java.util.Objects.requireNonNull;
 public class PropertiesReleaseDescriptorStore
         implements ReleaseDescriptorStore
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger( PropertiesReleaseDescriptorStore.class );
+    private final Logger logger = LoggerFactory.getLogger( getClass() );
 
     private final MavenCrypto mavenCrypto;
 
@@ -103,7 +103,7 @@ public class PropertiesReleaseDescriptorStore
         }
         catch ( FileNotFoundException e )
         {
-            LOGGER.debug( file.getName() + " not found - using empty properties" );
+            logger.debug( file.getName() + " not found - using empty properties" );
         }
         catch ( IOException e )
         {
@@ -117,7 +117,7 @@ public class PropertiesReleaseDescriptorStore
         }
         catch ( MavenCryptoException e )
         {
-            LOGGER.debug( e.getMessage() );
+            logger.debug( e.getMessage() );
         }
 
         ReleaseDescriptorBuilder builder;
@@ -187,7 +187,7 @@ public class PropertiesReleaseDescriptorStore
             }
             catch ( MavenCryptoException e )
             {
-                LOGGER.debug( e.getMessage() );
+                logger.debug( e.getMessage() );
             }
             properties.setProperty( "scm.password", password );
         }
@@ -204,7 +204,7 @@ public class PropertiesReleaseDescriptorStore
             }
             catch ( MavenCryptoException e )
             {
-                LOGGER.debug( e.getMessage() );
+                logger.debug( e.getMessage() );
             }
             properties.setProperty( "scm.passphrase", passPhrase );
         }

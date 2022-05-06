@@ -58,7 +58,7 @@ import static java.util.Objects.requireNonNull;
 public class DefaultReleaseManager
     implements ReleaseManager
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger( DefaultReleaseManager.class );
+    private final Logger logger = LoggerFactory.getLogger( getClass() );
 
     private final Map<String, Strategy> strategies;
 
@@ -594,7 +594,7 @@ public class DefaultReleaseManager
     {
         updateListener( cleanRequest.getReleaseManagerListener(), "cleanup", PHASE_START );
 
-        LOGGER.info( "Cleaning up after release..." );
+        logger.info( "Cleaning up after release..." );
 
         ReleaseDescriptor releaseDescriptor =
             ReleaseUtils.buildReleaseDescriptor( cleanRequest.getReleaseDescriptorBuilder() );
@@ -721,7 +721,7 @@ public class DefaultReleaseManager
             result.appendInfo( message );
         }
 
-        LOGGER.info( message );
+        logger.info( message );
     }
 
     private void captureException( ReleaseResult result, ReleaseManagerListener listener, Exception e )
