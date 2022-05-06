@@ -50,6 +50,46 @@ Upgrading Maven Release Plugin From 2 to 3
     {{{https://central.sonatype.org/publish/publish-maven/}the documentation}}
 
    []
+
+  Then configure <<<maven-release-plugin>>> to use that profile during <<<release:perform>>> with <<<releaseProfiles>>> parameter:
+
++-------+
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <releaseProfiles>my-project-release</releaseProfiles>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+
+  [...]
+
+  <profiles>
+    <profile>
+      <id>my-project-release</id>
+      <build>
+        <plugins>
+         [...
+          put here your release-specific plugins invocations, like maven-source-plugin, maven-javadoc-plugin, maven-gpg-plugin, ...
+          ...]
+        </plugins>
+      </build>
+    </profile>
+    [...]
+  </profiles>
+</project>
++-------+
  
 ** Short Term: Force Using Maven 3-only Default Release Profile
 
