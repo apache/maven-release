@@ -20,9 +20,13 @@ package org.apache.maven.shared.release.config;
  */
 
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.maven.model.Scm;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>ReleaseDescriptorBuilder class.</p>
@@ -32,6 +36,10 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
  */
 public class ReleaseDescriptorBuilder
 {
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile( "\\$\\{[^}]+}" );
+
+    private final Logger logger;
+
     /**
      * Hides inner logic of the release descriptor
      *
@@ -51,8 +59,17 @@ public class ReleaseDescriptorBuilder
      */
     public ReleaseDescriptorBuilder()
     {
+        this( LoggerFactory.getLogger( ReleaseDescriptorBuilder.class ) );
+    }
+
+    /**
+     * Constructor for testing purpose.
+     */
+    ReleaseDescriptorBuilder( Logger logger )
+    {
         this.releaseDescriptor = new BuilderReleaseDescriptor();
         this.releaseDescriptor.setLineSeparator( ReleaseUtil.LS );
+        this.logger = logger;
     }
 
     /**
@@ -99,7 +116,24 @@ public class ReleaseDescriptorBuilder
      */
     public ReleaseDescriptorBuilder setAdditionalArguments( String additionalArguments )
     {
-        releaseDescriptor.setAdditionalArguments( additionalArguments );
+        if ( additionalArguments != null )
+        {
+            Matcher matcher = PROPERTY_PATTERN.matcher( additionalArguments );
+            StringBuffer buf = new StringBuffer();
+            while ( matcher.find() )
+            {
+                matcher.appendReplacement( buf, "" );
+                logger.warn( "arguments parameter contains unresolved property: '{}'",
+                             matcher.group() );
+            }
+            matcher.appendTail( buf );
+
+            releaseDescriptor.setAdditionalArguments( buf.toString() );
+        }
+        else
+        {
+            releaseDescriptor.setAdditionalArguments( null );
+        }
         return this;
     }
 

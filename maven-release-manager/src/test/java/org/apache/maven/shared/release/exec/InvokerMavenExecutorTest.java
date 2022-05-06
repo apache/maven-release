@@ -19,17 +19,6 @@ package org.apache.maven.shared.release.exec;
  * under the License.
  */
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
 import java.io.File;
 import java.io.Writer;
 
@@ -37,17 +26,22 @@ import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.InvocationRequest;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.MavenCrypto;
-import org.codehaus.plexus.PlexusTestCase;
-import org.codehaus.plexus.logging.Logger;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class InvokerMavenExecutorTest
         extends PlexusJUnit4TestCase
@@ -65,77 +59,6 @@ public class InvokerMavenExecutorTest
 
         mavenCrypto = lookup( MavenCrypto.class );
         secDispatcher = lookup( SecDispatcher.class );
-    }
-
-    @Test
-    public void testThreads()
-        throws Exception
-    {
-        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
-
-        InvocationRequest req = new DefaultInvocationRequest();
-        executor.setupRequest( req, null, "-T 3" );
-        assertEquals( "3", req.getThreads() );
-
-        req = new DefaultInvocationRequest();
-        executor.setupRequest( req, null, "-T4" );
-        assertEquals( "4", req.getThreads() );
-
-        req = new DefaultInvocationRequest();
-        executor.setupRequest( req, null, "\"-T5\"" );
-        assertEquals( "5", req.getThreads() );
-    }
-
-    @Test
-    public void testBatch()
-                  throws Exception
-    {
-        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
-
-        InvocationRequest req = new DefaultInvocationRequest();
-
-        req.setBatchMode( false );
-        executor.setupRequest( req, null, "-B" );
-        assertTrue( req.isBatchMode() );
-
-        req = new DefaultInvocationRequest();
-        req.setBatchMode( false );
-        executor.setupRequest( req, null, "\"-B\"" );
-        assertTrue( req.isBatchMode() );
-    }
-
-    @Test
-    public void testUserToolchains()
-        throws Exception
-    {
-        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
-
-        InvocationRequest req = new DefaultInvocationRequest();
-        executor.setupRequest( req, null, "-t mytoolchains.xml" );
-        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
-
-        req = new DefaultInvocationRequest();
-        executor.setupRequest( req, null, "-tmytoolchains.xml" );
-        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
-
-        req = new DefaultInvocationRequest();
-        executor.setupRequest( req, null, "\"-tmytoolchains.xml\"" );
-        assertEquals( new File( "mytoolchains.xml" ), req.getToolchainsFile() );
-    }
-
-    @Test
-    public void testGlobalSettings()
-        throws Exception
-    {
-        InvokerMavenExecutor executor = new InvokerMavenExecutor( mavenCrypto );
-
-        InvocationRequest req = new DefaultInvocationRequest();
-        executor.setupRequest( req, null, "-gs custom-settings.xml" );
-        assertEquals( "custom-settings.xml", req.getGlobalSettingsFile().getPath() );
-
-        req = new DefaultInvocationRequest();
-        executor.setupRequest( req, null, "--global-settings other-settings.xml" );
-        assertEquals( "other-settings.xml", req.getGlobalSettingsFile().getPath() );
     }
 
     public void testEncryptSettings()
@@ -167,8 +90,6 @@ public class InvokerMavenExecutorTest
         ArgumentCaptor<Settings> encryptedSettings = ArgumentCaptor.forClass( Settings.class );
 
         when( executorSpy.getSettingsWriter() ).thenReturn( settingsWriter );
-        when( executorSpy.getOutputHandler() ).thenReturn( null );
-        when( executorSpy.getInvokerLogger() ).thenReturn( null );
 
         try
         {
