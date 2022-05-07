@@ -25,8 +25,8 @@ assert 1 == pomXml.getText().count("<developerConnection>scm:svn:http://\${scm.h
 
 File pomXmlTag = new File( basedir, 'pom.xml.tag' )
 assert pomXmlTag.exists()
-assert 1 == pomXmlTag.getText().count("<connection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/tags/mrelease-128-1.0</connection>")
-assert 1 == pomXmlTag.getText().count("<developerConnection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/tags/mrelease-128-1.0</developerConnection>")
+assert 1 == pomXmlTag.getText().count("<connection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/tags/1.0</connection>")
+assert 1 == pomXmlTag.getText().count("<developerConnection>scm:svn:http://\${scm.host}/svn/\${project.artifactId}/tags/1.0</developerConnection>")
 
 File pomXmlNext = new File( basedir, 'pom.xml.next' )
 assert pomXmlNext.exists()

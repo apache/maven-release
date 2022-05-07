@@ -70,7 +70,7 @@ public abstract class AbstractScmReleaseMojo
      *
      * @since 2.2.0
      */
-    @Parameter( defaultValue = "@{project.artifactId}-@{project.version}", property = "tagNameFormat" )
+    @Parameter( defaultValue = "@{project.version}", property = "tagNameFormat" )
     private String tagNameFormat;
 
     /**
@@ -113,7 +113,7 @@ public abstract class AbstractScmReleaseMojo
     private String workItem;
 
     /**
-     * Add a new or overwrite the default implementation per provider. 
+     * Add a new or overwrite the default implementation per provider.
      * The key is the scm prefix and the value is the role hint of the
      * {@link org.apache.maven.scm.provider.ScmProvider}.
      *
@@ -159,7 +159,7 @@ public abstract class AbstractScmReleaseMojo
 
         descriptor.setPushChanges( pushChanges );
         descriptor.setWorkItem( workItem );
-        
+
         if ( project.getScm() != null )
         {
             if ( project.getScm().getDeveloperConnection() != null )
@@ -171,24 +171,24 @@ public abstract class AbstractScmReleaseMojo
                 descriptor.setScmSourceUrl( project.getScm().getConnection() );
             }
         }
-        
+
         // As long as Scm.getId() does not exist, read it as a property
         descriptor.setScmId( project.getProperties().getProperty( "project.scm.id" ) );
-        
+
         for ( MavenProject reactorProject : session.getProjects() )
         {
             if ( reactorProject.getScm() != null )
             {
                 String projectId =
                     ArtifactUtils.versionlessKey( reactorProject.getGroupId(), reactorProject.getArtifactId() );
-                
+
                 descriptor.addOriginalScmInfo( projectId, buildScm( reactorProject ) );
             }
         }
 
         return descriptor;
     }
-    
+
     /**
      * <p>buildScm.</p>
      *

@@ -26,7 +26,7 @@
   <name>parent-project</name>
   <url>http://maven.apache.org</url>
   <scm>
-    <connection>scm:svn:file://localhost/${project.file.parentFile.parentFile}/target/svnroot/flat-multi-module/trunk/parent-project</connection>    
+    <connection>scm:svn:file://localhost/${project.file.parentFile.parentFile}/target/svnroot/flat-multi-module/trunk/parent-project</connection>
     <developerConnection>scm:svn:file://localhost/${project.file.parentFile.parentFile}/target/svnroot/flat-multi-module/trunk/parent-project</developerConnection>
   </scm>
 
@@ -42,6 +42,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <version>@project.version@</version>
+          <configuration>
+            <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

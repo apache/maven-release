@@ -95,7 +95,7 @@ mvn release:prepare-with-pom
 
 * Overriding the default tag name format
 
-  By default, if you do not specify a tag name, a default tag name of <<<artifactId>>>-<<<version>>> will be
+  By default, if you do not specify a tag name, a default tag name of <<<version>>> will be
   suggested (and if running non-interactively used).
 
   You can specify the exact tag name to use from the command line by passing the <<<tag>>> property, but if you
