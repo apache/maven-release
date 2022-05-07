@@ -218,7 +218,8 @@ public class CheckoutProjectFromScm
         checkoutDirectory.mkdirs();
 
         CommandParameters commandParameters = new CommandParameters();
-        commandParameters.setString( CommandParameter.SHALLOW, Boolean.TRUE.toString() );
+        commandParameters.setString( CommandParameter.SHALLOW,
+                Boolean.valueOf( releaseDescriptor.isScmShallowClone() ).toString() );
 
         CheckOutScmResult scmResult = provider.checkOut( repository, new ScmFileSet( checkoutDirectory ),
                 new ScmTag( releaseDescriptor.getScmReleaseLabel() ), commandParameters );

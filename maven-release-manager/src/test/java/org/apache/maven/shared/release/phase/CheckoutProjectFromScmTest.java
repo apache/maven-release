@@ -22,7 +22,6 @@ package org.apache.maven.shared.release.phase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -34,7 +33,7 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.scm.CommandParameters;
+import org.apache.maven.scm.CommandParameter;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
@@ -86,8 +85,8 @@ public class CheckoutProjectFromScmTest
         when( scmProviderMock.checkOut( eq( repository ),
                                         argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
                                         argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ),
-                                        any( CommandParameters.class)))
-            .thenReturn( new CheckOutScmResult( "",null ) );
+                                        argThat( new HasCommandParameter( CommandParameter.SHALLOW, true ) ) ) )
+            .thenReturn( new CheckOutScmResult( "", null ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
@@ -106,7 +105,7 @@ public class CheckoutProjectFromScmTest
         verify( scmProviderMock ).checkOut( eq( repository ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
                                             argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ),
-                                            any( CommandParameters.class ));
+                                            argThat( new HasCommandParameter( CommandParameter.SHALLOW, true ) ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
@@ -129,7 +128,7 @@ public class CheckoutProjectFromScmTest
         when( scmProviderMock.checkOut( eq( repository ),
                                         argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
                                         argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ),
-                                        any(CommandParameters.class)))
+                                        argThat( new HasCommandParameter( CommandParameter.SHALLOW, true ) ) ) )
             .thenReturn( new CheckOutScmResult( "", null ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
@@ -149,7 +148,7 @@ public class CheckoutProjectFromScmTest
         verify( scmProviderMock ).checkOut( eq( repository ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
                                             argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ),
-                                            any( CommandParameters.class ));
+                                            argThat( new HasCommandParameter( CommandParameter.SHALLOW, true ) ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 
@@ -172,8 +171,8 @@ public class CheckoutProjectFromScmTest
         when( scmProviderMock.checkOut( eq( repository ),
                                         argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
                                         argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ),
-                                        any( CommandParameters.class )) )
-            .thenReturn( new CheckOutScmResult( "",null ) );
+                                        argThat( new HasCommandParameter( CommandParameter.SHALLOW, true ) ) ) )
+            .thenReturn( new CheckOutScmResult( "", null ) );
 
         ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
@@ -193,7 +192,7 @@ public class CheckoutProjectFromScmTest
         verify( scmProviderMock ).checkOut( eq( repository ),
                                             argThat( new IsScmFileSetEquals( new ScmFileSet( checkoutDirectory ) ) ),
                                             argThat( new IsScmTagEquals( new ScmTag( "release-label" ) ) ),
-                                            any( CommandParameters.class ));
+                                            argThat( new HasCommandParameter( CommandParameter.SHALLOW, true ) ) );
         verifyNoMoreInteractions( scmProviderMock );
     }
 

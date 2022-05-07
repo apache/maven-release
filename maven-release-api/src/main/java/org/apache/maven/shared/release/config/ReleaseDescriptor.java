@@ -285,6 +285,15 @@ public interface ReleaseDescriptor
     String getScmCommentPrefix();
 
     /**
+     * Get whether to use a shallow clone with no history or a full clone containing the full history during the
+     * release.
+     *
+     * @return boolean
+     * @since 3.0.0-M6
+     */
+    boolean isScmShallowClone();
+
+    /**
      * Get the SCM commit comment when setting pom.xml to release.
      *
      * @return String

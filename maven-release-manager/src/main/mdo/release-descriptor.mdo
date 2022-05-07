@@ -69,6 +69,16 @@
           </description>
         </field>
         <field>
+          <name>scmShallowClone</name>
+          <version>3.0.0+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            Get whether to use a shallow clone with no history or a full clone containing the full history during the
+            release
+          </description>
+        </field>
+        <field>
           <name>scmReleaseCommitComment</name>
           <version>3.0.0+</version>
           <type>String</type>

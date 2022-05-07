@@ -90,6 +90,12 @@ public abstract class AbstractScmReleaseMojo
     private String scmCommentPrefix;
 
     /**
+     * When cloning a repository if it should be a shallow clone or a full clone.
+     */
+    @Parameter( defaultValue = "true", property = "scmShallowClone" )
+    private boolean scmShallowClone = true;
+
+    /**
      * Implemented with git will or not push changes to the upstream repository.
      * <code>true</code> by default to preserve backward compatibility.
      * @since 2.1
@@ -149,6 +155,7 @@ public abstract class AbstractScmReleaseMojo
         descriptor.setScmTagBase( tagBase );
         descriptor.setScmUsername( username );
         descriptor.setScmCommentPrefix( scmCommentPrefix );
+        descriptor.setScmShallowClone( scmShallowClone );
 
         descriptor.setPushChanges( pushChanges );
         descriptor.setWorkItem( workItem );

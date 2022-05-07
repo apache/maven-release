@@ -474,6 +474,19 @@ public class ReleaseDescriptorBuilder
     }
 
     /**
+     * <p>setScmShallowClone.</p>
+     *
+     * @param scmShallowClone a boolean
+     * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @since 3.0.0-M6
+     */
+    public ReleaseDescriptorBuilder setScmShallowClone( boolean scmShallowClone )
+    {
+        releaseDescriptor.setScmShallowClone( scmShallowClone );
+        return this;
+    }
+
+    /**
      * <p>setScmReleaseCommitComment.</p>
      *
      * @param scmReleaseCommitComment a {@link java.lang.String} object
