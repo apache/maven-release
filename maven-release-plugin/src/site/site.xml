@@ -33,15 +33,15 @@ under the License.
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
       <item name="Goals" href="plugin-info.html" collapse="true">
-        <item name="clean" href="clean-mojo.html"/>
-        <item name="prepare" href="prepare-mojo.html"/>
-        <item name="prepare-with-pom" href="prepare-with-pom-mojo.html"/>
-        <item name="rollback" href="rollback-mojo.html"/>
-        <item name="perform" href="perform-mojo.html"/>
-        <item name="stage" href="stage-mojo.html"/>
-        <item name="branch" href="branch-mojo.html"/>
-        <item name="update-versions" href="update-versions-mojo.html"/>
-        <item name="help" href="help-mojo.html"/>
+        <item name="release:clean" href="clean-mojo.html"/>
+        <item name="release:prepare" href="prepare-mojo.html"/>
+        <item name="release:prepare-with-pom" href="prepare-with-pom-mojo.html"/>
+        <item name="release:rollback" href="rollback-mojo.html"/>
+        <item name="release:perform" href="perform-mojo.html"/>
+        <item name="release:stage" href="stage-mojo.html"/>
+        <item name="release:branch" href="branch-mojo.html"/>
+        <item name="release:update-versions" href="update-versions-mojo.html"/>
+        <item name="release:help" href="help-mojo.html"/>
       </item>
       <item name="Usage" href="usage.html"/>
       <item name="Upgrade" href="upgrade.html"/>
