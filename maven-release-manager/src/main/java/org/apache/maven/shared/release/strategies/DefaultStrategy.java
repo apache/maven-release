@@ -66,6 +66,7 @@ public class DefaultStrategy implements Strategy
     public DefaultStrategy()
     {
         this.preparePhases = Collections.unmodifiableList( Arrays.asList(
+                //START SNIPPET: prepare
                 "check-poms",
                 "scm-check-modifications",
                 "check-dependency-snapshots",
@@ -83,18 +84,24 @@ public class DefaultStrategy implements Strategy
                 "run-completion-goals",
                 "scm-commit-development",
                 "end-release"
+                //END SNIPPET: prepare
         ) );
         this.performPhases = Collections.unmodifiableList( Arrays.asList(
+                //START SNIPPET: perform
                 "verify-completed-prepare-phases",
                 "checkout-project-from-scm",
                 "run-perform-goals"
+                //END SNIPPET: perform
         ) );
         this.rollbackPhases = Collections.unmodifiableList( Arrays.asList(
+                //START SNIPPET: rollback
                 "restore-backup-poms",
                 "scm-commit-rollback",
                 "remove-scm-tag"
+                //END SNIPPET: rollback
         ) );
         this.branchPhases = Collections.unmodifiableList( Arrays.asList(
+                //START SNIPPET: branch
                 "check-poms",
                 "scm-check-modifications",
                 "create-backup-poms",
@@ -107,12 +114,15 @@ public class DefaultStrategy implements Strategy
                 "rewrite-poms-for-development",
                 "scm-commit-development",
                 "end-release"
+                //END SNIPPET: branch
         ) );
         this.updateVersionsPhases = Collections.unmodifiableList( Arrays.asList(
+                //START SNIPPET: update-versions
                 "check-poms-updateversions",
                 "create-backup-poms",
                 "map-development-versions",
                 "rewrite-pom-versions"
+                //END SNIPPET: update-versions
         ) );
     }
 

@@ -37,20 +37,20 @@ Maven Release Manager
 
    * {<<<prepare>>>}:
 
-%{snippet|id=default-strategy-prepare-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+%{snippet|id=prepare|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java}
 
    * {<<<perform>>>}:
 
-%{snippet|id=default-strategy-perform-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+%{snippet|id=perform|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java}
 
    * {<<<rollback>>>}:
 
-%{snippet|id=default-strategy-rollback-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+%{snippet|id=rollback|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java}
 
    * {<<<branch>>>}:
 
-%{snippet|id=default-strategy-branch-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+%{snippet|id=branch|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java}
 
    * {<<<update-versions>>>}:
 
-%{snippet|id=default-strategy-update-versions-phases|file=${project.build.sourceDirectory}/../components-fragment.xml}
+%{snippet|id=update-versions|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java}
