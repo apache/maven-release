@@ -318,7 +318,7 @@ public class PrepareReleaseMojo
     private boolean pinExternals;
 
     /**
-     * Specifies the line separator to format pom.xml. The default value is system. The following properties are
+     * Specifies the line separator to format pom.xml. The following properties are
      * available:
      * <ul>
      * <li><code>system</code> - Use the system line separator.</li>

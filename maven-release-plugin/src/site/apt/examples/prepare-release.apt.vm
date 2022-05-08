@@ -46,6 +46,8 @@ Prepare a Release
 
    * Bump the version in the POMs to a new value y-SNAPSHOT (these values will also be prompted for)
 
+   * Eventually run completion goal(s) against the project (since 2.2) 
+
    * Commit the modified POMs
 
    []
