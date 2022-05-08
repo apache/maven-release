@@ -42,9 +42,3 @@ Maven Release
 *----------------------------------------------------------+----------------+
 | {{{./maven-release-policies/maven-release-semver-policy/}maven-release-semver-policy}} | a version policy that enforce SemVer format and upgrades minor element for next development version
 *----------------------------------------------------------+----------------+
-
-Notes for Developers
-
-  There are tests in this project which require you to set the M2_HOME
-  environment variable. Since many of the tests print error messages,
-  it is easy to forget about this and then be puzzled.
