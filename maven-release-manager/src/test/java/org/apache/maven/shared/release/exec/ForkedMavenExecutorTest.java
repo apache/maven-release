@@ -109,7 +109,6 @@ public class ForkedMavenExecutorTest
         verify( mockProcess ).waitFor();
         verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
-        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull() );
         verify( commandLineMock ).execute();
         verify( commandLineMock, times( 3 ) ).createArg();
         verify( valueArgument ).setValue( "clean" );
@@ -152,7 +151,6 @@ public class ForkedMavenExecutorTest
         verify( mockProcess ).waitFor();
         verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
-        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull() );
         verify( commandLineMock ).execute();
         verify( commandLineMock, times( 5 ) ).createArg();
         verify( argMock ).setValue( "clean" );
@@ -198,7 +196,6 @@ public class ForkedMavenExecutorTest
         verify( mockProcess ).waitFor();
         verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
-        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull() );
         verify( commandLineMock ).execute();
         verify( commandLineMock, times( 4 ) ).createArg();
         verify( argMock ).setValue( "clean" );
@@ -254,7 +251,6 @@ public class ForkedMavenExecutorTest
 //        verify( mockProcess ).exitValue();
         verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
-        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull() );
         verify( commandLineMock ).execute();
         verify( commandLineMock, times( 3 ) ).createArg();
         verify( argMock ).setValue( "clean" );
@@ -298,7 +294,6 @@ public class ForkedMavenExecutorTest
         // verify
         verify( commandLineMock ).setWorkingDirectory( workingDirectory.getAbsolutePath() );
         verify( commandLineMock ).addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
-        verify( commandLineMock ).addEnvironment( eq( "M2_HOME" ), isNull() );
         verify( commandLineMock ).execute();
         verify( commandLineMock, times( 3 ) ).createArg();
         verify( argMock ).setValue( "clean" );

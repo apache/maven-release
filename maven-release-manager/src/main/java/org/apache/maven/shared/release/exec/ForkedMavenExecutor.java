@@ -112,8 +112,6 @@ public class ForkedMavenExecutor
 
             cl.addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
 
-            cl.addEnvironment( "M2_HOME", mavenPath );
-
             if ( settingsFile != null )
             {
                 cl.createArg().setValue( "-s" );

@@ -86,7 +86,7 @@ public abstract class AbstractReleaseMojo
     private List<MavenProject> reactorProjects;
 
     /**
-     * The {@code M2_HOME} parameter to use for forked Maven invocations.
+     * The Maven home parameter to use for forked Maven invocations.
      *
      * @since 2.0-beta-8
      */
@@ -126,13 +126,13 @@ public abstract class AbstractReleaseMojo
     /**
      * The role-hint for the {@link org.apache.maven.shared.release.strategy.Strategy}
      * implementation used to specify the phases per goal.
-     * 
+     *
      * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.strategies.DefaultStrategy
      */
     @Parameter( defaultValue = "default", property = "releaseStrategyId" )
     private String releaseStrategyId;
-    
+
     /**
      * Gets the environment settings configured for this release.
      *
@@ -155,7 +155,7 @@ public abstract class AbstractReleaseMojo
     protected ReleaseDescriptorBuilder createReleaseDescriptor()
     {
         ReleaseDescriptorBuilder descriptor = new ReleaseDescriptorBuilder();
-        
+
         descriptor.setInteractive( settings.isInteractiveMode() );
 
         Path workingDirectory;
@@ -193,7 +193,7 @@ public abstract class AbstractReleaseMojo
         if ( !profileIds.isEmpty() || StringUtils.isNotBlank( additionalProfiles ) )
         {
             List<String> profiles = new ArrayList<>( profileIds );
-            
+
             if ( additionalProfiles != null )
             {
                 profiles.addAll( Arrays.asList( additionalProfiles.split( "," ) ) );
@@ -201,7 +201,7 @@ public abstract class AbstractReleaseMojo
 
             descriptor.setActivateProfiles( profiles );
         }
-        
+
         descriptor.setReleaseStrategyId( releaseStrategyId );
 
         return descriptor;
@@ -256,7 +256,7 @@ public abstract class AbstractReleaseMojo
     {
         this.pomFileName = pomFileName;
     }
-    
+
     /**
      * Gets the list of projects in the build reactor.
      *
@@ -283,12 +283,12 @@ public abstract class AbstractReleaseMojo
             arguments = argument;
         }
     }
-    
+
     static Path getCommonBasedir( List<MavenProject> reactorProjects )
                     throws IOException
     {
         Path basePath = reactorProjects.get( 0 ).getBasedir().toPath();
-        
+
         for ( MavenProject reactorProject : reactorProjects )
         {
             Path matchPath = reactorProject.getBasedir().toPath();
@@ -298,7 +298,7 @@ public abstract class AbstractReleaseMojo
             }
             basePath = matchPath;
         }
-        
+
         return basePath;
     }
 }
