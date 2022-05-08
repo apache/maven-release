@@ -32,7 +32,17 @@ under the License.
     </breadcrumbs>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html"/>
+      <item name="Goals" href="plugin-info.html" collapse="true">
+        <item name="clean" href="clean-mojo.html"/>
+        <item name="prepare" href="prepare-mojo.html"/>
+        <item name="prepare-with-pom" href="prepare-with-pom-mojo.html"/>
+        <item name="rollback" href="rollback-mojo.html"/>
+        <item name="perform" href="perform-mojo.html"/>
+        <item name="stage" href="stage-mojo.html"/>
+        <item name="branch" href="branch-mojo.html"/>
+        <item name="update-versions" href="update-versions-mojo.html"/>
+        <item name="help" href="help-mojo.html"/>
+      </item>
       <item name="Usage" href="usage.html"/>
       <item name="Upgrade" href="upgrade.html"/>
       <item name="FAQ" href="faq.html"/>

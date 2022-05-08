@@ -35,7 +35,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 
 /**
- * Run the integration tests for the project to verify that it builds before committing.
+ * Run a build of the project (eventually with the integration tests) to verify that it builds before committing.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */

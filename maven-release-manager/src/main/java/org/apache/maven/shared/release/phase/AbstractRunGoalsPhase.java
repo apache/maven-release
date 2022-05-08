@@ -33,7 +33,7 @@ import org.codehaus.plexus.util.StringUtils;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Run the integration tests for the project to verify that it builds before committing.
+ * Abstract phase to run a Maven invocation on the project.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -50,8 +50,8 @@ public abstract class AbstractRunGoalsPhase
         this.mavenExecutors = requireNonNull( mavenExecutors );
     }
 
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  File workingDirectory, String additionalArguments )
+    protected ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                     File workingDirectory, String additionalArguments )
             throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
@@ -62,6 +62,7 @@ public abstract class AbstractRunGoalsPhase
             if ( !StringUtils.isEmpty( goals ) )
             {
                 logInfo( result, "Executing goals '" + goals + "'..." );
+                // TODO add additionalArguments?
 
                 MavenExecutor mavenExecutor = mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
 

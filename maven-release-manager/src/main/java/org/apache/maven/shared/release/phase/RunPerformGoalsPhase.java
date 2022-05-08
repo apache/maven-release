@@ -37,7 +37,7 @@ import org.apache.maven.shared.release.util.PomFinder;
 import org.codehaus.plexus.util.StringUtils;
 
 /**
- * Run the integration tests for the project to verify that it builds before committing.
+ * Run the effective release build of the project and its deploy to remote repository.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
@@ -100,8 +100,10 @@ public class RunPerformGoalsPhase
             ReleaseResult result = new ReleaseResult();
 
             logDebug( result, "Additional arguments: " + additionalArguments );
+            // TODO switch to Info?
 
-            logInfo( result, "Executing perform goals  - since this is simulation mode these goals are skipped." );
+            logInfo( result, "Executing perform goals '" + getGoals( releaseDescriptor )
+                + "' - since this is simulation mode these goals are skipped." );
 
             return result;
         }
