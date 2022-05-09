@@ -72,15 +72,9 @@ public class InvokerMavenExecutor
         InvocationRequest req = new DefaultInvocationRequest()
                 .setDebug( getLogger().isDebugEnabled() )
                 .setBaseDirectory( workingDirectory )
-                .setBatchMode( !interactive )
+                .setBatchMode( true )
                 .setOutputHandler( getLogger()::info )
                 .setErrorHandler( getLogger()::error );
-
-        // for interactive mode we need some inputs stream
-        if ( interactive )
-        {
-            req.setInputStream( System.in );
-        }
 
         if ( pomFileName != null )
         {
