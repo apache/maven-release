@@ -89,7 +89,7 @@
   <properties>
     <scmVersion>1.12.2</scmVersion>
     <javaVersion>8</javaVersion>
-    <mavenVersion>3.2.5</mavenVersion>
+    <mavenVersion>3.8.5</mavenVersion>
     <resolverVersion>1.0.0.v20140518</resolverVersion>
     <wagonVersion>3.5.1</wagonVersion>
     <surefire.version>3.0.0-M6</surefire.version>
