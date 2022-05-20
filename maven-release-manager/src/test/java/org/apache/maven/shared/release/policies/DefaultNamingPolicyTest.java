@@ -31,9 +31,9 @@ public class DefaultNamingPolicyTest
     @Test
     public void testName() throws Exception
     {
-        assertEquals( "ARTIFACTID-VERSION",
+        assertEquals( "VERSION",
                       policy.getName( newNamingPolicyRequest( "ARTIFACTID", "VERSION" ) ).getName() );
-        assertEquals( "ARTIFACTID-1.0-SNAPSHOT",
+        assertEquals( "1.0-SNAPSHOT",
                       policy.getName( newNamingPolicyRequest( "ARTIFACTID", "1.0-SNAPSHOT" ) ).getName() );
     }
 

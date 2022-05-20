@@ -37,7 +37,7 @@ try
     String contents = data.toString();
 
     String expected1 = "Full run would tag working copy '" + basedir + "'";
-    String expected2 = "  with label 'regular-multi-module-project-1.0'";
+    String expected2 = "  with label '1.0'";
 
     if( contents.indexOf( expected1 ) != -1 && contents.indexOf( expected2 ) != -1 )
     {

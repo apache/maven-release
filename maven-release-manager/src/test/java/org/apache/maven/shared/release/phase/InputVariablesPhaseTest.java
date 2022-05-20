@@ -76,8 +76,8 @@ public class InputVariablesPhaseTest
     {
         // prepare
         Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ), eq( "artifactId-1.0" ) ) ).thenReturn( "tag-value",
-                                                                                               "simulated-tag-value" );
+        when( mockPrompter.prompt( isA( String.class ), eq( "1.0" ) ) ).thenReturn( "tag-value",
+                                                                                    "simulated-tag-value" );
         phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
 
         List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
@@ -103,7 +103,7 @@ public class InputVariablesPhaseTest
         // verify
         assertEquals( "Check tag", "simulated-tag-value", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
 
-        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "artifactId-1.0" ) );
+        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "1.0" ) );
         verifyNoMoreInteractions( mockPrompter );
     }
 
@@ -162,7 +162,7 @@ public class InputVariablesPhaseTest
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals( "Check tag", "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -174,7 +174,7 @@ public class InputVariablesPhaseTest
         phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals( "Check tag", "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
 
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
@@ -318,7 +318,7 @@ public class InputVariablesPhaseTest
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals( "Check tag", "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -330,7 +330,7 @@ public class InputVariablesPhaseTest
         phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals( "Check tag", "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
 
         // never use prompter
         verifyNoMoreInteractions( mockPrompter );
@@ -355,7 +355,7 @@ public class InputVariablesPhaseTest
         phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals( "Check tag", "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
 
         // prepare
         builder = new ReleaseDescriptorBuilder();

@@ -41,6 +41,6 @@ public class DefaultNamingPolicy implements NamingPolicy
     public NamingPolicyResult getName( NamingPolicyRequest request )
             throws PolicyException
     {
-        return new NamingPolicyResult().setName( request.getArtifactId() + "-" + request.getVersion() );
+        return new NamingPolicyResult().setName( request.getVersion() );
     }
 }
