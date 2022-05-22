@@ -111,7 +111,7 @@ mvn -Dusername=your_scm_username release:prepare
   release and run:
 
 +------
-mvn release:prepare -DdryRun=true
+mvn release:prepare -DdryRun
 +------
 
   This will ask all the same questions, run the same tests, and output a copy of how the POMs will look after
