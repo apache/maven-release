@@ -99,11 +99,9 @@ public class RunPerformGoalsPhase
         {
             ReleaseResult result = new ReleaseResult();
 
-            logDebug( result, "Additional arguments: " + additionalArguments );
-            // TODO switch to Info?
-
-            logInfo( result, "Executing perform goals '" + getGoals( releaseDescriptor )
+            logInfo( result, "Simulating perform goals '" + getGoals( releaseDescriptor )
                 + "' - since this is simulation mode these goals are skipped." );
+            logInfo( result, "    with additional arguments: " + additionalArguments );
 
             return result;
         }
@@ -140,7 +138,7 @@ public class RunPerformGoalsPhase
             }
         }
 
-        return execute( releaseDescriptor, releaseEnvironment, workDirectory, additionalArguments );
+        return execute( releaseDescriptor, releaseEnvironment, workDirectory, additionalArguments, false );
     }
 
     @Override

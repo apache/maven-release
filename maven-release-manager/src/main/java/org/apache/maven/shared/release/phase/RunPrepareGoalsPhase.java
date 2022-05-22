@@ -23,7 +23,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import java.io.File;
 import java.util.List;
 import java.util.Map;
 
@@ -55,8 +54,7 @@ public class RunPrepareGoalsPhase
                                   List<MavenProject> reactorProjects )
             throws ReleaseExecutionException
     {
-        return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getWorkingDirectory() ),
-                getAdditionalArguments( releaseDescriptor ) );
+        return execute( releaseDescriptor, releaseEnvironment, reactorProjects, false );
     }
 
     @Override
@@ -69,7 +67,7 @@ public class RunPrepareGoalsPhase
         logInfo( result, "Executing preparation goals - since this is simulation mode it is running against the "
                 + "original project, not the rewritten ones" );
 
-        execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+        execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
 
         return result;
     }

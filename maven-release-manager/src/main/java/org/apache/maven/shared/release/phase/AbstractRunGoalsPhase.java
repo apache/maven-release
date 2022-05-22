@@ -20,8 +20,10 @@ package org.apache.maven.shared.release.phase;
  */
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -51,7 +53,15 @@ public abstract class AbstractRunGoalsPhase
     }
 
     protected ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                     File workingDirectory, String additionalArguments )
+                                     List<MavenProject> reactorProjects, boolean logArguments )
+            throws ReleaseExecutionException
+    {
+        return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getWorkingDirectory() ),
+                        getAdditionalArguments( releaseDescriptor ), logArguments );
+    }
+
+    protected ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
+                                     File workingDirectory, String additionalArguments, boolean logArguments )
             throws ReleaseExecutionException
     {
         ReleaseResult result = new ReleaseResult();
@@ -62,7 +72,11 @@ public abstract class AbstractRunGoalsPhase
             if ( !StringUtils.isEmpty( goals ) )
             {
                 logInfo( result, "Executing goals '" + goals + "'..." );
-                // TODO add additionalArguments?
+                if ( logArguments )
+                {
+                    // logging arguments may log secrets: should be activated only on dryRun
+                    logInfo( result, "    with additional arguments: " + additionalArguments );
+                }
 
                 MavenExecutor mavenExecutor = mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
 
