@@ -1,5 +1,5 @@
   ------
-  Upgrading Maven Release Plugin From 2 to 3
+  Migrate Maven Release Plugin From 2 to 3
   ------
   ------
   2022-04-24
@@ -25,7 +25,7 @@
 ~~ NOTE: For help with the syntax of this file, see:
 ~~ http://maven.apache.org/doxia/references/apt-format.html
 
-Upgrading Maven Release Plugin From 2 to 3
+Migrate Maven Release Plugin From 2 to 3
 
 * Context: Maven 3 and Maven 4
 
@@ -46,8 +46,9 @@ Upgrading Maven Release Plugin From 2 to 3
 
   * for internal projects, just configure the <<<maven-source-plugin>>> for example
 
-  * for projects published to Maven Central repository, you'll need to add also <<<maven-javadoc-plugin>>> and <<<maven-gpg-plugin>>>: see
-    {{{https://central.sonatype.org/publish/publish-maven/}the documentation}}
+  * for projects {{{/repository/guide-central-repository-upload.html}published to Maven Central repository}}, you'll need to add also <<<maven-javadoc-plugin>>> and <<<maven-gpg-plugin>>>: see
+    {{{https://central.sonatype.org/publish/publish-maven/}the documentation}}. \
+    Notice: if you already published to Maven Central, there is a good chance the configuration has already been done in a parent POM.
 
    []
 

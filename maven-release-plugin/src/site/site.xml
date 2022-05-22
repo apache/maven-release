@@ -44,7 +44,7 @@ under the License.
         <item name="release:help" href="help-mojo.html"/>
       </item>
       <item name="Usage" href="usage.html"/>
-      <item name="Upgrade" href="upgrade.html"/>
+      <item name="Migrate" href="migrate.html"/>
       <item name="FAQ" href="faq.html"/>
       <!-- According to https://issues.apache.org/jira/browse/MNGSITE-152 -->
       <item name="License" href="http://www.apache.org/licenses/"/>
