@@ -38,7 +38,7 @@ Prepare a Release
 
    * Transform the SCM information in the POM to include the final destination of the tag
 
-   * Run the project tests against the modified POMs to confirm everything is in working order
+   * Run the project tests (preparation goals) against the modified POMs to confirm everything is in working order
 
    * Commit the modified POMs
 
@@ -97,10 +97,10 @@ mvn release:prepare-with-pom
 
 * Overriding the default tag name format
 
-  By default, if you do not specify a tag name, a default tag name of <<<artifactId>>>-<<<version>>> will be
-  suggested (and if running non-interactively used).
+  By default, if you do not specify a tag name, a default tag name of <<<artifactId-version>>> will be
+  suggested (and used if running non-interactively).
 
-  You can specify the exact tag name to use from the command line by passing the <<<tag>>> property, but if you
+  You can override proposed value with the exact tag name to use from the command line by passing the <<<tag>>> property (<<<-Dtag=my-tag>>>). If you
   want to have the tag name generated, but just change the default pattern, you can use the <<<tagNameFormat>>>
   configuration option.
 

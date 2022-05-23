@@ -30,7 +30,7 @@ Maven Release Plugin
   This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.
   Releasing a project is made in two steps: prepare and perform.
   
-  <<Note: Maven 3 users are encouraged to use at least {{{http://maven.apache.org/download.html}Maven-3.0.4}} due to some settings related issues.>> 
+  <<Note: Maven 3 users are encouraged to use at least {{{/download.html}Maven-3.0.4}} due to some settings related issues.>> 
 
 * Goals Overview
 
@@ -67,7 +67,7 @@ Maven Release Plugin
   entire debug logs, POMs or most preferably little demo projects attached to the issue are very much appreciated.
   Of course, patches are welcome, too. Contributors can check out the project from our
   {{{./scm.html}source repository}} and will find supplementary information in the
-  {{{http://maven.apache.org/guides/development/guide-helping.html}guide to helping with Maven}}.
+  {{{/guides/development/guide-helping.html}guide to helping with Maven}}.
 
 * Examples
 

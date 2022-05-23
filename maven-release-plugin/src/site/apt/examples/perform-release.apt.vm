@@ -31,7 +31,7 @@ Perform a Release
 
    * Checkout from an SCM URL with optional tag
 
-   * Run the predefined Maven goals to release the project (by default, <<<deploy site-deploy>>>)
+   * Run the perform Maven goals to release the project (by default, <<<deploy site-deploy>>>), eventually with release profile(s) active
 
    []
 
@@ -58,7 +58,7 @@ mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -Dc
   at release-time) by setting a comma separated list of profiles names in the <<<releaseProfiles>>> parameter. The goals and
   profiles required to release the project can then be configured in the POM:
 
--------
++-------
   <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-release-plugin</artifactId>
@@ -70,6 +70,8 @@ mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -Dc
       <releaseProfiles>release</releaseProfiles>
     </configuration>
   </plugin>
--------
++-------
+
+  Maven Release Plugin 2.x also activated a default profile by default, but not Maven Release Plugin 3.x: see {{{../migrate.html}migrate documentation}} for more details.
 
   After the release is complete, the <<<release.properties>>> and other release files will be removed from the checkout.

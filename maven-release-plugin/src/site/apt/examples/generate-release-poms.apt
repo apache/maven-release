@@ -30,16 +30,16 @@ Generate Release POMs
   To generate POMs with resolved information (e.g. version numbers) to check the values that the Release Plugin will use,
   execute the <<<prepare-with-pom>>> goal. Resolved values will be saved in <<<release-pom.xml>>>.
 
-+-------
+-------
 mvn release:prepare-with-pom
-+-------
+-------
 
   This relies on <<<release.properties>>> being present from a previous release preparation. If this is not the case,
   you need to give the goal the name of the URL and optional tag to perform the release from. For example:
 
-+-------
+-------
 mvn release:prepare-with-pom
   -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
-+-------
+-------
 
   After the release is complete, the <<<release.properties>>> and other release files will be removed from the checkout.

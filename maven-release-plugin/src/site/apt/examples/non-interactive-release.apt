@@ -88,11 +88,11 @@ mvn --batch-mode -Dtag=my-proj-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
   and the release and SNAPSHOT versions follow the same conventions as they do on the
   command line.
 
------------
++-----------
 scm.tag=my-proj-1.2
 project.rel.org.myCompany\:projectA=1.2
 project.dev.org.myCompany\:projectA=1.3-SNAPSHOT
------------
++-----------
 
   <<Note:>> Remember to escape the colon with a backslash, otherwise the property will not be
   interpreted correctly.

@@ -27,7 +27,7 @@
 
 Run Additional Goals Before Commit
 
-  To run additional goals after release preparation but before committing, specify them using the <<<preparationGoals>>>
+  To run additional goals after release preparation (tag) but before committing with new -SNAPSHOT version, specify them using the <<<preparationGoals>>>
   property.
 
 +-----

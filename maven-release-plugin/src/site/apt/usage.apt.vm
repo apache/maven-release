@@ -30,7 +30,7 @@ Usage
 
 * Prepare your project to use the maven-release-plugin
 
-  To be able to make a solid start with the maven-release-plugin, there are 2 things you should include in our pom:
+  To be able to make a solid start with the maven-release-plugin, there are 2 things you should include in your pom:
   
   * the <<<scm>>>-section with a <<<developerConnection>>>
   
@@ -40,14 +40,14 @@ Usage
   
   The <<<developerConnection>>> contains the URL of the Source Control Management system pointing to the folder containing this <<<pom.xml>>>
   This URL is prefixed with <<<scm:[scm-provider]>>> so the plugin can pick the right implementation for committing and tagging.
-  The {{{http://maven.apache.org/scm/scms-overview.html}Maven SCM}}-page contains an overview all the supported SCMs, per SCM you can see how the URL should look like. 
+  The {{{/scm/scms-overview.html}Maven SCM}}-page contains an overview all the supported SCMs, per SCM you can see how the URL should look like: 
   
 +--------
 
 <project>
   ...
   <scm>
-    <developerConnection>scm:svn:https://svn.mycompany.com/repos/myapplication/trunk/mycomponent/</developerConnection>
+    <developerConnection>scm:git:https://github.com/my-org/my-project.git</developerConnection>
   </scm>
   
   <build>
@@ -69,59 +69,24 @@ Usage
 
   The following are some common scenarios in preparing a release.
 
-* Use a different username in the SCM server than the one in the operating system
-
-  Most of the SCMs are simply executed as an external command as the current user on your system. If this username is
-  not the same as the SCM username, you may need to set the following option:
-
-+------
-mvn -Dusername=your_scm_username release:prepare
-+------
-
-* Set where to tag the files in Subversion
-
-  This example shows how to set the repository location for all tags to be created in Subversion.
-  Note that this is not needed if you use the standard SVN layout, where the root project is in <<<trunk>>>, and
-  there is a sibling <<<tags>>> directory.
-
-+-------------------
-<project>
-  ...
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-release-plugin</artifactId>
-        <version>${project.version}</version>
-        <configuration>
-          <tagBase>https://svn.mycompany.com/repos/myapplication/releases</tagBase>
-        </configuration>
-      </plugin>
-    </plugins>
-    ...
-  </build>
-  ...
-</project>
-+-------------------
-
 * Do a Dry Run
 
   Since the Release Plugin performs a number of operations that change the project, it may be wise to do a dry run
   before a big release or on a new project. To do this, commit all of your files as if you were about to run a full
   release and run:
 
-+------
+------
 mvn release:prepare -DdryRun
-+------
+------
 
   This will ask all the same questions, run the same tests, and output a copy of how the POMs will look after
   transformation. You can check the output and review the POMs, then run:
 
-+------
-mvn release:clean
-+------
+------
+mvn release:perform -DdryRun
+------
 
-  This will remove all of the files created above, and the project will be ready to execute the proper release.
+  This will show the perform actions then clean the project, ie. remove all of the files created above, and the project will be ready to execute the proper release.
 
 * Run in Batch Mode
 
@@ -151,3 +116,38 @@ mvn --batch-mode release:prepare
   you can still execute a <<<release:rollback>>> if some error has been detected and a new candidate must
   be created after some fixes. You just need to use a distinct tag in SCM, or rename the one that has been created
   if the SCM provider supports renaming tags.
+
+* Use a different username in the SCM server than the one in the operating system
+
+  Most of the SCMs are simply executed as an external command as the current user on your system. If this username is
+  not the same as the SCM username, you may need to set the following option:
+
+------
+mvn -Dusername=your_scm_username release:prepare
+------
+
+* Set where to tag the files in Subversion
+
+  This example shows how to set the repository location for all tags to be created in Subversion.
+  Note that this is not needed if you use the standard SVN layout, where the root project is in <<<trunk>>>, and
+  there is a sibling <<<tags>>> directory.
+
++-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <tagBase>https://svn.mycompany.com/repos/myapplication/releases</tagBase>
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </build>
+  ...
+</project>
++-------------------
