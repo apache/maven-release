@@ -20,11 +20,11 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-def addArgsExpr = /\Q[DEBUG] Additional arguments: \E(?:-Dhttps.protocols=TLSv1.2 )?-P(.+)\Q-DperformRelease=true -f pom.xml\E/
+def addArgsExpr = /\Q[INFO]     with additional arguments: \E(?:-Dhttps.protocols=TLSv1.2 )?-P(.+)\Q-DperformRelease=true -f pom.xml\E/
 def matcher = ( buildLog.getText() =~ addArgsExpr )
 
-// M2:  [DEBUG] Additional arguments: -P custom-release -DperformRelease=true -f pom.xml
-// M3:  [DEBUG] Additional arguments: -P it-repo,it-repo,custom-release -DperformRelease=true -f pom.xml 
+// M2:  [INFO]     with additional arguments: -P custom-release -DperformRelease=true -f pom.xml
+// M3:  [INFO]     with additional arguments: -P it-repo,it-repo,custom-release -DperformRelease=true -f pom.xml
 
 assert matcher.find()
 assert matcher.getCount() == 1

@@ -21,7 +21,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.apache.maven.plugin.release.its</groupId>
-  <artifactId>mrelease-759</artifactId>
+  <artifactId>mrelease-459</artifactId>
   <version>1.0-SNAPSHOT</version>
 
   <scm>

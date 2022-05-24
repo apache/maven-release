@@ -72,7 +72,7 @@ public abstract class AbstractRunGoalsPhase
             if ( !StringUtils.isEmpty( goals ) )
             {
                 logInfo( result, "Executing goals '" + goals + "'..." );
-                if ( logArguments )
+                if ( logArguments && ( additionalArguments != null ) )
                 {
                     // logging arguments may log secrets: should be activated only on dryRun
                     logInfo( result, "    with additional arguments: " + additionalArguments );
