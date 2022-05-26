@@ -151,7 +151,7 @@ public class ScmCommitPreparationPhaseTest
                                                                                                      Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
                                                                                                                                              ScmFileStatus.CHECKED_IN ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
@@ -264,7 +264,7 @@ public class ScmCommitPreparationPhaseTest
                                                                                                                                                     Collections.singletonList( new ScmFile( rootProject.getFile().getPath(),
                                                                                                                                                                                             ScmFileStatus.CHECKED_IN ) ) ) );
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.ROLE );
+        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
         stub.setScmProvider( scmProviderMock );
 
         // execute
