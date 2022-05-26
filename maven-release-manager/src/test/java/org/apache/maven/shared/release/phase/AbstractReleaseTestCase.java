@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.commons.lang.SystemUtils;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
@@ -84,7 +83,7 @@ public abstract class AbstractReleaseTestCase
     protected ProjectBuilder projectBuilder;
 
     protected ArtifactRepository localRepository;
-    
+
     private ArtifactFactory artifactFactory;
 
     protected ReleasePhase phase;
@@ -96,7 +95,7 @@ public abstract class AbstractReleaseTestCase
         super.setUp();
 
         projectBuilder = lookup( ProjectBuilder.class );
-        artifactFactory = lookup( ArtifactFactory.class ); 
+        artifactFactory = lookup( ArtifactFactory.class );
 
         ArtifactRepositoryLayout layout = lookup( ArtifactRepositoryLayout.class, "default" );
         String localRepoPath = getTestFile( "target/local-repository" ).getAbsolutePath().replace( '\\', '/' );
@@ -113,7 +112,7 @@ public abstract class AbstractReleaseTestCase
     {
         return createReactorProjects( path, path, subpath );
     }
-    
+
     protected ReleaseDescriptorBuilder createReleaseDescriptorBuilder( List<MavenProject> reactorProjects )
     {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
@@ -305,7 +304,7 @@ public abstract class AbstractReleaseTestCase
         throws IOException
     {
         StringBuffer sb = new StringBuffer( "Check the transformed POM " + actualFile );
-        sb.append( SystemUtils.LINE_SEPARATOR );
+        sb.append( System.lineSeparator() );
 
         final String remoteRepositoryURL = getRemoteRepositoryURL();
 
