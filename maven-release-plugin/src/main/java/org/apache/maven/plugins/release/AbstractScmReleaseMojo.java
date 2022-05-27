@@ -41,6 +41,18 @@ public abstract class AbstractScmReleaseMojo
     extends AbstractReleaseMojo
 {
     /**
+     * The SCM private key to use.
+     */
+    @Parameter( property = "privateKey" )
+    private String privateKey;
+
+    /**
+     * The SCM Private Key Pass Phrase to use.
+     */
+    @Parameter( property = "passphrase" )
+    private String passphrase;
+
+    /**
      * The SCM username to use.
      */
     @Parameter( property = "username" )
@@ -148,6 +160,10 @@ public abstract class AbstractScmReleaseMojo
     protected ReleaseDescriptorBuilder createReleaseDescriptor()
     {
         ReleaseDescriptorBuilder descriptor = super.createReleaseDescriptor();
+
+        //SSH support
+        descriptor.setScmPrivateKey(privateKey);
+        descriptor.setScmPrivateKeyPassPhrase(passphrase);
 
         descriptor.setScmPassword( password );
         descriptor.setScmReleaseLabel( tag );
