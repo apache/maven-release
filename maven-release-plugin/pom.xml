@@ -42,7 +42,7 @@
     <dependency>
       <groupId>org.apache.maven.release</groupId>
       <artifactId>maven-release-manager</artifactId>
-      <version>3.0.0-M6-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -81,13 +81,13 @@
     <dependency>
       <groupId>org.apache.maven.release</groupId>
       <artifactId>maven-release-oddeven-policy</artifactId>
-      <version>3.0.0-M6-SNAPSHOT</version>
+      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.apache.maven.release</groupId>
       <artifactId>maven-release-semver-policy</artifactId>
-      <version>3.0.0-M6-SNAPSHOT</version>
+      <version>${project.version}</version>
       <optional>true</optional>
     </dependency>
 
