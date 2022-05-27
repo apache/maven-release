@@ -89,6 +89,18 @@ public class PerformReleaseMojo
     private boolean localCheckout;
 
     /**
+     * The SCM private key to use.
+     */
+    @Parameter( property = "privateKey" )
+    private String privateKey;
+
+    /**
+     * The SCM Private Key Pass Phrase to use.
+     */
+    @Parameter( property = "passphrase" )
+    private String passphrase;
+
+    /**
      * The SCM username to use.
      */
     @Parameter( property = "username" )
