@@ -719,13 +719,23 @@
     /**
      * Method getOriginalScmInfo.
      * 
-     * @return Map
+     * @return Scm
      */
     public org.apache.maven.model.Scm getOriginalScmInfo( String id )
     {
         return this.originalScmInfo.get( id );
-    } //-- java.util.Map<Object, String> getOriginalScmInfo()
+    } //-- Scm getOriginalScmInfo( String)
     
+    /**
+     * Method hasOriginalScmInfo.
+     * 
+     * @return map contains
+     */
+    public boolean hasOriginalScmInfo( String id )
+    {
+        return this.originalScmInfo.containsKey( id );
+    } //-- boolean hasOriginalScmInfo( String )
+
     /**
      * Method addOriginalScmInfo.
      * 

@@ -96,7 +96,7 @@ public class RewritePomsForBranchPhase
                     // If the SCM element is not present, only add it if the parent was not mapped (ie, it's external to
                     // the release process and so has not been modified, so the values will not be correct on the tag),
                     String parentId = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
-                    if ( releaseDescriptor.getOriginalScmInfo( parentId ) == null )
+                    if ( !releaseDescriptor.hasOriginalScmInfo( parentId ) )
                     {
                         // we need to add it, since it has changed from the inherited value
                         scmRoot = new Scm();
