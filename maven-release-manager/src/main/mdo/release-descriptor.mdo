@@ -514,7 +514,7 @@
           <defaultValue>false</defaultValue>
           <description>
             NOTE : currently only implemented with svn scm. Enable a workaround to prevent issue due to svn client &amp;gt; 1.5.0
-            (http://jira.codehaus.org/browse/SCM-406)
+            (https://issues.apache.org/jira/browse/SCM-406)
           </description>
         </field>
         <field>
@@ -678,11 +678,11 @@
 
     public String getProjectReleaseVersion( String projectId )
     {
-      if ( projectVersions.containsKey( projectId ) )
-      {
-        return projectVersions.get( projectId ).getRelease();
-      }
-      return null;
+        if ( projectVersions.containsKey( projectId ) )
+        {
+            return projectVersions.get( projectId ).getRelease();
+        }
+        return null;
     }
 
     /**
@@ -698,11 +698,11 @@
 
     public String getProjectDevelopmentVersion( String projectId )
     {
-      if ( projectVersions.containsKey( projectId ) )
-      {
-        return projectVersions.get( projectId ).getDevelopment();
-      }
-      return null;
+        if ( projectVersions.containsKey( projectId ) )
+        {
+            return projectVersions.get( projectId ).getDevelopment();
+        }
+        return null;
     }
 
     /**
@@ -749,16 +749,16 @@
 
     public String getProjectOriginalVersion( String projectId )
     {
-      if ( projectVersions.containsKey( projectId ) )
-      {
-        return projectVersions.get( projectId ).getOriginal();
-      }
-      return null;
+        if ( projectVersions.containsKey( projectId ) )
+        {
+            return projectVersions.get( projectId ).getOriginal();
+        }
+        return null;
     }
     
     public void addOriginalVersion( String projectId, String version )
     {
-      computeIfAbsent( projectVersions, projectId ).setOriginal( version ); 
+        computeIfAbsent( projectVersions, projectId ).setOriginal( version ); 
     }
 
     /**
@@ -897,7 +897,7 @@
             return false;
         }
         if ( ( checkModificationExcludes == null || ( checkModificationExcludes != null && checkModificationExcludes.size() == 0) ) &&
-            ( that.getCheckModificationExcludes() == null || ( that.getCheckModificationExcludes() != null && that.getCheckModificationExcludes().size() == 0) ) )
+            ( that.getCheckModificationExcludes() == null || ( that.getCheckModificationExcludes() != null && that.getCheckModificationExcludes().size() == 0 ) ) )
         {
             // Do nothing.  This is a Modello workaround
         }
@@ -909,7 +909,7 @@
                 return false;
             }
         }
-        if ( ( originalScmInfo == null || (originalScmInfo != null && originalScmInfo.size() == 0 ) ) &&
+        if ( ( originalScmInfo == null || ( originalScmInfo != null && originalScmInfo.size() == 0 ) ) &&
             ( that.getOriginalScmInfo() == null || ( that.getOriginalScmInfo() != null && that.getOriginalScmInfo().size() == 0 ) ) )
         {
             // Do nothing.  This is a Modello workaround
