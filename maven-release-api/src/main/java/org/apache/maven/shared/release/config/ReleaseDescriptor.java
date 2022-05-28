@@ -485,10 +485,19 @@ public interface ReleaseDescriptor
     /**
      * <p>getOriginalScmInfo.</p>
      *
-     * @return the original {@code Scm} information.
      * @param projectKey the project key {@code String}
+     * @return the original {@code Scm} information.
      */
     Scm getOriginalScmInfo( String projectKey );
+
+    /**
+     * <p>hasOriginalScmInfo.</p>
+     *
+     * @param projectKey the project key {@code String}
+     * @return has original Scm info.
+     */
+    boolean hasOriginalScmInfo( String projectKey );
+
 
     // Modifiable
     /**
