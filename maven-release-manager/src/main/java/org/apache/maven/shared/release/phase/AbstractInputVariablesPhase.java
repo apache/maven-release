@@ -52,6 +52,7 @@ import org.codehaus.plexus.interpolation.StringSearchInterpolator;
 import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
  * Input any variables that were not yet configured.
@@ -230,7 +231,7 @@ public abstract class AbstractInputVariablesPhase
                     if ( branchOperation )
                     {
                         tag = prompter.get().prompt( "What is the branch name for \"" + project.getName() + "\"? ("
-                                + project.getGroupId() + ":" + project.getArtifactId() + ")" );
+                            + buffer().project( project.getArtifactId() ) + ")" );
                         if ( StringUtils.isEmpty( tag ) )
                         {
                             throw new ReleaseExecutionException( "No branch name was given." );
@@ -238,8 +239,10 @@ public abstract class AbstractInputVariablesPhase
                     }
                     else
                     {
-                        tag = prompter.get().prompt( "What is the SCM release tag or label for \"" + project.getName()
-                                + "\"? (" + project.getGroupId() + ":" + project.getArtifactId() + ")", suggestedName );
+                        tag = prompter.get().prompt(
+                                                     "What is the SCM release tag or label for \"" + project.getName()
+                                                         + "\"? (" + buffer().project( project.getArtifactId() ) + ")",
+                                                     suggestedName );
                     }
                 }
                 catch ( PrompterException e )

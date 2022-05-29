@@ -52,6 +52,8 @@ public class CreateBackupPomsPhase
         // remove previous backups, if any
         clean( reactorProjects );
 
+        logInfo( result, "Creating pom.xml backup with " + BACKUP_SUFFIX + " suffix" );
+
         for ( MavenProject project : reactorProjects )
         {
             createPomBackup( project );
