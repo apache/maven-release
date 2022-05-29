@@ -21,9 +21,7 @@ package org.apache.maven.shared.release.phase;
 
 import java.text.MessageFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
@@ -110,8 +108,6 @@ public abstract class AbstractMapVersionsPhase
     {
         ReleaseResult result = new ReleaseResult();
 
-        ResourceBundle resourceBundle = getResourceBundle( releaseEnvironment.getLocale() );
-
         MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
 
         if ( releaseDescriptor.isAutoVersionSubmodules() && ArtifactUtils.isSnapshot( rootProject.getVersion() ) )
@@ -121,7 +117,7 @@ public abstract class AbstractMapVersionsPhase
 
             String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, resourceBundle );
+            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor );
 
             if ( !convertToSnapshot )
             {
@@ -187,7 +183,7 @@ public abstract class AbstractMapVersionsPhase
             {
                 String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
 
-                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, resourceBundle );
+                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor );
 
                 if ( !convertToSnapshot )
                 {
@@ -211,8 +207,7 @@ public abstract class AbstractMapVersionsPhase
 
     private String resolveNextVersion( MavenProject project,
                                        String projectId,
-                                       ReleaseDescriptor releaseDescriptor,
-                                       ResourceBundle resourceBundle )
+                                       ReleaseDescriptor releaseDescriptor )
             throws ReleaseExecutionException
     {
         String defaultVersion;
@@ -257,7 +252,7 @@ public abstract class AbstractMapVersionsPhase
 
         String suggestedVersion = null;
         String nextVersion = defaultVersion;
-        String messageKey = null;
+        String messageFormat = null;
         try
         {
             while ( nextVersion == null || ArtifactUtils.isSnapshot( nextVersion ) != convertToSnapshot )
@@ -305,11 +300,11 @@ public abstract class AbstractMapVersionsPhase
 
                 if ( releaseDescriptor.isInteractive() )
                 {
-                    if ( messageKey == null )
+                    if ( messageFormat == null )
                     {
-                        messageKey = getMapversionPromptKey( releaseDescriptor );
+                        messageFormat = getMapversionPromptFormat( releaseDescriptor );
                     }
-                    String message = MessageFormat.format( resourceBundle.getString( messageKey ), project.getName(),
+                    String message = MessageFormat.format( messageFormat, project.getName(),
                                                            buffer().project( project.getArtifactId() ) );
                     nextVersion = prompter.prompt( message, suggestedVersion );
 
@@ -385,26 +380,26 @@ public abstract class AbstractMapVersionsPhase
     }
 
 
-    private String getMapversionPromptKey( ReleaseDescriptor releaseDescriptor )
+    private String getMapversionPromptFormat( ReleaseDescriptor releaseDescriptor )
     {
-        String messageKey;
+        String context;
         if ( convertToBranch )
         {
-            messageKey = "mapversion.branch.prompt";
+            context = "branch";
         }
         else if ( !convertToSnapshot )
         {
-            messageKey = "mapversion.release.prompt";
+            context = "release";
         }
         else if ( releaseDescriptor.isBranchCreation() )
         {
-            messageKey = "mapversion.workingcopy.prompt";
+            context = "new working copy";
         }
         else
         {
-            messageKey = "mapversion.development.prompt";
+            context = "new development";
         }
-        return messageKey;
+        return "What is the " + context + " version for \"{0}\"? ({1})";
     }
 
     @Override
@@ -420,10 +415,5 @@ public abstract class AbstractMapVersionsPhase
         result.setResultCode( ReleaseResult.SUCCESS );
 
         return result;
-    }
-
-    private ResourceBundle getResourceBundle( Locale locale )
-    {
-        return ResourceBundle.getBundle( "release-messages", locale, AbstractMapVersionsPhase.class.getClassLoader() );
     }
 }
