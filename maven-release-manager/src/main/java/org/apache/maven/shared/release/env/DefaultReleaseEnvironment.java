@@ -20,7 +20,6 @@ package org.apache.maven.shared.release.env;
  */
 
 import java.io.File;
-import java.util.Locale;
 
 import org.apache.maven.settings.Settings;
 
@@ -39,8 +38,6 @@ public class DefaultReleaseEnvironment
     private Settings settings;
 
     private String mavenExecutorId = DEFAULT_MAVEN_EXECUTOR_ID;
-
-    private Locale locale = Locale.ENGLISH;
 
     @Override
     public File getMavenHome()
@@ -136,24 +133,6 @@ public class DefaultReleaseEnvironment
     public DefaultReleaseEnvironment setLocalRepositoryDirectory( File localRepositoryDirectory )
     {
         this.localRepositoryDirectory = localRepositoryDirectory;
-        return this;
-    }
-
-    @Override
-    public Locale getLocale()
-    {
-        return locale;
-    }
-
-    /**
-     * <p>Setter for the field <code>locale</code>.</p>
-     *
-     * @param locale a {@link java.util.Locale} object
-     * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
-     */
-    public DefaultReleaseEnvironment setLocale( Locale locale )
-    {
-        this.locale = locale;
         return this;
     }
 }

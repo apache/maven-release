@@ -20,7 +20,6 @@ package org.apache.maven.shared.release.env;
  */
 
 import java.io.File;
-import java.util.Locale;
 
 import org.apache.maven.settings.Settings;
 
@@ -68,12 +67,4 @@ public interface ReleaseEnvironment
      * @return a {@link java.io.File} object
      */
     File getJavaHome();
-
-    /**
-     * <p>getLocale.</p>
-     *
-     * @return the locale
-     * @since 2.4
-     */
-    Locale getLocale();
 }
