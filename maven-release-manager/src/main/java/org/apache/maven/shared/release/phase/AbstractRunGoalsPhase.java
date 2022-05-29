@@ -77,7 +77,7 @@ public abstract class AbstractRunGoalsPhase
                 {
                     // logging arguments may log secrets: should be activated only on dryRun
                     logInfo( result, "    with additional arguments: "
-                        + ( additionalArguments == null ? "" : additionalArguments ) );
+                        + ( additionalArguments == null ? "(none)" : additionalArguments ) );
                 }
 
                 MavenExecutor mavenExecutor = mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
