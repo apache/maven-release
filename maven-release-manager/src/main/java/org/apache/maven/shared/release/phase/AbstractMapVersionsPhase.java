@@ -19,7 +19,6 @@ package org.apache.maven.shared.release.phase;
  * under the License.
  */
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -302,10 +301,10 @@ public abstract class AbstractMapVersionsPhase
                 {
                     if ( messageFormat == null )
                     {
-                        messageFormat = getMapversionPromptFormat( releaseDescriptor );
+                        messageFormat = "What is the " + getContextString( releaseDescriptor )
+                            + " version for \"%s\"? (" + buffer().project( "%s" ) + ")";
                     }
-                    String message = MessageFormat.format( messageFormat, project.getName(),
-                                                           buffer().project( project.getArtifactId() ) );
+                    String message = String.format( messageFormat, project.getName(), project.getArtifactId() );
                     nextVersion = prompter.prompt( message, suggestedVersion );
 
                     //@todo validate next version, maybe with DefaultArtifactVersion
@@ -329,6 +328,23 @@ public abstract class AbstractMapVersionsPhase
             throw new ReleaseExecutionException( "Error reading version from input handler: " + e.getMessage(), e );
         }
         return nextVersion;
+    }
+
+    private String getContextString( ReleaseDescriptor releaseDescriptor )
+    {
+        if ( convertToBranch )
+        {
+            return "branch";
+        }
+        if ( !convertToSnapshot )
+        {
+            return "release";
+        }
+        if ( releaseDescriptor.isBranchCreation() )
+        {
+            return "new working copy";
+        }
+        return "new development";
     }
 
     private String resolveSuggestedVersion( String baseVersion, String policyId )
@@ -377,29 +393,6 @@ public abstract class AbstractMapVersionsPhase
         }
 
         return projectVersion;
-    }
-
-
-    private String getMapversionPromptFormat( ReleaseDescriptor releaseDescriptor )
-    {
-        String context;
-        if ( convertToBranch )
-        {
-            context = "branch";
-        }
-        else if ( !convertToSnapshot )
-        {
-            context = "release";
-        }
-        else if ( releaseDescriptor.isBranchCreation() )
-        {
-            context = "new working copy";
-        }
-        else
-        {
-            context = "new development";
-        }
-        return "What is the " + context + " version for \"{0}\"? ({1})";
     }
 
     @Override
