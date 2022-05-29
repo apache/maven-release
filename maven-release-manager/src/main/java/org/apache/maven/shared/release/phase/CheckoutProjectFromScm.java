@@ -54,6 +54,7 @@ import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
@@ -277,7 +278,8 @@ public class CheckoutProjectFromScm
         if ( releaseDescriptor.isLocalCheckout() )
         {
             logInfo( result,
-                     "This would be a LOCAL check out to perform the release from " + checkoutDirectory + "..." );
+                     "The project would have a " + buffer().strong( "local" )
+                         + " check out to perform the release from " + checkoutDirectory + "..." );
         }
         else
         {
