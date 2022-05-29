@@ -612,6 +612,7 @@ public class DefaultReleaseManagerTest
         // prepare
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setDryRun( true );
+        performRequest.setReactorProjects( createReactorProjects() );
 
         ReleaseManagerListener managerListener = mock( ReleaseManagerListener.class );
         performRequest.setReleaseManagerListener( managerListener );
@@ -627,12 +628,10 @@ public class DefaultReleaseManagerTest
         releaseManager.perform( performRequest );
 
         // verify
-        verify( managerListener ).phaseStart( "verify-release-configuration" );
         verify( managerListener ).phaseStart( "verify-completed-prepare-phases" );
         verify( managerListener ).phaseStart( "checkout-project-from-scm" );
         verify( managerListener ).phaseStart( "run-perform-goals" );
-        verify( managerListener ).phaseStart( "cleanup" );
-        verify( managerListener, times( 5 ) ).phaseEnd();
+        verify( managerListener, times( 3 ) ).phaseEnd();
 
         // not part of actual test, but required to confirm 'no more interactions'
         verify( managerListener ).goalStart( anyString(), any() );
@@ -756,6 +755,7 @@ public class DefaultReleaseManagerTest
         // prepare
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setDryRun( true );
+        performRequest.setReactorProjects( createReactorProjects() );
 
         ReleaseManagerListener managerListener = mock( ReleaseManagerListener.class );
         performRequest.setReleaseManagerListener( managerListener );

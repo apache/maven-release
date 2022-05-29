@@ -39,7 +39,7 @@ import org.apache.maven.shared.release.strategy.Strategy;
 public class DefaultStrategy implements Strategy
 {
     /**
-     * The phases of release to run, and in what order.
+     * The phases of release to run to prepare.
      */
     private final List<String> preparePhases;
 

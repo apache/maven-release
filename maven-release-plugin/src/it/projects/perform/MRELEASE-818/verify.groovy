@@ -20,7 +20,7 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-def localCheckoutExpr = /\Q[INFO] This would be a LOCAL check out to perform the release ...\E/
+def localCheckoutExpr = /\Q[INFO] This would be a LOCAL check out to perform the release from /
 def matcher = ( buildLog.getText() =~ localCheckoutExpr )
 
 assert matcher.find()

@@ -80,7 +80,7 @@ mvn release:prepare -DdryRun
 ------
 
   This will ask all the same questions, run the same tests, and output a copy of how the POMs will look after
-  transformation. You can check the output and review the POMs, then run:
+  transformation. You can check the output and review the POMs (with <<<.tag>>> and <<<.next>>> suffixes), then run:
 
 ------
 mvn release:perform -DdryRun
@@ -94,9 +94,9 @@ mvn release:perform -DdryRun
   builds through a build server). To use the default inputs for the versions and tag information and not prompt for any
   values, use Maven's <<<--batch-mode>>> setting:
 
-+------
+------
 mvn --batch-mode release:prepare
-+------
+------
 
 * Use a staging repository
 

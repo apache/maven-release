@@ -32,7 +32,7 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 public abstract class AbstractBackupPomsPhase
         extends AbstractReleasePhase
 {
-    private final String backupSuffix = ".releaseBackup";
+    protected static final String BACKUP_SUFFIX = ".releaseBackup";
 
     /**
      * <p>getPomBackup.</p>
@@ -46,7 +46,7 @@ public abstract class AbstractBackupPomsPhase
 
         if ( pomFile != null )
         {
-            return new File( pomFile.getAbsolutePath() + backupSuffix );
+            return new File( pomFile.getAbsolutePath() + BACKUP_SUFFIX );
         }
         else
         {

@@ -33,6 +33,7 @@ import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
  * Abstract phase to run a Maven invocation on the project.
@@ -71,11 +72,12 @@ public abstract class AbstractRunGoalsPhase
             String goals = getGoals( releaseDescriptor );
             if ( !StringUtils.isEmpty( goals ) )
             {
-                logInfo( result, "Executing goals '" + goals + "'..." );
-                if ( logArguments && ( additionalArguments != null ) )
+                logInfo( result, "Executing goals '" + buffer().strong( goals ) + "'..." );
+                if ( logArguments )
                 {
                     // logging arguments may log secrets: should be activated only on dryRun
-                    logInfo( result, "    with additional arguments: " + additionalArguments );
+                    logInfo( result, "    with additional arguments: "
+                        + ( additionalArguments == null ? "" : additionalArguments ) );
                 }
 
                 MavenExecutor mavenExecutor = mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );

@@ -29,7 +29,7 @@ Perform a Release
 
   Performing a release runs the following release phases {{{../../maven-release-manager/#perform}by default}}:
 
-   * Checkout from an SCM URL with optional tag
+   * Checkout from an SCM URL with optional tag to <<<workingDirectory>>> (<<<target/checkout>>> by default)
 
    * Run the perform Maven goals to release the project (by default, <<<deploy site-deploy>>>), eventually with release profile(s) active
 

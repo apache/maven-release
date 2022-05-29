@@ -72,8 +72,6 @@ public class DefaultReleaseManager
      */
     private final AtomicReference<ReleaseDescriptorStore> configStore;
 
-    private static final int PHASE_SKIP = 0, PHASE_START = 1, PHASE_END = 2, GOAL_END = 12, ERROR = 99;
-
     @Inject
     public DefaultReleaseManager( Map<String, Strategy> strategies,
                                   Map<String, ReleasePhase> releasePhases,
@@ -187,7 +185,7 @@ public class DefaultReleaseManager
 
         for ( int idx = 0; idx <= index; idx++ )
         {
-            updateListener( prepareRequest.getReleaseManagerListener(), preparePhases.get( idx ), PHASE_SKIP );
+            phaseSkip( prepareRequest.getReleaseManagerListener(), preparePhases.get( idx ) );
         }
 
         if ( index == preparePhases.size() - 1 )
@@ -212,7 +210,7 @@ public class DefaultReleaseManager
                 throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
             }
 
-            updateListener( prepareRequest.getReleaseManagerListener(), name, PHASE_START );
+            phaseStart( prepareRequest.getReleaseManagerListener(), name );
 
             ReleaseResult phaseResult = null;
             try
@@ -249,10 +247,10 @@ public class DefaultReleaseManager
                 throw new ReleaseExecutionException( "Error writing release properties after completing phase", e );
             }
 
-            updateListener( prepareRequest.getReleaseManagerListener(), name, PHASE_END );
+            phaseEnd( prepareRequest.getReleaseManagerListener() );
         }
 
-        updateListener( prepareRequest.getReleaseManagerListener(), "prepare", GOAL_END );
+        goalEnd( prepareRequest.getReleaseManagerListener() );
     }
 
     @Override
@@ -277,16 +275,16 @@ public class DefaultReleaseManager
                 throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
             }
 
-            updateListener( rollbackRequest.getReleaseManagerListener(), name, PHASE_START );
+            phaseStart( rollbackRequest.getReleaseManagerListener(), name );
             phase.execute( releaseDescriptor,
                            rollbackRequest.getReleaseEnvironment(),
                            rollbackRequest.getReactorProjects() );
-            updateListener( rollbackRequest.getReleaseManagerListener(), name, PHASE_END );
+            phaseEnd( rollbackRequest.getReleaseManagerListener() );
         }
 
         //call release:clean so that resume will not be possible anymore after a rollback
         clean( rollbackRequest );
-        updateListener( rollbackRequest.getReleaseManagerListener(), "rollback", GOAL_END );
+        goalEnd( rollbackRequest.getReleaseManagerListener() );
     }
 
     @Override
@@ -363,7 +361,7 @@ public class DefaultReleaseManager
                 throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
             }
 
-            updateListener( performRequest.getReleaseManagerListener(), name, PHASE_START );
+            phaseStart( performRequest.getReleaseManagerListener(), name );
 
             ReleaseResult phaseResult = null;
             try
@@ -389,7 +387,7 @@ public class DefaultReleaseManager
                 }
             }
 
-            updateListener( performRequest.getReleaseManagerListener(), name, PHASE_END );
+            phaseEnd( performRequest.getReleaseManagerListener() );
         }
 
         if ( BooleanUtils.isNotFalse( performRequest.getClean() ) )
@@ -398,7 +396,7 @@ public class DefaultReleaseManager
             clean( performRequest );
         }
 
-        updateListener( performRequest.getReleaseManagerListener(), "perform", GOAL_END );
+        goalEnd( performRequest.getReleaseManagerListener() );
     }
 
     @Override
@@ -445,7 +443,7 @@ public class DefaultReleaseManager
                 throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
             }
 
-            updateListener( branchRequest.getReleaseManagerListener(), name, PHASE_START );
+            phaseStart( branchRequest.getReleaseManagerListener(), name );
 
             if ( dryRun )
             {
@@ -459,7 +457,8 @@ public class DefaultReleaseManager
                                branchRequest.getReleaseEnvironment(),
                                branchRequest.getReactorProjects() );
             }
-            updateListener( branchRequest.getReleaseManagerListener(), name, PHASE_END );
+
+            phaseEnd( branchRequest.getReleaseManagerListener() );
         }
 
         if ( !dryRun )
@@ -467,7 +466,7 @@ public class DefaultReleaseManager
             clean( branchRequest );
         }
 
-        updateListener( branchRequest.getReleaseManagerListener(), "branch", GOAL_END );
+        goalEnd( branchRequest.getReleaseManagerListener() );
     }
 
     @Override
@@ -513,16 +512,16 @@ public class DefaultReleaseManager
                 throw new ReleaseExecutionException( "Unable to find phase '" + name + "' to execute" );
             }
 
-            updateListener( updateVersionsRequest.getReleaseManagerListener(), name, PHASE_START );
+            phaseStart( updateVersionsRequest.getReleaseManagerListener(), name );
             phase.execute( releaseDescriptor,
                            updateVersionsRequest.getReleaseEnvironment(),
                            updateVersionsRequest.getReactorProjects() );
-            updateListener( updateVersionsRequest.getReleaseManagerListener(), name, PHASE_END );
+            phaseEnd( updateVersionsRequest.getReleaseManagerListener() );
         }
 
         clean( updateVersionsRequest );
 
-        updateListener( updateVersionsRequest.getReleaseManagerListener(), "updateVersions", GOAL_END );
+        goalEnd( updateVersionsRequest.getReleaseManagerListener() );
     }
 
     /**
@@ -560,15 +559,10 @@ public class DefaultReleaseManager
     {
         try
         {
-            updateListener( listener, "verify-release-configuration", PHASE_START );
-            ReleaseDescriptorBuilder result = configStore.get().read( builder );
-            updateListener( listener, "verify-release-configuration", PHASE_END );
-            return result;
+            return configStore.get().read( builder );
         }
         catch ( ReleaseDescriptorStoreException e )
         {
-            updateListener( listener, e.getMessage(), ERROR );
-
             throw new ReleaseExecutionException( "Error reading stored configuration: " + e.getMessage(), e );
         }
     }
@@ -592,8 +586,6 @@ public class DefaultReleaseManager
     @Override
     public void clean( ReleaseCleanRequest cleanRequest ) throws ReleaseFailureException
     {
-        updateListener( cleanRequest.getReleaseManagerListener(), "cleanup", PHASE_START );
-
         logger.info( "Cleaning up after release..." );
 
         ReleaseDescriptor releaseDescriptor =
@@ -616,8 +608,6 @@ public class DefaultReleaseManager
                 ( (ResourceGenerator) phase ).clean( cleanRequest.getReactorProjects() );
             }
         }
-
-        updateListener( cleanRequest.getReleaseManagerListener(), "cleanup", PHASE_END );
     }
 
     void goalStart( ReleaseManagerListener listener, String goal, List<String> phases )
@@ -628,27 +618,43 @@ public class DefaultReleaseManager
         }
     }
 
-    void updateListener( ReleaseManagerListener listener, String name, int state )
+    void goalEnd( ReleaseManagerListener listener )
     {
         if ( listener != null )
         {
-            switch ( state )
-            {
-                case GOAL_END:
-                    listener.goalEnd();
-                    break;
-                case PHASE_SKIP:
-                    listener.phaseSkip( name );
-                    break;
-                case PHASE_START:
-                    listener.phaseStart( name );
-                    break;
-                case PHASE_END:
-                    listener.phaseEnd();
-                    break;
-                default:
-                    listener.error( name );
-            }
+            listener.goalEnd();
+        }
+    }
+
+    void phaseSkip( ReleaseManagerListener listener, String name )
+    {
+        if ( listener != null )
+        {
+            listener.phaseSkip( name );
+        }
+    }
+
+    void phaseStart( ReleaseManagerListener listener, String name )
+    {
+        if ( listener != null )
+        {
+            listener.phaseStart( name );
+        }
+    }
+
+    void phaseEnd( ReleaseManagerListener listener )
+    {
+        if ( listener != null )
+        {
+            listener.phaseEnd();
+        }
+    }
+
+    void error( ReleaseManagerListener listener, String name )
+    {
+        if ( listener != null )
+        {
+            listener.error( name );
         }
     }
 
@@ -726,7 +732,10 @@ public class DefaultReleaseManager
 
     private void captureException( ReleaseResult result, ReleaseManagerListener listener, Exception e )
     {
-        updateListener( listener, e.getMessage(), ERROR );
+        if ( listener != null )
+        {
+            listener.error( e.getMessage() );
+        }
 
         result.appendError( e );
 

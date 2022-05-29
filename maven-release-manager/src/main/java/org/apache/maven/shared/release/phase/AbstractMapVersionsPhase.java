@@ -41,6 +41,7 @@ import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
  * Map projects to their new versions after release / into the next development cycle.
@@ -308,9 +309,8 @@ public abstract class AbstractMapVersionsPhase
                     {
                         messageKey = getMapversionPromptKey( releaseDescriptor );
                     }
-                    String message =
-                            MessageFormat.format( resourceBundle.getString( messageKey ), project.getName(),
-                                    projectId );
+                    String message = MessageFormat.format( resourceBundle.getString( messageKey ), project.getName(),
+                                                           buffer().project( project.getArtifactId() ) );
                     nextVersion = prompter.prompt( message, suggestedVersion );
 
                     //@todo validate next version, maybe with DefaultArtifactVersion

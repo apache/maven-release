@@ -270,13 +270,19 @@ public class CheckoutProjectFromScm
     {
         ReleaseResult result = new ReleaseResult();
 
+        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        File checkoutDirectory =
+                        FileUtils.resolveFile( rootProject.getBasedir(), releaseDescriptor.getCheckoutDirectory() );
+
         if ( releaseDescriptor.isLocalCheckout() )
         {
-            logInfo( result, "This would be a LOCAL check out to perform the release ..." );
+            logInfo( result,
+                     "This would be a LOCAL check out to perform the release from " + checkoutDirectory + "..." );
         }
         else
         {
-            logInfo( result, "The project would be checked out to perform the release ..." );
+            logInfo( result,
+                     "The project would be checked out to perform the release from " + checkoutDirectory + "..." );
         }
 
         result.setResultCode( ReleaseResult.SUCCESS );

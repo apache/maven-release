@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.phase;
  */
 
 import java.io.File;
+import java.net.URI;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -64,6 +65,7 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 /**
  * Base class for rewriting phases.
@@ -199,9 +201,15 @@ public abstract class AbstractRewritePomsPhase
     {
         result.setStartTime( ( startTime >= 0 ) ? startTime : System.currentTimeMillis() );
 
+        URI root = ReleaseUtil.getRootProject( reactorProjects ).getBasedir().toURI();
+
         for ( MavenProject project : reactorProjects )
         {
-            logInfo( result, "Transforming '" + project.getName() + "'..." );
+            URI pom = project.getFile().toURI();
+            logInfo( result,
+                     "Transforming " + root.relativize( pom ).getPath() + ' '
+                         + buffer().project( project.getArtifactId() ) + " '" + project.getName() + "'"
+                         + ( simulate ? " with ." + getPomSuffix() + " suffix" : "" ) + "..." );
 
             transformProject( project, releaseDescriptor, releaseEnvironment, simulate, result );
         }

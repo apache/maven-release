@@ -23,6 +23,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
+
 import java.io.File;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +101,7 @@ public class RunPerformGoalsPhase
         {
             ReleaseResult result = new ReleaseResult();
 
-            logInfo( result, "Simulating perform goals '" + getGoals( releaseDescriptor )
+            logInfo( result, "Simulating perform goals '" + buffer().strong( getGoals( releaseDescriptor ) )
                 + "' - since this is simulation mode these goals are skipped." );
             logInfo( result, "    with additional arguments: " + additionalArguments );
 

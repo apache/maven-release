@@ -77,7 +77,7 @@ public class DefaultReleaseManagerListener
 
     public void goalStart( String goal, List<String> phases )
     {
-        log.info( "starting " + buffer().strong( goal ) + " goal" + ( dryRun ? " in dry-run mode" : "" )
+        log.info( "starting " + buffer().mojo( goal ) + " goal" + ( dryRun ? " in dry-run mode" : "" )
             + ", composed of " + phases.size() + " phases: " + StringUtils.join( phases.iterator(), ", " ) );
         currentPhase = -1;
         this.phases = phases;
@@ -86,16 +86,9 @@ public class DefaultReleaseManagerListener
 
     public void phaseStart( String name )
     {
-        if ( goal == null || ( ( currentPhase + 1 ) >= phases.size() ) )
-        {
-            // out of goal phase
-            log.info( "phase " + buffer().strong( name ) + ( dryRun ? " (dry-run)" : "" ) );
-            return;
-        }
-
         nextPhase( name );
-        log.info( buffer().strong( "[" + goal + ( dryRun ? " dry-run" : "" ) + "] " ).toString() + ( currentPhase + 1 )
-            + "/" + phases.size() + " " + buffer().strong( name ) );
+        log.info( ( currentPhase + 1 ) + "/" + phases.size() + ' ' + buffer().mojo( goal + ':' + name )
+            + ( dryRun ? " dry-run" : "" ) );
     }
 
     /**
