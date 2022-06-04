@@ -1,5 +1,8 @@
 package org.apache.maven.scm.provider.stub;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -36,9 +39,10 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 /**
  * A stub SCM provider used for the Maven Release Plugin when doing integration testing.
  * 
- * @plexus.component role="org.apache.maven.scm.provider.ScmProvider" role-hint="stub"
  * @author Benjamin Bentmann
  */
+@Singleton
+@Named( "stub" )
 public class StubScmProvider
     extends AbstractScmProvider
 {

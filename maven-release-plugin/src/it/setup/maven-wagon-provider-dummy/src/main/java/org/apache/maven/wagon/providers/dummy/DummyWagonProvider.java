@@ -22,6 +22,8 @@ package org.apache.maven.wagon.providers.dummy;
 import java.io.File;
 import java.util.List;
 
+import javax.inject.Named;
+
 import org.apache.maven.wagon.ConnectionException;
 import org.apache.maven.wagon.ResourceDoesNotExistException;
 import org.apache.maven.wagon.TransferFailedException;
@@ -39,9 +41,8 @@ import org.apache.maven.wagon.repository.Repository;
  * DummyWagonProvider which does absolutely nothing
  * 
  * @author Robert Scholte
- * 
- * @plexus.component role="org.apache.maven.wagon.Wagon" role-hint="dummy" instantiation-strategy="per-lookup"
  */
+@Named( "dummy" )
 public class DummyWagonProvider implements Wagon
 {
 

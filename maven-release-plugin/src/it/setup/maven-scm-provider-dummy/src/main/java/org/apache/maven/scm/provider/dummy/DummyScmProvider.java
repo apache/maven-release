@@ -1,5 +1,8 @@
 package org.apache.maven.scm.provider.dummy;
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -31,9 +34,10 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
  * A dummy SCM provider used to bypass the {@code ScmCheckModificationsPhase} of the Release Plugin when doing a dry run
  * for integration testing.
  * 
- * @plexus.component role="org.apache.maven.scm.provider.ScmProvider" role-hint="dummy"
  * @author Benjamin Bentmann
  */
+@Singleton
+@Named( "dummy" )
 public class DummyScmProvider
     extends AbstractScmProvider
 {

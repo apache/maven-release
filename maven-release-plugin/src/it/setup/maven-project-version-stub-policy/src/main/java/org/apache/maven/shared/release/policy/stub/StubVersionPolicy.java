@@ -19,15 +19,18 @@ package org.apache.maven.shared.release.policy.stub;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
-import org.codehaus.plexus.component.annotations.Component;
 
 /**
  * A {@link VersionPolicy} implementation that switches continously between shapsnot and release version.
  */
-@Component( role = VersionPolicy.class, hint = "StubVersionPolicy" )
+@Singleton
+@Named( "StubVersionPolicy" )
 public final class StubVersionPolicy
     implements VersionPolicy
 {

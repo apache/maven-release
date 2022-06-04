@@ -190,34 +190,6 @@
           </models>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <version>@plexusMavenPluginVersion@</version>
-        <executions>
-          <execution>
-            <id>create-component-descriptor</id>
-            <phase>generate-resources</phase>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-          <execution>
-            <id>merge</id>
-            <configuration>
-              <output>${project.build.outputDirectory}/META-INF/plexus/components.xml</output>
-              <descriptors>
-                <descriptor>${project.build.outputDirectory}/META-INF/plexus/components.xml</descriptor>
-                <descriptor>src/main/components-fragment.xml</descriptor>
-              </descriptors>
-            </configuration>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>merge-descriptors</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 </project>

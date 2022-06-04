@@ -19,13 +19,15 @@ package org.apache.maven.shared.release.policy.stub;
  * under the License.
  */
 
+import javax.inject.Named;
+import javax.inject.Singleton;
+
 import org.apache.maven.shared.release.policy.naming.NamingPolicy;
 import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
 import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
 
-import org.codehaus.plexus.component.annotations.Component;
-
-@Component( role = NamingPolicy.class, hint = "StubNamingPolicy" )
+@Singleton
+@Named( "StubNamingPolicy" )
 public final class StubNamingPolicy
     implements NamingPolicy
 {

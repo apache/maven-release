@@ -36,6 +36,11 @@
       <artifactId>maven-scm-api</artifactId>
       <version>@scmVersion@</version>
     </dependency>
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
+      <version>1</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -49,13 +54,14 @@
         </configuration>
       </plugin>
       <plugin>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-maven-plugin</artifactId>
-        <version>@plexusMavenPluginVersion@</version>
+        <groupId>org.eclipse.sisu</groupId>
+        <artifactId>sisu-maven-plugin</artifactId>
+        <version>@sisuVersion@</version>
         <executions>
           <execution>
+            <id>index-project</id>
             <goals>
-              <goal>descriptor</goal>
+              <goal>main-index</goal>
             </goals>
           </execution>
         </executions>
