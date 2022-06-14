@@ -941,6 +941,10 @@
         {
             return false;
         }
+        if ( !java.util.Objects.equals( scmShallowClone, that.isScmShallowClone() ) )
+        {
+            return false;
+        }
         if ( !java.util.Objects.equals( scmReleaseCommitComment, that.getScmReleaseCommitComment() ) )
         {
             return false;
@@ -1087,6 +1091,7 @@
         result = 29 * result + java.util.Objects.hashCode( pomFileName );
         result = 29 * result + java.util.Objects.hashCode( checkModificationExcludes );
         result = 29 * result + java.util.Objects.hashCode( scmDevelopmentCommitComment );
+        result = 29 * result + java.util.Objects.hashCode( scmShallowClone );
         result = 29 * result + java.util.Objects.hashCode( scmReleaseCommitComment );
         result = 29 * result + java.util.Objects.hashCode( scmBranchCommitComment );
         result = 29 * result + java.util.Objects.hashCode( scmRollbackCommitComment );

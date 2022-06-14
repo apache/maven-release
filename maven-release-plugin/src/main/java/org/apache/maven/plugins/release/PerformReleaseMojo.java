@@ -101,6 +101,12 @@ public class PerformReleaseMojo
     private String password;
 
     /**
+     * When cloning a repository if it should be a shallow clone or a full clone.
+     */
+    @Parameter( defaultValue = "true", property = "scmShallowClone" )
+    private boolean scmShallowClone = true;
+
+    /**
      * Whether to use the default release profile (Maven 2 and 3) that adds sources and javadocs to the released
      * artifact, if appropriate. If set to true, the release plugin sets the property "<code>performRelease</code>" to
      * true, which activates the profile "<code>release-profile</code>" as inherited from
@@ -182,6 +188,8 @@ public class PerformReleaseMojo
             {
                 releaseDescriptor.setScmPassword( password );
             }
+
+            releaseDescriptor.setScmShallowClone( scmShallowClone );
 
             releaseDescriptor.setLocalCheckout( localCheckout );
 
