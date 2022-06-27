@@ -94,7 +94,7 @@
     <javaVersion>8</javaVersion>
     <mavenVersion>3.2.5</mavenVersion>
     <resolverVersion>1.0.0.v20140518</resolverVersion>
-    <wagonVersion>3.5.1</wagonVersion>
+    <wagonVersion>3.5.2</wagonVersion>
     <surefire.version>3.0.0-M6</surefire.version>
     <slf4jVersion>1.7.36</slf4jVersion>
     <junitVersion>4.13.2</junitVersion>
