@@ -38,7 +38,7 @@ import org.apache.maven.scm.repository.ScmRepositoryException;
 
 /**
  * A stub SCM provider used for the Maven Release Plugin when doing integration testing.
- * 
+ *
  * @author Benjamin Bentmann
  */
 @Singleton
@@ -62,8 +62,6 @@ public class StubScmProvider
                                         CommandParameters parameters )
         throws ScmException
     {
-        command.setLogger( getLogger() );
-
         return command.execute( repository, fileSet, parameters );
     }
 

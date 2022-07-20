@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * A dummy tag command.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class StubTagCommand
@@ -61,7 +61,7 @@ class StubTagCommand
             String tagName = parameters.getString( CommandParameter.TAG_NAME );
             File tagRoot = new File( stubRepo.getTagBase(), tagName );
 
-            getLogger().info( "Tagging: " + repoRoot + " > " + tagRoot );
+            logger.info( "Tagging: " + repoRoot + " > " + tagRoot );
 
             if ( tagRoot.exists() )
             {
@@ -80,7 +80,7 @@ class StubTagCommand
                 File srcFile = new File( repoRoot, path );
                 File dstFile = new File( tagRoot, path );
 
-                getLogger().info( "  " + path );
+                logger.info( "  " + path );
 
                 if ( srcFile.isDirectory() )
                 {

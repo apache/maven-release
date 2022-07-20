@@ -42,7 +42,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * A dummy check-out command.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class StubCheckOutCommand
@@ -75,7 +75,7 @@ class StubCheckOutCommand
                 revRoot = stubRepo.getRoot();
             }
 
-            getLogger().info( "Checking out: " + revRoot + " > " + workingCopyRoot );
+            logger.info( "Checking out: " + revRoot + " > " + workingCopyRoot );
 
             if ( workingCopyRoot.isFile() )
             {
@@ -100,7 +100,7 @@ class StubCheckOutCommand
                 File srcFile = new File( revRoot, path );
                 File dstFile = new File( workingCopyRoot, path );
 
-                getLogger().info( "  " + path );
+                logger.info( "  " + path );
 
                 if ( srcFile.isDirectory() )
                 {

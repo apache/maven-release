@@ -38,7 +38,7 @@ import org.codehaus.plexus.util.FileUtils;
 
 /**
  * A dummy check-in command.
- * 
+ *
  * @author Benjamin Bentmann
  */
 class StubCheckInCommand
@@ -58,7 +58,7 @@ class StubCheckInCommand
             File workingCopyRoot = stubRepo.getWorkingCopyRoot( fileSet );
             File repoRoot = stubRepo.getRoot();
 
-            getLogger().info( "Committing: " + workingCopyRoot + " > " + repoRoot );
+            logger.info( "Committing: " + workingCopyRoot + " > " + repoRoot );
 
             List paths = stubRepo.getPaths( workingCopyRoot, fileSet );
 
@@ -68,7 +68,7 @@ class StubCheckInCommand
                 File srcFile = new File( workingCopyRoot, path );
                 File dstFile = new File( repoRoot, path );
 
-                getLogger().info( "  " + path );
+                logger.info( "  " + path );
 
                 if ( dstFile.isDirectory() )
                 {
