@@ -41,6 +41,11 @@
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.release</groupId>
+      <artifactId>maven-release-api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.maven.release</groupId>
       <artifactId>maven-release-manager</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -65,16 +70,16 @@
       <artifactId>maven-settings</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.maven</groupId>
+      <artifactId>maven-artifact</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-utils</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.jdom</groupId>
-      <artifactId>jdom2</artifactId>
     </dependency>
 
     <!-- verified with ITs -->
@@ -112,6 +117,11 @@
       <version>3.3.0</version>
       <scope>test</scope>
     </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-simple</artifactId>
+        <scope>test</scope>
+      </dependency>
   </dependencies>
 
   <build>

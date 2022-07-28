@@ -30,7 +30,7 @@
 
   <name>Maven Release APIs</name>
   <description>APIs to implement to extend maven-release-plugin.</description>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -54,14 +54,22 @@
     </dependency>
     <dependency>
       <groupId>org.eclipse.aether</groupId>
+      <artifactId>aether-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.aether</groupId>
       <artifactId>aether-util</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-utils</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
