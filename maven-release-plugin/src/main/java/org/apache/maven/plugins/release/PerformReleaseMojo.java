@@ -20,14 +20,11 @@ package org.apache.maven.plugins.release;
  */
 
 import java.io.File;
-import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -46,7 +43,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 @Mojo( name = "perform", aggregator = true, requiresProject = false )
 public class PerformReleaseMojo
-    extends AbstractReleaseMojo
+    extends AbstractScmReleaseMojo
 {
     /**
      * A space separated list of goals to execute on release perform. Default value is either <code>deploy</code> or
@@ -89,18 +86,6 @@ public class PerformReleaseMojo
     private boolean localCheckout;
 
     /**
-     * The SCM username to use.
-     */
-    @Parameter( property = "username" )
-    private String username;
-
-    /**
-     * The SCM password to use.
-     */
-    @Parameter( property = "password" )
-    private String password;
-
-    /**
      * When cloning a repository if it should be a shallow clone or a full clone.
      */
     @Parameter( defaultValue = "true", property = "scmShallowClone" )
@@ -125,23 +110,6 @@ public class PerformReleaseMojo
     @Parameter( defaultValue = "false", property = "dryRun" )
     private boolean dryRun;
 
-    /**
-     * Add a new or overwrite the default implementation per provider.
-     * The key is the scm prefix and the value is the role hint of the
-     * {@link org.apache.maven.scm.provider.ScmProvider}.
-     *
-     * @since 2.5.3
-     * @see ScmManager#setScmProviderImplementation(String, String)
-     */
-    @Parameter
-    private Map<String, String> providerImplementations;
-
-    /**
-     * The SCM manager.
-     */
-    @Component
-    private ScmManager scmManager;
-
     @Override
     protected String getAdditionalProfiles()
     {
@@ -152,15 +120,7 @@ public class PerformReleaseMojo
     public void execute()
         throws MojoExecutionException, MojoFailureException
     {
-        if ( providerImplementations != null )
-        {
-            for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
-            {
-                getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
-                    + providerEntry.getValue() + "'." );
-                scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
-            }
-        }
+        super.execute();
 
         // goals may be splitted into multiple line in configuration.
         // Let's build a single line command
@@ -177,16 +137,6 @@ public class PerformReleaseMojo
             if ( connectionUrl != null )
             {
                 releaseDescriptor.setScmSourceUrl( connectionUrl );
-            }
-
-            if ( username != null )
-            {
-                releaseDescriptor.setScmUsername( username );
-            }
-
-            if ( password != null )
-            {
-                releaseDescriptor.setScmPassword( password );
             }
 
             releaseDescriptor.setScmShallowClone( scmShallowClone );
