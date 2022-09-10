@@ -54,6 +54,11 @@ public class PerformReleaseMojoTest
 {
     private File workingDirectory;
 
+    private static void assertTag(ArgumentCaptor<ReleasePerformRequest> argument) {
+        assertEquals( "test-tag", argument.getValue().getReleaseDescriptorBuilder().
+                build().getScmReleaseLabel() );
+    }
+
     public void testPerform()
         throws Exception
     {
@@ -67,7 +72,7 @@ public class PerformReleaseMojoTest
 
         ReleaseManager mock = mock( ReleaseManager.class );
         mojo.setReleaseManager( mock );
-        
+
         // execute
         mojo.execute();
         
@@ -78,6 +83,8 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertNotNull( argument.getValue().getReleaseDescriptorBuilder() );
+        assertTag( argument );
         verifyNoMoreInteractions( mock );
     }
 
@@ -85,6 +92,9 @@ public class PerformReleaseMojoTest
         throws Exception
     {
         PerformReleaseMojo mojo = getMojoWithProjectSite( "perform-with-flat-structure.xml" );
+
+        MavenProject project = (MavenProject) getVariableValueFromObject( mojo, "project" );
+        setVariableValueToObject( mojo, "session", newMavenSession( project ) );
 
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder( mojo );
         builder.setWorkingDirectory( workingDirectory.getAbsolutePath() );
@@ -106,6 +116,7 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertTag( argument );
         verifyNoMoreInteractions( mock );
     }
 
@@ -141,6 +152,7 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertTag( argument );
         verifyNoMoreInteractions( mock );
     }
 
@@ -195,6 +207,7 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertTag( argument );
 
         verifyNoMoreInteractions( mock );
     }
@@ -235,6 +248,7 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertTag( argument );
 
         verifyNoMoreInteractions( mock );
     }
@@ -264,6 +278,7 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertTag( argument );
 
         verifyNoMoreInteractions( mock );
     }
@@ -302,6 +317,7 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertTag( argument );
 
         verifyNoMoreInteractions( mock );
     }
@@ -340,6 +356,7 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertTag( argument );
 
         verifyNoMoreInteractions( mock );
     }
@@ -368,6 +385,7 @@ public class PerformReleaseMojoTest
         assertNotNull( argument.getValue().getReleaseEnvironment()  );
         assertNotNull( argument.getValue().getReactorProjects() );
         assertEquals( Boolean.FALSE, argument.getValue().getDryRun() );
+        assertTag( argument );
 
         verifyNoMoreInteractions( mock );
     }

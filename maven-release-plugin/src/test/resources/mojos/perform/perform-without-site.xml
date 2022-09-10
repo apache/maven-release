@@ -32,6 +32,7 @@
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
 		  <goals>deploy</goals>
           <useReleaseProfile>true</useReleaseProfile>
+          <tag>test-tag</tag>
         </configuration>
       </plugin>
     </plugins>

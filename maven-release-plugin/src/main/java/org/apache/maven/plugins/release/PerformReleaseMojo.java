@@ -46,7 +46,7 @@ import org.codehaus.plexus.util.StringUtils;
  */
 @Mojo( name = "perform", aggregator = true, requiresProject = false )
 public class PerformReleaseMojo
-    extends AbstractReleaseMojo
+    extends AbstractScmReleaseMojo
 {
     /**
      * A space separated list of goals to execute on release perform. Default value is either <code>deploy</code> or

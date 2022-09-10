@@ -31,6 +31,7 @@
           </reactorProjects>
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
+          <tag>test-tag</tag>
 		  <goals>deploy site-deploy</goals>		  
           <arguments>-Dmaven.test.skip=true</arguments>
         </configuration>
