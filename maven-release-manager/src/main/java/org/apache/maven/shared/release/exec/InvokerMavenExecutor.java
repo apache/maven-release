@@ -72,6 +72,8 @@ public class InvokerMavenExecutor
         InvocationRequest req = new DefaultInvocationRequest()
                 .setDebug( getLogger().isDebugEnabled() )
                 .setBaseDirectory( workingDirectory )
+                // fix for MRELEASE-1105
+                //.addShellEnvironment( "MAVEN_DEBUG_OPTS", "" )
                 .setBatchMode( true )
                 .setOutputHandler( getLogger()::info )
                 .setErrorHandler( getLogger()::error );

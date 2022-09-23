@@ -223,6 +223,7 @@
                 <pomInclude>projects/branch/*/pom.xml</pomInclude>
                 <pomInclude>projects/perform/*/pom.xml</pomInclude>
                 <pomInclude>projects/update-versions/*/pom.xml</pomInclude>
+                <pomInclude>projects/stage/*/pom.xml</pomInclude>
               </pomIncludes>
               <pomExcludes>
                 <pomExclude>projects/prepare/MRELEASE-966/pom.xml</pomExclude>

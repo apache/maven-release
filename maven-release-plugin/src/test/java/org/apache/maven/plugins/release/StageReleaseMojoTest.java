@@ -88,6 +88,16 @@ public class StageReleaseMojoTest
         assertEquals( "deploy site:stage-deploy", mojo.goals );
     }
 
+    public void testCreateArguments()
+            throws Exception
+    {
+        StageReleaseMojo mojo = getMojoWithProjectSite( "stage.xml" );
+        mojo.setDeploymentRepository();
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor = mojo.createReleaseDescriptor().build();
+        assertEquals( "-DskipTests -DaltDeploymentRepository=\"staging\"", releaseDescriptor.getAdditionalArguments() );
+    }
+
+
     private StageReleaseMojo getMojoWithProjectSite( String fileName )
         throws Exception
     {
