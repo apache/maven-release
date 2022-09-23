@@ -110,6 +110,9 @@ public class ForkedMavenExecutor
 
             cl.setWorkingDirectory( workingDirectory.getAbsolutePath() );
 
+            // FIX for MRELEASE-1105
+            //cl.addEnvironment( "MAVEN_DEBUG_OPTS", "" );
+
             cl.addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
 
             if ( settingsFile != null )

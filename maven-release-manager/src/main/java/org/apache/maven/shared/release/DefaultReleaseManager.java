@@ -322,6 +322,12 @@ public class DefaultReleaseManager
     private void perform( ReleasePerformRequest performRequest, ReleaseResult result )
         throws ReleaseExecutionException, ReleaseFailureException
     {
+
+        // https://issues.apache.org/jira/browse/MRELEASE-1104 because stageRepository is an additional arg
+        // and only adding at perform stage it's not available during prepare and so not save the not available
+        // when reloading. save this then change again after load
+        String additionalArguments = performRequest.getReleaseDescriptorBuilder().build().getAdditionalArguments();
+
         List<String> specificProfiles =
             ReleaseUtils.buildReleaseDescriptor( performRequest.getReleaseDescriptorBuilder() )
             .getActivateProfiles();
@@ -329,6 +335,9 @@ public class DefaultReleaseManager
         ReleaseDescriptorBuilder builder =
             loadReleaseDescriptorBuilder( performRequest.getReleaseDescriptorBuilder(),
                                           performRequest.getReleaseManagerListener() );
+
+
+        builder.setAdditionalArguments( additionalArguments );
 
         if ( specificProfiles != null && !specificProfiles.isEmpty() )
         {
