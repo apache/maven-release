@@ -96,7 +96,7 @@
     <resolverVersion>1.0.0.v20140518</resolverVersion>
     <wagonVersion>3.5.1</wagonVersion>
     <surefire.version>3.0.0-M6</surefire.version>
-    <slf4jVersion>1.7.36</slf4jVersion>
+    <slf4jVersion>2.0.3</slf4jVersion>
     <junitVersion>4.13.2</junitVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
     <project.build.outputTimestamp>2022-06-05T07:11:30Z</project.build.outputTimestamp>
