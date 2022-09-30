@@ -387,10 +387,7 @@ public class PrepareReleaseMojo
         config.setScmReleaseCommitComment( scmReleaseCommitComment );
         config.setAutoResolveSnapshots( autoResolveSnapshots );
         config.setPinExternals( pinExternals );
-        if ( generateReleasePoms )
-        {
-            config.setLineSeparator( resolveLineSeparator() );
-        }
+        config.setLineSeparator( resolveLineSeparator() );
 
         if ( checkModificationExcludeList != null )
         {

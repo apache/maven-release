@@ -50,6 +50,7 @@ import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -72,6 +73,7 @@ public class PrepareReleaseMojoTest
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         final PrepareReleaseMojo mojo = spy((PrepareReleaseMojo) lookupMojo( "prepare", testFile ));
+        mojo.getProject().setFile(testFile);
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.setPomFileName( "pom.xml" );
@@ -127,6 +129,7 @@ public class PrepareReleaseMojoTest
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        mojo.getProject().setFile(testFile);
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.setPomFileName( "pom.xml" );
@@ -169,6 +172,7 @@ public class PrepareReleaseMojoTest
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        mojo.getProject().setFile(testFile);
         setDefaults( mojo );
         mojo.setBasedir( testFile.getParentFile() );
         mojo.setPomFileName( "pom.xml" );
@@ -211,6 +215,7 @@ public class PrepareReleaseMojoTest
     {
         File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
         final PrepareWithPomReleaseMojo mojo = (PrepareWithPomReleaseMojo) lookupMojo( "prepare-with-pom", testFile );
+        mojo.getProject().setFile(testFile);
         setDefaults( mojo );
         setVariableValueToObject( mojo, "generateReleasePoms", Boolean.TRUE );
         mojo.setBasedir( testFile.getParentFile() );
@@ -242,7 +247,43 @@ public class PrepareReleaseMojoTest
         testLineSeparator("system", System.lineSeparator(), mojo, mock, times++);
     }
 
-    private void testLineSeparator( String lineSeparator, String expected, PrepareWithPomReleaseMojo mojo,
+    public void testLineSeparatorInPrepare()
+      throws Exception
+    {
+        File testFile = getTestFile( "target/test-classes/mojos/prepare/prepare.xml" );
+        final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo( "prepare", testFile );
+        mojo.getProject().setFile(testFile);
+        setDefaults( mojo );
+        mojo.setBasedir( testFile.getParentFile() );
+        mojo.setPomFileName( "pom.xml" );
+        mojo.project.setFile( testFile );
+        mojo.session = new MavenSession( null, null, null, null, null, null, null, null, null )
+        {
+            public Properties getExecutionProperties()
+            {
+                return new Properties();
+            };
+
+            @Override
+            public List<MavenProject> getProjects()
+            {
+                return Collections.singletonList( mojo.project );
+            }
+        };
+
+        ReleaseManager mock = mock( ReleaseManager.class );
+        mojo.setReleaseManager( mock );
+
+        int times = 1;
+        testLineSeparator(null, "\n", mojo, mock, times++);
+        testLineSeparator("source", "\n", mojo, mock, times++);
+        testLineSeparator("cr", "\r", mojo, mock, times++);
+        testLineSeparator("lf", "\n", mojo, mock, times++);
+        testLineSeparator("crlf", "\r\n", mojo, mock, times++);
+        testLineSeparator("system", System.lineSeparator(), mojo, mock, times++);
+    }
+
+    private void testLineSeparator( String lineSeparator, String expected, PrepareReleaseMojo mojo,
                                    ReleaseManager releaseManager, int times )
       throws Exception
     {
