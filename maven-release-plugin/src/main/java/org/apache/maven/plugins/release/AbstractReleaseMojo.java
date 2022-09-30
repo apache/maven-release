@@ -258,6 +258,14 @@ public abstract class AbstractReleaseMojo
     }
 
     /**
+     * only used for unit tests in which some required values of the project would be null
+     */
+    protected MavenProject getProject()
+    {
+        return this.project;
+    }
+
+    /**
      * Gets the list of projects in the build reactor.
      *
      * @return The list of reactor project, never <code>null</code>.
