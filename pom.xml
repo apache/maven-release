@@ -30,7 +30,7 @@
 
   <groupId>org.apache.maven.release</groupId>
   <artifactId>maven-release</artifactId>
-  <version>3.0.0-M7</version>
+  <version>3.0.0-M8-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Maven Release</name>
@@ -99,7 +99,7 @@
     <slf4jVersion>1.7.36</slf4jVersion>
     <junitVersion>4.13.2</junitVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
-    <project.build.outputTimestamp>2022-10-29T17:18:54Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2022-10-29T17:22:03Z</project.build.outputTimestamp>
 
     <mavenCompilerPluginVersion>3.10.1</mavenCompilerPluginVersion>
     <mavenInvokerPluginVersion>3.2.2</mavenInvokerPluginVersion>
