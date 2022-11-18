@@ -26,6 +26,7 @@ import javax.inject.Singleton;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -89,7 +90,7 @@ public class InvokerMavenExecutor
             // Have to serialize to a file as if Maven is embedded, there may not actually be a settings.xml on disk
             try
             {
-                settingsFile = File.createTempFile( "release-settings", ".xml" );
+                settingsFile = Files.createTempFile( "release-settings", ".xml" ).toFile();
                 SettingsXpp3Writer writer = getSettingsWriter();
 
                 try ( FileWriter fileWriter = new FileWriter( settingsFile ) )

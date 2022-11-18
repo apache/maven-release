@@ -28,6 +28,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
@@ -89,7 +90,7 @@ public class ForkedMavenExecutor
             // Have to serialize to a file as if Maven is embedded, there may not actually be a settings.xml on disk
             try
             {
-                settingsFile = File.createTempFile( "release-settings", ".xml" );
+                settingsFile = Files.createTempFile( "release-settings", ".xml" ).toFile();
                 SettingsXpp3Writer writer = getSettingsWriter();
 
                 try ( FileWriter fileWriter = new FileWriter( settingsFile ) )
