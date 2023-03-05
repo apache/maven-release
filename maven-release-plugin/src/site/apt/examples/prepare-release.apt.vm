@@ -34,7 +34,7 @@ Prepare a Release
 
    * Check that there are no SNAPSHOT dependencies
 
-   * Change the version in the POMs from x-SNAPSHOT to a new version (you will be prompted for the versions to use)
+   * Change the version in the POMs from x-SNAPSHOT to a new release version (you will be prompted for the versions to use, with a default value proposed by version policy configured as <<<projectVersionPolicyId>>>)
 
    * Transform the SCM information in the POM to include the final destination of the tag
 
@@ -44,7 +44,7 @@ Prepare a Release
 
    * Tag the code in the SCM with a version name (this will be prompted for)
 
-   * Bump the version in the POMs to a new value y-SNAPSHOT (these values will also be prompted for)
+   * Bump the version in the POMs to a new value y-SNAPSHOT (these values will also be prompted for, with a default value proposed by version policy configured as <<<projectVersionPolicyId>>>)
 
    * Eventually run completion goal(s) against the project (since 2.2) 
 
@@ -144,3 +144,18 @@ mvn release:prepare-with-pom
     []
 
   The <<<project.>>> prefix is optional and may be omitted.
+
+* Overriding the release and next development versions proposed by default
+
+  By default, the proposed release version is the current version without <<<-SNAPSHOT>>>, and the proposed next development version is a minor increment
+  to the release with <<<-SNAPSHOT>>>.
+
+  The proposed values policy can be configured by {{{/prepare-mojo.html#projectVersionPolicyId}<<<projectVersionPolicyId>>> parameter}}.
+
+  Maven Release Plugin provides 2 alternate policies:
+
+    * <<<OddEvenVersionPolicy>>>: even version numbers for releases, and odd version numbers for development (see {{{../../maven-release-policies/maven-release-oddeven-policy/apidocs/org/apache/maven/shared/release/policy/oddeven/OddEvenVersionPolicy.html}javadoc}}),
+
+    * <<<SemVerVersionPolicy>>>: increase minor element when resolving the development version (see {{{../../maven-release-policies/maven-release-semver-policy/apidocs/org/apache/maven/shared/release/policy/semver/SemVerVersionPolicy.html}javadoc}}).
+
+    []
