@@ -44,15 +44,14 @@ under the License.
         <item name="release:help" href="help-mojo.html"/>
       </item>
       <item name="Usage" href="usage.html" collapse="false">
-        <item name="Prepare a Release" href="examples/prepare-release.html"/>
-        <item name="Perform a Release" href="examples/perform-release.html"/>
-        <item name="Generate Release POMs" href="examples/generate-release-poms.html"/>
-        <item name="Rollback a Release" href="examples/rollback-release.html"/>
-        <item name="Clean a Release" href="examples/clean-release.html"/>
-        <item name="Create a Branch" href="examples/branch.html"/>
-        <item name="Non-interactive Release" href="examples/non-interactive-release.html"/>
-        <item name="Update POM Versions" href="examples/update-versions.html"/>
-      <item name="Run Additional Goals Before Commit" href="examples/run-goals-before-commit.html"/>
+        <item name="Non-interactive Release" href="usage/non-interactive-release.html"/>
+        <item name="Prepare a Release" href="usage/prepare-release.html"/>
+        <item name="Perform a Release" href="usage/perform-release.html"/>
+        <item name="Generate Release POMs" href="usage/generate-release-poms.html"/>
+        <item name="Rollback a Release" href="usage/rollback-release.html"/>
+        <item name="Clean a Release" href="usage/clean-release.html"/>
+        <item name="Create a Branch" href="usage/branch.html"/>
+        <item name="Update POM Versions" href="usage/update-versions.html"/>
       </item>
       <item name="Migrate" href="migrate.html"/>
       <item name="FAQ" href="faq.html"/>
@@ -61,6 +60,7 @@ under the License.
       <item name="Download" href="../download.html"/>
     </menu>
     <menu name="Examples">
+      <item name="Run Additional Goals Before Commit" href="examples/run-goals-before-commit.html"/>
       <item name="Lock Files During Release" href="examples/lock-files.html"/>
     </menu>
   </body>

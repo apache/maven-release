@@ -25,6 +25,11 @@
 
 Clean a Release
 
+  {{{../clean-mojo.html}<<<release:clean>>> goal}} cleans up after a release preparation.
+  This is done automatically after a successful <<<release:perform>>>, so is best served for cleaning up a failed or abandoned release, or a dry run.
+
+  Note that only the working copy is cleaned up, no previous steps are rolled back in SCM.
+
   Cleaning a release goes through the following release phases:
 
   * Delete the release descriptor (<<<release.properties>>>)

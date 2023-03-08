@@ -32,8 +32,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 /**
  * Rollback changes made by a previous release. This requires that the previous release descriptor
  * <code>release.properties</code> is still available in the local working copy. For more info see <a
- * href="https://maven.apache.org/plugins/maven-release-plugin/examples/rollback-release.html"
- * >https://maven.apache.org/plugins/maven-release-plugin/examples/rollback-release.html</a>.
+ * href="https://maven.apache.org/plugins/maven-release-plugin/usage/rollback-release.html"
+ * >https://maven.apache.org/plugins/maven-release-plugin/usage/rollback-release.html</a>.
  *
  * @since 2.0-beta-5
  * @author Edwin Punzalan

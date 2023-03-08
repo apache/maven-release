@@ -28,6 +28,9 @@
 
 Prepare a Release
 
+  {{{../prepare-mojo.html}<<<release:prepare>>> goal}} ensures the project is ready to be released and then prepares SCM to eventually contain a tagged version of the release.
+  This is expected to be followed by a call to {{{./perform-release.html}<<<release:perform>>>}}.
+
   Preparing a release goes through the following release phases {{{../../maven-release-manager/#prepare}by default}}:
 
    * Check that there are no uncommitted changes in the sources

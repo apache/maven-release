@@ -39,8 +39,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * Prepare for a release in SCM. Steps through several phases to ensure the POM is ready to be released and then
  * prepares SCM to eventually contain a tagged version of the release and a record in the local copy of the parameters
  * used. This can be followed by a call to <code>release:perform</code>. For more info see <a
- * href="https://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html"
- * >https://maven.apache.org/plugins/maven-release-plugin/examples/prepare-release.html</a>.
+ * href="https://maven.apache.org/plugins/maven-release-plugin/usage/prepare-release.html"
+ * >https://maven.apache.org/plugins/maven-release-plugin/usage/prepare-release.html</a>.
  *
  * @author <a href="mailto:jdcasey@apache.org">John Casey</a>
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
