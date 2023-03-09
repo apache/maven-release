@@ -72,7 +72,9 @@ Usage
 * Do a Dry Run
 
   Since the Release Plugin performs a number of operations that change the project, it may be wise to do a dry run
-  before a big release or on a new project. To do this, commit all of your files as if you were about to run a full
+  before a big release or on a new project.
+
+  To do this, commit all of your files as if you were about to run a full
   release and run:
 
 ------

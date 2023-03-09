@@ -29,7 +29,8 @@ import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
 
 /**
- * <p>DefaultVersionPolicy class.</p>
+ * Default version policy: proposed release version just removes {@code -SNAPSHOT},
+ * next development version adds a minor increment to release and adds {@code -SNAPSHOT}.
  *
  * @author Robert Scholte
  */

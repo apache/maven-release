@@ -25,6 +25,8 @@
 
 Create a Branch
 
+  {{{../branch-mojo.html}<<<release:branch>>> goal}} branches a project in SCM, using the same steps as the {{{./prepare-release.html}<<<release:prepare>>> goal}}, creating a branch instead of a tag.
+
   Creating a branch involves the following release phases {{{../../maven-release-manager/#branch}by default}}:
 
    * Check that there are no uncommitted changes in the sources

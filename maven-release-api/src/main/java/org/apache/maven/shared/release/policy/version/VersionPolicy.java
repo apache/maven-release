@@ -23,7 +23,7 @@ import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.versions.VersionParseException;
 
 /**
- * API for next version calculations, used by maven-release-plugin to suggest release and next develoment versions.
+ * API for next version calculations, used by maven-release-plugin to suggest release and next development versions.
  *
  * @since 2.5.1 (MRELEASE-431)
  */

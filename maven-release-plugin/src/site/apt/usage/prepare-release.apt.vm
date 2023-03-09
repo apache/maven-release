@@ -28,13 +28,16 @@
 
 Prepare a Release
 
+  {{{../prepare-mojo.html}<<<release:prepare>>> goal}} ensures the project is ready to be released and then prepares SCM to eventually contain a tagged version of the release.
+  This is expected to be followed by a call to {{{./perform-release.html}<<<release:perform>>>}}.
+
   Preparing a release goes through the following release phases {{{../../maven-release-manager/#prepare}by default}}:
 
    * Check that there are no uncommitted changes in the sources
 
    * Check that there are no SNAPSHOT dependencies
 
-   * Change the version in the POMs from x-SNAPSHOT to a new version (you will be prompted for the versions to use)
+   * Change the version in the POMs from x-SNAPSHOT to a new release version (you will be prompted for the versions to use, with a default value proposed by version policy configured as <<<projectVersionPolicyId>>>)
 
    * Transform the SCM information in the POM to include the final destination of the tag
 
@@ -44,7 +47,7 @@ Prepare a Release
 
    * Tag the code in the SCM with a version name (this will be prompted for)
 
-   * Bump the version in the POMs to a new value y-SNAPSHOT (these values will also be prompted for)
+   * Bump the version in the POMs to a new value y-SNAPSHOT (these values will also be prompted for, with a default value proposed by version policy configured as <<<projectVersionPolicyId>>>)
 
    * Eventually run completion goal(s) against the project (since 2.2) 
 
@@ -144,3 +147,43 @@ mvn release:prepare-with-pom
     []
 
   The <<<project.>>> prefix is optional and may be omitted.
+
+* Overriding proposed release and next development versions
+
+  The Release Plugin automatically calculates the versions that are proposed for the release and the next development version (i.e. the next SNAPSHOT).
+
+  The default VersionPolicy compares and increments versions for a common java versioning scheme:
+  the proposed release version is the current version without <<<-SNAPSHOT>>>,
+  and the proposed next development version is a minor increment to the release with <<<-SNAPSHOT>>>.
+
+  It is possible to select a different VersionPolicy by specifying its id:
+
++-------------------
+<project>
+  ...
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <projectVersionPolicyId>SemVerVersionPolicy</projectVersionPolicyId>
+        </configuration>
+      </plugin>
+    </plugins>
+    ...
+  </build>
+  ...
+</project>
++-------------------
+
+  There are 3 VersionPolicies bundled with the Release Plugin:
+
+    * <<<default>>>: increments versions for a common java versioning scheme,
+
+    * <<<OddEvenVersionPolicy>>>: even version numbers for releases, and odd version numbers for development (see {{{../../maven-release-policies/maven-release-oddeven-policy/apidocs/org/apache/maven/shared/release/policy/oddeven/OddEvenVersionPolicy.html}javadoc}}),
+
+    * <<<SemVerVersionPolicy>>>: enforce SemVer format and increase minor element when resolving the development version (see {{{../../maven-release-policies/maven-release-semver-policy/apidocs/org/apache/maven/shared/release/policy/semver/SemVerVersionPolicy.html}javadoc}}).
+
+    []

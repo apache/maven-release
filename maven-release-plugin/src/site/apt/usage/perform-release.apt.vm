@@ -27,6 +27,8 @@
 
 Perform a Release
 
+  {{{../perform-mojo.html}<<<release:perform>>> goal}} performs a release from SCM, either from a specified tag, or usually the tag representing the previous release in the working copy created by {{{./prepare-release.html}<<<release:prepare>>>}}.
+
   Performing a release runs the following release phases {{{../../maven-release-manager/#perform}by default}}:
 
    * Checkout from an SCM URL with optional tag to <<<workingDirectory>>> (<<<target/checkout>>> by default)
