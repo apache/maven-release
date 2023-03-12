@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -31,8 +30,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public interface ScmRepositoryConfigurator
-{
+public interface ScmRepositoryConfigurator {
     /**
      * Construct a configured SCM repository from a release configuration.
      *
@@ -43,8 +41,8 @@ public interface ScmRepositoryConfigurator
      *         SCM repository
      * @throws org.apache.maven.scm.manager.NoSuchScmProviderException if the requested SCM provider is not available
      */
-    ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
-        throws ScmRepositoryException, NoSuchScmProviderException;
+    ScmRepository getConfiguredRepository(ReleaseDescriptor releaseDescriptor, Settings settings)
+            throws ScmRepositoryException, NoSuchScmProviderException;
 
     /**
      * Get the SCM provider used for the given SCM repository.
@@ -53,8 +51,7 @@ public interface ScmRepositoryConfigurator
      * @return the SCM provider
      * @throws org.apache.maven.scm.manager.NoSuchScmProviderException if the requested SCM provider is not available
      */
-    ScmProvider getRepositoryProvider( ScmRepository repository )
-        throws NoSuchScmProviderException;
+    ScmProvider getRepositoryProvider(ScmRepository repository) throws NoSuchScmProviderException;
 
     /**
      * Construct a configured SCM repository from a release configuration with an overridden base SCM URL.
@@ -67,6 +64,6 @@ public interface ScmRepositoryConfigurator
      *         SCM repository
      * @throws org.apache.maven.scm.manager.NoSuchScmProviderException if the requested SCM provider is not available
      */
-    ScmRepository getConfiguredRepository( String url, ReleaseDescriptor releaseDescriptor, Settings settings )
-        throws ScmRepositoryException, NoSuchScmProviderException;
+    ScmRepository getConfiguredRepository(String url, ReleaseDescriptor releaseDescriptor, Settings settings)
+            throws ScmRepositoryException, NoSuchScmProviderException;
 }

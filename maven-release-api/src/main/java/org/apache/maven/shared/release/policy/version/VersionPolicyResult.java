@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policy.version;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,14 +16,14 @@ package org.apache.maven.shared.release.policy.version;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policy.version;
 
 /**
  * <p>VersionPolicyResult class.</p>
  *
  * @since 2.5.1 (MRELEASE-431)
  */
-public class VersionPolicyResult
-{
+public class VersionPolicyResult {
     private String version;
 
     /**
@@ -33,8 +31,7 @@ public class VersionPolicyResult
      *
      * @return a {@link java.lang.String} object
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 
@@ -44,10 +41,8 @@ public class VersionPolicyResult
      * @param version a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyResult} object
      */
-    public VersionPolicyResult setVersion( String version )
-    {
+    public VersionPolicyResult setVersion(String version) {
         this.version = version;
         return this;
     }
-    
 }

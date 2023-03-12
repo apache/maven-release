@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,123 +50,107 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  */
 @Singleton
-@Named( "scm-branch" )
-public class ScmBranchPhase
-        extends AbstractReleasePhase
-{
+@Named("scm-branch")
+public class ScmBranchPhase extends AbstractReleasePhase {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
     private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     @Inject
-    public ScmBranchPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
-    {
+    public ScmBranchPhase(ScmRepositoryConfigurator scmRepositoryConfigurator) {
         this.scmRepositoryConfigurator = scmRepositoryConfigurator;
     }
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult relResult = new ReleaseResult();
 
-        validateConfiguration( releaseDescriptor );
+        validateConfiguration(releaseDescriptor);
 
-        logInfo( relResult, "Branching release with the label " + releaseDescriptor.getScmReleaseLabel() + "..." );
+        logInfo(relResult, "Branching release with the label " + releaseDescriptor.getScmReleaseLabel() + "...");
 
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-                ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+                ReleaseUtil.createBasedirAlignedReleaseDescriptor(releaseDescriptor, reactorProjects);
 
         ScmRepository repository;
         ScmProvider provider;
-        try
-        {
-            repository =
-                    scmRepositoryConfigurator.getConfiguredRepository(
-                            basedirAlignedReleaseDescriptor.getScmSourceUrl(),
-                            releaseDescriptor,
-                            releaseEnvironment.getSettings() );
+        try {
+            repository = scmRepositoryConfigurator.getConfiguredRepository(
+                    basedirAlignedReleaseDescriptor.getScmSourceUrl(),
+                    releaseDescriptor,
+                    releaseEnvironment.getSettings());
 
-            repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
+            repository.getProviderRepository().setPushChanges(releaseDescriptor.isPushChanges());
 
-            repository.getProviderRepository().setWorkItem( releaseDescriptor.getWorkItem() );
+            repository.getProviderRepository().setWorkItem(releaseDescriptor.getWorkItem());
 
-            provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
+            provider = scmRepositoryConfigurator.getRepositoryProvider(repository);
 
-        }
-        catch ( ScmRepositoryException e )
-        {
-            throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
-        }
-        catch ( NoSuchScmProviderException e )
-        {
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+        } catch (ScmRepositoryException e) {
+            throw new ReleaseScmRepositoryException(e.getMessage(), e.getValidationMessages());
+        } catch (NoSuchScmProviderException e) {
+            throw new ReleaseExecutionException("Unable to configure SCM repository: " + e.getMessage(), e);
         }
 
         BranchScmResult result;
-        try
-        {
-            ScmFileSet fileSet = new ScmFileSet( new File( basedirAlignedReleaseDescriptor.getWorkingDirectory() ) );
+        try {
+            ScmFileSet fileSet = new ScmFileSet(new File(basedirAlignedReleaseDescriptor.getWorkingDirectory()));
             String branchName = releaseDescriptor.getScmReleaseLabel();
 
             ScmBranchParameters scmBranchParameters = new ScmBranchParameters();
-            scmBranchParameters.setMessage( releaseDescriptor.getScmCommentPrefix() + "copy for branch " + branchName );
-            scmBranchParameters.setRemoteBranching( releaseDescriptor.isRemoteTagging() );
-            scmBranchParameters.setScmRevision( releaseDescriptor.getScmReleasedPomRevision() );
-            scmBranchParameters.setPinExternals( releaseDescriptor.isPinExternals() );
+            scmBranchParameters.setMessage(releaseDescriptor.getScmCommentPrefix() + "copy for branch " + branchName);
+            scmBranchParameters.setRemoteBranching(releaseDescriptor.isRemoteTagging());
+            scmBranchParameters.setScmRevision(releaseDescriptor.getScmReleasedPomRevision());
+            scmBranchParameters.setPinExternals(releaseDescriptor.isPinExternals());
 
-            result = provider.branch( repository, fileSet, branchName, scmBranchParameters );
-        }
-        catch ( ScmException e )
-        {
-            throw new ReleaseExecutionException( "An error is occurred in the branch process: " + e.getMessage(), e );
+            result = provider.branch(repository, fileSet, branchName, scmBranchParameters);
+        } catch (ScmException e) {
+            throw new ReleaseExecutionException("An error is occurred in the branch process: " + e.getMessage(), e);
         }
 
-        if ( !result.isSuccess() )
-        {
-            throw new ReleaseScmCommandException( "Unable to branch SCM", result );
+        if (!result.isSuccess()) {
+            throw new ReleaseScmCommandException("Unable to branch SCM", result);
         }
 
-        relResult.setResultCode( ReleaseResult.SUCCESS );
+        relResult.setResultCode(ReleaseResult.SUCCESS);
 
         return relResult;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
 
-        validateConfiguration( releaseDescriptor );
+        validateConfiguration(releaseDescriptor);
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-                ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+                ReleaseUtil.createBasedirAlignedReleaseDescriptor(releaseDescriptor, reactorProjects);
 
-        logInfo( result, "Full run would branch " + basedirAlignedReleaseDescriptor.getWorkingDirectory() );
-        if ( releaseDescriptor.getScmBranchBase() != null )
-        {
-            logInfo( result, "  to SCM URL " + releaseDescriptor.getScmBranchBase() );
+        logInfo(result, "Full run would branch " + basedirAlignedReleaseDescriptor.getWorkingDirectory());
+        if (releaseDescriptor.getScmBranchBase() != null) {
+            logInfo(result, "  to SCM URL " + releaseDescriptor.getScmBranchBase());
         }
-        logInfo( result, "  with label '" + releaseDescriptor.getScmReleaseLabel() + "'" );
-        if ( releaseDescriptor.isPinExternals() )
-        {
-            logInfo( result, "  and pinned externals" );
+        logInfo(result, "  with label '" + releaseDescriptor.getScmReleaseLabel() + "'");
+        if (releaseDescriptor.isPinExternals()) {
+            logInfo(result, "  and pinned externals");
         }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
-    private static void validateConfiguration( ReleaseDescriptor releaseDescriptor )
-            throws ReleaseFailureException
-    {
-        if ( releaseDescriptor.getScmReleaseLabel() == null )
-        {
-            throw new ReleaseFailureException( "A release label is required for committing" );
+    private static void validateConfiguration(ReleaseDescriptor releaseDescriptor) throws ReleaseFailureException {
+        if (releaseDescriptor.getScmReleaseLabel() == null) {
+            throw new ReleaseFailureException("A release label is required for committing");
         }
     }
 }

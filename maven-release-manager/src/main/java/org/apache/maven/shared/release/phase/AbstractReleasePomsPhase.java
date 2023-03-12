@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -35,49 +34,35 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
-public abstract class AbstractReleasePomsPhase extends AbstractReleasePhase
-{
+public abstract class AbstractReleasePomsPhase extends AbstractReleasePhase {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
     private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    protected AbstractReleasePomsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
-    {
+    protected AbstractReleasePomsPhase(ScmRepositoryConfigurator scmRepositoryConfigurator) {
         this.scmRepositoryConfigurator = scmRepositoryConfigurator;
     }
 
-    protected ScmRepository getScmRepository( ReleaseDescriptor releaseDescriptor,
-                                              ReleaseEnvironment releaseEnvironment )
-            throws ReleaseFailureException, ReleaseExecutionException
-    {
-        try
-        {
-            return scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                    releaseEnvironment.getSettings() );
-        }
-        catch ( ScmRepositoryException exception )
-        {
-            throw new ReleaseScmRepositoryException( exception.getMessage(), exception.getValidationMessages() );
-        }
-        catch ( NoSuchScmProviderException exception )
-        {
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + exception.getMessage(),
-                    exception );
+    protected ScmRepository getScmRepository(ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment)
+            throws ReleaseFailureException, ReleaseExecutionException {
+        try {
+            return scmRepositoryConfigurator.getConfiguredRepository(
+                    releaseDescriptor, releaseEnvironment.getSettings());
+        } catch (ScmRepositoryException exception) {
+            throw new ReleaseScmRepositoryException(exception.getMessage(), exception.getValidationMessages());
+        } catch (NoSuchScmProviderException exception) {
+            throw new ReleaseExecutionException(
+                    "Unable to configure SCM repository: " + exception.getMessage(), exception);
         }
     }
 
-    protected ScmProvider getScmProvider( ScmRepository scmRepository )
-            throws ReleaseExecutionException
-    {
-        try
-        {
-            return scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
-        }
-        catch ( NoSuchScmProviderException exception )
-        {
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + exception.getMessage(),
-                    exception );
+    protected ScmProvider getScmProvider(ScmRepository scmRepository) throws ReleaseExecutionException {
+        try {
+            return scmRepositoryConfigurator.getRepositoryProvider(scmRepository);
+        } catch (NoSuchScmProviderException exception) {
+            throw new ReleaseExecutionException(
+                    "Unable to configure SCM repository: " + exception.getMessage(), exception);
         }
     }
 }

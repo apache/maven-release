@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,17 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+package org.apache.maven.shared.release.phase;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,14 +35,24 @@ import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 /**
  * Test the variable input phase.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class InputVariablesPhaseTest
-    extends PlexusJUnit4TestCase
-{
+public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
     private InputVariablesPhase phase;
 
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
@@ -62,334 +60,340 @@ public class InputVariablesPhaseTest
     private Map<String, NamingPolicy> namingPolicies;
 
     @Override
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
-        scmRepositoryConfigurator = lookup( ScmRepositoryConfigurator.class );
-        namingPolicies = lookupMap( NamingPolicy.class );
+        scmRepositoryConfigurator = lookup(ScmRepositoryConfigurator.class);
+        namingPolicies = lookupMap(NamingPolicy.class);
     }
 
     @Test
-    public void testInputVariablesInteractive()
-        throws Exception
-    {
+    public void testInputVariablesInteractive() throws Exception {
         // prepare
-        Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ), eq( "artifactId-1.0" ) ) ).thenReturn( "tag-value",
-                                                                                               "simulated-tag-value" );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+        Prompter mockPrompter = mock(Prompter.class);
+        when(mockPrompter.prompt(isA(String.class), eq("artifactId-1.0")))
+                .thenReturn("tag-value", "simulated-tag-value");
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "tag-value", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "tag-value",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         // execute
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "simulated-tag-value", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "simulated-tag-value",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
-        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), eq( "artifactId-1.0" ) );
-        verifyNoMoreInteractions( mockPrompter );
+        verify(mockPrompter, times(2)).prompt(isA(String.class), eq("artifactId-1.0"));
+        verifyNoMoreInteractions(mockPrompter);
     }
 
     @Test
-    public void testUnmappedVersion()
-        throws Exception
-    {
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+    public void testUnmappedVersion() throws Exception {
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
-        Prompter mockPrompter = mock( Prompter.class );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+        Prompter mockPrompter = mock(Prompter.class);
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
 
-        try
-        {
-            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        try {
+            phase.execute(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-            fail( "Expected an exception" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            assertNull( "check no cause", e.getCause() );
+            fail("Expected an exception");
+        } catch (ReleaseExecutionException e) {
+            assertNull("check no cause", e.getCause());
         }
 
         builder = new ReleaseDescriptorBuilder();
 
-        try
-        {
-            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        try {
+            phase.simulate(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-            fail( "Expected an exception" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            assertNull( "check no cause", e.getCause() );
+            fail("Expected an exception");
+        } catch (ReleaseExecutionException e) {
+            assertNull("check no cause", e.getCause());
         }
     }
 
     @Test
-    public void testInputVariablesNonInteractive()
-        throws Exception
-    {
+    public void testInputVariablesNonInteractive() throws Exception {
         // prepare
-        Prompter mockPrompter = mock( Prompter.class );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+        Prompter mockPrompter = mock(Prompter.class);
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        builder.setInteractive(false);
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "artifactId-1.0",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        builder.setInteractive(false);
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         // execute
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "artifactId-1.0",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // never use prompter
-        verifyNoMoreInteractions( mockPrompter );
+        verifyNoMoreInteractions(mockPrompter);
     }
 
     @Test
-    public void testInputVariablesNonInteractiveConfigured()
-        throws Exception
-    {
+    public void testInputVariablesNonInteractiveConfigured() throws Exception {
         // prepare
-        Prompter mockPrompter = mock( Prompter.class );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+        Prompter mockPrompter = mock(Prompter.class);
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.setScmReleaseLabel( "tag-value" );
+        builder.setInteractive(false);
+        builder.setScmReleaseLabel("tag-value");
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "tag-value", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "tag-value",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.setScmReleaseLabel( "simulated-tag-value" );
+        builder.setInteractive(false);
+        builder.setScmReleaseLabel("simulated-tag-value");
 
         // execute
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "simulated-tag-value", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "simulated-tag-value",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // never use prompter
-        verifyNoMoreInteractions( mockPrompter );
+        verifyNoMoreInteractions(mockPrompter);
     }
 
     @Test
-    public void testInputVariablesInteractiveConfigured()
-        throws Exception
-    {
+    public void testInputVariablesInteractiveConfigured() throws Exception {
         // prepare
-        Prompter mockPrompter = mock( Prompter.class );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+        Prompter mockPrompter = mock(Prompter.class);
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmReleaseLabel( "tag-value" );
+        builder.setScmReleaseLabel("tag-value");
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "tag-value", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "tag-value",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
-        builder.setScmReleaseLabel( "simulated-tag-value" );
+        builder.setScmReleaseLabel("simulated-tag-value");
 
         // execute
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "simulated-tag-value", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "simulated-tag-value",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // never use prompter
-        verifyNoMoreInteractions( mockPrompter );
+        verifyNoMoreInteractions(mockPrompter);
     }
 
     @Test
-    public void testPrompterException()
-        throws Exception
-    {
+    public void testPrompterException() throws Exception {
         // prepare
-        Prompter mockPrompter = mock( Prompter.class );
-        when( mockPrompter.prompt( isA( String.class ),
-                                   isA( String.class ) ) ).thenThrow( new PrompterException( "..." ) );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+        Prompter mockPrompter = mock(Prompter.class);
+        when(mockPrompter.prompt(isA(String.class), isA(String.class))).thenThrow(new PrompterException("..."));
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         // execute
-        try
-        {
-            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        try {
+            phase.execute(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-            fail( "Expected an exception" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
+            fail("Expected an exception");
+        } catch (ReleaseExecutionException e) {
+            assertEquals("check cause", PrompterException.class, e.getCause().getClass());
         }
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         // execute
-        try
-        {
-            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        try {
+            phase.simulate(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-            fail( "Expected an exception" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            assertEquals( "check cause", PrompterException.class, e.getCause().getClass() );
+            fail("Expected an exception");
+        } catch (ReleaseExecutionException e) {
+            assertEquals("check cause", PrompterException.class, e.getCause().getClass());
         }
 
         // verify
-        verify( mockPrompter, times( 2 ) ).prompt( isA( String.class ), isA( String.class ) );
-        verifyNoMoreInteractions( mockPrompter );
+        verify(mockPrompter, times(2)).prompt(isA(String.class), isA(String.class));
+        verifyNoMoreInteractions(mockPrompter);
     }
 
     // MRELEASE-110
     @Test
-    public void testSvnTag()
-        throws Exception
-    {
+    public void testSvnTag() throws Exception {
         // prepare
-        Prompter mockPrompter = mock( Prompter.class );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+        Prompter mockPrompter = mock(Prompter.class);
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:svn://localhost/repo" );
+        builder.setInteractive(false);
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:svn://localhost/repo");
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "artifactId-1.0",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:svn://localhost/repo" );
+        builder.setInteractive(false);
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:svn://localhost/repo");
 
         // execute
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "artifactId-1.0",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // never use prompter
-        verifyNoMoreInteractions( mockPrompter );
+        verifyNoMoreInteractions(mockPrompter);
     }
 
     // MRELEASE-159
     @Test
-    public void testCustomTagFormat()
-        throws Exception
-    {
+    public void testCustomTagFormat() throws Exception {
         // prepare
-        Prompter mockPrompter = mock( Prompter.class );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
+        Prompter mockPrompter = mock(Prompter.class);
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
+        builder.setInteractive(false);
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "artifactId-1.0",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.addReleaseVersion( "groupId:artifactId", "1.0" );
-        builder.setScmSourceUrl( "scm:svn:file://localhost/tmp/scm-repo" );
-        builder.setScmTagNameFormat( "simulated-@{artifactId}-@{version}" );
+        builder.setInteractive(false);
+        builder.addReleaseVersion("groupId:artifactId", "1.0");
+        builder.setScmSourceUrl("scm:svn:file://localhost/tmp/scm-repo");
+        builder.setScmTagNameFormat("simulated-@{artifactId}-@{version}");
 
         // execute
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals( "Check tag", "simulated-artifactId-1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getScmReleaseLabel() );
+        assertEquals(
+                "Check tag",
+                "simulated-artifactId-1.0",
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
 
         // never use prompter
-        verifyNoMoreInteractions( mockPrompter );
+        verifyNoMoreInteractions(mockPrompter);
     }
 
     @Test
-    public void testBranchOperation()
-        throws Exception
-    {
+    public void testBranchOperation() throws Exception {
         // prepare
-        Prompter mockPrompter = mock( Prompter.class );
-        phase = new InputVariablesPhase( mockPrompter, scmRepositoryConfigurator, namingPolicies );
-        assertFalse( phase.isBranchOperation() );
+        Prompter mockPrompter = mock(Prompter.class);
+        phase = new InputVariablesPhase(mockPrompter, scmRepositoryConfigurator, namingPolicies);
+        assertFalse(phase.isBranchOperation());
     }
 
-    private static MavenProject createProject( String artifactId, String version )
-    {
+    private static MavenProject createProject(String artifactId, String version) {
         Model model = new Model();
-        model.setGroupId( "groupId" );
-        model.setArtifactId( artifactId );
-        model.setVersion( version );
-        return new MavenProject( model );
+        model.setGroupId("groupId");
+        model.setArtifactId(artifactId);
+        model.setVersion(version);
+        return new MavenProject(model);
     }
 }

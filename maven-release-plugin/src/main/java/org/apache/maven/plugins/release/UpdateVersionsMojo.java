@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -40,10 +39,8 @@ import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
  * @author Paul Gier
  * @since 2.0
  */
-@Mojo( name = "update-versions", aggregator = true )
-public class UpdateVersionsMojo
-    extends AbstractReleaseMojo
-{
+@Mojo(name = "update-versions", aggregator = true)
+public class UpdateVersionsMojo extends AbstractReleaseMojo {
 
     /**
      * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
@@ -51,7 +48,7 @@ public class UpdateVersionsMojo
      *
      * @since 2.0
      */
-    @Parameter( defaultValue = "false", property = "autoVersionSubmodules" )
+    @Parameter(defaultValue = "false", property = "autoVersionSubmodules")
     private boolean autoVersionSubmodules;
 
     /**
@@ -59,7 +56,7 @@ public class UpdateVersionsMojo
      *
      * @since 2.0
      */
-    @Parameter( defaultValue = "true", property = "addSchema" )
+    @Parameter(defaultValue = "true", property = "addSchema")
     private boolean addSchema;
 
     /**
@@ -67,7 +64,7 @@ public class UpdateVersionsMojo
      *
      * @since 2.0
      */
-    @Parameter( property = "developmentVersion" )
+    @Parameter(property = "developmentVersion")
     private String developmentVersion;
 
     /**
@@ -75,7 +72,7 @@ public class UpdateVersionsMojo
      *
      * @since 2.5.2
      */
-    @Parameter( defaultValue = "true", property = "updateDependencies" )
+    @Parameter(defaultValue = "true", property = "updateDependencies")
     private boolean updateDependencies;
 
     /**
@@ -83,7 +80,7 @@ public class UpdateVersionsMojo
      *
      * @since 2.5.2
      */
-    @Parameter( defaultValue = "false", property = "useEditMode" )
+    @Parameter(defaultValue = "false", property = "useEditMode")
     private boolean useEditMode;
 
     /**
@@ -91,7 +88,7 @@ public class UpdateVersionsMojo
      *
      * @since 3.0.0-M5
      */
-    @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
+    @Parameter(defaultValue = "default", property = "projectVersionPolicyId")
     private String projectVersionPolicyId;
 
     /**
@@ -99,45 +96,37 @@ public class UpdateVersionsMojo
      *
      * @since 3.0.0-M8
      */
-    @Parameter( property = "projectVersionPolicyConfig" )
+    @Parameter(property = "projectVersionPolicyConfig")
     private XmlPlexusConfiguration projectVersionPolicyConfig;
 
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         final ReleaseDescriptorBuilder config = createReleaseDescriptor();
-        config.setAddSchema( addSchema );
-        config.setAutoVersionSubmodules( autoVersionSubmodules );
-        config.setDefaultDevelopmentVersion( developmentVersion );
-        config.setScmUseEditMode( useEditMode );
-        config.setUpdateDependencies( updateDependencies );
-        config.setProjectVersionPolicyId( projectVersionPolicyId );
-        if ( projectVersionPolicyConfig != null )
-        {
-            config.setProjectVersionPolicyConfig( projectVersionPolicyConfig.toString() );
+        config.setAddSchema(addSchema);
+        config.setAutoVersionSubmodules(autoVersionSubmodules);
+        config.setDefaultDevelopmentVersion(developmentVersion);
+        config.setScmUseEditMode(useEditMode);
+        config.setUpdateDependencies(updateDependencies);
+        config.setProjectVersionPolicyId(projectVersionPolicyId);
+        if (projectVersionPolicyConfig != null) {
+            config.setProjectVersionPolicyConfig(projectVersionPolicyConfig.toString());
         }
-        config.addOriginalScmInfo( ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() ),
-                                   project.getScm() );
+        config.addOriginalScmInfo(
+                ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId()), project.getScm());
 
-        try
-        {
+        try {
             ReleaseUpdateVersionsRequest updateVersionsRequest = new ReleaseUpdateVersionsRequest();
-            updateVersionsRequest.setReleaseDescriptorBuilder( config );
-            updateVersionsRequest.setReleaseEnvironment( getReleaseEnvironment() );
-            updateVersionsRequest.setReactorProjects( getReactorProjects() );
-            updateVersionsRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog() ) );
-            updateVersionsRequest.setUserProperties( session.getUserProperties() );
+            updateVersionsRequest.setReleaseDescriptorBuilder(config);
+            updateVersionsRequest.setReleaseEnvironment(getReleaseEnvironment());
+            updateVersionsRequest.setReactorProjects(getReactorProjects());
+            updateVersionsRequest.setReleaseManagerListener(new DefaultReleaseManagerListener(getLog()));
+            updateVersionsRequest.setUserProperties(session.getUserProperties());
 
-            releaseManager.updateVersions( updateVersionsRequest );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            throw new MojoFailureException( e.getMessage(), e );
+            releaseManager.updateVersions(updateVersionsRequest);
+        } catch (ReleaseExecutionException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (ReleaseFailureException e) {
+            throw new MojoFailureException(e.getMessage(), e);
         }
     }
 }

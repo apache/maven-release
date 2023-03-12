@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.util.List;
 
@@ -41,9 +40,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public abstract class AbstractCheckPomPhase
-        extends AbstractReleasePhase
-{
+public abstract class AbstractCheckPomPhase extends AbstractReleasePhase {
 
     private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
@@ -57,74 +54,64 @@ public abstract class AbstractCheckPomPhase
      */
     private final boolean snapshotsRequired;
 
-    public AbstractCheckPomPhase( ScmRepositoryConfigurator scmRepositoryConfigurator, boolean scmRequired,
-                                  boolean snapshotsRequired )
-    {
-        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
+    public AbstractCheckPomPhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator, boolean scmRequired, boolean snapshotsRequired) {
+        this.scmRepositoryConfigurator = requireNonNull(scmRepositoryConfigurator);
         this.scmRequired = scmRequired;
         this.snapshotsRequired = snapshotsRequired;
     }
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
 
         // Currently, we don't deal with multiple SCM locations in a multiproject
-        if ( scmRequired )
-        {
-            if ( StringUtils.isEmpty( releaseDescriptor.getScmSourceUrl() ) )
-            {
+        if (scmRequired) {
+            if (StringUtils.isEmpty(releaseDescriptor.getScmSourceUrl())) {
                 throw new ReleaseFailureException(
-                        "Missing required setting: scm connection or developerConnection must be specified." );
+                        "Missing required setting: scm connection or developerConnection must be specified.");
             }
 
-            try
-            {
-                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                        releaseEnvironment.getSettings() );
-            }
-            catch ( ScmRepositoryException e )
-            {
-                throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
-            }
-            catch ( NoSuchScmProviderException e )
-            {
+            try {
+                scmRepositoryConfigurator.getConfiguredRepository(releaseDescriptor, releaseEnvironment.getSettings());
+            } catch (ScmRepositoryException e) {
+                throw new ReleaseScmRepositoryException(e.getMessage(), e.getValidationMessages());
+            } catch (NoSuchScmProviderException e) {
                 throw new ReleaseFailureException(
-                        "The provider given in the SCM URL could not be found: " + e.getMessage() );
+                        "The provider given in the SCM URL could not be found: " + e.getMessage());
             }
         }
 
         boolean containsSnapshotProjects = false;
 
-        for ( MavenProject project : reactorProjects )
-        {
-            if ( ArtifactUtils.isSnapshot( project.getVersion() ) )
-            {
+        for (MavenProject project : reactorProjects) {
+            if (ArtifactUtils.isSnapshot(project.getVersion())) {
                 containsSnapshotProjects = true;
 
                 break;
             }
         }
 
-        if ( snapshotsRequired && !containsSnapshotProjects && !releaseDescriptor.isBranchCreation() )
-        {
-            throw new ReleaseFailureException( "You don't have a SNAPSHOT project in the reactor projects list." );
+        if (snapshotsRequired && !containsSnapshotProjects && !releaseDescriptor.isBranchCreation()) {
+            throw new ReleaseFailureException("You don't have a SNAPSHOT project in the reactor projects list.");
         }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         // It makes no modifications, so simulate is the same as execute
-        return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+        return execute(releaseDescriptor, releaseEnvironment, reactorProjects);
     }
 }

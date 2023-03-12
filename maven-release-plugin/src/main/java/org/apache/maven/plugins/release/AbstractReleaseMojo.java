@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.release;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,22 +43,20 @@ import org.codehaus.plexus.util.StringUtils;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public abstract class AbstractReleaseMojo
-    extends AbstractMojo
-{
+public abstract class AbstractReleaseMojo extends AbstractMojo {
     /**
      */
-    @Parameter( defaultValue = "${basedir}", readonly = true, required = true )
+    @Parameter(defaultValue = "${basedir}", readonly = true, required = true)
     private File basedir;
 
     /**
      */
-    @Parameter( defaultValue = "${settings}", readonly = true, required = true )
+    @Parameter(defaultValue = "${settings}", readonly = true, required = true)
     private Settings settings;
 
     /**
      */
-    @Parameter( defaultValue = "${project}", readonly = true, required = true )
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
     /**
@@ -70,19 +67,19 @@ public abstract class AbstractReleaseMojo
     /**
      * Additional arguments to pass to the Maven executions, separated by spaces.
      */
-    @Parameter( alias = "prepareVerifyArgs", property = "arguments" )
+    @Parameter(alias = "prepareVerifyArgs", property = "arguments")
     private String arguments;
 
     /**
      * The file name of the POM to execute any goals against. As of version 3.0.0, this defaults to the name of
      * POM file of the project being built.
      */
-    @Parameter( property = "pomFileName", defaultValue = "${project.file.name}" )
+    @Parameter(property = "pomFileName", defaultValue = "${project.file.name}")
     private String pomFileName;
 
     /**
      */
-    @Parameter( defaultValue = "${reactorProjects}", readonly = true, required = true )
+    @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
     private List<MavenProject> reactorProjects;
 
     /**
@@ -90,7 +87,7 @@ public abstract class AbstractReleaseMojo
      *
      * @since 2.0-beta-8
      */
-    @Parameter( defaultValue = "${maven.home}" )
+    @Parameter(defaultValue = "${maven.home}")
     private File mavenHome;
 
     /**
@@ -98,7 +95,7 @@ public abstract class AbstractReleaseMojo
      *
      * @since 2.0-beta-8
      */
-    @Parameter( defaultValue = "${java.home}" )
+    @Parameter(defaultValue = "${java.home}")
     private File javaHome;
 
     /**
@@ -106,7 +103,7 @@ public abstract class AbstractReleaseMojo
      *
      * @since 2.0-beta-8
      */
-    @Parameter ( defaultValue = "${maven.repo.local}" )
+    @Parameter(defaultValue = "${maven.repo.local}")
     private File localRepoDirectory;
 
     /**
@@ -114,13 +111,13 @@ public abstract class AbstractReleaseMojo
      *
      * @since 2.0-beta-8
      */
-    @Parameter( defaultValue = "invoker", property = "mavenExecutorId" )
+    @Parameter(defaultValue = "invoker", property = "mavenExecutorId")
     private String mavenExecutorId;
 
     /**
      * @since 2.0
      */
-    @Parameter( defaultValue = "${session}", readonly = true, required = true )
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
     protected MavenSession session;
 
     /**
@@ -130,7 +127,7 @@ public abstract class AbstractReleaseMojo
      * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.strategies.DefaultStrategy
      */
-    @Parameter( defaultValue = "default", property = "releaseStrategyId" )
+    @Parameter(defaultValue = "default", property = "releaseStrategyId")
     private String releaseStrategyId;
 
     /**
@@ -138,13 +135,13 @@ public abstract class AbstractReleaseMojo
      *
      * @return The release environment, never <code>null</code>.
      */
-    protected ReleaseEnvironment getReleaseEnvironment()
-    {
-        return new DefaultReleaseEnvironment().setSettings( settings )
-                                              .setJavaHome( javaHome )
-                                              .setMavenHome( mavenHome )
-                                              .setLocalRepositoryDirectory( localRepoDirectory )
-                                              .setMavenExecutorId( mavenExecutorId );
+    protected ReleaseEnvironment getReleaseEnvironment() {
+        return new DefaultReleaseEnvironment()
+                .setSettings(settings)
+                .setJavaHome(javaHome)
+                .setMavenHome(mavenHome)
+                .setLocalRepositoryDirectory(localRepoDirectory)
+                .setMavenExecutorId(mavenExecutorId);
     }
 
     /**
@@ -152,57 +149,50 @@ public abstract class AbstractReleaseMojo
      *
      * @return The release descriptor, never <code>null</code>.
      */
-    protected ReleaseDescriptorBuilder createReleaseDescriptor()
-    {
+    protected ReleaseDescriptorBuilder createReleaseDescriptor() {
         ReleaseDescriptorBuilder descriptor = new ReleaseDescriptorBuilder();
 
-        descriptor.setInteractive( settings.isInteractiveMode() );
+        descriptor.setInteractive(settings.isInteractiveMode());
 
         Path workingDirectory;
-        try
-        {
-            workingDirectory = getCommonBasedir( reactorProjects );
+        try {
+            workingDirectory = getCommonBasedir(reactorProjects);
+        } catch (IOException e) {
+            throw new RuntimeException(e.getMessage());
         }
-        catch ( IOException e )
-        {
-            throw new RuntimeException( e.getMessage() );
-        }
-        descriptor.setWorkingDirectory( workingDirectory.toFile().getAbsolutePath() );
+        descriptor.setWorkingDirectory(workingDirectory.toFile().getAbsolutePath());
 
         Path rootBasedir = basedir.toPath();
-        if ( rootBasedir.equals( workingDirectory ) )
-        {
-            descriptor.setPomFileName( pomFileName );
-        }
-        else
-        {
-            descriptor.setPomFileName( workingDirectory.relativize( rootBasedir ).resolve( pomFileName ).toString() );
-        }
-
-        for ( MavenProject project : reactorProjects )
-        {
-            String versionlessKey = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
-            descriptor.putOriginalVersion( versionlessKey, project.getVersion() );
+        if (rootBasedir.equals(workingDirectory)) {
+            descriptor.setPomFileName(pomFileName);
+        } else {
+            descriptor.setPomFileName(workingDirectory
+                    .relativize(rootBasedir)
+                    .resolve(pomFileName)
+                    .toString());
         }
 
-        descriptor.setAdditionalArguments( this.arguments );
+        for (MavenProject project : reactorProjects) {
+            String versionlessKey = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
+            descriptor.putOriginalVersion(versionlessKey, project.getVersion());
+        }
+
+        descriptor.setAdditionalArguments(this.arguments);
 
         List<String> profileIds = session.getRequest().getActiveProfiles();
         String additionalProfiles = getAdditionalProfiles();
 
-        if ( !profileIds.isEmpty() || StringUtils.isNotBlank( additionalProfiles ) )
-        {
-            List<String> profiles = new ArrayList<>( profileIds );
+        if (!profileIds.isEmpty() || StringUtils.isNotBlank(additionalProfiles)) {
+            List<String> profiles = new ArrayList<>(profileIds);
 
-            if ( additionalProfiles != null )
-            {
-                profiles.addAll( Arrays.asList( additionalProfiles.split( "," ) ) );
+            if (additionalProfiles != null) {
+                profiles.addAll(Arrays.asList(additionalProfiles.split(",")));
             }
 
-            descriptor.setActivateProfiles( profiles );
+            descriptor.setActivateProfiles(profiles);
         }
 
-        descriptor.setReleaseStrategyId( releaseStrategyId );
+        descriptor.setReleaseStrategyId(releaseStrategyId);
 
         return descriptor;
     }
@@ -212,8 +202,7 @@ public abstract class AbstractReleaseMojo
      *
      * @return additional profiles to enable during release
      */
-    protected String getAdditionalProfiles()
-    {
+    protected String getAdditionalProfiles() {
         return null;
     }
 
@@ -222,8 +211,7 @@ public abstract class AbstractReleaseMojo
      *
      * @param releaseManager The release manager implementation to use, must not be <code>null</code>.
      */
-    void setReleaseManager( ReleaseManager releaseManager )
-    {
+    void setReleaseManager(ReleaseManager releaseManager) {
         this.releaseManager = releaseManager;
     }
 
@@ -232,13 +220,11 @@ public abstract class AbstractReleaseMojo
      *
      * @return The effective settings for this build, never <code>null</code>.
      */
-    Settings getSettings()
-    {
+    Settings getSettings() {
         return settings;
     }
 
-    protected final File getBasedir()
-    {
+    protected final File getBasedir() {
         return basedir;
     }
 
@@ -247,21 +233,18 @@ public abstract class AbstractReleaseMojo
      *
      * @param basedir The build's base directory, must not be <code>null</code>.
      */
-    public void setBasedir( File basedir )
-    {
+    public void setBasedir(File basedir) {
         this.basedir = basedir;
     }
 
-    public void setPomFileName( String pomFileName )
-    {
+    public void setPomFileName(String pomFileName) {
         this.pomFileName = pomFileName;
     }
 
     /**
      * only used for unit tests in which some required values of the project would be null
      */
-    protected MavenProject getProject()
-    {
+    protected MavenProject getProject() {
         return this.project;
     }
 
@@ -270,8 +253,7 @@ public abstract class AbstractReleaseMojo
      *
      * @return The list of reactor project, never <code>null</code>.
      */
-    public List<MavenProject> getReactorProjects()
-    {
+    public List<MavenProject> getReactorProjects() {
         return reactorProjects;
     }
 
@@ -280,28 +262,20 @@ public abstract class AbstractReleaseMojo
      *
      * @param argument The argument to add, must not be <code>null</code>.
      */
-    protected void addArgument( String argument )
-    {
-        if ( arguments != null )
-        {
+    protected void addArgument(String argument) {
+        if (arguments != null) {
             arguments += " " + argument;
-        }
-        else
-        {
+        } else {
             arguments = argument;
         }
     }
 
-    static Path getCommonBasedir( List<MavenProject> reactorProjects )
-                    throws IOException
-    {
-        Path basePath = reactorProjects.get( 0 ).getBasedir().toPath();
+    static Path getCommonBasedir(List<MavenProject> reactorProjects) throws IOException {
+        Path basePath = reactorProjects.get(0).getBasedir().toPath();
 
-        for ( MavenProject reactorProject : reactorProjects )
-        {
+        for (MavenProject reactorProject : reactorProjects) {
             Path matchPath = reactorProject.getBasedir().toPath();
-            while ( !basePath.startsWith( matchPath ) )
-            {
+            while (!basePath.startsWith(matchPath)) {
                 matchPath = matchPath.getParent();
             }
             basePath = matchPath;

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 import java.util.List;
 
@@ -31,9 +30,7 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
  *
  * @author Hervé Boutemy
  */
-public class DefaultReleaseManagerListener
-    implements ReleaseManagerListener
-{
+public class DefaultReleaseManagerListener implements ReleaseManagerListener {
     private final Log log;
 
     private final boolean dryRun;
@@ -49,9 +46,8 @@ public class DefaultReleaseManagerListener
      *
      * @param log a {@link org.apache.maven.plugin.logging.Log} object
      */
-    public DefaultReleaseManagerListener( Log log )
-    {
-        this( log, false );
+    public DefaultReleaseManagerListener(Log log) {
+        this(log, false);
     }
 
     /**
@@ -60,62 +56,53 @@ public class DefaultReleaseManagerListener
      * @param log a {@link org.apache.maven.plugin.logging.Log} object
      * @param dryRun a boolean
      */
-    public DefaultReleaseManagerListener( Log log, boolean dryRun )
-    {
+    public DefaultReleaseManagerListener(Log log, boolean dryRun) {
         this.log = log;
         this.dryRun = dryRun;
     }
 
-    private void nextPhase( String name )
-    {
+    private void nextPhase(String name) {
         currentPhase++;
-        if ( !name.equals( phases.get( currentPhase ) ) )
-        {
-            log.warn( "inconsistent phase name: expected '" + phases.get( currentPhase ) + "' but got '" + name + "'" );
+        if (!name.equals(phases.get(currentPhase))) {
+            log.warn("inconsistent phase name: expected '" + phases.get(currentPhase) + "' but got '" + name + "'");
         }
     }
 
-    public void goalStart( String goal, List<String> phases )
-    {
-        log.info( "starting " + buffer().mojo( goal ) + " goal" + ( dryRun ? " in dry-run mode" : "" )
-            + ", composed of " + phases.size() + " phases: " + StringUtils.join( phases.iterator(), ", " ) );
+    public void goalStart(String goal, List<String> phases) {
+        log.info("starting " + buffer().mojo(goal) + " goal" + (dryRun ? " in dry-run mode" : "") + ", composed of "
+                + phases.size() + " phases: " + StringUtils.join(phases.iterator(), ", "));
         currentPhase = -1;
         this.phases = phases;
         this.goal = goal;
     }
 
-    public void phaseStart( String name )
-    {
-        nextPhase( name );
-        log.info( ( currentPhase + 1 ) + "/" + phases.size() + ' ' + buffer().mojo( goal + ':' + name )
-            + ( dryRun ? " dry-run" : "" ) );
+    public void phaseStart(String name) {
+        nextPhase(name);
+        log.info((currentPhase + 1) + "/" + phases.size() + ' ' + buffer().mojo(goal + ':' + name)
+                + (dryRun ? " dry-run" : ""));
     }
 
     /**
      * <p>phaseEnd.</p>
      */
-    public void phaseEnd()
-    {
+    public void phaseEnd() {
         // NOOP
     }
 
-    public void phaseSkip( String name )
-    {
-        nextPhase( name );
+    public void phaseSkip(String name) {
+        nextPhase(name);
     }
 
     /**
      * <p>goalEnd.</p>
      */
-    public void goalEnd()
-    {
+    public void goalEnd() {
         goal = null;
         phases = null;
     }
 
-    public void error( String reason )
-    {
-        log.error( "error during phase " + ( currentPhase + 1 ) + "/" + phases.size() + " " + phases.get( currentPhase )
-            + ": " + reason );
+    public void error(String reason) {
+        log.error("error during phase " + (currentPhase + 1) + "/" + phases.size() + " " + phases.get(currentPhase)
+                + ": " + reason);
     }
 }

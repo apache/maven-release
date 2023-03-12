@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +33,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomModelBase
-{
+public class JDomModelBase {
     private final Element modelBase;
 
     /**
@@ -43,8 +41,7 @@ public class JDomModelBase
      *
      * @param modelBase a {@link org.jdom2.Element} object
      */
-    public JDomModelBase( Element modelBase )
-    {
+    public JDomModelBase(Element modelBase) {
         this.modelBase = modelBase;
     }
 
@@ -53,17 +50,13 @@ public class JDomModelBase
      *
      * @return a {@link org.apache.maven.model.Build} object
      */
-    public Build getBuild()
-    {
-        Element elm = modelBase.getChild( "build", modelBase.getNamespace() );
-        if ( elm == null )
-        {
+    public Build getBuild() {
+        Element elm = modelBase.getChild("build", modelBase.getNamespace());
+        if (elm == null) {
             return null;
-        }
-        else
-        {
+        } else {
             // this way build setters change DOM tree immediately
-            return new JDomBuild( elm );
+            return new JDomBuild(elm);
         }
     }
 
@@ -72,22 +65,17 @@ public class JDomModelBase
      *
      * @return a {@link java.util.List} object
      */
-    public List<Dependency> getDependencies()
-    {
-        Element dependenciesElm = modelBase.getChild( "dependencies", modelBase.getNamespace() );
-        if ( dependenciesElm == null )
-        {
+    public List<Dependency> getDependencies() {
+        Element dependenciesElm = modelBase.getChild("dependencies", modelBase.getNamespace());
+        if (dependenciesElm == null) {
             return Collections.emptyList();
-        }
-        else
-        {
-            List<Element> dependencyElms = dependenciesElm.getChildren( "dependency", modelBase.getNamespace() );
+        } else {
+            List<Element> dependencyElms = dependenciesElm.getChildren("dependency", modelBase.getNamespace());
 
-            List<Dependency> dependencies = new ArrayList<>( dependencyElms.size() );
+            List<Dependency> dependencies = new ArrayList<>(dependencyElms.size());
 
-            for ( Element dependencyElm : dependencyElms )
-            {
-                dependencies.add( new JDomDependency( dependencyElm ) );
+            for (Element dependencyElm : dependencyElms) {
+                dependencies.add(new JDomDependency(dependencyElm));
             }
 
             return dependencies;
@@ -99,17 +87,13 @@ public class JDomModelBase
      *
      * @return a {@link org.apache.maven.model.DependencyManagement} object
      */
-    public DependencyManagement getDependencyManagement()
-    {
-        Element elm = modelBase.getChild( "dependencyManagement", modelBase.getNamespace() );
-        if ( elm == null )
-        {
+    public DependencyManagement getDependencyManagement() {
+        Element elm = modelBase.getChild("dependencyManagement", modelBase.getNamespace());
+        if (elm == null) {
             return null;
-        }
-        else
-        {
+        } else {
             // this way build setters change DOM tree immediately
-            return new JDomDependencyManagement( elm );
+            return new JDomDependencyManagement(elm);
         }
     }
 }

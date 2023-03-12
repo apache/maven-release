@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 /**
  * <p>ReleaseCleanRequest class.</p>
@@ -25,7 +24,4 @@ package org.apache.maven.shared.release;
  * @author Robert Scholte
  * @since 2.3
  */
-public class ReleaseCleanRequest
-    extends AbstractReleaseRequest
-{
-}
+public class ReleaseCleanRequest extends AbstractReleaseRequest {}

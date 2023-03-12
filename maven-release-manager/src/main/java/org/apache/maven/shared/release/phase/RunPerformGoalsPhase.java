@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,12 +16,11 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
-import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
 import java.io.File;
 import java.util.List;
@@ -38,100 +35,87 @@ import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.util.PomFinder;
 import org.codehaus.plexus.util.StringUtils;
 
+import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
+
 /**
  * Run the effective release build of the project and its deploy to remote repository.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "run-perform-goals" )
-public class RunPerformGoalsPhase
-        extends AbstractRunGoalsPhase
-{
+@Named("run-perform-goals")
+public class RunPerformGoalsPhase extends AbstractRunGoalsPhase {
     @Inject
-    public RunPerformGoalsPhase( Map<String, MavenExecutor> mavenExecutors )
-    {
-        super( mavenExecutors );
+    public RunPerformGoalsPhase(Map<String, MavenExecutor> mavenExecutors) {
+        super(mavenExecutors);
     }
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException
-    {
-        return runLogic( releaseDescriptor, releaseEnvironment, false );
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException {
+        return runLogic(releaseDescriptor, releaseEnvironment, false);
     }
 
-    private ReleaseResult runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                    boolean simulate )
-            throws ReleaseExecutionException
-    {
-        String additionalArguments = getAdditionalArguments( releaseDescriptor );
+    private ReleaseResult runLogic(
+            ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, boolean simulate)
+            throws ReleaseExecutionException {
+        String additionalArguments = getAdditionalArguments(releaseDescriptor);
 
-        if ( releaseDescriptor.isUseReleaseProfile() )
-        {
-            if ( !StringUtils.isEmpty( additionalArguments ) )
-            {
+        if (releaseDescriptor.isUseReleaseProfile()) {
+            if (!StringUtils.isEmpty(additionalArguments)) {
                 additionalArguments = additionalArguments + " -DperformRelease=true";
-            }
-            else
-            {
+            } else {
                 additionalArguments = "-DperformRelease=true";
             }
         }
 
         String pomFileName = releaseDescriptor.getPomFileName();
-        if ( pomFileName == null )
-        {
+        if (pomFileName == null) {
             pomFileName = "pom.xml";
         }
 
         // ensure we don't use the release pom for the perform goals
         // ^^ paranoia? A MavenExecutor has already access to this. Probably worth refactoring.
-        if ( !StringUtils.isEmpty( additionalArguments ) )
-        {
+        if (!StringUtils.isEmpty(additionalArguments)) {
             additionalArguments = additionalArguments + " -f " + pomFileName;
-        }
-        else
-        {
+        } else {
             additionalArguments = "-f " + pomFileName;
         }
 
-        if ( simulate )
-        {
+        if (simulate) {
             ReleaseResult result = new ReleaseResult();
 
-            logInfo( result, "Simulating perform goals '" + buffer().strong( getGoals( releaseDescriptor ) )
-                + "' - since this is simulation mode these goals are skipped." );
-            logInfo( result, "    with additional arguments: " + additionalArguments );
+            logInfo(
+                    result,
+                    "Simulating perform goals '" + buffer().strong(getGoals(releaseDescriptor))
+                            + "' - since this is simulation mode these goals are skipped.");
+            logInfo(result, "    with additional arguments: " + additionalArguments);
 
             return result;
         }
 
         String workDir = releaseDescriptor.getWorkingDirectory();
-        if ( workDir == null )
-        {
-            workDir = System.getProperty( "user.dir" );
+        if (workDir == null) {
+            workDir = System.getProperty("user.dir");
         }
 
-
-        File pomFile = new File( workDir, pomFileName );
-        PomFinder pomFinder = new PomFinder( getLogger() );
+        File pomFile = new File(workDir, pomFileName);
+        PomFinder pomFinder = new PomFinder(getLogger());
         boolean foundPom = false;
 
-        if ( StringUtils.isEmpty( releaseDescriptor.getScmRelativePathProjectDirectory() ) )
-        {
-            foundPom = pomFinder.parsePom( pomFile );
+        if (StringUtils.isEmpty(releaseDescriptor.getScmRelativePathProjectDirectory())) {
+            foundPom = pomFinder.parsePom(pomFile);
         }
 
-        File workDirectory = new File( releaseDescriptor.getCheckoutDirectory() );
+        File workDirectory = new File(releaseDescriptor.getCheckoutDirectory());
 
-        if ( foundPom )
-        {
-            File matchingPom = pomFinder.findMatchingPom( workDirectory );
-            if ( matchingPom != null )
-            {
-                getLogger().info( "Invoking perform goals in directory " + matchingPom.getParent() );
+        if (foundPom) {
+            File matchingPom = pomFinder.findMatchingPom(workDirectory);
+            if (matchingPom != null) {
+                getLogger().info("Invoking perform goals in directory " + matchingPom.getParent());
                 // The directory of the POM in a flat project layout is not
                 // the same directory as the SCM checkout directory!
                 // The same is true for a sparse checkout in e.g. GIT
@@ -140,20 +124,20 @@ public class RunPerformGoalsPhase
             }
         }
 
-        return execute( releaseDescriptor, releaseEnvironment, workDirectory, additionalArguments, false );
+        return execute(releaseDescriptor, releaseEnvironment, workDirectory, additionalArguments, false);
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException
-    {
-        return runLogic( releaseDescriptor, releaseEnvironment, true );
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException {
+        return runLogic(releaseDescriptor, releaseEnvironment, true);
     }
 
     @Override
-    protected String getGoals( ReleaseDescriptor releaseDescriptor )
-    {
+    protected String getGoals(ReleaseDescriptor releaseDescriptor) {
         return releaseDescriptor.getPerformGoals();
     }
 }

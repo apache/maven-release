@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.env;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.env;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.env;
 
 import java.io.File;
 
@@ -26,9 +25,7 @@ import org.apache.maven.settings.Settings;
 /**
  * <p>DefaultReleaseEnvironment class.</p>
  */
-public class DefaultReleaseEnvironment
-        implements ReleaseEnvironment
-{
+public class DefaultReleaseEnvironment implements ReleaseEnvironment {
     private File mavenHome;
 
     private File javaHome;
@@ -40,14 +37,12 @@ public class DefaultReleaseEnvironment
     private String mavenExecutorId = DEFAULT_MAVEN_EXECUTOR_ID;
 
     @Override
-    public File getMavenHome()
-    {
+    public File getMavenHome() {
         return mavenHome;
     }
 
     @Override
-    public Settings getSettings()
-    {
+    public Settings getSettings() {
         return settings;
     }
 
@@ -57,8 +52,7 @@ public class DefaultReleaseEnvironment
      * @param mavenHome a {@link java.io.File} object
      * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
      */
-    public DefaultReleaseEnvironment setMavenHome( File mavenHome )
-    {
+    public DefaultReleaseEnvironment setMavenHome(File mavenHome) {
         this.mavenHome = mavenHome;
         return this;
     }
@@ -69,15 +63,13 @@ public class DefaultReleaseEnvironment
      * @param settings a {@link org.apache.maven.settings.Settings} object
      * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
      */
-    public DefaultReleaseEnvironment setSettings( Settings settings )
-    {
+    public DefaultReleaseEnvironment setSettings(Settings settings) {
         this.settings = settings;
         return this;
     }
 
     @Override
-    public String getMavenExecutorId()
-    {
+    public String getMavenExecutorId() {
         return mavenExecutorId;
     }
 
@@ -87,15 +79,13 @@ public class DefaultReleaseEnvironment
      * @param mavenExecutorId a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
      */
-    public DefaultReleaseEnvironment setMavenExecutorId( String mavenExecutorId )
-    {
+    public DefaultReleaseEnvironment setMavenExecutorId(String mavenExecutorId) {
         this.mavenExecutorId = mavenExecutorId;
         return this;
     }
 
     @Override
-    public File getJavaHome()
-    {
+    public File getJavaHome() {
         return javaHome;
     }
 
@@ -105,20 +95,17 @@ public class DefaultReleaseEnvironment
      * @param javaHome a {@link java.io.File} object
      * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
      */
-    public DefaultReleaseEnvironment setJavaHome( File javaHome )
-    {
+    public DefaultReleaseEnvironment setJavaHome(File javaHome) {
         this.javaHome = javaHome;
         return this;
     }
 
     @Override
-    public File getLocalRepositoryDirectory()
-    {
+    public File getLocalRepositoryDirectory() {
         File localRepo = localRepositoryDirectory;
 
-        if ( localRepo == null && settings != null && settings.getLocalRepository() != null )
-        {
-            localRepo = new File( settings.getLocalRepository() ).getAbsoluteFile();
+        if (localRepo == null && settings != null && settings.getLocalRepository() != null) {
+            localRepo = new File(settings.getLocalRepository()).getAbsoluteFile();
         }
 
         return localRepo;
@@ -130,8 +117,7 @@ public class DefaultReleaseEnvironment
      * @param localRepositoryDirectory a {@link java.io.File} object
      * @return a {@link org.apache.maven.shared.release.env.DefaultReleaseEnvironment} object
      */
-    public DefaultReleaseEnvironment setLocalRepositoryDirectory( File localRepositoryDirectory )
-    {
+    public DefaultReleaseEnvironment setLocalRepositoryDirectory(File localRepositoryDirectory) {
         this.localRepositoryDirectory = localRepositoryDirectory;
         return this;
     }

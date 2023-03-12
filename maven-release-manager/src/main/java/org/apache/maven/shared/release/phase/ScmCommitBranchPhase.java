@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,13 +30,10 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "scm-commit-branch" )
-public class ScmCommitBranchPhase
-        extends AbstractScmCommitPreparationPhase
-{
+@Named("scm-commit-branch")
+public class ScmCommitBranchPhase extends AbstractScmCommitPreparationPhase {
     @Inject
-    public ScmCommitBranchPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
-    {
-        super( scmRepositoryConfigurator, "getScmBranchCommitComment" );
+    public ScmCommitBranchPhase(ScmRepositoryConfigurator scmRepositoryConfigurator) {
+        super(scmRepositoryConfigurator, "getScmBranchCommitComment");
     }
 }

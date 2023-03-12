@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 import java.util.List;
 
@@ -30,8 +29,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * @author Robert Scholte
  * @since 2.3
  */
-public abstract class AbstractReleaseRequest
-{
+public abstract class AbstractReleaseRequest {
     private ReleaseDescriptorBuilder releaseDescriptorBuilder;
 
     private List<MavenProject> reactorProjects;
@@ -43,8 +41,7 @@ public abstract class AbstractReleaseRequest
      *
      * @return the releaseDescriptor
      */
-    public ReleaseDescriptorBuilder getReleaseDescriptorBuilder()
-    {
+    public ReleaseDescriptorBuilder getReleaseDescriptorBuilder() {
         return releaseDescriptorBuilder;
     }
 
@@ -53,8 +50,7 @@ public abstract class AbstractReleaseRequest
      *
      * @param releaseDescriptor the releaseDescriptor to set
      */
-    public void setReleaseDescriptorBuilder( ReleaseDescriptorBuilder releaseDescriptor )
-    {
+    public void setReleaseDescriptorBuilder(ReleaseDescriptorBuilder releaseDescriptor) {
         this.releaseDescriptorBuilder = releaseDescriptor;
     }
 
@@ -63,8 +59,7 @@ public abstract class AbstractReleaseRequest
      *
      * @return the reactorProjects
      */
-    public List<MavenProject> getReactorProjects()
-    {
+    public List<MavenProject> getReactorProjects() {
         return reactorProjects;
     }
 
@@ -73,8 +68,7 @@ public abstract class AbstractReleaseRequest
      *
      * @param reactorProjects the reactorProjects to set
      */
-    public void setReactorProjects( List<MavenProject> reactorProjects )
-    {
+    public void setReactorProjects(List<MavenProject> reactorProjects) {
         this.reactorProjects = reactorProjects;
     }
 
@@ -83,8 +77,7 @@ public abstract class AbstractReleaseRequest
      *
      * @return the releaseManagerListener
      */
-    public ReleaseManagerListener getReleaseManagerListener()
-    {
+    public ReleaseManagerListener getReleaseManagerListener() {
         return releaseManagerListener;
     }
 
@@ -93,8 +86,7 @@ public abstract class AbstractReleaseRequest
      *
      * @param releaseManagerListener the releaseManagerListener to set
      */
-    public void setReleaseManagerListener( ReleaseManagerListener releaseManagerListener )
-    {
+    public void setReleaseManagerListener(ReleaseManagerListener releaseManagerListener) {
         this.releaseManagerListener = releaseManagerListener;
     }
 }

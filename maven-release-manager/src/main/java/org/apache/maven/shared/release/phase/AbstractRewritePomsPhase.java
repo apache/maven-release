@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.net.URI;
@@ -72,9 +71,7 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public abstract class AbstractRewritePomsPhase
-        extends AbstractReleasePhase implements ResourceGenerator
-{
+public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase implements ResourceGenerator {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
@@ -94,13 +91,13 @@ public abstract class AbstractRewritePomsPhase
 
     private long startTime = -1 * 1000;
 
-    protected AbstractRewritePomsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
-                                        Map<String, ModelETLFactory> modelETLFactories,
-                                        Map<String, ScmTranslator> scmTranslators )
-    {
-        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
-        this.modelETLFactories = requireNonNull( modelETLFactories );
-        this.scmTranslators = requireNonNull( scmTranslators );
+    protected AbstractRewritePomsPhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator,
+            Map<String, ModelETLFactory> modelETLFactories,
+            Map<String, ScmTranslator> scmTranslators) {
+        this.scmRepositoryConfigurator = requireNonNull(scmRepositoryConfigurator);
+        this.modelETLFactories = requireNonNull(modelETLFactories);
+        this.scmTranslators = requireNonNull(scmTranslators);
     }
 
     /**
@@ -108,8 +105,7 @@ public abstract class AbstractRewritePomsPhase
      *
      * @return a {@link java.util.Map} object
      */
-    protected final Map<String, ScmTranslator> getScmTranslators()
-    {
+    protected final Map<String, ScmTranslator> getScmTranslators() {
         return scmTranslators;
     }
 
@@ -118,8 +114,7 @@ public abstract class AbstractRewritePomsPhase
      *
      * @param modelETL a {@link java.lang.String} object
      */
-    public void setModelETL( String modelETL )
-    {
+    public void setModelETL(String modelETL) {
         this.modelETL = modelETL;
     }
 
@@ -128,8 +123,7 @@ public abstract class AbstractRewritePomsPhase
      *
      * @param startTime a long
      */
-    public void setStartTime( long startTime )
-    {
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
@@ -141,484 +135,474 @@ public abstract class AbstractRewritePomsPhase
     protected abstract String getPomSuffix();
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
 
-        transform( releaseDescriptor, releaseEnvironment, reactorProjects, false, result );
+        transform(releaseDescriptor, releaseEnvironment, reactorProjects, false, result);
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
 
-        transform( releaseDescriptor, releaseEnvironment, reactorProjects, true, result );
+        transform(releaseDescriptor, releaseEnvironment, reactorProjects, true, result);
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
     @Override
-    public ReleaseResult clean( List<MavenProject> reactorProjects )
-    {
+    public ReleaseResult clean(List<MavenProject> reactorProjects) {
         ReleaseResult result = new ReleaseResult();
 
-        if ( reactorProjects != null )
-        {
-            for ( MavenProject project : reactorProjects )
-            {
-                File pomFile = ReleaseUtil.getStandardPom( project );
+        if (reactorProjects != null) {
+            for (MavenProject project : reactorProjects) {
+                File pomFile = ReleaseUtil.getStandardPom(project);
                 // MRELEASE-273 : if no pom
-                if ( pomFile != null )
-                {
-                    File file = new File( pomFile.getParentFile(), pomFile.getName() + "." + getPomSuffix() );
-                    if ( file.exists() )
-                    {
+                if (pomFile != null) {
+                    File file = new File(pomFile.getParentFile(), pomFile.getName() + "." + getPomSuffix());
+                    if (file.exists()) {
                         file.delete();
                     }
                 }
             }
         }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
-    private void transform( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                            List<MavenProject> reactorProjects, boolean simulate, ReleaseResult result )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
-        result.setStartTime( ( startTime >= 0 ) ? startTime : System.currentTimeMillis() );
+    private void transform(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects,
+            boolean simulate,
+            ReleaseResult result)
+            throws ReleaseExecutionException, ReleaseFailureException {
+        result.setStartTime((startTime >= 0) ? startTime : System.currentTimeMillis());
 
-        URI root = ReleaseUtil.getRootProject( reactorProjects ).getBasedir().toURI();
+        URI root = ReleaseUtil.getRootProject(reactorProjects).getBasedir().toURI();
 
-        for ( MavenProject project : reactorProjects )
-        {
+        for (MavenProject project : reactorProjects) {
             URI pom = project.getFile().toURI();
-            logInfo( result,
-                     "Transforming " + root.relativize( pom ).getPath() + ' '
-                         + buffer().project( project.getArtifactId() ) + " '" + project.getName() + "'"
-                         + ( simulate ? " with ." + getPomSuffix() + " suffix" : "" ) + "..." );
+            logInfo(
+                    result,
+                    "Transforming " + root.relativize(pom).getPath() + ' '
+                            + buffer().project(project.getArtifactId()) + " '" + project.getName() + "'"
+                            + (simulate ? " with ." + getPomSuffix() + " suffix" : "") + "...");
 
-            transformProject( project, releaseDescriptor, releaseEnvironment, simulate, result );
+            transformProject(project, releaseDescriptor, releaseEnvironment, simulate, result);
         }
     }
 
-    private void transformProject( MavenProject project, ReleaseDescriptor releaseDescriptor,
-                                   ReleaseEnvironment releaseEnvironment, boolean simulate,
-                                   ReleaseResult result )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
-        File pomFile = ReleaseUtil.getStandardPom( project );
+    private void transformProject(
+            MavenProject project,
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            boolean simulate,
+            ReleaseResult result)
+            throws ReleaseExecutionException, ReleaseFailureException {
+        File pomFile = ReleaseUtil.getStandardPom(project);
 
         ModelETLRequest request = new ModelETLRequest();
-        request.setProject( project );
-        request.setReleaseDescriptor( releaseDescriptor );
+        request.setProject(project);
+        request.setReleaseDescriptor(releaseDescriptor);
 
-        ModelETL etl = modelETLFactories.get( modelETL ).newInstance( request );
+        ModelETL etl = modelETLFactories.get(modelETL).newInstance(request);
 
-        etl.extract( pomFile );
+        etl.extract(pomFile);
 
         ScmRepository scmRepository = null;
         ScmProvider provider = null;
 
-        if ( isUpdateScm() )
-        {
-            try
-            {
-                scmRepository = scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                        releaseEnvironment.getSettings() );
+        if (isUpdateScm()) {
+            try {
+                scmRepository = scmRepositoryConfigurator.getConfiguredRepository(
+                        releaseDescriptor, releaseEnvironment.getSettings());
 
-                provider = scmRepositoryConfigurator.getRepositoryProvider( scmRepository );
-            }
-            catch ( ScmRepositoryException e )
-            {
-                throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
-            }
-            catch ( NoSuchScmProviderException e )
-            {
-                throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+                provider = scmRepositoryConfigurator.getRepositoryProvider(scmRepository);
+            } catch (ScmRepositoryException e) {
+                throw new ReleaseScmRepositoryException(e.getMessage(), e.getValidationMessages());
+            } catch (NoSuchScmProviderException e) {
+                throw new ReleaseExecutionException("Unable to configure SCM repository: " + e.getMessage(), e);
             }
         }
 
-        transformDocument( project, etl.getModel(), releaseDescriptor, scmRepository, result,
-                simulate );
+        transformDocument(project, etl.getModel(), releaseDescriptor, scmRepository, result, simulate);
 
         File outputFile;
-        if ( simulate )
-        {
-            outputFile = new File( pomFile.getParentFile(), pomFile.getName() + "." + getPomSuffix() );
-        }
-        else
-        {
+        if (simulate) {
+            outputFile = new File(pomFile.getParentFile(), pomFile.getName() + "." + getPomSuffix());
+        } else {
             outputFile = pomFile;
-            prepareScm( pomFile, releaseDescriptor, scmRepository, provider );
+            prepareScm(pomFile, releaseDescriptor, scmRepository, provider);
         }
-        etl.load( outputFile );
-
+        etl.load(outputFile);
     }
 
-    private void transformDocument( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                    ScmRepository scmRepository, ReleaseResult result,
-                                    boolean simulate )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    private void transformDocument(
+            MavenProject project,
+            Model modelTarget,
+            ReleaseDescriptor releaseDescriptor,
+            ScmRepository scmRepository,
+            ReleaseResult result,
+            boolean simulate)
+            throws ReleaseExecutionException, ReleaseFailureException {
         Model model = project.getModel();
 
         Properties properties = modelTarget.getProperties();
 
-        String parentVersion = rewriteParent( project, modelTarget, releaseDescriptor, simulate );
+        String parentVersion = rewriteParent(project, modelTarget, releaseDescriptor, simulate);
 
-        String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+        String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
-        rewriteVersion( modelTarget, releaseDescriptor, projectId, project );
+        rewriteVersion(modelTarget, releaseDescriptor, projectId, project);
 
         Build buildTarget = modelTarget.getBuild();
-        if ( buildTarget != null )
-        {
+        if (buildTarget != null) {
             // profile.build.extensions doesn't exist, so only rewrite project.build.extensions
-            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getExtensions() ),
-                    model, properties, result, releaseDescriptor, simulate );
+            rewriteArtifactVersions(
+                    toMavenCoordinates(buildTarget.getExtensions()),
+                    model,
+                    properties,
+                    result,
+                    releaseDescriptor,
+                    simulate);
 
-            rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPlugins() ),
-                    model, properties, result, releaseDescriptor, simulate );
+            rewriteArtifactVersions(
+                    toMavenCoordinates(buildTarget.getPlugins()),
+                    model,
+                    properties,
+                    result,
+                    releaseDescriptor,
+                    simulate);
 
-            for ( Plugin plugin : buildTarget.getPlugins() )
-            {
-                rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ),
-                        model, properties,
-                        result, releaseDescriptor, simulate );
+            for (Plugin plugin : buildTarget.getPlugins()) {
+                rewriteArtifactVersions(
+                        toMavenCoordinates(plugin.getDependencies()),
+                        model,
+                        properties,
+                        result,
+                        releaseDescriptor,
+                        simulate);
             }
 
-            if ( buildTarget.getPluginManagement() != null )
-            {
-                rewriteArtifactVersions( toMavenCoordinates( buildTarget.getPluginManagement().getPlugins() ), model,
-                        properties, result, releaseDescriptor, simulate );
+            if (buildTarget.getPluginManagement() != null) {
+                rewriteArtifactVersions(
+                        toMavenCoordinates(buildTarget.getPluginManagement().getPlugins()),
+                        model,
+                        properties,
+                        result,
+                        releaseDescriptor,
+                        simulate);
 
-                for ( Plugin plugin : buildTarget.getPluginManagement().getPlugins() )
-                {
-                    rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties, result,
-                            releaseDescriptor, simulate );
+                for (Plugin plugin : buildTarget.getPluginManagement().getPlugins()) {
+                    rewriteArtifactVersions(
+                            toMavenCoordinates(plugin.getDependencies()),
+                            model,
+                            properties,
+                            result,
+                            releaseDescriptor,
+                            simulate);
                 }
             }
         }
 
-        for ( Profile profile : modelTarget.getProfiles() )
-        {
+        for (Profile profile : modelTarget.getProfiles()) {
             BuildBase profileBuild = profile.getBuild();
-            if ( profileBuild != null )
-            {
-                rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPlugins() ), model, properties, result,
-                        releaseDescriptor, simulate );
+            if (profileBuild != null) {
+                rewriteArtifactVersions(
+                        toMavenCoordinates(profileBuild.getPlugins()),
+                        model,
+                        properties,
+                        result,
+                        releaseDescriptor,
+                        simulate);
 
-                for ( Plugin plugin : profileBuild.getPlugins() )
-                {
-                    rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties, result,
-                            releaseDescriptor, simulate );
+                for (Plugin plugin : profileBuild.getPlugins()) {
+                    rewriteArtifactVersions(
+                            toMavenCoordinates(plugin.getDependencies()),
+                            model,
+                            properties,
+                            result,
+                            releaseDescriptor,
+                            simulate);
                 }
 
-                if ( profileBuild.getPluginManagement() != null )
-                {
-                    rewriteArtifactVersions( toMavenCoordinates( profileBuild.getPluginManagement().getPlugins() ),
-                            model, properties, result, releaseDescriptor, simulate );
+                if (profileBuild.getPluginManagement() != null) {
+                    rewriteArtifactVersions(
+                            toMavenCoordinates(
+                                    profileBuild.getPluginManagement().getPlugins()),
+                            model,
+                            properties,
+                            result,
+                            releaseDescriptor,
+                            simulate);
 
-                    for ( Plugin plugin : profileBuild.getPluginManagement().getPlugins() )
-                    {
-                        rewriteArtifactVersions( toMavenCoordinates( plugin.getDependencies() ), model, properties,
-                                result, releaseDescriptor, simulate );
+                    for (Plugin plugin : profileBuild.getPluginManagement().getPlugins()) {
+                        rewriteArtifactVersions(
+                                toMavenCoordinates(plugin.getDependencies()),
+                                model,
+                                properties,
+                                result,
+                                releaseDescriptor,
+                                simulate);
                     }
                 }
             }
         }
 
         List<ModelBase> modelBases = new ArrayList<>();
-        modelBases.add( modelTarget );
-        modelBases.addAll( modelTarget.getProfiles() );
+        modelBases.add(modelTarget);
+        modelBases.addAll(modelTarget.getProfiles());
 
-        for ( ModelBase modelBase : modelBases )
-        {
-            rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencies() ), model, properties, result,
-                    releaseDescriptor, simulate );
+        for (ModelBase modelBase : modelBases) {
+            rewriteArtifactVersions(
+                    toMavenCoordinates(modelBase.getDependencies()),
+                    model,
+                    properties,
+                    result,
+                    releaseDescriptor,
+                    simulate);
 
-            if ( modelBase.getDependencyManagement() != null )
-            {
-                rewriteArtifactVersions( toMavenCoordinates( modelBase.getDependencyManagement().getDependencies() ),
-                        model, properties, result, releaseDescriptor, simulate );
+            if (modelBase.getDependencyManagement() != null) {
+                rewriteArtifactVersions(
+                        toMavenCoordinates(modelBase.getDependencyManagement().getDependencies()),
+                        model,
+                        properties,
+                        result,
+                        releaseDescriptor,
+                        simulate);
             }
 
-            if ( modelBase.getReporting() != null )
-            {
-                rewriteArtifactVersions( toMavenCoordinates( modelBase.getReporting().getPlugins() ), model, properties,
-                        result, releaseDescriptor, simulate );
+            if (modelBase.getReporting() != null) {
+                rewriteArtifactVersions(
+                        toMavenCoordinates(modelBase.getReporting().getPlugins()),
+                        model,
+                        properties,
+                        result,
+                        releaseDescriptor,
+                        simulate);
             }
         }
 
-        transformScm( project, modelTarget, releaseDescriptor, projectId, scmRepository, result );
+        transformScm(project, modelTarget, releaseDescriptor, projectId, scmRepository, result);
 
-        if ( properties != null )
-        {
-            rewriteBuildOutputTimestampProperty( properties, result );
+        if (properties != null) {
+            rewriteBuildOutputTimestampProperty(properties, result);
         }
     }
 
-    private void rewriteBuildOutputTimestampProperty( Properties properties, ReleaseResult result )
-    {
-        String buildOutputTimestamp = properties.getProperty( "project.build.outputTimestamp" );
-        if ( buildOutputTimestamp == null || StringUtils.isEmpty( buildOutputTimestamp ) )
-        {
+    private void rewriteBuildOutputTimestampProperty(Properties properties, ReleaseResult result) {
+        String buildOutputTimestamp = properties.getProperty("project.build.outputTimestamp");
+        if (buildOutputTimestamp == null || StringUtils.isEmpty(buildOutputTimestamp)) {
             // no Reproducible Builds output timestamp defined
             return;
         }
 
-        if ( StringUtils.isNumeric( buildOutputTimestamp ) )
-        {
+        if (StringUtils.isNumeric(buildOutputTimestamp)) {
             // int representing seconds since the epoch, like SOURCE_DATE_EPOCH
-            buildOutputTimestamp = String.valueOf( result.getStartTime() / 1000 );
-        }
-        else if ( buildOutputTimestamp.length() <= 1 )
-        {
+            buildOutputTimestamp = String.valueOf(result.getStartTime() / 1000);
+        } else if (buildOutputTimestamp.length() <= 1) {
             // value length == 1 means disable Reproducible Builds
             return;
-        }
-        else
-        {
+        } else {
             // ISO-8601
-            DateFormat df = new SimpleDateFormat( "yyyy-MM-dd'T'HH:mm:ss'Z'" );
-            df.setTimeZone( TimeZone.getTimeZone( "UTC" ) );
-            buildOutputTimestamp = df.format( new Date( result.getStartTime() ) );
+            DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            buildOutputTimestamp = df.format(new Date(result.getStartTime()));
         }
-        properties.setProperty( "project.build.outputTimestamp", buildOutputTimestamp );
+        properties.setProperty("project.build.outputTimestamp", buildOutputTimestamp);
     }
 
-    private void rewriteVersion( Model modelTarget, ReleaseDescriptor releaseDescriptor, String projectId,
-                                 MavenProject project )
-            throws ReleaseFailureException
-    {
-        String version = getNextVersion( releaseDescriptor, projectId );
-        if ( version == null )
-        {
-            throw new ReleaseFailureException( "Version for '" + project.getName() + "' was not mapped" );
+    private void rewriteVersion(
+            Model modelTarget, ReleaseDescriptor releaseDescriptor, String projectId, MavenProject project)
+            throws ReleaseFailureException {
+        String version = getNextVersion(releaseDescriptor, projectId);
+        if (version == null) {
+            throw new ReleaseFailureException("Version for '" + project.getName() + "' was not mapped");
         }
 
-        modelTarget.setVersion( version );
+        modelTarget.setVersion(version);
     }
 
-    private String rewriteParent( MavenProject project, Model targetModel,
-                                  ReleaseDescriptor releaseDescriptor, boolean simulate )
-            throws ReleaseFailureException
-    {
+    private String rewriteParent(
+            MavenProject project, Model targetModel, ReleaseDescriptor releaseDescriptor, boolean simulate)
+            throws ReleaseFailureException {
         String parentVersion = null;
-        if ( project.hasParent() )
-        {
+        if (project.hasParent()) {
             MavenProject parent = project.getParent();
-            String key = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
-            parentVersion = getNextVersion( releaseDescriptor, key );
-            if ( parentVersion == null )
-            {
-                //MRELEASE-317
-                parentVersion = getResolvedSnapshotVersion( key, releaseDescriptor );
+            String key = ArtifactUtils.versionlessKey(parent.getGroupId(), parent.getArtifactId());
+            parentVersion = getNextVersion(releaseDescriptor, key);
+            if (parentVersion == null) {
+                // MRELEASE-317
+                parentVersion = getResolvedSnapshotVersion(key, releaseDescriptor);
             }
-            if ( parentVersion == null )
-            {
-                String original = getOriginalVersion( releaseDescriptor, key, simulate );
-                if ( parent.getVersion().equals( original ) )
-                {
-                    throw new ReleaseFailureException( "Version for parent '" + parent.getName() + "' was not mapped" );
+            if (parentVersion == null) {
+                String original = getOriginalVersion(releaseDescriptor, key, simulate);
+                if (parent.getVersion().equals(original)) {
+                    throw new ReleaseFailureException("Version for parent '" + parent.getName() + "' was not mapped");
                 }
-            }
-            else
-            {
-                targetModel.getParent().setVersion( parentVersion );
+            } else {
+                targetModel.getParent().setVersion(parentVersion);
             }
         }
         return parentVersion;
     }
 
-    private void rewriteArtifactVersions( Collection<MavenCoordinate> elements, Model projectModel,
-                                          Properties properties, ReleaseResult result,
-                                          ReleaseDescriptor releaseDescriptor, boolean simulate )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
-        if ( elements == null )
-        {
+    private void rewriteArtifactVersions(
+            Collection<MavenCoordinate> elements,
+            Model projectModel,
+            Properties properties,
+            ReleaseResult result,
+            ReleaseDescriptor releaseDescriptor,
+            boolean simulate)
+            throws ReleaseExecutionException, ReleaseFailureException {
+        if (elements == null) {
             return;
         }
-        String projectId = ArtifactUtils.versionlessKey( projectModel.getGroupId(), projectModel.getArtifactId() );
-        for ( MavenCoordinate coordinate : elements )
-        {
+        String projectId = ArtifactUtils.versionlessKey(projectModel.getGroupId(), projectModel.getArtifactId());
+        for (MavenCoordinate coordinate : elements) {
             String rawVersion = coordinate.getVersion();
-            if ( rawVersion == null )
-            {
+            if (rawVersion == null) {
                 // managed dependency or unversioned plugin
                 continue;
             }
 
             String rawGroupId = coordinate.getGroupId();
-            if ( rawGroupId == null )
-            {
-                if ( "plugin".equals( coordinate.getName() ) )
-                {
+            if (rawGroupId == null) {
+                if ("plugin".equals(coordinate.getName())) {
                     rawGroupId = "org.apache.maven.plugins";
-                }
-                else
-                {
+                } else {
                     // incomplete dependency
                     continue;
                 }
             }
-            String groupId = ReleaseUtil.interpolate( rawGroupId, projectModel );
+            String groupId = ReleaseUtil.interpolate(rawGroupId, projectModel);
 
             String rawArtifactId = coordinate.getArtifactId();
-            if ( rawArtifactId == null )
-            {
+            if (rawArtifactId == null) {
                 // incomplete element
                 continue;
             }
-            String artifactId = ReleaseUtil.interpolate( rawArtifactId, projectModel );
+            String artifactId = ReleaseUtil.interpolate(rawArtifactId, projectModel);
 
-            String key = ArtifactUtils.versionlessKey( groupId, artifactId );
-            String resolvedSnapshotVersion = getResolvedSnapshotVersion( key, releaseDescriptor );
-            String mappedVersion = getNextVersion( releaseDescriptor, key );
-            String originalVersion = getOriginalVersion( releaseDescriptor, key, simulate );
-            if ( originalVersion == null )
-            {
-                originalVersion = getOriginalResolvedSnapshotVersion( key, releaseDescriptor );
+            String key = ArtifactUtils.versionlessKey(groupId, artifactId);
+            String resolvedSnapshotVersion = getResolvedSnapshotVersion(key, releaseDescriptor);
+            String mappedVersion = getNextVersion(releaseDescriptor, key);
+            String originalVersion = getOriginalVersion(releaseDescriptor, key, simulate);
+            if (originalVersion == null) {
+                originalVersion = getOriginalResolvedSnapshotVersion(key, releaseDescriptor);
             }
 
             // MRELEASE-220
-            if ( mappedVersion != null && mappedVersion.endsWith( Artifact.SNAPSHOT_VERSION )
-                    && !rawVersion.endsWith( Artifact.SNAPSHOT_VERSION ) && !releaseDescriptor.isUpdateDependencies() )
-            {
+            if (mappedVersion != null
+                    && mappedVersion.endsWith(Artifact.SNAPSHOT_VERSION)
+                    && !rawVersion.endsWith(Artifact.SNAPSHOT_VERSION)
+                    && !releaseDescriptor.isUpdateDependencies()) {
                 continue;
             }
 
-            if ( mappedVersion != null )
-            {
-                if ( rawVersion.equals( originalVersion ) )
-                {
-                    logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
-                    coordinate.setVersion( mappedVersion );
-                }
-                else if ( rawVersion.matches( "\\$\\{.+\\}" ) )
-                {
-                    String expression = rawVersion.substring( 2, rawVersion.length() - 1 );
+            if (mappedVersion != null) {
+                if (rawVersion.equals(originalVersion)) {
+                    logInfo(result, "  Updating " + artifactId + " to " + mappedVersion);
+                    coordinate.setVersion(mappedVersion);
+                } else if (rawVersion.matches("\\$\\{.+\\}")) {
+                    String expression = rawVersion.substring(2, rawVersion.length() - 1);
 
-                    if ( expression.startsWith( "project." ) || expression.startsWith( "pom." )
-                            || "version".equals( expression ) )
-                    {
-                        if ( !mappedVersion.equals( getNextVersion( releaseDescriptor, projectId ) ) )
-                        {
-                            logInfo( result, "  Updating " + artifactId + " to " + mappedVersion );
-                            coordinate.setVersion( mappedVersion );
+                    if (expression.startsWith("project.")
+                            || expression.startsWith("pom.")
+                            || "version".equals(expression)) {
+                        if (!mappedVersion.equals(getNextVersion(releaseDescriptor, projectId))) {
+                            logInfo(result, "  Updating " + artifactId + " to " + mappedVersion);
+                            coordinate.setVersion(mappedVersion);
+                        } else {
+                            logInfo(result, "  Ignoring artifact version update for expression " + rawVersion);
                         }
-                        else
-                        {
-                            logInfo( result, "  Ignoring artifact version update for expression " + rawVersion );
-                        }
-                    }
-                    else if ( properties != null )
-                    {
+                    } else if (properties != null) {
                         // version is an expression, check for properties to update instead
 
-                        String propertyValue = properties.getProperty( expression );
+                        String propertyValue = properties.getProperty(expression);
 
-                        if ( propertyValue != null )
-                        {
-                            if ( propertyValue.equals( originalVersion ) )
-                            {
-                                logInfo( result, "  Updating " + rawVersion + " to " + mappedVersion );
+                        if (propertyValue != null) {
+                            if (propertyValue.equals(originalVersion)) {
+                                logInfo(result, "  Updating " + rawVersion + " to " + mappedVersion);
                                 // change the property only if the property is the same as what's in the reactor
-                                properties.setProperty( expression, mappedVersion );
-                            }
-                            else if ( mappedVersion.equals( propertyValue ) )
-                            {
+                                properties.setProperty(expression, mappedVersion);
+                            } else if (mappedVersion.equals(propertyValue)) {
                                 // this property may have been updated during processing a sibling.
-                                logInfo( result, "  Ignoring artifact version update for expression " + rawVersion
-                                        + " because it is already updated" );
-                            }
-                            else if ( !mappedVersion.equals( rawVersion ) )
-                            {
+                                logInfo(
+                                        result,
+                                        "  Ignoring artifact version update for expression " + rawVersion
+                                                + " because it is already updated");
+                            } else if (!mappedVersion.equals(rawVersion)) {
                                 // WARNING: ${pom.*} prefix support and ${version} is about to be dropped in mvn4!
                                 // https://issues.apache.org/jira/browse/MNG-7404
                                 // https://issues.apache.org/jira/browse/MNG-7244
-                                if ( mappedVersion.matches( "\\$\\{project.+\\}" )
-                                        || mappedVersion.matches( "\\$\\{pom.+\\}" )
-                                        || "${version}".equals( mappedVersion ) )
-                                {
-                                    logInfo( result, "  Ignoring artifact version update for expression "
-                                            + mappedVersion );
+                                if (mappedVersion.matches("\\$\\{project.+\\}")
+                                        || mappedVersion.matches("\\$\\{pom.+\\}")
+                                        || "${version}".equals(mappedVersion)) {
+                                    logInfo(
+                                            result,
+                                            "  Ignoring artifact version update for expression " + mappedVersion);
                                     // ignore... we cannot update this expression
-                                }
-                                else
-                                {
+                                } else {
                                     // the value of the expression conflicts with what the user wanted to release
-                                    throw new ReleaseFailureException( "The artifact (" + key + ") requires a "
+                                    throw new ReleaseFailureException("The artifact (" + key + ") requires a "
                                             + "different version (" + mappedVersion + ") than what is found ("
                                             + propertyValue + ") for the expression (" + expression + ") in the "
-                                            + "project (" + projectId + ")." );
+                                            + "project (" + projectId + ").");
                                 }
                             }
-                        }
-                        else
-                        {
+                        } else {
                             // the expression used to define the version of this artifact may be inherited
                             // TODO needs a better error message, what pom? what dependency?
-                            throw new ReleaseFailureException( "The version could not be updated: " + rawVersion );
+                            throw new ReleaseFailureException("The version could not be updated: " + rawVersion);
                         }
                     }
-                }
-                else
-                {
+                } else {
                     // different/previous version not related to current release
                 }
-            }
-            else if ( resolvedSnapshotVersion != null )
-            {
-                logInfo( result, "  Updating " + artifactId + " to " + resolvedSnapshotVersion );
+            } else if (resolvedSnapshotVersion != null) {
+                logInfo(result, "  Updating " + artifactId + " to " + resolvedSnapshotVersion);
 
-                coordinate.setVersion( resolvedSnapshotVersion );
-            }
-            else
-            {
+                coordinate.setVersion(resolvedSnapshotVersion);
+            } else {
                 // artifact not related to current release
             }
         }
     }
 
-    private void prepareScm( File pomFile, ReleaseDescriptor releaseDescriptor, ScmRepository repository,
-                             ScmProvider provider )
-            throws ReleaseExecutionException, ReleaseScmCommandException
-    {
-        try
-        {
-            if ( isUpdateScm() && ( releaseDescriptor.isScmUseEditMode() || provider.requiresEditMode() ) )
-            {
-                EditScmResult result = provider.edit( repository, new ScmFileSet(
-                        new File( releaseDescriptor.getWorkingDirectory() ), pomFile ) );
+    private void prepareScm(
+            File pomFile, ReleaseDescriptor releaseDescriptor, ScmRepository repository, ScmProvider provider)
+            throws ReleaseExecutionException, ReleaseScmCommandException {
+        try {
+            if (isUpdateScm() && (releaseDescriptor.isScmUseEditMode() || provider.requiresEditMode())) {
+                EditScmResult result = provider.edit(
+                        repository, new ScmFileSet(new File(releaseDescriptor.getWorkingDirectory()), pomFile));
 
-                if ( !result.isSuccess() )
-                {
-                    throw new ReleaseScmCommandException( "Unable to enable editing on the POM", result );
+                if (!result.isSuccess()) {
+                    throw new ReleaseScmCommandException("Unable to enable editing on the POM", result);
                 }
             }
-        }
-        catch ( ScmException e )
-        {
-            throw new ReleaseExecutionException( "An error occurred enabling edit mode: " + e.getMessage(), e );
+        } catch (ScmException e) {
+            throw new ReleaseExecutionException("An error occurred enabling edit mode: " + e.getMessage(), e);
         }
     }
-
 
     /**
      * <p>getResolvedSnapshotVersion.</p>
@@ -627,8 +611,8 @@ public abstract class AbstractRewritePomsPhase
      * @param releaseDscriptor       a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
      * @return a {@link java.lang.String} object
      */
-    protected abstract String getResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                          ReleaseDescriptor releaseDscriptor );
+    protected abstract String getResolvedSnapshotVersion(
+            String artifactVersionlessKey, ReleaseDescriptor releaseDscriptor);
 
     /**
      * <p>getOriginalVersion.</p>
@@ -638,8 +622,8 @@ public abstract class AbstractRewritePomsPhase
      * @param simulate          a boolean
      * @return a {@link java.lang.String} object
      */
-    protected abstract String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey,
-                                                  boolean simulate );
+    protected abstract String getOriginalVersion(
+            ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate);
 
     /**
      * <p>getNextVersion.</p>
@@ -648,7 +632,7 @@ public abstract class AbstractRewritePomsPhase
      * @param key               a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
-    protected abstract String getNextVersion( ReleaseDescriptor releaseDescriptor, String key );
+    protected abstract String getNextVersion(ReleaseDescriptor releaseDescriptor, String key);
 
     /**
      * <p>transformScm.</p>
@@ -661,9 +645,13 @@ public abstract class AbstractRewritePomsPhase
      * @param result            a {@link org.apache.maven.shared.release.ReleaseResult} object
      * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
      */
-    protected abstract void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                          String projectId, ScmRepository scmRepository,
-                                          ReleaseResult result )
+    protected abstract void transformScm(
+            MavenProject project,
+            Model modelTarget,
+            ReleaseDescriptor releaseDescriptor,
+            String projectId,
+            ScmRepository scmRepository,
+            ReleaseResult result)
             throws ReleaseExecutionException;
 
     /**
@@ -672,8 +660,7 @@ public abstract class AbstractRewritePomsPhase
      * @return {@code true} if the SCM-section should be updated, otherwise {@code false}
      * @since 2.4
      */
-    protected boolean isUpdateScm()
-    {
+    protected boolean isUpdateScm() {
         return true;
     }
 
@@ -684,10 +671,9 @@ public abstract class AbstractRewritePomsPhase
      * @param releaseDescriptor      a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
      * @return a {@link java.lang.String} object
      */
-    protected String getOriginalResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                         ReleaseDescriptor releaseDescriptor )
-    {
-        return releaseDescriptor.getDependencyOriginalVersion( artifactVersionlessKey );
+    protected String getOriginalResolvedSnapshotVersion(
+            String artifactVersionlessKey, ReleaseDescriptor releaseDescriptor) {
+        return releaseDescriptor.getDependencyOriginalVersion(artifactVersionlessKey);
     }
 
     /**
@@ -699,55 +685,41 @@ public abstract class AbstractRewritePomsPhase
      * @param urlPath   - scm.url or scm.connection
      * @return The url path for the tag.
      */
-    protected static String translateUrlPath( String trunkPath, String tagPath, String urlPath )
-    {
+    protected static String translateUrlPath(String trunkPath, String tagPath, String urlPath) {
         trunkPath = trunkPath.trim();
         tagPath = tagPath.trim();
-        //Strip the slash at the end if one is present
-        if ( trunkPath.endsWith( "/" ) )
-        {
-            trunkPath = trunkPath.substring( 0, trunkPath.length() - 1 );
+        // Strip the slash at the end if one is present
+        if (trunkPath.endsWith("/")) {
+            trunkPath = trunkPath.substring(0, trunkPath.length() - 1);
         }
-        if ( tagPath.endsWith( "/" ) )
-        {
-            tagPath = tagPath.substring( 0, tagPath.length() - 1 );
+        if (tagPath.endsWith("/")) {
+            tagPath = tagPath.substring(0, tagPath.length() - 1);
         }
         char[] tagPathChars = trunkPath.toCharArray();
         char[] trunkPathChars = tagPath.toCharArray();
         // Find the common path between trunk and tags
         int i = 0;
-        while ( ( i < tagPathChars.length ) && ( i < trunkPathChars.length ) && tagPathChars[i] == trunkPathChars[i] )
-        {
+        while ((i < tagPathChars.length) && (i < trunkPathChars.length) && tagPathChars[i] == trunkPathChars[i]) {
             ++i;
         }
         // If there is nothing common between trunk and tags, or the relative
         // path does not exist in the url, then just return the tag.
-        if ( i == 0 || urlPath.indexOf( trunkPath.substring( i ) ) < 0 )
-        {
+        if (i == 0 || urlPath.indexOf(trunkPath.substring(i)) < 0) {
             return tagPath;
-        }
-        else
-        {
-            return StringUtils.replace( urlPath, trunkPath.substring( i ), tagPath.substring( i ) );
+        } else {
+            return StringUtils.replace(urlPath, trunkPath.substring(i), tagPath.substring(i));
         }
     }
 
-    private Collection<MavenCoordinate> toMavenCoordinates( List<?> objects )
-    {
-        Collection<MavenCoordinate> coordinates = new ArrayList<>( objects.size() );
-        for ( Object object : objects )
-        {
-            if ( object instanceof MavenCoordinate )
-            {
-                coordinates.add( (MavenCoordinate) object );
-            }
-            else
-            {
+    private Collection<MavenCoordinate> toMavenCoordinates(List<?> objects) {
+        Collection<MavenCoordinate> coordinates = new ArrayList<>(objects.size());
+        for (Object object : objects) {
+            if (object instanceof MavenCoordinate) {
+                coordinates.add((MavenCoordinate) object);
+            } else {
                 throw new UnsupportedOperationException();
             }
         }
         return coordinates;
     }
-
-
 }

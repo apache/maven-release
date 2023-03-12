@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -42,39 +41,44 @@ import static java.util.Objects.requireNonNull;
 /**
  * <p>Abstract AbstractMavenExecutor class.</p>
  */
-public abstract class AbstractMavenExecutor
-        implements MavenExecutor
-{
-    private final Logger logger = LoggerFactory.getLogger( getClass() );
+public abstract class AbstractMavenExecutor implements MavenExecutor {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final MavenCrypto mavenCrypto;
 
-    protected AbstractMavenExecutor( MavenCrypto mavenCrypto )
-    {
-        this.mavenCrypto = requireNonNull( mavenCrypto );
+    protected AbstractMavenExecutor(MavenCrypto mavenCrypto) {
+        this.mavenCrypto = requireNonNull(mavenCrypto);
     }
 
     @Override
-    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String additionalArguments, String pomFileName,
-                              ReleaseResult result )
-            throws MavenExecutorException
-    {
+    public void executeGoals(
+            File workingDirectory,
+            String goals,
+            ReleaseEnvironment releaseEnvironment,
+            boolean interactive,
+            String additionalArguments,
+            String pomFileName,
+            ReleaseResult result)
+            throws MavenExecutorException {
         List<String> goalsList = new ArrayList<>();
-        if ( goals != null )
-        {
+        if (goals != null) {
             // accept both space and comma, so the old way still work
             // also accept line separators, so that goal lists can be spread
             // across multiple lines in the POM.
-            Collections.addAll( goalsList, StringUtils.split( goals, ", \n\r\t" ) );
+            Collections.addAll(goalsList, StringUtils.split(goals, ", \n\r\t"));
         }
-        executeGoals( workingDirectory, goalsList, releaseEnvironment, interactive, additionalArguments, pomFileName,
-                result );
+        executeGoals(
+                workingDirectory, goalsList, releaseEnvironment, interactive, additionalArguments, pomFileName, result);
     }
 
-    protected abstract void executeGoals( File workingDirectory, List<String> goals,
-                                          ReleaseEnvironment releaseEnvironment, boolean interactive,
-                                          String additionalArguments, String pomFileName, ReleaseResult result )
+    protected abstract void executeGoals(
+            File workingDirectory,
+            List<String> goals,
+            ReleaseEnvironment releaseEnvironment,
+            boolean interactive,
+            String additionalArguments,
+            String pomFileName,
+            ReleaseResult result)
             throws MavenExecutorException;
 
     /**
@@ -82,8 +86,7 @@ public abstract class AbstractMavenExecutor
      *
      * @return a {@link Logger} object
      */
-    protected final Logger getLogger()
-    {
+    protected final Logger getLogger() {
         return logger;
     }
 
@@ -93,50 +96,35 @@ public abstract class AbstractMavenExecutor
      * @param settings a {@link org.apache.maven.settings.Settings} object
      * @return a {@link org.apache.maven.settings.Settings} object
      */
-    protected Settings encryptSettings( Settings settings )
-    {
-        Settings encryptedSettings = SettingsUtils.copySettings( settings );
+    protected Settings encryptSettings(Settings settings) {
+        Settings encryptedSettings = SettingsUtils.copySettings(settings);
 
-        for ( Server server : encryptedSettings.getServers() )
-        {
+        for (Server server : encryptedSettings.getServers()) {
             String password = server.getPassword();
-            if ( password != null && !mavenCrypto.isEncryptedString( password ) )
-            {
-                try
-                {
-                    server.setPassword( mavenCrypto.encryptAndDecorate( password ) );
-                }
-                catch ( MavenCryptoException e )
-                {
+            if (password != null && !mavenCrypto.isEncryptedString(password)) {
+                try {
+                    server.setPassword(mavenCrypto.encryptAndDecorate(password));
+                } catch (MavenCryptoException e) {
                     // ignore
                 }
             }
 
             String passphrase = server.getPassphrase();
-            if ( passphrase != null && !mavenCrypto.isEncryptedString( passphrase ) )
-            {
-                try
-                {
-                    server.setPassphrase( mavenCrypto.encryptAndDecorate( passphrase ) );
-                }
-                catch ( MavenCryptoException e )
-                {
+            if (passphrase != null && !mavenCrypto.isEncryptedString(passphrase)) {
+                try {
+                    server.setPassphrase(mavenCrypto.encryptAndDecorate(passphrase));
+                } catch (MavenCryptoException e) {
                     // ignore
                 }
             }
         }
 
-        for ( Proxy proxy : encryptedSettings.getProxies() )
-        {
+        for (Proxy proxy : encryptedSettings.getProxies()) {
             String password = proxy.getPassword();
-            if ( password != null && !mavenCrypto.isEncryptedString( password ) )
-            {
-                try
-                {
-                    proxy.setPassword( mavenCrypto.encryptAndDecorate( password ) );
-                }
-                catch ( MavenCryptoException e )
-                {
+            if (password != null && !mavenCrypto.isEncryptedString(password)) {
+                try {
+                    proxy.setPassword(mavenCrypto.encryptAndDecorate(password));
+                } catch (MavenCryptoException e) {
                     // ignore
                 }
             }
@@ -150,8 +138,7 @@ public abstract class AbstractMavenExecutor
      *
      * @return a {@link org.apache.maven.settings.io.xpp3.SettingsXpp3Writer} object
      */
-    protected SettingsXpp3Writer getSettingsWriter()
-    {
+    protected SettingsXpp3Writer getSettingsWriter() {
         return new SettingsXpp3Writer();
     }
 }

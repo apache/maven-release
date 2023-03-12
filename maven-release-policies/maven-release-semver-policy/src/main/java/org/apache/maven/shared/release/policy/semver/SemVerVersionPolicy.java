@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policy.semver;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.policy.semver;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policy.semver;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -35,47 +34,36 @@ import org.semver.Version.Element;
  * Uses SemVer implementation to increase minor element when resolving the development version
  */
 @Singleton
-@Named( "SemVerVersionPolicy" )
-@Description( "A VersionPolicy following the SemVer rules" )
-public class SemVerVersionPolicy implements VersionPolicy
-{
+@Named("SemVerVersionPolicy")
+@Description("A VersionPolicy following the SemVer rules")
+public class SemVerVersionPolicy implements VersionPolicy {
 
     @Override
-    public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
-        throws VersionParseException
-    {
+    public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {
         Version version;
-        try 
-        {
-            version = Version.parse( request.getVersion() );
+        try {
+            version = Version.parse(request.getVersion());
+        } catch (IllegalArgumentException e) {
+            throw new VersionParseException(e.getMessage());
         }
-        catch ( IllegalArgumentException e )
-        {
-            throw new VersionParseException( e.getMessage() );
-        }
-        
+
         VersionPolicyResult result = new VersionPolicyResult();
-        result.setVersion( version.toReleaseVersion().toString() );
+        result.setVersion(version.toReleaseVersion().toString());
         return result;
     }
 
     @Override
-    public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
-        throws VersionParseException
-    {
+    public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws VersionParseException {
         Version version;
-        try 
-        {
-            version = Version.parse( request.getVersion() );
+        try {
+            version = Version.parse(request.getVersion());
+        } catch (IllegalArgumentException e) {
+            throw new VersionParseException(e.getMessage());
         }
-        catch ( IllegalArgumentException e )
-        {
-            throw new VersionParseException( e.getMessage() );
-        }
-        
-        version = version.next( Element.MINOR );  
+
+        version = version.next(Element.MINOR);
         VersionPolicyResult result = new VersionPolicyResult();
-        result.setVersion( version + "-SNAPSHOT" );
+        result.setVersion(version + "-SNAPSHOT");
         return result;
     }
 }

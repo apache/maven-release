@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.stubs;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.stubs;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.stubs;
 
 import javax.inject.Singleton;
 
@@ -33,55 +32,41 @@ import org.eclipse.sisu.Priority;
  * Override the makeRepository methods to honour the URL passed in.
  */
 @Singleton
-@Priority( 100 )
-public class ScmManagerStub
-        extends org.apache.maven.scm.manager.ScmManagerStub
-{
+@Priority(100)
+public class ScmManagerStub extends org.apache.maven.scm.manager.ScmManagerStub {
     private Exception e;
 
     private Map<String, ScmRepository> scmRepositoriesForUrl = new HashMap<>();
 
     @Override
-    public ScmRepository makeScmRepository( String scmUrl )
-            throws ScmRepositoryException, NoSuchScmProviderException
-    {
-        if ( e != null )
-        {
-            if ( e instanceof ScmRepositoryException )
-            {
+    public ScmRepository makeScmRepository(String scmUrl) throws ScmRepositoryException, NoSuchScmProviderException {
+        if (e != null) {
+            if (e instanceof ScmRepositoryException) {
                 throw (ScmRepositoryException) e;
-            }
-            else if ( e instanceof NoSuchScmProviderException )
-            {
+            } else if (e instanceof NoSuchScmProviderException) {
                 throw (NoSuchScmProviderException) e;
-            }
-            else
-            {
-                throw new RuntimeException( e );
+            } else {
+                throw new RuntimeException(e);
             }
         }
 
-        if ( scmRepositoriesForUrl.isEmpty() )
-        {
+        if (scmRepositoriesForUrl.isEmpty()) {
             // we didn't configure any for URLs, return the preset one
             return getScmRepository();
         }
 
-        ScmRepository repository = scmRepositoriesForUrl.get( scmUrl );
-        if ( repository == null )
-        {
-            throw new ScmRepositoryException( "Unexpected URL: " + scmUrl );
+        ScmRepository repository = scmRepositoriesForUrl.get(scmUrl);
+        if (repository == null) {
+            throw new ScmRepositoryException("Unexpected URL: " + scmUrl);
         }
         return repository;
     }
 
-    public void addScmRepositoryForUrl( String url, ScmRepository repository )
-    {
-        scmRepositoriesForUrl.put( url, repository );
+    public void addScmRepositoryForUrl(String url, ScmRepository repository) {
+        scmRepositoriesForUrl.put(url, repository);
     }
 
-    public void setException( Exception e )
-    {
+    public void setException(Exception e) {
         this.e = e;
     }
 }

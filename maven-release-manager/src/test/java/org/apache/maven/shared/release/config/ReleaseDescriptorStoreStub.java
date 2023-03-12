@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.config;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,38 +16,31 @@ package org.apache.maven.shared.release.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.config;
 
 /**
  * Test stub for the release configuration store that holds a single configuration in memory.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseDescriptorStoreStub
-    implements ReleaseDescriptorStore
-{
+public class ReleaseDescriptorStoreStub implements ReleaseDescriptorStore {
     /**
      * The release configuration to use.
      */
     private ReleaseDescriptorBuilder releaseDescriptor = new ReleaseDescriptorBuilder();
 
     @Override
-    public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor )
-    {
+    public ReleaseDescriptorBuilder read(ReleaseDescriptorBuilder mergeDescriptor) {
         return mergeDescriptor;
     }
 
     @Override
-    public void write( ReleaseDescriptor config )
-    {
-    }
+    public void write(ReleaseDescriptor config) {}
 
     @Override
-    public void delete( ReleaseDescriptor config )
-    {
-    }
+    public void delete(ReleaseDescriptor config) {}
 
-    public ReleaseDescriptorBuilder getReleaseConfiguration()
-    {
+    public ReleaseDescriptorBuilder getReleaseConfiguration() {
         return releaseDescriptor;
     }
 }

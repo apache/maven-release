@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,93 +40,79 @@ import org.apache.maven.shared.release.transform.ModelETLFactory;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "rewrite-poms-for-development" )
-public class RewritePomsForDevelopmentPhase
-        extends AbstractRewritePomsPhase
-{
+@Named("rewrite-poms-for-development")
+public class RewritePomsForDevelopmentPhase extends AbstractRewritePomsPhase {
     @Inject
     public RewritePomsForDevelopmentPhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator,
             Map<String, ModelETLFactory> modelETLFactories,
-            Map<String, ScmTranslator> scmTranslators )
-    {
-        super( scmRepositoryConfigurator, modelETLFactories, scmTranslators );
+            Map<String, ScmTranslator> scmTranslators) {
+        super(scmRepositoryConfigurator, modelETLFactories, scmTranslators);
     }
 
     @Override
-    protected final String getPomSuffix()
-    {
+    protected final String getPomSuffix() {
         return "next";
     }
 
     @Override
-    protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                 String projectId, ScmRepository scmRepository, ReleaseResult result )
-    {
+    protected void transformScm(
+            MavenProject project,
+            Model modelTarget,
+            ReleaseDescriptor releaseDescriptor,
+            String projectId,
+            ScmRepository scmRepository,
+            ReleaseResult result) {
         // If SCM is null in original model, it is inherited, no mods needed
-        if ( project.getScm() != null )
-        {
+        if (project.getScm() != null) {
             Scm scmRoot = modelTarget.getScm();
-            if ( scmRoot != null )
-            {
-                ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
-                if ( translator != null )
-                {
-                    Scm scm = releaseDescriptor.getOriginalScmInfo( projectId );
+            if (scmRoot != null) {
+                ScmTranslator translator = getScmTranslators().get(scmRepository.getProvider());
+                if (translator != null) {
+                    Scm scm = releaseDescriptor.getOriginalScmInfo(projectId);
 
-                    if ( scm != null )
-                    {
-                        scmRoot.setConnection( scm.getConnection() );
-                        scmRoot.setDeveloperConnection( scm.getDeveloperConnection() );
-                        scmRoot.setUrl( scm.getUrl() );
-                        String tag = translator.resolveTag( scm.getTag() );
+                    if (scm != null) {
+                        scmRoot.setConnection(scm.getConnection());
+                        scmRoot.setDeveloperConnection(scm.getDeveloperConnection());
+                        scmRoot.setUrl(scm.getUrl());
+                        String tag = translator.resolveTag(scm.getTag());
                         // reuse unresolved tag from original in case ScmTranslator does not support tags
-                        if ( tag == null )
-                        {
+                        if (tag == null) {
                             tag = scm.getTag();
                             // never give out default value as there is no way to distinguish it from an the
                             // explicitly set tag with the same value
-                            if ( "HEAD".equals( tag ) )
-                            {
+                            if ("HEAD".equals(tag)) {
                                 tag = null;
                             }
                         }
-                        scmRoot.setTag( tag );
-                    }
-                    else
-                    {
+                        scmRoot.setTag(tag);
+                    } else {
                         // cleanly remove the SCM element
-                        modelTarget.setScm( null );
+                        modelTarget.setScm(null);
                     }
-                }
-                else
-                {
+                } else {
                     String message = "No SCM translator found - skipping rewrite";
-                    result.appendDebug( message );
-                    getLogger().debug( message );
+                    result.appendDebug(message);
+                    getLogger().debug(message);
                 }
             }
         }
     }
 
     @Override
-    protected String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate )
-    {
+    protected String getOriginalVersion(ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate) {
         return simulate
-                ? releaseDescriptor.getProjectOriginalVersion( projectKey )
-                : releaseDescriptor.getProjectReleaseVersion( projectKey );
+                ? releaseDescriptor.getProjectOriginalVersion(projectKey)
+                : releaseDescriptor.getProjectReleaseVersion(projectKey);
     }
 
     @Override
-    protected String getNextVersion( ReleaseDescriptor releaseDescriptor, String key )
-    {
-        return releaseDescriptor.getProjectDevelopmentVersion( key );
+    protected String getNextVersion(ReleaseDescriptor releaseDescriptor, String key) {
+        return releaseDescriptor.getProjectDevelopmentVersion(key);
     }
 
     @Override
-    protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                 ReleaseDescriptor releaseDescriptor )
-    {
-        return releaseDescriptor.getDependencyDevelopmentVersion( artifactVersionlessKey );
+    protected String getResolvedSnapshotVersion(String artifactVersionlessKey, ReleaseDescriptor releaseDescriptor) {
+        return releaseDescriptor.getDependencyDevelopmentVersion(artifactVersionlessKey);
     }
 }

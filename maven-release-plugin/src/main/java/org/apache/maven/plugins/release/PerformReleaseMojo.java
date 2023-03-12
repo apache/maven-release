@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.release;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import java.io.File;
 import java.util.Map;
@@ -44,15 +43,13 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Mojo( name = "perform", aggregator = true, requiresProject = false )
-public class PerformReleaseMojo
-    extends AbstractReleaseMojo
-{
+@Mojo(name = "perform", aggregator = true, requiresProject = false)
+public class PerformReleaseMojo extends AbstractReleaseMojo {
     /**
      * A space separated list of goals to execute on release perform. Default value is either <code>deploy</code> or
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
      */
-    @Parameter( property = "goals" )
+    @Parameter(property = "goals")
     String goals;
 
     /**
@@ -60,20 +57,20 @@ public class PerformReleaseMojo
      *
      * @since 2.0-beta-8
      */
-    @Parameter( property = "releaseProfiles" )
+    @Parameter(property = "releaseProfiles")
     private String releaseProfiles;
 
     /**
      * The checkout directory.
      */
-    @Parameter( defaultValue = "${project.build.directory}/checkout", property = "workingDirectory", required = true )
+    @Parameter(defaultValue = "${project.build.directory}/checkout", property = "workingDirectory", required = true)
     private File workingDirectory;
 
     /**
      * The SCM URL to checkout from. If omitted, the one from the <code>release.properties</code> file is used, followed
      * by the URL from the current POM.
      */
-    @Parameter( property = "connectionUrl" )
+    @Parameter(property = "connectionUrl")
     private String connectionUrl;
 
     /**
@@ -85,25 +82,25 @@ public class PerformReleaseMojo
      *
      * @since 2.0 for release:perform and 2.5.2 for release:stage
      */
-    @Parameter( defaultValue = "false", property = "localCheckout" )
+    @Parameter(defaultValue = "false", property = "localCheckout")
     private boolean localCheckout;
 
     /**
      * The SCM username to use.
      */
-    @Parameter( property = "username" )
+    @Parameter(property = "username")
     private String username;
 
     /**
      * The SCM password to use.
      */
-    @Parameter( property = "password" )
+    @Parameter(property = "password")
     private String password;
 
     /**
      * When cloning a repository if it should be a shallow clone or a full clone.
      */
-    @Parameter( defaultValue = "true", property = "scmShallowClone" )
+    @Parameter(defaultValue = "true", property = "scmShallowClone")
     private boolean scmShallowClone = true;
 
     /**
@@ -114,7 +111,7 @@ public class PerformReleaseMojo
      *
      * @deprecated The <code>release-profile</code> profile will be removed from future versions of the super POM
      */
-    @Parameter( defaultValue = "false", property = "useReleaseProfile" )
+    @Parameter(defaultValue = "false", property = "useReleaseProfile")
     @Deprecated
     private boolean useReleaseProfile;
 
@@ -122,7 +119,7 @@ public class PerformReleaseMojo
      * Dry run: don't checkout anything from the scm repository, or modify the checkout.
      * The goals (by default at least {@code deploy}) will <strong>not</strong> be executed.
      */
-    @Parameter( defaultValue = "false", property = "dryRun" )
+    @Parameter(defaultValue = "false", property = "dryRun")
     private boolean dryRun;
 
     /**
@@ -143,96 +140,77 @@ public class PerformReleaseMojo
     private ScmManager scmManager;
 
     @Override
-    protected String getAdditionalProfiles()
-    {
+    protected String getAdditionalProfiles() {
         return releaseProfiles;
     }
 
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( providerImplementations != null )
-        {
-            for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
-            {
-                getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
-                    + providerEntry.getValue() + "'." );
-                scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (providerImplementations != null) {
+            for (Map.Entry<String, String> providerEntry : providerImplementations.entrySet()) {
+                getLog().info("Change the default '" + providerEntry.getKey() + "' provider implementation to '"
+                        + providerEntry.getValue() + "'.");
+                scmManager.setScmProviderImplementation(providerEntry.getKey(), providerEntry.getValue());
             }
         }
 
         // goals may be splitted into multiple line in configuration.
         // Let's build a single line command
-        if ( goals != null )
-        {
-            goals = StringUtils.join( StringUtils.split( goals ), " " );
+        if (goals != null) {
+            goals = StringUtils.join(StringUtils.split(goals), " ");
         }
 
-        try
-        {
+        try {
             setDeploymentRepository();
             // Note that the working directory here is not the same as in the release configuration, so don't reuse that
             ReleaseDescriptorBuilder releaseDescriptor = createReleaseDescriptor();
-            if ( connectionUrl != null )
-            {
-                releaseDescriptor.setScmSourceUrl( connectionUrl );
+            if (connectionUrl != null) {
+                releaseDescriptor.setScmSourceUrl(connectionUrl);
             }
 
-            if ( username != null )
-            {
-                releaseDescriptor.setScmUsername( username );
+            if (username != null) {
+                releaseDescriptor.setScmUsername(username);
             }
 
-            if ( password != null )
-            {
-                releaseDescriptor.setScmPassword( password );
+            if (password != null) {
+                releaseDescriptor.setScmPassword(password);
             }
 
-            releaseDescriptor.setScmShallowClone( scmShallowClone );
+            releaseDescriptor.setScmShallowClone(scmShallowClone);
 
-            releaseDescriptor.setLocalCheckout( localCheckout );
+            releaseDescriptor.setLocalCheckout(localCheckout);
 
-            releaseDescriptor.setCheckoutDirectory( workingDirectory.getAbsolutePath() );
-            releaseDescriptor.setUseReleaseProfile( useReleaseProfile );
+            releaseDescriptor.setCheckoutDirectory(workingDirectory.getAbsolutePath());
+            releaseDescriptor.setUseReleaseProfile(useReleaseProfile);
 
             createGoals();
-            releaseDescriptor.setPerformGoals( goals );
+            releaseDescriptor.setPerformGoals(goals);
 
-            ReleasePerformRequest performRequest  = new ReleasePerformRequest();
-            performRequest.setReleaseDescriptorBuilder( releaseDescriptor );
-            performRequest.setReleaseEnvironment( getReleaseEnvironment() );
-            performRequest.setReactorProjects( getReactorProjects() );
-            performRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog(), dryRun ) );
-            performRequest.setDryRun( dryRun );
+            ReleasePerformRequest performRequest = new ReleasePerformRequest();
+            performRequest.setReleaseDescriptorBuilder(releaseDescriptor);
+            performRequest.setReleaseEnvironment(getReleaseEnvironment());
+            performRequest.setReactorProjects(getReactorProjects());
+            performRequest.setReleaseManagerListener(new DefaultReleaseManagerListener(getLog(), dryRun));
+            performRequest.setDryRun(dryRun);
 
-            releaseManager.perform( performRequest );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            throw new MojoFailureException( e.getMessage(), e );
+            releaseManager.perform(performRequest);
+        } catch (ReleaseExecutionException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (ReleaseFailureException e) {
+            throw new MojoFailureException(e.getMessage(), e);
         }
     }
 
     /** Just here so it may be overridden by StageReleaseMojo */
-    void setDeploymentRepository()
-    {
-    }
+    void setDeploymentRepository() {}
 
     /** Just here so it may be overridden by StageReleaseMojo */
-    void createGoals()
-    {
-        if ( goals == null )
-        {
+    void createGoals() {
+        if (goals == null) {
             // set default
             goals = "deploy";
-            if ( project.getDistributionManagement() != null
-                && project.getDistributionManagement().getSite() != null )
-            {
+            if (project.getDistributionManagement() != null
+                    && project.getDistributionManagement().getSite() != null) {
                 goals += " site-deploy";
             }
         }

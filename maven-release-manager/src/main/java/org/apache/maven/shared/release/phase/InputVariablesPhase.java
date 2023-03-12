@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,14 +34,13 @@ import org.codehaus.plexus.components.interactivity.Prompter;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "input-variables" )
-public class InputVariablesPhase
-        extends AbstractInputVariablesPhase
-{
+@Named("input-variables")
+public class InputVariablesPhase extends AbstractInputVariablesPhase {
     @Inject
-    public InputVariablesPhase( Prompter prompter, ScmRepositoryConfigurator scmRepositoryConfigurator,
-                                Map<String, NamingPolicy> namingPolicies )
-    {
-        super( prompter, scmRepositoryConfigurator, namingPolicies, false, "default" );
+    public InputVariablesPhase(
+            Prompter prompter,
+            ScmRepositoryConfigurator scmRepositoryConfigurator,
+            Map<String, NamingPolicy> namingPolicies) {
+        super(prompter, scmRepositoryConfigurator, namingPolicies, false, "default");
     }
 }

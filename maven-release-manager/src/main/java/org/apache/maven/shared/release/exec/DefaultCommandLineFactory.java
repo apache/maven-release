@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -31,23 +30,16 @@ import org.codehaus.plexus.util.cli.Commandline;
  */
 @Singleton
 @Named
-public class DefaultCommandLineFactory
-        implements CommandLineFactory
-{
+public class DefaultCommandLineFactory implements CommandLineFactory {
     @Override
-    public Commandline createCommandLine( String executable )
-            throws MavenExecutorException
-    {
+    public Commandline createCommandLine(String executable) throws MavenExecutorException {
         Commandline commandline = new Commandline();
-        commandline.setExecutable( executable );
+        commandline.setExecutable(executable);
 
-        try
-        {
+        try {
             commandline.addSystemEnvironment();
-        }
-        catch ( Exception e )
-        {
-            throw new MavenExecutorException( e.getMessage(), e );
+        } catch (Exception e) {
+            throw new MavenExecutorException(e.getMessage(), e);
         }
 
         return commandline;

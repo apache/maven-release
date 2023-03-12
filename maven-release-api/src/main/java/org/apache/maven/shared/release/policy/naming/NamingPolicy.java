@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policy.naming;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.policy.naming;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policy.naming;
 
 import org.apache.maven.shared.release.policy.PolicyException;
 
@@ -26,8 +25,7 @@ import org.apache.maven.shared.release.policy.PolicyException;
  *
  * @since 3.0.0 (MRELEASE-979)
  */
-public interface NamingPolicy
-{
+public interface NamingPolicy {
     /**
      * <p>getName.</p>
      *
@@ -35,7 +33,5 @@ public interface NamingPolicy
      * @param request the {@code NamingPolicyRequest}
      * @throws org.apache.maven.shared.release.policy.PolicyException if exception in the policy
      */
-    NamingPolicyResult getName( NamingPolicyRequest request )
-        throws PolicyException;
-
+    NamingPolicyResult getName(NamingPolicyRequest request) throws PolicyException;
 }

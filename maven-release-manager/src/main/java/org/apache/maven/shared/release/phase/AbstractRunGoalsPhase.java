@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.util.List;
@@ -40,98 +39,100 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public abstract class AbstractRunGoalsPhase
-        extends AbstractReleasePhase
-{
+public abstract class AbstractRunGoalsPhase extends AbstractReleasePhase {
     /**
      * Component to assist in executing Maven.
      */
     private final Map<String, MavenExecutor> mavenExecutors;
 
-    protected AbstractRunGoalsPhase( Map<String, MavenExecutor> mavenExecutors )
-    {
-        this.mavenExecutors = requireNonNull( mavenExecutors );
+    protected AbstractRunGoalsPhase(Map<String, MavenExecutor> mavenExecutors) {
+        this.mavenExecutors = requireNonNull(mavenExecutors);
     }
 
-    protected ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                     List<MavenProject> reactorProjects, boolean logArguments )
-            throws ReleaseExecutionException
-    {
-        return execute( releaseDescriptor, releaseEnvironment, new File( releaseDescriptor.getWorkingDirectory() ),
-                        getAdditionalArguments( releaseDescriptor ), logArguments );
+    protected ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects,
+            boolean logArguments)
+            throws ReleaseExecutionException {
+        return execute(
+                releaseDescriptor,
+                releaseEnvironment,
+                new File(releaseDescriptor.getWorkingDirectory()),
+                getAdditionalArguments(releaseDescriptor),
+                logArguments);
     }
 
-    protected ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                     File workingDirectory, String additionalArguments, boolean logArguments )
-            throws ReleaseExecutionException
-    {
+    protected ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            File workingDirectory,
+            String additionalArguments,
+            boolean logArguments)
+            throws ReleaseExecutionException {
         ReleaseResult result = new ReleaseResult();
 
-        try
-        {
-            String goals = getGoals( releaseDescriptor );
-            if ( !StringUtils.isEmpty( goals ) )
-            {
-                logInfo( result, "Executing goals '" + buffer().strong( goals ) + "'..." );
-                if ( logArguments )
-                {
+        try {
+            String goals = getGoals(releaseDescriptor);
+            if (!StringUtils.isEmpty(goals)) {
+                logInfo(result, "Executing goals '" + buffer().strong(goals) + "'...");
+                if (logArguments) {
                     // logging arguments may log secrets: should be activated only on dryRun
-                    logInfo( result, "    with additional arguments: "
-                        + ( additionalArguments == null ? "(none)" : additionalArguments ) );
+                    logInfo(
+                            result,
+                            "    with additional arguments: "
+                                    + (additionalArguments == null ? "(none)" : additionalArguments));
                 }
 
-                MavenExecutor mavenExecutor = mavenExecutors.get( releaseEnvironment.getMavenExecutorId() );
+                MavenExecutor mavenExecutor = mavenExecutors.get(releaseEnvironment.getMavenExecutorId());
 
-                if ( mavenExecutor == null )
-                {
+                if (mavenExecutor == null) {
                     throw new ReleaseExecutionException(
-                            "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId() );
+                            "Cannot find Maven executor with id: " + releaseEnvironment.getMavenExecutorId());
                 }
 
                 File executionRoot;
                 String pomFileName;
-                if ( releaseDescriptor.getPomFileName() != null )
-                {
-                    File rootPom = new File( workingDirectory, releaseDescriptor.getPomFileName() );
+                if (releaseDescriptor.getPomFileName() != null) {
+                    File rootPom = new File(workingDirectory, releaseDescriptor.getPomFileName());
                     executionRoot = rootPom.getParentFile();
                     pomFileName = rootPom.getName();
-                }
-                else
-                {
+                } else {
                     executionRoot = workingDirectory;
                     pomFileName = null;
                 }
 
-                mavenExecutor.executeGoals( executionRoot, goals, releaseEnvironment,
-                        releaseDescriptor.isInteractive(), additionalArguments,
-                        pomFileName, result );
+                mavenExecutor.executeGoals(
+                        executionRoot,
+                        goals,
+                        releaseEnvironment,
+                        releaseDescriptor.isInteractive(),
+                        additionalArguments,
+                        pomFileName,
+                        result);
             }
-        }
-        catch ( MavenExecutorException e )
-        {
-            throw new ReleaseExecutionException( e.getMessage(), e );
+        } catch (MavenExecutorException e) {
+            throw new ReleaseExecutionException(e.getMessage(), e);
         }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
-    protected abstract String getGoals( ReleaseDescriptor releaseDescriptor );
+    protected abstract String getGoals(ReleaseDescriptor releaseDescriptor);
 
-    protected String getAdditionalArguments( ReleaseDescriptor releaseDescriptor )
-    {
+    protected String getAdditionalArguments(ReleaseDescriptor releaseDescriptor) {
         StringBuilder builder = new StringBuilder();
 
-        if ( releaseDescriptor.getAdditionalArguments() != null )
-        {
-            builder.append( releaseDescriptor.getAdditionalArguments() );
+        if (releaseDescriptor.getAdditionalArguments() != null) {
+            builder.append(releaseDescriptor.getAdditionalArguments());
         }
 
-        if ( !releaseDescriptor.getActivateProfiles().isEmpty() )
-        {
-            builder.append( " -P " )
-                    .append( StringUtils.join( releaseDescriptor.getActivateProfiles().iterator(), "," ) );
+        if (!releaseDescriptor.getActivateProfiles().isEmpty()) {
+            builder.append(" -P ")
+                    .append(StringUtils.join(
+                            releaseDescriptor.getActivateProfiles().iterator(), ","));
         }
 
         return builder.length() > 0 ? builder.toString().trim() : null;
@@ -147,13 +148,11 @@ public abstract class AbstractRunGoalsPhase
      *                                     directory or ""
      * @return The working directory
      */
-    protected File determineWorkingDirectory( File checkoutDirectory, String relativePathProjectDirectory )
-    {
+    protected File determineWorkingDirectory(File checkoutDirectory, String relativePathProjectDirectory) {
         File workingDirectory = checkoutDirectory;
 
-        if ( StringUtils.isNotEmpty( relativePathProjectDirectory ) )
-        {
-            workingDirectory = new File( checkoutDirectory, relativePathProjectDirectory );
+        if (StringUtils.isNotEmpty(relativePathProjectDirectory)) {
+            workingDirectory = new File(checkoutDirectory, relativePathProjectDirectory);
         }
 
         return workingDirectory;

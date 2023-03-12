@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,8 +38,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomProperties extends Properties
-{
+public class JDomProperties extends Properties {
     private final Element properties;
 
     /**
@@ -48,120 +46,94 @@ public class JDomProperties extends Properties
      *
      * @param properties a {@link org.jdom2.Element} object
      */
-    public JDomProperties( Element properties )
-    {
+    public JDomProperties(Element properties) {
         this.properties = properties;
     }
 
     @Override
-    public synchronized Object setProperty( String key, String value )
-    {
-        Element property = properties.getChild( key, properties.getNamespace() );
+    public synchronized Object setProperty(String key, String value) {
+        Element property = properties.getChild(key, properties.getNamespace());
 
-        JDomUtils.rewriteValue( property, value );
+        JDomUtils.rewriteValue(property, value);
 
         // todo follow specs of Hashtable.put
         return null;
     }
 
     @Override
-    public synchronized void load( Reader reader )
-        throws IOException
-    {
+    public synchronized void load(Reader reader) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public synchronized void load( InputStream inStream )
-        throws IOException
-    {
+    public synchronized void load(InputStream inStream) throws IOException {
         throw new UnsupportedOperationException();
     }
 
-    @SuppressWarnings( "deprecation" )
+    @SuppressWarnings("deprecation")
     @Override
-    public void save( OutputStream out, String comments )
-    {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void store( Writer writer, String comments )
-        throws IOException
-    {
+    public void save(OutputStream out, String comments) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void store( OutputStream out, String comments )
-        throws IOException
-    {
+    public void store(Writer writer, String comments) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public synchronized void loadFromXML( InputStream in )
-        throws IOException, InvalidPropertiesFormatException
-    {
+    public void store(OutputStream out, String comments) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void storeToXML( OutputStream os, String comment )
-        throws IOException
-    {
+    public synchronized void loadFromXML(InputStream in) throws IOException, InvalidPropertiesFormatException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void storeToXML( OutputStream os, String comment, String encoding )
-        throws IOException
-    {
+    public void storeToXML(OutputStream os, String comment) throws IOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getProperty( String key )
-    {
-        Element property = properties.getChild( key, properties.getNamespace() );
+    public void storeToXML(OutputStream os, String comment, String encoding) throws IOException {
+        throw new UnsupportedOperationException();
+    }
 
-        if ( property == null )
-        {
+    @Override
+    public String getProperty(String key) {
+        Element property = properties.getChild(key, properties.getNamespace());
+
+        if (property == null) {
             return null;
-        }
-        else
-        {
+        } else {
             return property.getTextTrim();
         }
     }
 
     @Override
-    public String getProperty( String key, String defaultValue )
-    {
+    public String getProperty(String key, String defaultValue) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Enumeration<?> propertyNames()
-    {
+    public Enumeration<?> propertyNames() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Set<String> stringPropertyNames()
-    {
+    public Set<String> stringPropertyNames() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void list( PrintStream out )
-    {
+    public void list(PrintStream out) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void list( PrintWriter out )
-    {
+    public void list(PrintWriter out) {
         throw new UnsupportedOperationException();
     }
 }

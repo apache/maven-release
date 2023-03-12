@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.release;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -36,30 +35,22 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@Mojo( name = "clean", aggregator = true )
-public class CleanReleaseMojo
-    extends AbstractReleaseMojo
-{
+@Mojo(name = "clean", aggregator = true)
+public class CleanReleaseMojo extends AbstractReleaseMojo {
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         ReleaseDescriptorBuilder releaseDescriptor = new ReleaseDescriptorBuilder();
-        releaseDescriptor.setWorkingDirectory( getBasedir().getAbsolutePath() );
+        releaseDescriptor.setWorkingDirectory(getBasedir().getAbsolutePath());
 
         ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();
-        cleanRequest.setReleaseDescriptorBuilder( releaseDescriptor );
-        cleanRequest.setReactorProjects( getReactorProjects() );
-        cleanRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog() ) );
-        
-        try
-        {
-            releaseManager.clean( cleanRequest );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            throw new MojoFailureException( e.getMessage() );
+        cleanRequest.setReleaseDescriptorBuilder(releaseDescriptor);
+        cleanRequest.setReactorProjects(getReactorProjects());
+        cleanRequest.setReleaseManagerListener(new DefaultReleaseManagerListener(getLog()));
+
+        try {
+            releaseManager.clean(cleanRequest);
+        } catch (ReleaseFailureException e) {
+            throw new MojoFailureException(e.getMessage());
         }
     }
-
 }

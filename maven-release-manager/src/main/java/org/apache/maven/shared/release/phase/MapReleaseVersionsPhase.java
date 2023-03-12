@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -57,14 +56,13 @@ import org.codehaus.plexus.components.interactivity.Prompter;
  * @author Robert Scholte
  */
 @Singleton
-@Named( "map-release-versions" )
-public class MapReleaseVersionsPhase
-        extends AbstractMapVersionsPhase
-{
+@Named("map-release-versions")
+public class MapReleaseVersionsPhase extends AbstractMapVersionsPhase {
     @Inject
-    public MapReleaseVersionsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
-                                    Prompter prompter, Map<String, VersionPolicy> versionPolicies )
-    {
-        super( scmRepositoryConfigurator, prompter, versionPolicies, false, false );
+    public MapReleaseVersionsPhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator,
+            Prompter prompter,
+            Map<String, VersionPolicy> versionPolicies) {
+        super(scmRepositoryConfigurator, prompter, versionPolicies, false, false);
     }
 }

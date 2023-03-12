@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policy.oddeven;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.policy.oddeven;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policy.oddeven;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -44,99 +43,75 @@ import org.eclipse.sisu.Description;
  *
  */
 @Singleton
-@Named( "OddEvenVersionPolicy" )
-@Description( "A VersionPolicy implementation that selects even version numbers only for releases" )
-public final class OddEvenVersionPolicy
-    implements VersionPolicy
-{
+@Named("OddEvenVersionPolicy")
+@Description("A VersionPolicy implementation that selects even version numbers only for releases")
+public final class OddEvenVersionPolicy implements VersionPolicy {
 
     @Override
-    public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
-        throws PolicyException
-    {
-        return calculateNextVersion( request, false );
+    public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws PolicyException {
+        return calculateNextVersion(request, false);
     }
 
     @Override
-    public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
-        throws PolicyException
-    {
-        return calculateNextVersion( request, true );
+    public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws PolicyException {
+        return calculateNextVersion(request, true);
     }
 
-    private VersionPolicyResult calculateNextVersion( VersionPolicyRequest request, boolean development )
-    {
+    private VersionPolicyResult calculateNextVersion(VersionPolicyRequest request, boolean development) {
         Version defaultVersionInfo = null;
 
-        try
-        {
-            defaultVersionInfo = new Version( request.getVersion() );
-        }
-        catch ( VersionParseException e )
-        {
-            throw new IllegalArgumentException( "Can't tell if version with no digits is even: " + e.getMessage(), e );
+        try {
+            defaultVersionInfo = new Version(request.getVersion());
+        } catch (VersionParseException e) {
+            throw new IllegalArgumentException("Can't tell if version with no digits is even: " + e.getMessage(), e);
         }
 
-        Version newVersion = newVersion( defaultVersionInfo, development );
+        Version newVersion = newVersion(defaultVersionInfo, development);
 
-        return new VersionPolicyResult().setVersion( newVersion.toString()  );
+        return new VersionPolicyResult().setVersion(newVersion.toString());
     }
 
-    private Version newVersion( Version defaultVersionInfo, boolean development )
-    {
+    private Version newVersion(Version defaultVersionInfo, boolean development) {
         Version newVersion;
         int mostSignificantSegment;
 
-        if ( StringUtils.isNumeric( defaultVersionInfo.getAnnotationRevision() ) )
-        {
-            mostSignificantSegment = Integer.parseInt( defaultVersionInfo.getAnnotationRevision() );
+        if (StringUtils.isNumeric(defaultVersionInfo.getAnnotationRevision())) {
+            mostSignificantSegment = Integer.parseInt(defaultVersionInfo.getAnnotationRevision());
 
-            int skip = getVersionIncrements( development, mostSignificantSegment % 2 == 0 );
+            int skip = getVersionIncrements(development, mostSignificantSegment % 2 == 0);
 
-            newVersion = defaultVersionInfo.setAnnotationRevision( String.valueOf( mostSignificantSegment + skip ) );
-        }
-        else
-        {
+            newVersion = defaultVersionInfo.setAnnotationRevision(String.valueOf(mostSignificantSegment + skip));
+        } else {
             List<String> digits = defaultVersionInfo.getDigits();
 
-            if ( digits == null )
-            {
-                throw new IllegalArgumentException( "Can't tell if version with no digits is even." );
+            if (digits == null) {
+                throw new IllegalArgumentException("Can't tell if version with no digits is even.");
             }
 
-            mostSignificantSegment = Integer.parseInt( digits.get( digits.size() - 1 ) );
+            mostSignificantSegment = Integer.parseInt(digits.get(digits.size() - 1));
 
-            int skip = getVersionIncrements( development, mostSignificantSegment % 2 == 0 );
+            int skip = getVersionIncrements(development, mostSignificantSegment % 2 == 0);
 
-            digits.set( digits.size() - 1, String.valueOf( String.valueOf( mostSignificantSegment + skip ) ) );
+            digits.set(digits.size() - 1, String.valueOf(String.valueOf(mostSignificantSegment + skip)));
 
-            newVersion = defaultVersionInfo.setDigits( digits );
+            newVersion = defaultVersionInfo.setDigits(digits);
         }
 
-        if ( development )
-        {
-            return newVersion.setBuildSpecifier( Artifact.SNAPSHOT_VERSION );
-        }
-        else
-        {
-            return newVersion.setBuildSpecifier( null );
+        if (development) {
+            return newVersion.setBuildSpecifier(Artifact.SNAPSHOT_VERSION);
+        } else {
+            return newVersion.setBuildSpecifier(null);
         }
     }
 
-    private int getVersionIncrements( boolean development, boolean isEven )
-    {
-        if ( development && !isEven )
-        {
+    private int getVersionIncrements(boolean development, boolean isEven) {
+        if (development && !isEven) {
             // do we need a snapshot? make sure the version info is odd
             return 2;
-        }
-        else if ( !development && isEven )
-        {
+        } else if (!development && isEven) {
             // do we need a release? make sure the version info is even
             return 0;
-        }
-        else
-        {
+        } else {
             // by default, never reuse revisions
             return 1;
         }

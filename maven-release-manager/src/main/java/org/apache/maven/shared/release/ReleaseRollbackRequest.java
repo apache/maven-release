@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
@@ -27,9 +26,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
  * @author Robert Scholte
  * @since 2.3
  */
-public class ReleaseRollbackRequest
-    extends AbstractReleaseRequest
-{
+public class ReleaseRollbackRequest extends AbstractReleaseRequest {
     private ReleaseEnvironment releaseEnvironment;
 
     /**
@@ -37,8 +34,7 @@ public class ReleaseRollbackRequest
      *
      * @return the releaseEnvironment
      */
-    public ReleaseEnvironment getReleaseEnvironment()
-    {
+    public ReleaseEnvironment getReleaseEnvironment() {
         return releaseEnvironment;
     }
 
@@ -47,8 +43,7 @@ public class ReleaseRollbackRequest
      *
      * @param releaseEnvironment the releaseEnvironment to set
      */
-    public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )
-    {
+    public void setReleaseEnvironment(ReleaseEnvironment releaseEnvironment) {
         this.releaseEnvironment = releaseEnvironment;
     }
 }

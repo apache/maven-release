@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,9 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -34,124 +30,103 @@ import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
 import org.junit.Test;
 
-public class JDomPropertiesTest
-{
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+public class JDomPropertiesTest {
     private SAXBuilder builder = new SAXBuilder();
 
     @Test
-    public void testSetProperty() throws Exception
-    {
+    public void testSetProperty() throws Exception {
         String content = "<properties></properties>";
-        Element propertiesElm = builder.build( new StringReader( content ) ).getRootElement();
-        assertNull( getProperty( propertiesElm, "KEY" ) );
+        Element propertiesElm = builder.build(new StringReader(content)).getRootElement();
+        assertNull(getProperty(propertiesElm, "KEY"));
 
         // Adding not allowed, prepare properties
         content = "<properties><KEY>OLD_VALUE</KEY></properties>";
-        propertiesElm = builder.build( new StringReader( content ) ).getRootElement();
-        assertEquals( "OLD_VALUE", getProperty( propertiesElm, "KEY" ) );
-        new JDomProperties( propertiesElm ).setProperty( "KEY", "NEW_VALUE" );
-        assertEquals( "NEW_VALUE", getProperty( propertiesElm, "KEY" ) );
+        propertiesElm = builder.build(new StringReader(content)).getRootElement();
+        assertEquals("OLD_VALUE", getProperty(propertiesElm, "KEY"));
+        new JDomProperties(propertiesElm).setProperty("KEY", "NEW_VALUE");
+        assertEquals("NEW_VALUE", getProperty(propertiesElm, "KEY"));
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testLoadReader()
-        throws Exception
-    {
-        new JDomProperties( null ).load( (Reader) null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testLoadReader() throws Exception {
+        new JDomProperties(null).load((Reader) null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testLoadInputStream()
-        throws Exception
-    {
-        new JDomProperties( null ).load( (InputStream) null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testLoadInputStream() throws Exception {
+        new JDomProperties(null).load((InputStream) null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testSave()
-    {
-        new JDomProperties( null ).save( null, null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testSave() {
+        new JDomProperties(null).save(null, null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testStoreWriter()
-        throws Exception
-    {
-        new JDomProperties( null ).store( (Writer) null, null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testStoreWriter() throws Exception {
+        new JDomProperties(null).store((Writer) null, null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testStoreOutputStream()
-        throws Exception
-    {
-        new JDomProperties( null ).store( (OutputStream) null, null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testStoreOutputStream() throws Exception {
+        new JDomProperties(null).store((OutputStream) null, null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testLoadFromXML()
-        throws Exception
-    {
-        new JDomProperties( null ).loadFromXML( null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testLoadFromXML() throws Exception {
+        new JDomProperties(null).loadFromXML(null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testStoreToXML()
-        throws Exception
-    {
-        new JDomProperties( null ).storeToXML( null, null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testStoreToXML() throws Exception {
+        new JDomProperties(null).storeToXML(null, null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testStoreToXMLEncoded()
-        throws Exception
-    {
-        new JDomProperties( null ).storeToXML( (OutputStream) null, null, (String) null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testStoreToXMLEncoded() throws Exception {
+        new JDomProperties(null).storeToXML((OutputStream) null, null, (String) null);
     }
 
     @Test
-    public void testGetProperty() throws Exception
-    {
+    public void testGetProperty() throws Exception {
         String content = "<properties></properties>";
-        Element propertiesElm = builder.build( new StringReader( content ) ).getRootElement();
-        assertNull( new JDomProperties( propertiesElm ).getProperty( "KEY" ) );
+        Element propertiesElm = builder.build(new StringReader(content)).getRootElement();
+        assertNull(new JDomProperties(propertiesElm).getProperty("KEY"));
 
         content = "<properties><KEY>VALUE</KEY></properties>";
-        propertiesElm = builder.build( new StringReader( content ) ).getRootElement();
-        assertEquals( "VALUE", new JDomProperties( propertiesElm ).getProperty( "KEY" ) );
+        propertiesElm = builder.build(new StringReader(content)).getRootElement();
+        assertEquals("VALUE", new JDomProperties(propertiesElm).getProperty("KEY"));
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testGetPropertyDefault()
-    {
-        new JDomProperties( null ).getProperty( null, null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetPropertyDefault() {
+        new JDomProperties(null).getProperty(null, null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testPropertyNames()
-    {
-        new JDomProperties( null ).propertyNames();
+    @Test(expected = UnsupportedOperationException.class)
+    public void testPropertyNames() {
+        new JDomProperties(null).propertyNames();
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testStringPropertyNames()
-    {
-        new JDomProperties( null ).stringPropertyNames();
+    @Test(expected = UnsupportedOperationException.class)
+    public void testStringPropertyNames() {
+        new JDomProperties(null).stringPropertyNames();
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testListPrintStream()
-    {
-        new JDomProperties( null ).list( (PrintStream) null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testListPrintStream() {
+        new JDomProperties(null).list((PrintStream) null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testListPrintWriter()
-    {
-        new JDomProperties( null ).list( (PrintWriter) null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testListPrintWriter() {
+        new JDomProperties(null).list((PrintWriter) null);
     }
 
-    private String getProperty( Element propertiesElm, String key )
-    {
-        return propertiesElm.getChildText( key, propertiesElm.getNamespace() );
+    private String getProperty(Element propertiesElm, String key) {
+        return propertiesElm.getChildText(key, propertiesElm.getNamespace());
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.shared.release.ReleaseResult;
 import org.slf4j.Logger;
@@ -28,13 +27,10 @@ import org.slf4j.LoggerFactory;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public abstract class AbstractReleasePhase
-    implements ReleasePhase
-{
-    private final Logger logger = LoggerFactory.getLogger( getClass() );
+public abstract class AbstractReleasePhase implements ReleasePhase {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected Logger getLogger()
-    {
+    protected Logger getLogger() {
         return logger;
     }
 
@@ -44,10 +40,9 @@ public abstract class AbstractReleasePhase
      * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
      * @param message a {@link java.lang.String} object
      */
-    protected void logInfo( ReleaseResult result, String message )
-    {
-        result.appendInfo( message );
-        getLogger().info( message );
+    protected void logInfo(ReleaseResult result, String message) {
+        result.appendInfo(message);
+        getLogger().info(message);
     }
 
     /**
@@ -56,10 +51,9 @@ public abstract class AbstractReleasePhase
      * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
      * @param message a {@link java.lang.String} object
      */
-    protected void logWarn( ReleaseResult result, String message )
-    {
-        result.appendWarn( message );
-        getLogger().warn( message );
+    protected void logWarn(ReleaseResult result, String message) {
+        result.appendWarn(message);
+        getLogger().warn(message);
     }
 
     /**
@@ -68,10 +62,9 @@ public abstract class AbstractReleasePhase
      * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
      * @param message a {@link java.lang.String} object
      */
-    protected void logError( ReleaseResult result, String message )
-    {
-        result.appendWarn( message );
-        getLogger().error( message );
+    protected void logError(ReleaseResult result, String message) {
+        result.appendWarn(message);
+        getLogger().error(message);
     }
 
     /**
@@ -80,10 +73,9 @@ public abstract class AbstractReleasePhase
      * @param result a {@link org.apache.maven.shared.release.ReleaseResult} object
      * @param message a {@link java.lang.String} object
      */
-    protected void logDebug( ReleaseResult result, String message )
-    {
-        result.appendDebug( message );
-        getLogger().debug( message );
+    protected void logDebug(ReleaseResult result, String message) {
+        result.appendDebug(message);
+        getLogger().debug(message);
     }
 
     /**
@@ -93,10 +85,9 @@ public abstract class AbstractReleasePhase
      * @param message a {@link java.lang.String} object
      * @param e a {@link java.lang.Exception} object
      */
-    protected void logDebug( ReleaseResult result, String message, Exception e )
-    {
-        result.appendDebug( message, e );
-        getLogger().debug( message, e );
+    protected void logDebug(ReleaseResult result, String message, Exception e) {
+        result.appendDebug(message, e);
+        getLogger().debug(message, e);
     }
 
     /**
@@ -104,11 +95,10 @@ public abstract class AbstractReleasePhase
      *
      * @return a {@link org.apache.maven.shared.release.ReleaseResult} object
      */
-    protected ReleaseResult getReleaseResultSuccess()
-    {
+    protected ReleaseResult getReleaseResultSuccess() {
         ReleaseResult result = new ReleaseResult();
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }

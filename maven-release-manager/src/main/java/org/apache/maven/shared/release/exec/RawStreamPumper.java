@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,9 +25,7 @@ import java.io.OutputStream;
 /**
  * <p>RawStreamPumper class.</p>
  */
-public class RawStreamPumper
-        extends Thread
-{
+public class RawStreamPumper extends Thread {
     private final InputStream in;
 
     private final OutputStream out;
@@ -46,8 +43,7 @@ public class RawStreamPumper
      * @param out  a {@link java.io.OutputStream} object
      * @param poll a boolean
      */
-    public RawStreamPumper( InputStream in, OutputStream out, boolean poll )
-    {
+    public RawStreamPumper(InputStream in, OutputStream out, boolean poll) {
         this.in = in;
         this.out = out;
         this.poll = poll;
@@ -59,8 +55,7 @@ public class RawStreamPumper
      * @param in  a {@link java.io.InputStream} object
      * @param out a {@link java.io.OutputStream} object
      */
-    public RawStreamPumper( InputStream in, OutputStream out )
-    {
+    public RawStreamPumper(InputStream in, OutputStream out) {
         this.in = in;
         this.out = out;
         this.poll = false;
@@ -69,8 +64,7 @@ public class RawStreamPumper
     /**
      * <p>Setter for the field <code>done</code>.</p>
      */
-    public void setDone()
-    {
+    public void setDone() {
         done = true;
     }
 
@@ -79,9 +73,7 @@ public class RawStreamPumper
      *
      * @throws java.io.IOException if any.
      */
-    public void closeInput()
-            throws IOException
-    {
+    public void closeInput() throws IOException {
         in.close();
     }
 
@@ -90,64 +82,42 @@ public class RawStreamPumper
      *
      * @throws java.io.IOException if any.
      */
-    public void closeOutput()
-            throws IOException
-    {
+    public void closeOutput() throws IOException {
         out.close();
     }
 
     @Override
-    public void run()
-    {
-        try
-        {
-            if ( poll )
-            {
-                while ( !done )
-                {
-                    if ( in.available() > 0 )
-                    {
-                        int i = in.read( buffer );
-                        if ( i != -1 )
-                        {
-                            out.write( buffer, 0, i );
+    public void run() {
+        try {
+            if (poll) {
+                while (!done) {
+                    if (in.available() > 0) {
+                        int i = in.read(buffer);
+                        if (i != -1) {
+                            out.write(buffer, 0, i);
                             out.flush();
-                        }
-                        else
-                        {
+                        } else {
                             done = true;
                         }
-                    }
-                    else
-                    {
-                        Thread.sleep( 1 );
+                    } else {
+                        Thread.sleep(1);
                     }
                 }
-            }
-            else
-            {
-                int i = in.read( buffer );
-                while ( i != -1 && !done )
-                {
-                    if ( i != -1 )
-                    {
-                        out.write( buffer, 0, i );
+            } else {
+                int i = in.read(buffer);
+                while (i != -1 && !done) {
+                    if (i != -1) {
+                        out.write(buffer, 0, i);
                         out.flush();
-                    }
-                    else
-                    {
+                    } else {
                         done = true;
                     }
-                    i = in.read( buffer );
+                    i = in.read(buffer);
                 }
             }
-        }
-        catch ( Throwable e )
-        {
+        } catch (Throwable e) {
             // Caught everything
-        }
-        finally
-        {
+        } finally {
             done = true;
         }
     }

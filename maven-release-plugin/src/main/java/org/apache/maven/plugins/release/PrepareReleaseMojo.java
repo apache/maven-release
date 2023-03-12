@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -49,28 +48,26 @@ import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 // TODO [!] check how this works with version ranges
-@Mojo( name = "prepare", aggregator = true, requiresDependencyCollection = ResolutionScope.TEST )
-public class PrepareReleaseMojo
-    extends AbstractScmReleaseMojo
-{
+@Mojo(name = "prepare", aggregator = true, requiresDependencyCollection = ResolutionScope.TEST)
+public class PrepareReleaseMojo extends AbstractScmReleaseMojo {
 
     /**
      * Resume a previous release attempt from the point where it was stopped.
      */
-    @Parameter( defaultValue = "true", property = "resume" )
+    @Parameter(defaultValue = "true", property = "resume")
     private boolean resume;
 
     /**
      * @deprecated Please use release:prepare-with-pom instead.
      */
     @Deprecated
-    @Parameter( defaultValue = "false", property = "generateReleasePoms" )
+    @Parameter(defaultValue = "false", property = "generateReleasePoms")
     private boolean generateReleasePoms;
 
     /**
      * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
      */
-    @Parameter( defaultValue = "false", property = "useEditMode" )
+    @Parameter(defaultValue = "false", property = "useEditMode")
     private boolean useEditMode;
 
     /**
@@ -78,7 +75,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.0-beta-5
      */
-    @Parameter( defaultValue = "true", property = "updateDependencies" )
+    @Parameter(defaultValue = "true", property = "updateDependencies")
     private boolean updateDependencies;
 
     /**
@@ -87,7 +84,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.0-beta-5
      */
-    @Parameter( defaultValue = "false", property = "autoVersionSubmodules" )
+    @Parameter(defaultValue = "false", property = "autoVersionSubmodules")
     private boolean autoVersionSubmodules;
 
     /**
@@ -96,19 +93,19 @@ public class PrepareReleaseMojo
      * operations (only listed on the console) are working as expected. Modified POMs are written alongside the
      * originals without modifying them.
      */
-    @Parameter( defaultValue = "false", property = "dryRun" )
+    @Parameter(defaultValue = "false", property = "dryRun")
     private boolean dryRun;
 
     /**
      * Whether to add a schema to the POM if it was previously missing on release.
      */
-    @Parameter( defaultValue = "true", property = "addSchema" )
+    @Parameter(defaultValue = "true", property = "addSchema")
     private boolean addSchema;
 
     /**
      * Goals to run as part of the preparation step, after transformation but before committing. Space delimited.
      */
-    @Parameter( defaultValue = "clean verify", property = "preparationGoals" )
+    @Parameter(defaultValue = "clean verify", property = "preparationGoals")
     private String preparationGoals;
 
     /**
@@ -117,7 +114,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.2
      */
-    @Parameter( defaultValue = "", property = "completionGoals" )
+    @Parameter(defaultValue = "", property = "completionGoals")
     private String completionGoals;
 
     /**
@@ -125,7 +122,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.0-beta-5
      */
-    @Parameter( defaultValue = "false", property = "commitByProject" )
+    @Parameter(defaultValue = "false", property = "commitByProject")
     private boolean commitByProject;
 
     /**
@@ -133,7 +130,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.0-beta-7
      */
-    @Parameter( defaultValue = "false", property = "ignoreSnapshots" )
+    @Parameter(defaultValue = "false", property = "ignoreSnapshots")
     private boolean allowTimestampedSnapshots;
 
     /**
@@ -142,7 +139,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.0-beta-9
      */
-    @Parameter( defaultValue = "false", property = "allowReleasePluginSnapshot", readonly = true )
+    @Parameter(defaultValue = "false", property = "allowReleasePluginSnapshot", readonly = true)
     private boolean allowReleasePluginSnapshot;
 
     /**
@@ -159,7 +156,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.1
      */
-    @Parameter( property = "checkModificationExcludeList" )
+    @Parameter(property = "checkModificationExcludeList")
     private String checkModificationExcludeList;
 
     /**
@@ -167,7 +164,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.0-beta-8
      */
-    @Parameter( property = "releaseVersion" )
+    @Parameter(property = "releaseVersion")
     private String releaseVersion;
 
     /**
@@ -175,7 +172,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.0-beta-8
      */
-    @Parameter( property = "developmentVersion" )
+    @Parameter(property = "developmentVersion")
     private String developmentVersion;
 
     /**
@@ -189,7 +186,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.0-beta-9
      */
-    @Parameter( defaultValue = "true", property = "remoteTagging" )
+    @Parameter(defaultValue = "true", property = "remoteTagging")
     private boolean remoteTagging;
 
     /**
@@ -197,7 +194,7 @@ public class PrepareReleaseMojo
      *
      * @since 3.0.0-M4
      */
-    @Parameter( property = "signTag" )
+    @Parameter(property = "signTag")
     private boolean signTag = false;
 
     /**
@@ -205,7 +202,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.1
      */
-    @Parameter( defaultValue = "true", property = "updateWorkingCopyVersions" )
+    @Parameter(defaultValue = "true", property = "updateWorkingCopyVersions")
     private boolean updateWorkingCopyVersions;
 
     /**
@@ -218,7 +215,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.1
      */
-    @Parameter( defaultValue = "false", property = "suppressCommitBeforeTag" )
+    @Parameter(defaultValue = "false", property = "suppressCommitBeforeTag")
     private boolean suppressCommitBeforeTag;
 
     /**
@@ -228,7 +225,7 @@ public class PrepareReleaseMojo
      *
      * @since 2.2
      */
-    @Parameter( defaultValue = "0", property = "waitBeforeTagging" )
+    @Parameter(defaultValue = "0", property = "waitBeforeTagging")
     private int waitBeforeTagging;
 
     /**
@@ -238,7 +235,7 @@ public class PrepareReleaseMojo
      * @since 2.5.1
      * @see org.apache.maven.shared.release.policies.DefaultVersionPolicy
      */
-    @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
+    @Parameter(defaultValue = "default", property = "projectVersionPolicyId")
     private String projectVersionPolicyId;
 
     /**
@@ -246,7 +243,7 @@ public class PrepareReleaseMojo
      *
      * @since 3.0.0-M8
      */
-    @Parameter( property = "projectVersionPolicyConfig" )
+    @Parameter(property = "projectVersionPolicyConfig")
     private XmlPlexusConfiguration projectVersionPolicyConfig;
 
     /**
@@ -256,7 +253,7 @@ public class PrepareReleaseMojo
      * @since 3.0.0-M1
      * @see org.apache.maven.shared.release.policies.DefaultNamingPolicy
      */
-    @Parameter( property = "projectNamingPolicyId" )
+    @Parameter(property = "projectNamingPolicyId")
     private String projectTagNamingPolicyId;
 
     /**
@@ -275,7 +272,7 @@ public class PrepareReleaseMojo
      *
      * @since 3.0.0-M1
      */
-    @Parameter( defaultValue = "@{prefix} prepare release @{releaseLabel}", property = "scmReleaseCommitComment" )
+    @Parameter(defaultValue = "@{prefix} prepare release @{releaseLabel}", property = "scmReleaseCommitComment")
     private String scmReleaseCommitComment = "@{prefix} prepare release @{releaseLabel}";
 
     /**
@@ -296,7 +293,7 @@ public class PrepareReleaseMojo
      */
     @Parameter(
             defaultValue = "@{prefix} prepare for next development iteration",
-            property = "scmDevelopmentCommitComment" )
+            property = "scmDevelopmentCommitComment")
     private String scmDevelopmentCommitComment = "@{prefix} prepare for next development iteration";
 
     /**
@@ -314,7 +311,7 @@ public class PrepareReleaseMojo
      *
      * @since 3.0.0-M4
      */
-    @Parameter( property = "autoResolveSnapshots" )
+    @Parameter(property = "autoResolveSnapshots")
     private String autoResolveSnapshots;
 
     /**
@@ -323,7 +320,7 @@ public class PrepareReleaseMojo
      *
      * @since 3.0.0-M4
      */
-    @Parameter( defaultValue = "false", property = "pinExternals" )
+    @Parameter(defaultValue = "false", property = "pinExternals")
     private boolean pinExternals;
 
     /**
@@ -339,23 +336,20 @@ public class PrepareReleaseMojo
      *
      * @since 3.0.0-M6
      */
-    @Parameter( defaultValue = "source", property = "lineSeparator" )
+    @Parameter(defaultValue = "source", property = "lineSeparator")
     private String lineSeparator;
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( generateReleasePoms )
-        {
-            throw new MojoFailureException( "Generating release POMs is no longer supported in release:prepare. "
-                + "Please run release:prepare-with-pom instead." );
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (generateReleasePoms) {
+            throw new MojoFailureException("Generating release POMs is no longer supported in release:prepare. "
+                    + "Please run release:prepare-with-pom instead.");
         }
 
-        prepareRelease( generateReleasePoms );
+        prepareRelease(generateReleasePoms);
     }
 
     /**
@@ -365,85 +359,73 @@ public class PrepareReleaseMojo
      * @throws org.apache.maven.plugin.MojoExecutionException if any.
      * @throws org.apache.maven.plugin.MojoFailureException if any.
      */
-    protected void prepareRelease( boolean generateReleasePoms )
-        throws MojoExecutionException, MojoFailureException
-    {
+    protected void prepareRelease(boolean generateReleasePoms) throws MojoExecutionException, MojoFailureException {
         // this is here so the subclass can call it without getting the extra generateReleasePoms check in execute()
         // above
         super.execute();
 
         final ReleaseDescriptorBuilder config = createReleaseDescriptor();
-        config.setAddSchema( addSchema );
-        config.setGenerateReleasePoms( generateReleasePoms );
-        config.setScmUseEditMode( useEditMode );
-        config.setPreparationGoals( preparationGoals );
-        config.setCompletionGoals( completionGoals );
-        config.setCommitByProject( commitByProject );
-        config.setUpdateDependencies( updateDependencies );
-        config.setAutoVersionSubmodules( autoVersionSubmodules );
-        config.setAllowTimestampedSnapshots( allowTimestampedSnapshots );
-        config.setSnapshotReleasePluginAllowed( allowReleasePluginSnapshot );
-        config.setDefaultReleaseVersion( releaseVersion );
-        config.setDefaultDevelopmentVersion( developmentVersion );
-        config.setRemoteTagging( remoteTagging );
-        config.setScmSignTags( signTag );
-        config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
-        config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTag );
-        config.setWaitBeforeTagging( waitBeforeTagging );
-        config.setProjectVersionPolicyId( projectVersionPolicyId );
-        if ( projectVersionPolicyConfig != null )
-        {
-            config.setProjectVersionPolicyConfig( projectVersionPolicyConfig.toString() );
+        config.setAddSchema(addSchema);
+        config.setGenerateReleasePoms(generateReleasePoms);
+        config.setScmUseEditMode(useEditMode);
+        config.setPreparationGoals(preparationGoals);
+        config.setCompletionGoals(completionGoals);
+        config.setCommitByProject(commitByProject);
+        config.setUpdateDependencies(updateDependencies);
+        config.setAutoVersionSubmodules(autoVersionSubmodules);
+        config.setAllowTimestampedSnapshots(allowTimestampedSnapshots);
+        config.setSnapshotReleasePluginAllowed(allowReleasePluginSnapshot);
+        config.setDefaultReleaseVersion(releaseVersion);
+        config.setDefaultDevelopmentVersion(developmentVersion);
+        config.setRemoteTagging(remoteTagging);
+        config.setScmSignTags(signTag);
+        config.setUpdateWorkingCopyVersions(updateWorkingCopyVersions);
+        config.setSuppressCommitBeforeTagOrBranch(suppressCommitBeforeTag);
+        config.setWaitBeforeTagging(waitBeforeTagging);
+        config.setProjectVersionPolicyId(projectVersionPolicyId);
+        if (projectVersionPolicyConfig != null) {
+            config.setProjectVersionPolicyConfig(projectVersionPolicyConfig.toString());
         }
-        config.setProjectNamingPolicyId( projectTagNamingPolicyId );
-        config.setScmDevelopmentCommitComment( scmDevelopmentCommitComment );
-        config.setScmReleaseCommitComment( scmReleaseCommitComment );
-        config.setAutoResolveSnapshots( autoResolveSnapshots );
-        config.setPinExternals( pinExternals );
-        config.setLineSeparator( resolveLineSeparator() );
+        config.setProjectNamingPolicyId(projectTagNamingPolicyId);
+        config.setScmDevelopmentCommitComment(scmDevelopmentCommitComment);
+        config.setScmReleaseCommitComment(scmReleaseCommitComment);
+        config.setAutoResolveSnapshots(autoResolveSnapshots);
+        config.setPinExternals(pinExternals);
+        config.setLineSeparator(resolveLineSeparator());
 
-        if ( checkModificationExcludeList != null )
-        {
-            checkModificationExcludes = checkModificationExcludeList.replaceAll( "\\s", "" ).split( "," );
+        if (checkModificationExcludeList != null) {
+            checkModificationExcludes =
+                    checkModificationExcludeList.replaceAll("\\s", "").split(",");
         }
 
-        if ( checkModificationExcludes != null )
-        {
-            config.setCheckModificationExcludes( Arrays.asList( checkModificationExcludes ) );
+        if (checkModificationExcludes != null) {
+            config.setCheckModificationExcludes(Arrays.asList(checkModificationExcludes));
         }
 
         ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
-        prepareRequest.setReleaseDescriptorBuilder( config );
-        prepareRequest.setReleaseEnvironment( getReleaseEnvironment() );
-        prepareRequest.setReactorProjects( getReactorProjects() );
-        prepareRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog(), dryRun ) );
-        prepareRequest.setResume( resume );
-        prepareRequest.setDryRun( dryRun );
-        prepareRequest.setUserProperties( session.getUserProperties() );
+        prepareRequest.setReleaseDescriptorBuilder(config);
+        prepareRequest.setReleaseEnvironment(getReleaseEnvironment());
+        prepareRequest.setReactorProjects(getReactorProjects());
+        prepareRequest.setReleaseManagerListener(new DefaultReleaseManagerListener(getLog(), dryRun));
+        prepareRequest.setResume(resume);
+        prepareRequest.setDryRun(dryRun);
+        prepareRequest.setUserProperties(session.getUserProperties());
 
-        try
-        {
-            releaseManager.prepare( prepareRequest );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            throw new MojoFailureException( e.getMessage(), e );
+        try {
+            releaseManager.prepare(prepareRequest);
+        } catch (ReleaseExecutionException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (ReleaseFailureException e) {
+            throw new MojoFailureException(e.getMessage(), e);
         }
     }
 
-    private String resolveLineSeparator() throws MojoExecutionException
-    {
-        if ( lineSeparator  == null )
-        {
+    private String resolveLineSeparator() throws MojoExecutionException {
+        if (lineSeparator == null) {
             return getLineSeparatorFromPom();
         }
 
-        switch ( lineSeparator )
-        {
+        switch (lineSeparator) {
             case "lf":
                 return "\n";
             case "cr":
@@ -455,43 +437,34 @@ public class PrepareReleaseMojo
             case "source":
                 return getLineSeparatorFromPom();
             default:
-                throw new IllegalArgumentException( String.format( "Unknown property lineSeparator: '%s'. Use one of"
-                  + " the following: 'source', 'system', 'lf', 'cr', 'crlf'.", lineSeparator ) );
+                throw new IllegalArgumentException(String.format(
+                        "Unknown property lineSeparator: '%s'. Use one of"
+                                + " the following: 'source', 'system', 'lf', 'cr', 'crlf'.",
+                        lineSeparator));
         }
     }
 
-    private String getLineSeparatorFromPom()
-      throws MojoExecutionException
-    {
+    private String getLineSeparatorFromPom() throws MojoExecutionException {
         char current;
         String lineSeparator = "";
-        try ( InputStream is = new FileInputStream( this.project.getFile() ) )
-        {
-            while ( is.available() > 0 )
-            {
-                current = ( char ) is.read();
-                if ( ( current == '\n' ) || ( current == '\r' ) )
-                {
+        try (InputStream is = new FileInputStream(this.project.getFile())) {
+            while (is.available() > 0) {
+                current = (char) is.read();
+                if ((current == '\n') || (current == '\r')) {
                     lineSeparator += current;
-                    if ( is.available() > 0 )
-                    {
-                        char next = ( char ) is.read();
-                        if ( ( next != current )
-                          && ( ( next == '\r' ) || ( next == '\n' ) ) )
-                        {
+                    if (is.available() > 0) {
+                        char next = (char) is.read();
+                        if ((next != current) && ((next == '\r') || (next == '\n'))) {
                             lineSeparator += next;
                         }
                     }
                     return lineSeparator;
                 }
             }
-        }
-        catch ( IOException e )
-        {
-            throw new MojoExecutionException( "Failed to detect line separator of " + this.project.getFile(), e );
+        } catch (IOException e) {
+            throw new MojoExecutionException("Failed to detect line separator of " + this.project.getFile(), e);
         }
 
         return lineSeparator;
     }
-
 }

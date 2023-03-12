@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.strategy;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.strategy;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.strategy;
 
 import java.util.List;
 
@@ -28,36 +27,35 @@ import java.util.List;
  *
  * @author Robert Scholte
  */
-public interface Strategy
-{
+public interface Strategy {
     /**
      * <p>getPreparePhases.</p>
      *
      * @return The release phases to execute the calling the prepare goal
      */
     List<String> getPreparePhases();
-    
+
     /**
      * <p>getPerformPhases.</p>
      *
      * @return The release phases to execute the calling the perform goal
      */
     List<String> getPerformPhases();
-    
+
     /**
      * <p>getBranchPhases.</p>
      *
      * @return The release phases to execute the calling the branch goal
      */
     List<String> getBranchPhases();
-    
+
     /**
      * <p>getRollbackPhases.</p>
      *
      * @return The release phases to execute the calling the rollback goal
      */
     List<String> getRollbackPhases();
-    
+
     /**
      * <p>getUpdateVersionsPhases.</p>
      *

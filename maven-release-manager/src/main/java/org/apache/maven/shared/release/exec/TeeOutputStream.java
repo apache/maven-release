@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FilterOutputStream;
@@ -27,10 +26,8 @@ import java.io.OutputStream;
 /**
  * <p>TeeOutputStream class.</p>
  */
-public class TeeOutputStream
-        extends FilterOutputStream
-{
-    private final ByteArrayOutputStream bout = new ByteArrayOutputStream( 1024 * 8 );
+public class TeeOutputStream extends FilterOutputStream {
+    private final ByteArrayOutputStream bout = new ByteArrayOutputStream(1024 * 8);
     private final byte[] indent;
     private int last = '\n';
 
@@ -39,9 +36,8 @@ public class TeeOutputStream
      *
      * @param out a {@link java.io.OutputStream} object
      */
-    public TeeOutputStream( OutputStream out )
-    {
-        this( out, "    " );
+    public TeeOutputStream(OutputStream out) {
+        this(out, "    ");
     }
 
     /**
@@ -50,50 +46,41 @@ public class TeeOutputStream
      * @param out a {@link java.io.OutputStream} object
      * @param i   a {@link java.lang.String} object
      */
-    public TeeOutputStream( OutputStream out, String i )
-    {
-        super( out );
+    public TeeOutputStream(OutputStream out, String i) {
+        super(out);
         indent = i.getBytes();
     }
 
     @Override
-    public void write( byte[] b, int off, int len )
-            throws IOException
-    {
-        for ( int x = 0; x < len; x++ )
-        {
+    public void write(byte[] b, int off, int len) throws IOException {
+        for (int x = 0; x < len; x++) {
             int c = b[off + x];
-            if ( last == '\n' || ( last == '\r' && c != '\n' ) )
-            {
-                out.write( b, off, x );
-                bout.write( b, off, x );
-                out.write( indent );
+            if (last == '\n' || (last == '\r' && c != '\n')) {
+                out.write(b, off, x);
+                bout.write(b, off, x);
+                out.write(indent);
                 off += x;
                 len -= x;
                 x = 0;
             }
             last = c;
         }
-        out.write( b, off, len );
-        bout.write( b, off, len );
+        out.write(b, off, len);
+        bout.write(b, off, len);
     }
 
     @Override
-    public void write( int b )
-            throws IOException
-    {
-        if ( last == '\n' || ( last == '\r' && b != '\n' ) )
-        {
-            out.write( indent );
+    public void write(int b) throws IOException {
+        if (last == '\n' || (last == '\r' && b != '\n')) {
+            out.write(indent);
         }
-        out.write( b );
-        bout.write( b );
+        out.write(b);
+        bout.write(b);
         last = b;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return bout.toString();
     }
 
@@ -102,9 +89,7 @@ public class TeeOutputStream
      *
      * @return a {@link java.lang.String} object
      */
-    public String getContent()
-    {
+    public String getContent() {
         return bout.toString();
     }
-
 }

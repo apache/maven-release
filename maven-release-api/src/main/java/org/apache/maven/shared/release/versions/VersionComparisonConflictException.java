@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.versions;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,13 +16,12 @@ package org.apache.maven.shared.release.versions;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.versions;
 
 /**
  * <p>VersionComparisonConflictException class.</p>
  */
-public class VersionComparisonConflictException
-    extends RuntimeException
-{
+public class VersionComparisonConflictException extends RuntimeException {
 
     private final String lhsVersion;
 
@@ -42,9 +39,8 @@ public class VersionComparisonConflictException
      * @param aetherComparisonResult a int
      * @param mavenComparisonResult a int
      */
-    public VersionComparisonConflictException( String lhsVersion, String rhsVersion, int aetherComparisonResult,
-                                               int mavenComparisonResult )
-    {
+    public VersionComparisonConflictException(
+            String lhsVersion, String rhsVersion, int aetherComparisonResult, int mavenComparisonResult) {
         this.lhsVersion = lhsVersion;
         this.rhsVersion = rhsVersion;
         this.aetherComparisonResult = aetherComparisonResult;
@@ -52,10 +48,8 @@ public class VersionComparisonConflictException
     }
 
     @Override
-    public String getMessage()
-    {
+    public String getMessage() {
         return "Conflict when comparing " + lhsVersion + " with " + rhsVersion + "; Aether: " + aetherComparisonResult
-            + "; Maven: " + mavenComparisonResult;
+                + "; Maven: " + mavenComparisonResult;
     }
-
 }

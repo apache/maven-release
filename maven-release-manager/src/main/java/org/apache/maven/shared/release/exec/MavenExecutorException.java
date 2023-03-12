@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,15 +16,14 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 /**
  * Exception executing Maven.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class MavenExecutorException
-        extends Exception
-{
+public class MavenExecutorException extends Exception {
     private int exitCode;
 
     /**
@@ -35,9 +32,8 @@ public class MavenExecutorException
      * @param message  a {@link java.lang.String} object
      * @param exitCode a int
      */
-    public MavenExecutorException( String message, int exitCode )
-    {
-        super( message );
+    public MavenExecutorException(String message, int exitCode) {
+        super(message);
 
         this.exitCode = exitCode;
     }
@@ -48,9 +44,8 @@ public class MavenExecutorException
      * @param message a {@link java.lang.String} object
      * @param cause   a {@link java.lang.Throwable} object
      */
-    public MavenExecutorException( String message, Throwable cause )
-    {
-        super( message, cause );
+    public MavenExecutorException(String message, Throwable cause) {
+        super(message, cause);
     }
 
     /**
@@ -58,8 +53,7 @@ public class MavenExecutorException
      *
      * @return a int
      */
-    public int getExitCode()
-    {
+    public int getExitCode() {
         return exitCode;
     }
 }

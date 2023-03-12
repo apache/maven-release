@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,12 +16,12 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import junit.framework.TestCase;
-import org.junit.Test;
+package org.apache.maven.shared.release.exec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
@@ -32,23 +30,21 @@ import static org.junit.Assert.assertEquals;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class TeeConsumerTest
-{
+public class TeeConsumerTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    private final TeeConsumer consumer = new TeeConsumer( new PrintStream( out ), "xxx " );
+    private final TeeConsumer consumer = new TeeConsumer(new PrintStream(out), "xxx ");
 
-    private static final String LS = System.getProperty( "line.separator" );
+    private static final String LS = System.getProperty("line.separator");
 
     @Test
-    public void testConsumeLine()
-    {
-        consumer.consumeLine( "line" );
+    public void testConsumeLine() {
+        consumer.consumeLine("line");
 
-        assertEquals( "Check output", "xxx line" + LS, out.toString() );
+        assertEquals("Check output", "xxx line" + LS, out.toString());
 
-        assertEquals( "Check content", "line" + LS, consumer.getContent() );
+        assertEquals("Check content", "line" + LS, consumer.getContent());
 
-        assertEquals( "Check toString", "line" + LS, consumer.toString() );
+        assertEquals("Check toString", "line" + LS, consumer.toString());
     }
 }

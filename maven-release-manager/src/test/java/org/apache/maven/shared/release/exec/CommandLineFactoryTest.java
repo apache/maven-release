@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.codehaus.plexus.util.cli.Commandline;
@@ -32,29 +31,23 @@ import static org.junit.Assert.assertTrue;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class CommandLineFactoryTest
-        extends PlexusJUnit4TestCase
-{
+public class CommandLineFactoryTest extends PlexusJUnit4TestCase {
     private CommandLineFactory factory;
 
     @Override
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
 
-        factory = lookup( CommandLineFactory.class );
+        factory = lookup(CommandLineFactory.class);
     }
 
     @Test
-    public void testCreation()
-        throws Exception
-    {
-        Commandline cl = factory.createCommandLine( "exec" );
+    public void testCreation() throws Exception {
+        Commandline cl = factory.createCommandLine("exec");
 
         String executable = cl.getExecutable();
-        assertTrue( "Check executable " + executable, executable.contains("exec") );
-        assertNotNull( "Check environment", cl.getEnvironmentVariables() );
-        assertFalse( "Check environment", cl.getEnvironmentVariables().length == 0 );
+        assertTrue("Check executable " + executable, executable.contains("exec"));
+        assertNotNull("Check environment", cl.getEnvironmentVariables());
+        assertFalse("Check environment", cl.getEnvironmentVariables().length == 0);
     }
 }

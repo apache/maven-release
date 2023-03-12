@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policy.naming;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.policy.naming;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policy.naming;
 
 /**
  * <p>NamingPolicyRequest class.</p>
@@ -25,12 +24,11 @@ package org.apache.maven.shared.release.policy.naming;
  * @author Robert Scholte
  * @since 3.0.0-M5
  */
-public class NamingPolicyRequest
-{
+public class NamingPolicyRequest {
     private String groupId;
-    
+
     private String artifactId;
-    
+
     private String version;
 
     /**
@@ -38,8 +36,7 @@ public class NamingPolicyRequest
      *
      * @return a {@link java.lang.String} object
      */
-    public String getGroupId()
-    {
+    public String getGroupId() {
         return groupId;
     }
 
@@ -49,8 +46,7 @@ public class NamingPolicyRequest
      * @param groupId a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.policy.naming.NamingPolicyRequest} object
      */
-    public NamingPolicyRequest setGroupId( String groupId )
-    {
+    public NamingPolicyRequest setGroupId(String groupId) {
         this.groupId = groupId;
         return this;
     }
@@ -60,8 +56,7 @@ public class NamingPolicyRequest
      *
      * @return a {@link java.lang.String} object
      */
-    public String getArtifactId()
-    {
+    public String getArtifactId() {
         return artifactId;
     }
 
@@ -71,8 +66,7 @@ public class NamingPolicyRequest
      * @param artifactId a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.policy.naming.NamingPolicyRequest} object
      */
-    public NamingPolicyRequest setArtifactId( String artifactId )
-    {
+    public NamingPolicyRequest setArtifactId(String artifactId) {
         this.artifactId = artifactId;
         return this;
     }
@@ -82,8 +76,7 @@ public class NamingPolicyRequest
      *
      * @return a {@link java.lang.String} object
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 
@@ -93,8 +86,7 @@ public class NamingPolicyRequest
      * @param version a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.policy.naming.NamingPolicyRequest} object
      */
-    public NamingPolicyRequest setVersion( String version )
-    {
+    public NamingPolicyRequest setVersion(String version) {
         this.version = version;
         return this;
     }

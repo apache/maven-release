@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,14 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.ArgumentMatchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.reset;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
+package org.apache.maven.shared.release.exec;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,83 +26,122 @@ import java.util.List;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
-
-import junit.framework.TestCase;
 import org.apache.maven.shared.release.util.MavenCrypto;
 import org.junit.Test;
 
-public class AbstractMavenExecutorTest
-{
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+
+public class AbstractMavenExecutorTest {
 
     @Test
-    public void testGoalSeparation()
-        throws MavenExecutorException
-    {
-        AbstractMavenExecutor executor = spy( new AbstractMavenExecutorSpy( mock( MavenCrypto.class ) ) );
+    public void testGoalSeparation() throws MavenExecutorException {
+        AbstractMavenExecutor executor = spy(new AbstractMavenExecutorSpy(mock(MavenCrypto.class)));
 
-        executor.executeGoals( null, (String) null, new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull(), eq( new ArrayList<String>() ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
-                                         isNull(), isNull() );
-        reset( executor );
+        executor.executeGoals(null, (String) null, new DefaultReleaseEnvironment(), true, null, null, null);
+        verify(executor)
+                .executeGoals(
+                        isNull(),
+                        eq(new ArrayList<String>()),
+                        isA(ReleaseEnvironment.class),
+                        eq(true),
+                        isNull(),
+                        isNull(),
+                        isNull());
+        reset(executor);
 
-        executor.executeGoals( null, " clean verify ", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull(),
-                                         eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
-                                         isNull(), isNull() );
-        reset( executor );
+        executor.executeGoals(null, " clean verify ", new DefaultReleaseEnvironment(), true, null, null, null);
+        verify(executor)
+                .executeGoals(
+                        isNull(),
+                        eq(Arrays.asList("clean", "verify")),
+                        isA(ReleaseEnvironment.class),
+                        eq(true),
+                        isNull(),
+                        isNull(),
+                        isNull());
+        reset(executor);
 
-        executor.executeGoals( null, ",clean,verify,", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull(),
-                                         eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
-                                         isNull(), isNull() );
-        reset( executor );
+        executor.executeGoals(null, ",clean,verify,", new DefaultReleaseEnvironment(), true, null, null, null);
+        verify(executor)
+                .executeGoals(
+                        isNull(),
+                        eq(Arrays.asList("clean", "verify")),
+                        isA(ReleaseEnvironment.class),
+                        eq(true),
+                        isNull(),
+                        isNull(),
+                        isNull());
+        reset(executor);
 
-        executor.executeGoals( null, "\nclean\nverify\n", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull(),
-                                         eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
-                                         isNull(), isNull() );
-        reset( executor );
+        executor.executeGoals(null, "\nclean\nverify\n", new DefaultReleaseEnvironment(), true, null, null, null);
+        verify(executor)
+                .executeGoals(
+                        isNull(),
+                        eq(Arrays.asList("clean", "verify")),
+                        isA(ReleaseEnvironment.class),
+                        eq(true),
+                        isNull(),
+                        isNull(),
+                        isNull());
+        reset(executor);
 
-        executor.executeGoals( null, "\rclean\rverify\r", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull(),
-                                         eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
-                                         isNull(), isNull() );
-        reset( executor );
+        executor.executeGoals(null, "\rclean\rverify\r", new DefaultReleaseEnvironment(), true, null, null, null);
+        verify(executor)
+                .executeGoals(
+                        isNull(),
+                        eq(Arrays.asList("clean", "verify")),
+                        isA(ReleaseEnvironment.class),
+                        eq(true),
+                        isNull(),
+                        isNull(),
+                        isNull());
+        reset(executor);
 
-        executor.executeGoals( null, "\r\nclean\r\nverify\r\n", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull(),
-                                         eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
-                                         isNull(), isNull() );
-        reset( executor );
+        executor.executeGoals(null, "\r\nclean\r\nverify\r\n", new DefaultReleaseEnvironment(), true, null, null, null);
+        verify(executor)
+                .executeGoals(
+                        isNull(),
+                        eq(Arrays.asList("clean", "verify")),
+                        isA(ReleaseEnvironment.class),
+                        eq(true),
+                        isNull(),
+                        isNull(),
+                        isNull());
+        reset(executor);
 
-        executor.executeGoals( null, "\tclean\tverify\t", new DefaultReleaseEnvironment(), true, null, null, null );
-        verify( executor ).executeGoals( isNull(),
-                                         eq( Arrays.asList( "clean", "verify" ) ),
-                                         isA( ReleaseEnvironment.class ), eq( true ), isNull(),
-                                         isNull(), isNull() );
-        reset( executor );
+        executor.executeGoals(null, "\tclean\tverify\t", new DefaultReleaseEnvironment(), true, null, null, null);
+        verify(executor)
+                .executeGoals(
+                        isNull(),
+                        eq(Arrays.asList("clean", "verify")),
+                        isA(ReleaseEnvironment.class),
+                        eq(true),
+                        isNull(),
+                        isNull(),
+                        isNull());
+        reset(executor);
     }
 
-    protected class AbstractMavenExecutorSpy
-        extends AbstractMavenExecutor
-    {
-        public AbstractMavenExecutorSpy( MavenCrypto mavenCrypto )
-        {
-            super( mavenCrypto );
+    protected class AbstractMavenExecutorSpy extends AbstractMavenExecutor {
+        public AbstractMavenExecutorSpy(MavenCrypto mavenCrypto) {
+            super(mavenCrypto);
         }
 
         @Override
-        protected void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
-                                     boolean interactive, String additionalArguments, String pomFileName,
-                                     ReleaseResult result )
-            throws MavenExecutorException
-        {
-        }
+        protected void executeGoals(
+                File workingDirectory,
+                List<String> goals,
+                ReleaseEnvironment releaseEnvironment,
+                boolean interactive,
+                String additionalArguments,
+                String pomFileName,
+                ReleaseResult result)
+                throws MavenExecutorException {}
     }
 }

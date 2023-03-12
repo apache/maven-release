@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.config;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,23 +16,21 @@ package org.apache.maven.shared.release.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.config;
 
 /**
  * Exception occurring within the configuration store.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseDescriptorStoreException
-        extends Exception
-{
+public class ReleaseDescriptorStoreException extends Exception {
     /**
      * <p>Constructor for ReleaseDescriptorStoreException.</p>
      *
      * @param message a {@link java.lang.String} object
      * @param t       a {@link java.lang.Throwable} object
      */
-    public ReleaseDescriptorStoreException( String message, Throwable t )
-    {
-        super( message, t );
+    public ReleaseDescriptorStoreException(String message, Throwable t) {
+        super(message, t);
     }
 }

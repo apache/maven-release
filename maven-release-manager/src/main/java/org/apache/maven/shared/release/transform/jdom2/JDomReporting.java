@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +33,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomReporting extends Reporting
-{
+public class JDomReporting extends Reporting {
 
     private final Element reporting;
 
@@ -44,40 +42,32 @@ public class JDomReporting extends Reporting
      *
      * @param reporting a {@link org.jdom2.Element} object
      */
-    public JDomReporting( Element reporting )
-    {
+    public JDomReporting(Element reporting) {
         this.reporting = reporting;
     }
 
     @Override
-    public void addPlugin( ReportPlugin reportPlugin )
-    {
+    public void addPlugin(ReportPlugin reportPlugin) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getOutputDirectory()
-    {
+    public String getOutputDirectory() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<ReportPlugin> getPlugins()
-    {
-        Element pluginsElm = reporting.getChild( "plugins", reporting.getNamespace() );
-        if ( pluginsElm == null )
-        {
+    public List<ReportPlugin> getPlugins() {
+        Element pluginsElm = reporting.getChild("plugins", reporting.getNamespace());
+        if (pluginsElm == null) {
             return Collections.emptyList();
-        }
-        else
-        {
-            List<Element> pluginElms = pluginsElm.getChildren( "plugin", reporting.getNamespace() );
+        } else {
+            List<Element> pluginElms = pluginsElm.getChildren("plugin", reporting.getNamespace());
 
-            List<ReportPlugin> plugins = new ArrayList<>( pluginElms.size() );
+            List<ReportPlugin> plugins = new ArrayList<>(pluginElms.size());
 
-            for ( Element pluginElm : pluginElms )
-            {
-                plugins.add( new JDomReportPlugin( pluginElm ) );
+            for (Element pluginElm : pluginElms) {
+                plugins.add(new JDomReportPlugin(pluginElm));
             }
 
             return plugins;
@@ -85,44 +75,37 @@ public class JDomReporting extends Reporting
     }
 
     @Override
-    public void removePlugin( ReportPlugin reportPlugin )
-    {
+    public void removePlugin(ReportPlugin reportPlugin) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setOutputDirectory( String outputDirectory )
-    {
+    public void setOutputDirectory(String outputDirectory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setPlugins( List<ReportPlugin> plugins )
-    {
+    public void setPlugins(List<ReportPlugin> plugins) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void flushReportPluginMap()
-    {
+    public void flushReportPluginMap() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Map<String, ReportPlugin> getReportPluginsAsMap()
-    {
+    public Map<String, ReportPlugin> getReportPluginsAsMap() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean isExcludeDefaults()
-    {
+    public boolean isExcludeDefaults() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setExcludeDefaults( boolean excludeDefaults )
-    {
+    public void setExcludeDefaults(boolean excludeDefaults) {
         throw new UnsupportedOperationException();
     }
 }

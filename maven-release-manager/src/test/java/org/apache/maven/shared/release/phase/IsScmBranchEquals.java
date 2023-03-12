@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.scm.ScmBranch;
 import org.mockito.ArgumentMatcher;
@@ -27,20 +26,17 @@ import org.mockito.ArgumentMatcher;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class IsScmBranchEquals implements ArgumentMatcher<ScmBranch>
-{
+public class IsScmBranchEquals implements ArgumentMatcher<ScmBranch> {
     private final ScmBranch branch;
 
-    public IsScmBranchEquals( ScmBranch branch )
-    {
+    public IsScmBranchEquals(ScmBranch branch) {
         this.branch = branch;
     }
 
     @Override
-    public boolean matches( ScmBranch argument )
-    {
+    public boolean matches(ScmBranch argument) {
         ScmBranch sb = (ScmBranch) argument;
 
-        return sb.getName().equals( this.branch.getName() );
+        return sb.getName().equals(this.branch.getName());
     }
 }

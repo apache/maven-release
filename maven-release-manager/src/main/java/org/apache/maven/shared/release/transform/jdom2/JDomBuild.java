@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,15 +29,14 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.model.PluginManagement;
 import org.apache.maven.model.Resource;
 import org.jdom2.Element;
+
 /**
  * JDOM2 implementation of poms BUILD element
  *
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomBuild
-    extends Build
-{
+public class JDomBuild extends Build {
     private final Element build;
 
     /**
@@ -46,262 +44,213 @@ public class JDomBuild
      *
      * @param build a {@link org.jdom2.Element} object
      */
-    public JDomBuild( Element build )
-    {
+    public JDomBuild(Element build) {
         this.build = build;
     }
 
     @Override
-    public void addExtension( Extension extension )
-    {
+    public void addExtension(Extension extension) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Extension> getExtensions()
-    {
-        Element extensionsElm = build.getChild( "extensions", build.getNamespace() );
-        if ( extensionsElm == null )
-        {
+    public List<Extension> getExtensions() {
+        Element extensionsElm = build.getChild("extensions", build.getNamespace());
+        if (extensionsElm == null) {
             return Collections.emptyList();
-        }
-        else
-        {
-            List<Element> extensionElms = extensionsElm.getChildren( "extension", build.getNamespace() );
+        } else {
+            List<Element> extensionElms = extensionsElm.getChildren("extension", build.getNamespace());
 
-            List<Extension> extensions = new ArrayList<>( extensionElms.size() );
-            for ( Element extensionElm : extensionElms )
-            {
-                extensions.add( new JDomExtension( extensionElm ) );
+            List<Extension> extensions = new ArrayList<>(extensionElms.size());
+            for (Element extensionElm : extensionElms) {
+                extensions.add(new JDomExtension(extensionElm));
             }
             return extensions;
         }
     }
 
     @Override
-    public String getOutputDirectory()
-    {
+    public String getOutputDirectory() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getScriptSourceDirectory()
-    {
+    public String getScriptSourceDirectory() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getSourceDirectory()
-    {
+    public String getSourceDirectory() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getTestOutputDirectory()
-    {
+    public String getTestOutputDirectory() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getTestSourceDirectory()
-    {
+    public String getTestSourceDirectory() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeExtension( Extension extension )
-    {
+    public void removeExtension(Extension extension) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setExtensions( List<Extension> extensions )
-    {
+    public void setExtensions(List<Extension> extensions) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setOutputDirectory( String outputDirectory )
-    {
+    public void setOutputDirectory(String outputDirectory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setScriptSourceDirectory( String scriptSourceDirectory )
-    {
+    public void setScriptSourceDirectory(String scriptSourceDirectory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setSourceDirectory( String sourceDirectory )
-    {
+    public void setSourceDirectory(String sourceDirectory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setTestOutputDirectory( String testOutputDirectory )
-    {
+    public void setTestOutputDirectory(String testOutputDirectory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setTestSourceDirectory( String testSourceDirectory )
-    {
+    public void setTestSourceDirectory(String testSourceDirectory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addFilter( String string )
-    {
+    public void addFilter(String string) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addResource( Resource resource )
-    {
+    public void addResource(Resource resource) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addTestResource( Resource resource )
-    {
+    public void addTestResource(Resource resource) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getDefaultGoal()
-    {
+    public String getDefaultGoal() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getDirectory()
-    {
+    public String getDirectory() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<String> getFilters()
-    {
+    public List<String> getFilters() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getFinalName()
-    {
+    public String getFinalName() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Resource> getResources()
-    {
+    public List<Resource> getResources() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Resource> getTestResources()
-    {
+    public List<Resource> getTestResources() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeFilter( String string )
-    {
+    public void removeFilter(String string) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeResource( Resource resource )
-    {
+    public void removeResource(Resource resource) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeTestResource( Resource resource )
-    {
+    public void removeTestResource(Resource resource) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setDefaultGoal( String defaultGoal )
-    {
+    public void setDefaultGoal(String defaultGoal) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setDirectory( String directory )
-    {
+    public void setDirectory(String directory) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setFilters( List<String> filters )
-    {
+    public void setFilters(List<String> filters) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setFinalName( String finalName )
-    {
+    public void setFinalName(String finalName) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setResources( List<Resource> resources )
-    {
+    public void setResources(List<Resource> resources) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setTestResources( List<Resource> testResources )
-    {
+    public void setTestResources(List<Resource> testResources) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public PluginManagement getPluginManagement()
-    {
-        Element pluginManagementElm = build.getChild( "pluginManagement", build.getNamespace() );
-        if ( pluginManagementElm == null )
-        {
+    public PluginManagement getPluginManagement() {
+        Element pluginManagementElm = build.getChild("pluginManagement", build.getNamespace());
+        if (pluginManagementElm == null) {
             return null;
-        }
-        else
-        {
-            return new JDomPluginManagement( pluginManagementElm );
+        } else {
+            return new JDomPluginManagement(pluginManagementElm);
         }
     }
 
     @Override
-    public void setPluginManagement( PluginManagement pluginManagement )
-    {
+    public void setPluginManagement(PluginManagement pluginManagement) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void addPlugin( Plugin plugin )
-    {
+    public void addPlugin(Plugin plugin) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Plugin> getPlugins()
-    {
-        Element pluginsElm = build.getChild( "plugins", build.getNamespace() );
-        if ( pluginsElm == null )
-        {
+    public List<Plugin> getPlugins() {
+        Element pluginsElm = build.getChild("plugins", build.getNamespace());
+        if (pluginsElm == null) {
             return Collections.emptyList();
-        }
-        else
-        {
-            List<Element> pluginElms =
-                pluginsElm.getChildren( "plugin", build.getNamespace() );
+        } else {
+            List<Element> pluginElms = pluginsElm.getChildren("plugin", build.getNamespace());
 
-            List<Plugin> plugins = new ArrayList<>( pluginElms.size() );
+            List<Plugin> plugins = new ArrayList<>(pluginElms.size());
 
-            for ( Element pluginElm : pluginElms )
-            {
-                plugins.add( new JDomPlugin( pluginElm ) );
+            for (Element pluginElm : pluginElms) {
+                plugins.add(new JDomPlugin(pluginElm));
             }
 
             return plugins;
@@ -309,26 +258,22 @@ public class JDomBuild
     }
 
     @Override
-    public void removePlugin( Plugin plugin )
-    {
+    public void removePlugin(Plugin plugin) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setPlugins( List<Plugin> plugins )
-    {
+    public void setPlugins(List<Plugin> plugins) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void flushPluginMap()
-    {
+    public void flushPluginMap() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Map<String, Plugin> getPluginsAsMap()
-    {
+    public Map<String, Plugin> getPluginsAsMap() {
         throw new UnsupportedOperationException();
     }
 }

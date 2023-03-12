@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.config;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.config;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -33,14 +32,12 @@ import org.apache.maven.shared.release.scm.IdentifiedScm;
  *
  * @author <a href="mailto:jwhitlock@apache.org">Jeremy Whitlock</a>
  */
-public class ReleaseUtils
-{
+public class ReleaseUtils {
     private static final String DEVELOPMENT_KEY = "dev";
 
     private static final String RELEASE_KEY = "rel";
 
-    private ReleaseUtils()
-    {
+    private ReleaseUtils() {
         // nothing to see here
     }
 
@@ -50,8 +47,7 @@ public class ReleaseUtils
      * @param builder a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor} object
      */
-    public static BuilderReleaseDescriptor buildReleaseDescriptor( ReleaseDescriptorBuilder builder )
-    {
+    public static BuilderReleaseDescriptor buildReleaseDescriptor(ReleaseDescriptorBuilder builder) {
         return builder.build();
     }
 
@@ -61,194 +57,146 @@ public class ReleaseUtils
      * @param properties a {@link java.util.Properties} object
      * @param builder    a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public static void copyPropertiesToReleaseDescriptor( Properties properties, ReleaseDescriptorBuilder builder )
-    {
-        if ( properties.containsKey( "completedPhase" ) )
-        {
-            builder.setCompletedPhase( properties.getProperty( "completedPhase" ) );
+    public static void copyPropertiesToReleaseDescriptor(Properties properties, ReleaseDescriptorBuilder builder) {
+        if (properties.containsKey("completedPhase")) {
+            builder.setCompletedPhase(properties.getProperty("completedPhase"));
         }
-        if ( properties.containsKey( "commitByProject" ) )
-        {
-            builder.setCommitByProject( Boolean.parseBoolean( properties.getProperty( "commitByProject" ) ) );
+        if (properties.containsKey("commitByProject")) {
+            builder.setCommitByProject(Boolean.parseBoolean(properties.getProperty("commitByProject")));
         }
-        if ( properties.containsKey( "scm.id" ) )
-        {
-            builder.setScmId( properties.getProperty( "scm.id" ) );
+        if (properties.containsKey("scm.id")) {
+            builder.setScmId(properties.getProperty("scm.id"));
         }
-        if ( properties.containsKey( "scm.url" ) )
-        {
-            builder.setScmSourceUrl( properties.getProperty( "scm.url" ) );
+        if (properties.containsKey("scm.url")) {
+            builder.setScmSourceUrl(properties.getProperty("scm.url"));
         }
-        if ( properties.containsKey( "scm.username" ) )
-        {
-            builder.setScmUsername( properties.getProperty( "scm.username" ) );
+        if (properties.containsKey("scm.username")) {
+            builder.setScmUsername(properties.getProperty("scm.username"));
         }
-        if ( properties.containsKey( "scm.password" ) )
-        {
-            builder.setScmPassword( properties.getProperty( "scm.password" ) );
+        if (properties.containsKey("scm.password")) {
+            builder.setScmPassword(properties.getProperty("scm.password"));
         }
-        if ( properties.containsKey( "scm.privateKey" ) )
-        {
-            builder.setScmPrivateKey( properties.getProperty( "scm.privateKey" ) );
+        if (properties.containsKey("scm.privateKey")) {
+            builder.setScmPrivateKey(properties.getProperty("scm.privateKey"));
         }
-        if ( properties.containsKey( "scm.passphrase" ) )
-        {
-            builder.setScmPrivateKeyPassPhrase( properties.getProperty( "scm.passphrase" ) );
+        if (properties.containsKey("scm.passphrase")) {
+            builder.setScmPrivateKeyPassPhrase(properties.getProperty("scm.passphrase"));
         }
-        if ( properties.containsKey( "scm.tagBase" ) )
-        {
-            builder.setScmTagBase( properties.getProperty( "scm.tagBase" ) );
+        if (properties.containsKey("scm.tagBase")) {
+            builder.setScmTagBase(properties.getProperty("scm.tagBase"));
         }
-        if ( properties.containsKey( "scm.tagNameFormat" ) )
-        {
-            builder.setScmTagNameFormat( properties.getProperty( "scm.tagNameFormat" ) );
+        if (properties.containsKey("scm.tagNameFormat")) {
+            builder.setScmTagNameFormat(properties.getProperty("scm.tagNameFormat"));
         }
-        if ( properties.containsKey( "scm.branchBase" ) )
-        {
-            builder.setScmBranchBase( properties.getProperty( "scm.branchBase" ) );
+        if (properties.containsKey("scm.branchBase")) {
+            builder.setScmBranchBase(properties.getProperty("scm.branchBase"));
         }
-        if ( properties.containsKey( "scm.tag" ) )
-        {
-            builder.setScmReleaseLabel( properties.getProperty( "scm.tag" ) );
+        if (properties.containsKey("scm.tag")) {
+            builder.setScmReleaseLabel(properties.getProperty("scm.tag"));
         }
-        if ( properties.containsKey( "scm.commentPrefix" ) )
-        {
-            builder.setScmCommentPrefix( properties.getProperty( "scm.commentPrefix" ) );
+        if (properties.containsKey("scm.commentPrefix")) {
+            builder.setScmCommentPrefix(properties.getProperty("scm.commentPrefix"));
         }
-        if ( properties.containsKey( "scm.developmentCommitComment" ) )
-        {
-            builder.setScmDevelopmentCommitComment( properties.getProperty( "scm.developmentCommitComment" ) );
+        if (properties.containsKey("scm.developmentCommitComment")) {
+            builder.setScmDevelopmentCommitComment(properties.getProperty("scm.developmentCommitComment"));
         }
-        if ( properties.containsKey( "scm.releaseCommitComment" ) )
-        {
-            builder.setScmReleaseCommitComment( properties.getProperty( "scm.releaseCommitComment" ) );
+        if (properties.containsKey("scm.releaseCommitComment")) {
+            builder.setScmReleaseCommitComment(properties.getProperty("scm.releaseCommitComment"));
         }
-        if ( properties.containsKey( "scm.branchCommitComment" ) )
-        {
-            builder.setScmBranchCommitComment( properties.getProperty( "scm.branchCommitComment" ) );
+        if (properties.containsKey("scm.branchCommitComment")) {
+            builder.setScmBranchCommitComment(properties.getProperty("scm.branchCommitComment"));
         }
-        if ( properties.containsKey( "scm.rollbackCommitComment" ) )
-        {
-            builder.setScmRollbackCommitComment( properties.getProperty( "scm.rollbackCommitComment" ) );
+        if (properties.containsKey("scm.rollbackCommitComment")) {
+            builder.setScmRollbackCommitComment(properties.getProperty("scm.rollbackCommitComment"));
         }
-        if ( properties.containsKey( "exec.additionalArguments" ) )
-        {
-            builder.setAdditionalArguments( properties.getProperty( "exec.additionalArguments" ) );
+        if (properties.containsKey("exec.additionalArguments")) {
+            builder.setAdditionalArguments(properties.getProperty("exec.additionalArguments"));
         }
-        if ( properties.containsKey( "exec.pomFileName" ) )
-        {
-            builder.setPomFileName( properties.getProperty( "exec.pomFileName" ) );
+        if (properties.containsKey("exec.pomFileName")) {
+            builder.setPomFileName(properties.getProperty("exec.pomFileName"));
         }
-        if ( properties.containsKey( "exec.activateProfiles" ) )
-        {
-            builder.setActivateProfiles(
-                    Arrays.asList( properties.getProperty( "exec.activateProfiles" ).split( "," ) ) );
+        if (properties.containsKey("exec.activateProfiles")) {
+            builder.setActivateProfiles(Arrays.asList(
+                    properties.getProperty("exec.activateProfiles").split(",")));
         }
-        if ( properties.containsKey( "preparationGoals" ) )
-        {
-            builder.setPreparationGoals( properties.getProperty( "preparationGoals" ) );
+        if (properties.containsKey("preparationGoals")) {
+            builder.setPreparationGoals(properties.getProperty("preparationGoals"));
         }
-        if ( properties.containsKey( "completionGoals" ) )
-        {
-            builder.setCompletionGoals( properties.getProperty( "completionGoals" ) );
+        if (properties.containsKey("completionGoals")) {
+            builder.setCompletionGoals(properties.getProperty("completionGoals"));
         }
-        if ( properties.containsKey( "projectVersionPolicyId" ) )
-        {
-            builder.setProjectVersionPolicyId( properties.getProperty( "projectVersionPolicyId" ) );
+        if (properties.containsKey("projectVersionPolicyId")) {
+            builder.setProjectVersionPolicyId(properties.getProperty("projectVersionPolicyId"));
         }
-        if ( properties.containsKey( "projectVersionPolicyConfig" ) )
-        {
-            builder.setProjectVersionPolicyConfig( properties.getProperty( "projectVersionPolicyConfig" ) );
+        if (properties.containsKey("projectVersionPolicyConfig")) {
+            builder.setProjectVersionPolicyConfig(properties.getProperty("projectVersionPolicyConfig"));
         }
-        if ( properties.containsKey( "projectNamingPolicyId" ) )
-        {
-            builder.setProjectNamingPolicyId( properties.getProperty( "projectNamingPolicyId" ) );
+        if (properties.containsKey("projectNamingPolicyId")) {
+            builder.setProjectNamingPolicyId(properties.getProperty("projectNamingPolicyId"));
         }
-        if ( properties.containsKey( "releaseStrategyId" ) )
-        {
-            builder.setReleaseStrategyId( properties.getProperty( "releaseStrategyId" ) );
+        if (properties.containsKey("releaseStrategyId")) {
+            builder.setReleaseStrategyId(properties.getProperty("releaseStrategyId"));
         }
-        if ( properties.containsKey( "exec.snapshotReleasePluginAllowed" ) )
-        {
-            String snapshotReleasePluginAllowedStr = properties.getProperty( "exec.snapshotReleasePluginAllowed" );
-            builder.setSnapshotReleasePluginAllowed( Boolean.parseBoolean( snapshotReleasePluginAllowedStr ) );
+        if (properties.containsKey("exec.snapshotReleasePluginAllowed")) {
+            String snapshotReleasePluginAllowedStr = properties.getProperty("exec.snapshotReleasePluginAllowed");
+            builder.setSnapshotReleasePluginAllowed(Boolean.parseBoolean(snapshotReleasePluginAllowedStr));
         }
-        if ( properties.containsKey( "remoteTagging" ) )
-        {
-            String remoteTaggingStr = properties.getProperty( "remoteTagging" );
-            builder.setRemoteTagging( Boolean.parseBoolean( remoteTaggingStr ) );
+        if (properties.containsKey("remoteTagging")) {
+            String remoteTaggingStr = properties.getProperty("remoteTagging");
+            builder.setRemoteTagging(Boolean.parseBoolean(remoteTaggingStr));
         }
-        if ( properties.containsKey( "pinExternals" ) )
-        {
-            String pinExternals = properties.getProperty( "pinExternals" );
-            builder.setPinExternals( Boolean.parseBoolean( pinExternals ) );
+        if (properties.containsKey("pinExternals")) {
+            String pinExternals = properties.getProperty("pinExternals");
+            builder.setPinExternals(Boolean.parseBoolean(pinExternals));
         }
-        if ( properties.containsKey( "pushChanges" ) )
-        {
-            String pushChanges = properties.getProperty( "pushChanges" );
-            builder.setPushChanges( Boolean.parseBoolean( pushChanges ) );
+        if (properties.containsKey("pushChanges")) {
+            String pushChanges = properties.getProperty("pushChanges");
+            builder.setPushChanges(Boolean.parseBoolean(pushChanges));
         }
-        if ( properties.containsKey( "workItem" ) )
-        {
-            builder.setWorkItem( properties.getProperty( "workItem" ) );
+        if (properties.containsKey("workItem")) {
+            builder.setWorkItem(properties.getProperty("workItem"));
         }
-        if ( properties.containsKey( "autoResolveSnapshots" ) )
-        {
-            String resolve = properties.getProperty( "autoResolveSnapshots" );
-            builder.setAutoResolveSnapshots( resolve );
+        if (properties.containsKey("autoResolveSnapshots")) {
+            String resolve = properties.getProperty("autoResolveSnapshots");
+            builder.setAutoResolveSnapshots(resolve);
         }
 
-        loadResolvedDependencies( properties, builder );
+        loadResolvedDependencies(properties, builder);
 
         // boolean properties are not written to the properties file because the value from the caller is always used
 
-        for ( Object o : properties.keySet() )
-        {
+        for (Object o : properties.keySet()) {
             String property = (String) o;
-            if ( property.startsWith( "project.rel." ) )
-            {
-                builder.addReleaseVersion( property.substring( "project.rel.".length() ),
-                        properties.getProperty( property ) );
-            }
-            else if ( property.startsWith( "project.dev." ) )
-            {
-                builder.addDevelopmentVersion( property.substring( "project.dev.".length() ),
-                        properties.getProperty( property ) );
-            }
-            else if ( property.startsWith( "dependency.rel." ) )
-            {
-                builder.addDependencyReleaseVersion( property.substring( "dependency.rel.".length() ),
-                        properties.getProperty( property ) );
-            }
-            else if ( property.startsWith( "dependency.dev." ) )
-            {
-                builder.addDependencyDevelopmentVersion( property.substring( "dependency.dev.".length() ),
-                        properties.getProperty( property ) );
-            }
-            else if ( property.startsWith( "project.scm." ) )
-            {
-                int index = property.lastIndexOf( '.' );
-                if ( index > "project.scm.".length() )
-                {
-                    String key = property.substring( "project.scm.".length(), index );
+            if (property.startsWith("project.rel.")) {
+                builder.addReleaseVersion(
+                        property.substring("project.rel.".length()), properties.getProperty(property));
+            } else if (property.startsWith("project.dev.")) {
+                builder.addDevelopmentVersion(
+                        property.substring("project.dev.".length()), properties.getProperty(property));
+            } else if (property.startsWith("dependency.rel.")) {
+                builder.addDependencyReleaseVersion(
+                        property.substring("dependency.rel.".length()), properties.getProperty(property));
+            } else if (property.startsWith("dependency.dev.")) {
+                builder.addDependencyDevelopmentVersion(
+                        property.substring("dependency.dev.".length()), properties.getProperty(property));
+            } else if (property.startsWith("project.scm.")) {
+                int index = property.lastIndexOf('.');
+                if (index > "project.scm.".length()) {
+                    String key = property.substring("project.scm.".length(), index);
 
-                    if ( builder.build().getOriginalScmInfo( key ) == null )
-                    {
-                        if ( properties.getProperty( "project.scm." + key + ".empty" ) != null )
-                        {
-                            builder.addOriginalScmInfo( key, null );
-                        }
-                        else
-                        {
+                    if (builder.build().getOriginalScmInfo(key) == null) {
+                        if (properties.getProperty("project.scm." + key + ".empty") != null) {
+                            builder.addOriginalScmInfo(key, null);
+                        } else {
                             IdentifiedScm scm = new IdentifiedScm();
-                            scm.setConnection( properties.getProperty( "project.scm." + key + ".connection" ) );
+                            scm.setConnection(properties.getProperty("project.scm." + key + ".connection"));
                             scm.setDeveloperConnection(
-                                    properties.getProperty( "project.scm." + key + ".developerConnection" ) );
-                            scm.setUrl( properties.getProperty( "project.scm." + key + ".url" ) );
-                            scm.setTag( properties.getProperty( "project.scm." + key + ".tag" ) );
-                            scm.setId( properties.getProperty( "project.scm." + key + ".id" ) );
+                                    properties.getProperty("project.scm." + key + ".developerConnection"));
+                            scm.setUrl(properties.getProperty("project.scm." + key + ".url"));
+                            scm.setTag(properties.getProperty("project.scm." + key + ".tag"));
+                            scm.setId(properties.getProperty("project.scm." + key + ".id"));
 
-                            builder.addOriginalScmInfo( key, scm );
+                            builder.addOriginalScmInfo(key, scm);
                         }
                     }
                 }
@@ -256,53 +204,41 @@ public class ReleaseUtils
         }
     }
 
-    private static void loadResolvedDependencies( Properties prop, ReleaseDescriptorBuilder builder )
-    {
+    private static void loadResolvedDependencies(Properties prop, ReleaseDescriptorBuilder builder) {
         Set entries = prop.entrySet();
         Iterator<Entry<String, String>> iterator = entries.iterator();
         String propertyName;
         Entry<String, String> currentEntry;
 
-        while ( iterator.hasNext() )
-        {
+        while (iterator.hasNext()) {
             currentEntry = iterator.next();
             propertyName = currentEntry.getKey();
 
-            if ( propertyName.startsWith( "dependency." ) )
-            {
+            if (propertyName.startsWith("dependency.")) {
                 String artifactVersionlessKey;
                 int startIndex = "dependency.".length();
                 int endIndex;
                 String versionType;
 
-                if ( propertyName.contains( ".development" ) )
-                {
-                    endIndex = propertyName.lastIndexOf( ".development" );
+                if (propertyName.contains(".development")) {
+                    endIndex = propertyName.lastIndexOf(".development");
                     versionType = DEVELOPMENT_KEY;
-                }
-                else if ( propertyName.contains( ".release" ) )
-                {
-                    endIndex = propertyName.lastIndexOf( ".release" );
+                } else if (propertyName.contains(".release")) {
+                    endIndex = propertyName.lastIndexOf(".release");
                     versionType = RELEASE_KEY;
-                }
-                else
-                {
+                } else {
                     // MRELEASE-834, probably a maven-dependency-plugin property
                     continue;
                 }
 
-                artifactVersionlessKey = propertyName.substring( startIndex, endIndex );
+                artifactVersionlessKey = propertyName.substring(startIndex, endIndex);
 
-                if ( RELEASE_KEY.equals( versionType ) )
-                {
-                    builder.addDependencyReleaseVersion( artifactVersionlessKey, currentEntry.getValue() );
-                }
-                else if ( DEVELOPMENT_KEY.equals( versionType ) )
-                {
-                    builder.addDependencyDevelopmentVersion( artifactVersionlessKey, currentEntry.getValue() );
+                if (RELEASE_KEY.equals(versionType)) {
+                    builder.addDependencyReleaseVersion(artifactVersionlessKey, currentEntry.getValue());
+                } else if (DEVELOPMENT_KEY.equals(versionType)) {
+                    builder.addDependencyDevelopmentVersion(artifactVersionlessKey, currentEntry.getValue());
                 }
             }
         }
     }
-
 }

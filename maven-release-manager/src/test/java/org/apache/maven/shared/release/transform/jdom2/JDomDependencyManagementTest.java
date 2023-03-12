@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,9 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.io.StringReader;
 
@@ -28,44 +24,54 @@ import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
 import org.junit.Test;
 
-public class JDomDependencyManagementTest
-{
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+public class JDomDependencyManagementTest {
     private SAXBuilder builder = new SAXBuilder();
 
     @Test
-    public void testGetDependencies() throws Exception
-    {
+    public void testGetDependencies() throws Exception {
         String content = "<dependencyManamgement></dependencyManamgement>";
-        Document document = builder.build( new StringReader( content ) );
-        assertNotNull( new JDomDependencyManagement( document.getRootElement() ).getDependencies() );
-        assertEquals( 0, new JDomDependencyManagement( document.getRootElement() ).getDependencies().size() );
+        Document document = builder.build(new StringReader(content));
+        assertNotNull(new JDomDependencyManagement(document.getRootElement()).getDependencies());
+        assertEquals(
+                0,
+                new JDomDependencyManagement(document.getRootElement())
+                        .getDependencies()
+                        .size());
 
         content = "<dependencyManamgement><dependencies/></dependencyManamgement>";
-        document = builder.build( new StringReader( content ) );
-        assertEquals( 0, new JDomDependencyManagement( document.getRootElement() ).getDependencies().size() );
+        document = builder.build(new StringReader(content));
+        assertEquals(
+                0,
+                new JDomDependencyManagement(document.getRootElement())
+                        .getDependencies()
+                        .size());
 
         content = "<dependencyManamgement><dependencies><dependency/></dependencies></dependencyManamgement>";
-        document = builder.build( new StringReader( content ) );
-        assertEquals( 1, new JDomDependencyManagement( document.getRootElement() ).getDependencies().size() );
+        document = builder.build(new StringReader(content));
+        assertEquals(
+                1,
+                new JDomDependencyManagement(document.getRootElement())
+                        .getDependencies()
+                        .size());
     }
 
     // All other methods throw UnsupportedOperationException
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testAddDependency()
-    {
-        new JDomDependencyManagement( null ).addDependency( null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testAddDependency() {
+        new JDomDependencyManagement(null).addDependency(null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testRemoveDependency()
-    {
-        new JDomDependencyManagement( null ).addDependency( null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testRemoveDependency() {
+        new JDomDependencyManagement(null).addDependency(null);
     }
 
-    @Test( expected = UnsupportedOperationException.class )
-    public void testSetDependenciesListOfDependency()
-    {
-        new JDomDependencyManagement( null ).setDependencies( null );
+    @Test(expected = UnsupportedOperationException.class)
+    public void testSetDependenciesListOfDependency() {
+        new JDomDependencyManagement(null).setDependencies(null);
     }
 }

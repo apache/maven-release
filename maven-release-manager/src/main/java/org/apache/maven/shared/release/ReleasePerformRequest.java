@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
@@ -27,9 +26,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
  * @author Robert Scholte
  * @since 2.3
  */
-public class ReleasePerformRequest
-    extends AbstractReleaseRequest
-{
+public class ReleasePerformRequest extends AbstractReleaseRequest {
     // using Boolean to detect if has been set explicitly
     private Boolean dryRun;
 
@@ -43,8 +40,7 @@ public class ReleasePerformRequest
      *
      * @return the dryRun
      */
-    public Boolean getDryRun()
-    {
+    public Boolean getDryRun() {
         return dryRun;
     }
 
@@ -53,8 +49,7 @@ public class ReleasePerformRequest
      *
      * @param dryRun the dryRun to set
      */
-    public void setDryRun( Boolean dryRun )
-    {
+    public void setDryRun(Boolean dryRun) {
         this.dryRun = dryRun;
     }
 
@@ -63,8 +58,7 @@ public class ReleasePerformRequest
      *
      * @return the clean
      */
-    public Boolean getClean()
-    {
+    public Boolean getClean() {
         return clean;
     }
 
@@ -73,8 +67,7 @@ public class ReleasePerformRequest
      *
      * @param clean the clean to set
      */
-    public void setClean( Boolean clean )
-    {
+    public void setClean(Boolean clean) {
         this.clean = clean;
     }
 
@@ -83,8 +76,7 @@ public class ReleasePerformRequest
      *
      * @return the releaseEnvironment
      */
-    public ReleaseEnvironment getReleaseEnvironment()
-    {
+    public ReleaseEnvironment getReleaseEnvironment() {
         return releaseEnvironment;
     }
 
@@ -93,8 +85,7 @@ public class ReleasePerformRequest
      *
      * @param releaseEnvironment the releaseEnvironment to set
      */
-    public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )
-    {
+    public void setReleaseEnvironment(ReleaseEnvironment releaseEnvironment) {
         this.releaseEnvironment = releaseEnvironment;
     }
 }

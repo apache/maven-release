@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policy.version;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.policy.version;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policy.version;
 
 import org.apache.maven.artifact.repository.metadata.Metadata;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -28,11 +27,10 @@ import org.apache.maven.scm.repository.ScmRepository;
  *
  * @since 2.5.1 (MRELEASE-431)
  */
-public class VersionPolicyRequest
-{
+public class VersionPolicyRequest {
 
     private String version;
-    
+
     private Metadata metaData;
 
     private ScmRepository scmRepository;
@@ -46,8 +44,7 @@ public class VersionPolicyRequest
      *
      * @return a {@link java.lang.String} object
      */
-    public String getVersion()
-    {
+    public String getVersion() {
         return version;
     }
 
@@ -57,30 +54,27 @@ public class VersionPolicyRequest
      * @param version a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
-    public VersionPolicyRequest setVersion( String version )
-    {
+    public VersionPolicyRequest setVersion(String version) {
         this.version = version;
         return this;
     }
-    
+
     /**
      * <p>Getter for the field <code>metaData</code>.</p>
      *
      * @return a {@link org.apache.maven.artifact.repository.metadata.Metadata} object
      */
-    public Metadata getMetaData()
-    {
+    public Metadata getMetaData() {
         return metaData;
     }
-    
+
     /**
      * <p>Setter for the field <code>metaData</code>.</p>
      *
      * @param metaData a {@link org.apache.maven.artifact.repository.metadata.Metadata} object
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
-    public VersionPolicyRequest setMetaData( Metadata metaData )
-    {
+    public VersionPolicyRequest setMetaData(Metadata metaData) {
         this.metaData = metaData;
         return this;
     }
@@ -90,8 +84,7 @@ public class VersionPolicyRequest
      *
      * @return a {@link ScmRepository} object
      */
-    public ScmRepository getScmRepository()
-    {
+    public ScmRepository getScmRepository() {
         return scmRepository;
     }
 
@@ -101,8 +94,7 @@ public class VersionPolicyRequest
      * @param scmRepository The {@link ScmRepository} where the history can be retrieved.
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
-    public VersionPolicyRequest setScmRepository( ScmRepository scmRepository )
-    {
+    public VersionPolicyRequest setScmRepository(ScmRepository scmRepository) {
         this.scmRepository = scmRepository;
         return this;
     }
@@ -112,8 +104,7 @@ public class VersionPolicyRequest
      *
      * @return a {@link ScmProvider} object
      */
-    public ScmProvider getScmProvider()
-    {
+    public ScmProvider getScmProvider() {
         return scmProvider;
     }
 
@@ -123,8 +114,7 @@ public class VersionPolicyRequest
      * @param scmProvider The {@link ScmProvider} where the history can be retrieved.
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
-    public VersionPolicyRequest setScmProvider( ScmProvider scmProvider )
-    {
+    public VersionPolicyRequest setScmProvider(ScmProvider scmProvider) {
         this.scmProvider = scmProvider;
         return this;
     }
@@ -134,8 +124,7 @@ public class VersionPolicyRequest
      *
      * @return the {@link String} that contains the workingDirectory (can be null or empty).
      */
-    public String getWorkingDirectory()
-    {
+    public String getWorkingDirectory() {
         return workingDirectory;
     }
 
@@ -145,8 +134,7 @@ public class VersionPolicyRequest
      * @param workingDirectory The {@link String} that contains the workingDirectory (can be null or empty).
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
-    public VersionPolicyRequest setWorkingDirectory( String workingDirectory )
-    {
+    public VersionPolicyRequest setWorkingDirectory(String workingDirectory) {
         this.workingDirectory = workingDirectory;
         return this;
     }
@@ -156,8 +144,7 @@ public class VersionPolicyRequest
      *
      * @return the {@link String} that contains the config (can be null or empty).
      */
-    public String getConfig()
-    {
+    public String getConfig() {
         return config;
     }
 
@@ -167,10 +154,8 @@ public class VersionPolicyRequest
      * @param config The {@link String} that contains the config (can be null or empty).
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
-    public VersionPolicyRequest setConfig( String config )
-    {
+    public VersionPolicyRequest setConfig(String config) {
         this.config = config;
         return this;
     }
-
 }

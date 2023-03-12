@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,9 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.util.Iterator;
@@ -31,105 +27,88 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Edwin Punzalan
  */
-public class CreateBackupPomsPhaseTest
-    extends AbstractBackupPomsPhaseTest
-{
+public class CreateBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
     @Override
-    ReleasePhase getReleasePhase()
-        throws Exception
-    {
-        return (ReleasePhase) lookup( ReleasePhase.class, "create-backup-poms" );
+    ReleasePhase getReleasePhase() throws Exception {
+        return (ReleasePhase) lookup(ReleasePhase.class, "create-backup-poms");
     }
 
     @Test
-    public void testBasicPom()
-        throws Exception
-    {
+    public void testBasicPom() throws Exception {
         String projectPath = "target/test-classes/projects/create-backup-poms/basic-pom";
 
         // should create backup files
-        runExecuteOnProjects( projectPath );
+        runExecuteOnProjects(projectPath);
 
         // should delete backup files
-        runCleanOnProjects( projectPath );
+        runCleanOnProjects(projectPath);
 
         // should re-create backup files
-        runSimulateOnProjects( projectPath );
+        runSimulateOnProjects(projectPath);
     }
 
     @Test
-    public void testMultiModulePom()
-        throws Exception
-    {
+    public void testMultiModulePom() throws Exception {
         String projectPath = "target/test-classes/projects/create-backup-poms/pom-with-modules";
 
         // should create backup files
-        runExecuteOnProjects( projectPath );
+        runExecuteOnProjects(projectPath);
 
         // should delete backup files
-        runCleanOnProjects( projectPath );
+        runCleanOnProjects(projectPath);
 
         // should re-create backup files
-        runSimulateOnProjects( projectPath );
+        runSimulateOnProjects(projectPath);
     }
 
-    private void runExecuteOnProjects( String path )
-        throws Exception
-    {
-        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+    private void runExecuteOnProjects(String path) throws Exception {
+        List<MavenProject> projects = getReactorProjects(getTestPath(path));
 
-        phase.execute( null, new DefaultReleaseEnvironment(), projects );
+        phase.execute(null, new DefaultReleaseEnvironment(), projects);
 
-        testProjectBackups( projects, true );
+        testProjectBackups(projects, true);
     }
 
-    private void runSimulateOnProjects( String path )
-        throws Exception
-    {
-        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+    private void runSimulateOnProjects(String path) throws Exception {
+        List<MavenProject> projects = getReactorProjects(getTestPath(path));
 
-        phase.simulate( null, new DefaultReleaseEnvironment(), projects );
+        phase.simulate(null, new DefaultReleaseEnvironment(), projects);
 
-        testProjectBackups( projects, true );
+        testProjectBackups(projects, true);
     }
 
-    private void runCleanOnProjects( String path )
-        throws Exception
-    {
-        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+    private void runCleanOnProjects(String path) throws Exception {
+        List<MavenProject> projects = getReactorProjects(getTestPath(path));
 
-        ( (ResourceGenerator) phase ).clean( projects );
+        ((ResourceGenerator) phase).clean(projects);
 
-        testProjectBackups( projects, false );
+        testProjectBackups(projects, false);
     }
 
-    protected void testProjectBackups( List<MavenProject> reactorProjects, boolean created )
-        throws Exception
-    {
-        for( Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); )
-        {
+    protected void testProjectBackups(List<MavenProject> reactorProjects, boolean created) throws Exception {
+        for (Iterator<MavenProject> projects = reactorProjects.iterator(); projects.hasNext(); ) {
             MavenProject project = projects.next();
 
             File pomFile = project.getFile();
 
-            File backupFile = new File( pomFile.getAbsolutePath() + releaseBackupSuffix );
+            File backupFile = new File(pomFile.getAbsolutePath() + releaseBackupSuffix);
 
-            if ( created )
-            {
-                assertTrue( "Check if backup file was created.", backupFile.exists() );
+            if (created) {
+                assertTrue("Check if backup file was created.", backupFile.exists());
 
-                String pomContents = ReleaseUtil.readXmlFile( pomFile );
+                String pomContents = ReleaseUtil.readXmlFile(pomFile);
 
-                String backupContents = ReleaseUtil.readXmlFile( backupFile );
+                String backupContents = ReleaseUtil.readXmlFile(backupFile);
 
-                assertTrue( "Check if pom and backup files are identical", pomContents.equals( backupContents ) );
-            }
-            else
-            {
-                assertFalse( "Check if backup file is not present", backupFile.exists() );
+                assertTrue("Check if pom and backup files are identical", pomContents.equals(backupContents));
+            } else {
+                assertFalse("Check if backup file is not present", backupFile.exists());
             }
         }
     }

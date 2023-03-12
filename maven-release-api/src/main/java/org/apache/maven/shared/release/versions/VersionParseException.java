@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.versions;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,21 +16,19 @@ package org.apache.maven.shared.release.versions;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.versions;
 
 /**
  * <p>VersionParseException class.</p>
  */
-public class VersionParseException
-    extends Exception
-{
+public class VersionParseException extends Exception {
     /**
      * <p>Constructor for VersionParseException.</p>
      *
      * @param message a {@link java.lang.String} object
      */
-    public VersionParseException( String message )
-    {
-        super( message );
+    public VersionParseException(String message) {
+        super(message);
     }
 
     /**
@@ -40,8 +36,7 @@ public class VersionParseException
      *
      * @param message a {@link java.lang.String} object
      */
-    public VersionParseException( String message, Throwable e )
-    {
-        super( message, e );
+    public VersionParseException(String message, Throwable e) {
+        super(message, e);
     }
 }

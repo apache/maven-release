@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 import java.util.Properties;
 
@@ -29,11 +28,9 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
  * @author Robert Scholte
  * @since 2.3
  */
-public class ReleaseUpdateVersionsRequest
-    extends AbstractReleaseRequest
-{
+public class ReleaseUpdateVersionsRequest extends AbstractReleaseRequest {
     private ReleaseEnvironment releaseEnvironment;
-    
+
     private Properties userProperties;
 
     /**
@@ -41,8 +38,7 @@ public class ReleaseUpdateVersionsRequest
      *
      * @return the releaseEnvironment
      */
-    public ReleaseEnvironment getReleaseEnvironment()
-    {
+    public ReleaseEnvironment getReleaseEnvironment() {
         return releaseEnvironment;
     }
 
@@ -51,28 +47,25 @@ public class ReleaseUpdateVersionsRequest
      *
      * @param releaseEnvironment the releaseEnvironment to set
      */
-    public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )
-    {
+    public void setReleaseEnvironment(ReleaseEnvironment releaseEnvironment) {
         this.releaseEnvironment = releaseEnvironment;
     }
-    
+
     /**
      * <p>Getter for the field <code>userProperties</code>.</p>
      *
      * @return a {@link java.util.Properties} object
      */
-    public Properties getUserProperties()
-    {
+    public Properties getUserProperties() {
         return userProperties;
     }
-    
+
     /**
      * <p>Setter for the field <code>userProperties</code>.</p>
      *
      * @param userProperties a {@link java.util.Properties} object
      */
-    public void setUserProperties( Properties userProperties )
-    {
+    public void setUserProperties(Properties userProperties) {
         this.userProperties = userProperties;
     }
 }

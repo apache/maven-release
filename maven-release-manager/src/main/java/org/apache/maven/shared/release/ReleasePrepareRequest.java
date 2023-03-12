@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 import java.util.Properties;
 
@@ -29,9 +28,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
  * @author Robert Scholte
  * @since 2.3
  */
-public class ReleasePrepareRequest
-    extends AbstractReleaseRequest
-{
+public class ReleasePrepareRequest extends AbstractReleaseRequest {
     // using Boolean to detect if has been set explicitly
     private Boolean dryRun;
 
@@ -39,7 +36,7 @@ public class ReleasePrepareRequest
     private Boolean resume;
 
     private ReleaseEnvironment releaseEnvironment;
-    
+
     private Properties userProperties;
 
     /**
@@ -47,8 +44,7 @@ public class ReleasePrepareRequest
      *
      * @return the dryRun
      */
-    public Boolean getDryRun()
-    {
+    public Boolean getDryRun() {
         return dryRun;
     }
 
@@ -57,8 +53,7 @@ public class ReleasePrepareRequest
      *
      * @param dryRun the dryRun to set
      */
-    public void setDryRun( Boolean dryRun )
-    {
+    public void setDryRun(Boolean dryRun) {
         this.dryRun = dryRun;
     }
 
@@ -67,8 +62,7 @@ public class ReleasePrepareRequest
      *
      * @return the resume
      */
-    public Boolean getResume()
-    {
+    public Boolean getResume() {
         return resume;
     }
 
@@ -77,8 +71,7 @@ public class ReleasePrepareRequest
      *
      * @param resume the resume to set
      */
-    public void setResume( Boolean resume )
-    {
+    public void setResume(Boolean resume) {
         this.resume = resume;
     }
 
@@ -87,8 +80,7 @@ public class ReleasePrepareRequest
      *
      * @return the releaseEnvironment
      */
-    public ReleaseEnvironment getReleaseEnvironment()
-    {
+    public ReleaseEnvironment getReleaseEnvironment() {
         return releaseEnvironment;
     }
 
@@ -97,28 +89,25 @@ public class ReleasePrepareRequest
      *
      * @param releaseEnvironment the releaseEnvironment to set
      */
-    public void setReleaseEnvironment( ReleaseEnvironment releaseEnvironment )
-    {
+    public void setReleaseEnvironment(ReleaseEnvironment releaseEnvironment) {
         this.releaseEnvironment = releaseEnvironment;
     }
-    
+
     /**
      * <p>Getter for the field <code>userProperties</code>.</p>
      *
      * @return a {@link java.util.Properties} object
      */
-    public Properties getUserProperties()
-    {
+    public Properties getUserProperties() {
         return userProperties;
     }
-    
+
     /**
      * <p>Setter for the field <code>userProperties</code>.</p>
      *
      * @param userProperties a {@link java.util.Properties} object
      */
-    public void setUserProperties( Properties userProperties )
-    {
+    public void setUserProperties(Properties userProperties) {
         this.userProperties = userProperties;
     }
 }

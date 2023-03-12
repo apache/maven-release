@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policy.semver;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,40 +16,37 @@ package org.apache.maven.shared.release.policy.semver;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.*;
+package org.apache.maven.shared.release.policy.semver;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.junit.Test;
 
-public final class SemVerVersionPolicyTest
-{
+import static org.junit.Assert.*;
+
+public final class SemVerVersionPolicyTest {
 
     private final VersionPolicy versionPolicy = new SemVerVersionPolicy();
 
     @Test
-    public void testConvertToSnapshot()
-        throws Exception
-    {
-        String suggestedVersion = versionPolicy.getDevelopmentVersion( newVersionPolicyRequest( "1.0.0" ) )
-                                               .getVersion();
+    public void testConvertToSnapshot() throws Exception {
+        String suggestedVersion = versionPolicy
+                .getDevelopmentVersion(newVersionPolicyRequest("1.0.0"))
+                .getVersion();
 
-        assertEquals( "1.1.0-SNAPSHOT", suggestedVersion );
+        assertEquals("1.1.0-SNAPSHOT", suggestedVersion);
     }
 
     @Test
-    public void testConvertToRelease()
-        throws Exception
-    {
-        String suggestedVersion = versionPolicy.getReleaseVersion( newVersionPolicyRequest( "1.0.0-SNAPSHOT" ) )
-                                               .getVersion();
+    public void testConvertToRelease() throws Exception {
+        String suggestedVersion = versionPolicy
+                .getReleaseVersion(newVersionPolicyRequest("1.0.0-SNAPSHOT"))
+                .getVersion();
 
-        assertEquals( "1.0.0", suggestedVersion );
+        assertEquals("1.0.0", suggestedVersion);
     }
 
-    private static VersionPolicyRequest newVersionPolicyRequest( String version )
-    {
-        return new VersionPolicyRequest().setVersion( version );
+    private static VersionPolicyRequest newVersionPolicyRequest(String version) {
+        return new VersionPolicyRequest().setVersion(version);
     }
 }

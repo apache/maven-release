@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,45 +16,41 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class SubversionScmTranslatorTest
-{
+public class SubversionScmTranslatorTest {
 
-    private final SubversionScmTranslator scmTranslator  = new SubversionScmTranslator();
+    private final SubversionScmTranslator scmTranslator = new SubversionScmTranslator();
 
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
     @Test
-    public void testResolveTag()
-    {
+    public void testResolveTag() {
         // "HEAD"is default
-        assertNull( scmTranslator.resolveTag( "HEAD" ) );
-        assertNull( scmTranslator.resolveTag( "project-1.0" ) );
+        assertNull(scmTranslator.resolveTag("HEAD"));
+        assertNull(scmTranslator.resolveTag("project-1.0"));
     }
 
     @Test
-    public void testTranslateTagUrl()
-    {
-        assertEquals( "url/tags/tag", scmTranslator.translateTagUrl( "url", "tag", null )  );
-        assertEquals( "tagBase/tag", scmTranslator.translateTagUrl( "url", "tag", "tagBase" )  );
+    public void testTranslateTagUrl() {
+        assertEquals("url/tags/tag", scmTranslator.translateTagUrl("url", "tag", null));
+        assertEquals("tagBase/tag", scmTranslator.translateTagUrl("url", "tag", "tagBase"));
     }
 
     @Test
-    public void testTranslateBranchUrl()
-    {
-        assertEquals( "url/branches/branchName", scmTranslator.translateBranchUrl( "url", "branchName", null )  );
-        assertEquals( "tagBase/branchName", scmTranslator.translateBranchUrl( "url", "branchName", "tagBase" )  );
+    public void testTranslateBranchUrl() {
+        assertEquals("url/branches/branchName", scmTranslator.translateBranchUrl("url", "branchName", null));
+        assertEquals("tagBase/branchName", scmTranslator.translateBranchUrl("url", "branchName", "tagBase"));
     }
 
     @Test
-    public void testGetRelativePath()
-    {
-        assertEquals( "a/b/c", "a/b/c" );
+    public void testGetRelativePath() {
+        assertEquals("a/b/c", "a/b/c");
     }
 }

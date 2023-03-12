@@ -17,7 +17,6 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -117,11 +116,11 @@
       <version>3.3.0</version>
       <scope>test</scope>
     </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-simple</artifactId>
-        <scope>test</scope>
-      </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 
   <build>
@@ -149,19 +148,17 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <executions>
           <execution>
+            <id>ensure-no-container-api</id>
             <goals>
               <goal>enforce</goal>
             </goals>
-            <id>ensure-no-container-api</id>
             <configuration>
               <rules>
                 <bannedDependencies>
                   <excludes>
                     <exclude>org.codehaus.plexus:plexus-component-api</exclude>
                   </excludes>
-                  <message>
-                    The new containers are not supported. You probably added a dependency that is missing the exclusions.
-                  </message>
+                  <message>The new containers are not supported. You probably added a dependency that is missing the exclusions.</message>
                 </bannedDependencies>
               </rules>
               <fail>true</fail>
@@ -192,16 +189,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>integration-test-prepare</id>
-                <goals>
-                  <goal>install</goal>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
@@ -235,19 +222,21 @@
                 <dryRun>true</dryRun>
               </properties>
             </configuration>
+            <executions>
+              <execution>
+                <id>integration-test-prepare</id>
+                <goals>
+                  <goal>install</goal>
+                  <goal>integration-test</goal>
+                  <goal>verify</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>mrm-maven-plugin</artifactId>
             <version>1.4.1</version>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>start</goal>
-                  <goal>stop</goal>
-                </goals>
-              </execution>
-            </executions>
             <configuration>
               <repositories>
                 <mockRepo>
@@ -256,6 +245,14 @@
                 <proxyRepo />
               </repositories>
             </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>start</goal>
+                  <goal>stop</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

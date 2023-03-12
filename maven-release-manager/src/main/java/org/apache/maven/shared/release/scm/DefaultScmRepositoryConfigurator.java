@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,174 +50,142 @@ import static java.util.Objects.requireNonNull;
  */
 @Singleton
 @Named
-public class DefaultScmRepositoryConfigurator
-    implements ScmRepositoryConfigurator
-{
-    private final Logger logger = LoggerFactory.getLogger( getClass() );
+public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurator {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final AtomicReference<ScmManager> scmManager;
 
     private final MavenCrypto mavenCrypto;
 
     @Inject
-    public DefaultScmRepositoryConfigurator( ScmManager scmManager, MavenCrypto mavenCrypto )
-    {
-        this.scmManager = new AtomicReference<>( requireNonNull( scmManager ) );
-        this.mavenCrypto = requireNonNull( mavenCrypto );
+    public DefaultScmRepositoryConfigurator(ScmManager scmManager, MavenCrypto mavenCrypto) {
+        this.scmManager = new AtomicReference<>(requireNonNull(scmManager));
+        this.mavenCrypto = requireNonNull(mavenCrypto);
     }
 
     /**
      * For testing purposes only!
      */
-    public void setScmManager( ScmManager scmManager )
-    {
-        this.scmManager.set( scmManager );
+    public void setScmManager(ScmManager scmManager) {
+        this.scmManager.set(scmManager);
     }
 
     @Override
-    public ScmRepository getConfiguredRepository( ReleaseDescriptor releaseDescriptor, Settings settings )
-        throws ScmRepositoryException, NoSuchScmProviderException
-    {
+    public ScmRepository getConfiguredRepository(ReleaseDescriptor releaseDescriptor, Settings settings)
+            throws ScmRepositoryException, NoSuchScmProviderException {
         String url = releaseDescriptor.getScmSourceUrl();
-        return getConfiguredRepository( url, releaseDescriptor, settings );
+        return getConfiguredRepository(url, releaseDescriptor, settings);
     }
 
     @Override
-    public ScmRepository getConfiguredRepository( String url, ReleaseDescriptor releaseDescriptor, Settings settings )
-        throws ScmRepositoryException, NoSuchScmProviderException
-    {
+    public ScmRepository getConfiguredRepository(String url, ReleaseDescriptor releaseDescriptor, Settings settings)
+            throws ScmRepositoryException, NoSuchScmProviderException {
         String username = releaseDescriptor.getScmUsername();
         String password = releaseDescriptor.getScmPassword();
         String privateKey = releaseDescriptor.getScmPrivateKey();
         String passphrase = releaseDescriptor.getScmPrivateKeyPassPhrase();
 
-        ScmRepository repository = scmManager.get().makeScmRepository( url );
+        ScmRepository repository = scmManager.get().makeScmRepository(url);
 
         ScmProviderRepository scmRepo = repository.getProviderRepository();
 
-        //MRELEASE-76
-        scmRepo.setPersistCheckout( false );
+        // MRELEASE-76
+        scmRepo.setPersistCheckout(false);
 
-        if ( settings != null )
-        {
+        if (settings != null) {
             Server server = null;
 
-            if ( releaseDescriptor.getScmId() != null )
-            {
-                server = settings.getServer( releaseDescriptor.getScmId() );
+            if (releaseDescriptor.getScmId() != null) {
+                server = settings.getServer(releaseDescriptor.getScmId());
             }
 
-            if ( server == null && repository.getProviderRepository() instanceof ScmProviderRepositoryWithHost )
-            {
+            if (server == null && repository.getProviderRepository() instanceof ScmProviderRepositoryWithHost) {
                 ScmProviderRepositoryWithHost repositoryWithHost =
-                    (ScmProviderRepositoryWithHost) repository.getProviderRepository();
+                        (ScmProviderRepositoryWithHost) repository.getProviderRepository();
                 String host = repositoryWithHost.getHost();
 
                 int port = repositoryWithHost.getPort();
 
-                if ( port > 0 )
-                {
+                if (port > 0) {
                     host += ":" + port;
                 }
 
-                // TODO: this is a bit dodgy - id is not host, but since we don't have a <host> field we make an assumption
-                server = settings.getServer( host );
+                // TODO: this is a bit dodgy - id is not host, but since we don't have a <host> field we make an
+                // assumption
+                server = settings.getServer(host);
             }
 
-            if ( server != null )
-            {
-                if ( username == null )
-                {
+            if (server != null) {
+                if (username == null) {
                     username = server.getUsername();
                 }
 
-                if ( password == null )
-                {
-                    password = decrypt( server.getPassword(), server.getId() );
+                if (password == null) {
+                    password = decrypt(server.getPassword(), server.getId());
                 }
 
-                if ( privateKey == null )
-                {
+                if (privateKey == null) {
                     privateKey = server.getPrivateKey();
                 }
 
-                if ( passphrase == null )
-                {
-                    passphrase = decrypt( server.getPassphrase(), server.getId() );
+                if (passphrase == null) {
+                    passphrase = decrypt(server.getPassphrase(), server.getId());
                 }
             }
         }
 
-        if ( !StringUtils.isEmpty( username ) )
-        {
-            scmRepo.setUser( username );
+        if (!StringUtils.isEmpty(username)) {
+            scmRepo.setUser(username);
         }
-        if ( !StringUtils.isEmpty( password ) )
-        {
-            scmRepo.setPassword( password );
+        if (!StringUtils.isEmpty(password)) {
+            scmRepo.setPassword(password);
         }
 
-        if ( scmRepo instanceof ScmProviderRepositoryWithHost )
-        {
+        if (scmRepo instanceof ScmProviderRepositoryWithHost) {
             ScmProviderRepositoryWithHost repositoryWithHost = (ScmProviderRepositoryWithHost) scmRepo;
-            if ( !StringUtils.isEmpty( privateKey ) )
-            {
-                repositoryWithHost.setPrivateKey( privateKey );
+            if (!StringUtils.isEmpty(privateKey)) {
+                repositoryWithHost.setPrivateKey(privateKey);
             }
 
-            if ( !StringUtils.isEmpty( passphrase ) )
-            {
-                repositoryWithHost.setPassphrase( passphrase );
+            if (!StringUtils.isEmpty(passphrase)) {
+                repositoryWithHost.setPassphrase(passphrase);
             }
         }
 
-        if ( "svn".equals( repository.getProvider() ) )
-        {
+        if ("svn".equals(repository.getProvider())) {
             SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) repository.getProviderRepository();
 
             String tagBase = releaseDescriptor.getScmTagBase();
-            if ( !StringUtils.isEmpty( tagBase ) )
-            {
-                svnRepo.setTagBase( tagBase );
+            if (!StringUtils.isEmpty(tagBase)) {
+                svnRepo.setTagBase(tagBase);
             }
 
             String branchBase = releaseDescriptor.getScmBranchBase();
-            if ( !StringUtils.isEmpty( branchBase ) )
-            {
-                svnRepo.setBranchBase( branchBase );
+            if (!StringUtils.isEmpty(branchBase)) {
+                svnRepo.setBranchBase(branchBase);
             }
         }
 
         return repository;
     }
 
-    private String decrypt( String str, String server )
-    {
-        try
-        {
-            return mavenCrypto.decrypt( str );
-        }
-        catch ( MavenCryptoException e )
-        {
-            String msg =
-                "Failed to decrypt password/passphrase for server " + server + ", using auth token as is: "
+    private String decrypt(String str, String server) {
+        try {
+            return mavenCrypto.decrypt(str);
+        } catch (MavenCryptoException e) {
+            String msg = "Failed to decrypt password/passphrase for server " + server + ", using auth token as is: "
                     + e.getMessage();
-            if ( logger.isDebugEnabled() )
-            {
-                logger.warn( msg, e );
-            }
-            else
-            {
-                logger.warn( msg );
+            if (logger.isDebugEnabled()) {
+                logger.warn(msg, e);
+            } else {
+                logger.warn(msg);
             }
             return str;
         }
     }
 
     @Override
-    public ScmProvider getRepositoryProvider( ScmRepository repository )
-        throws NoSuchScmProviderException
-    {
-        return scmManager.get().getProviderByRepository( repository );
+    public ScmProvider getRepositoryProvider(ScmRepository repository) throws NoSuchScmProviderException {
+        return scmManager.get().getProviderByRepository(repository);
     }
 }

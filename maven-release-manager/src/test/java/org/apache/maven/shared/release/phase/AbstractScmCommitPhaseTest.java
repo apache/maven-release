@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,9 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.util.List;
@@ -31,66 +27,61 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.junit.Test;
 
-public class AbstractScmCommitPhaseTest
-{
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+public class AbstractScmCommitPhaseTest {
     @Test
-    public void testDefaultCreatePomFiles()
-    {
-        List<File> files =
-            AbstractScmCommitPhase.createPomFiles( ReleaseUtils.buildReleaseDescriptor( new ReleaseDescriptorBuilder() ),
-                                                   createProject( "artifactId", "1.0-SNAPSHOT",
-                                                                  new File( "pom.xml" ) ) );
-        assertEquals( "Number of created files", files.size(), 1 );
-        assertTrue( files.contains( new File( "pom.xml" ) ) );
+    public void testDefaultCreatePomFiles() {
+        List<File> files = AbstractScmCommitPhase.createPomFiles(
+                ReleaseUtils.buildReleaseDescriptor(new ReleaseDescriptorBuilder()),
+                createProject("artifactId", "1.0-SNAPSHOT", new File("pom.xml")));
+        assertEquals("Number of created files", files.size(), 1);
+        assertTrue(files.contains(new File("pom.xml")));
     }
 
-
     @Test
-    public void testCreatePomFilesSuppressCommitBeforeTag()
-    {
+    public void testCreatePomFilesSuppressCommitBeforeTag() {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setSuppressCommitBeforeTagOrBranch( true );
-        List<File> files =
-            AbstractScmCommitPhase.createPomFiles(  ReleaseUtils.buildReleaseDescriptor( builder ),
-                                                   createProject( "artifactId", "1.0-SNAPSHOT", new File( "pom.xml" ) ) );
-        assertEquals( "Number of created files", files.size(), 1 );
-        assertTrue( files.contains( new File( "pom.xml" ) ) );
+        builder.setSuppressCommitBeforeTagOrBranch(true);
+        List<File> files = AbstractScmCommitPhase.createPomFiles(
+                ReleaseUtils.buildReleaseDescriptor(builder),
+                createProject("artifactId", "1.0-SNAPSHOT", new File("pom.xml")));
+        assertEquals("Number of created files", files.size(), 1);
+        assertTrue(files.contains(new File("pom.xml")));
     }
 
     @Test
-    public void testCreatePomFilesWithReleasePom()
-    {
+    public void testCreatePomFilesWithReleasePom() {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setGenerateReleasePoms( true );
-        List<File> files =
-            AbstractScmCommitPhase.createPomFiles( ReleaseUtils.buildReleaseDescriptor( builder ),
-                                                   createProject( "artifactId", "1.0-SNAPSHOT", new File( "pom.xml" ) ) );
-        assertEquals( "Number of created files", files.size(), 2 );
-        assertTrue( files.contains( new File( "pom.xml" ) ) );
-        assertTrue( files.contains( new File( "release-pom.xml" ) ) );
+        builder.setGenerateReleasePoms(true);
+        List<File> files = AbstractScmCommitPhase.createPomFiles(
+                ReleaseUtils.buildReleaseDescriptor(builder),
+                createProject("artifactId", "1.0-SNAPSHOT", new File("pom.xml")));
+        assertEquals("Number of created files", files.size(), 2);
+        assertTrue(files.contains(new File("pom.xml")));
+        assertTrue(files.contains(new File("release-pom.xml")));
     }
 
     @Test
-    public void testCreatePomFilesWithReleasePomAndSuppressCommitBeforeTag()
-    {
+    public void testCreatePomFilesWithReleasePomAndSuppressCommitBeforeTag() {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setGenerateReleasePoms( true );
-        builder.setSuppressCommitBeforeTagOrBranch( true );
-        List<File> files =
-            AbstractScmCommitPhase.createPomFiles( ReleaseUtils.buildReleaseDescriptor( builder ),
-                                                   createProject( "artifactId", "1.0-SNAPSHOT", new File( "pom.xml" ) ) );
-        assertEquals( "Number of created files", files.size(), 1 );
-        assertTrue( files.contains( new File( "pom.xml" ) ) );
+        builder.setGenerateReleasePoms(true);
+        builder.setSuppressCommitBeforeTagOrBranch(true);
+        List<File> files = AbstractScmCommitPhase.createPomFiles(
+                ReleaseUtils.buildReleaseDescriptor(builder),
+                createProject("artifactId", "1.0-SNAPSHOT", new File("pom.xml")));
+        assertEquals("Number of created files", files.size(), 1);
+        assertTrue(files.contains(new File("pom.xml")));
     }
 
-    private static MavenProject createProject( String artifactId, String version, File file )
-    {
+    private static MavenProject createProject(String artifactId, String version, File file) {
         Model model = new Model();
-        model.setGroupId( "groupId" );
-        model.setArtifactId( artifactId );
-        model.setVersion( version );
-        MavenProject project = new MavenProject( model );
-        project.setFile( file );
+        model.setGroupId("groupId");
+        model.setArtifactId(artifactId);
+        model.setVersion(version);
+        MavenProject project = new MavenProject(model);
+        project.setFile(file);
         return project;
     }
 }

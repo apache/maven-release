@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -42,8 +41,7 @@ import org.jdom2.Text;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomModel extends Model
-{
+public class JDomModel extends Model {
     private final Element project;
 
     private final JDomModelBase modelBase;
@@ -53,9 +51,8 @@ public class JDomModel extends Model
      *
      * @param document a {@link org.jdom2.Document} object
      */
-    public JDomModel( Document document )
-    {
-        this( document.getRootElement() );
+    public JDomModel(Document document) {
+        this(document.getRootElement());
     }
 
     /**
@@ -63,175 +60,136 @@ public class JDomModel extends Model
      *
      * @param project a {@link org.jdom2.Element} object
      */
-    public JDomModel( Element project )
-    {
+    public JDomModel(Element project) {
         this.project = project;
-        this.modelBase = new JDomModelBase( project );
+        this.modelBase = new JDomModelBase(project);
     }
 
     @Override
-    public Build getBuild()
-    {
+    public Build getBuild() {
         return modelBase.getBuild();
     }
 
     @Override
-    public List<Dependency> getDependencies()
-    {
+    public List<Dependency> getDependencies() {
         return modelBase.getDependencies();
     }
 
     @Override
-    public DependencyManagement getDependencyManagement()
-    {
+    public DependencyManagement getDependencyManagement() {
         return modelBase.getDependencyManagement();
     }
 
     @Override
-    public Parent getParent()
-    {
+    public Parent getParent() {
         Element elm = getParentElement();
-        if ( elm == null )
-        {
+        if (elm == null) {
             return null;
-        }
-        else
-        {
+        } else {
             // this way scm setters change DOM tree immediately
-            return new JDomParent( elm );
+            return new JDomParent(elm);
         }
     }
 
-    private Element getParentElement()
-    {
-        return project.getChild( "parent", project.getNamespace() );
+    private Element getParentElement() {
+        return project.getChild("parent", project.getNamespace());
     }
 
     @Override
-    public List<Profile> getProfiles()
-    {
-        Element profilesElm = project.getChild( "profiles", project.getNamespace() );
-        if ( profilesElm == null )
-        {
+    public List<Profile> getProfiles() {
+        Element profilesElm = project.getChild("profiles", project.getNamespace());
+        if (profilesElm == null) {
             return Collections.emptyList();
-        }
-        else
-        {
-            List<Element> profileElms = profilesElm.getChildren( "profile", project.getNamespace() );
+        } else {
+            List<Element> profileElms = profilesElm.getChildren("profile", project.getNamespace());
 
-            List<Profile> profiles = new ArrayList<>( profileElms.size() );
+            List<Profile> profiles = new ArrayList<>(profileElms.size());
 
-            for ( Element profileElm : profileElms )
-            {
-                profiles.add( new JDomProfile( profileElm ) );
+            for (Element profileElm : profileElms) {
+                profiles.add(new JDomProfile(profileElm));
             }
 
             return profiles;
         }
     }
 
-
     @Override
-    public Properties getProperties()
-    {
-        Element properties = project.getChild( "properties", project.getNamespace() );
+    public Properties getProperties() {
+        Element properties = project.getChild("properties", project.getNamespace());
 
-        if ( properties == null )
-        {
+        if (properties == null) {
             return null;
-        }
-        else
-        {
-            return new JDomProperties( properties );
+        } else {
+            return new JDomProperties(properties);
         }
     }
 
     @Override
-    public Reporting getReporting()
-    {
-        Element reporting = project.getChild( "reporting", project.getNamespace() );
+    public Reporting getReporting() {
+        Element reporting = project.getChild("reporting", project.getNamespace());
 
-        if ( reporting == null )
-        {
+        if (reporting == null) {
             return null;
-        }
-        else
-        {
-            return new JDomReporting( reporting );
+        } else {
+            return new JDomReporting(reporting);
         }
     }
 
     @Override
-    public void setScm( Scm scm )
-    {
-        if ( scm == null )
-        {
-            JDomUtils.rewriteElement( "scm", null, project, project.getNamespace() );
-        }
-        else
-        {
-            Element scmRoot = new Element( "scm" );
-            scmRoot.addContent( "\n  " );
+    public void setScm(Scm scm) {
+        if (scm == null) {
+            JDomUtils.rewriteElement("scm", null, project, project.getNamespace());
+        } else {
+            Element scmRoot = new Element("scm");
+            scmRoot.addContent("\n  ");
 
             // Write current values to JDOM2 tree
-            Scm jdomScm = new JDomScm( scmRoot );
-            jdomScm.setConnection( scm.getConnection() );
-            jdomScm.setDeveloperConnection( scm.getDeveloperConnection() );
-            jdomScm.setTag( scm.getTag() );
-            jdomScm.setUrl( scm.getUrl() );
+            Scm jdomScm = new JDomScm(scmRoot);
+            jdomScm.setConnection(scm.getConnection());
+            jdomScm.setDeveloperConnection(scm.getDeveloperConnection());
+            jdomScm.setTag(scm.getTag());
+            jdomScm.setUrl(scm.getUrl());
 
-            project.addContent( "\n  " ).addContent( scmRoot ).addContent( "\n" );
+            project.addContent("\n  ").addContent(scmRoot).addContent("\n");
         }
     }
 
     @Override
-    public Scm getScm()
-    {
-        Element elm = project.getChild( "scm", project.getNamespace() );
-        if ( elm == null )
-        {
+    public Scm getScm() {
+        Element elm = project.getChild("scm", project.getNamespace());
+        if (elm == null) {
             return null;
-        }
-        else
-        {
+        } else {
             // this way scm setters change DOM tree immediately
-            return new JDomScm( elm );
+            return new JDomScm(elm);
         }
     }
 
     @Override
-    public void setVersion( String version )
-    {
-        Element versionElement = project.getChild( "version", project.getNamespace() );
+    public void setVersion(String version) {
+        Element versionElement = project.getChild("version", project.getNamespace());
 
         String parentVersion;
         Element parent = getParentElement();
-        if ( parent != null )
-        {
-            parentVersion = parent.getChildTextTrim( "version", project.getNamespace() );
-        }
-        else
-        {
+        if (parent != null) {
+            parentVersion = parent.getChildTextTrim("version", project.getNamespace());
+        } else {
             parentVersion = null;
         }
 
-        if ( versionElement == null )
-        {
-            if ( !version.equals( parentVersion ) )
-            {
+        if (versionElement == null) {
+            if (!version.equals(parentVersion)) {
                 // we will add this after artifactId, since it was missing but different from the inherited version
-                Element artifactIdElement = project.getChild( "artifactId", project.getNamespace() );
-                int index = project.indexOf( artifactIdElement );
+                Element artifactIdElement = project.getChild("artifactId", project.getNamespace());
+                int index = project.indexOf(artifactIdElement);
 
-                versionElement = new Element( "version", project.getNamespace() );
-                versionElement.setText( version );
-                project.addContent( index + 1, new Text( "\n  " ) );
-                project.addContent( index + 2, versionElement );
+                versionElement = new Element("version", project.getNamespace());
+                versionElement.setText(version);
+                project.addContent(index + 1, new Text("\n  "));
+                project.addContent(index + 2, versionElement);
             }
-        }
-        else
-        {
-            JDomUtils.rewriteValue( versionElement, version );
+        } else {
+            JDomUtils.rewriteValue(versionElement, version);
         }
     }
 }

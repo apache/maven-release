@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,12 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.ArgumentMatchers.argThat;
+package org.apache.maven.shared.release.phase;
 
 import java.util.List;
 
@@ -46,196 +39,199 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.isA;
+
 /**
  * Test the remove SCM tag phase.
  */
-public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase
-{
+public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase {
 
     @Override
-    public void setUp() throws Exception
-    {
+    public void setUp() throws Exception {
 
         super.setUp();
 
-        phase = ( ReleasePhase ) lookup( ReleasePhase.class, "remove-scm-tag" );
-
+        phase = (ReleasePhase) lookup(ReleasePhase.class, "remove-scm-tag");
     }
 
     @Test
-    public void testExecuteOutput() throws Exception
-    {
+    public void testExecuteOutput() throws Exception {
 
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmSourceUrl("scm-url");
         List<MavenProject> reactorProjects = createReactorProjects();
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( rootProject.getFile().getName() );
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName(rootProject.getFile().getName());
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile());
 
         // mock, only real matcher is the file set
-        ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
-        Mockito.when( scmProviderMock.untag( isA( ScmRepository.class ),
-                argThat( new IsScmFileSetEquals( fileSet ) ),
-                isA( CommandParameters.class ) ) )
-                .thenReturn( new UntagScmResult( "...", "...", "...", true ) );
-        ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmProvider scmProviderMock = Mockito.mock(ScmProvider.class);
+        Mockito.when(scmProviderMock.untag(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        isA(CommandParameters.class)))
+                .thenReturn(new UntagScmResult("...", "...", "...", true));
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         // execute
-        ReleaseResult actual = phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ),
-                new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseResult actual = phase.execute(
+                ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify, actual contains trailing newline
-        Assert.assertEquals( "[INFO] Removing tag with the label release-label ...", actual.getOutput().trim() );
-
+        Assert.assertEquals(
+                "[INFO] Removing tag with the label release-label ...",
+                actual.getOutput().trim());
     }
 
     @Test
-    public void testExecuteResultCode() throws Exception
-    {
+    public void testExecuteResultCode() throws Exception {
 
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmSourceUrl("scm-url");
         List<MavenProject> reactorProjects = createReactorProjects();
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( rootProject.getFile().getName() );
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName(rootProject.getFile().getName());
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile());
 
         // mock, only real matcher is the file set
-        ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
-        Mockito.when( scmProviderMock.untag( isA( ScmRepository.class ),
-                argThat( new IsScmFileSetEquals( fileSet ) ),
-                isA( CommandParameters.class ) ) )
-                .thenReturn( new UntagScmResult( "...", "...", "...", true ) );
-        ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmProvider scmProviderMock = Mockito.mock(ScmProvider.class);
+        Mockito.when(scmProviderMock.untag(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        isA(CommandParameters.class)))
+                .thenReturn(new UntagScmResult("...", "...", "...", true));
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         // execute
-        ReleaseResult actual = phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ),
-                new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseResult actual = phase.execute(
+                ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        Assert.assertEquals( 0, actual.getResultCode() );
-
+        Assert.assertEquals(0, actual.getResultCode());
     }
 
     @Test
-    @Ignore( "We changed the behaviour to warning instead of error." )
-    public void testExecuteError() throws Exception
-    {
+    @Ignore("We changed the behaviour to warning instead of error.")
+    public void testExecuteError() throws Exception {
 
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmSourceUrl("scm-url");
         List<MavenProject> reactorProjects = createReactorProjects();
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( rootProject.getFile().getName() );
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName(rootProject.getFile().getName());
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile());
 
         // mock, only real matcher is the file set
-        ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
-        Mockito.when( scmProviderMock.untag( isA( ScmRepository.class ),
-                argThat( new IsScmFileSetEquals( fileSet ) ),
-                isA( CommandParameters.class ) ) )
-                .thenReturn( new UntagScmResult( "command-line", "provider-message", "command-output", false ) );
-        ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmProvider scmProviderMock = Mockito.mock(ScmProvider.class);
+        Mockito.when(scmProviderMock.untag(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        isA(CommandParameters.class)))
+                .thenReturn(new UntagScmResult("command-line", "provider-message", "command-output", false));
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         // execute
-        ReleaseScmCommandException e = assertThrows( ReleaseScmCommandException.class, 
-                     () -> phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects ) );
-        
-        assertThat( e.getMessage(), equalTo( "Unable to remove tag \nProvider message:\nprovider-message\nCommand output:\ncommand-output" ) );
+        ReleaseScmCommandException e = assertThrows(
+                ReleaseScmCommandException.class,
+                () -> phase.execute(
+                        ReleaseUtils.buildReleaseDescriptor(builder),
+                        new DefaultReleaseEnvironment(),
+                        reactorProjects));
+
+        assertThat(
+                e.getMessage(),
+                equalTo("Unable to remove tag \nProvider message:\nprovider-message\nCommand output:\ncommand-output"));
     }
 
     @Test
-    public void testExecuteNoError() throws Exception
-    {
+    public void testExecuteNoError() throws Exception {
 
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmSourceUrl("scm-url");
         List<MavenProject> reactorProjects = createReactorProjects();
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( rootProject.getFile().getName() );
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName(rootProject.getFile().getName());
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile());
 
         // mock, only real matcher is the file set
-        ScmProvider scmProviderMock = Mockito.mock( ScmProvider.class );
-        Mockito.when( scmProviderMock.untag( isA( ScmRepository.class ),
-                argThat( new IsScmFileSetEquals( fileSet ) ),
-                isA( CommandParameters.class ) ) )
-                .thenReturn( new UntagScmResult( "command-line", "provider-message", "command-output", false ) );
-        ScmManagerStub stub = ( ScmManagerStub ) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmProvider scmProviderMock = Mockito.mock(ScmProvider.class);
+        Mockito.when(scmProviderMock.untag(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        isA(CommandParameters.class)))
+                .thenReturn(new UntagScmResult("command-line", "provider-message", "command-output", false));
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         // execute
-        ReleaseResult actual = phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ),
-                new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseResult actual = phase.execute(
+                ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        Assert.assertEquals( 0, actual.getResultCode() );
-
-
+        Assert.assertEquals(0, actual.getResultCode());
     }
 
     @Test
-    public void testSimulateOutput() throws Exception
-    {
+    public void testSimulateOutput() throws Exception {
 
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmSourceUrl("scm-url");
         List<MavenProject> reactorProjects = createReactorProjects();
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( rootProject.getFile().getName() );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName(rootProject.getFile().getName());
 
         // execute
-        ReleaseResult actual = phase.simulate(ReleaseUtils.buildReleaseDescriptor( builder ),
-                new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseResult actual = phase.simulate(
+                ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify, actual contains newline
-        Assert.assertEquals( "[INFO] Full run would remove tag with label: 'release-label'", 
-                actual.getOutput().trim() );
-
+        Assert.assertEquals(
+                "[INFO] Full run would remove tag with label: 'release-label'",
+                actual.getOutput().trim());
     }
 
     @Test
-    public void testSimulateResultCode() throws Exception
-    {
+    public void testSimulateResultCode() throws Exception {
 
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmSourceUrl( "scm-url" );
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmSourceUrl("scm-url");
         List<MavenProject> reactorProjects = createReactorProjects();
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( rootProject.getFile().getName() );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName(rootProject.getFile().getName());
 
         // execute
-        ReleaseResult actual = phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ),
-                new DefaultReleaseEnvironment(), reactorProjects );
+        ReleaseResult actual = phase.simulate(
+                ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        Assert.assertEquals( 0, actual.getResultCode() );
+        Assert.assertEquals(0, actual.getResultCode());
     }
 
-    private List<MavenProject> createReactorProjects() throws Exception
-    {
-        return createReactorProjects( "scm-commit/single-pom", "" );
+    private List<MavenProject> createReactorProjects() throws Exception {
+        return createReactorProjects("scm-commit/single-pom", "");
     }
-
 }

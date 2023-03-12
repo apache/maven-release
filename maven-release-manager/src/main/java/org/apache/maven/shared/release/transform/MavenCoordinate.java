@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform;
 
 /**
  * <p>MavenCoordinate interface.</p>
@@ -25,8 +24,7 @@ package org.apache.maven.shared.release.transform;
  * @author Robert Scholte
  * @since 3.0
  */
-public interface MavenCoordinate
-{
+public interface MavenCoordinate {
     /**
      * <p>getGroupId.</p>
      *
@@ -53,7 +51,7 @@ public interface MavenCoordinate
      *
      * @param version a {@link java.lang.String} object
      */
-    void setVersion( String version );
+    void setVersion(String version);
 
     // @todo helper method during refactoring, will be removed
     /**

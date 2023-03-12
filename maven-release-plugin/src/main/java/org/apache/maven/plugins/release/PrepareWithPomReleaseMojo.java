@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -31,20 +30,16 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @since 2.0
  */
-@Mojo( name = "prepare-with-pom", aggregator = true, requiresDependencyResolution = ResolutionScope.TEST )
-public class PrepareWithPomReleaseMojo
-    extends PrepareReleaseMojo
-{
+@Mojo(name = "prepare-with-pom", aggregator = true, requiresDependencyResolution = ResolutionScope.TEST)
+public class PrepareWithPomReleaseMojo extends PrepareReleaseMojo {
     /**
      * Whether to generate <code>release-pom.xml</code> files that contain resolved information about the project.
      */
-    @Parameter( defaultValue = "true", property = "generateReleasePoms" )
+    @Parameter(defaultValue = "true", property = "generateReleasePoms")
     private boolean generateReleasePoms;
 
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        prepareRelease( generateReleasePoms );
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        prepareRelease(generateReleasePoms);
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform;
 
 /**
  * <p>ModelETLFactory interface.</p>
@@ -25,13 +24,12 @@ package org.apache.maven.shared.release.transform;
  * @author Robert Scholte
  * @since 3.0
  */
-public interface ModelETLFactory
-{
+public interface ModelETLFactory {
     /**
      * <p>newInstance.</p>
      *
      * @param request a {@link org.apache.maven.shared.release.transform.ModelETLRequest} object
      * @return a {@link org.apache.maven.shared.release.transform.ModelETL} object
      */
-    ModelETL newInstance( ModelETLRequest request );
+    ModelETL newInstance(ModelETLRequest request);
 }

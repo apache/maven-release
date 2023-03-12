@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 import org.apache.maven.scm.ScmResult;
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -27,18 +26,15 @@ import org.apache.maven.shared.release.ReleaseFailureException;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseScmCommandException
-    extends ReleaseFailureException
-{
+public class ReleaseScmCommandException extends ReleaseFailureException {
     /**
      * <p>Constructor for ReleaseScmCommandException.</p>
      *
      * @param message a {@link java.lang.String} object
      * @param result a {@link org.apache.maven.scm.ScmResult} object
      */
-    public ReleaseScmCommandException( String message, ScmResult result )
-    {
-        super( message + "\nProvider message:\n" + result.getProviderMessage() + "\nCommand output:\n"
-            + result.getCommandOutput() );
+    public ReleaseScmCommandException(String message, ScmResult result) {
+        super(message + "\nProvider message:\n" + result.getProviderMessage() + "\nCommand output:\n"
+                + result.getCommandOutput());
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.util.List;
 import java.util.Map;
@@ -73,9 +72,7 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  * @author Robert Scholte
  */
-public abstract class AbstractMapVersionsPhase
-        extends AbstractReleasePhase
-{
+public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
@@ -101,348 +98,263 @@ public abstract class AbstractMapVersionsPhase
      */
     private final boolean convertToBranch;
 
-    public AbstractMapVersionsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
-                                     Prompter prompter, Map<String, VersionPolicy> versionPolicies,
-                                     boolean convertToSnapshot, boolean convertToBranch )
-    {
-        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
-        this.prompter = requireNonNull( prompter );
-        this.versionPolicies = requireNonNull( versionPolicies );
+    public AbstractMapVersionsPhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator,
+            Prompter prompter,
+            Map<String, VersionPolicy> versionPolicies,
+            boolean convertToSnapshot,
+            boolean convertToBranch) {
+        this.scmRepositoryConfigurator = requireNonNull(scmRepositoryConfigurator);
+        this.prompter = requireNonNull(prompter);
+        this.versionPolicies = requireNonNull(versionPolicies);
         this.convertToSnapshot = convertToSnapshot;
         this.convertToBranch = convertToBranch;
-
     }
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException {
         ReleaseResult result = new ReleaseResult();
 
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
 
-        if ( releaseDescriptor.isAutoVersionSubmodules() && ArtifactUtils.isSnapshot( rootProject.getVersion() ) )
-        {
+        if (releaseDescriptor.isAutoVersionSubmodules() && ArtifactUtils.isSnapshot(rootProject.getVersion())) {
             // get the root project
             MavenProject project = rootProject;
 
-            String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+            String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
-            String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, releaseEnvironment );
+            String nextVersion = resolveNextVersion(project, projectId, releaseDescriptor, releaseEnvironment);
 
-            if ( !convertToSnapshot )
-            {
-                releaseDescriptor.addReleaseVersion( projectId, nextVersion );
-            }
-            else if ( releaseDescriptor.isBranchCreation() && convertToBranch )
-            {
-                releaseDescriptor.addReleaseVersion( projectId, nextVersion );
-            }
-            else
-            {
-                releaseDescriptor.addDevelopmentVersion( projectId, nextVersion );
+            if (!convertToSnapshot) {
+                releaseDescriptor.addReleaseVersion(projectId, nextVersion);
+            } else if (releaseDescriptor.isBranchCreation() && convertToBranch) {
+                releaseDescriptor.addReleaseVersion(projectId, nextVersion);
+            } else {
+                releaseDescriptor.addDevelopmentVersion(projectId, nextVersion);
             }
 
-            for ( MavenProject subProject : reactorProjects )
-            {
-                String subProjectId =
-                        ArtifactUtils.versionlessKey( subProject.getGroupId(), subProject.getArtifactId() );
+            for (MavenProject subProject : reactorProjects) {
+                String subProjectId = ArtifactUtils.versionlessKey(subProject.getGroupId(), subProject.getArtifactId());
 
-                if ( convertToSnapshot )
-                {
-                    String subProjectNextVersion = releaseDescriptor.getProjectDevelopmentVersion( subProjectId );
+                if (convertToSnapshot) {
+                    String subProjectNextVersion = releaseDescriptor.getProjectDevelopmentVersion(subProjectId);
                     String v;
-                    if ( subProjectNextVersion != null )
-                    {
+                    if (subProjectNextVersion != null) {
                         v = subProjectNextVersion;
-                    }
-                    else if ( ArtifactUtils.isSnapshot( subProject.getVersion() ) )
-                    {
+                    } else if (ArtifactUtils.isSnapshot(subProject.getVersion())) {
                         v = nextVersion;
-                    }
-                    else
-                    {
+                    } else {
                         v = subProject.getVersion();
                     }
 
-                    if ( releaseDescriptor.isBranchCreation() && convertToBranch )
-                    {
-                        releaseDescriptor.addReleaseVersion( subProjectId, v );
+                    if (releaseDescriptor.isBranchCreation() && convertToBranch) {
+                        releaseDescriptor.addReleaseVersion(subProjectId, v);
+                    } else {
+                        releaseDescriptor.addDevelopmentVersion(subProjectId, v);
                     }
-                    else
-                    {
-                        releaseDescriptor.addDevelopmentVersion( subProjectId, v );
-                    }
-                }
-                else
-                {
-                    String subProjectNextVersion = releaseDescriptor.getProjectReleaseVersion( subProjectId );
-                    if ( subProjectNextVersion != null )
-                    {
-                        releaseDescriptor.addReleaseVersion( subProjectId, subProjectNextVersion );
-                    }
-                    else
-                    {
-                        releaseDescriptor.addReleaseVersion( subProjectId, nextVersion );
+                } else {
+                    String subProjectNextVersion = releaseDescriptor.getProjectReleaseVersion(subProjectId);
+                    if (subProjectNextVersion != null) {
+                        releaseDescriptor.addReleaseVersion(subProjectId, subProjectNextVersion);
+                    } else {
+                        releaseDescriptor.addReleaseVersion(subProjectId, nextVersion);
                     }
                 }
             }
-        }
-        else
-        {
-            for ( MavenProject project : reactorProjects )
-            {
-                String projectId = ArtifactUtils.versionlessKey( project.getGroupId(), project.getArtifactId() );
+        } else {
+            for (MavenProject project : reactorProjects) {
+                String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
-                String nextVersion = resolveNextVersion( project, projectId, releaseDescriptor, releaseEnvironment );
+                String nextVersion = resolveNextVersion(project, projectId, releaseDescriptor, releaseEnvironment);
 
-                if ( !convertToSnapshot )
-                {
-                    releaseDescriptor.addReleaseVersion( projectId, nextVersion );
-                }
-                else if ( releaseDescriptor.isBranchCreation() && convertToBranch )
-                {
-                    releaseDescriptor.addReleaseVersion( projectId, nextVersion );
-                }
-                else
-                {
-                    releaseDescriptor.addDevelopmentVersion( projectId, nextVersion );
+                if (!convertToSnapshot) {
+                    releaseDescriptor.addReleaseVersion(projectId, nextVersion);
+                } else if (releaseDescriptor.isBranchCreation() && convertToBranch) {
+                    releaseDescriptor.addReleaseVersion(projectId, nextVersion);
+                } else {
+                    releaseDescriptor.addDevelopmentVersion(projectId, nextVersion);
                 }
             }
         }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
-    private String resolveNextVersion( MavenProject project,
-                                       String projectId,
-                                       ReleaseDescriptor releaseDescriptor,
-                                       ReleaseEnvironment releaseEnvironment )
-            throws ReleaseExecutionException
-    {
+    private String resolveNextVersion(
+            MavenProject project,
+            String projectId,
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment)
+            throws ReleaseExecutionException {
         String defaultVersion;
-        if ( convertToBranch )
-        {
+        if (convertToBranch) {
             // no branch modification
-            if ( !( releaseDescriptor.isUpdateBranchVersions()
-                    && ( ArtifactUtils.isSnapshot( project.getVersion() )
-                    || releaseDescriptor.isUpdateVersionsToSnapshot() ) ) )
-            {
+            if (!(releaseDescriptor.isUpdateBranchVersions()
+                    && (ArtifactUtils.isSnapshot(project.getVersion())
+                            || releaseDescriptor.isUpdateVersionsToSnapshot()))) {
                 return project.getVersion();
             }
 
-            defaultVersion = getReleaseVersion( projectId, releaseDescriptor );
-        }
-        else if ( !convertToSnapshot ) // map-release-version
+            defaultVersion = getReleaseVersion(projectId, releaseDescriptor);
+        } else if (!convertToSnapshot) // map-release-version
         {
-            defaultVersion = getReleaseVersion( projectId, releaseDescriptor );
-        }
-        else if ( releaseDescriptor.isBranchCreation() )
-        {
+            defaultVersion = getReleaseVersion(projectId, releaseDescriptor);
+        } else if (releaseDescriptor.isBranchCreation()) {
             // no working copy modification
-            if ( !( ArtifactUtils.isSnapshot( project.getVersion() )
-                    && releaseDescriptor.isUpdateWorkingCopyVersions() ) )
-            {
+            if (!(ArtifactUtils.isSnapshot(project.getVersion()) && releaseDescriptor.isUpdateWorkingCopyVersions())) {
                 return project.getVersion();
             }
 
-            defaultVersion = getDevelopmentVersion( projectId, releaseDescriptor );
-        }
-        else
-        {
+            defaultVersion = getDevelopmentVersion(projectId, releaseDescriptor);
+        } else {
             // no working copy modification
-            if ( !( releaseDescriptor.isUpdateWorkingCopyVersions() ) )
-            {
+            if (!(releaseDescriptor.isUpdateWorkingCopyVersions())) {
                 return project.getVersion();
             }
 
-            defaultVersion = getDevelopmentVersion( projectId, releaseDescriptor );
+            defaultVersion = getDevelopmentVersion(projectId, releaseDescriptor);
         }
-        //@todo validate default version, maybe with DefaultArtifactVersion
+        // @todo validate default version, maybe with DefaultArtifactVersion
 
         String suggestedVersion = null;
         String nextVersion = defaultVersion;
         String messageFormat = null;
-        try
-        {
-            while ( nextVersion == null || ArtifactUtils.isSnapshot( nextVersion ) != convertToSnapshot )
-            {
-                if ( suggestedVersion == null )
-                {
+        try {
+            while (nextVersion == null || ArtifactUtils.isSnapshot(nextVersion) != convertToSnapshot) {
+                if (suggestedVersion == null) {
                     String baseVersion = null;
-                    if ( convertToSnapshot )
-                    {
-                        baseVersion = getReleaseVersion( projectId, releaseDescriptor );
+                    if (convertToSnapshot) {
+                        baseVersion = getReleaseVersion(projectId, releaseDescriptor);
                     }
                     // unspecified and unmapped version, so use project version
-                    if ( baseVersion == null )
-                    {
+                    if (baseVersion == null) {
                         baseVersion = project.getVersion();
                     }
 
-                    try
-                    {
-                        try
-                        {
+                    try {
+                        try {
                             suggestedVersion =
-                                    resolveSuggestedVersion( baseVersion,
-                                            releaseDescriptor,
-                                            releaseEnvironment );
-                        }
-                        catch ( VersionParseException e )
-                        {
-                            if ( releaseDescriptor.isInteractive() )
-                            {
+                                    resolveSuggestedVersion(baseVersion, releaseDescriptor, releaseEnvironment);
+                        } catch (VersionParseException e) {
+                            if (releaseDescriptor.isInteractive()) {
                                 suggestedVersion =
-                                        resolveSuggestedVersion( "1.0", releaseDescriptor, releaseEnvironment );
-                            }
-                            else
-                            {
-                                throw new ReleaseExecutionException( "Error parsing version, cannot determine next "
-                                        + "version: " + e.getMessage(), e );
+                                        resolveSuggestedVersion("1.0", releaseDescriptor, releaseEnvironment);
+                            } else {
+                                throw new ReleaseExecutionException(
+                                        "Error parsing version, cannot determine next " + "version: " + e.getMessage(),
+                                        e);
                             }
                         }
-                    }
-                    catch ( PolicyException | VersionParseException e )
-                    {
-                        throw new ReleaseExecutionException( e.getMessage(), e );
+                    } catch (PolicyException | VersionParseException e) {
+                        throw new ReleaseExecutionException(e.getMessage(), e);
                     }
                 }
 
-                if ( releaseDescriptor.isInteractive() )
-                {
-                    if ( messageFormat == null )
-                    {
-                        messageFormat = "What is the " + getContextString( releaseDescriptor )
-                            + " version for \"%s\"? (" + buffer().project( "%s" ) + ")";
+                if (releaseDescriptor.isInteractive()) {
+                    if (messageFormat == null) {
+                        messageFormat = "What is the " + getContextString(releaseDescriptor) + " version for \"%s\"? ("
+                                + buffer().project("%s") + ")";
                     }
-                    String message = String.format( messageFormat, project.getName(), project.getArtifactId() );
-                    nextVersion = prompter.prompt( message, suggestedVersion );
+                    String message = String.format(messageFormat, project.getName(), project.getArtifactId());
+                    nextVersion = prompter.prompt(message, suggestedVersion);
 
-                    //@todo validate next version, maybe with DefaultArtifactVersion
-                }
-                else if ( defaultVersion == null )
-                {
+                    // @todo validate next version, maybe with DefaultArtifactVersion
+                } else if (defaultVersion == null) {
                     nextVersion = suggestedVersion;
-                }
-                else if ( convertToSnapshot )
-                {
-                    throw new ReleaseExecutionException( defaultVersion + " is invalid, expected a snapshot" );
-                }
-                else
-                {
-                    throw new ReleaseExecutionException( defaultVersion + " is invalid, expected a non-snapshot" );
+                } else if (convertToSnapshot) {
+                    throw new ReleaseExecutionException(defaultVersion + " is invalid, expected a snapshot");
+                } else {
+                    throw new ReleaseExecutionException(defaultVersion + " is invalid, expected a non-snapshot");
                 }
             }
-        }
-        catch ( PrompterException e )
-        {
-            throw new ReleaseExecutionException( "Error reading version from input handler: " + e.getMessage(), e );
+        } catch (PrompterException e) {
+            throw new ReleaseExecutionException("Error reading version from input handler: " + e.getMessage(), e);
         }
         return nextVersion;
     }
 
-    private String getContextString( ReleaseDescriptor releaseDescriptor )
-    {
-        if ( convertToBranch )
-        {
+    private String getContextString(ReleaseDescriptor releaseDescriptor) {
+        if (convertToBranch) {
             return "branch";
         }
-        if ( !convertToSnapshot )
-        {
+        if (!convertToSnapshot) {
             return "release";
         }
-        if ( releaseDescriptor.isBranchCreation() )
-        {
+        if (releaseDescriptor.isBranchCreation()) {
             return "new working copy";
         }
         return "new development";
     }
 
-    private String resolveSuggestedVersion( String baseVersion,
-                                            ReleaseDescriptor releaseDescriptor,
-                                            ReleaseEnvironment releaseEnvironment )
-            throws PolicyException, VersionParseException
-    {
+    private String resolveSuggestedVersion(
+            String baseVersion, ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment)
+            throws PolicyException, VersionParseException {
         String policyId = releaseDescriptor.getProjectVersionPolicyId();
-        VersionPolicy policy = versionPolicies.get( policyId );
-        if ( policy == null )
-        {
-            throw new PolicyException( "Policy '" + policyId + "' is unknown, available: " + versionPolicies.keySet() );
+        VersionPolicy policy = versionPolicies.get(policyId);
+        if (policy == null) {
+            throw new PolicyException("Policy '" + policyId + "' is unknown, available: " + versionPolicies.keySet());
         }
 
-        VersionPolicyRequest request = new VersionPolicyRequest().setVersion( baseVersion );
+        VersionPolicyRequest request = new VersionPolicyRequest().setVersion(baseVersion);
 
-        if ( releaseDescriptor.getProjectVersionPolicyConfig() != null )
-        {
-            request.setConfig( releaseDescriptor.getProjectVersionPolicyConfig().toString() );
+        if (releaseDescriptor.getProjectVersionPolicyConfig() != null) {
+            request.setConfig(releaseDescriptor.getProjectVersionPolicyConfig().toString());
         }
-        request.setWorkingDirectory( releaseDescriptor.getWorkingDirectory() );
+        request.setWorkingDirectory(releaseDescriptor.getWorkingDirectory());
 
-        if ( scmRepositoryConfigurator != null && releaseDescriptor.getScmSourceUrl() != null )
-        {
-            try
-            {
-                ScmRepository repository = scmRepositoryConfigurator
-                        .getConfiguredRepository( releaseDescriptor, releaseEnvironment.getSettings() );
+        if (scmRepositoryConfigurator != null && releaseDescriptor.getScmSourceUrl() != null) {
+            try {
+                ScmRepository repository = scmRepositoryConfigurator.getConfiguredRepository(
+                        releaseDescriptor, releaseEnvironment.getSettings());
 
-                ScmProvider provider = scmRepositoryConfigurator
-                        .getRepositoryProvider( repository );
+                ScmProvider provider = scmRepositoryConfigurator.getRepositoryProvider(repository);
 
-                request.setScmRepository( repository );
-                request.setScmProvider( provider );
-            }
-            catch ( ScmRepositoryException | NoSuchScmProviderException e )
-            {
+                request.setScmRepository(repository);
+                request.setScmProvider(provider);
+            } catch (ScmRepositoryException | NoSuchScmProviderException e) {
                 Logger logger = getLogger();
-                if ( logger.isWarnEnabled() )
-                {
-                    logger.warn( "Next Version will NOT be based on the version control: {}", e.getMessage() );
-                }
-                else
-                {
-                    if ( logger.isDebugEnabled() )
-                    {
-                        logger.warn( "Next Version will NOT be based on the version control", e );
+                if (logger.isWarnEnabled()) {
+                    logger.warn("Next Version will NOT be based on the version control: {}", e.getMessage());
+                } else {
+                    if (logger.isDebugEnabled()) {
+                        logger.warn("Next Version will NOT be based on the version control", e);
                     }
                 }
             }
         }
-        return convertToSnapshot ? policy.getDevelopmentVersion( request ).getVersion()
-                : policy.getReleaseVersion( request ).getVersion();
+        return convertToSnapshot
+                ? policy.getDevelopmentVersion(request).getVersion()
+                : policy.getReleaseVersion(request).getVersion();
     }
 
-    private String getDevelopmentVersion( String projectId, ReleaseDescriptor releaseDescriptor )
-    {
-        String projectVersion = releaseDescriptor.getProjectDevelopmentVersion( projectId );
+    private String getDevelopmentVersion(String projectId, ReleaseDescriptor releaseDescriptor) {
+        String projectVersion = releaseDescriptor.getProjectDevelopmentVersion(projectId);
 
-        if ( StringUtils.isEmpty( projectVersion ) )
-        {
+        if (StringUtils.isEmpty(projectVersion)) {
             projectVersion = releaseDescriptor.getDefaultDevelopmentVersion();
         }
 
-        if ( StringUtils.isEmpty( projectVersion ) )
-        {
+        if (StringUtils.isEmpty(projectVersion)) {
             return null;
         }
 
         return projectVersion;
     }
 
-    private String getReleaseVersion( String projectId, ReleaseDescriptor releaseDescriptor )
-    {
-        String projectVersion = releaseDescriptor.getProjectReleaseVersion( projectId );
+    private String getReleaseVersion(String projectId, ReleaseDescriptor releaseDescriptor) {
+        String projectVersion = releaseDescriptor.getProjectReleaseVersion(projectId);
 
-        if ( StringUtils.isEmpty( projectVersion ) )
-        {
+        if (StringUtils.isEmpty(projectVersion)) {
             projectVersion = releaseDescriptor.getDefaultReleaseVersion();
         }
 
-        if ( StringUtils.isEmpty( projectVersion ) )
-        {
+        if (StringUtils.isEmpty(projectVersion)) {
             return null;
         }
 
@@ -450,16 +362,17 @@ public abstract class AbstractMapVersionsPhase
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException {
         ReleaseResult result = new ReleaseResult();
 
         // It makes no modifications, so simulate is the same as execute
-        execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+        execute(releaseDescriptor, releaseEnvironment, reactorProjects);
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }

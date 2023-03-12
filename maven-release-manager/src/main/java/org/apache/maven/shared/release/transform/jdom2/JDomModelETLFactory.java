@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,12 +16,13 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
 
-import org.apache.maven.shared.release.transform.ModelETLRequest;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
+import org.apache.maven.shared.release.transform.ModelETLRequest;
 
 /**
  * <p>JDomModelETLFactory class.</p>
@@ -32,19 +31,17 @@ import org.apache.maven.shared.release.transform.ModelETLFactory;
  * @since 3.0
  */
 @Singleton
-@Named( JDomModelETLFactory.NAME )
-public class JDomModelETLFactory implements ModelETLFactory
-{
+@Named(JDomModelETLFactory.NAME)
+public class JDomModelETLFactory implements ModelETLFactory {
     public static final String NAME = "jdom2-sax";
 
     @Override
-    public JDomModelETL newInstance( ModelETLRequest request )
-    {
+    public JDomModelETL newInstance(ModelETLRequest request) {
         JDomModelETL result = new JDomModelETL();
 
-        result.setLs( request.getLineSeparator() );
-        result.setProject( request.getProject() );
-        result.setReleaseDescriptor( request.getReleaseDescriptor() );
+        result.setLs(request.getLineSeparator());
+        result.setProject(request.getProject());
+        result.setReleaseDescriptor(request.getReleaseDescriptor());
 
         return result;
     }

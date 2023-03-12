@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -38,10 +37,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * @since 2.0-beta-5
  * @author Edwin Punzalan
  */
-@Mojo( name = "rollback", aggregator = true )
-public class RollbackReleaseMojo
-    extends AbstractScmReleaseMojo
-{
+@Mojo(name = "rollback", aggregator = true)
+public class RollbackReleaseMojo extends AbstractScmReleaseMojo {
 
     /**
      * The SCM commit comment when rolling back.
@@ -60,37 +57,29 @@ public class RollbackReleaseMojo
      * @since 3.0.0-M5
      */
     @Parameter(
-            defaultValue = "@{prefix} rollback the release of @{releaseLabel}", 
-            property = "scmRollbackCommitComment" )
+            defaultValue = "@{prefix} rollback the release of @{releaseLabel}",
+            property = "scmRollbackCommitComment")
     private String scmRollbackCommitComment = "@{prefix} rollback the release of @{releaseLabel}";
 
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         super.execute();
 
         final ReleaseDescriptorBuilder config = createReleaseDescriptor();
-        config.setScmRollbackCommitComment( scmRollbackCommitComment );
+        config.setScmRollbackCommitComment(scmRollbackCommitComment);
 
-        try
-        {
+        try {
             ReleaseRollbackRequest rollbackRequest = new ReleaseRollbackRequest();
-            rollbackRequest.setReleaseDescriptorBuilder( config );
-            rollbackRequest.setReleaseEnvironment( getReleaseEnvironment() );
-            rollbackRequest.setReactorProjects( getReactorProjects()  );
-            rollbackRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog() ) );
-            
-            releaseManager.rollback( rollbackRequest );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            throw new MojoFailureException( e.getMessage(), e );
+            rollbackRequest.setReleaseDescriptorBuilder(config);
+            rollbackRequest.setReleaseEnvironment(getReleaseEnvironment());
+            rollbackRequest.setReactorProjects(getReactorProjects());
+            rollbackRequest.setReleaseManagerListener(new DefaultReleaseManagerListener(getLog()));
+
+            releaseManager.rollback(rollbackRequest);
+        } catch (ReleaseExecutionException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (ReleaseFailureException e) {
+            throw new MojoFailureException(e.getMessage(), e);
         }
     }
-
 }

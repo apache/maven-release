@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 import java.util.List;
 
@@ -26,22 +25,21 @@ import java.util.List;
  *
  * @author Edwin Punzalan
  */
-public interface ReleaseManagerListener
-{
+public interface ReleaseManagerListener {
     /**
      * <p>goalStart.</p>
      *
      * @param goal a {@link java.lang.String} object
      * @param phases a {@link java.util.List} object
      */
-    void goalStart( String goal, List<String> phases );
+    void goalStart(String goal, List<String> phases);
 
     /**
      * <p>phaseStart.</p>
      *
      * @param name a {@link java.lang.String} object
      */
-    void phaseStart( String name );
+    void phaseStart(String name);
 
     /**
      * <p>phaseEnd.</p>
@@ -53,7 +51,7 @@ public interface ReleaseManagerListener
      *
      * @param name a {@link java.lang.String} object
      */
-    void phaseSkip( String name );
+    void phaseSkip(String name);
 
     /**
      * <p>goalEnd.</p>
@@ -65,5 +63,5 @@ public interface ReleaseManagerListener
      *
      * @param reason a {@link java.lang.String} object
      */
-    void error( String reason );
+    void error(String reason);
 }

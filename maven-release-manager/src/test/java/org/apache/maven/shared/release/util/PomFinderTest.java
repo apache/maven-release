@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.util;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,53 +16,50 @@ package org.apache.maven.shared.release.util;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.junit.Test;
-import org.slf4j.LoggerFactory;
+package org.apache.maven.shared.release.util;
 
 import java.io.File;
 import java.net.URL;
+
+import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-
 /**
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  */
-public class PomFinderTest
-{
+public class PomFinderTest {
     @Test
-    public void testPomFinderParser()
-    {
-        PomFinder pf = new PomFinder( LoggerFactory.getLogger( "test" ) );
+    public void testPomFinderParser() {
+        PomFinder pf = new PomFinder(LoggerFactory.getLogger("test"));
 
-        boolean found = pf.parsePom( new File( "src/test/resources/pomfinder/pomNothere.xml" ) );
-        assertFalse( found );
+        boolean found = pf.parsePom(new File("src/test/resources/pomfinder/pomNothere.xml"));
+        assertFalse(found);
 
         URL pomUrl = getClass().getClassLoader().getResource("pomfinder/pom1.xml");
-        assertNotNull( pomUrl );
+        assertNotNull(pomUrl);
 
-        File pomFile = new File( pomUrl.getFile() );
-        found = pf.parsePom( pomFile );
-        assertTrue("pomFile not found pomUrl " + pomUrl + ", pomFile " + pomFile.getPath() , found );
+        File pomFile = new File(pomUrl.getFile());
+        found = pf.parsePom(pomFile);
+        assertTrue("pomFile not found pomUrl " + pomUrl + ", pomFile " + pomFile.getPath(), found);
 
         {
-            File foundPom = pf.findMatchingPom( pomFile.getParentFile() );
-            assertNotNull( foundPom );
+            File foundPom = pf.findMatchingPom(pomFile.getParentFile());
+            assertNotNull(foundPom);
 
-            assertEquals( pomFile.getAbsolutePath(), foundPom.getAbsolutePath() );
+            assertEquals(pomFile.getAbsolutePath(), foundPom.getAbsolutePath());
         }
 
         {
             // try from 1 directory higher
-            File foundPom = pf.findMatchingPom( pomFile.getParentFile().getParentFile() );
-            assertNotNull( foundPom );
+            File foundPom = pf.findMatchingPom(pomFile.getParentFile().getParentFile());
+            assertNotNull(foundPom);
 
-            assertEquals( pomFile.getAbsolutePath(), foundPom.getAbsolutePath() );
+            assertEquals(pomFile.getAbsolutePath(), foundPom.getAbsolutePath());
         }
     }
-
 }

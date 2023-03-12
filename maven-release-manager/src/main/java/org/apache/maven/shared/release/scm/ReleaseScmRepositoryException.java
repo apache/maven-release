@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,40 +16,35 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.apache.maven.shared.release.ReleaseFailureException;
+package org.apache.maven.shared.release.scm;
 
 import java.util.List;
+
+import org.apache.maven.shared.release.ReleaseFailureException;
 
 /**
  * Exception occurring during an SCM repository operation.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseScmRepositoryException
-    extends ReleaseFailureException
-{
+public class ReleaseScmRepositoryException extends ReleaseFailureException {
     /**
      * <p>Constructor for ReleaseScmRepositoryException.</p>
      *
      * @param message a {@link java.lang.String} object
      * @param validationMessages a {@link java.util.List} object
      */
-    public ReleaseScmRepositoryException( String message, List<String> validationMessages )
-    {
-        super( message + listValidationMessages( validationMessages ) );
+    public ReleaseScmRepositoryException(String message, List<String> validationMessages) {
+        super(message + listValidationMessages(validationMessages));
     }
 
-    private static String listValidationMessages( List<String> messages )
-    {
+    private static String listValidationMessages(List<String> messages) {
         StringBuilder buffer = new StringBuilder();
 
-        if ( messages != null )
-        {
-            for ( String message : messages )
-            {
-                buffer.append( "\n  - " );
-                buffer.append( message );
+        if (messages != null) {
+            for (String message : messages) {
+                buffer.append("\n  - ");
+                buffer.append(message);
             }
         }
 

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 
@@ -29,9 +28,7 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
  *
  * @author Edwin Punzalan
  */
-public abstract class AbstractBackupPomsPhase
-        extends AbstractReleasePhase
-{
+public abstract class AbstractBackupPomsPhase extends AbstractReleasePhase {
     protected static final String BACKUP_SUFFIX = ".releaseBackup";
 
     /**
@@ -40,16 +37,12 @@ public abstract class AbstractBackupPomsPhase
      * @param project a {@link org.apache.maven.project.MavenProject} object
      * @return a {@link java.io.File} object
      */
-    protected File getPomBackup( MavenProject project )
-    {
-        File pomFile = ReleaseUtil.getStandardPom( project );
+    protected File getPomBackup(MavenProject project) {
+        File pomFile = ReleaseUtil.getStandardPom(project);
 
-        if ( pomFile != null )
-        {
-            return new File( pomFile.getAbsolutePath() + BACKUP_SUFFIX );
-        }
-        else
-        {
+        if (pomFile != null) {
+            return new File(pomFile.getAbsolutePath() + BACKUP_SUFFIX);
+        } else {
             return null;
         }
     }
@@ -59,12 +52,10 @@ public abstract class AbstractBackupPomsPhase
      *
      * @param project a {@link org.apache.maven.project.MavenProject} object
      */
-    protected void deletePomBackup( MavenProject project )
-    {
-        File pomBackup = getPomBackup( project );
+    protected void deletePomBackup(MavenProject project) {
+        File pomBackup = getPomBackup(project);
 
-        if ( pomBackup != null && pomBackup.exists() )
-        {
+        if (pomBackup != null && pomBackup.exists()) {
             pomBackup.delete();
         }
     }

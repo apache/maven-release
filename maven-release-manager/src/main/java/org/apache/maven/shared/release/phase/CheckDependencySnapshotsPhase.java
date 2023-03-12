@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,13 +54,14 @@ import static java.util.Objects.requireNonNull;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-// TODO plugins with no version will be resolved to RELEASE which is not a snapshot, but remains unresolved to this point. This is a potential hole in the check, and should be revisited after the release pom writing is done and resolving versions to verify whether it is.
-// TODO plugins injected by the lifecycle are not tested here. They will be injected with a RELEASE version so are covered under the above point.
+// TODO plugins with no version will be resolved to RELEASE which is not a snapshot, but remains unresolved to this
+// point. This is a potential hole in the check, and should be revisited after the release pom writing is done and
+// resolving versions to verify whether it is.
+// TODO plugins injected by the lifecycle are not tested here. They will be injected with a RELEASE version so are
+// covered under the above point.
 @Singleton
-@Named( "check-dependency-snapshots" )
-public class CheckDependencySnapshotsPhase
-        extends AbstractReleasePhase
-{
+@Named("check-dependency-snapshots")
+public class CheckDependencySnapshotsPhase extends AbstractReleasePhase {
     public static final String RESOLVE_SNAPSHOT_MESSAGE = "There are still some remaining snapshot dependencies.\n";
 
     public static final String RESOLVE_SNAPSHOT_PROMPT = "Do you want to resolve them now?";
@@ -80,7 +80,8 @@ public class CheckDependencySnapshotsPhase
     // UsedSnapshots end up on the classpath.
     // SpecifiedSnapshots are defined anywhere in the pom.
     // We'll probably need to introduce specifiedSnapshots as well.
-    // @TODO MRELEASE-378: verify custom dependencies in plugins. Be aware of deprecated/removed Components in M3, such as PluginCollector
+    // @TODO MRELEASE-378: verify custom dependencies in plugins. Be aware of deprecated/removed Components in M3, such
+    // as PluginCollector
     // @TODO MRELEASE-763: verify all dependencies in inactive profiles
 
     // Don't prompt for every project in reactor, remember state of questions
@@ -89,455 +90,382 @@ public class CheckDependencySnapshotsPhase
     private String resolveSnapshotType;
 
     @Inject
-    public CheckDependencySnapshotsPhase( Prompter prompter )
-    {
-        this.prompter = new AtomicReference<>( requireNonNull( prompter ) );
+    public CheckDependencySnapshotsPhase(Prompter prompter) {
+        this.prompter = new AtomicReference<>(requireNonNull(prompter));
     }
 
     /**
      * For easier testing only!
      */
-    public void setPrompter( Prompter prompter )
-    {
-        this.prompter.set( prompter );
+    public void setPrompter(Prompter prompter) {
+        this.prompter.set(prompter);
     }
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
 
-        if ( !releaseDescriptor.isAllowTimestampedSnapshots() )
-        {
-            logInfo( result, "Checking dependencies and plugins for snapshots ..." );
+        if (!releaseDescriptor.isAllowTimestampedSnapshots()) {
+            logInfo(result, "Checking dependencies and plugins for snapshots ...");
 
-            for ( MavenProject project : reactorProjects )
-            {
-                checkProject( project, releaseDescriptor );
+            for (MavenProject project : reactorProjects) {
+                checkProject(project, releaseDescriptor);
             }
+        } else {
+            logInfo(result, "Ignoring SNAPSHOT dependencies and plugins ...");
         }
-        else
-        {
-            logInfo( result, "Ignoring SNAPSHOT dependencies and plugins ..." );
-        }
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
-    private void checkProject( MavenProject project, ReleaseDescriptor releaseDescriptor )
-            throws ReleaseFailureException, ReleaseExecutionException
-    {
-        Map<String, Artifact> artifactMap = ArtifactUtils.artifactMapByVersionlessId( project.getArtifacts() );
+    private void checkProject(MavenProject project, ReleaseDescriptor releaseDescriptor)
+            throws ReleaseFailureException, ReleaseExecutionException {
+        Map<String, Artifact> artifactMap = ArtifactUtils.artifactMapByVersionlessId(project.getArtifacts());
 
         Set<Artifact> usedSnapshotDependencies = new HashSet<>();
 
-        if ( project.getParentArtifact() != null )
-        {
-            if ( checkArtifact( project.getParentArtifact(), artifactMap, releaseDescriptor ) )
-            {
-                usedSnapshotDependencies.add( project.getParentArtifact() );
+        if (project.getParentArtifact() != null) {
+            if (checkArtifact(project.getParentArtifact(), artifactMap, releaseDescriptor)) {
+                usedSnapshotDependencies.add(project.getParentArtifact());
             }
         }
 
         Set<Artifact> dependencyArtifacts = project.getDependencyArtifacts();
-        usedSnapshotDependencies.addAll( checkDependencies( releaseDescriptor, artifactMap, dependencyArtifacts ) );
+        usedSnapshotDependencies.addAll(checkDependencies(releaseDescriptor, artifactMap, dependencyArtifacts));
 
-        //@todo check dependencyManagement
+        // @todo check dependencyManagement
 
         Set<Artifact> pluginArtifacts = project.getPluginArtifacts();
-        Set<Artifact> usedSnapshotPlugins = checkPlugins( releaseDescriptor, artifactMap, pluginArtifacts );
+        Set<Artifact> usedSnapshotPlugins = checkPlugins(releaseDescriptor, artifactMap, pluginArtifacts);
 
-        //@todo check pluginManagement
+        // @todo check pluginManagement
 
         Set<Artifact> reportArtifacts = project.getReportArtifacts();
-        Set<Artifact> usedSnapshotReports = checkReports( releaseDescriptor, artifactMap, reportArtifacts );
+        Set<Artifact> usedSnapshotReports = checkReports(releaseDescriptor, artifactMap, reportArtifacts);
 
         Set<Artifact> extensionArtifacts = project.getExtensionArtifacts();
-        Set<Artifact> usedSnapshotExtensions = checkExtensions( releaseDescriptor, artifactMap, extensionArtifacts );
+        Set<Artifact> usedSnapshotExtensions = checkExtensions(releaseDescriptor, artifactMap, extensionArtifacts);
 
-        //@todo check profiles
+        // @todo check profiles
 
-        if ( !usedSnapshotDependencies.isEmpty() || !usedSnapshotReports.isEmpty()
-                || !usedSnapshotExtensions.isEmpty() || !usedSnapshotPlugins.isEmpty() )
-        {
-            if ( releaseDescriptor.isInteractive() || null != releaseDescriptor.getAutoResolveSnapshots() )
-            {
-                resolveSnapshots( usedSnapshotDependencies, usedSnapshotReports, usedSnapshotExtensions,
-                        usedSnapshotPlugins, releaseDescriptor );
+        if (!usedSnapshotDependencies.isEmpty()
+                || !usedSnapshotReports.isEmpty()
+                || !usedSnapshotExtensions.isEmpty()
+                || !usedSnapshotPlugins.isEmpty()) {
+            if (releaseDescriptor.isInteractive() || null != releaseDescriptor.getAutoResolveSnapshots()) {
+                resolveSnapshots(
+                        usedSnapshotDependencies,
+                        usedSnapshotReports,
+                        usedSnapshotExtensions,
+                        usedSnapshotPlugins,
+                        releaseDescriptor);
             }
 
-            if ( !usedSnapshotDependencies.isEmpty() || !usedSnapshotReports.isEmpty()
-                    || !usedSnapshotExtensions.isEmpty() || !usedSnapshotPlugins.isEmpty() )
-            {
+            if (!usedSnapshotDependencies.isEmpty()
+                    || !usedSnapshotReports.isEmpty()
+                    || !usedSnapshotExtensions.isEmpty()
+                    || !usedSnapshotPlugins.isEmpty()) {
                 StringBuilder message = new StringBuilder();
 
-                printSnapshotDependencies( usedSnapshotDependencies, message );
-                printSnapshotDependencies( usedSnapshotReports, message );
-                printSnapshotDependencies( usedSnapshotExtensions, message );
-                printSnapshotDependencies( usedSnapshotPlugins, message );
-                message.append( "in project '" + project.getName() + "' (" + project.getId() + ")" );
+                printSnapshotDependencies(usedSnapshotDependencies, message);
+                printSnapshotDependencies(usedSnapshotReports, message);
+                printSnapshotDependencies(usedSnapshotExtensions, message);
+                printSnapshotDependencies(usedSnapshotPlugins, message);
+                message.append("in project '" + project.getName() + "' (" + project.getId() + ")");
 
                 throw new ReleaseFailureException(
-                        "Can't release project due to non released dependencies :\n" + message );
+                        "Can't release project due to non released dependencies :\n" + message);
             }
         }
     }
 
-    private Set<Artifact> checkPlugins( ReleaseDescriptor releaseDescriptor,
-                                        Map<String, Artifact> artifactMap, Set<Artifact> pluginArtifacts )
-            throws ReleaseExecutionException
-    {
+    private Set<Artifact> checkPlugins(
+            ReleaseDescriptor releaseDescriptor, Map<String, Artifact> artifactMap, Set<Artifact> pluginArtifacts)
+            throws ReleaseExecutionException {
         Set<Artifact> usedSnapshotPlugins = new HashSet<>();
-        for ( Artifact artifact : pluginArtifacts )
-        {
-            if ( checkArtifact( artifact, artifactMap, releaseDescriptor ) )
-            {
+        for (Artifact artifact : pluginArtifacts) {
+            if (checkArtifact(artifact, artifactMap, releaseDescriptor)) {
                 boolean addToFailures;
 
-                if ( "org.apache.maven.plugins".equals( artifact.getGroupId() ) && "maven-release-plugin".equals(
-                        artifact.getArtifactId() ) )
-                {
+                if ("org.apache.maven.plugins".equals(artifact.getGroupId())
+                        && "maven-release-plugin".equals(artifact.getArtifactId())) {
                     // It's a snapshot of the release plugin. Maybe just testing - ask
                     // By default, we fail as for any other plugin
-                    if ( releaseDescriptor.isSnapshotReleasePluginAllowed() )
-                    {
+                    if (releaseDescriptor.isSnapshotReleasePluginAllowed()) {
                         addToFailures = false;
-                    }
-                    else if ( releaseDescriptor.isInteractive() )
-                    {
-                        try
-                        {
+                    } else if (releaseDescriptor.isInteractive()) {
+                        try {
                             String result;
-                            if ( !releaseDescriptor.isSnapshotReleasePluginAllowed() )
-                            {
-                                prompter.get().showMessage( "This project relies on a SNAPSHOT of the release plugin. "
-                                        + "This may be necessary during testing.\n" );
-                                result = prompter.get().prompt( "Do you want to continue with the release?",
-                                        Arrays.asList( "yes", "no" ), "no" );
-                            }
-                            else
-                            {
+                            if (!releaseDescriptor.isSnapshotReleasePluginAllowed()) {
+                                prompter.get()
+                                        .showMessage("This project relies on a SNAPSHOT of the release plugin. "
+                                                + "This may be necessary during testing.\n");
+                                result = prompter.get()
+                                        .prompt(
+                                                "Do you want to continue with the release?",
+                                                Arrays.asList("yes", "no"),
+                                                "no");
+                            } else {
                                 result = "yes";
                             }
 
-                            addToFailures = !result.toLowerCase( Locale.ENGLISH ).startsWith( "y" );
+                            addToFailures = !result.toLowerCase(Locale.ENGLISH).startsWith("y");
+                        } catch (PrompterException e) {
+                            throw new ReleaseExecutionException(e.getMessage(), e);
                         }
-                        catch ( PrompterException e )
-                        {
-                            throw new ReleaseExecutionException( e.getMessage(), e );
-                        }
-                    }
-                    else
-                    {
+                    } else {
                         addToFailures = true;
                     }
-                }
-                else
-                {
+                } else {
                     addToFailures = true;
                 }
 
-                if ( addToFailures )
-                {
-                    usedSnapshotPlugins.add( artifact );
+                if (addToFailures) {
+                    usedSnapshotPlugins.add(artifact);
                 }
             }
         }
         return usedSnapshotPlugins;
     }
 
-    private Set<Artifact> checkDependencies( ReleaseDescriptor releaseDescriptor,
-                                             Map<String, Artifact> artifactMap,
-                                             Set<Artifact> dependencyArtifacts )
-    {
+    private Set<Artifact> checkDependencies(
+            ReleaseDescriptor releaseDescriptor, Map<String, Artifact> artifactMap, Set<Artifact> dependencyArtifacts) {
         Set<Artifact> usedSnapshotDependencies = new HashSet<>();
-        for ( Artifact artifact : dependencyArtifacts )
-        {
-            if ( checkArtifact( artifact, artifactMap, releaseDescriptor ) )
-            {
-                usedSnapshotDependencies.add( getArtifactFromMap( artifact, artifactMap ) );
+        for (Artifact artifact : dependencyArtifacts) {
+            if (checkArtifact(artifact, artifactMap, releaseDescriptor)) {
+                usedSnapshotDependencies.add(getArtifactFromMap(artifact, artifactMap));
             }
         }
         return usedSnapshotDependencies;
     }
 
-    private Set<Artifact> checkReports( ReleaseDescriptor releaseDescriptor,
-                                        Map<String, Artifact> artifactMap, Set<Artifact> reportArtifacts )
-    {
+    private Set<Artifact> checkReports(
+            ReleaseDescriptor releaseDescriptor, Map<String, Artifact> artifactMap, Set<Artifact> reportArtifacts) {
         Set<Artifact> usedSnapshotReports = new HashSet<>();
-        for ( Artifact artifact : reportArtifacts )
-        {
-            if ( checkArtifact( artifact, artifactMap, releaseDescriptor ) )
-            {
-                //snapshotDependencies.add( artifact );
-                usedSnapshotReports.add( artifact );
+        for (Artifact artifact : reportArtifacts) {
+            if (checkArtifact(artifact, artifactMap, releaseDescriptor)) {
+                // snapshotDependencies.add( artifact );
+                usedSnapshotReports.add(artifact);
             }
         }
         return usedSnapshotReports;
     }
 
-    private Set<Artifact> checkExtensions( ReleaseDescriptor releaseDescriptor,
-                                           Map<String, Artifact> artifactMap, Set<Artifact> extensionArtifacts )
-    {
+    private Set<Artifact> checkExtensions(
+            ReleaseDescriptor releaseDescriptor, Map<String, Artifact> artifactMap, Set<Artifact> extensionArtifacts) {
         Set<Artifact> usedSnapshotExtensions = new HashSet<>();
-        for ( Artifact artifact : extensionArtifacts )
-        {
-            if ( checkArtifact( artifact, artifactMap, releaseDescriptor ) )
-            {
-                usedSnapshotExtensions.add( artifact );
+        for (Artifact artifact : extensionArtifacts) {
+            if (checkArtifact(artifact, artifactMap, releaseDescriptor)) {
+                usedSnapshotExtensions.add(artifact);
             }
         }
         return usedSnapshotExtensions;
     }
 
-    private static boolean checkArtifact( Artifact artifact,
-                                          Map<String, Artifact> artifactMapByVersionlessId,
-                                          ReleaseDescriptor releaseDescriptor )
-    {
-        Artifact checkArtifact = getArtifactFromMap( artifact, artifactMapByVersionlessId );
+    private static boolean checkArtifact(
+            Artifact artifact, Map<String, Artifact> artifactMapByVersionlessId, ReleaseDescriptor releaseDescriptor) {
+        Artifact checkArtifact = getArtifactFromMap(artifact, artifactMapByVersionlessId);
 
-        return checkArtifact( checkArtifact, releaseDescriptor );
+        return checkArtifact(checkArtifact, releaseDescriptor);
     }
 
-    private static Artifact getArtifactFromMap( Artifact artifact, Map<String, Artifact> artifactMapByVersionlessId )
-    {
-        String versionlessId = ArtifactUtils.versionlessKey( artifact );
-        Artifact checkArtifact = artifactMapByVersionlessId.get( versionlessId );
+    private static Artifact getArtifactFromMap(Artifact artifact, Map<String, Artifact> artifactMapByVersionlessId) {
+        String versionlessId = ArtifactUtils.versionlessKey(artifact);
+        Artifact checkArtifact = artifactMapByVersionlessId.get(versionlessId);
 
-        if ( checkArtifact == null )
-        {
+        if (checkArtifact == null) {
             checkArtifact = artifact;
         }
         return checkArtifact;
     }
 
-    private static boolean checkArtifact( Artifact artifact, ReleaseDescriptor releaseDescriptor )
-    {
-        String versionlessKey = ArtifactUtils.versionlessKey( artifact.getGroupId(), artifact.getArtifactId() );
-        String releaseDescriptorResolvedVersion = releaseDescriptor.getDependencyReleaseVersion( versionlessKey );
+    private static boolean checkArtifact(Artifact artifact, ReleaseDescriptor releaseDescriptor) {
+        String versionlessKey = ArtifactUtils.versionlessKey(artifact.getGroupId(), artifact.getArtifactId());
+        String releaseDescriptorResolvedVersion = releaseDescriptor.getDependencyReleaseVersion(versionlessKey);
 
         boolean releaseDescriptorResolvedVersionIsSnapshot = releaseDescriptorResolvedVersion == null
-                || releaseDescriptorResolvedVersion.contains( Artifact.SNAPSHOT_VERSION );
+                || releaseDescriptorResolvedVersion.contains(Artifact.SNAPSHOT_VERSION);
 
         // We are only looking at dependencies external to the project - ignore anything found in the reactor as
         // it's version will be updated
         boolean bannedVersion = artifact.isSnapshot()
-                && !artifact.getBaseVersion().equals( releaseDescriptor.getProjectOriginalVersion( versionlessKey ) )
+                && !artifact.getBaseVersion().equals(releaseDescriptor.getProjectOriginalVersion(versionlessKey))
                 && releaseDescriptorResolvedVersionIsSnapshot;
 
         // If we have a snapshot but allowTimestampedSnapshots is true, accept the artifact if the version
         // indicates that it is a timestamped snapshot.
-        if ( bannedVersion && releaseDescriptor.isAllowTimestampedSnapshots() )
-        {
-            bannedVersion = artifact.getVersion().contains( Artifact.SNAPSHOT_VERSION );
+        if (bannedVersion && releaseDescriptor.isAllowTimestampedSnapshots()) {
+            bannedVersion = artifact.getVersion().contains(Artifact.SNAPSHOT_VERSION);
         }
 
         return bannedVersion;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         // It makes no modifications, so simulate is the same as execute
-        return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+        return execute(releaseDescriptor, releaseEnvironment, reactorProjects);
     }
 
-    private void printSnapshotDependencies( Set<Artifact> snapshotsSet, StringBuilder message )
-    {
-        List<Artifact> snapshotsList = new ArrayList<>( snapshotsSet );
+    private void printSnapshotDependencies(Set<Artifact> snapshotsSet, StringBuilder message) {
+        List<Artifact> snapshotsList = new ArrayList<>(snapshotsSet);
 
-        Collections.sort( snapshotsList );
+        Collections.sort(snapshotsList);
 
-        for ( Artifact artifact : snapshotsList )
-        {
-            message.append( "    " );
+        for (Artifact artifact : snapshotsList) {
+            message.append("    ");
 
-            message.append( artifact );
+            message.append(artifact);
 
-            message.append( "\n" );
+            message.append("\n");
         }
     }
 
-    private void resolveSnapshots( Set<Artifact> projectDependencies, Set<Artifact> reportDependencies,
-                                   Set<Artifact> extensionDependencies, Set<Artifact> pluginDependencies,
-                                   ReleaseDescriptor releaseDescriptor )
-            throws ReleaseExecutionException
-    {
-        try
-        {
+    private void resolveSnapshots(
+            Set<Artifact> projectDependencies,
+            Set<Artifact> reportDependencies,
+            Set<Artifact> extensionDependencies,
+            Set<Artifact> pluginDependencies,
+            ReleaseDescriptor releaseDescriptor)
+            throws ReleaseExecutionException {
+        try {
             String autoResolveSnapshots = releaseDescriptor.getAutoResolveSnapshots();
-            if ( resolveSnapshot == null )
-            {
-                prompter.get().showMessage( RESOLVE_SNAPSHOT_MESSAGE );
-                if ( autoResolveSnapshots != null )
-                {
+            if (resolveSnapshot == null) {
+                prompter.get().showMessage(RESOLVE_SNAPSHOT_MESSAGE);
+                if (autoResolveSnapshots != null) {
                     resolveSnapshot = "yes";
-                    prompter.get().showMessage( RESOLVE_SNAPSHOT_PROMPT + " " + resolveSnapshot );
-                }
-                else
-                {
-                    resolveSnapshot =
-                            prompter.get().prompt( RESOLVE_SNAPSHOT_PROMPT, Arrays.asList( "yes", "no" ), "no" );
+                    prompter.get().showMessage(RESOLVE_SNAPSHOT_PROMPT + " " + resolveSnapshot);
+                } else {
+                    resolveSnapshot = prompter.get().prompt(RESOLVE_SNAPSHOT_PROMPT, Arrays.asList("yes", "no"), "no");
                 }
             }
 
-            if ( resolveSnapshot.toLowerCase( Locale.ENGLISH ).startsWith( "y" ) )
-            {
-                if ( resolveSnapshotType == null )
-                {
-                    prompter.get().showMessage( RESOLVE_SNAPSHOT_TYPE_MESSAGE );
+            if (resolveSnapshot.toLowerCase(Locale.ENGLISH).startsWith("y")) {
+                if (resolveSnapshotType == null) {
+                    prompter.get().showMessage(RESOLVE_SNAPSHOT_TYPE_MESSAGE);
                     int defaultAnswer = -1;
-                    if ( autoResolveSnapshots != null )
-                    {
-                        if ( "all".equalsIgnoreCase( autoResolveSnapshots ) )
-                        {
+                    if (autoResolveSnapshots != null) {
+                        if ("all".equalsIgnoreCase(autoResolveSnapshots)) {
                             defaultAnswer = 0;
-                        }
-                        else if ( "dependencies".equalsIgnoreCase( autoResolveSnapshots ) )
-                        {
+                        } else if ("dependencies".equalsIgnoreCase(autoResolveSnapshots)) {
                             defaultAnswer = 1;
-                        }
-                        else if ( "plugins".equalsIgnoreCase( autoResolveSnapshots ) )
-                        {
+                        } else if ("plugins".equalsIgnoreCase(autoResolveSnapshots)) {
                             defaultAnswer = 2;
-                        }
-                        else if ( "reports".equalsIgnoreCase( autoResolveSnapshots ) )
-                        {
+                        } else if ("reports".equalsIgnoreCase(autoResolveSnapshots)) {
                             defaultAnswer = 3;
-                        }
-                        else if ( "extensions".equalsIgnoreCase( autoResolveSnapshots ) )
-                        {
+                        } else if ("extensions".equalsIgnoreCase(autoResolveSnapshots)) {
                             defaultAnswer = 4;
-                        }
-                        else
-                        {
-                            try
-                            {
-                                defaultAnswer = Integer.parseInt( autoResolveSnapshots );
-                            }
-                            catch ( NumberFormatException e )
-                            {
-                                throw new ReleaseExecutionException( e.getMessage(), e );
+                        } else {
+                            try {
+                                defaultAnswer = Integer.parseInt(autoResolveSnapshots);
+                            } catch (NumberFormatException e) {
+                                throw new ReleaseExecutionException(e.getMessage(), e);
                             }
                         }
                     }
-                    if ( defaultAnswer >= 0 && defaultAnswer <= 4 )
-                    {
-                        prompter.get().showMessage( RESOLVE_SNAPSHOT_TYPE_PROMPT + " " + autoResolveSnapshots );
-                        resolveSnapshotType = Integer.toString( defaultAnswer );
-                    }
-                    else
-                    {
-                        resolveSnapshotType =
-                                prompter.get()
-                                        .prompt( RESOLVE_SNAPSHOT_TYPE_PROMPT, Arrays.asList( "0", "1", "2", "3" ),
-                                                "1" );
+                    if (defaultAnswer >= 0 && defaultAnswer <= 4) {
+                        prompter.get().showMessage(RESOLVE_SNAPSHOT_TYPE_PROMPT + " " + autoResolveSnapshots);
+                        resolveSnapshotType = Integer.toString(defaultAnswer);
+                    } else {
+                        resolveSnapshotType = prompter.get()
+                                .prompt(RESOLVE_SNAPSHOT_TYPE_PROMPT, Arrays.asList("0", "1", "2", "3"), "1");
                     }
                 }
 
-                switch ( Integer.parseInt( resolveSnapshotType.toLowerCase( Locale.ENGLISH ) ) )
-                {
-                    // all
+                switch (Integer.parseInt(resolveSnapshotType.toLowerCase(Locale.ENGLISH))) {
+                        // all
                     case 0:
-                        processSnapshot( projectDependencies, releaseDescriptor, autoResolveSnapshots );
-                        processSnapshot( pluginDependencies, releaseDescriptor, autoResolveSnapshots );
-                        processSnapshot( reportDependencies, releaseDescriptor, autoResolveSnapshots );
-                        processSnapshot( extensionDependencies, releaseDescriptor, autoResolveSnapshots );
+                        processSnapshot(projectDependencies, releaseDescriptor, autoResolveSnapshots);
+                        processSnapshot(pluginDependencies, releaseDescriptor, autoResolveSnapshots);
+                        processSnapshot(reportDependencies, releaseDescriptor, autoResolveSnapshots);
+                        processSnapshot(extensionDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
-                    // project dependencies
+                        // project dependencies
                     case 1:
-                        processSnapshot( projectDependencies, releaseDescriptor, autoResolveSnapshots );
+                        processSnapshot(projectDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
-                    // plugins
+                        // plugins
                     case 2:
-                        processSnapshot( pluginDependencies, releaseDescriptor, autoResolveSnapshots );
+                        processSnapshot(pluginDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
-                    // reports
+                        // reports
                     case 3:
-                        processSnapshot( reportDependencies, releaseDescriptor, autoResolveSnapshots );
+                        processSnapshot(reportDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
-                    // extensions
+                        // extensions
                     case 4:
-                        processSnapshot( extensionDependencies, releaseDescriptor, autoResolveSnapshots );
+                        processSnapshot(extensionDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
                     default:
                 }
             }
-        }
-        catch ( PrompterException | VersionParseException e )
-        {
-            throw new ReleaseExecutionException( e.getMessage(), e );
+        } catch (PrompterException | VersionParseException e) {
+            throw new ReleaseExecutionException(e.getMessage(), e);
         }
     }
 
-    private void processSnapshot( Set<Artifact> snapshotSet, ReleaseDescriptor releaseDescriptor,
-                                  String autoResolveSnapshots )
-            throws PrompterException, VersionParseException
-    {
+    private void processSnapshot(
+            Set<Artifact> snapshotSet, ReleaseDescriptor releaseDescriptor, String autoResolveSnapshots)
+            throws PrompterException, VersionParseException {
         Iterator<Artifact> iterator = snapshotSet.iterator();
 
-        while ( iterator.hasNext() )
-        {
+        while (iterator.hasNext()) {
             Artifact currentArtifact = iterator.next();
-            String versionlessKey = ArtifactUtils.versionlessKey( currentArtifact );
+            String versionlessKey = ArtifactUtils.versionlessKey(currentArtifact);
 
-            VersionInfo versionInfo = new DefaultVersionInfo( currentArtifact.getBaseVersion() );
-            releaseDescriptor.addDependencyOriginalVersion( versionlessKey, versionInfo.toString() );
+            VersionInfo versionInfo = new DefaultVersionInfo(currentArtifact.getBaseVersion());
+            releaseDescriptor.addDependencyOriginalVersion(versionlessKey, versionInfo.toString());
 
-            prompter.get().showMessage(
-                    "Dependency '" + versionlessKey + "' is a snapshot (" + currentArtifact.getVersion() + ")\n" );
+            prompter.get()
+                    .showMessage("Dependency '" + versionlessKey + "' is a snapshot (" + currentArtifact.getVersion()
+                            + ")\n");
             String message = "Which release version should it be set to?";
             String result;
-            if ( null != autoResolveSnapshots )
-            {
+            if (null != autoResolveSnapshots) {
                 result = versionInfo.getReleaseVersionString();
-                prompter.get().showMessage( message + " " + result );
-            }
-            else
-            {
-                result = prompter.get().prompt( message, versionInfo.getReleaseVersionString() );
+                prompter.get().showMessage(message + " " + result);
+            } else {
+                result = prompter.get().prompt(message, versionInfo.getReleaseVersionString());
             }
 
-            releaseDescriptor.addDependencyReleaseVersion( versionlessKey, result );
+            releaseDescriptor.addDependencyReleaseVersion(versionlessKey, result);
 
             iterator.remove();
 
             // by default, keep the same version for the dependency after release, unless it was previously newer
             // the user may opt to type in something different
-            VersionInfo nextVersionInfo = new DefaultVersionInfo( result );
+            VersionInfo nextVersionInfo = new DefaultVersionInfo(result);
 
             String nextVersion;
-            if ( nextVersionInfo.compareTo( versionInfo ) > 0 )
-            {
+            if (nextVersionInfo.compareTo(versionInfo) > 0) {
                 nextVersion = nextVersionInfo.toString();
-            }
-            else
-            {
+            } else {
                 nextVersion = versionInfo.toString();
             }
 
             message = "What version should the dependency be reset to for development?";
-            if ( null != autoResolveSnapshots )
-            {
+            if (null != autoResolveSnapshots) {
                 result = nextVersion;
-                prompter.get().showMessage( message + " " + result );
-            }
-            else
-            {
-                result = prompter.get().prompt( message, nextVersion );
+                prompter.get().showMessage(message + " " + result);
+            } else {
+                result = prompter.get().prompt(message, nextVersion);
             }
 
-            releaseDescriptor.addDependencyDevelopmentVersion( versionlessKey, result );
+            releaseDescriptor.addDependencyDevelopmentVersion(versionlessKey, result);
         }
     }
 }

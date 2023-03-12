@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,14 +30,13 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "scm-commit-development" )
-public class ScmCommitDevelopmentPhase
-        extends AbstractScmCommitDevelopmentPhase
-{
+@Named("scm-commit-development")
+public class ScmCommitDevelopmentPhase extends AbstractScmCommitDevelopmentPhase {
     @Inject
-    public ScmCommitDevelopmentPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
-    {
-        super( scmRepositoryConfigurator, "getScmDevelopmentCommitComment",
-                "rollback changes from release preparation of {0}" );
+    public ScmCommitDevelopmentPhase(ScmRepositoryConfigurator scmRepositoryConfigurator) {
+        super(
+                scmRepositoryConfigurator,
+                "getScmDevelopmentCommitComment",
+                "rollback changes from release preparation of {0}");
     }
 }

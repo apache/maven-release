@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -48,70 +47,57 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "rewrite-poms-for-release" )
-public class RewritePomsForReleasePhase
-        extends AbstractRewritePomsPhase
-{
+@Named("rewrite-poms-for-release")
+public class RewritePomsForReleasePhase extends AbstractRewritePomsPhase {
     @Inject
     public RewritePomsForReleasePhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator,
             Map<String, ModelETLFactory> modelETLFactories,
-            Map<String, ScmTranslator> scmTranslators )
-    {
-        super( scmRepositoryConfigurator, modelETLFactories, scmTranslators );
+            Map<String, ScmTranslator> scmTranslators) {
+        super(scmRepositoryConfigurator, modelETLFactories, scmTranslators);
     }
 
     @Override
-    protected final String getPomSuffix()
-    {
+    protected final String getPomSuffix() {
         return "tag";
     }
 
     @Override
-    protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                 String projectId, ScmRepository scmRepository, ReleaseResult result )
-            throws ReleaseExecutionException
-    {
+    protected void transformScm(
+            MavenProject project,
+            Model modelTarget,
+            ReleaseDescriptor releaseDescriptor,
+            String projectId,
+            ScmRepository scmRepository,
+            ReleaseResult result)
+            throws ReleaseExecutionException {
         // If SCM is null in original model, it is inherited, no mods needed
-        if ( project.getScm() != null )
-        {
+        if (project.getScm() != null) {
             Scm scmRoot = modelTarget.getScm();
-            if ( scmRoot != null )
-            {
-                try
-                {
-                    translateScm( project, releaseDescriptor, scmRoot, scmRepository, result );
+            if (scmRoot != null) {
+                try {
+                    translateScm(project, releaseDescriptor, scmRoot, scmRepository, result);
+                } catch (IOException e) {
+                    throw new ReleaseExecutionException(e.getMessage(), e);
                 }
-                catch ( IOException e )
-                {
-                    throw new ReleaseExecutionException( e.getMessage(), e );
-                }
-            }
-            else
-            {
+            } else {
                 MavenProject parent = project.getParent();
-                if ( parent != null )
-                {
+                if (parent != null) {
                     // If the SCM element is not present, only add it if the parent was not mapped (ie, it's external to
                     // the release process and so has not been modified, so the values will not be correct on the tag),
-                    String parentId = ArtifactUtils.versionlessKey( parent.getGroupId(), parent.getArtifactId() );
-                    if ( !releaseDescriptor.hasOriginalScmInfo( parentId ) )
-                    {
+                    String parentId = ArtifactUtils.versionlessKey(parent.getGroupId(), parent.getArtifactId());
+                    if (!releaseDescriptor.hasOriginalScmInfo(parentId)) {
                         // we need to add it, since it has changed from the inherited value
                         Scm scmTarget = new Scm();
                         // reset default value (HEAD)
-                        scmTarget.setTag( null );
+                        scmTarget.setTag(null);
 
-                        try
-                        {
-                            if ( translateScm( project, releaseDescriptor, scmTarget, scmRepository, result ) )
-                            {
-                                modelTarget.setScm( scmTarget );
+                        try {
+                            if (translateScm(project, releaseDescriptor, scmTarget, scmRepository, result)) {
+                                modelTarget.setScm(scmTarget);
                             }
-                        }
-                        catch ( IOException e )
-                        {
-                            throw new ReleaseExecutionException( e.getMessage(), e );
+                        } catch (IOException e) {
+                            throw new ReleaseExecutionException(e.getMessage(), e);
                         }
                     }
                 }
@@ -119,17 +105,18 @@ public class RewritePomsForReleasePhase
         }
     }
 
-    private boolean translateScm( MavenProject project, ReleaseDescriptor releaseDescriptor, Scm scmTarget,
-                                  ScmRepository scmRepository, ReleaseResult relResult )
-            throws IOException
-    {
-        ScmTranslator translator = getScmTranslators().get( scmRepository.getProvider() );
+    private boolean translateScm(
+            MavenProject project,
+            ReleaseDescriptor releaseDescriptor,
+            Scm scmTarget,
+            ScmRepository scmRepository,
+            ReleaseResult relResult)
+            throws IOException {
+        ScmTranslator translator = getScmTranslators().get(scmRepository.getProvider());
         boolean result = false;
-        if ( translator != null )
-        {
+        if (translator != null) {
             Scm scm = project.getOriginalModel().getScm();
-            if ( scm == null )
-            {
+            if (scm == null) {
                 scm = project.getScm();
             }
 
@@ -137,132 +124,108 @@ public class RewritePomsForReleasePhase
             String tagBase = releaseDescriptor.getScmTagBase();
 
             // TODO: svn utils should take care of prepending this
-            if ( tagBase != null )
-            {
+            if (tagBase != null) {
                 tagBase = "scm:svn:" + tagBase;
             }
 
-            Path projectBasedir = project.getBasedir().toPath().toRealPath( LinkOption.NOFOLLOW_LINKS );
-            Path workingDirectory = Paths.get( releaseDescriptor.getWorkingDirectory() );
+            Path projectBasedir = project.getBasedir().toPath().toRealPath(LinkOption.NOFOLLOW_LINKS);
+            Path workingDirectory = Paths.get(releaseDescriptor.getWorkingDirectory());
 
-            int count = ReleaseUtil.getBaseWorkingDirectoryParentCount( workingDirectory, projectBasedir );
+            int count = ReleaseUtil.getBaseWorkingDirectoryParentCount(workingDirectory, projectBasedir);
 
-            if ( scm.getConnection() != null )
-            {
-                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getConnection() );
+            if (scm.getConnection() != null) {
+                String rootUrl = ReleaseUtil.realignScmUrl(count, scm.getConnection());
 
-                String subDirectoryTag = scm.getConnection().substring( rootUrl.length() );
-                if ( !subDirectoryTag.startsWith( "/" ) )
-                {
+                String subDirectoryTag = scm.getConnection().substring(rootUrl.length());
+                if (!subDirectoryTag.startsWith("/")) {
                     subDirectoryTag = "/" + subDirectoryTag;
                 }
 
                 String scmConnectionTag = tagBase;
-                if ( scmConnectionTag != null )
-                {
+                if (scmConnectionTag != null) {
                     String trunkUrl = scm.getDeveloperConnection();
-                    if ( trunkUrl == null )
-                    {
+                    if (trunkUrl == null) {
                         trunkUrl = scm.getConnection();
                     }
-                    scmConnectionTag = translateUrlPath( trunkUrl, tagBase, scm.getConnection() );
+                    scmConnectionTag = translateUrlPath(trunkUrl, tagBase, scm.getConnection());
                 }
-                String value =
-                        translator.translateTagUrl( scm.getConnection(), tag + subDirectoryTag, scmConnectionTag );
+                String value = translator.translateTagUrl(scm.getConnection(), tag + subDirectoryTag, scmConnectionTag);
 
-                if ( !value.equals( scm.getConnection() ) )
-                {
-                    scmTarget.setConnection( value );
+                if (!value.equals(scm.getConnection())) {
+                    scmTarget.setConnection(value);
                     result = true;
                 }
             }
 
-            if ( scm.getDeveloperConnection() != null )
-            {
-                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getDeveloperConnection() );
+            if (scm.getDeveloperConnection() != null) {
+                String rootUrl = ReleaseUtil.realignScmUrl(count, scm.getDeveloperConnection());
 
-                String subDirectoryTag = scm.getDeveloperConnection().substring( rootUrl.length() );
-                if ( !subDirectoryTag.startsWith( "/" ) )
-                {
+                String subDirectoryTag = scm.getDeveloperConnection().substring(rootUrl.length());
+                if (!subDirectoryTag.startsWith("/")) {
                     subDirectoryTag = "/" + subDirectoryTag;
                 }
 
-                String value =
-                        translator.translateTagUrl( scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase );
+                String value = translator.translateTagUrl(scm.getDeveloperConnection(), tag + subDirectoryTag, tagBase);
 
-                if ( !value.equals( scm.getDeveloperConnection() ) )
-                {
-                    scmTarget.setDeveloperConnection( value );
+                if (!value.equals(scm.getDeveloperConnection())) {
+                    scmTarget.setDeveloperConnection(value);
                     result = true;
                 }
             }
 
-            if ( scm.getUrl() != null )
-            {
-                String rootUrl = ReleaseUtil.realignScmUrl( count, scm.getUrl() );
+            if (scm.getUrl() != null) {
+                String rootUrl = ReleaseUtil.realignScmUrl(count, scm.getUrl());
 
-                String subDirectoryTag = scm.getUrl().substring( rootUrl.length() );
-                if ( !subDirectoryTag.startsWith( "/" ) )
-                {
+                String subDirectoryTag = scm.getUrl().substring(rootUrl.length());
+                if (!subDirectoryTag.startsWith("/")) {
                     subDirectoryTag = "/" + subDirectoryTag;
                 }
 
                 String tagScmUrl = tagBase;
-                if ( tagScmUrl != null )
-                {
+                if (tagScmUrl != null) {
                     String trunkUrl = scm.getDeveloperConnection();
-                    if ( trunkUrl == null )
-                    {
+                    if (trunkUrl == null) {
                         trunkUrl = scm.getConnection();
                     }
-                    tagScmUrl = translateUrlPath( trunkUrl, tagBase, scm.getUrl() );
+                    tagScmUrl = translateUrlPath(trunkUrl, tagBase, scm.getUrl());
                 }
                 // use original tag base without protocol
-                String value = translator.translateTagUrl( scm.getUrl(), tag + subDirectoryTag, tagScmUrl );
-                if ( !value.equals( scm.getUrl() ) )
-                {
-                    scmTarget.setUrl( value );
+                String value = translator.translateTagUrl(scm.getUrl(), tag + subDirectoryTag, tagScmUrl);
+                if (!value.equals(scm.getUrl())) {
+                    scmTarget.setUrl(value);
                     result = true;
                 }
             }
 
-            if ( tag != null )
-            {
-                String value = translator.resolveTag( tag );
-                if ( value != null && !value.equals( scm.getTag() ) )
-                {
-                    scmTarget.setTag( value );
+            if (tag != null) {
+                String value = translator.resolveTag(tag);
+                if (value != null && !value.equals(scm.getTag())) {
+                    scmTarget.setTag(value);
                     result = true;
                 }
             }
-        }
-        else
-        {
+        } else {
             String message = "No SCM translator found - skipping rewrite";
 
-            relResult.appendDebug( message );
+            relResult.appendDebug(message);
 
-            getLogger().debug( message );
+            getLogger().debug(message);
         }
         return result;
     }
 
     @Override
-    protected String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate )
-    {
-        return releaseDescriptor.getProjectOriginalVersion( projectKey );
+    protected String getOriginalVersion(ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate) {
+        return releaseDescriptor.getProjectOriginalVersion(projectKey);
     }
 
     @Override
-    protected String getNextVersion( ReleaseDescriptor releaseDescriptor, String key )
-    {
-        return releaseDescriptor.getProjectReleaseVersion( key );
+    protected String getNextVersion(ReleaseDescriptor releaseDescriptor, String key) {
+        return releaseDescriptor.getProjectReleaseVersion(key);
     }
 
     @Override
-    protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                 ReleaseDescriptor releaseDescriptor )
-    {
-        return releaseDescriptor.getDependencyReleaseVersion( artifactVersionlessKey );
+    protected String getResolvedSnapshotVersion(String artifactVersionlessKey, ReleaseDescriptor releaseDescriptor) {
+        return releaseDescriptor.getDependencyReleaseVersion(artifactVersionlessKey);
     }
 }

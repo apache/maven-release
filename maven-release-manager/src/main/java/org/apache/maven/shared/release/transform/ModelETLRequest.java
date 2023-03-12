@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
@@ -28,8 +27,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
  * @author Robert Scholte
  * @since 3.0
  */
-public class ModelETLRequest
-{
+public class ModelETLRequest {
 
     private MavenProject project;
 
@@ -40,8 +38,7 @@ public class ModelETLRequest
      *
      * @return a {@link java.lang.String} object
      */
-    public String getLineSeparator()
-    {
+    public String getLineSeparator() {
         return releaseDescriptor.getLineSeparator();
     }
 
@@ -50,8 +47,7 @@ public class ModelETLRequest
      *
      * @return a {@link org.apache.maven.project.MavenProject} object
      */
-    public MavenProject getProject()
-    {
+    public MavenProject getProject() {
         return project;
     }
 
@@ -60,8 +56,7 @@ public class ModelETLRequest
      *
      * @param project a {@link org.apache.maven.project.MavenProject} object
      */
-    public void setProject( MavenProject project )
-    {
+    public void setProject(MavenProject project) {
         this.project = project;
     }
 
@@ -70,8 +65,7 @@ public class ModelETLRequest
      *
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
      */
-    public ReleaseDescriptor getReleaseDescriptor()
-    {
+    public ReleaseDescriptor getReleaseDescriptor() {
         return releaseDescriptor;
     }
 
@@ -80,8 +74,7 @@ public class ModelETLRequest
      *
      * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
      */
-    public void setReleaseDescriptor( ReleaseDescriptor releaseDescriptor )
-    {
+    public void setReleaseDescriptor(ReleaseDescriptor releaseDescriptor) {
         this.releaseDescriptor = releaseDescriptor;
     }
 }

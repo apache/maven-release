@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policies;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.policies;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policies;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -35,12 +34,9 @@ import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
  */
 @Singleton
 @Named
-public class DefaultNamingPolicy implements NamingPolicy
-{
+public class DefaultNamingPolicy implements NamingPolicy {
     @Override
-    public NamingPolicyResult getName( NamingPolicyRequest request )
-            throws PolicyException
-    {
-        return new NamingPolicyResult().setName( request.getArtifactId() + "-" + request.getVersion() );
+    public NamingPolicyResult getName(NamingPolicyRequest request) throws PolicyException {
+        return new NamingPolicyResult().setName(request.getArtifactId() + "-" + request.getVersion());
     }
 }

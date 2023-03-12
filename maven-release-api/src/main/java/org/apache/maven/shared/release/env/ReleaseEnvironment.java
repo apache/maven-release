@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.env;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.env;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.env;
 
 import java.io.File;
 
@@ -27,8 +26,7 @@ import org.apache.maven.settings.Settings;
  * <p>ReleaseEnvironment interface.</p>
  *
  */
-public interface ReleaseEnvironment
-{
+public interface ReleaseEnvironment {
 
     /** Constant <code>DEFAULT_MAVEN_EXECUTOR_ID="forked-path"</code> */
     String DEFAULT_MAVEN_EXECUTOR_ID = "forked-path";

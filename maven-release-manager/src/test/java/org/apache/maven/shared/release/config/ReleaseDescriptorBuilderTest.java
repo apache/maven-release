@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.config;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.config;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -31,32 +30,29 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
 
-public class ReleaseDescriptorBuilderTest
-{
-    private final Logger logger = Mockito.mock( Logger.class );
+public class ReleaseDescriptorBuilderTest {
+    private final Logger logger = Mockito.mock(Logger.class);
 
     @Test
-    public void testCleanupArguments()
-    {
-        setAdditionalArguments( "abc abc -Dxxx",  "abc abc -Dxxx");
-        verifyZeroInteractions( logger );
-        reset( logger );
+    public void testCleanupArguments() {
+        setAdditionalArguments("abc abc -Dxxx", "abc abc -Dxxx");
+        verifyZeroInteractions(logger);
+        reset(logger);
 
-        setAdditionalArguments( "abc abc ${arguments}", "abc abc " );
-        verify( logger ).warn( anyString(), eq( "${arguments}" ) );
-        verifyNoMoreInteractions( logger );
-        reset( logger );
+        setAdditionalArguments("abc abc ${arguments}", "abc abc ");
+        verify(logger).warn(anyString(), eq("${arguments}"));
+        verifyNoMoreInteractions(logger);
+        reset(logger);
 
-        setAdditionalArguments( "abc ${first} abc ${arguments}", "abc  abc " );
-        verify( logger ).warn( anyString(), eq( "${first}" ) );
-        verify( logger ).warn( anyString(), eq( "${arguments}" ) );
-        verifyNoMoreInteractions( logger );
+        setAdditionalArguments("abc ${first} abc ${arguments}", "abc  abc ");
+        verify(logger).warn(anyString(), eq("${first}"));
+        verify(logger).warn(anyString(), eq("${arguments}"));
+        verifyNoMoreInteractions(logger);
     }
 
-    private void setAdditionalArguments(String input, String expected)
-    {
-        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder( logger );
-        builder.setAdditionalArguments( input );
-        assertEquals( expected, builder.build().getAdditionalArguments() );
+    private void setAdditionalArguments(String input, String expected) {
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder(logger);
+        builder.setAdditionalArguments(input);
+        assertEquals(expected, builder.build().getAdditionalArguments());
     }
 }

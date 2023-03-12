@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.release;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import java.util.Map;
 
@@ -37,25 +36,23 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * @author Robert Scholte
  */
 // Extra layer since 2.4. Don't use @since doclet, these would be inherited by the subclasses
-public abstract class AbstractScmReleaseMojo
-    extends AbstractReleaseMojo
-{
+public abstract class AbstractScmReleaseMojo extends AbstractReleaseMojo {
     /**
      * The SCM username to use.
      */
-    @Parameter( property = "username" )
+    @Parameter(property = "username")
     private String username;
 
     /**
      * The SCM password to use.
      */
-    @Parameter( property = "password" )
+    @Parameter(property = "password")
     private String password;
 
     /**
      * The SCM tag to use.
      */
-    @Parameter( alias = "releaseLabel", property = "tag" )
+    @Parameter(alias = "releaseLabel", property = "tag")
     private String tag;
 
     /**
@@ -70,7 +67,7 @@ public abstract class AbstractScmReleaseMojo
      *
      * @since 2.2.0
      */
-    @Parameter( defaultValue = "@{project.artifactId}-@{project.version}", property = "tagNameFormat" )
+    @Parameter(defaultValue = "@{project.artifactId}-@{project.version}", property = "tagNameFormat")
     private String tagNameFormat;
 
     /**
@@ -78,7 +75,7 @@ public abstract class AbstractScmReleaseMojo
      * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/tags</code>. The URL is an SVN URL and does not
      * include the SCM provider and protocol.
      */
-    @Parameter( property = "tagBase" )
+    @Parameter(property = "tagBase")
     private String tagBase;
 
     /**
@@ -86,13 +83,13 @@ public abstract class AbstractScmReleaseMojo
      *
      * @since 2.0-beta-5
      */
-    @Parameter( defaultValue = "[maven-release-plugin] ", property = "scmCommentPrefix" )
+    @Parameter(defaultValue = "[maven-release-plugin] ", property = "scmCommentPrefix")
     private String scmCommentPrefix;
 
     /**
      * When cloning a repository if it should be a shallow clone or a full clone.
      */
-    @Parameter( defaultValue = "true", property = "scmShallowClone" )
+    @Parameter(defaultValue = "true", property = "scmShallowClone")
     private boolean scmShallowClone = true;
 
     /**
@@ -100,7 +97,7 @@ public abstract class AbstractScmReleaseMojo
      * <code>true</code> by default to preserve backward compatibility.
      * @since 2.1
      */
-    @Parameter( defaultValue = "true", property = "pushChanges" )
+    @Parameter(defaultValue = "true", property = "pushChanges")
     private boolean pushChanges = true;
 
     /**
@@ -109,11 +106,11 @@ public abstract class AbstractScmReleaseMojo
      *
      * @since 3.0.0-M5
      */
-    @Parameter( property = "workItem" )
+    @Parameter(property = "workItem")
     private String workItem;
 
     /**
-     * Add a new or overwrite the default implementation per provider. 
+     * Add a new or overwrite the default implementation per provider.
      * The key is the scm prefix and the value is the role hint of the
      * {@link org.apache.maven.scm.provider.ScmProvider}.
      *
@@ -130,85 +127,70 @@ public abstract class AbstractScmReleaseMojo
     private ScmManager scmManager;
 
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
-        if ( providerImplementations != null )
-        {
-            for ( Map.Entry<String, String> providerEntry : providerImplementations.entrySet() )
-            {
-                getLog().info( "Change the default '" + providerEntry.getKey() + "' provider implementation to '"
-                    + providerEntry.getValue() + "'." );
-                scmManager.setScmProviderImplementation( providerEntry.getKey(), providerEntry.getValue() );
+    public void execute() throws MojoExecutionException, MojoFailureException {
+        if (providerImplementations != null) {
+            for (Map.Entry<String, String> providerEntry : providerImplementations.entrySet()) {
+                getLog().info("Change the default '" + providerEntry.getKey() + "' provider implementation to '"
+                        + providerEntry.getValue() + "'.");
+                scmManager.setScmProviderImplementation(providerEntry.getKey(), providerEntry.getValue());
             }
         }
     }
 
     @Override
-    protected ReleaseDescriptorBuilder createReleaseDescriptor()
-    {
+    protected ReleaseDescriptorBuilder createReleaseDescriptor() {
         ReleaseDescriptorBuilder descriptor = super.createReleaseDescriptor();
 
-        descriptor.setScmPassword( password );
-        descriptor.setScmReleaseLabel( tag );
-        descriptor.setScmTagNameFormat( tagNameFormat );
-        descriptor.setScmTagBase( tagBase );
-        descriptor.setScmUsername( username );
-        descriptor.setScmCommentPrefix( scmCommentPrefix );
-        descriptor.setScmShallowClone( scmShallowClone );
+        descriptor.setScmPassword(password);
+        descriptor.setScmReleaseLabel(tag);
+        descriptor.setScmTagNameFormat(tagNameFormat);
+        descriptor.setScmTagBase(tagBase);
+        descriptor.setScmUsername(username);
+        descriptor.setScmCommentPrefix(scmCommentPrefix);
+        descriptor.setScmShallowClone(scmShallowClone);
 
-        descriptor.setPushChanges( pushChanges );
-        descriptor.setWorkItem( workItem );
-        
-        if ( project.getScm() != null )
-        {
-            if ( project.getScm().getDeveloperConnection() != null )
-            {
-                descriptor.setScmSourceUrl( project.getScm().getDeveloperConnection() );
-            }
-            else if ( project.getScm().getConnection() != null )
-            {
-                descriptor.setScmSourceUrl( project.getScm().getConnection() );
+        descriptor.setPushChanges(pushChanges);
+        descriptor.setWorkItem(workItem);
+
+        if (project.getScm() != null) {
+            if (project.getScm().getDeveloperConnection() != null) {
+                descriptor.setScmSourceUrl(project.getScm().getDeveloperConnection());
+            } else if (project.getScm().getConnection() != null) {
+                descriptor.setScmSourceUrl(project.getScm().getConnection());
             }
         }
-        
+
         // As long as Scm.getId() does not exist, read it as a property
-        descriptor.setScmId( project.getProperties().getProperty( "project.scm.id" ) );
-        
-        for ( MavenProject reactorProject : session.getProjects() )
-        {
-            if ( reactorProject.getScm() != null )
-            {
+        descriptor.setScmId(project.getProperties().getProperty("project.scm.id"));
+
+        for (MavenProject reactorProject : session.getProjects()) {
+            if (reactorProject.getScm() != null) {
                 String projectId =
-                    ArtifactUtils.versionlessKey( reactorProject.getGroupId(), reactorProject.getArtifactId() );
-                
-                descriptor.addOriginalScmInfo( projectId, buildScm( reactorProject ) );
+                        ArtifactUtils.versionlessKey(reactorProject.getGroupId(), reactorProject.getArtifactId());
+
+                descriptor.addOriginalScmInfo(projectId, buildScm(reactorProject));
             }
         }
 
         return descriptor;
     }
-    
+
     /**
      * <p>buildScm.</p>
      *
      * @param project a {@link org.apache.maven.project.MavenProject} object
      * @return a {@link org.apache.maven.model.Scm} object
      */
-    protected Scm buildScm( MavenProject project )
-    {
+    protected Scm buildScm(MavenProject project) {
         Scm scm;
-        if ( project.getOriginalModel().getScm() == null )
-        {
+        if (project.getOriginalModel().getScm() == null) {
             scm = null;
-        }
-        else
-        {
+        } else {
             scm = new Scm();
-            scm.setConnection( project.getOriginalModel().getScm().getConnection() );
-            scm.setDeveloperConnection( project.getOriginalModel().getScm().getDeveloperConnection() );
-            scm.setTag( project.getOriginalModel().getScm().getTag() );
-            scm.setUrl( project.getOriginalModel().getScm().getUrl() );
+            scm.setConnection(project.getOriginalModel().getScm().getConnection());
+            scm.setDeveloperConnection(project.getOriginalModel().getScm().getDeveloperConnection());
+            scm.setTag(project.getOriginalModel().getScm().getTag());
+            scm.setUrl(project.getOriginalModel().getScm().getUrl());
         }
         return scm;
     }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.versions;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,55 +16,44 @@ package org.apache.maven.shared.release.versions;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.versions;
 
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 
-class MavenArtifactVersion
-    implements Comparable<MavenArtifactVersion>
-{
+class MavenArtifactVersion implements Comparable<MavenArtifactVersion> {
     private final ArtifactVersion version;
 
-    MavenArtifactVersion( String version )
-    {
-        this.version = new DefaultArtifactVersion( version );
+    MavenArtifactVersion(String version) {
+        this.version = new DefaultArtifactVersion(version);
     }
 
-    public int compareTo( MavenArtifactVersion o )
-    {
-        return version.compareTo( o.version );
+    public int compareTo(MavenArtifactVersion o) {
+        return version.compareTo(o.version);
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.version.toString();
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return this.version.hashCode();
     }
-    
+
     @Override
-    public boolean equals( Object other )
-    {
-        if ( this == other )
-        {
+    public boolean equals(Object other) {
+        if (this == other) {
             return true;
         }
-        if ( other == null )
-        {
+        if (other == null) {
             return false;
         }
 
-        if ( other instanceof MavenArtifactVersion )
-        {
-            return version.equals( ( (MavenArtifactVersion) other ).version );
+        if (other instanceof MavenArtifactVersion) {
+            return version.equals(((MavenArtifactVersion) other).version);
         }
         return false;
     }
-
-    
 }

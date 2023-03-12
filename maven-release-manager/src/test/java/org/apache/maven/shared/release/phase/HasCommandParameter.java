@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.scm.CommandParameter;
 import org.apache.maven.scm.CommandParameters;
@@ -29,32 +28,24 @@ import org.mockito.ArgumentMatcher;
  *
  * @author <a href="mailto:michael@bigmichi1.de">Michael Cramer</a>
  */
-public class HasCommandParameter implements ArgumentMatcher<CommandParameters>
-{
+public class HasCommandParameter implements ArgumentMatcher<CommandParameters> {
     private final CommandParameter commandParameter;
 
     private final Object expected;
 
-    public HasCommandParameter( CommandParameter commandParameter, Object expected )
-    {
+    public HasCommandParameter(CommandParameter commandParameter, Object expected) {
         this.commandParameter = commandParameter;
         this.expected = expected;
     }
 
     @Override
-    public boolean matches( CommandParameters argument )
-    {
+    public boolean matches(CommandParameters argument) {
         CommandParameters commandParameters = (CommandParameters) argument;
 
-        try
-        {
-            return commandParameters.getString( this.commandParameter ).equals( String.valueOf( expected ) );
-        }
-        catch ( ScmException e )
-        {
+        try {
+            return commandParameters.getString(this.commandParameter).equals(String.valueOf(expected));
+        } catch (ScmException e) {
             return false;
         }
     }
-
-
 }

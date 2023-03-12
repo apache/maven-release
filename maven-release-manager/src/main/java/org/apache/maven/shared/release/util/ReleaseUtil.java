@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.util;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.util;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,31 +45,26 @@ import org.codehaus.plexus.util.ReaderFactory;
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  */
-public class ReleaseUtil
-{
-    @SuppressWarnings( "checkstyle:constantname" )
+public class ReleaseUtil {
+    @SuppressWarnings("checkstyle:constantname")
     public static final String RELEASE_POMv4 = "release-pom.xml";
 
-    @SuppressWarnings( "checkstyle:constantname" )
+    @SuppressWarnings("checkstyle:constantname")
     public static final String POMv4 = "pom.xml";
 
     /**
      * The line separator to use.
      */
-    public static final String LS = System.getProperty( "line.separator" );
+    public static final String LS = System.getProperty("line.separator");
 
-    private ReleaseUtil()
-    {
+    private ReleaseUtil() {
         // noop
     }
 
-    public static MavenProject getRootProject( List<MavenProject> reactorProjects )
-    {
-        MavenProject project = reactorProjects.get( 0 );
-        for ( MavenProject currentProject : reactorProjects )
-        {
-            if ( currentProject.isExecutionRoot() )
-            {
+    public static MavenProject getRootProject(List<MavenProject> reactorProjects) {
+        MavenProject project = reactorProjects.get(0);
+        for (MavenProject currentProject : reactorProjects) {
+            if (currentProject.isExecutionRoot()) {
                 project = currentProject;
                 break;
             }
@@ -79,44 +73,37 @@ public class ReleaseUtil
         return project;
     }
 
-    public static File getStandardPom( MavenProject project )
-    {
-        if ( project == null )
-        {
+    public static File getStandardPom(MavenProject project) {
+        if (project == null) {
             return null;
         }
 
         File pom = project.getFile();
 
-        if ( pom == null )
-        {
+        if (pom == null) {
             return null;
         }
 
-        File releasePom = getReleasePom( project );
-        if ( pom.equals( releasePom ) )
-        {
-            pom = new File( pom.getParent(), POMv4 );
+        File releasePom = getReleasePom(project);
+        if (pom.equals(releasePom)) {
+            pom = new File(pom.getParent(), POMv4);
         }
 
         return pom;
     }
 
-    public static File getReleasePom( MavenProject project )
-    {
-        if ( project == null )
-        {
+    public static File getReleasePom(MavenProject project) {
+        if (project == null) {
             return null;
         }
 
         File pom = project.getFile();
 
-        if ( pom == null )
-        {
+        if (pom == null) {
             return null;
         }
 
-        return new File( pom.getParent(), RELEASE_POMv4 );
+        return new File(pom.getParent(), RELEASE_POMv4);
     }
 
     /**
@@ -128,18 +115,13 @@ public class ReleaseUtil
      * @return The string contents of the XML file.
      * @throws IOException If the file could not be opened/read.
      */
-    public static String readXmlFile( File file )
-        throws IOException
-    {
-        return readXmlFile( file, LS );
+    public static String readXmlFile(File file) throws IOException {
+        return readXmlFile(file, LS);
     }
 
-    public static String readXmlFile( File file, String ls )
-        throws IOException
-    {
-        try ( Reader reader = ReaderFactory.newXmlReader( file ) )
-        {
-            return normalizeLineEndings( IOUtil.toString( reader ), ls );
+    public static String readXmlFile(File file, String ls) throws IOException {
+        try (Reader reader = ReaderFactory.newXmlReader(file)) {
+            return normalizeLineEndings(IOUtil.toString(reader), ls);
         }
     }
 
@@ -152,86 +134,73 @@ public class ReleaseUtil
      * @return The input string with normalized line separators or <code>null</code> if the string was <code>null</code>
      *         .
      */
-    public static String normalizeLineEndings( String text, String separator )
-    {
+    public static String normalizeLineEndings(String text, String separator) {
         String norm = text;
-        if ( text != null )
-        {
-            norm = text.replaceAll( "(\r\n)|(\n)|(\r)", separator );
+        if (text != null) {
+            norm = text.replaceAll("(\r\n)|(\n)|(\r)", separator);
         }
         return norm;
     }
 
-    public static ReleaseDescriptor createBasedirAlignedReleaseDescriptor( ReleaseDescriptor releaseDescriptor,
-                                                                           List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException
-    {
-        int parentLevels = Paths.get( releaseDescriptor.getPomFileName() ).getNameCount() - 1;
+    public static ReleaseDescriptor createBasedirAlignedReleaseDescriptor(
+            ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects) throws ReleaseExecutionException {
+        int parentLevels = Paths.get(releaseDescriptor.getPomFileName()).getNameCount() - 1;
 
         String url = releaseDescriptor.getScmSourceUrl();
-        url = realignScmUrl( parentLevels, url );
+        url = realignScmUrl(parentLevels, url);
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setWorkingDirectory( releaseDescriptor.getWorkingDirectory() );
-        builder.setScmSourceUrl( url );
+        builder.setWorkingDirectory(releaseDescriptor.getWorkingDirectory());
+        builder.setScmSourceUrl(url);
 
-        return ReleaseUtils.buildReleaseDescriptor( builder );
+        return ReleaseUtils.buildReleaseDescriptor(builder);
     }
 
-    public static int getBaseWorkingDirectoryParentCount( final Path baseDirectory, final Path workingDirectory )
-    {
-        return Math.max( 0, workingDirectory.normalize().getNameCount() - baseDirectory.normalize().getNameCount() );
+    public static int getBaseWorkingDirectoryParentCount(final Path baseDirectory, final Path workingDirectory) {
+        return Math.max(
+                0,
+                workingDirectory.normalize().getNameCount()
+                        - baseDirectory.normalize().getNameCount());
     }
 
-    public static String realignScmUrl( int parentLevels, String url )
-    {
-        if ( !StringUtils.isEmpty( url ) )
-        {
+    public static String realignScmUrl(int parentLevels, String url) {
+        if (!StringUtils.isEmpty(url)) {
             // normalize
-            url = url.replaceAll( "/\\./", "/" ).replaceAll( "/\\.$", "" ).
-                            replaceAll( "/[^/]+/\\.\\./", "/" ).replaceAll( "/[^/]+/\\.\\.$", "" );
+            url = url.replaceAll("/\\./", "/")
+                    .replaceAll("/\\.$", "")
+                    .replaceAll("/[^/]+/\\.\\./", "/")
+                    .replaceAll("/[^/]+/\\.\\.$", "");
 
             int index = url.length();
             String suffix = "";
-            if ( url.endsWith( "/" ) )
-            {
+            if (url.endsWith("/")) {
                 index--;
                 suffix = "/";
             }
 
-            for ( int i = 0; i < parentLevels && index > 0; i++ )
-            {
-                index = url.lastIndexOf( '/', index - 1 );
+            for (int i = 0; i < parentLevels && index > 0; i++) {
+                index = url.lastIndexOf('/', index - 1);
             }
 
-            if ( index > 0 )
-            {
-                url = url.substring( 0, index ) + suffix;
+            if (index > 0) {
+                url = url.substring(0, index) + suffix;
             }
-
         }
         return url;
     }
 
-    public static String interpolate( String value, Model model )
-        throws ReleaseExecutionException
-    {
-        if ( value != null && value.contains( "${" ) )
-        {
+    public static String interpolate(String value, Model model) throws ReleaseExecutionException {
+        if (value != null && value.contains("${")) {
             StringSearchInterpolator interpolator = new StringSearchInterpolator();
-            List<String> pomPrefixes = Arrays.asList( "pom.", "project." );
-            interpolator.addValueSource( new PrefixedObjectValueSource( pomPrefixes, model, false ) );
-            interpolator.addValueSource( new MapBasedValueSource( model.getProperties() ) );
-            interpolator.addValueSource( new ObjectBasedValueSource( model ) );
-            try
-            {
-                value = interpolator.interpolate( value, new PrefixAwareRecursionInterceptor( pomPrefixes ) );
-            }
-            catch ( InterpolationException e )
-            {
+            List<String> pomPrefixes = Arrays.asList("pom.", "project.");
+            interpolator.addValueSource(new PrefixedObjectValueSource(pomPrefixes, model, false));
+            interpolator.addValueSource(new MapBasedValueSource(model.getProperties()));
+            interpolator.addValueSource(new ObjectBasedValueSource(model));
+            try {
+                value = interpolator.interpolate(value, new PrefixAwareRecursionInterceptor(pomPrefixes));
+            } catch (InterpolationException e) {
                 throw new ReleaseExecutionException(
-                                                     "Failed to interpolate " + value + " for project " + model.getId(),
-                                                     e );
+                        "Failed to interpolate " + value + " for project " + model.getId(), e);
             }
         }
         return value;

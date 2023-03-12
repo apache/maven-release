@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policy.naming;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,14 +16,14 @@ package org.apache.maven.shared.release.policy.naming;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policy.naming;
 
 /**
  * <p>NamingPolicyResult class.</p>
  *
  * @since 3.0.0 (MRELEASE-979)
  */
-public class NamingPolicyResult
-{
+public class NamingPolicyResult {
     /**
      * The tag or branch name to use.
      */
@@ -36,8 +34,7 @@ public class NamingPolicyResult
      *
      * @return a {@link java.lang.String} object
      */
-    public String getName()
-    {
+    public String getName() {
         return name;
     }
 
@@ -47,10 +44,8 @@ public class NamingPolicyResult
      * @param name a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.policy.naming.NamingPolicyResult} object
      */
-    public NamingPolicyResult setName( String name )
-    {
+    public NamingPolicyResult setName(String name) {
         this.name = name;
         return this;
     }
-
 }

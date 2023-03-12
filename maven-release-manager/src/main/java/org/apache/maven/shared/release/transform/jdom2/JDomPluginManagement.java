@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,8 +33,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomPluginManagement extends PluginManagement
-{
+public class JDomPluginManagement extends PluginManagement {
     private final Element pluginManagement;
 
     /**
@@ -43,34 +41,27 @@ public class JDomPluginManagement extends PluginManagement
      *
      * @param pluginManagement a {@link org.jdom2.Element} object
      */
-    public JDomPluginManagement( Element pluginManagement )
-    {
+    public JDomPluginManagement(Element pluginManagement) {
         this.pluginManagement = pluginManagement;
     }
 
     @Override
-    public void addPlugin( Plugin plugin )
-    {
+    public void addPlugin(Plugin plugin) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Plugin> getPlugins()
-    {
-        Element pluginsElm = pluginManagement.getChild( "plugins", pluginManagement.getNamespace() );
-        if ( pluginsElm == null )
-        {
+    public List<Plugin> getPlugins() {
+        Element pluginsElm = pluginManagement.getChild("plugins", pluginManagement.getNamespace());
+        if (pluginsElm == null) {
             return Collections.emptyList();
-        }
-        else
-        {
-            List<Element> pluginElms = pluginsElm.getChildren( "plugin", pluginManagement.getNamespace() );
+        } else {
+            List<Element> pluginElms = pluginsElm.getChildren("plugin", pluginManagement.getNamespace());
 
-            List<Plugin> plugins = new ArrayList<>( pluginElms.size() );
+            List<Plugin> plugins = new ArrayList<>(pluginElms.size());
 
-            for ( Element pluginElm : pluginElms )
-            {
-                plugins.add( new JDomPlugin( pluginElm ) );
+            for (Element pluginElm : pluginElms) {
+                plugins.add(new JDomPlugin(pluginElm));
             }
 
             return plugins;
@@ -78,26 +69,22 @@ public class JDomPluginManagement extends PluginManagement
     }
 
     @Override
-    public void removePlugin( Plugin plugin )
-    {
+    public void removePlugin(Plugin plugin) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setPlugins( List<Plugin> plugins )
-    {
+    public void setPlugins(List<Plugin> plugins) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void flushPluginMap()
-    {
+    public void flushPluginMap() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Map<String, Plugin> getPluginsAsMap()
-    {
+    public Map<String, Plugin> getPluginsAsMap() {
         throw new UnsupportedOperationException();
     }
 }

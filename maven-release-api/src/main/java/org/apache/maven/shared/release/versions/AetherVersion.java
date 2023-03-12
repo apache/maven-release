@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.versions;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,31 +16,24 @@ package org.apache.maven.shared.release.versions;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.versions;
 
 import org.eclipse.aether.util.version.GenericVersionScheme;
 import org.eclipse.aether.version.InvalidVersionSpecificationException;
 
-class AetherVersion
-    implements org.eclipse.aether.version.Version
-{
+class AetherVersion implements org.eclipse.aether.version.Version {
     private final org.eclipse.aether.version.Version version;
 
-    AetherVersion( String version )
-        throws VersionParseException
-    {
-        try
-        {
-            this.version = new GenericVersionScheme().parseVersion( version );
-        }
-        catch ( InvalidVersionSpecificationException e )
-        {
-            throw new VersionParseException( e.getMessage() );
+    AetherVersion(String version) throws VersionParseException {
+        try {
+            this.version = new GenericVersionScheme().parseVersion(version);
+        } catch (InvalidVersionSpecificationException e) {
+            throw new VersionParseException(e.getMessage());
         }
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return this.version.toString();
     }
 
@@ -52,8 +43,7 @@ class AetherVersion
      * @param other a {@link org.eclipse.aether.version.Version} object
      * @return a int
      */
-    public int compareTo( org.eclipse.aether.version.Version other )
-    {
-        return this.version.compareTo( other );
+    public int compareTo(org.eclipse.aether.version.Version other) {
+        return this.version.compareTo(other);
     }
 }

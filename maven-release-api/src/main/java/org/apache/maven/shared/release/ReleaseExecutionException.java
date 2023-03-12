@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,21 +16,19 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 /**
  * Exception occurring during release execution.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseExecutionException
-    extends Exception
-{
+public class ReleaseExecutionException extends Exception {
     /**
      * Creates a new instance of <code>ReleaseExecutionException</code> without detail message.
      */
-    public ReleaseExecutionException( String message )
-    {
-        super( message );
+    public ReleaseExecutionException(String message) {
+        super(message);
     }
 
     /**
@@ -40,8 +36,7 @@ public class ReleaseExecutionException
      *
      * @param message the detail message.
      */
-    public ReleaseExecutionException( String message, Throwable cause )
-    {
-        super( message, cause );
+    public ReleaseExecutionException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policies;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,27 +16,28 @@ package org.apache.maven.shared.release.policies;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.assertEquals;
+package org.apache.maven.shared.release.policies;
 
 import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
 import org.junit.Test;
 
-public class DefaultNamingPolicyTest
-{
+import static org.junit.Assert.assertEquals;
+
+public class DefaultNamingPolicyTest {
     private final DefaultNamingPolicy policy = new DefaultNamingPolicy();
 
     @Test
-    public void testName() throws Exception
-    {
-        assertEquals( "ARTIFACTID-VERSION",
-                      policy.getName( newNamingPolicyRequest( "ARTIFACTID", "VERSION" ) ).getName() );
-        assertEquals( "ARTIFACTID-1.0-SNAPSHOT",
-                      policy.getName( newNamingPolicyRequest( "ARTIFACTID", "1.0-SNAPSHOT" ) ).getName() );
+    public void testName() throws Exception {
+        assertEquals(
+                "ARTIFACTID-VERSION",
+                policy.getName(newNamingPolicyRequest("ARTIFACTID", "VERSION")).getName());
+        assertEquals(
+                "ARTIFACTID-1.0-SNAPSHOT",
+                policy.getName(newNamingPolicyRequest("ARTIFACTID", "1.0-SNAPSHOT"))
+                        .getName());
     }
 
-    private NamingPolicyRequest newNamingPolicyRequest( String artifactId, String version )
-    {
-        return new NamingPolicyRequest().setArtifactId( artifactId ).setVersion( version );
+    private NamingPolicyRequest newNamingPolicyRequest(String artifactId, String version) {
+        return new NamingPolicyRequest().setArtifactId(artifactId).setVersion(version);
     }
 }

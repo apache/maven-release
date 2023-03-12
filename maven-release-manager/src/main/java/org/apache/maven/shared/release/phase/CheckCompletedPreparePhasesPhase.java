@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -35,54 +34,50 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  */
 @Singleton
-@Named( "verify-completed-prepare-phases" )
-public class CheckCompletedPreparePhasesPhase
-        extends AbstractReleasePhase
-{
+@Named("verify-completed-prepare-phases")
+public class CheckCompletedPreparePhasesPhase extends AbstractReleasePhase {
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor,
-                                  ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
 
         // if we stopped mid-way through preparation - don't perform
-        if ( releaseDescriptor.getCompletedPhase() != null
-                && !"end-release".equals( releaseDescriptor.getCompletedPhase() ) )
-        {
+        if (releaseDescriptor.getCompletedPhase() != null
+                && !"end-release".equals(releaseDescriptor.getCompletedPhase())) {
             String message = "Cannot perform release - the preparation step was stopped mid-way. Please re-run "
                     + "release:prepare to continue, or perform the release from an SCM tag.";
 
-            result.setResultCode( ReleaseResult.ERROR );
+            result.setResultCode(ReleaseResult.ERROR);
 
-            logError( result, message );
+            logError(result, message);
 
-            throw new ReleaseFailureException( message );
+            throw new ReleaseFailureException(message);
         }
 
-        if ( releaseDescriptor.getScmSourceUrl() == null )
-        {
+        if (releaseDescriptor.getScmSourceUrl() == null) {
             String message = "No SCM URL was provided to perform the release from";
 
-            result.setResultCode( ReleaseResult.ERROR );
+            result.setResultCode(ReleaseResult.ERROR);
 
-            logError( result, message );
+            logError(result, message);
 
-            throw new ReleaseFailureException( message );
+            throw new ReleaseFailureException(message);
         }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor,
-                                   ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
-        return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
+        return execute(releaseDescriptor, releaseEnvironment, reactorProjects);
     }
 }

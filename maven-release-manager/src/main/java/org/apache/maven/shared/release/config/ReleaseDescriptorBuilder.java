@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.config;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.config;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -34,9 +33,8 @@ import org.slf4j.LoggerFactory;
  * @author Robert Scholte
  * @since 3.0.0-M5
  */
-public class ReleaseDescriptorBuilder
-{
-    private static final Pattern PROPERTY_PATTERN = Pattern.compile( "\\$\\{[^}]+}" );
+public class ReleaseDescriptorBuilder {
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile("\\$\\{[^}]+}");
 
     private final Logger logger;
 
@@ -45,11 +43,8 @@ public class ReleaseDescriptorBuilder
      *
      * @author Robert Scholte
      */
-    public static final class BuilderReleaseDescriptor extends ModelloReleaseDescriptor implements ReleaseDescriptor
-    {
-        private BuilderReleaseDescriptor()
-        {
-        }
+    public static final class BuilderReleaseDescriptor extends ModelloReleaseDescriptor implements ReleaseDescriptor {
+        private BuilderReleaseDescriptor() {}
     }
 
     private final BuilderReleaseDescriptor releaseDescriptor;
@@ -57,18 +52,16 @@ public class ReleaseDescriptorBuilder
     /**
      * <p>Constructor for ReleaseDescriptorBuilder.</p>
      */
-    public ReleaseDescriptorBuilder()
-    {
-        this( LoggerFactory.getLogger( ReleaseDescriptorBuilder.class ) );
+    public ReleaseDescriptorBuilder() {
+        this(LoggerFactory.getLogger(ReleaseDescriptorBuilder.class));
     }
 
     /**
      * Constructor for testing purpose.
      */
-    ReleaseDescriptorBuilder( Logger logger )
-    {
+    ReleaseDescriptorBuilder(Logger logger) {
         this.releaseDescriptor = new BuilderReleaseDescriptor();
-        this.releaseDescriptor.setLineSeparator( ReleaseUtil.LS );
+        this.releaseDescriptor.setLineSeparator(ReleaseUtil.LS);
         this.logger = logger;
     }
 
@@ -78,9 +71,8 @@ public class ReleaseDescriptorBuilder
      * @param string a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder addCheckModificationExclude( String string )
-    {
-        releaseDescriptor.addCheckModificationExclude( string );
+    public ReleaseDescriptorBuilder addCheckModificationExclude(String string) {
+        releaseDescriptor.addCheckModificationExclude(string);
         return this;
     }
 
@@ -90,9 +82,8 @@ public class ReleaseDescriptorBuilder
      * @param profiles a {@link java.util.List} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setActivateProfiles( List<String> profiles )
-    {
-        releaseDescriptor.setActivateProfiles( profiles );
+    public ReleaseDescriptorBuilder setActivateProfiles(List<String> profiles) {
+        releaseDescriptor.setActivateProfiles(profiles);
         return this;
     }
 
@@ -102,9 +93,8 @@ public class ReleaseDescriptorBuilder
      * @param addSchema a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setAddSchema( boolean addSchema )
-    {
-        releaseDescriptor.setAddSchema( addSchema );
+    public ReleaseDescriptorBuilder setAddSchema(boolean addSchema) {
+        releaseDescriptor.setAddSchema(addSchema);
         return this;
     }
 
@@ -114,25 +104,19 @@ public class ReleaseDescriptorBuilder
      * @param additionalArguments a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setAdditionalArguments( String additionalArguments )
-    {
-        if ( additionalArguments != null )
-        {
-            Matcher matcher = PROPERTY_PATTERN.matcher( additionalArguments );
+    public ReleaseDescriptorBuilder setAdditionalArguments(String additionalArguments) {
+        if (additionalArguments != null) {
+            Matcher matcher = PROPERTY_PATTERN.matcher(additionalArguments);
             StringBuffer buf = new StringBuffer();
-            while ( matcher.find() )
-            {
-                matcher.appendReplacement( buf, "" );
-                logger.warn( "arguments parameter contains unresolved property: '{}'",
-                             matcher.group() );
+            while (matcher.find()) {
+                matcher.appendReplacement(buf, "");
+                logger.warn("arguments parameter contains unresolved property: '{}'", matcher.group());
             }
-            matcher.appendTail( buf );
+            matcher.appendTail(buf);
 
-            releaseDescriptor.setAdditionalArguments( buf.toString() );
-        }
-        else
-        {
-            releaseDescriptor.setAdditionalArguments( null );
+            releaseDescriptor.setAdditionalArguments(buf.toString());
+        } else {
+            releaseDescriptor.setAdditionalArguments(null);
         }
         return this;
     }
@@ -143,9 +127,8 @@ public class ReleaseDescriptorBuilder
      * @param allowTimestampedSnapshots a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setAllowTimestampedSnapshots( boolean allowTimestampedSnapshots )
-    {
-        releaseDescriptor.setAllowTimestampedSnapshots( allowTimestampedSnapshots );
+    public ReleaseDescriptorBuilder setAllowTimestampedSnapshots(boolean allowTimestampedSnapshots) {
+        releaseDescriptor.setAllowTimestampedSnapshots(allowTimestampedSnapshots);
         return this;
     }
 
@@ -155,9 +138,8 @@ public class ReleaseDescriptorBuilder
      * @param autoVersionSubmodules a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setAutoVersionSubmodules( boolean autoVersionSubmodules )
-    {
-        releaseDescriptor.setAutoVersionSubmodules( autoVersionSubmodules );
+    public ReleaseDescriptorBuilder setAutoVersionSubmodules(boolean autoVersionSubmodules) {
+        releaseDescriptor.setAutoVersionSubmodules(autoVersionSubmodules);
         return this;
     }
 
@@ -167,9 +149,8 @@ public class ReleaseDescriptorBuilder
      * @param branchCreation a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setBranchCreation( boolean branchCreation )
-    {
-        releaseDescriptor.setBranchCreation( branchCreation );
+    public ReleaseDescriptorBuilder setBranchCreation(boolean branchCreation) {
+        releaseDescriptor.setBranchCreation(branchCreation);
         return this;
     }
 
@@ -179,9 +160,8 @@ public class ReleaseDescriptorBuilder
      * @param checkModificationExcludes a {@link java.util.List} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setCheckModificationExcludes( List<String> checkModificationExcludes )
-    {
-        releaseDescriptor.setCheckModificationExcludes( checkModificationExcludes );
+    public ReleaseDescriptorBuilder setCheckModificationExcludes(List<String> checkModificationExcludes) {
+        releaseDescriptor.setCheckModificationExcludes(checkModificationExcludes);
         return this;
     }
 
@@ -191,9 +171,8 @@ public class ReleaseDescriptorBuilder
      * @param checkoutDirectory a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setCheckoutDirectory( String checkoutDirectory )
-    {
-        releaseDescriptor.setCheckoutDirectory( checkoutDirectory );
+    public ReleaseDescriptorBuilder setCheckoutDirectory(String checkoutDirectory) {
+        releaseDescriptor.setCheckoutDirectory(checkoutDirectory);
         return this;
     }
 
@@ -203,9 +182,8 @@ public class ReleaseDescriptorBuilder
      * @param commitByProject a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setCommitByProject( boolean commitByProject )
-    {
-        releaseDescriptor.setCommitByProject( commitByProject );
+    public ReleaseDescriptorBuilder setCommitByProject(boolean commitByProject) {
+        releaseDescriptor.setCommitByProject(commitByProject);
         return this;
     }
 
@@ -215,9 +193,8 @@ public class ReleaseDescriptorBuilder
      * @param completedPhase a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setCompletedPhase( String completedPhase )
-    {
-        releaseDescriptor.setCompletedPhase( completedPhase );
+    public ReleaseDescriptorBuilder setCompletedPhase(String completedPhase) {
+        releaseDescriptor.setCompletedPhase(completedPhase);
         return this;
     }
 
@@ -227,9 +204,8 @@ public class ReleaseDescriptorBuilder
      * @param completionGoals a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setCompletionGoals( String completionGoals )
-    {
-        releaseDescriptor.setCompletionGoals( completionGoals );
+    public ReleaseDescriptorBuilder setCompletionGoals(String completionGoals) {
+        releaseDescriptor.setCompletionGoals(completionGoals);
         return this;
     }
 
@@ -239,9 +215,8 @@ public class ReleaseDescriptorBuilder
      * @param defaultDevelopmentVersion a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setDefaultDevelopmentVersion( String defaultDevelopmentVersion )
-    {
-        releaseDescriptor.setDefaultDevelopmentVersion( defaultDevelopmentVersion );
+    public ReleaseDescriptorBuilder setDefaultDevelopmentVersion(String defaultDevelopmentVersion) {
+        releaseDescriptor.setDefaultDevelopmentVersion(defaultDevelopmentVersion);
         return this;
     }
 
@@ -251,9 +226,8 @@ public class ReleaseDescriptorBuilder
      * @param defaultReleaseVersion a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setDefaultReleaseVersion( String defaultReleaseVersion )
-    {
-        releaseDescriptor.setDefaultReleaseVersion( defaultReleaseVersion );
+    public ReleaseDescriptorBuilder setDefaultReleaseVersion(String defaultReleaseVersion) {
+        releaseDescriptor.setDefaultReleaseVersion(defaultReleaseVersion);
         return this;
     }
 
@@ -263,9 +237,8 @@ public class ReleaseDescriptorBuilder
      * @param description a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setDescription( String description )
-    {
-        releaseDescriptor.setDescription( description );
+    public ReleaseDescriptorBuilder setDescription(String description) {
+        releaseDescriptor.setDescription(description);
         return this;
     }
 
@@ -275,9 +248,8 @@ public class ReleaseDescriptorBuilder
      * @param generateReleasePoms a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setGenerateReleasePoms( boolean generateReleasePoms )
-    {
-        releaseDescriptor.setGenerateReleasePoms( generateReleasePoms );
+    public ReleaseDescriptorBuilder setGenerateReleasePoms(boolean generateReleasePoms) {
+        releaseDescriptor.setGenerateReleasePoms(generateReleasePoms);
         return this;
     }
 
@@ -287,9 +259,8 @@ public class ReleaseDescriptorBuilder
      * @param interactive a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setInteractive( boolean interactive )
-    {
-        releaseDescriptor.setInteractive( interactive );
+    public ReleaseDescriptorBuilder setInteractive(boolean interactive) {
+        releaseDescriptor.setInteractive(interactive);
         return this;
     }
 
@@ -299,9 +270,8 @@ public class ReleaseDescriptorBuilder
      * @param ls a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setLineSeparator( String ls )
-    {
-        releaseDescriptor.setLineSeparator( ls );
+    public ReleaseDescriptorBuilder setLineSeparator(String ls) {
+        releaseDescriptor.setLineSeparator(ls);
         return this;
     }
 
@@ -311,9 +281,8 @@ public class ReleaseDescriptorBuilder
      * @param localCheckout a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setLocalCheckout( boolean localCheckout )
-    {
-        releaseDescriptor.setLocalCheckout( localCheckout );
+    public ReleaseDescriptorBuilder setLocalCheckout(boolean localCheckout) {
+        releaseDescriptor.setLocalCheckout(localCheckout);
         return this;
     }
 
@@ -323,9 +292,8 @@ public class ReleaseDescriptorBuilder
      * @param modelEncoding a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setModelEncoding( String modelEncoding )
-    {
-        releaseDescriptor.setModelEncoding( modelEncoding );
+    public ReleaseDescriptorBuilder setModelEncoding(String modelEncoding) {
+        releaseDescriptor.setModelEncoding(modelEncoding);
         return this;
     }
 
@@ -335,9 +303,8 @@ public class ReleaseDescriptorBuilder
      * @param name a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setName( String name )
-    {
-        releaseDescriptor.setName( name );
+    public ReleaseDescriptorBuilder setName(String name) {
+        releaseDescriptor.setName(name);
         return this;
     }
 
@@ -347,9 +314,8 @@ public class ReleaseDescriptorBuilder
      * @param performGoals a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setPerformGoals( String performGoals )
-    {
-        releaseDescriptor.setPerformGoals( performGoals );
+    public ReleaseDescriptorBuilder setPerformGoals(String performGoals) {
+        releaseDescriptor.setPerformGoals(performGoals);
         return this;
     }
 
@@ -359,9 +325,8 @@ public class ReleaseDescriptorBuilder
      * @param pomFileName a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setPomFileName( String pomFileName )
-    {
-        releaseDescriptor.setPomFileName( pomFileName );
+    public ReleaseDescriptorBuilder setPomFileName(String pomFileName) {
+        releaseDescriptor.setPomFileName(pomFileName);
         return this;
     }
 
@@ -371,9 +336,8 @@ public class ReleaseDescriptorBuilder
      * @param preparationGoals a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setPreparationGoals( String preparationGoals )
-    {
-        releaseDescriptor.setPreparationGoals( preparationGoals );
+    public ReleaseDescriptorBuilder setPreparationGoals(String preparationGoals) {
+        releaseDescriptor.setPreparationGoals(preparationGoals);
         return this;
     }
 
@@ -383,9 +347,8 @@ public class ReleaseDescriptorBuilder
      * @param projectNamingPolicyId a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setProjectNamingPolicyId( String projectNamingPolicyId )
-    {
-        releaseDescriptor.setProjectNamingPolicyId( projectNamingPolicyId );
+    public ReleaseDescriptorBuilder setProjectNamingPolicyId(String projectNamingPolicyId) {
+        releaseDescriptor.setProjectNamingPolicyId(projectNamingPolicyId);
         return this;
     }
 
@@ -395,9 +358,8 @@ public class ReleaseDescriptorBuilder
      * @param projectVersionPolicyId a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setProjectVersionPolicyId( String projectVersionPolicyId )
-    {
-        releaseDescriptor.setProjectVersionPolicyId( projectVersionPolicyId );
+    public ReleaseDescriptorBuilder setProjectVersionPolicyId(String projectVersionPolicyId) {
+        releaseDescriptor.setProjectVersionPolicyId(projectVersionPolicyId);
         return this;
     }
 
@@ -407,9 +369,8 @@ public class ReleaseDescriptorBuilder
      * @param setProjectVersionPolicyConfig a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setProjectVersionPolicyConfig( String setProjectVersionPolicyConfig )
-    {
-        releaseDescriptor.setProjectVersionPolicyConfig( setProjectVersionPolicyConfig );
+    public ReleaseDescriptorBuilder setProjectVersionPolicyConfig(String setProjectVersionPolicyConfig) {
+        releaseDescriptor.setProjectVersionPolicyConfig(setProjectVersionPolicyConfig);
         return this;
     }
 
@@ -419,9 +380,8 @@ public class ReleaseDescriptorBuilder
      * @param pushChanges a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setPushChanges( boolean pushChanges )
-    {
-        releaseDescriptor.setPushChanges( pushChanges );
+    public ReleaseDescriptorBuilder setPushChanges(boolean pushChanges) {
+        releaseDescriptor.setPushChanges(pushChanges);
         return this;
     }
 
@@ -431,9 +391,8 @@ public class ReleaseDescriptorBuilder
      * @param workItem a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setWorkItem( String workItem )
-    {
-        releaseDescriptor.setWorkItem( workItem );
+    public ReleaseDescriptorBuilder setWorkItem(String workItem) {
+        releaseDescriptor.setWorkItem(workItem);
         return this;
     }
 
@@ -443,9 +402,8 @@ public class ReleaseDescriptorBuilder
      * @param releaseStrategyId a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setReleaseStrategyId( String releaseStrategyId )
-    {
-        releaseDescriptor.setReleaseStrategyId( releaseStrategyId );
+    public ReleaseDescriptorBuilder setReleaseStrategyId(String releaseStrategyId) {
+        releaseDescriptor.setReleaseStrategyId(releaseStrategyId);
         return this;
     }
 
@@ -455,9 +413,8 @@ public class ReleaseDescriptorBuilder
      * @param remoteTagging a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setRemoteTagging( boolean remoteTagging )
-    {
-        releaseDescriptor.setRemoteTagging( remoteTagging );
+    public ReleaseDescriptorBuilder setRemoteTagging(boolean remoteTagging) {
+        releaseDescriptor.setRemoteTagging(remoteTagging);
         return this;
     }
 
@@ -467,9 +424,8 @@ public class ReleaseDescriptorBuilder
      * @param scmBranchBase a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmBranchBase( String scmBranchBase )
-    {
-        releaseDescriptor.setScmBranchBase( scmBranchBase );
+    public ReleaseDescriptorBuilder setScmBranchBase(String scmBranchBase) {
+        releaseDescriptor.setScmBranchBase(scmBranchBase);
         return this;
     }
 
@@ -479,9 +435,8 @@ public class ReleaseDescriptorBuilder
      * @param scmCommentPrefix a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmCommentPrefix( String scmCommentPrefix )
-    {
-        releaseDescriptor.setScmCommentPrefix( scmCommentPrefix );
+    public ReleaseDescriptorBuilder setScmCommentPrefix(String scmCommentPrefix) {
+        releaseDescriptor.setScmCommentPrefix(scmCommentPrefix);
         return this;
     }
 
@@ -492,9 +447,8 @@ public class ReleaseDescriptorBuilder
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @since 3.0.0-M6
      */
-    public ReleaseDescriptorBuilder setScmShallowClone( boolean scmShallowClone )
-    {
-        releaseDescriptor.setScmShallowClone( scmShallowClone );
+    public ReleaseDescriptorBuilder setScmShallowClone(boolean scmShallowClone) {
+        releaseDescriptor.setScmShallowClone(scmShallowClone);
         return this;
     }
 
@@ -505,9 +459,8 @@ public class ReleaseDescriptorBuilder
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @since 3.0.0-M1
      */
-    public ReleaseDescriptorBuilder setScmReleaseCommitComment( String scmReleaseCommitComment )
-    {
-        releaseDescriptor.setScmReleaseCommitComment( scmReleaseCommitComment );
+    public ReleaseDescriptorBuilder setScmReleaseCommitComment(String scmReleaseCommitComment) {
+        releaseDescriptor.setScmReleaseCommitComment(scmReleaseCommitComment);
         return this;
     }
 
@@ -518,9 +471,8 @@ public class ReleaseDescriptorBuilder
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @since 3.0.0-M1
      */
-    public ReleaseDescriptorBuilder setScmDevelopmentCommitComment( String scmDevelopmentCommitComment )
-    {
-        releaseDescriptor.setScmDevelopmentCommitComment( scmDevelopmentCommitComment );
+    public ReleaseDescriptorBuilder setScmDevelopmentCommitComment(String scmDevelopmentCommitComment) {
+        releaseDescriptor.setScmDevelopmentCommitComment(scmDevelopmentCommitComment);
         return this;
     }
 
@@ -531,9 +483,8 @@ public class ReleaseDescriptorBuilder
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @since 3.0.0-M1
      */
-    public ReleaseDescriptorBuilder setScmBranchCommitComment( String scmBranchCommitComment )
-    {
-        releaseDescriptor.setScmBranchCommitComment( scmBranchCommitComment );
+    public ReleaseDescriptorBuilder setScmBranchCommitComment(String scmBranchCommitComment) {
+        releaseDescriptor.setScmBranchCommitComment(scmBranchCommitComment);
         return this;
     }
 
@@ -544,9 +495,8 @@ public class ReleaseDescriptorBuilder
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @since 3.0.0-M1
      */
-    public ReleaseDescriptorBuilder setScmRollbackCommitComment( String scmRollbackCommitComment )
-    {
-        releaseDescriptor.setScmRollbackCommitComment( scmRollbackCommitComment );
+    public ReleaseDescriptorBuilder setScmRollbackCommitComment(String scmRollbackCommitComment) {
+        releaseDescriptor.setScmRollbackCommitComment(scmRollbackCommitComment);
         return this;
     }
 
@@ -556,9 +506,8 @@ public class ReleaseDescriptorBuilder
      * @param scmId a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmId( String scmId )
-    {
-        releaseDescriptor.setScmId( scmId );
+    public ReleaseDescriptorBuilder setScmId(String scmId) {
+        releaseDescriptor.setScmId(scmId);
         return this;
     }
 
@@ -568,9 +517,8 @@ public class ReleaseDescriptorBuilder
      * @param scmPassword a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmPassword( String scmPassword )
-    {
-        releaseDescriptor.setScmPassword( scmPassword );
+    public ReleaseDescriptorBuilder setScmPassword(String scmPassword) {
+        releaseDescriptor.setScmPassword(scmPassword);
         return this;
     }
 
@@ -580,9 +528,8 @@ public class ReleaseDescriptorBuilder
      * @param scmPrivateKey a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmPrivateKey( String scmPrivateKey )
-    {
-        releaseDescriptor.setScmPrivateKey( scmPrivateKey );
+    public ReleaseDescriptorBuilder setScmPrivateKey(String scmPrivateKey) {
+        releaseDescriptor.setScmPrivateKey(scmPrivateKey);
         return this;
     }
 
@@ -592,9 +539,8 @@ public class ReleaseDescriptorBuilder
      * @param scmPrivateKeyPassPhrase a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmPrivateKeyPassPhrase( String scmPrivateKeyPassPhrase )
-    {
-        releaseDescriptor.setScmPrivateKeyPassPhrase( scmPrivateKeyPassPhrase );
+    public ReleaseDescriptorBuilder setScmPrivateKeyPassPhrase(String scmPrivateKeyPassPhrase) {
+        releaseDescriptor.setScmPrivateKeyPassPhrase(scmPrivateKeyPassPhrase);
         return this;
     }
 
@@ -604,9 +550,8 @@ public class ReleaseDescriptorBuilder
      * @param scmRelativePathProjectDirectory a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmRelativePathProjectDirectory( String scmRelativePathProjectDirectory )
-    {
-        releaseDescriptor.setScmRelativePathProjectDirectory( scmRelativePathProjectDirectory );
+    public ReleaseDescriptorBuilder setScmRelativePathProjectDirectory(String scmRelativePathProjectDirectory) {
+        releaseDescriptor.setScmRelativePathProjectDirectory(scmRelativePathProjectDirectory);
         return this;
     }
 
@@ -616,9 +561,8 @@ public class ReleaseDescriptorBuilder
      * @param scmReleaseLabel a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmReleaseLabel( String scmReleaseLabel )
-    {
-        releaseDescriptor.setScmReleaseLabel( scmReleaseLabel );
+    public ReleaseDescriptorBuilder setScmReleaseLabel(String scmReleaseLabel) {
+        releaseDescriptor.setScmReleaseLabel(scmReleaseLabel);
         return this;
     }
 
@@ -628,9 +572,8 @@ public class ReleaseDescriptorBuilder
      * @param scmReleasedPomRevision a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmReleasedPomRevision( String scmReleasedPomRevision )
-    {
-        releaseDescriptor.setScmReleasedPomRevision( scmReleasedPomRevision );
+    public ReleaseDescriptorBuilder setScmReleasedPomRevision(String scmReleasedPomRevision) {
+        releaseDescriptor.setScmReleasedPomRevision(scmReleasedPomRevision);
         return this;
     }
 
@@ -640,9 +583,8 @@ public class ReleaseDescriptorBuilder
      * @param scmSourceUrl a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmSourceUrl( String scmSourceUrl )
-    {
-        releaseDescriptor.setScmSourceUrl( scmSourceUrl );
+    public ReleaseDescriptorBuilder setScmSourceUrl(String scmSourceUrl) {
+        releaseDescriptor.setScmSourceUrl(scmSourceUrl);
         return this;
     }
 
@@ -652,9 +594,8 @@ public class ReleaseDescriptorBuilder
      * @param scmTagBase a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmTagBase( String scmTagBase )
-    {
-        releaseDescriptor.setScmTagBase( scmTagBase );
+    public ReleaseDescriptorBuilder setScmTagBase(String scmTagBase) {
+        releaseDescriptor.setScmTagBase(scmTagBase);
         return this;
     }
 
@@ -664,9 +605,8 @@ public class ReleaseDescriptorBuilder
      * @param scmTagNameFormat a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmTagNameFormat( String scmTagNameFormat )
-    {
-        releaseDescriptor.setScmTagNameFormat( scmTagNameFormat );
+    public ReleaseDescriptorBuilder setScmTagNameFormat(String scmTagNameFormat) {
+        releaseDescriptor.setScmTagNameFormat(scmTagNameFormat);
         return this;
     }
 
@@ -676,9 +616,8 @@ public class ReleaseDescriptorBuilder
      * @param signTags a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmSignTags( boolean signTags )
-    {
-        releaseDescriptor.setScmSignTags( signTags );
+    public ReleaseDescriptorBuilder setScmSignTags(boolean signTags) {
+        releaseDescriptor.setScmSignTags(signTags);
         return this;
     }
 
@@ -688,9 +627,8 @@ public class ReleaseDescriptorBuilder
      * @param scmUseEditMode a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmUseEditMode( boolean scmUseEditMode )
-    {
-        releaseDescriptor.setScmUseEditMode( scmUseEditMode );
+    public ReleaseDescriptorBuilder setScmUseEditMode(boolean scmUseEditMode) {
+        releaseDescriptor.setScmUseEditMode(scmUseEditMode);
         return this;
     }
 
@@ -700,9 +638,8 @@ public class ReleaseDescriptorBuilder
      * @param scmUsername a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setScmUsername( String scmUsername )
-    {
-        releaseDescriptor.setScmUsername( scmUsername );
+    public ReleaseDescriptorBuilder setScmUsername(String scmUsername) {
+        releaseDescriptor.setScmUsername(scmUsername);
         return this;
     }
 
@@ -712,9 +649,8 @@ public class ReleaseDescriptorBuilder
      * @param snapshotReleasePluginAllowed a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setSnapshotReleasePluginAllowed( boolean snapshotReleasePluginAllowed )
-    {
-        releaseDescriptor.setSnapshotReleasePluginAllowed( snapshotReleasePluginAllowed );
+    public ReleaseDescriptorBuilder setSnapshotReleasePluginAllowed(boolean snapshotReleasePluginAllowed) {
+        releaseDescriptor.setSnapshotReleasePluginAllowed(snapshotReleasePluginAllowed);
         return this;
     }
 
@@ -724,9 +660,8 @@ public class ReleaseDescriptorBuilder
      * @param suppressCommitBeforeTagOrBranch a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setSuppressCommitBeforeTagOrBranch( boolean suppressCommitBeforeTagOrBranch )
-    {
-        releaseDescriptor.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeTagOrBranch );
+    public ReleaseDescriptorBuilder setSuppressCommitBeforeTagOrBranch(boolean suppressCommitBeforeTagOrBranch) {
+        releaseDescriptor.setSuppressCommitBeforeTagOrBranch(suppressCommitBeforeTagOrBranch);
         return this;
     }
 
@@ -736,9 +671,8 @@ public class ReleaseDescriptorBuilder
      * @param updateBranchVersions a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setUpdateBranchVersions( boolean updateBranchVersions )
-    {
-        releaseDescriptor.setUpdateBranchVersions( updateBranchVersions );
+    public ReleaseDescriptorBuilder setUpdateBranchVersions(boolean updateBranchVersions) {
+        releaseDescriptor.setUpdateBranchVersions(updateBranchVersions);
         return this;
     }
 
@@ -748,9 +682,8 @@ public class ReleaseDescriptorBuilder
      * @param updateDependencies a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setUpdateDependencies( boolean updateDependencies )
-    {
-        releaseDescriptor.setUpdateDependencies( updateDependencies );
+    public ReleaseDescriptorBuilder setUpdateDependencies(boolean updateDependencies) {
+        releaseDescriptor.setUpdateDependencies(updateDependencies);
         return this;
     }
 
@@ -760,9 +693,8 @@ public class ReleaseDescriptorBuilder
      * @param updateVersionsToSnapshot a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setUpdateVersionsToSnapshot( boolean updateVersionsToSnapshot )
-    {
-        releaseDescriptor.setUpdateVersionsToSnapshot( updateVersionsToSnapshot );
+    public ReleaseDescriptorBuilder setUpdateVersionsToSnapshot(boolean updateVersionsToSnapshot) {
+        releaseDescriptor.setUpdateVersionsToSnapshot(updateVersionsToSnapshot);
         return this;
     }
 
@@ -772,9 +704,8 @@ public class ReleaseDescriptorBuilder
      * @param updateWorkingCopyVersions a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setUpdateWorkingCopyVersions( boolean updateWorkingCopyVersions )
-    {
-        releaseDescriptor.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
+    public ReleaseDescriptorBuilder setUpdateWorkingCopyVersions(boolean updateWorkingCopyVersions) {
+        releaseDescriptor.setUpdateWorkingCopyVersions(updateWorkingCopyVersions);
         return this;
     }
 
@@ -784,9 +715,8 @@ public class ReleaseDescriptorBuilder
      * @param useReleaseProfile a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setUseReleaseProfile( boolean useReleaseProfile )
-    {
-        releaseDescriptor.setUseReleaseProfile( useReleaseProfile );
+    public ReleaseDescriptorBuilder setUseReleaseProfile(boolean useReleaseProfile) {
+        releaseDescriptor.setUseReleaseProfile(useReleaseProfile);
         return this;
     }
 
@@ -796,9 +726,8 @@ public class ReleaseDescriptorBuilder
      * @param waitBeforeTagging a int
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setWaitBeforeTagging( int waitBeforeTagging )
-    {
-        releaseDescriptor.setWaitBeforeTagging( waitBeforeTagging );
+    public ReleaseDescriptorBuilder setWaitBeforeTagging(int waitBeforeTagging) {
+        releaseDescriptor.setWaitBeforeTagging(waitBeforeTagging);
         return this;
     }
 
@@ -808,9 +737,8 @@ public class ReleaseDescriptorBuilder
      * @param workingDirectory a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setWorkingDirectory( String workingDirectory )
-    {
-        releaseDescriptor.setWorkingDirectory( workingDirectory );
+    public ReleaseDescriptorBuilder setWorkingDirectory(String workingDirectory) {
+        releaseDescriptor.setWorkingDirectory(workingDirectory);
         return this;
     }
 
@@ -821,9 +749,8 @@ public class ReleaseDescriptorBuilder
      * @param value a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder addReleaseVersion( String key, String value )
-    {
-        releaseDescriptor.addReleaseVersion( key, value );
+    public ReleaseDescriptorBuilder addReleaseVersion(String key, String value) {
+        releaseDescriptor.addReleaseVersion(key, value);
         return this;
     }
 
@@ -834,9 +761,8 @@ public class ReleaseDescriptorBuilder
      * @param value a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder addDevelopmentVersion( String key, String value )
-    {
-        releaseDescriptor.addDevelopmentVersion( key, value );
+    public ReleaseDescriptorBuilder addDevelopmentVersion(String key, String value) {
+        releaseDescriptor.addDevelopmentVersion(key, value);
         return this;
     }
 
@@ -847,9 +773,8 @@ public class ReleaseDescriptorBuilder
      * @param value a {@link org.apache.maven.model.Scm} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder addOriginalScmInfo( String key, Scm value )
-    {
-        releaseDescriptor.addOriginalScmInfo( key, value );
+    public ReleaseDescriptorBuilder addOriginalScmInfo(String key, Scm value) {
+        releaseDescriptor.addOriginalScmInfo(key, value);
         return this;
     }
 
@@ -859,9 +784,8 @@ public class ReleaseDescriptorBuilder
      * @param projectKey a {@link java.lang.String} object
      * @param version    a {@link java.lang.String} object
      */
-    public void putOriginalVersion( String projectKey, String version )
-    {
-        releaseDescriptor.addOriginalVersion( projectKey, version );
+    public void putOriginalVersion(String projectKey, String version) {
+        releaseDescriptor.addOriginalVersion(projectKey, version);
     }
 
     /**
@@ -871,11 +795,9 @@ public class ReleaseDescriptorBuilder
      * @param version       a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder addDependencyOriginalVersion( String dependencyKey, String version )
-    {
-        releaseDescriptor.addDependencyOriginalVersion( dependencyKey, version );
+    public ReleaseDescriptorBuilder addDependencyOriginalVersion(String dependencyKey, String version) {
+        releaseDescriptor.addDependencyOriginalVersion(dependencyKey, version);
         return this;
-
     }
 
     /**
@@ -885,9 +807,8 @@ public class ReleaseDescriptorBuilder
      * @param version       a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder addDependencyReleaseVersion( String dependencyKey, String version )
-    {
-        releaseDescriptor.addDependencyReleaseVersion( dependencyKey, version );
+    public ReleaseDescriptorBuilder addDependencyReleaseVersion(String dependencyKey, String version) {
+        releaseDescriptor.addDependencyReleaseVersion(dependencyKey, version);
         return this;
     }
 
@@ -898,9 +819,8 @@ public class ReleaseDescriptorBuilder
      * @param version       a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder addDependencyDevelopmentVersion( String dependencyKey, String version )
-    {
-        releaseDescriptor.addDependencyDevelopmentVersion( dependencyKey, version );
+    public ReleaseDescriptorBuilder addDependencyDevelopmentVersion(String dependencyKey, String version) {
+        releaseDescriptor.addDependencyDevelopmentVersion(dependencyKey, version);
         return this;
     }
 
@@ -910,9 +830,8 @@ public class ReleaseDescriptorBuilder
      * @param autoResolveSnapshots a {@link java.lang.String} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setAutoResolveSnapshots( String autoResolveSnapshots )
-    {
-        releaseDescriptor.setAutoResolveSnapshots( autoResolveSnapshots );
+    public ReleaseDescriptorBuilder setAutoResolveSnapshots(String autoResolveSnapshots) {
+        releaseDescriptor.setAutoResolveSnapshots(autoResolveSnapshots);
         return this;
     }
 
@@ -922,14 +841,12 @@ public class ReleaseDescriptorBuilder
      * @param pinExternals a boolean
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      */
-    public ReleaseDescriptorBuilder setPinExternals( boolean pinExternals )
-    {
-        releaseDescriptor.setPinExternals( pinExternals );
+    public ReleaseDescriptorBuilder setPinExternals(boolean pinExternals) {
+        releaseDescriptor.setPinExternals(pinExternals);
         return this;
     }
 
-    public BuilderReleaseDescriptor build()
-    {
+    public BuilderReleaseDescriptor build() {
         return releaseDescriptor;
     }
 }

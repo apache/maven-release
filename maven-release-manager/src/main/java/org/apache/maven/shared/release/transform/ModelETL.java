@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform;
 
 import java.io.File;
 
@@ -30,15 +29,14 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
  * @author Robert Scholte
  * @since 3.0
  */
-public interface ModelETL
-{
+public interface ModelETL {
     /**
      * <p>extract.</p>
      *
      * @param pomFile a {@link java.io.File} object
      * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
      */
-    void extract( File pomFile ) throws ReleaseExecutionException;
+    void extract(File pomFile) throws ReleaseExecutionException;
 
     /**
      * <p>transform.</p>
@@ -51,7 +49,7 @@ public interface ModelETL
      * @param pomFile a {@link java.io.File} object
      * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
      */
-    void load( File pomFile ) throws ReleaseExecutionException;
+    void load(File pomFile) throws ReleaseExecutionException;
 
     // will be removed once transform() is implemented
     /**

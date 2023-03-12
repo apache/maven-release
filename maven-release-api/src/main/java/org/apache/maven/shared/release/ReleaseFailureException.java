@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,17 +16,15 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 /**
  * A failure during the release process.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleaseFailureException
-    extends Exception
-{
-    public ReleaseFailureException( String message )
-    {
-        super( message );
+public class ReleaseFailureException extends Exception {
+    public ReleaseFailureException(String message) {
+        super(message);
     }
 }

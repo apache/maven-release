@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,17 +16,9 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Singleton;
-
-import static org.junit.Assert.assertTrue;
-
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,58 +46,57 @@ import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 /**
  * Test the generate release POMs phase.
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
-public class GenerateReleasePomsPhaseTest
-    extends AbstractRewritingReleasePhaseTestCase
-{
+public class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseTestCase {
     private static final String NEXT_VERSION = "1.0";
 
     private static final String ALTERNATIVE_NEXT_VERSION = "2.0";
 
     private ScmProvider scmProviderMock;
 
-    public GenerateReleasePomsPhaseTest( String modelETL )
-    {
-        super( modelETL );
+    public GenerateReleasePomsPhaseTest(String modelETL) {
+        super(modelETL);
     }
 
     @Override
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
 
         scmProviderMock = null;
     }
 
     @Override
-    protected Module[] getCustomModules()
-    {
+    protected Module[] getCustomModules() {
         return new Module[] {
-                new AbstractModule()
-                {
-                    @Override
-                    protected void configure()
-                    {
-                        bind( ScmManager.class )
-                                .to( org.apache.maven.shared.release.stubs.ScmManagerStub.class )
-                                .in( Singleton.class );
-                        bind( ScmTranslator.class )
-                                .annotatedWith( Names.named( "stub-provider" ) )
-                                .to( org.apache.maven.shared.release.scm.SubversionScmTranslator.class )
-                                .in( Singleton.class );
-                    }
+            new AbstractModule() {
+                @Override
+                protected void configure() {
+                    bind(ScmManager.class)
+                            .to(org.apache.maven.shared.release.stubs.ScmManagerStub.class)
+                            .in(Singleton.class);
+                    bind(ScmTranslator.class)
+                            .annotatedWith(Names.named("stub-provider"))
+                            .to(org.apache.maven.shared.release.scm.SubversionScmTranslator.class)
+                            .in(Singleton.class);
                 }
+            }
         };
     }
 
     @Override
-    protected String getRoleHint()
-    {
+    protected String getRoleHint() {
         return "generate-release-poms";
     }
 
@@ -123,68 +112,61 @@ public class GenerateReleasePomsPhaseTest
     // }
 
     @Test
-    public void testRewriteExternalRangeDependency()
-        throws Exception
-    {
-        List<MavenProject> reactorProjects = createReactorProjects( "external-range-dependency" );
-        ReleaseDescriptorBuilder builder = createMappedConfiguration( reactorProjects, "external-range-dependency" );
+    public void testRewriteExternalRangeDependency() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("external-range-dependency");
+        ReleaseDescriptorBuilder builder = createMappedConfiguration(reactorProjects, "external-range-dependency");
 
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        comparePomFiles( reactorProjects );
+        comparePomFiles(reactorProjects);
     }
 
     // MRELEASE-787
     @Test
-    public void testSuppressCommitBeforeTagOrBranch()
-        throws Exception
-    {
-        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+    public void testSuppressCommitBeforeTagOrBranch() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setGenerateReleasePoms( true );
-        builder.setSuppressCommitBeforeTagOrBranch( true );
-        builder.setRemoteTagging( false );
-        builder.setPinExternals( false );
-        mapNextVersion( builder, "groupId:artifactId" );
+        builder.setGenerateReleasePoms(true);
+        builder.setSuppressCommitBeforeTagOrBranch(true);
+        builder.setRemoteTagging(false);
+        builder.setPinExternals(false);
+        mapNextVersion(builder, "groupId:artifactId");
 
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        verify( scmProviderMock ).add( isA( ScmRepository.class ), isA( ScmFileSet.class ) );
+        verify(scmProviderMock).add(isA(ScmRepository.class), isA(ScmFileSet.class));
 
-        verifyNoMoreInteractions( scmProviderMock );
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     @Test
-    public void testSuppressCommitBeforeTagOrBranchAndReomoteTagging()
-        throws Exception
-    {
-        List<MavenProject> reactorProjects = createReactorProjects( "basic-pom" );
+    public void testSuppressCommitBeforeTagOrBranchAndReomoteTagging() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setGenerateReleasePoms( true );
-        builder.setSuppressCommitBeforeTagOrBranch( true );
-        builder.setRemoteTagging( true );
-        builder.setPinExternals( false );
-        mapNextVersion( builder, "groupId:artifactId" );
+        builder.setGenerateReleasePoms(true);
+        builder.setSuppressCommitBeforeTagOrBranch(true);
+        builder.setRemoteTagging(true);
+        builder.setPinExternals(false);
+        mapNextVersion(builder, "groupId:artifactId");
 
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        verify( scmProviderMock ).add( isA( ScmRepository.class ), isA( ScmFileSet.class ) );
+        verify(scmProviderMock).add(isA(ScmRepository.class), isA(ScmFileSet.class));
 
-        verifyNoMoreInteractions( scmProviderMock );
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     // MRELEASE-808
     @Test
-    public void testFinalName()
-        throws Exception
-    {
-        List<MavenProject> reactorProjects = createReactorProjects( "pom-with-finalname" );
-        ReleaseDescriptorBuilder builder = createConfigurationForWithParentNextVersion( reactorProjects, "pom-with-finalname" );
-        builder.setGenerateReleasePoms( true );
+    public void testFinalName() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("pom-with-finalname");
+        ReleaseDescriptorBuilder builder =
+                createConfigurationForWithParentNextVersion(reactorProjects, "pom-with-finalname");
+        builder.setGenerateReleasePoms(true);
 
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue( comparePomFiles( reactorProjects ) );
+        assertTrue(comparePomFiles(reactorProjects));
     }
 
     /*
@@ -193,11 +175,11 @@ public class GenerateReleasePomsPhaseTest
      * util.List)
      */
     @Override
-    protected ReleaseDescriptorBuilder createDescriptorFromProjects( List<MavenProject> reactorProjects, String workingDirectory )
-    {
-        ReleaseDescriptorBuilder builder = super.createDescriptorFromProjects( reactorProjects, workingDirectory );
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setGenerateReleasePoms( true );
+    protected ReleaseDescriptorBuilder createDescriptorFromProjects(
+            List<MavenProject> reactorProjects, String workingDirectory) {
+        ReleaseDescriptorBuilder builder = super.createDescriptorFromProjects(reactorProjects, workingDirectory);
+        builder.setScmReleaseLabel("release-label");
+        builder.setGenerateReleasePoms(true);
         return builder;
     }
 
@@ -206,61 +188,54 @@ public class GenerateReleasePomsPhaseTest
      * String, boolean)
      */
     @Override
-    protected List<MavenProject> prepareReactorProjects( String path )
-        throws Exception
-    {
+    protected List<MavenProject> prepareReactorProjects(String path) throws Exception {
         String dir = "generate-release-poms/" + path;
-        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
+        List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
 
-        scmProviderMock = mock( ScmProvider.class );
+        scmProviderMock = mock(ScmProvider.class);
 
         List<File> releasePoms = new ArrayList<>();
 
-        for ( MavenProject project : reactorProjects )
-        {
-            releasePoms.add( ReleaseUtil.getReleasePom( project ) );
+        for (MavenProject project : reactorProjects) {
+            releasePoms.add(ReleaseUtil.getReleasePom(project));
         }
 
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), releasePoms );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile(), releasePoms);
 
-        when( scmProviderMock.add( isA( ScmRepository.class ),
-               argThat( new IsScmFileSetEquals( fileSet ) ) ) ).thenReturn( new AddScmResult( "...",
-                              Collections.singletonList( new ScmFile( "pom.xml", ScmFileStatus.ADDED ) ) ) );
+        when(scmProviderMock.add(isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet))))
+                .thenReturn(new AddScmResult(
+                        "...", Collections.singletonList(new ScmFile("pom.xml", ScmFileStatus.ADDED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         return reactorProjects;
     }
 
     @Override
-    protected void verifyReactorProjects( String path, boolean copyFiles )
-        throws Exception
-    {
-        String dir = "generate-release-poms/"+ path;
-        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
+    protected void verifyReactorProjects(String path, boolean copyFiles) throws Exception {
+        String dir = "generate-release-poms/" + path;
+        List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
 
         List<File> releasePoms = new ArrayList<>();
 
-        for ( Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); )
-        {
+        for (Iterator<MavenProject> iterator = reactorProjects.iterator(); iterator.hasNext(); ) {
             MavenProject project = iterator.next();
 
-            releasePoms.add( ReleaseUtil.getReleasePom( project ) );
+            releasePoms.add(ReleaseUtil.getReleasePom(project));
         }
 
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile(), releasePoms );
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile(), releasePoms);
 
-        verify( scmProviderMock ).add( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ) );
-        verifyNoMoreInteractions( scmProviderMock );
+        verify(scmProviderMock).add(isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)));
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     @Override
-    protected void mapNextVersion( ReleaseDescriptorBuilder config, String projectId )
-    {
-        config.addReleaseVersion( projectId, NEXT_VERSION );
+    protected void mapNextVersion(ReleaseDescriptorBuilder config, String projectId) {
+        config.addReleaseVersion(projectId, NEXT_VERSION);
     }
 
     /*
@@ -269,9 +244,8 @@ public class GenerateReleasePomsPhaseTest
      * maven.shared.release.config.ReleaseDescriptor, java.lang.String)
      */
     @Override
-    protected void mapAlternateNextVersion( ReleaseDescriptorBuilder config, String projectId )
-    {
-        config.addReleaseVersion( projectId, ALTERNATIVE_NEXT_VERSION );
+    protected void mapAlternateNextVersion(ReleaseDescriptorBuilder config, String projectId) {
+        config.addReleaseVersion(projectId, ALTERNATIVE_NEXT_VERSION);
     }
 
     /*
@@ -280,8 +254,7 @@ public class GenerateReleasePomsPhaseTest
      * shared.release.config.ReleaseDescriptor, java.lang.String)
      */
     @Override
-    protected void unmapNextVersion( ReleaseDescriptorBuilder config, String projectId )
-    {
+    protected void unmapNextVersion(ReleaseDescriptorBuilder config, String projectId) {
         // nothing to do
     }
 
@@ -290,13 +263,12 @@ public class GenerateReleasePomsPhaseTest
      * createConfigurationForPomWithParentAlternateNextVersion(java.util.List)
      */
     @Override
-    protected ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion( List<MavenProject> reactorProjects, String workingDirectory )
-        throws Exception
-    {
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, workingDirectory );
+    protected ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion(
+            List<MavenProject> reactorProjects, String workingDirectory) throws Exception {
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects(reactorProjects, workingDirectory);
 
-        builder.addReleaseVersion( "groupId:artifactId", NEXT_VERSION );
-        builder.addReleaseVersion( "groupId:subproject1", ALTERNATIVE_NEXT_VERSION );
+        builder.addReleaseVersion("groupId:artifactId", NEXT_VERSION);
+        builder.addReleaseVersion("groupId:subproject1", ALTERNATIVE_NEXT_VERSION);
 
         return builder;
     }
@@ -306,13 +278,12 @@ public class GenerateReleasePomsPhaseTest
      * createConfigurationForWithParentNextVersion(java.util.List)
      */
     @Override
-    protected ReleaseDescriptorBuilder createConfigurationForWithParentNextVersion( List<MavenProject> reactorProjects, String workingDirectory )
-        throws Exception
-    {
-        ReleaseDescriptorBuilder builder = createDescriptorFromProjects( reactorProjects, workingDirectory );
+    protected ReleaseDescriptorBuilder createConfigurationForWithParentNextVersion(
+            List<MavenProject> reactorProjects, String workingDirectory) throws Exception {
+        ReleaseDescriptorBuilder builder = createDescriptorFromProjects(reactorProjects, workingDirectory);
 
-        builder.addReleaseVersion( "groupId:artifactId", NEXT_VERSION );
-        builder.addReleaseVersion( "groupId:subproject1", NEXT_VERSION );
+        builder.addReleaseVersion("groupId:artifactId", NEXT_VERSION);
+        builder.addReleaseVersion("groupId:subproject1", NEXT_VERSION);
 
         return builder;
     }
@@ -322,11 +293,8 @@ public class GenerateReleasePomsPhaseTest
      * org.apache.maven.shared.release.phase.AbstractRewritingReleasePhaseTestCase#readTestProjectFile(java.lang.String)
      */
     @Override
-    protected String readTestProjectFile( String fileName )
-        throws IOException
-    {
-        return ReleaseUtil.readXmlFile( getTestFile( "target/test-classes/projects/generate-release-poms/"
-            + fileName ) );
+    protected String readTestProjectFile(String fileName) throws IOException {
+        return ReleaseUtil.readXmlFile(getTestFile("target/test-classes/projects/generate-release-poms/" + fileName));
     }
 
     /*
@@ -336,13 +304,11 @@ public class GenerateReleasePomsPhaseTest
      */
     // @Override
     @Override
-    protected void comparePomFiles( MavenProject project, String expectedFileSuffix, boolean normalizeLineEndings )
-        throws IOException
-    {
-        File actualFile = ReleaseUtil.getReleasePom( project );
-        File expectedFile =
-            new File( actualFile.getParentFile(), "expected-release-pom" + expectedFileSuffix + ".xml" );
+    protected void comparePomFiles(MavenProject project, String expectedFileSuffix, boolean normalizeLineEndings)
+            throws IOException {
+        File actualFile = ReleaseUtil.getReleasePom(project);
+        File expectedFile = new File(actualFile.getParentFile(), "expected-release-pom" + expectedFileSuffix + ".xml");
 
-        comparePomFiles( expectedFile, actualFile, normalizeLineEndings, true );
+        comparePomFiles(expectedFile, actualFile, normalizeLineEndings, true);
     }
 }

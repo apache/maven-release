@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -30,65 +29,54 @@ import java.io.File;
  * @author <a href="mailto:ChrisGWarp@gmail.com">Chris Graham</a>
  */
 @Singleton
-@Named( "jazz" )
-public class JazzScmTranslator
-        implements ScmTranslator
-{
+@Named("jazz")
+public class JazzScmTranslator implements ScmTranslator {
     @Override
-    public String translateBranchUrl( String url, String branchName, String branchBase )
-    {
+    public String translateBranchUrl(String url, String branchName, String branchBase) {
         // Jazz URL's (currently) take the form:
         // "scm:jazz:[username[;password]@]http[s]://server_name[:port]/jazzPath:repositoryWorkspace"
         // Eg:
         // scm:jazz:Deb;Deb@https://rtc:9444/jazz:BogusRepositoryWorkspace
-        int i = url.lastIndexOf( ':' );
-        url = url.substring( 0, i + 1 );
-        if ( branchName != null && branchName.endsWith( "/" ) )
-        {
+        int i = url.lastIndexOf(':');
+        url = url.substring(0, i + 1);
+        if (branchName != null && branchName.endsWith("/")) {
             // Remove the trailing "/", if present.
-            branchName = branchName.substring( 0, branchName.length() - 1 );
+            branchName = branchName.substring(0, branchName.length() - 1);
         }
         url = url + branchName;
         return url;
     }
 
     @Override
-    public String translateTagUrl( String url, String tag, String tagBase )
-    {
+    public String translateTagUrl(String url, String tag, String tagBase) {
         // Jazz URL's (currently) take the form:
         // "scm:jazz:[username[;password]@]http[s]://server_name[:port]/jazzPath:repositoryWorkspace"
         // Eg:
         // scm:jazz:Deb;Deb@https://rtc:9444/jazz:BogusRepositoryWorkspace
-        int i = url.lastIndexOf( ':' );
-        url = url.substring( 0, i + 1 );
-        if ( tag != null && tag.endsWith( "/" ) )
-        {
+        int i = url.lastIndexOf(':');
+        url = url.substring(0, i + 1);
+        if (tag != null && tag.endsWith("/")) {
             // Remove the trailing "/", if present.
-            tag = tag.substring( 0, tag.length() - 1 );
+            tag = tag.substring(0, tag.length() - 1);
         }
         url = url + tag;
         return url;
     }
 
     @Override
-    public String resolveTag( String tag )
-    {
+    public String resolveTag(String tag) {
         // project.scm.tag is not required, so return null.
         return null;
     }
 
     @Override
-    public String toRelativePath( String path )
-    {
+    public String toRelativePath(String path) {
         String relativePath;
-        if ( path.startsWith( "\\" ) || path.startsWith( "/" ) )
-        {
-            relativePath = path.substring( 1 );
-        }
-        else
-        {
+        if (path.startsWith("\\") || path.startsWith("/")) {
+            relativePath = path.substring(1);
+        } else {
             relativePath = path;
         }
-        return relativePath.replace( "\\", File.separator ).replace( "/", File.separator );
+        return relativePath.replace("\\", File.separator).replace("/", File.separator);
     }
 }

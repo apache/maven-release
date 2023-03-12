@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,12 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
@@ -27,17 +31,10 @@ import org.codehaus.plexus.util.ReaderFactory;
 import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * @author Edwin Punzalan
  */
-public abstract class AbstractBackupPomsPhaseTest
-    extends PlexusJUnit4TestCase
-{
+public abstract class AbstractBackupPomsPhaseTest extends PlexusJUnit4TestCase {
     private final String pomFilename = "pom.xml";
 
     protected final String releaseBackupSuffix = ".releaseBackup";
@@ -45,51 +42,42 @@ public abstract class AbstractBackupPomsPhaseTest
     protected ReleasePhase phase;
 
     @Override
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
 
         phase = getReleasePhase();
     }
 
-    abstract ReleasePhase getReleasePhase()
-        throws Exception;
+    abstract ReleasePhase getReleasePhase() throws Exception;
 
-    protected List<MavenProject> getReactorProjects( String projectPath )
-        throws Exception
-    {
+    protected List<MavenProject> getReactorProjects(String projectPath) throws Exception {
         List<MavenProject> reactorProjects = new ArrayList<>();
 
-        File pomFile = new File( projectPath, pomFilename );
+        File pomFile = new File(projectPath, pomFilename);
 
-        MavenProject mainProject = createMavenProject( pomFile );
+        MavenProject mainProject = createMavenProject(pomFile);
 
-        reactorProjects.add( mainProject );
+        reactorProjects.add(mainProject);
 
-        for ( String module : mainProject.getModel().getModules() )
-        {
-            File modulePom = new File( projectPath + "/" + module, pomFilename );
+        for (String module : mainProject.getModel().getModules()) {
+            File modulePom = new File(projectPath + "/" + module, pomFilename);
 
-            MavenProject subproject = createMavenProject( modulePom );
+            MavenProject subproject = createMavenProject(modulePom);
 
-            reactorProjects.add( subproject );
+            reactorProjects.add(subproject);
         }
 
         return reactorProjects;
     }
 
-    private MavenProject createMavenProject( File pomFile ) throws IOException, XmlPullParserException
-    {
+    private MavenProject createMavenProject(File pomFile) throws IOException, XmlPullParserException {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model;
-        try ( XmlStreamReader xmlStreamReader = ReaderFactory.newXmlReader( pomFile ))
-        {
-            model = reader.read( xmlStreamReader );
+        try (XmlStreamReader xmlStreamReader = ReaderFactory.newXmlReader(pomFile)) {
+            model = reader.read(xmlStreamReader);
         }
-        MavenProject project = new MavenProject( model );
-        project.setFile( pomFile );
+        MavenProject project = new MavenProject(model);
+        project.setFile(pomFile);
         return project;
     }
-
 }

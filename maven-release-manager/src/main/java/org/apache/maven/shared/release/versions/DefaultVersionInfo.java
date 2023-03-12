@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.versions;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,11 +16,7 @@ package org.apache.maven.shared.release.versions;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import org.apache.maven.artifact.Artifact;
-import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.codehaus.plexus.util.StringUtils;
+package org.apache.maven.shared.release.versions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +24,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.maven.artifact.Artifact;
+import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
+import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This compares and increments versions for a common java versioning scheme.
@@ -54,9 +53,7 @@ import java.util.regex.Pattern;
  * TODO: this parser is better than DefaultArtifactVersion - replace it with this (but align naming) and then remove
  * this from here.
  */
-public class DefaultVersionInfo
-    implements VersionInfo
-{
+public class DefaultVersionInfo implements VersionInfo {
     private final String strVersion;
 
     private final List<String> digits;
@@ -93,12 +90,12 @@ public class DefaultVersionInfo
 
     /** Constant <code>STANDARD_PATTERN</code> */
     public static final Pattern STANDARD_PATTERN = Pattern.compile(
-        "^((?:\\d+\\.)*\\d+)"      // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
-        + "([-_])?"                // optional - or _  (annotation separator)
-        + "([a-zA-Z]*)"            // alpha characters (looking for annotation - alpha, beta, RC, etc.)
-        + "([-_])?"                // optional - or _  (annotation revision separator)
-        + "(\\d*)"                 // digits  (any digits after rc or beta is an annotation revision)
-        + "(?:([-_])?(.*?))?$" );  // - or _ followed everything else (build specifier)
+            "^((?:\\d+\\.)*\\d+)" // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
+                    + "([-_])?" // optional - or _  (annotation separator)
+                    + "([a-zA-Z]*)" // alpha characters (looking for annotation - alpha, beta, RC, etc.)
+                    + "([-_])?" // optional - or _  (annotation revision separator)
+                    + "(\\d*)" // digits  (any digits after rc or beta is an annotation revision)
+                    + "(?:([-_])?(.*?))?$"); // - or _ followed everything else (build specifier)
 
     /* *
      * cmaki 02242009
@@ -110,7 +107,7 @@ public class DefaultVersionInfo
      */
     // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
     /** Constant <code>ALTERNATE_PATTERN</code> */
-    public static final Pattern ALTERNATE_PATTERN = Pattern.compile( "^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)" );
+    public static final Pattern ALTERNATE_PATTERN = Pattern.compile("^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)");
 
     /**
      * Constructs this object and parses the supplied version string.
@@ -118,16 +115,13 @@ public class DefaultVersionInfo
      * @param version the version string
      * @throws org.apache.maven.shared.release.versions.VersionParseException if an exception during parsing the input
      */
-    public DefaultVersionInfo( String version )
-        throws VersionParseException
-    {
+    public DefaultVersionInfo(String version) throws VersionParseException {
         strVersion = version;
 
         // FIX for non-digit release numbers, e.g. trunk-SNAPSHOT or just SNAPSHOT
-        Matcher matcher = ALTERNATE_PATTERN.matcher( strVersion );
+        Matcher matcher = ALTERNATE_PATTERN.matcher(strVersion);
         // TODO: hack because it didn't support "SNAPSHOT"
-        if ( matcher.matches() )
-        {
+        if (matcher.matches()) {
             annotation = null;
             digits = null;
             buildSpecifier = version;
@@ -135,41 +129,32 @@ public class DefaultVersionInfo
             return;
         }
 
-        Matcher m = STANDARD_PATTERN.matcher( strVersion );
-        if ( m.matches() )
-        {
-            digits = parseDigits( m.group( DIGITS_INDEX ) );
-            if ( !SNAPSHOT_IDENTIFIER.equals( m.group( ANNOTATION_INDEX ) ) )
-            {
-                annotationSeparator = m.group( ANNOTATION_SEPARATOR_INDEX );
-                annotation = nullIfEmpty( m.group( ANNOTATION_INDEX ) );
+        Matcher m = STANDARD_PATTERN.matcher(strVersion);
+        if (m.matches()) {
+            digits = parseDigits(m.group(DIGITS_INDEX));
+            if (!SNAPSHOT_IDENTIFIER.equals(m.group(ANNOTATION_INDEX))) {
+                annotationSeparator = m.group(ANNOTATION_SEPARATOR_INDEX);
+                annotation = nullIfEmpty(m.group(ANNOTATION_INDEX));
 
-                if ( StringUtils.isNotEmpty( m.group( ANNOTATION_REV_SEPARATOR_INDEX ) )
-                    && StringUtils.isEmpty( m.group( ANNOTATION_REVISION_INDEX ) ) )
-                {
+                if (StringUtils.isNotEmpty(m.group(ANNOTATION_REV_SEPARATOR_INDEX))
+                        && StringUtils.isEmpty(m.group(ANNOTATION_REVISION_INDEX))) {
                     // The build separator was picked up as the annotation revision separator
-                    buildSeparator = m.group( ANNOTATION_REV_SEPARATOR_INDEX );
-                    buildSpecifier = nullIfEmpty( m.group( BUILD_SPECIFIER_INDEX ) );
-                }
-                else
-                {
-                    annotationRevSeparator = m.group( ANNOTATION_REV_SEPARATOR_INDEX );
-                    annotationRevision = nullIfEmpty( m.group( ANNOTATION_REVISION_INDEX ) );
+                    buildSeparator = m.group(ANNOTATION_REV_SEPARATOR_INDEX);
+                    buildSpecifier = nullIfEmpty(m.group(BUILD_SPECIFIER_INDEX));
+                } else {
+                    annotationRevSeparator = m.group(ANNOTATION_REV_SEPARATOR_INDEX);
+                    annotationRevision = nullIfEmpty(m.group(ANNOTATION_REVISION_INDEX));
 
-                    buildSeparator = m.group( BUILD_SEPARATOR_INDEX );
-                    buildSpecifier = nullIfEmpty( m.group( BUILD_SPECIFIER_INDEX ) );
+                    buildSeparator = m.group(BUILD_SEPARATOR_INDEX);
+                    buildSpecifier = nullIfEmpty(m.group(BUILD_SPECIFIER_INDEX));
                 }
-            }
-            else
-            {
+            } else {
                 // Annotation was "SNAPSHOT" so populate the build specifier with that data
-                buildSeparator = m.group( ANNOTATION_SEPARATOR_INDEX );
-                buildSpecifier = nullIfEmpty( m.group( ANNOTATION_INDEX ) );
+                buildSeparator = m.group(ANNOTATION_SEPARATOR_INDEX);
+                buildSpecifier = nullIfEmpty(m.group(ANNOTATION_INDEX));
             }
-        }
-        else
-        {
-            throw new VersionParseException( "Unable to parse the version string: \"" + version + "\"" );
+        } else {
+            throw new VersionParseException("Unable to parse the version string: \"" + version + "\"");
         }
     }
 
@@ -184,9 +169,14 @@ public class DefaultVersionInfo
      * @param annotationRevSeparator a {@link java.lang.String} object
      * @param buildSeparator a {@link java.lang.String} object
      */
-    public DefaultVersionInfo( List<String> digits, String annotation, String annotationRevision, String buildSpecifier,
-                               String annotationSeparator, String annotationRevSeparator, String buildSeparator )
-    {
+    public DefaultVersionInfo(
+            List<String> digits,
+            String annotation,
+            String annotationRevision,
+            String buildSpecifier,
+            String annotationSeparator,
+            String annotationRevSeparator,
+            String buildSeparator) {
         this.digits = digits;
         this.annotation = annotation;
         this.annotationRevision = annotationRevision;
@@ -194,34 +184,34 @@ public class DefaultVersionInfo
         this.annotationSeparator = annotationSeparator;
         this.annotationRevSeparator = annotationRevSeparator;
         this.buildSeparator = buildSeparator;
-        this.strVersion = getVersionString( this, buildSpecifier, buildSeparator );
+        this.strVersion = getVersionString(this, buildSpecifier, buildSeparator);
     }
 
     @Override
-    public boolean isSnapshot()
-    {
-        return ArtifactUtils.isSnapshot( strVersion );
+    public boolean isSnapshot() {
+        return ArtifactUtils.isSnapshot(strVersion);
     }
 
     @Override
-    public VersionInfo getNextVersion()
-    {
+    public VersionInfo getNextVersion() {
         DefaultVersionInfo version = null;
-        if ( digits != null )
-        {
-            List<String> digits = new ArrayList<>( this.digits );
+        if (digits != null) {
+            List<String> digits = new ArrayList<>(this.digits);
             String annotationRevision = this.annotationRevision;
-            if ( StringUtils.isNumeric( annotationRevision ) )
-            {
-                annotationRevision = incrementVersionString( annotationRevision );
-            }
-            else
-            {
-                digits.set( digits.size() - 1, incrementVersionString( digits.get( digits.size() - 1 ) ) );
+            if (StringUtils.isNumeric(annotationRevision)) {
+                annotationRevision = incrementVersionString(annotationRevision);
+            } else {
+                digits.set(digits.size() - 1, incrementVersionString(digits.get(digits.size() - 1)));
             }
 
-            version = new DefaultVersionInfo( digits, annotation, annotationRevision, buildSpecifier,
-                                              annotationSeparator, annotationRevSeparator, buildSeparator );
+            version = new DefaultVersionInfo(
+                    digits,
+                    annotation,
+                    annotationRevision,
+                    buildSpecifier,
+                    annotationSeparator,
+                    annotationRevSeparator,
+                    buildSeparator);
         }
         return version;
     }
@@ -233,49 +223,43 @@ public class DefaultVersionInfo
      * greater.
      */
     @Override
-    public int compareTo( VersionInfo obj )
-    {
+    public int compareTo(VersionInfo obj) {
         DefaultVersionInfo that = (DefaultVersionInfo) obj;
 
         int result;
         // TODO: this is a workaround for a bug in DefaultArtifactVersion - fix there - 1.01 < 1.01.01
-        if ( strVersion.startsWith( that.strVersion ) && !strVersion.equals( that.strVersion )
-            && strVersion.charAt( that.strVersion.length() ) != '-' )
-        {
+        if (strVersion.startsWith(that.strVersion)
+                && !strVersion.equals(that.strVersion)
+                && strVersion.charAt(that.strVersion.length()) != '-') {
             result = 1;
-        }
-        else if ( that.strVersion.startsWith( strVersion ) && !strVersion.equals( that.strVersion )
-            && that.strVersion.charAt( strVersion.length() ) != '-' )
-        {
+        } else if (that.strVersion.startsWith(strVersion)
+                && !strVersion.equals(that.strVersion)
+                && that.strVersion.charAt(strVersion.length()) != '-') {
             result = -1;
-        }
-        else
-        {
-            // TODO: this is a workaround for a bug in DefaultArtifactVersion - fix there - it should not consider case in comparing the qualifier
+        } else {
+            // TODO: this is a workaround for a bug in DefaultArtifactVersion - fix there - it should not consider case
+            // in comparing the qualifier
             // NOTE: The combination of upper-casing and lower-casing is an approximation of String.equalsIgnoreCase()
-            String thisVersion = strVersion.toUpperCase( Locale.ENGLISH ).toLowerCase( Locale.ENGLISH );
-            String thatVersion = that.strVersion.toUpperCase( Locale.ENGLISH ).toLowerCase( Locale.ENGLISH );
+            String thisVersion = strVersion.toUpperCase(Locale.ENGLISH).toLowerCase(Locale.ENGLISH);
+            String thatVersion = that.strVersion.toUpperCase(Locale.ENGLISH).toLowerCase(Locale.ENGLISH);
 
-            result = new DefaultArtifactVersion( thisVersion ).compareTo( new DefaultArtifactVersion( thatVersion ) );
+            result = new DefaultArtifactVersion(thisVersion).compareTo(new DefaultArtifactVersion(thatVersion));
         }
         return result;
     }
 
     @Override
-    public boolean equals( Object obj )
-    {
-        if ( !( obj instanceof DefaultVersionInfo ) )
-        {
+    public boolean equals(Object obj) {
+        if (!(obj instanceof DefaultVersionInfo)) {
             return false;
         }
 
-        return compareTo( (VersionInfo) obj ) == 0;
+        return compareTo((VersionInfo) obj) == 0;
     }
 
     @Override
-    public int hashCode()
-    {
-        return strVersion.toLowerCase( Locale.ENGLISH ).hashCode();
+    public int hashCode() {
+        return strVersion.toLowerCase(Locale.ENGLISH).hashCode();
     }
 
     /**
@@ -286,30 +270,25 @@ public class DefaultVersionInfo
      * @return {@code String} increments the input {@code String} as an integer
      * and Preserves any lpad of "0" zeros.
      */
-    protected String incrementVersionString( String s )
-    {
-        int n = Integer.valueOf( s ).intValue() + 1;
-        String value = String.valueOf( n );
-        if ( value.length() < s.length() )
-        {
+    protected String incrementVersionString(String s) {
+        int n = Integer.valueOf(s).intValue() + 1;
+        String value = String.valueOf(n);
+        if (value.length() < s.length()) {
             // String was left-padded with zeros
-            value = StringUtils.leftPad( value, s.length(), "0" );
+            value = StringUtils.leftPad(value, s.length(), "0");
         }
         return value;
     }
 
     @Override
-    public String getSnapshotVersionString()
-    {
-        if ( strVersion.equals( Artifact.SNAPSHOT_VERSION ) )
-        {
+    public String getSnapshotVersionString() {
+        if (strVersion.equals(Artifact.SNAPSHOT_VERSION)) {
             return strVersion;
         }
 
         String baseVersion = getReleaseVersionString();
 
-        if ( baseVersion.length() > 0 )
-        {
+        if (baseVersion.length() > 0) {
             baseVersion += "-";
         }
 
@@ -317,30 +296,24 @@ public class DefaultVersionInfo
     }
 
     @Override
-    public String getReleaseVersionString()
-    {
+    public String getReleaseVersionString() {
         String baseVersion = strVersion;
 
-        Matcher m = Artifact.VERSION_FILE_PATTERN.matcher( baseVersion );
-        if ( m.matches() )
-        {
-            baseVersion = m.group( 1 );
+        Matcher m = Artifact.VERSION_FILE_PATTERN.matcher(baseVersion);
+        if (m.matches()) {
+            baseVersion = m.group(1);
         }
         // MRELEASE-623 SNAPSHOT is case-insensitive
-        else if ( StringUtils.right( baseVersion, 9 ).equalsIgnoreCase( "-" + Artifact.SNAPSHOT_VERSION ) )
-        {
-            baseVersion = baseVersion.substring( 0, baseVersion.length() - Artifact.SNAPSHOT_VERSION.length() - 1 );
-        }
-        else if ( baseVersion.equals( Artifact.SNAPSHOT_VERSION ) )
-        {
+        else if (StringUtils.right(baseVersion, 9).equalsIgnoreCase("-" + Artifact.SNAPSHOT_VERSION)) {
+            baseVersion = baseVersion.substring(0, baseVersion.length() - Artifact.SNAPSHOT_VERSION.length() - 1);
+        } else if (baseVersion.equals(Artifact.SNAPSHOT_VERSION)) {
             baseVersion = "1.0";
         }
         return baseVersion;
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return strVersion;
     }
 
@@ -352,38 +325,30 @@ public class DefaultVersionInfo
      * @param buildSeparator a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
-    protected static String getVersionString( DefaultVersionInfo info, String buildSpecifier, String buildSeparator )
-    {
+    protected static String getVersionString(DefaultVersionInfo info, String buildSpecifier, String buildSeparator) {
         StringBuilder sb = new StringBuilder();
 
-        if ( info.digits != null )
-        {
-            sb.append( joinDigitString( info.digits ) );
+        if (info.digits != null) {
+            sb.append(joinDigitString(info.digits));
         }
 
-        if ( StringUtils.isNotEmpty( info.annotation ) )
-        {
-            sb.append( StringUtils.defaultString( info.annotationSeparator ) );
-            sb.append( info.annotation );
+        if (StringUtils.isNotEmpty(info.annotation)) {
+            sb.append(StringUtils.defaultString(info.annotationSeparator));
+            sb.append(info.annotation);
         }
 
-        if ( StringUtils.isNotEmpty( info.annotationRevision ) )
-        {
-            if ( StringUtils.isEmpty( info.annotation ) )
-            {
-                sb.append( StringUtils.defaultString( info.annotationSeparator ) );
+        if (StringUtils.isNotEmpty(info.annotationRevision)) {
+            if (StringUtils.isEmpty(info.annotation)) {
+                sb.append(StringUtils.defaultString(info.annotationSeparator));
+            } else {
+                sb.append(StringUtils.defaultString(info.annotationRevSeparator));
             }
-            else
-            {
-                sb.append( StringUtils.defaultString( info.annotationRevSeparator ) );
-            }
-            sb.append( info.annotationRevision );
+            sb.append(info.annotationRevision);
         }
 
-        if ( StringUtils.isNotEmpty( buildSpecifier ) )
-        {
-            sb.append( StringUtils.defaultString( buildSeparator ) );
-            sb.append( buildSpecifier );
+        if (StringUtils.isNotEmpty(buildSpecifier)) {
+            sb.append(StringUtils.defaultString(buildSeparator));
+            sb.append(buildSpecifier);
         }
 
         return sb.toString();
@@ -395,9 +360,8 @@ public class DefaultVersionInfo
      * @return a single {@code String} of the items in the passed list, joined with a "."
      * @param digits {@code List<String>} of digits
      */
-    protected static String joinDigitString( List<String> digits )
-    {
-        return digits != null ? StringUtils.join( digits.iterator(), DIGIT_SEPARATOR_STRING ) : null;
+    protected static String joinDigitString(List<String> digits) {
+        return digits != null ? StringUtils.join(digits.iterator(), DIGIT_SEPARATOR_STRING) : null;
     }
 
     /**
@@ -406,18 +370,16 @@ public class DefaultVersionInfo
      *
      * @param strDigits
      */
-    private List<String> parseDigits( String strDigits )
-    {
-        return Arrays.asList( StringUtils.split( strDigits, DIGIT_SEPARATOR_STRING ) );
+    private List<String> parseDigits(String strDigits) {
+        return Arrays.asList(StringUtils.split(strDigits, DIGIT_SEPARATOR_STRING));
     }
 
-    //--------------------------------------------------
+    // --------------------------------------------------
     // Getters & Setters
-    //--------------------------------------------------
+    // --------------------------------------------------
 
-    private static String nullIfEmpty( String s )
-    {
-        return StringUtils.isEmpty( s ) ? null : s;
+    private static String nullIfEmpty(String s) {
+        return StringUtils.isEmpty(s) ? null : s;
     }
 
     /**
@@ -425,8 +387,7 @@ public class DefaultVersionInfo
      *
      * @return a {@link java.util.List} object
      */
-    public List<String> getDigits()
-    {
+    public List<String> getDigits() {
         return digits;
     }
 
@@ -435,8 +396,7 @@ public class DefaultVersionInfo
      *
      * @return a {@link java.lang.String} object
      */
-    public String getAnnotation()
-    {
+    public String getAnnotation() {
         return annotation;
     }
 
@@ -445,8 +405,7 @@ public class DefaultVersionInfo
      *
      * @return a {@link java.lang.String} object
      */
-    public String getAnnotationRevision()
-    {
+    public String getAnnotationRevision() {
         return annotationRevision;
     }
 
@@ -455,9 +414,7 @@ public class DefaultVersionInfo
      *
      * @return a {@link java.lang.String} object
      */
-    public String getBuildSpecifier()
-    {
+    public String getBuildSpecifier() {
         return buildSpecifier;
     }
-
 }

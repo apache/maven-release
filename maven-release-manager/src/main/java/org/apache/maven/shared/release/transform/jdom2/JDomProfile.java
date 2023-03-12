@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.List;
 
@@ -33,9 +32,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomProfile
-    extends Profile
-{
+public class JDomProfile extends Profile {
     private final JDomModelBase modelBase;
 
     /**
@@ -43,26 +40,22 @@ public class JDomProfile
      *
      * @param profile a {@link org.jdom2.Element} object
      */
-    public JDomProfile( Element profile )
-    {
-        this.modelBase = new JDomModelBase( profile ) ;
+    public JDomProfile(Element profile) {
+        this.modelBase = new JDomModelBase(profile);
     }
 
     @Override
-    public BuildBase getBuild()
-    {
+    public BuildBase getBuild() {
         return modelBase.getBuild();
     }
 
     @Override
-    public List<Dependency> getDependencies()
-    {
+    public List<Dependency> getDependencies() {
         return modelBase.getDependencies();
     }
 
     @Override
-    public DependencyManagement getDependencyManagement()
-    {
+    public DependencyManagement getDependencyManagement() {
         return modelBase.getDependencyManagement();
     }
 }

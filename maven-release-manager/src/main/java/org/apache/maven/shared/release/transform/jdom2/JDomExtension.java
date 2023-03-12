@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import org.apache.maven.model.Extension;
 import org.apache.maven.shared.release.transform.MavenCoordinate;
@@ -29,8 +28,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomExtension extends Extension implements MavenCoordinate
-{
+public class JDomExtension extends Extension implements MavenCoordinate {
     private final MavenCoordinate coordinate;
 
     /**
@@ -38,50 +36,42 @@ public class JDomExtension extends Extension implements MavenCoordinate
      *
      * @param extension a {@link org.jdom2.Element} object
      */
-    public JDomExtension( Element extension )
-    {
-        this.coordinate = new JDomMavenCoordinate( extension );
+    public JDomExtension(Element extension) {
+        this.coordinate = new JDomMavenCoordinate(extension);
     }
 
     @Override
-    public String getArtifactId()
-    {
+    public String getArtifactId() {
         return coordinate.getArtifactId();
     }
 
     @Override
-    public String getGroupId()
-    {
+    public String getGroupId() {
         return coordinate.getGroupId();
     }
 
     @Override
-    public String getVersion()
-    {
+    public String getVersion() {
         return coordinate.getVersion();
     }
 
     @Override
-    public void setArtifactId( String artifactId )
-    {
+    public void setArtifactId(String artifactId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setGroupId( String groupId )
-    {
+    public void setGroupId(String groupId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setVersion( String version )
-    {
-        coordinate.setVersion( version );
+    public void setVersion(String version) {
+        coordinate.setVersion(version);
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "extension";
     }
 }

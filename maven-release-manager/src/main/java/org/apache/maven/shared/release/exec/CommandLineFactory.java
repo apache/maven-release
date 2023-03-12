@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import org.codehaus.plexus.util.cli.Commandline;
 
@@ -26,8 +25,7 @@ import org.codehaus.plexus.util.cli.Commandline;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public interface CommandLineFactory
-{
+public interface CommandLineFactory {
     /**
      * Create a command line object with default environment for the given executable.
      *
@@ -36,6 +34,5 @@ public interface CommandLineFactory
      * @throws org.apache.maven.shared.release.exec.MavenExecutorException if there was a problem creating
      *                                                                     the command line
      */
-    Commandline createCommandLine( String executable )
-            throws MavenExecutorException;
+    Commandline createCommandLine(String executable) throws MavenExecutorException;
 }

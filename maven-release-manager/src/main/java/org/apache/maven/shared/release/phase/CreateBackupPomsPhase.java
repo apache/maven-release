@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -38,68 +37,60 @@ import org.codehaus.plexus.util.FileUtils;
  * @author Edwin Punzalan
  */
 @Singleton
-@Named( "create-backup-poms" )
-public class CreateBackupPomsPhase
-        extends AbstractBackupPomsPhase implements ResourceGenerator
-{
+@Named("create-backup-poms")
+public class CreateBackupPomsPhase extends AbstractBackupPomsPhase implements ResourceGenerator {
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
 
         // remove previous backups, if any
-        clean( reactorProjects );
+        clean(reactorProjects);
 
-        logInfo( result, "Creating pom.xml backup with " + BACKUP_SUFFIX + " suffix" );
+        logInfo(result, "Creating pom.xml backup with " + BACKUP_SUFFIX + " suffix");
 
-        for ( MavenProject project : reactorProjects )
-        {
-            createPomBackup( project );
+        for (MavenProject project : reactorProjects) {
+            createPomBackup(project);
         }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
     @Override
-    public ReleaseResult clean( List<MavenProject> reactorProjects )
-    {
+    public ReleaseResult clean(List<MavenProject> reactorProjects) {
         ReleaseResult result = new ReleaseResult();
 
-        for ( MavenProject project : reactorProjects )
-        {
-            deletePomBackup( project );
+        for (MavenProject project : reactorProjects) {
+            deletePomBackup(project);
         }
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
-        return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
+        return execute(releaseDescriptor, releaseEnvironment, reactorProjects);
     }
 
-    private void createPomBackup( MavenProject project )
-            throws ReleaseExecutionException
-    {
+    private void createPomBackup(MavenProject project) throws ReleaseExecutionException {
         // delete any existing backup first
-        deletePomBackup( project );
+        deletePomBackup(project);
 
-        try
-        {
-            FileUtils.copyFile( ReleaseUtil.getStandardPom( project ), getPomBackup( project ) );
-        }
-        catch ( IOException e )
-        {
-            throw new ReleaseExecutionException( "Error creating backup POM: " + e.getMessage(), e );
+        try {
+            FileUtils.copyFile(ReleaseUtil.getStandardPom(project), getPomBackup(project));
+        } catch (IOException e) {
+            throw new ReleaseExecutionException("Error creating backup POM: " + e.getMessage(), e);
         }
     }
 }

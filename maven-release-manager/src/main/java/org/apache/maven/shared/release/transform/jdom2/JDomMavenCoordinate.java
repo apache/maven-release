@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.jdom2.Element;
@@ -28,8 +27,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomMavenCoordinate implements MavenCoordinate
-{
+public class JDomMavenCoordinate implements MavenCoordinate {
     private final Element element;
 
     /**
@@ -37,52 +35,41 @@ public class JDomMavenCoordinate implements MavenCoordinate
      *
      * @param elm a {@link org.jdom2.Element} object
      */
-    public JDomMavenCoordinate( Element elm )
-    {
+    public JDomMavenCoordinate(Element elm) {
         this.element = elm;
     }
 
     @Override
-    public String getGroupId()
-    {
-        return element.getChildTextTrim( "groupId", element.getNamespace() );
+    public String getGroupId() {
+        return element.getChildTextTrim("groupId", element.getNamespace());
     }
 
     @Override
-    public String getArtifactId()
-    {
-        return element.getChildTextTrim( "artifactId", element.getNamespace() );
+    public String getArtifactId() {
+        return element.getChildTextTrim("artifactId", element.getNamespace());
     }
 
     @Override
-    public String getVersion()
-    {
+    public String getVersion() {
         Element version = getVersionElement();
-        if ( version == null )
-        {
+        if (version == null) {
             return null;
-        }
-        else
-        {
+        } else {
             return version.getTextTrim();
         }
-
     }
 
-    private Element getVersionElement()
-    {
-        return element.getChild( "version", element.getNamespace() );
-    }
-
-    @Override
-    public void setVersion( String version )
-    {
-        JDomUtils.rewriteValue( getVersionElement(), version );
+    private Element getVersionElement() {
+        return element.getChild("version", element.getNamespace());
     }
 
     @Override
-    public String getName()
-    {
+    public void setVersion(String version) {
+        JDomUtils.rewriteValue(getVersionElement(), version);
+    }
+
+    @Override
+    public String getName() {
         return element.getName();
     }
 }

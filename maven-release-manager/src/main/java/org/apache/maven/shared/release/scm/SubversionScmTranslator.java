@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -32,32 +31,25 @@ import org.apache.maven.scm.provider.svn.SvnTagBranchUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "svn" )
-public class SubversionScmTranslator
-    implements ScmTranslator
-{
+@Named("svn")
+public class SubversionScmTranslator implements ScmTranslator {
     @Override
-    public String translateBranchUrl( String url, String branchName, String branchBase )
-    {
-        return SvnTagBranchUtils.resolveUrl( url, branchBase, SvnTagBranchUtils.SVN_BRANCHES,
-                                             new ScmBranch( branchName ) );
+    public String translateBranchUrl(String url, String branchName, String branchBase) {
+        return SvnTagBranchUtils.resolveUrl(url, branchBase, SvnTagBranchUtils.SVN_BRANCHES, new ScmBranch(branchName));
     }
 
     @Override
-    public String translateTagUrl( String url, String tag, String tagBase )
-    {
-        return SvnTagBranchUtils.resolveUrl( url, tagBase, SvnTagBranchUtils.SVN_TAGS, new ScmTag( tag ) );
+    public String translateTagUrl(String url, String tag, String tagBase) {
+        return SvnTagBranchUtils.resolveUrl(url, tagBase, SvnTagBranchUtils.SVN_TAGS, new ScmTag(tag));
     }
 
     @Override
-    public String resolveTag( String tag )
-    {
+    public String resolveTag(String tag) {
         return null;
     }
 
     @Override
-    public String toRelativePath( String path )
-    {
+    public String toRelativePath(String path) {
         return path;
     }
 }

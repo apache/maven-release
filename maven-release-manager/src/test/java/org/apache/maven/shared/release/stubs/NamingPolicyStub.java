@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.stubs;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.stubs;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.stubs;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -33,13 +32,10 @@ import org.apache.maven.shared.release.policy.naming.NamingPolicyResult;
  *
  */
 @Singleton
-@Named( "stub" )
-public class NamingPolicyStub implements NamingPolicy
-{
+@Named("stub")
+public class NamingPolicyStub implements NamingPolicy {
     @Override
-    public NamingPolicyResult getName( NamingPolicyRequest request )
-        throws PolicyException
-    {
-        return new NamingPolicyResult().setName( "STUB" );
+    public NamingPolicyResult getName(NamingPolicyRequest request) throws PolicyException {
+        return new NamingPolicyResult().setName("STUB");
     }
 }

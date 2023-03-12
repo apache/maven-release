@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,18 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.io.IOException;
@@ -62,381 +49,391 @@ import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
 /**
  * Test the SCM branch phase.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ScmBranchPhaseTest
-    extends AbstractReleaseTestCase
-{
+public class ScmBranchPhaseTest extends AbstractReleaseTestCase {
     @Override
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
 
-        phase = lookup( ReleasePhase.class, "scm-branch" );
+        phase = lookup(ReleasePhase.class, "scm-branch");
     }
 
-    public static String getPath( File file )
-        throws IOException
-    {
-        return file.toPath().toRealPath( LinkOption.NOFOLLOW_LINKS ).toString();
+    public static String getPath(File file) throws IOException {
+        return file.toPath().toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
     }
 
     @Test
-    public void testBranch()
-        throws Exception
-    {
+    public void testBranch() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
-        builder.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( "pom.xml" );
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmCommentPrefix( "[my prefix] " );
+        builder.setScmSourceUrl("scm-url");
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName("pom.xml");
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmCommentPrefix("[my prefix] ");
 
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile());
 
-        ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.branch( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
-                                      eq( "release-label" ),
-                                      argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
-                                                                                                                                                                                                Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
-                                                                                                                                                                                                                                        ScmFileStatus.TAGGED ) ) ) );
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmProvider scmProviderMock = mock(ScmProvider.class);
+        when(scmProviderMock.branch(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        eq("release-label"),
+                        argThat(new IsScmBranchParametersEquals(
+                                new ScmBranchParameters("[my prefix] copy for branch release-label")))))
+                .thenReturn(new BranchScmResult(
+                        "...",
+                        Collections.singletonList(new ScmFile(getPath(rootProject.getFile()), ScmFileStatus.TAGGED))));
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        verify( scmProviderMock ).branch( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
-                                          eq( "release-label" ),
-                                          argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) );
-        verifyNoMoreInteractions( scmProviderMock );
+        verify(scmProviderMock)
+                .branch(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        eq("release-label"),
+                        argThat(new IsScmBranchParametersEquals(
+                                new ScmBranchParameters("[my prefix] copy for branch release-label"))));
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     @Test
-    public void testCommitMultiModuleDeepFolders()
-        throws Exception
-    {
+    public void testCommitMultiModuleDeepFolders() throws Exception {
         // prepare
         String dir = "scm-commit/multimodule-with-deep-subprojects";
-        List<MavenProject> reactorProjects =
-            createReactorProjects( dir, dir, null );
+        List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
         String sourceUrl = "http://svn.example.com/repos/project/trunk/";
         String scmUrl = "scm:svn:" + sourceUrl;
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmSourceUrl( scmUrl );
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( "pom.xml" );
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmCommentPrefix( "[my prefix] " );
-        builder.setScmBranchBase( "http://svn.example.com/repos/project/branches/" );
+        builder.setScmSourceUrl(scmUrl);
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName("pom.xml");
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmCommentPrefix("[my prefix] ");
+        builder.setScmBranchBase("http://svn.example.com/repos/project/branches/");
 
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile());
 
-        SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( sourceUrl );
-        scmProviderRepository.setBranchBase( "http://svn.example.com/repos/project/branches/" );
-        ScmRepository repository = new ScmRepository( "svn", scmProviderRepository );
-        ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.branch( eq( repository ), argThat( new IsScmFileSetEquals( fileSet ) ),
-                                      eq( "release-label" ),
-                                      argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
-                                                                                                                                                                                                Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
-                                                                                                                                                                                                                                        ScmFileStatus.TAGGED ) ) ) );
+        SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository(sourceUrl);
+        scmProviderRepository.setBranchBase("http://svn.example.com/repos/project/branches/");
+        ScmRepository repository = new ScmRepository("svn", scmProviderRepository);
+        ScmProvider scmProviderMock = mock(ScmProvider.class);
+        when(scmProviderMock.branch(
+                        eq(repository),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        eq("release-label"),
+                        argThat(new IsScmBranchParametersEquals(
+                                new ScmBranchParameters("[my prefix] copy for branch release-label")))))
+                .thenReturn(new BranchScmResult(
+                        "...",
+                        Collections.singletonList(new ScmFile(getPath(rootProject.getFile()), ScmFileStatus.TAGGED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
-        stub.addScmRepositoryForUrl( scmUrl, repository );
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
+        stub.addScmRepositoryForUrl(scmUrl, repository);
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        verify( scmProviderMock ).branch( eq( repository ), argThat( new IsScmFileSetEquals( fileSet ) ),
-                                          eq( "release-label" ),
-                                          argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) );
-        verifyNoMoreInteractions( scmProviderMock );
+        verify(scmProviderMock)
+                .branch(
+                        eq(repository),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        eq("release-label"),
+                        argThat(new IsScmBranchParametersEquals(
+                                new ScmBranchParameters("[my prefix] copy for branch release-label"))));
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     @Test
-    public void testCommitForFlatMultiModule()
-        throws Exception
-    {
+    public void testCommitForFlatMultiModule() throws Exception {
         // prepare
         List<MavenProject> reactorProjects =
-            createReactorProjects( "rewrite-for-release/pom-with-parent-flat", "root-project" );
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
+                createReactorProjects("rewrite-for-release/pom-with-parent-flat", "root-project");
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmSourceUrl( rootProject.getScm().getConnection() );
-        builder.setWorkingDirectory( getWorkingDirectory( "rewrite-for-release/pom-with-parent-flat" ).toRealPath( LinkOption.NOFOLLOW_LINKS ).toString() );
-        builder.setPomFileName( "root-project/pom.xml" );
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmCommentPrefix( "[my prefix] " );
+        builder.setScmSourceUrl(rootProject.getScm().getConnection());
+        builder.setWorkingDirectory(getWorkingDirectory("rewrite-for-release/pom-with-parent-flat")
+                .toRealPath(LinkOption.NOFOLLOW_LINKS)
+                .toString());
+        builder.setPomFileName("root-project/pom.xml");
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmCommentPrefix("[my prefix] ");
 
         // one directory up from root project
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile().getParentFile() );
+        ScmFileSet fileSet =
+                new ScmFileSet(rootProject.getFile().getParentFile().getParentFile());
 
         String scmUrl = "file://localhost/tmp/scm-repo/trunk";
-        SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository( scmUrl );
-        ScmRepository repository = new ScmRepository( "svn", scmProviderRepository );
-        ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.branch( eq( repository ), argThat( new IsScmFileSetEquals( fileSet ) ),
-                                      eq( "release-label" ),
-                                      argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
-                                                                                                                                                                                                Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
-                                                                                                                                                                                                                                        ScmFileStatus.TAGGED ) ) ) );
+        SvnScmProviderRepository scmProviderRepository = new SvnScmProviderRepository(scmUrl);
+        ScmRepository repository = new ScmRepository("svn", scmProviderRepository);
+        ScmProvider scmProviderMock = mock(ScmProvider.class);
+        when(scmProviderMock.branch(
+                        eq(repository),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        eq("release-label"),
+                        argThat(new IsScmBranchParametersEquals(
+                                new ScmBranchParameters("[my prefix] copy for branch release-label")))))
+                .thenReturn(new BranchScmResult(
+                        "...",
+                        Collections.singletonList(new ScmFile(getPath(rootProject.getFile()), ScmFileStatus.TAGGED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
-        stub.addScmRepositoryForUrl( "scm:svn:" + scmUrl, repository );
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
+        stub.addScmRepositoryForUrl("scm:svn:" + scmUrl, repository);
 
         // execute
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        verify( scmProviderMock ).branch( eq( repository ), argThat( new IsScmFileSetEquals( fileSet ) ),
-                                          eq( "release-label" ),
-                                          argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) );
-        verifyNoMoreInteractions( scmProviderMock );
+        verify(scmProviderMock)
+                .branch(
+                        eq(repository),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        eq("release-label"),
+                        argThat(new IsScmBranchParametersEquals(
+                                new ScmBranchParameters("[my prefix] copy for branch release-label"))));
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     @Test
-    public void testCommitMultiModule()
-        throws Exception
-    {
+    public void testCommitMultiModule() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         String dir = "scm-commit/multiple-poms";
-        List<MavenProject> reactorProjects = createReactorProjects( dir, dir, null );
-        builder.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( "pom.xml" );
-        builder.setScmReleaseLabel( "release-label" );
-        builder.setScmCommentPrefix( "[my prefix] " );
+        List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
+        builder.setScmSourceUrl("scm-url");
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName("pom.xml");
+        builder.setScmReleaseLabel("release-label");
+        builder.setScmCommentPrefix("[my prefix] ");
 
-        ScmFileSet fileSet = new ScmFileSet( rootProject.getFile().getParentFile() );
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile());
 
-        ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.branch( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
-                                      eq( "release-label" ),
-                                      argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) ) ).thenReturn( new BranchScmResult( "...",
-                                                                                                                                                                                                Collections.singletonList( new ScmFile( getPath( rootProject.getFile() ),
-                                                                                                                                                                                                                                        ScmFileStatus.TAGGED ) ) ) );
+        ScmProvider scmProviderMock = mock(ScmProvider.class);
+        when(scmProviderMock.branch(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        eq("release-label"),
+                        argThat(new IsScmBranchParametersEquals(
+                                new ScmBranchParameters("[my prefix] copy for branch release-label")))))
+                .thenReturn(new BranchScmResult(
+                        "...",
+                        Collections.singletonList(new ScmFile(getPath(rootProject.getFile()), ScmFileStatus.TAGGED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         // exeucte
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        verify( scmProviderMock ).branch( isA( ScmRepository.class ), argThat( new IsScmFileSetEquals( fileSet ) ),
-                                          eq( "release-label" ),
-                                          argThat( new IsScmBranchParametersEquals( new ScmBranchParameters( "[my prefix] copy for branch release-label" ) ) ) );
-        verifyNoMoreInteractions( scmProviderMock );
+        verify(scmProviderMock)
+                .branch(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        eq("release-label"),
+                        argThat(new IsScmBranchParametersEquals(
+                                new ScmBranchParameters("[my prefix] copy for branch release-label"))));
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     @Test
-    public void testBranchNoReleaseLabel()
-        throws Exception
-    {
+    public void testBranchNoReleaseLabel() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
 
-        try
-        {
-            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
-            fail( "Should have thrown an exception" );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            assertTrue( true );
+        try {
+            phase.execute(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+            fail("Should have thrown an exception");
+        } catch (ReleaseFailureException e) {
+            assertTrue(true);
         }
     }
 
     @Test
-    public void testSimulateBranch()
-        throws Exception
-    {
+    public void testSimulateBranch() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
-        builder.setScmSourceUrl( "scm-url" );
-        MavenProject rootProject = ReleaseUtil.getRootProject( reactorProjects );
-        builder.setWorkingDirectory( getPath( rootProject.getFile().getParentFile() ) );
-        builder.setPomFileName( "pom.xml" );
-        builder.setScmReleaseLabel( "release-label" );
+        builder.setScmSourceUrl("scm-url");
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(getPath(rootProject.getFile().getParentFile()));
+        builder.setPomFileName("pom.xml");
+        builder.setScmReleaseLabel("release-label");
 
-        ScmProvider scmProviderMock = mock( ScmProvider.class );
+        ScmProvider scmProviderMock = mock(ScmProvider.class);
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         // execute
-        phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
         // no scmProvider invocation
-        verifyNoMoreInteractions( scmProviderMock );
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     @Test
-    public void testSimulateBranchNoReleaseLabel()
-        throws Exception
-    {
+    public void testSimulateBranchNoReleaseLabel() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
 
-        try
-        {
-            phase.simulate( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
-            fail( "Should have thrown an exception" );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            assertTrue( true );
+        try {
+            phase.simulate(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+            fail("Should have thrown an exception");
+        } catch (ReleaseFailureException e) {
+            assertTrue(true);
         }
     }
 
     @Test
-    public void testNoSuchScmProviderExceptionThrown()
-        throws Exception
-    {
+    public void testNoSuchScmProviderExceptionThrown() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
-        scmManagerStub.setException( new NoSuchScmProviderException( "..." )  );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup(ScmManager.class);
+        scmManagerStub.setException(new NoSuchScmProviderException("..."));
 
         // execute
-        try
-        {
-            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        try {
+            phase.execute(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-            fail( "Status check should have failed" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
+            fail("Status check should have failed");
+        } catch (ReleaseExecutionException e) {
             // verify
-            assertEquals( "check cause", NoSuchScmProviderException.class, e.getCause().getClass() );
+            assertEquals(
+                    "check cause",
+                    NoSuchScmProviderException.class,
+                    e.getCause().getClass());
         }
     }
 
     @Test
-    public void testScmRepositoryExceptionThrown()
-        throws Exception
-    {
+    public void testScmRepositoryExceptionThrown() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup( ScmManager.class );
-        scmManagerStub.setException( new ScmRepositoryException( "..." )  );
+        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup(ScmManager.class);
+        scmManagerStub.setException(new ScmRepositoryException("..."));
 
         // execute
-        try
-        {
-            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        try {
+            phase.execute(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-            fail( "Status check should have failed" );
-        }
-        catch ( ReleaseScmRepositoryException e )
-        {
+            fail("Status check should have failed");
+        } catch (ReleaseScmRepositoryException e) {
             // verify
-            assertNull( "Check no additional cause", e.getCause() );
+            assertNull("Check no additional cause", e.getCause());
         }
-
     }
 
     @Test
-    public void testScmExceptionThrown()
-        throws Exception
-    {
+    public void testScmExceptionThrown() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmProvider scmProviderMock = mock( ScmProvider.class );
-        when( scmProviderMock.branch( isA( ScmRepository.class ), isA( ScmFileSet.class ), isA( String.class ),
-                                      isA( ScmBranchParameters.class ) ) ).thenThrow( new ScmException( "..." ) );
+        ScmProvider scmProviderMock = mock(ScmProvider.class);
+        when(scmProviderMock.branch(
+                        isA(ScmRepository.class),
+                        isA(ScmFileSet.class),
+                        isA(String.class),
+                        isA(ScmBranchParameters.class)))
+                .thenThrow(new ScmException("..."));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup( ScmManager.class );
-        stub.setScmProvider( scmProviderMock );
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
 
         // execute
-        try
-        {
-            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        try {
+            phase.execute(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-            fail( "Status check should have failed" );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            assertEquals( "check cause", ScmException.class, e.getCause().getClass() );
+            fail("Status check should have failed");
+        } catch (ReleaseExecutionException e) {
+            assertEquals("check cause", ScmException.class, e.getCause().getClass());
         }
 
         // verify
-        verify( scmProviderMock ).branch( isA( ScmRepository.class ), isA( ScmFileSet.class ), isA( String.class ),
-                                          isA( ScmBranchParameters.class ) );
-        verifyNoMoreInteractions( scmProviderMock );
+        verify(scmProviderMock)
+                .branch(
+                        isA(ScmRepository.class),
+                        isA(ScmFileSet.class),
+                        isA(String.class),
+                        isA(ScmBranchParameters.class));
+        verifyNoMoreInteractions(scmProviderMock);
     }
 
     @Test
-    public void testScmResultFailure()
-        throws Exception
-    {
+    public void testScmResultFailure() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmManager scmManager = lookup( ScmManager.class );
-        ScmProviderStub providerStub =
-            (ScmProviderStub) scmManager.getProviderByUrl( "scm-url" );
+        ScmManager scmManager = lookup(ScmManager.class);
+        ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl("scm-url");
 
-        providerStub.setBranchScmResult( new BranchScmResult( "", "", "", false ) );
+        providerStub.setBranchScmResult(new BranchScmResult("", "", "", false));
 
-        try
-        {
-            phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        try {
+            phase.execute(
+                    ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-            fail( "Commit should have failed" );
-        }
-        catch ( ReleaseScmCommandException e )
-        {
-            assertNull( "check no other cause", e.getCause() );
+            fail("Commit should have failed");
+        } catch (ReleaseScmCommandException e) {
+            assertNull("check no other cause", e.getCause());
         }
     }
 
-    private List<MavenProject> createReactorProjects()
-        throws Exception
-    {
+    private List<MavenProject> createReactorProjects() throws Exception {
         String dir = "scm-commit/single-pom";
-        return createReactorProjects( dir, dir, null );
+        return createReactorProjects(dir, dir, null);
     }
 
-    private static ReleaseDescriptorBuilder createReleaseDescriptorBuilder()
-        throws IOException
-    {
+    private static ReleaseDescriptorBuilder createReleaseDescriptorBuilder() throws IOException {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmSourceUrl( "scm-url" );
-        builder.setScmReleaseLabel( "release-label" );
-        
-        File workingDir = getTestFile( "target/test/checkout" );
-        if ( !workingDir.exists() )
-        {
-            assertTrue( "Failed to create the directory, along with all necessary parent directories",
-                        workingDir.mkdirs() );
+        builder.setScmSourceUrl("scm-url");
+        builder.setScmReleaseLabel("release-label");
+
+        File workingDir = getTestFile("target/test/checkout");
+        if (!workingDir.exists()) {
+            assertTrue(
+                    "Failed to create the directory, along with all necessary parent directories", workingDir.mkdirs());
         }
-        
-        builder.setWorkingDirectory( getPath( workingDir ) );
-        builder.setPomFileName( "pom.xml" );
+
+        builder.setWorkingDirectory(getPath(workingDir));
+        builder.setPomFileName("pom.xml");
         return builder;
     }
 }

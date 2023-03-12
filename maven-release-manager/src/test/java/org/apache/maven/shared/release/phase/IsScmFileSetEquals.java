@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.io.IOException;
 
@@ -29,31 +28,25 @@ import org.mockito.ArgumentMatcher;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class IsScmFileSetEquals implements ArgumentMatcher<ScmFileSet>
-{
+public class IsScmFileSetEquals implements ArgumentMatcher<ScmFileSet> {
     private final ScmFileSet fileSet;
 
-    public IsScmFileSetEquals( ScmFileSet fileSet )
-    {
+    public IsScmFileSetEquals(ScmFileSet fileSet) {
         this.fileSet = fileSet;
     }
 
     @Override
-    public boolean matches( ScmFileSet argument )
-    {
+    public boolean matches(ScmFileSet argument) {
         ScmFileSet fs = (ScmFileSet) argument;
 
-        try
-        {
-            return fs.getBasedir().getCanonicalPath().equals( fileSet.getBasedir().getCanonicalPath() )
-                && fs.getFileList().equals( fileSet.getFileList() );
-        }
-        catch ( IOException e )
-        {
+        try {
+            return fs.getBasedir()
+                            .getCanonicalPath()
+                            .equals(fileSet.getBasedir().getCanonicalPath())
+                    && fs.getFileList().equals(fileSet.getFileList());
+        } catch (IOException e) {
             // should not happened so RuntimeException
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-    
-    
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,10 +16,19 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
@@ -44,14 +51,6 @@ import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.codehaus.plexus.util.SelectorUtils;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -60,10 +59,8 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "scm-check-modifications" )
-public class ScmCheckModificationsPhase
-    extends AbstractReleasePhase
-{
+@Named("scm-check-modifications")
+public class ScmCheckModificationsPhase extends AbstractReleasePhase {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
@@ -79,107 +76,87 @@ public class ScmCheckModificationsPhase
      *
      * @todo proper construction of filenames, especially release properties
      */
-    private final Set<String> exclusionPatterns = new HashSet<>( Arrays.asList(
-        "**" + File.separator + "pom.xml.backup", "**" + File.separator + "pom.xml.tag",
-        "**" + File.separator + "pom.xml.next", "**" + File.separator + "pom.xml.branch",
-        "**" + File.separator + "release.properties", "**" + File.separator + "pom.xml.releaseBackup" ) );
+    private final Set<String> exclusionPatterns = new HashSet<>(Arrays.asList(
+            "**" + File.separator + "pom.xml.backup", "**" + File.separator + "pom.xml.tag",
+            "**" + File.separator + "pom.xml.next", "**" + File.separator + "pom.xml.branch",
+            "**" + File.separator + "release.properties", "**" + File.separator + "pom.xml.releaseBackup"));
 
     @Inject
-    public ScmCheckModificationsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
-                                       Map<String, ScmTranslator> scmTranslators )
-    {
-        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
-        this.scmTranslators = requireNonNull( scmTranslators );
+    public ScmCheckModificationsPhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator, Map<String, ScmTranslator> scmTranslators) {
+        this.scmRepositoryConfigurator = requireNonNull(scmRepositoryConfigurator);
+        this.scmTranslators = requireNonNull(scmTranslators);
     }
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult relResult = new ReleaseResult();
 
         List<String> additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
 
-        if ( additionalExcludes != null )
-        {
+        if (additionalExcludes != null) {
             // SelectorUtils expects OS-specific paths and patterns
-            for ( String additionalExclude : additionalExcludes )
-            {
-                exclusionPatterns.add( additionalExclude.replace( "\\", File.separator )
-                                       .replace( "/", File.separator ) );
+            for (String additionalExclude : additionalExcludes) {
+                exclusionPatterns.add(
+                        additionalExclude.replace("\\", File.separator).replace("/", File.separator));
             }
         }
 
-        logInfo( relResult, "Verifying that there are no local modifications..." );
-        logInfo( relResult, "  ignoring changes on: " + StringUtils.join( exclusionPatterns.toArray(), ", " ) );
+        logInfo(relResult, "Verifying that there are no local modifications...");
+        logInfo(relResult, "  ignoring changes on: " + StringUtils.join(exclusionPatterns.toArray(), ", "));
 
         ScmRepository repository;
         ScmProvider provider;
-        try
-        {
-            repository =
-                scmRepositoryConfigurator.getConfiguredRepository( releaseDescriptor,
-                                                                   releaseEnvironment.getSettings() );
+        try {
+            repository = scmRepositoryConfigurator.getConfiguredRepository(
+                    releaseDescriptor, releaseEnvironment.getSettings());
 
-            provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
-        }
-        catch ( ScmRepositoryException e )
-        {
-            throw new ReleaseScmRepositoryException( e.getMessage() + " for URL: "
-                + releaseDescriptor.getScmSourceUrl(), e.getValidationMessages() );
-        }
-        catch ( NoSuchScmProviderException e )
-        {
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+            provider = scmRepositoryConfigurator.getRepositoryProvider(repository);
+        } catch (ScmRepositoryException e) {
+            throw new ReleaseScmRepositoryException(
+                    e.getMessage() + " for URL: " + releaseDescriptor.getScmSourceUrl(), e.getValidationMessages());
+        } catch (NoSuchScmProviderException e) {
+            throw new ReleaseExecutionException("Unable to configure SCM repository: " + e.getMessage(), e);
         }
 
         StatusScmResult result;
-        try
-        {
-            result =
-                provider.status( repository, new ScmFileSet( new File( releaseDescriptor.getWorkingDirectory() ) ) );
-        }
-        catch ( ScmException e )
-        {
-            throw new ReleaseExecutionException( "An error occurred during the status check process: " + e.getMessage(),
-                                                 e );
+        try {
+            result = provider.status(repository, new ScmFileSet(new File(releaseDescriptor.getWorkingDirectory())));
+        } catch (ScmException e) {
+            throw new ReleaseExecutionException(
+                    "An error occurred during the status check process: " + e.getMessage(), e);
         }
 
-        if ( !result.isSuccess() )
-        {
-            throw new ReleaseScmCommandException( "Unable to check for local modifications", result );
+        if (!result.isSuccess()) {
+            throw new ReleaseScmCommandException("Unable to check for local modifications", result);
         }
 
         List<ScmFile> changedFiles = result.getChangedFiles();
 
-        if ( !changedFiles.isEmpty() )
-        {
-            ScmTranslator scmTranslator = scmTranslators.get( repository.getProvider() );
+        if (!changedFiles.isEmpty()) {
+            ScmTranslator scmTranslator = scmTranslators.get(repository.getProvider());
 
             // TODO: would be nice for SCM status command to do this for me.
-            for ( Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); )
-            {
+            for (Iterator<ScmFile> i = changedFiles.iterator(); i.hasNext(); ) {
                 ScmFile f = i.next();
 
                 String path;
-                if ( scmTranslator != null )
-                {
-                    path = scmTranslator.toRelativePath( f.getPath() );
-                }
-                else
-                {
+                if (scmTranslator != null) {
+                    path = scmTranslator.toRelativePath(f.getPath());
+                } else {
                     path = f.getPath();
                 }
 
                 // SelectorUtils expects File.separator, don't standardize!
-                String fileName = path.replace( "\\", File.separator ).replace( "/", File.separator );
+                String fileName = path.replace("\\", File.separator).replace("/", File.separator);
 
-                for ( String exclusionPattern : exclusionPatterns )
-                {
-                    if ( SelectorUtils.matchPath( exclusionPattern, fileName ) )
-                    {
-                        logDebug( relResult, "Ignoring changed file: " + fileName );
+                for (String exclusionPattern : exclusionPatterns) {
+                    if (SelectorUtils.matchPath(exclusionPattern, fileName)) {
+                        logDebug(relResult, "Ignoring changed file: " + fileName);
                         i.remove();
                         break;
                     }
@@ -187,31 +164,30 @@ public class ScmCheckModificationsPhase
             }
         }
 
-        if ( !changedFiles.isEmpty() )
-        {
+        if (!changedFiles.isEmpty()) {
             StringBuilder message = new StringBuilder();
 
-            for ( ScmFile file : changedFiles )
-            {
-                message.append( file.toString() );
-                message.append( "\n" );
+            for (ScmFile file : changedFiles) {
+                message.append(file.toString());
+                message.append("\n");
             }
 
-            throw new ReleaseFailureException( "Cannot prepare the release because you have local modifications : \n"
-                + message );
+            throw new ReleaseFailureException(
+                    "Cannot prepare the release because you have local modifications : \n" + message);
         }
 
-        relResult.setResultCode( ReleaseResult.SUCCESS );
+        relResult.setResultCode(ReleaseResult.SUCCESS);
 
         return relResult;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         // It makes no modifications, so simulate is the same as execute
-        return execute( releaseDescriptor, releaseEnvironment, reactorProjects );
+        return execute(releaseDescriptor, releaseEnvironment, reactorProjects);
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,42 +39,42 @@ import org.apache.maven.shared.release.exec.MavenExecutor;
  * @author <a href="mailto:stephenc@apache.org">Stephen Connolly</a>
  */
 @Singleton
-@Named( "run-completion-goals" )
-public class RunCompleteGoalsPhase
-        extends AbstractRunGoalsPhase
-{
+@Named("run-completion-goals")
+public class RunCompleteGoalsPhase extends AbstractRunGoalsPhase {
     @Inject
-    public RunCompleteGoalsPhase( Map<String, MavenExecutor> mavenExecutors )
-    {
-        super( mavenExecutors );
+    public RunCompleteGoalsPhase(Map<String, MavenExecutor> mavenExecutors) {
+        super(mavenExecutors);
     }
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException
-    {
-        return execute( releaseDescriptor, releaseEnvironment, reactorProjects, false );
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException {
+        return execute(releaseDescriptor, releaseEnvironment, reactorProjects, false);
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException {
         ReleaseResult result = new ReleaseResult();
 
-        logInfo( result, "Executing completion goals - since this is simulation mode it is running against the "
-                + "original project, not the rewritten ones" );
+        logInfo(
+                result,
+                "Executing completion goals - since this is simulation mode it is running against the "
+                        + "original project, not the rewritten ones");
 
-        execute( releaseDescriptor, releaseEnvironment, reactorProjects, true );
+        execute(releaseDescriptor, releaseEnvironment, reactorProjects, true);
 
         return result;
     }
 
     @Override
-    protected String getGoals( ReleaseDescriptor releaseDescriptor )
-    {
+    protected String getGoals(ReleaseDescriptor releaseDescriptor) {
         return releaseDescriptor.getCompletionGoals();
     }
 }

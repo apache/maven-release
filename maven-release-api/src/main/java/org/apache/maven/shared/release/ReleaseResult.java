@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -25,8 +24,7 @@ import java.io.PrintStream;
 /**
  * @author Edwin Punzalan
  */
-public class ReleaseResult
-{
+public class ReleaseResult {
     /** The result of the release. */
     public static final int UNDEFINED = -1;
     /** The release was successful. */
@@ -42,32 +40,29 @@ public class ReleaseResult
 
     private long endTime;
 
-    private static final String LS = System.getProperty( "line.separator" );
+    private static final String LS = System.getProperty("line.separator");
 
     /**
      * Append Info message to the output.
      * @param message the message to append
      */
-    public void appendInfo( String message )
-    {
-        stdOut.append( "[INFO] " ).append( message ).append( LS );
+    public void appendInfo(String message) {
+        stdOut.append("[INFO] ").append(message).append(LS);
     }
     /**
      * Append warning message to the output.
      * @param message the message to append
      */
-    public void appendWarn( String message )
-    {
-        stdOut.append( "[WARN] " ).append( message ).append( LS );
+    public void appendWarn(String message) {
+        stdOut.append("[WARN] ").append(message).append(LS);
     }
 
     /**
      * Append debug message to the output.
      * @param message the message to append
      */
-    public void appendDebug( String message )
-    {
-        stdOut.append( "[DEBUG] " ).append( message ).append( LS );
+    public void appendDebug(String message) {
+        stdOut.append("[DEBUG] ").append(message).append(LS);
     }
 
     /**
@@ -75,11 +70,10 @@ public class ReleaseResult
      * @param message the message to append
      * @param e the exception to append
      */
-    public void appendDebug( String message, Exception e )
-    {
-        appendDebug( message );
+    public void appendDebug(String message, Exception e) {
+        appendDebug(message);
 
-        stdOut.append( getStackTrace( e ) ).append( LS );
+        stdOut.append(getStackTrace(e)).append(LS);
     }
 
     /**
@@ -87,11 +81,10 @@ public class ReleaseResult
      *
      * @param message the message to append
      */
-    public void appendError( String message )
-    {
-        stdOut.append( "[ERROR] " ).append( message ).append( LS );
+    public void appendError(String message) {
+        stdOut.append("[ERROR] ").append(message).append(LS);
 
-        setResultCode( ERROR );
+        setResultCode(ERROR);
     }
 
     /**
@@ -99,9 +92,8 @@ public class ReleaseResult
      *
      * @param e the exception to append
      */
-    public void appendError( Exception e )
-    {
-        appendError( getStackTrace( e ) );
+    public void appendError(Exception e) {
+        appendError(getStackTrace(e));
     }
 
     /**
@@ -110,11 +102,10 @@ public class ReleaseResult
      * @param message the message to append
      * @param e the exception to append
      */
-    public void appendError( String message, Exception e )
-    {
-        appendError( message );
+    public void appendError(String message, Exception e) {
+        appendError(message);
 
-        stdOut.append( getStackTrace( e ) ).append( LS );
+        stdOut.append(getStackTrace(e)).append(LS);
     }
 
     /**
@@ -122,53 +113,44 @@ public class ReleaseResult
      *
      * @param message the message to append
      */
-    public void appendOutput( String message )
-    {
-        stdOut.append( message );
+    public void appendOutput(String message) {
+        stdOut.append(message);
     }
 
-    public String getOutput()
-    {
+    public String getOutput() {
         return stdOut.toString();
     }
 
-    public int getResultCode()
-    {
+    public int getResultCode() {
         return resultCode;
     }
 
-    public void setResultCode( int resultCode )
-    {
+    public void setResultCode(int resultCode) {
         this.resultCode = resultCode;
     }
 
-    public long getStartTime()
-    {
+    public long getStartTime() {
         return startTime;
     }
 
-    public void setStartTime( long startTime )
-    {
+    public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
-    public long getEndTime()
-    {
+    public long getEndTime() {
         return endTime;
     }
 
-    public void setEndTime( long endTime )
-    {
+    public void setEndTime(long endTime) {
         this.endTime = endTime;
     }
 
-    private String getStackTrace( Exception e )
-    {
+    private String getStackTrace(Exception e) {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
 
-        PrintStream stream = new PrintStream( byteStream );
+        PrintStream stream = new PrintStream(byteStream);
 
-        e.printStackTrace( stream );
+        e.printStackTrace(stream);
 
         stream.flush();
 

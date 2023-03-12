@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,8 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.assertEquals;
+package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -30,40 +27,40 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Test the the end release phase. Nothing to see here really, but we want to make sure it is configured.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class EndReleasePhaseTest
-    extends PlexusJUnit4TestCase
-{
+public class EndReleasePhaseTest extends PlexusJUnit4TestCase {
     private ReleasePhase phase;
 
     @Override
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
 
-        phase = lookup( ReleasePhase.class, "end-release" );
+        phase = lookup(ReleasePhase.class, "end-release");
     }
 
     @Test
-    public void testExecute()
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        ReleaseResult result = phase.execute( ReleaseUtils.buildReleaseDescriptor( new ReleaseDescriptorBuilder() ), new DefaultReleaseEnvironment(), null );
+    public void testExecute() throws ReleaseExecutionException, ReleaseFailureException {
+        ReleaseResult result = phase.execute(
+                ReleaseUtils.buildReleaseDescriptor(new ReleaseDescriptorBuilder()),
+                new DefaultReleaseEnvironment(),
+                null);
 
-        assertEquals( ReleaseResult.SUCCESS, result.getResultCode() );
+        assertEquals(ReleaseResult.SUCCESS, result.getResultCode());
     }
 
     @Test
-    public void testSimulate()
-        throws ReleaseExecutionException, ReleaseFailureException
-    {
-        ReleaseResult result = phase.simulate( ReleaseUtils.buildReleaseDescriptor( new ReleaseDescriptorBuilder() ), new DefaultReleaseEnvironment(), null );
+    public void testSimulate() throws ReleaseExecutionException, ReleaseFailureException {
+        ReleaseResult result = phase.simulate(
+                ReleaseUtils.buildReleaseDescriptor(new ReleaseDescriptorBuilder()),
+                new DefaultReleaseEnvironment(),
+                null);
 
-        assertEquals( ReleaseResult.SUCCESS, result.getResultCode() );
+        assertEquals(ReleaseResult.SUCCESS, result.getResultCode());
     }
 }

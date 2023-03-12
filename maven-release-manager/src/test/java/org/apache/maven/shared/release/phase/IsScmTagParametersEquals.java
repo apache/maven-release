@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.shared.release.phase;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,31 +16,29 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.scm.ScmTagParameters;
 import org.mockito.ArgumentMatcher;
 
 /**
  * Mockito constraint to compare tags since it has no equals method.
- * 
+ *
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  */
-public class IsScmTagParametersEquals implements ArgumentMatcher<ScmTagParameters>
-{
+public class IsScmTagParametersEquals implements ArgumentMatcher<ScmTagParameters> {
     private final ScmTagParameters scmTagParameters;
 
-    public IsScmTagParametersEquals( ScmTagParameters scmTagParameters )
-    {
+    public IsScmTagParametersEquals(ScmTagParameters scmTagParameters) {
         this.scmTagParameters = scmTagParameters;
     }
 
     @Override
-    public boolean matches( ScmTagParameters argument )
-    {
+    public boolean matches(ScmTagParameters argument) {
         ScmTagParameters stp = (ScmTagParameters) argument;
-        return stp.getMessage().equals( this.scmTagParameters.getMessage() )
-            && stp.isRemoteTagging() == this.scmTagParameters.isRemoteTagging()
-            && stp.isPinExternals() == this.scmTagParameters.isPinExternals()
-            && stp.isSign() == this.scmTagParameters.isSign();
+        return stp.getMessage().equals(this.scmTagParameters.getMessage())
+                && stp.isRemoteTagging() == this.scmTagParameters.isRemoteTagging()
+                && stp.isPinExternals() == this.scmTagParameters.isPinExternals()
+                && stp.isSign() == this.scmTagParameters.isSign();
     }
 }

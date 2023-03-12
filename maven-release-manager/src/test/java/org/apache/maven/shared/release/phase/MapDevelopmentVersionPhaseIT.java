@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.util.Collections;
 import java.util.List;
@@ -32,38 +31,35 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class MapDevelopmentVersionPhaseIT
-        extends PlexusJUnit4TestCase
-{
+public class MapDevelopmentVersionPhaseIT extends PlexusJUnit4TestCase {
     private MapDevelopmentVersionsPhase mapDevelopmentVersionsPhase;
 
     @Override
-    public void setUp()
-        throws Exception
-    {
+    public void setUp() throws Exception {
         super.setUp();
-        mapDevelopmentVersionsPhase = (MapDevelopmentVersionsPhase) lookup( ReleasePhase.class, "map-development-versions" );
+        mapDevelopmentVersionsPhase =
+                (MapDevelopmentVersionsPhase) lookup(ReleasePhase.class, "map-development-versions");
     }
 
-    private static MavenProject createProject( String artifactId, String version )
-    {
+    private static MavenProject createProject(String artifactId, String version) {
         Model model = new Model();
-        model.setGroupId( "groupId" );
-        model.setArtifactId( artifactId );
-        model.setVersion( version );
-        return new MavenProject( model );
+        model.setGroupId("groupId");
+        model.setArtifactId(artifactId);
+        model.setVersion(version);
+        return new MavenProject(model);
     }
 
     @Test
-    public void testNoUpdateWorkingCopyVersions() throws Exception
-    {
+    public void testNoUpdateWorkingCopyVersions() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setInteractive( false );
-        builder.setUpdateWorkingCopyVersions( false );
+        builder.setInteractive(false);
+        builder.setUpdateWorkingCopyVersions(false);
 
-        List<MavenProject> reactorProjects = Collections.singletonList( createProject( "artifactId", "1.0" ) );
-        mapDevelopmentVersionsPhase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), reactorProjects );
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
+        mapDevelopmentVersionsPhase.execute(
+                ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertEquals( "1.0", ReleaseUtils.buildReleaseDescriptor( builder ).getProjectDevelopmentVersion( "groupId:artifactId" ) );
+        assertEquals(
+                "1.0", ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
     }
 }

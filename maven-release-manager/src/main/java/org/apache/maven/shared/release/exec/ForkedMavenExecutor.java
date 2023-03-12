@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -46,131 +45,108 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "forked-path" )
-public class ForkedMavenExecutor
-        extends AbstractMavenExecutor
-{
+@Named("forked-path")
+public class ForkedMavenExecutor extends AbstractMavenExecutor {
     /**
      * Command line factory.
      */
     private final CommandLineFactory commandLineFactory;
 
     @Inject
-    public ForkedMavenExecutor( MavenCrypto mavenCrypto,
-                                CommandLineFactory commandLineFactory )
-    {
-        super( mavenCrypto );
-        this.commandLineFactory = requireNonNull( commandLineFactory );
+    public ForkedMavenExecutor(MavenCrypto mavenCrypto, CommandLineFactory commandLineFactory) {
+        super(mavenCrypto);
+        this.commandLineFactory = requireNonNull(commandLineFactory);
     }
 
     /*
      * @noinspection UseOfSystemOutOrSystemErr
      */
     @Override
-    public void executeGoals( File workingDirectory, List<String> goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String additionalArguments, String pomFileName,
-                              ReleaseResult relResult )
-            throws MavenExecutorException
-    {
+    public void executeGoals(
+            File workingDirectory,
+            List<String> goals,
+            ReleaseEnvironment releaseEnvironment,
+            boolean interactive,
+            String additionalArguments,
+            String pomFileName,
+            ReleaseResult relResult)
+            throws MavenExecutorException {
         String mavenPath;
         // if null we use the current one
-        if ( releaseEnvironment.getMavenHome() != null )
-        {
+        if (releaseEnvironment.getMavenHome() != null) {
             mavenPath = releaseEnvironment.getMavenHome().getAbsolutePath();
-        }
-        else
-        {
-            mavenPath = System.getProperty( "maven.home" );
+        } else {
+            mavenPath = System.getProperty("maven.home");
         }
 
         File settingsFile = null;
-        if ( releaseEnvironment.getSettings() != null )
-        {
+        if (releaseEnvironment.getSettings() != null) {
             // Have to serialize to a file as if Maven is embedded, there may not actually be a settings.xml on disk
-            try
-            {
-                settingsFile = File.createTempFile( "release-settings", ".xml" );
+            try {
+                settingsFile = File.createTempFile("release-settings", ".xml");
                 SettingsXpp3Writer writer = getSettingsWriter();
 
-                try ( FileWriter fileWriter = new FileWriter( settingsFile ) )
-                {
-                    writer.write( fileWriter, encryptSettings( releaseEnvironment.getSettings() ) );
+                try (FileWriter fileWriter = new FileWriter(settingsFile)) {
+                    writer.write(fileWriter, encryptSettings(releaseEnvironment.getSettings()));
                 }
-            }
-            catch ( IOException e )
-            {
-                throw new MavenExecutorException( "Could not create temporary file for release settings.xml", e );
+            } catch (IOException e) {
+                throw new MavenExecutorException("Could not create temporary file for release settings.xml", e);
             }
         }
-        try
-        {
+        try {
 
             Commandline cl =
-                    commandLineFactory.createCommandLine( mavenPath + File.separator + "bin" + File.separator + "mvn" );
+                    commandLineFactory.createCommandLine(mavenPath + File.separator + "bin" + File.separator + "mvn");
 
-            cl.setWorkingDirectory( workingDirectory.getAbsolutePath() );
+            cl.setWorkingDirectory(workingDirectory.getAbsolutePath());
 
             // FIX for MRELEASE-1105
-            //cl.addEnvironment( "MAVEN_DEBUG_OPTS", "" );
+            // cl.addEnvironment( "MAVEN_DEBUG_OPTS", "" );
 
-            cl.addEnvironment( "MAVEN_TERMINATE_CMD", "on" );
+            cl.addEnvironment("MAVEN_TERMINATE_CMD", "on");
 
-            if ( settingsFile != null )
-            {
-                cl.createArg().setValue( "-s" );
-                cl.createArg().setFile( settingsFile );
+            if (settingsFile != null) {
+                cl.createArg().setValue("-s");
+                cl.createArg().setFile(settingsFile);
             }
 
-            if ( pomFileName != null )
-            {
-                cl.createArg().setValue( "-f" );
-                cl.createArg().setValue( pomFileName );
+            if (pomFileName != null) {
+                cl.createArg().setValue("-f");
+                cl.createArg().setValue(pomFileName);
             }
 
-            for ( String goal : goals )
-            {
-                cl.createArg().setValue( goal );
+            for (String goal : goals) {
+                cl.createArg().setValue(goal);
             }
 
-            if ( !interactive )
-            {
-                cl.createArg().setValue( "--batch-mode" );
+            if (!interactive) {
+                cl.createArg().setValue("--batch-mode");
             }
 
-            if ( !StringUtils.isEmpty( additionalArguments ) )
-            {
-                cl.createArg().setLine( additionalArguments );
+            if (!StringUtils.isEmpty(additionalArguments)) {
+                cl.createArg().setLine(additionalArguments);
             }
 
-            TeeOutputStream stdOut = new TeeOutputStream( System.out );
+            TeeOutputStream stdOut = new TeeOutputStream(System.out);
 
-            TeeOutputStream stdErr = new TeeOutputStream( System.err );
+            TeeOutputStream stdErr = new TeeOutputStream(System.err);
 
-            try
-            {
-                relResult.appendInfo( "Executing: " + cl );
-                getLogger().info( "Executing: " + cl );
+            try {
+                relResult.appendInfo("Executing: " + cl);
+                getLogger().info("Executing: " + cl);
 
-                int result = executeCommandLine( cl, System.in, stdOut, stdErr );
+                int result = executeCommandLine(cl, System.in, stdOut, stdErr);
 
-                if ( result != 0 )
-                {
-                    throw new MavenExecutorException( "Maven execution failed, exit code: '" + result + "'", result );
+                if (result != 0) {
+                    throw new MavenExecutorException("Maven execution failed, exit code: '" + result + "'", result);
                 }
+            } catch (CommandLineException e) {
+                throw new MavenExecutorException("Can't run goal " + goals, e);
+            } finally {
+                relResult.appendOutput(stdOut.toString());
             }
-            catch ( CommandLineException e )
-            {
-                throw new MavenExecutorException( "Can't run goal " + goals, e );
-            }
-            finally
-            {
-                relResult.appendOutput( stdOut.toString() );
-            }
-        }
-        finally
-        {
-            if ( settingsFile != null && settingsFile.exists() && !settingsFile.delete() )
-            {
+        } finally {
+            if (settingsFile != null && settingsFile.exists() && !settingsFile.delete()) {
                 settingsFile.deleteOnExit();
             }
         }
@@ -186,31 +162,27 @@ public class ForkedMavenExecutor
      * @return a int
      * @throws org.codehaus.plexus.util.cli.CommandLineException if any.
      */
-    public static int executeCommandLine( Commandline cl, InputStream systemIn, OutputStream systemOut,
-                                          OutputStream systemErr )
-            throws CommandLineException
-    {
-        if ( cl == null )
-        {
-            throw new IllegalArgumentException( "cl cannot be null." );
+    public static int executeCommandLine(
+            Commandline cl, InputStream systemIn, OutputStream systemOut, OutputStream systemErr)
+            throws CommandLineException {
+        if (cl == null) {
+            throw new IllegalArgumentException("cl cannot be null.");
         }
 
         Process p = cl.execute();
 
-        //processes.put( new Long( cl.getPid() ), p );
+        // processes.put( new Long( cl.getPid() ), p );
 
         RawStreamPumper inputFeeder = null;
 
-        if ( systemIn != null )
-        {
-            inputFeeder = new RawStreamPumper( systemIn, p.getOutputStream(), true );
+        if (systemIn != null) {
+            inputFeeder = new RawStreamPumper(systemIn, p.getOutputStream(), true);
         }
 
-        RawStreamPumper outputPumper = new RawStreamPumper( p.getInputStream(), systemOut );
-        RawStreamPumper errorPumper = new RawStreamPumper( p.getErrorStream(), systemErr );
+        RawStreamPumper outputPumper = new RawStreamPumper(p.getInputStream(), systemOut);
+        RawStreamPumper errorPumper = new RawStreamPumper(p.getErrorStream(), systemErr);
 
-        if ( inputFeeder != null )
-        {
+        if (inputFeeder != null) {
             inputFeeder.start();
         }
 
@@ -218,57 +190,39 @@ public class ForkedMavenExecutor
 
         errorPumper.start();
 
-        try
-        {
+        try {
             int returnValue = p.waitFor();
 
-            if ( inputFeeder != null )
-            {
+            if (inputFeeder != null) {
                 inputFeeder.setDone();
             }
             outputPumper.setDone();
             errorPumper.setDone();
 
-            //processes.remove( new Long( cl.getPid() ) );
+            // processes.remove( new Long( cl.getPid() ) );
 
             return returnValue;
-        }
-        catch ( InterruptedException ex )
-        {
-            //killProcess( cl.getPid() );
-            throw new CommandLineException( "Error while executing external command, process killed.", ex );
-        }
-        finally
-        {
-            try
-            {
+        } catch (InterruptedException ex) {
+            // killProcess( cl.getPid() );
+            throw new CommandLineException("Error while executing external command, process killed.", ex);
+        } finally {
+            try {
                 errorPumper.closeInput();
+            } catch (IOException e) {
+                // ignore
             }
-            catch ( IOException e )
-            {
-                //ignore
-            }
-            try
-            {
+            try {
                 outputPumper.closeInput();
+            } catch (IOException e) {
+                // ignore
             }
-            catch ( IOException e )
-            {
-                //ignore
-            }
-            if ( inputFeeder != null )
-            {
-                try
-                {
+            if (inputFeeder != null) {
+                try {
                     inputFeeder.closeOutput();
-                }
-                catch ( IOException e )
-                {
-                    //ignore
+                } catch (IOException e) {
+                    // ignore
                 }
             }
         }
     }
-
-
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,8 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
-
-import static org.junit.Assert.assertTrue;
+package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.util.List;
@@ -32,81 +29,70 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
 import org.junit.Test;
 
+import static org.junit.Assert.assertTrue;
+
 /**
  * @author Edwin Punzalan
  */
-public class RestoreBackupPomsPhaseTest
-    extends AbstractBackupPomsPhaseTest
-{
+public class RestoreBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
     private String expectedPomFilename = "expected-pom.xml";
 
     @Override
-    ReleasePhase getReleasePhase()
-        throws Exception
-    {
-        return lookup( ReleasePhase.class, "restore-backup-poms" );
+    ReleasePhase getReleasePhase() throws Exception {
+        return lookup(ReleasePhase.class, "restore-backup-poms");
     }
 
     @Test
-    public void testBasicPom()
-        throws Exception
-    {
+    public void testBasicPom() throws Exception {
         String projectPath = "/projects/restore-backup-poms/basic-pom";
 
         // copy poms so tests are valid without clean
-        File sourceDir = getTestFile( "src/test/resources" + projectPath );
-        File testDir = getTestFile( "target/test-classes" + projectPath );
-        FileUtils.copyDirectoryStructure( sourceDir, testDir );
+        File sourceDir = getTestFile("src/test/resources" + projectPath);
+        File testDir = getTestFile("target/test-classes" + projectPath);
+        FileUtils.copyDirectoryStructure(sourceDir, testDir);
 
         String testPath = "target/test-classes" + projectPath;
 
-        runExecuteOnProjects( testPath );
+        runExecuteOnProjects(testPath);
     }
 
     @Test
-    public void testMultiModulePom()
-        throws Exception
-    {
+    public void testMultiModulePom() throws Exception {
         String projectPath = "/projects/restore-backup-poms/pom-with-modules";
 
         // copy poms so tests are valid without clean
-        File sourceDir = getTestFile( "src/test/resources" + projectPath );
-        File testDir = getTestFile( "target/test-classes" + projectPath );
-        FileUtils.copyDirectoryStructure( sourceDir, testDir );
+        File sourceDir = getTestFile("src/test/resources" + projectPath);
+        File testDir = getTestFile("target/test-classes" + projectPath);
+        FileUtils.copyDirectoryStructure(sourceDir, testDir);
 
         String testPath = "target/test-classes" + projectPath;
 
-        runExecuteOnProjects( testPath );
+        runExecuteOnProjects(testPath);
     }
 
-    private void runExecuteOnProjects( String path )
-        throws Exception
-    {
-        List<MavenProject> projects = getReactorProjects( getTestPath( path ) );
+    private void runExecuteOnProjects(String path) throws Exception {
+        List<MavenProject> projects = getReactorProjects(getTestPath(path));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setScmSourceUrl( "scm:svn:http://myhost/myrepo" );
-        phase.execute( ReleaseUtils.buildReleaseDescriptor( builder ), new DefaultReleaseEnvironment(), projects );
+        builder.setScmSourceUrl("scm:svn:http://myhost/myrepo");
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), projects);
 
-        testProjectIsRestored( projects );
+        testProjectIsRestored(projects);
     }
 
-    private void testProjectIsRestored( List<MavenProject> reactorProjects )
-        throws Exception
-    {
-        for ( MavenProject project : reactorProjects )
-        {
+    private void testProjectIsRestored(List<MavenProject> reactorProjects) throws Exception {
+        for (MavenProject project : reactorProjects) {
             File pomFile = project.getFile();
 
-            File expectedFile = new File( pomFile.getParentFile(), expectedPomFilename );
+            File expectedFile = new File(pomFile.getParentFile(), expectedPomFilename);
 
-            assertTrue( "Check if expected file exists.", expectedFile.exists() );
+            assertTrue("Check if expected file exists.", expectedFile.exists());
 
-            String pomContents = ReleaseUtil.readXmlFile( pomFile );
+            String pomContents = ReleaseUtil.readXmlFile(pomFile);
 
-            String expectedContents = ReleaseUtil.readXmlFile( expectedFile );
+            String expectedContents = ReleaseUtil.readXmlFile(expectedFile);
 
-            assertTrue( "Check if pom and backup files are identical", pomContents.equals( expectedContents ) );
+            assertTrue("Check if pom and backup files are identical", pomContents.equals(expectedContents));
         }
     }
 }

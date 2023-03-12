@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import org.apache.maven.scm.ScmTag;
 import org.mockito.ArgumentMatcher;
@@ -27,22 +26,17 @@ import org.mockito.ArgumentMatcher;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class IsScmTagEquals implements ArgumentMatcher<ScmTag>
-{
+public class IsScmTagEquals implements ArgumentMatcher<ScmTag> {
     private final ScmTag tag;
 
-    public IsScmTagEquals( ScmTag tag )
-    {
+    public IsScmTagEquals(ScmTag tag) {
         this.tag = tag;
     }
 
     @Override
-    public boolean matches( ScmTag argument )
-    {
+    public boolean matches(ScmTag argument) {
         ScmTag tag = (ScmTag) argument;
 
-        return tag.getName().equals( this.tag.getName() );
+        return tag.getName().equals(this.tag.getName());
     }
-
-
 }

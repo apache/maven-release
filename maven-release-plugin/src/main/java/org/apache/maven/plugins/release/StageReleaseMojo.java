@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.release;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -35,39 +34,33 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:nicolas@apache.org">Nicolas De Loof</a>
  * @since 2.0-beta-8
  */
-@Mojo( name = "stage", aggregator = true, requiresProject = false )
-public class StageReleaseMojo
-    extends PerformReleaseMojo
-{
+@Mojo(name = "stage", aggregator = true, requiresProject = false)
+public class StageReleaseMojo extends PerformReleaseMojo {
     /**
      * URL of the staging repository to use.
      *
      * @since 2.0-beta-8
      */
-    @Parameter( property = "stagingRepository", required = true )
+    @Parameter(property = "stagingRepository", required = true)
     private String stagingRepository;
 
     @Override
-    void createGoals()
-    {
-        if ( goals == null )
-        {
+    void createGoals() {
+        if (goals == null) {
             // set default
             goals = "deploy";
-            if ( project.getDistributionManagement() != null
-                && project.getDistributionManagement().getSite() != null )
-            {
+            if (project.getDistributionManagement() != null
+                    && project.getDistributionManagement().getSite() != null) {
                 goals += " site:stage-deploy";
             }
         }
 
-        goals = StringUtils.replace( goals, "site-deploy", "site:stage-deploy" );
-        goals = StringUtils.replace( goals, "site:deploy", "site:stage-deploy" );
+        goals = StringUtils.replace(goals, "site-deploy", "site:stage-deploy");
+        goals = StringUtils.replace(goals, "site:deploy", "site:stage-deploy");
     }
 
     @Override
-    void setDeploymentRepository()
-    {
-        addArgument( "-DaltDeploymentRepository=\"" + stagingRepository + "\"" );
+    void setDeploymentRepository() {
+        addArgument("-DaltDeploymentRepository=\"" + stagingRepository + "\"");
     }
 }

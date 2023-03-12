@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.stubs;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.stubs;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.stubs;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -30,23 +29,25 @@ import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 
 @Singleton
-@Named( "wrapper" )
-public class MavenExecutorWrapper implements MavenExecutor
-{
+@Named("wrapper")
+public class MavenExecutorWrapper implements MavenExecutor {
     private MavenExecutor executor;
 
-    public void setMavenExecutor( MavenExecutor executor )
-    {
+    public void setMavenExecutor(MavenExecutor executor) {
         this.executor = executor;
     }
 
     @Override
-    public void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
-                              boolean interactive, String additionalArguments, String pomFileName,
-                              ReleaseResult result )
-        throws MavenExecutorException
-    {
-        executor.executeGoals( workingDirectory, goals, releaseEnvironment, interactive, additionalArguments,
-                               pomFileName, result );
+    public void executeGoals(
+            File workingDirectory,
+            String goals,
+            ReleaseEnvironment releaseEnvironment,
+            boolean interactive,
+            String additionalArguments,
+            String pomFileName,
+            ReleaseResult result)
+            throws MavenExecutorException {
+        executor.executeGoals(
+                workingDirectory, goals, releaseEnvironment, interactive, additionalArguments, pomFileName, result);
     }
 }

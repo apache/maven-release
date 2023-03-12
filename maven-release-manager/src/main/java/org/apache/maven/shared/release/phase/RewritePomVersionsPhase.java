@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -40,53 +39,49 @@ import org.apache.maven.shared.release.transform.ModelETLFactory;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "rewrite-pom-versions" )
-public class RewritePomVersionsPhase
-        extends AbstractRewritePomsPhase
-{
+@Named("rewrite-pom-versions")
+public class RewritePomVersionsPhase extends AbstractRewritePomsPhase {
     @Inject
-    public RewritePomVersionsPhase( ScmRepositoryConfigurator scmRepositoryConfigurator,
-                                    Map<String, ModelETLFactory> modelETLFactories,
-                                    Map<String, ScmTranslator> scmTranslators )
-    {
-        super( scmRepositoryConfigurator, modelETLFactories, scmTranslators );
+    public RewritePomVersionsPhase(
+            ScmRepositoryConfigurator scmRepositoryConfigurator,
+            Map<String, ModelETLFactory> modelETLFactories,
+            Map<String, ScmTranslator> scmTranslators) {
+        super(scmRepositoryConfigurator, modelETLFactories, scmTranslators);
     }
 
     @Override
-    protected final String getPomSuffix()
-    {
+    protected final String getPomSuffix() {
         return "next";
     }
 
     @Override
-    protected void transformScm( MavenProject project, Model modelTarget, ReleaseDescriptor releaseDescriptor,
-                                 String projectId, ScmRepository scmRepository, ReleaseResult result )
-    {
+    protected void transformScm(
+            MavenProject project,
+            Model modelTarget,
+            ReleaseDescriptor releaseDescriptor,
+            String projectId,
+            ScmRepository scmRepository,
+            ReleaseResult result) {
         // We are only updating versions no mods to scm needed
     }
 
     @Override
-    protected boolean isUpdateScm()
-    {
+    protected boolean isUpdateScm() {
         return false;
     }
 
     @Override
-    protected String getOriginalVersion( ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate )
-    {
-        return releaseDescriptor.getProjectOriginalVersion( projectKey );
+    protected String getOriginalVersion(ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate) {
+        return releaseDescriptor.getProjectOriginalVersion(projectKey);
     }
 
     @Override
-    protected String getNextVersion( ReleaseDescriptor releaseDescriptor, String key )
-    {
-        return releaseDescriptor.getProjectDevelopmentVersion( key );
+    protected String getNextVersion(ReleaseDescriptor releaseDescriptor, String key) {
+        return releaseDescriptor.getProjectDevelopmentVersion(key);
     }
 
     @Override
-    protected String getResolvedSnapshotVersion( String artifactVersionlessKey,
-                                                 ReleaseDescriptor resolvedSnapshotsMap )
-    {
+    protected String getResolvedSnapshotVersion(String artifactVersionlessKey, ReleaseDescriptor resolvedSnapshotsMap) {
         // Only update the pom version, not the dependency versions
         return null;
     }

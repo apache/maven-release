@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -31,24 +30,21 @@ import static org.junit.Assert.assertEquals;
  *
  * @author Benjamin Bentmann
  */
-public class TeeOutputStreamTest
-{
+public class TeeOutputStreamTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    private final TeeOutputStream stream = new TeeOutputStream( new PrintStream( out ), "xxx " );
+    private final TeeOutputStream stream = new TeeOutputStream(new PrintStream(out), "xxx ");
 
-    private static final String LS = System.getProperty( "line.separator" );
+    private static final String LS = System.getProperty("line.separator");
 
     @Test
-    public void testConsumeLine()
-            throws Exception
-    {
-        stream.write( ( "the first line" + LS + "line2" + LS + "3" + LS ).getBytes() );
+    public void testConsumeLine() throws Exception {
+        stream.write(("the first line" + LS + "line2" + LS + "3" + LS).getBytes());
 
-        assertEquals( "Check output", "xxx the first line" + LS + "xxx line2" + LS + "xxx 3" + LS, out.toString() );
+        assertEquals("Check output", "xxx the first line" + LS + "xxx line2" + LS + "xxx 3" + LS, out.toString());
 
-        assertEquals( "Check content", "the first line" + LS + "line2" + LS + "3" + LS, stream.getContent() );
+        assertEquals("Check content", "the first line" + LS + "line2" + LS + "3" + LS, stream.getContent());
 
-        assertEquals( "Check toString", "the first line" + LS + "line2" + LS + "3" + LS, stream.toString() );
+        assertEquals("Check toString", "the first line" + LS + "line2" + LS + "3" + LS, stream.toString());
     }
 }

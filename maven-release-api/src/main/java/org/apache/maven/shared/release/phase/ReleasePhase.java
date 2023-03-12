@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,9 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
+
+import java.util.List;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -26,15 +27,12 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
-import java.util.List;
-
 /**
  * A phase in the release cycle.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public interface ReleasePhase
-{
+public interface ReleasePhase {
     /**
      * Execute the phase.
      *
@@ -45,9 +43,11 @@ public interface ReleasePhase
      * @throws ReleaseFailureException   a failure during the execution of the phase
      * @return the release result
      */
-    ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                           List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException;
+    ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Simulate the phase, but don't make any changes to the project.
@@ -59,8 +59,9 @@ public interface ReleasePhase
      * @throws ReleaseFailureException   a failure during the execution of the phase
      * @return the release result
      */
-    ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                            List<MavenProject> reactorProjects )
-        throws ReleaseExecutionException, ReleaseFailureException;
-
+    ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException;
 }

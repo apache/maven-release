@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import java.io.File;
 
@@ -29,8 +28,7 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public interface MavenExecutor
-{
+public interface MavenExecutor {
     /**
      * Execute goals using Maven.
      *
@@ -43,7 +41,13 @@ public interface MavenExecutor
      * @param result              holds all results of the execution
      * @throws org.apache.maven.shared.release.exec.MavenExecutorException if an error occurred executing Maven
      */
-    void executeGoals( File workingDirectory, String goals, ReleaseEnvironment releaseEnvironment,
-                       boolean interactive, String additionalArguments, String pomFileName, ReleaseResult result )
+    void executeGoals(
+            File workingDirectory,
+            String goals,
+            ReleaseEnvironment releaseEnvironment,
+            boolean interactive,
+            String additionalArguments,
+            String pomFileName,
+            ReleaseResult result)
             throws MavenExecutorException;
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 /**
  * Translate the SCM information after tagging/reverting to trunk.
@@ -25,8 +24,7 @@ package org.apache.maven.shared.release.scm;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 // TODO move this API into SCM?
-public interface ScmTranslator
-{
+public interface ScmTranslator {
     /**
      * Take an URL and find the correct replacement URL for a given branch.
      *
@@ -35,7 +33,7 @@ public interface ScmTranslator
      * @param branchBase the branch base for providers that support it
      * @return the replacement URL
      */
-    String translateBranchUrl( String url, String branchName, String branchBase );
+    String translateBranchUrl(String url, String branchName, String branchBase);
 
     /**
      * Take an URL and find the correct replacement URL for a given tag.
@@ -45,7 +43,7 @@ public interface ScmTranslator
      * @param tagBase the tag base for providers that support it
      * @return the replacement URL
      */
-    String translateTagUrl( String url, String tag, String tagBase );
+    String translateTagUrl(String url, String tag, String tagBase);
 
     /**
      * Determine what tag should be added to the POM given the original tag and the new one.
@@ -53,7 +51,7 @@ public interface ScmTranslator
      * @param tag the new tag
      * @return the tag to use, or <code>null</code> if the provider does not use tags
      */
-    String resolveTag( String tag );
+    String resolveTag(String tag);
 
     /**
      * Translates an ScmFile path to a path relative to the working directory.
@@ -62,5 +60,5 @@ public interface ScmTranslator
      * @return the relative path with OS specific File separator
      * @since 2.3.1
      */
-    String toRelativePath( String path );
+    String toRelativePath(String path);
 }

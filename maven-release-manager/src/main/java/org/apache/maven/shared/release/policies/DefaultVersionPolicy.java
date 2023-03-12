@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.policies;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.policies;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.policies;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -36,24 +35,17 @@ import org.apache.maven.shared.release.versions.VersionParseException;
  */
 @Singleton
 @Named
-public class DefaultVersionPolicy
-        implements VersionPolicy
-{
+public class DefaultVersionPolicy implements VersionPolicy {
     @Override
-    public VersionPolicyResult getReleaseVersion( VersionPolicyRequest request )
-            throws VersionParseException
-    {
-        String releaseVersion = new DefaultVersionInfo( request.getVersion() ).getReleaseVersionString();
-        return new VersionPolicyResult().setVersion( releaseVersion );
+    public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {
+        String releaseVersion = new DefaultVersionInfo(request.getVersion()).getReleaseVersionString();
+        return new VersionPolicyResult().setVersion(releaseVersion);
     }
 
     @Override
-    public VersionPolicyResult getDevelopmentVersion( VersionPolicyRequest request )
-            throws VersionParseException
-    {
+    public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws VersionParseException {
         String developmentVersion =
-                new DefaultVersionInfo( request.getVersion() ).getNextVersion().getSnapshotVersionString();
-        return new VersionPolicyResult().setVersion( developmentVersion );
+                new DefaultVersionInfo(request.getVersion()).getNextVersion().getSnapshotVersionString();
+        return new VersionPolicyResult().setVersion(developmentVersion);
     }
-
 }

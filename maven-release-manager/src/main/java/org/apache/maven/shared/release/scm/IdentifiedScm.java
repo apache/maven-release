@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 import org.apache.maven.model.Scm;
 
@@ -28,9 +27,7 @@ import org.apache.maven.model.Scm;
  * @author Robert Scholte
  * @since 2.3
  */
-public class IdentifiedScm
-    extends Scm
-{
+public class IdentifiedScm extends Scm {
 
     private String id;
 
@@ -39,8 +36,7 @@ public class IdentifiedScm
      *
      * @return the id
      */
-    public String getId()
-    {
+    public String getId() {
         return id;
     }
 
@@ -49,8 +45,7 @@ public class IdentifiedScm
      *
      * @param id the id to set
      */
-    public void setId( String id )
-    {
+    public void setId(String id) {
         this.id = id;
     }
 }

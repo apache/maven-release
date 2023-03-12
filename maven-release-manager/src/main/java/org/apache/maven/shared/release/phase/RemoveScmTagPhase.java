@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -51,121 +50,105 @@ import static java.util.Objects.requireNonNull;
  * Remove tag from SCM repository during rollback
  */
 @Singleton
-@Named( "remove-scm-tag" )
-public class RemoveScmTagPhase
-        extends AbstractReleasePhase
-{
+@Named("remove-scm-tag")
+public class RemoveScmTagPhase extends AbstractReleasePhase {
     /**
      * Tool that gets a configured SCM repository from release configuration.
      */
     private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     @Inject
-    public RemoveScmTagPhase( ScmRepositoryConfigurator scmRepositoryConfigurator )
-    {
-        this.scmRepositoryConfigurator = requireNonNull( scmRepositoryConfigurator );
+    public RemoveScmTagPhase(ScmRepositoryConfigurator scmRepositoryConfigurator) {
+        this.scmRepositoryConfigurator = requireNonNull(scmRepositoryConfigurator);
     }
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                  List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult releaseResult = new ReleaseResult();
 
-        validateConfiguration( releaseDescriptor );
+        validateConfiguration(releaseDescriptor);
 
-        logInfo( releaseResult, "Removing tag with the label " + releaseDescriptor.getScmReleaseLabel() + " ..." );
+        logInfo(releaseResult, "Removing tag with the label " + releaseDescriptor.getScmReleaseLabel() + " ...");
 
         ReleaseDescriptor basedirAlignedReleaseDescriptor =
-                ReleaseUtil.createBasedirAlignedReleaseDescriptor( releaseDescriptor, reactorProjects );
+                ReleaseUtil.createBasedirAlignedReleaseDescriptor(releaseDescriptor, reactorProjects);
 
         ScmRepository repository;
         ScmProvider provider;
-        try
-        {
-            repository =
-                    scmRepositoryConfigurator.getConfiguredRepository(
-                            basedirAlignedReleaseDescriptor.getScmSourceUrl(),
-                            releaseDescriptor,
-                            releaseEnvironment.getSettings() );
+        try {
+            repository = scmRepositoryConfigurator.getConfiguredRepository(
+                    basedirAlignedReleaseDescriptor.getScmSourceUrl(),
+                    releaseDescriptor,
+                    releaseEnvironment.getSettings());
 
-            repository.getProviderRepository().setPushChanges( releaseDescriptor.isPushChanges() );
+            repository.getProviderRepository().setPushChanges(releaseDescriptor.isPushChanges());
 
-            repository.getProviderRepository().setWorkItem( releaseDescriptor.getWorkItem() );
+            repository.getProviderRepository().setWorkItem(releaseDescriptor.getWorkItem());
 
-            provider = scmRepositoryConfigurator.getRepositoryProvider( repository );
-        }
-        catch ( ScmRepositoryException e )
-        {
-            throw new ReleaseScmRepositoryException( e.getMessage(), e.getValidationMessages() );
-        }
-        catch ( NoSuchScmProviderException e )
-        {
-            throw new ReleaseExecutionException( "Unable to configure SCM repository: " + e.getMessage(), e );
+            provider = scmRepositoryConfigurator.getRepositoryProvider(repository);
+        } catch (ScmRepositoryException e) {
+            throw new ReleaseScmRepositoryException(e.getMessage(), e.getValidationMessages());
+        } catch (NoSuchScmProviderException e) {
+            throw new ReleaseExecutionException("Unable to configure SCM repository: " + e.getMessage(), e);
         }
 
         UntagScmResult untagScmResult;
-        try
-        {
-            ScmFileSet fileSet = new ScmFileSet( new File( basedirAlignedReleaseDescriptor.getWorkingDirectory() ) );
+        try {
+            ScmFileSet fileSet = new ScmFileSet(new File(basedirAlignedReleaseDescriptor.getWorkingDirectory()));
             String tagName = releaseDescriptor.getScmReleaseLabel();
             String message = releaseDescriptor.getScmCommentPrefix() + "remove tag " + tagName;
             CommandParameters commandParameters = new CommandParameters();
-            commandParameters.setString( CommandParameter.TAG_NAME, tagName );
-            commandParameters.setString( CommandParameter.MESSAGE, message );
-            if ( getLogger().isDebugEnabled() )
-            {
-                getLogger().debug(
-                        "RemoveScmTagPhase :: scmUntagParameters tagName " + tagName );
-                getLogger().debug(
-                        "RemoveScmTagPhase :: scmUntagParameters message " + message );
-                getLogger().debug(
-                        "RemoveScmTagPhase :: fileSet  " + fileSet );
+            commandParameters.setString(CommandParameter.TAG_NAME, tagName);
+            commandParameters.setString(CommandParameter.MESSAGE, message);
+            if (getLogger().isDebugEnabled()) {
+                getLogger().debug("RemoveScmTagPhase :: scmUntagParameters tagName " + tagName);
+                getLogger().debug("RemoveScmTagPhase :: scmUntagParameters message " + message);
+                getLogger().debug("RemoveScmTagPhase :: fileSet  " + fileSet);
             }
-            untagScmResult = provider.untag( repository, fileSet, commandParameters );
-        }
-        catch ( ScmException e )
-        {
-            throw new ReleaseExecutionException( "An error has occurred in the remove tag process: "
-                    + e.getMessage(), e );
+            untagScmResult = provider.untag(repository, fileSet, commandParameters);
+        } catch (ScmException e) {
+            throw new ReleaseExecutionException(
+                    "An error has occurred in the remove tag process: " + e.getMessage(), e);
         }
 
-        if ( !untagScmResult.isSuccess() )
-        {
-            getLogger().warn( String.format( "Unable to remove tag%nProvider message: %s%nCommand output: %s",
-                    untagScmResult.getProviderMessage(), untagScmResult.getCommandOutput() ) );
+        if (!untagScmResult.isSuccess()) {
+            getLogger()
+                    .warn(String.format(
+                            "Unable to remove tag%nProvider message: %s%nCommand output: %s",
+                            untagScmResult.getProviderMessage(), untagScmResult.getCommandOutput()));
         }
 
-        releaseResult.setResultCode( ReleaseResult.SUCCESS );
+        releaseResult.setResultCode(ReleaseResult.SUCCESS);
 
         return releaseResult;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                                   List<MavenProject> reactorProjects )
-            throws ReleaseExecutionException, ReleaseFailureException
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult releaseResult = new ReleaseResult();
 
-        validateConfiguration( releaseDescriptor );
+        validateConfiguration(releaseDescriptor);
 
-        logInfo( releaseResult, "Full run would remove tag with label: '" + releaseDescriptor.getScmReleaseLabel()
-                + "'" );
+        logInfo(
+                releaseResult,
+                "Full run would remove tag with label: '" + releaseDescriptor.getScmReleaseLabel() + "'");
 
-        releaseResult.setResultCode( ReleaseResult.SUCCESS );
+        releaseResult.setResultCode(ReleaseResult.SUCCESS);
 
         return releaseResult;
     }
 
-    private void validateConfiguration( ReleaseDescriptor releaseDescriptor )
-            throws ReleaseFailureException
-    {
-        if ( releaseDescriptor.getScmReleaseLabel() == null )
-        {
-            throw new ReleaseFailureException( "A release label is required for removal" );
+    private void validateConfiguration(ReleaseDescriptor releaseDescriptor) throws ReleaseFailureException {
+        if (releaseDescriptor.getScmReleaseLabel() == null) {
+            throw new ReleaseFailureException("A release label is required for removal");
         }
     }
-
 }

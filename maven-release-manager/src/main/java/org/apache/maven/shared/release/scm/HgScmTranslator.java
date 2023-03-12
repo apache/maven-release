@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.scm;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.scm;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.scm;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -26,32 +25,26 @@ import javax.inject.Singleton;
  * <p>HgScmTranslator class.</p>
  */
 @Singleton
-@Named( "hg" )
-public class HgScmTranslator
-        implements ScmTranslator
-{
+@Named("hg")
+public class HgScmTranslator implements ScmTranslator {
 
     @Override
-    public String translateBranchUrl( String url, String branchName, String branchBase )
-    {
+    public String translateBranchUrl(String url, String branchName, String branchBase) {
         return url;
     }
 
     @Override
-    public String translateTagUrl( String url, String tag, String tagBase )
-    {
+    public String translateTagUrl(String url, String tag, String tagBase) {
         return url;
     }
 
     @Override
-    public String resolveTag( String tag )
-    {
+    public String resolveTag(String tag) {
         return tag;
     }
 
     @Override
-    public String toRelativePath( String path )
-    {
+    public String toRelativePath(String path) {
         return path;
     }
 }

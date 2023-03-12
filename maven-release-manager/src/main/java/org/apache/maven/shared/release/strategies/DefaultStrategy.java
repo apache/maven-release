@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.strategies;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.strategies;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.strategies;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -36,8 +35,7 @@ import org.apache.maven.shared.release.strategy.Strategy;
  */
 @Singleton
 @Named
-public class DefaultStrategy implements Strategy
-{
+public class DefaultStrategy implements Strategy {
     /**
      * The phases of release to run to prepare.
      */
@@ -63,10 +61,9 @@ public class DefaultStrategy implements Strategy
      */
     private final List<String> updateVersionsPhases;
 
-    public DefaultStrategy()
-    {
-        this.preparePhases = Collections.unmodifiableList( Arrays.asList(
-                //START SNIPPET: prepare
+    public DefaultStrategy() {
+        this.preparePhases = Collections.unmodifiableList(Arrays.asList(
+                // START SNIPPET: prepare
                 "check-poms",
                 "scm-check-modifications",
                 "check-dependency-snapshots",
@@ -84,24 +81,20 @@ public class DefaultStrategy implements Strategy
                 "run-completion-goals",
                 "scm-commit-development",
                 "end-release"
-                //END SNIPPET: prepare
-        ) );
-        this.performPhases = Collections.unmodifiableList( Arrays.asList(
-                //START SNIPPET: perform
-                "verify-completed-prepare-phases",
-                "checkout-project-from-scm",
-                "run-perform-goals"
-                //END SNIPPET: perform
-        ) );
-        this.rollbackPhases = Collections.unmodifiableList( Arrays.asList(
-                //START SNIPPET: rollback
-                "restore-backup-poms",
-                "scm-commit-rollback",
-                "remove-scm-tag"
-                //END SNIPPET: rollback
-        ) );
-        this.branchPhases = Collections.unmodifiableList( Arrays.asList(
-                //START SNIPPET: branch
+                // END SNIPPET: prepare
+                ));
+        this.performPhases = Collections.unmodifiableList(Arrays.asList(
+                // START SNIPPET: perform
+                "verify-completed-prepare-phases", "checkout-project-from-scm", "run-perform-goals"
+                // END SNIPPET: perform
+                ));
+        this.rollbackPhases = Collections.unmodifiableList(Arrays.asList(
+                // START SNIPPET: rollback
+                "restore-backup-poms", "scm-commit-rollback", "remove-scm-tag"
+                // END SNIPPET: rollback
+                ));
+        this.branchPhases = Collections.unmodifiableList(Arrays.asList(
+                // START SNIPPET: branch
                 "check-poms",
                 "scm-check-modifications",
                 "create-backup-poms",
@@ -114,45 +107,37 @@ public class DefaultStrategy implements Strategy
                 "rewrite-poms-for-development",
                 "scm-commit-development",
                 "end-release"
-                //END SNIPPET: branch
-        ) );
-        this.updateVersionsPhases = Collections.unmodifiableList( Arrays.asList(
-                //START SNIPPET: update-versions
-                "check-poms-updateversions",
-                "create-backup-poms",
-                "map-development-versions",
-                "rewrite-pom-versions"
-                //END SNIPPET: update-versions
-        ) );
+                // END SNIPPET: branch
+                ));
+        this.updateVersionsPhases = Collections.unmodifiableList(Arrays.asList(
+                // START SNIPPET: update-versions
+                "check-poms-updateversions", "create-backup-poms", "map-development-versions", "rewrite-pom-versions"
+                // END SNIPPET: update-versions
+                ));
     }
 
     @Override
-    public final List<String> getPreparePhases()
-    {
+    public final List<String> getPreparePhases() {
         return preparePhases;
     }
 
     @Override
-    public List<String> getPerformPhases()
-    {
+    public List<String> getPerformPhases() {
         return performPhases;
     }
 
     @Override
-    public List<String> getRollbackPhases()
-    {
+    public List<String> getRollbackPhases() {
         return rollbackPhases;
     }
 
     @Override
-    public List<String> getBranchPhases()
-    {
+    public List<String> getBranchPhases() {
         return branchPhases;
     }
 
     @Override
-    public List<String> getUpdateVersionsPhases()
-    {
+    public List<String> getUpdateVersionsPhases() {
         return updateVersionsPhases;
     }
 }

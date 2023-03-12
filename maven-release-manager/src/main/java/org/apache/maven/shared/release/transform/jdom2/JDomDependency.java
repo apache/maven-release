@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.List;
 
@@ -32,8 +31,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomDependency extends Dependency implements MavenCoordinate
-{
+public class JDomDependency extends Dependency implements MavenCoordinate {
     private final MavenCoordinate coordinate;
 
     /**
@@ -41,134 +39,112 @@ public class JDomDependency extends Dependency implements MavenCoordinate
      *
      * @param dependency a {@link org.jdom2.Element} object
      */
-    public JDomDependency( Element dependency )
-    {
-        this.coordinate = new JDomMavenCoordinate( dependency );
+    public JDomDependency(Element dependency) {
+        this.coordinate = new JDomMavenCoordinate(dependency);
     }
 
     @Override
-    public void addExclusion( Exclusion exclusion )
-    {
+    public void addExclusion(Exclusion exclusion) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getArtifactId()
-    {
+    public String getArtifactId() {
         return coordinate.getArtifactId();
     }
 
     @Override
-    public String getClassifier()
-    {
+    public String getClassifier() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<Exclusion> getExclusions()
-    {
+    public List<Exclusion> getExclusions() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getGroupId()
-    {
+    public String getGroupId() {
         return coordinate.getGroupId();
     }
 
     @Override
-    public String getScope()
-    {
+    public String getScope() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getSystemPath()
-    {
+    public String getSystemPath() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getType()
-    {
+    public String getType() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getVersion()
-    {
+    public String getVersion() {
         return coordinate.getVersion();
     }
 
     @Override
-    public boolean isOptional()
-    {
+    public boolean isOptional() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void removeExclusion( Exclusion exclusion )
-    {
+    public void removeExclusion(Exclusion exclusion) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setArtifactId( String artifactId )
-    {
+    public void setArtifactId(String artifactId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setClassifier( String classifier )
-    {
+    public void setClassifier(String classifier) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setExclusions( List<Exclusion> exclusions )
-    {
+    public void setExclusions(List<Exclusion> exclusions) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setGroupId( String groupId )
-    {
+    public void setGroupId(String groupId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setOptional( boolean optional )
-    {
+    public void setOptional(boolean optional) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setScope( String scope )
-    {
+    public void setScope(String scope) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setSystemPath( String systemPath )
-    {
+    public void setSystemPath(String systemPath) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setType( String type )
-    {
+    public void setType(String type) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setVersion( String version )
-    {
-        coordinate.setVersion( version );
+    public void setVersion(String version) {
+        coordinate.setVersion(version);
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "dependency";
     }
 }

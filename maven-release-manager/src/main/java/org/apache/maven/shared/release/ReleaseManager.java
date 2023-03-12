@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,14 +16,14 @@ package org.apache.maven.shared.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release;
 
 /**
  * Release management classes.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public interface ReleaseManager
-{
+public interface ReleaseManager {
     /**
      * Prepare a release.
      *
@@ -34,7 +32,7 @@ public interface ReleaseManager
      * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem performing the release
      * @since 2.3
      */
-    void prepare( ReleasePrepareRequest prepareRequest ) throws ReleaseExecutionException, ReleaseFailureException;
+    void prepare(ReleasePrepareRequest prepareRequest) throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * <p>prepareWithResult.</p>
@@ -42,7 +40,7 @@ public interface ReleaseManager
      * @param prepareRequest a {@link org.apache.maven.shared.release.ReleasePrepareRequest} object
      * @return a {@link org.apache.maven.shared.release.ReleaseResult} object
      */
-    ReleaseResult prepareWithResult( ReleasePrepareRequest prepareRequest );
+    ReleaseResult prepareWithResult(ReleasePrepareRequest prepareRequest);
 
     /**
      * <p>performWithResult.</p>
@@ -50,7 +48,7 @@ public interface ReleaseManager
      * @param performRequest a {@link org.apache.maven.shared.release.ReleasePerformRequest} object
      * @return a {@link org.apache.maven.shared.release.ReleaseResult} object
      */
-    ReleaseResult performWithResult( ReleasePerformRequest performRequest );
+    ReleaseResult performWithResult(ReleasePerformRequest performRequest);
 
     /**
      * Perform a release
@@ -60,8 +58,7 @@ public interface ReleaseManager
      * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem performing the release
      * @since 2.3
      */
-    void perform( ReleasePerformRequest performRequest )
-        throws ReleaseExecutionException, ReleaseFailureException;
+    void perform(ReleasePerformRequest performRequest) throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Clean a release.
@@ -70,7 +67,7 @@ public interface ReleaseManager
      * @throws org.apache.maven.shared.release.ReleaseFailureException if exception when releasing
      * @since 2.3
      */
-    void clean( ReleaseCleanRequest cleanRequest ) throws ReleaseFailureException;
+    void clean(ReleaseCleanRequest cleanRequest) throws ReleaseFailureException;
 
     /**
      * Rollback changes made by the previous release
@@ -80,8 +77,7 @@ public interface ReleaseManager
      * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem during release rollback
      * @since 2.3
      */
-    void rollback( ReleaseRollbackRequest rollbackRequest )
-        throws ReleaseExecutionException, ReleaseFailureException;
+    void rollback(ReleaseRollbackRequest rollbackRequest) throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Branch a project
@@ -91,7 +87,7 @@ public interface ReleaseManager
      * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem during release branch
      * @since 2.3
      */
-    void branch( ReleaseBranchRequest branchRequest ) throws ReleaseExecutionException, ReleaseFailureException;
+    void branch(ReleaseBranchRequest branchRequest) throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
      * Update version numbers for a project
@@ -101,6 +97,6 @@ public interface ReleaseManager
      * @throws org.apache.maven.shared.release.ReleaseFailureException   if there is a problem during update versions
      * @since 2.3
      */
-    void updateVersions( ReleaseUpdateVersionsRequest updateVersionsRequest )
-        throws ReleaseExecutionException, ReleaseFailureException;
+    void updateVersions(ReleaseUpdateVersionsRequest updateVersionsRequest)
+            throws ReleaseExecutionException, ReleaseFailureException;
 }

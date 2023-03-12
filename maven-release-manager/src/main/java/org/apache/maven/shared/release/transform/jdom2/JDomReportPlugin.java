@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.List;
 import java.util.Map;
@@ -33,9 +32,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomReportPlugin
-    extends ReportPlugin implements MavenCoordinate
-{
+public class JDomReportPlugin extends ReportPlugin implements MavenCoordinate {
     private final MavenCoordinate coordinate;
 
     /**
@@ -43,128 +40,107 @@ public class JDomReportPlugin
      *
      * @param reportPlugin a {@link org.jdom2.Element} object
      */
-    public JDomReportPlugin( Element reportPlugin )
-    {
-        this.coordinate = new JDomMavenCoordinate( reportPlugin );
+    public JDomReportPlugin(Element reportPlugin) {
+        this.coordinate = new JDomMavenCoordinate(reportPlugin);
     }
 
     @Override
-    public void addReportSet( ReportSet reportSet )
-    {
+    public void addReportSet(ReportSet reportSet) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getArtifactId()
-    {
+    public String getArtifactId() {
         return coordinate.getArtifactId();
     }
 
     @Override
-    public Object getConfiguration()
-    {
+    public Object getConfiguration() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getGroupId()
-    {
+    public String getGroupId() {
         return coordinate.getGroupId();
     }
 
     @Override
-    public String getInherited()
-    {
+    public String getInherited() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public List<ReportSet> getReportSets()
-    {
+    public List<ReportSet> getReportSets() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getVersion()
-    {
+    public String getVersion() {
         return coordinate.getVersion();
     }
 
     @Override
-    public void removeReportSet( ReportSet reportSet )
-    {
+    public void removeReportSet(ReportSet reportSet) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setArtifactId( String artifactId )
-    {
+    public void setArtifactId(String artifactId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setConfiguration( Object configuration )
-    {
+    public void setConfiguration(Object configuration) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setGroupId( String groupId )
-    {
+    public void setGroupId(String groupId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setInherited( String inherited )
-    {
+    public void setInherited(String inherited) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setReportSets( List<ReportSet> reportSets )
-    {
+    public void setReportSets(List<ReportSet> reportSets) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setVersion( String version )
-    {
-        coordinate.setVersion( version );
+    public void setVersion(String version) {
+        coordinate.setVersion(version);
     }
 
     @Override
-    public void flushReportSetMap()
-    {
+    public void flushReportSetMap() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public Map<String, ReportSet> getReportSetsAsMap()
-    {
+    public Map<String, ReportSet> getReportSetsAsMap() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getKey()
-    {
+    public String getKey() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void unsetInheritanceApplied()
-    {
+    public void unsetInheritanceApplied() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean isInheritanceApplied()
-    {
+    public boolean isInheritanceApplied() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getName()
-    {
+    public String getName() {
         return "plugin";
     }
 }

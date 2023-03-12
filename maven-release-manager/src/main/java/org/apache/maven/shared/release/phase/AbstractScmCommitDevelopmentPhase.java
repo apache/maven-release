@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.text.MessageFormat;
@@ -38,9 +37,7 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public abstract class AbstractScmCommitDevelopmentPhase
-        extends AbstractScmCommitPhase
-{
+public abstract class AbstractScmCommitDevelopmentPhase extends AbstractScmCommitPhase {
     /**
      * The format for the
      */
@@ -48,64 +45,54 @@ public abstract class AbstractScmCommitDevelopmentPhase
 
     protected AbstractScmCommitDevelopmentPhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator,
-            String descriptorCommentGetter, String rollbackMessageFormat )
-    {
-        super( scmRepositoryConfigurator, descriptorCommentGetter );
+            String descriptorCommentGetter,
+            String rollbackMessageFormat) {
+        super(scmRepositoryConfigurator, descriptorCommentGetter);
         this.rollbackMessageFormat = rollbackMessageFormat;
     }
 
     @Override
-    protected void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                             List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
-            throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException
-    {
+    protected void runLogic(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects,
+            ReleaseResult result,
+            boolean simulating)
+            throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException {
         // no rollback required
         if (
-            // was there no commit that has to be rolled back by a new one
-                releaseDescriptor.isSuppressCommitBeforeTagOrBranch()
-                        // and working copy should not be touched
-                        && !releaseDescriptor.isUpdateWorkingCopyVersions() )
-        {
-            if ( simulating )
-            {
-                logInfo( result, "Full run would not commit changes, because updateWorkingCopyVersions is false." );
-            }
-            else
-            {
-                logInfo( result, "Modified POMs are not committed because updateWorkingCopyVersions is set to false." );
+        // was there no commit that has to be rolled back by a new one
+        releaseDescriptor.isSuppressCommitBeforeTagOrBranch()
+                // and working copy should not be touched
+                && !releaseDescriptor.isUpdateWorkingCopyVersions()) {
+            if (simulating) {
+                logInfo(result, "Full run would not commit changes, because updateWorkingCopyVersions is false.");
+            } else {
+                logInfo(result, "Modified POMs are not committed because updateWorkingCopyVersions is set to false.");
             }
         }
         // rollback or commit development versions required
-        else
-        {
+        else {
             String message;
-            if ( !releaseDescriptor.isUpdateWorkingCopyVersions() )
-            {
+            if (!releaseDescriptor.isUpdateWorkingCopyVersions()) {
                 // the commit is a rollback
-                message = createRollbackMessage( releaseDescriptor );
-            }
-            else
-            {
+                message = createRollbackMessage(releaseDescriptor);
+            } else {
                 // a normal commit
-                message = createMessage( reactorProjects, releaseDescriptor );
+                message = createMessage(reactorProjects, releaseDescriptor);
             }
-            if ( simulating )
-            {
-                Collection<File> pomFiles = createPomFiles( releaseDescriptor, reactorProjects );
-                logInfo( result,
-                        "Full run would commit " + pomFiles.size() + " files with message: '" + message + "'" );
-            }
-            else
-            {
-                performCheckins( releaseDescriptor, releaseEnvironment, reactorProjects, message );
+            if (simulating) {
+                Collection<File> pomFiles = createPomFiles(releaseDescriptor, reactorProjects);
+                logInfo(result, "Full run would commit " + pomFiles.size() + " files with message: '" + message + "'");
+            } else {
+                performCheckins(releaseDescriptor, releaseEnvironment, reactorProjects, message);
             }
         }
     }
 
-    private String createRollbackMessage( ReleaseDescriptor releaseDescriptor )
-    {
-        return MessageFormat.format( releaseDescriptor.getScmCommentPrefix() + rollbackMessageFormat,
-                releaseDescriptor.getScmReleaseLabel() );
+    private String createRollbackMessage(ReleaseDescriptor releaseDescriptor) {
+        return MessageFormat.format(
+                releaseDescriptor.getScmCommentPrefix() + rollbackMessageFormat,
+                releaseDescriptor.getScmReleaseLabel());
     }
-
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,22 +16,21 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
+
+import java.util.List;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 
-import java.util.List;
-
 /**
  * Test stub for testing if a phase is executed.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ReleasePhaseStub
-    implements ReleasePhase, ResourceGenerator
-{
+public class ReleasePhaseStub implements ReleasePhase, ResourceGenerator {
     /**
      * Whether the phase was simulated.
      */
@@ -50,53 +47,53 @@ public class ReleasePhaseStub
     private boolean cleaned;
 
     @Override
-    public ReleaseResult execute( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
-    {
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects) {
         ReleaseResult result = new ReleaseResult();
 
         executed = true;
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
     @Override
-    public ReleaseResult simulate( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment, List<MavenProject> reactorProjects )
-    {
+    public ReleaseResult simulate(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects) {
         ReleaseResult result = new ReleaseResult();
 
         simulated = true;
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
     @Override
-    public ReleaseResult clean( List<MavenProject> reactorProjects )
-    {
+    public ReleaseResult clean(List<MavenProject> reactorProjects) {
         ReleaseResult result = new ReleaseResult();
 
         cleaned = true;
 
-        result.setResultCode( ReleaseResult.SUCCESS );
+        result.setResultCode(ReleaseResult.SUCCESS);
 
         return result;
     }
 
-    public boolean isExecuted()
-    {
+    public boolean isExecuted() {
         return executed;
     }
 
-    public boolean isSimulated()
-    {
+    public boolean isSimulated() {
         return simulated;
     }
 
-    public boolean isCleaned()
-    {
+    public boolean isCleaned() {
         return cleaned;
     }
 }

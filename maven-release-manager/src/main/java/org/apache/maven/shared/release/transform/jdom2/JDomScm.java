@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import org.apache.maven.model.Scm;
 import org.jdom2.Element;
@@ -28,60 +27,50 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomScm extends Scm
-{
+public class JDomScm extends Scm {
     private Element scm;
 
-    JDomScm( Element scm )
-    {
+    JDomScm(Element scm) {
         this.scm = scm;
     }
 
     @Override
-    public String getConnection()
-    {
+    public String getConnection() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setConnection( String connection )
-    {
-        JDomUtils.rewriteElement( "connection", connection, scm, scm.getNamespace() );
+    public void setConnection(String connection) {
+        JDomUtils.rewriteElement("connection", connection, scm, scm.getNamespace());
     }
 
     @Override
-    public String getDeveloperConnection()
-    {
+    public String getDeveloperConnection() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setDeveloperConnection( String developerConnection )
-    {
-        JDomUtils.rewriteElement( "developerConnection", developerConnection, scm, scm.getNamespace() );
+    public void setDeveloperConnection(String developerConnection) {
+        JDomUtils.rewriteElement("developerConnection", developerConnection, scm, scm.getNamespace());
     }
 
     @Override
-    public String getTag()
-    {
+    public String getTag() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setTag( String tag )
-    {
-        JDomUtils.rewriteElement( "tag", tag, scm, scm.getNamespace() );
+    public void setTag(String tag) {
+        JDomUtils.rewriteElement("tag", tag, scm, scm.getNamespace());
     }
 
     @Override
-    public String getUrl()
-    {
+    public String getUrl() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setUrl( String url )
-    {
-        JDomUtils.rewriteElement( "url", url, scm, scm.getNamespace() );
+    public void setUrl(String url) {
+        JDomUtils.rewriteElement("url", url, scm, scm.getNamespace());
     }
 }

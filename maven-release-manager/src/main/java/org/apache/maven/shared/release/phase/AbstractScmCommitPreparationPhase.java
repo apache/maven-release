@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.util.List;
 
@@ -36,69 +35,54 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public abstract class AbstractScmCommitPreparationPhase
-        extends AbstractScmCommitPhase
-{
+public abstract class AbstractScmCommitPreparationPhase extends AbstractScmCommitPhase {
     protected AbstractScmCommitPreparationPhase(
-            ScmRepositoryConfigurator scmRepositoryConfigurator,
-            String descriptorCommentGetter )
-    {
-        super( scmRepositoryConfigurator, descriptorCommentGetter );
+            ScmRepositoryConfigurator scmRepositoryConfigurator, String descriptorCommentGetter) {
+        super(scmRepositoryConfigurator, descriptorCommentGetter);
     }
 
     @Override
-    protected void runLogic( ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment,
-                             List<MavenProject> reactorProjects, ReleaseResult result, boolean simulating )
-            throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException
-    {
+    protected void runLogic(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects,
+            ReleaseResult result,
+            boolean simulating)
+            throws ReleaseScmCommandException, ReleaseExecutionException, ReleaseScmRepositoryException {
         // no prepare-commit required
-        if ( releaseDescriptor.isSuppressCommitBeforeTagOrBranch() )
-        {
+        if (releaseDescriptor.isSuppressCommitBeforeTagOrBranch()) {
             String parameterName;
-            if ( releaseDescriptor.isBranchCreation() )
-            {
+            if (releaseDescriptor.isBranchCreation()) {
                 parameterName = "suppressCommitBeforeBranch";
-            }
-            else
-            {
+            } else {
                 parameterName = "suppressCommitBeforeTag";
             }
 
-            if ( simulating )
-            {
-                logInfo( result,
-                        "Full run would not commit changes, " + "because " + parameterName + " is set to true." );
-            }
-            else
-            {
-                logInfo( result,
-                        "Modified POMs are not committed because " + parameterName + " is set to true." );
+            if (simulating) {
+                logInfo(
+                        result,
+                        "Full run would not commit changes, " + "because " + parameterName + " is set to true.");
+            } else {
+                logInfo(result, "Modified POMs are not committed because " + parameterName + " is set to true.");
             }
         }
         // commit development versions required
-        else
-        {
-            String message = createMessage( reactorProjects, releaseDescriptor );
-            if ( simulating )
-            {
-                simulateCheckins( releaseDescriptor, reactorProjects, result, message );
-            }
-            else
-            {
-                performCheckins( releaseDescriptor, releaseEnvironment, reactorProjects, message );
+        else {
+            String message = createMessage(reactorProjects, releaseDescriptor);
+            if (simulating) {
+                simulateCheckins(releaseDescriptor, reactorProjects, result, message);
+            } else {
+                performCheckins(releaseDescriptor, releaseEnvironment, reactorProjects, message);
             }
         }
     }
 
-    protected void validateConfiguration( ReleaseDescriptor releaseDescriptor )
-            throws ReleaseFailureException
-    {
-        super.validateConfiguration( releaseDescriptor );
+    protected void validateConfiguration(ReleaseDescriptor releaseDescriptor) throws ReleaseFailureException {
+        super.validateConfiguration(releaseDescriptor);
 
-        if ( releaseDescriptor.isSuppressCommitBeforeTagOrBranch() && releaseDescriptor.isRemoteTagging() )
-        {
+        if (releaseDescriptor.isSuppressCommitBeforeTagOrBranch() && releaseDescriptor.isRemoteTagging()) {
             throw new ReleaseFailureException(
-                    "Cannot perform a remote tag or branch without committing the working copy first." );
+                    "Cannot perform a remote tag or branch without committing the working copy first.");
         }
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import java.util.Iterator;
 
@@ -31,11 +30,9 @@ import org.jdom2.Text;
  * @author Robert Scholte
  * @since 3.0
  */
-public final class JDomUtils
-{
+public final class JDomUtils {
 
-    private JDomUtils()
-    {
+    private JDomUtils() {
         // noop
     }
 
@@ -46,27 +43,19 @@ public final class JDomUtils
      * @param element The element to update, must not be <code>null</code>.
      * @param value   The text string to set, must not be <code>null</code>.
      */
-    public static void rewriteValue( Element element, String value )
-    {
+    public static void rewriteValue(Element element, String value) {
         Text text = null;
-        if ( element.getContent() != null )
-        {
-            for ( Iterator<?> it = element.getContent().iterator(); it.hasNext(); )
-            {
+        if (element.getContent() != null) {
+            for (Iterator<?> it = element.getContent().iterator(); it.hasNext(); ) {
                 Object content = it.next();
-                if ( ( content instanceof Text ) && ( (Text) content ).getTextTrim().length() > 0 )
-                {
+                if ((content instanceof Text) && ((Text) content).getTextTrim().length() > 0) {
                     text = (Text) content;
-                    while ( it.hasNext() )
-                    {
+                    while (it.hasNext()) {
                         content = it.next();
-                        if ( content instanceof Text )
-                        {
-                            text.append( (Text) content );
+                        if (content instanceof Text) {
+                            text.append((Text) content);
                             it.remove();
-                        }
-                        else
-                        {
+                        } else {
                             break;
                         }
                     }
@@ -74,18 +63,15 @@ public final class JDomUtils
                 }
             }
         }
-        if ( text == null )
-        {
-            element.addContent( value );
-        }
-        else
-        {
+        if (text == null) {
+            element.addContent(value);
+        } else {
             String chars = text.getText();
             String trimmed = text.getTextTrim();
-            int idx = chars.indexOf( trimmed );
-            String leadingWhitespace = chars.substring( 0, idx );
-            String trailingWhitespace = chars.substring( idx + trimmed.length() );
-            text.setText( leadingWhitespace + value + trailingWhitespace );
+            int idx = chars.indexOf(trimmed);
+            String leadingWhitespace = chars.substring(0, idx);
+            String trailingWhitespace = chars.substring(idx + trimmed.length());
+            text.setText(leadingWhitespace + value + trailingWhitespace);
         }
     }
 
@@ -98,44 +84,30 @@ public final class JDomUtils
      * @param namespace a {@link org.jdom2.Namespace} object
      * @return a {@link org.jdom2.Element} object
      */
-    public static Element rewriteElement( String name, String value, Element root, Namespace namespace )
-    {
-        Element tagElement = root.getChild( name, namespace );
-        if ( tagElement != null )
-        {
-            if ( value != null )
-            {
-                rewriteValue( tagElement, value );
-            }
-            else
-            {
-                int index = root.indexOf( tagElement );
-                root.removeContent( index );
-                for ( int i = index - 1; i >= 0; i-- )
-                {
-                    if ( root.getContent( i ) instanceof Text )
-                    {
-                        root.removeContent( i );
-                    }
-                    else
-                    {
+    public static Element rewriteElement(String name, String value, Element root, Namespace namespace) {
+        Element tagElement = root.getChild(name, namespace);
+        if (tagElement != null) {
+            if (value != null) {
+                rewriteValue(tagElement, value);
+            } else {
+                int index = root.indexOf(tagElement);
+                root.removeContent(index);
+                for (int i = index - 1; i >= 0; i--) {
+                    if (root.getContent(i) instanceof Text) {
+                        root.removeContent(i);
+                    } else {
                         break;
                     }
                 }
             }
-        }
-        else
-        {
-            if ( value != null )
-            {
-                Element element = new Element( name, namespace );
-                element.setText( value );
-                root.addContent( "  " ).addContent( element ).addContent( "\n  " );
+        } else {
+            if (value != null) {
+                Element element = new Element(name, namespace);
+                element.setText(value);
+                root.addContent("  ").addContent(element).addContent("\n  ");
                 tagElement = element;
             }
         }
         return tagElement;
     }
-
-
 }

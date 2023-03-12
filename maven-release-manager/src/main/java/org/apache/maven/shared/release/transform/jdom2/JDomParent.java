@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.transform.jdom2;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.transform.jdom2;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.transform.jdom2;
 
 import org.apache.maven.model.Parent;
 import org.jdom2.Element;
@@ -28,8 +27,7 @@ import org.jdom2.Element;
  * @author Robert Scholte
  * @since 3.0
  */
-public class JDomParent extends Parent
-{
+public class JDomParent extends Parent {
     private Element parent;
 
     /**
@@ -37,62 +35,52 @@ public class JDomParent extends Parent
      *
      * @param parent a {@link org.jdom2.Element} object
      */
-    public JDomParent( Element parent )
-    {
+    public JDomParent(Element parent) {
         this.parent = parent;
     }
 
     @Override
-    public String getVersion()
-    {
+    public String getVersion() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setVersion( String version )
-    {
-        JDomUtils.rewriteElement( "version", version, parent, parent.getNamespace() );
+    public void setVersion(String version) {
+        JDomUtils.rewriteElement("version", version, parent, parent.getNamespace());
     }
 
     @Override
-    public String getArtifactId()
-    {
+    public String getArtifactId() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getGroupId()
-    {
+    public String getGroupId() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getRelativePath()
-    {
+    public String getRelativePath() {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setArtifactId( String artifactId )
-    {
+    public void setArtifactId(String artifactId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setGroupId( String groupId )
-    {
+    public void setGroupId(String groupId) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void setRelativePath( String relativePath )
-    {
+    public void setRelativePath(String relativePath) {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public String getId()
-    {
+    public String getId() {
         throw new UnsupportedOperationException();
     }
 }

@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.phase;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.phase;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.phase;
 
 import java.util.List;
 
@@ -30,13 +29,12 @@ import org.apache.maven.shared.release.ReleaseResult;
  * @author Robert Scholte
  * @since 3.0.0-M5
  */
-public interface ResourceGenerator
-{
+public interface ResourceGenerator {
     /**
      * Clean up after a phase if it leaves any additional files in the checkout.
      *
      * @param reactorProjects the reactor projects
      * @return the release result
      */
-    ReleaseResult clean( List<MavenProject> reactorProjects );
+    ReleaseResult clean(List<MavenProject> reactorProjects);
 }

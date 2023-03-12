@@ -1,5 +1,3 @@
-package org.apache.maven.plugins.release;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -9,7 +7,7 @@ package org.apache.maven.plugins.release;
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -18,6 +16,7 @@ package org.apache.maven.plugins.release;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.plugins.release;
 
 import java.util.Arrays;
 
@@ -40,16 +39,14 @@ import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  * @since 2.0-beta-6
  */
-@Mojo( name = "branch", aggregator = true )
-public class BranchReleaseMojo
-    extends AbstractScmReleaseMojo
-{
+@Mojo(name = "branch", aggregator = true)
+public class BranchReleaseMojo extends AbstractScmReleaseMojo {
     /**
      * The branch name to use.
      *
      * @since 2.0-beta-6
      */
-    @Parameter( property = "branchName" )
+    @Parameter(property = "branchName")
     private String branchName;
 
     /**
@@ -59,7 +56,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0
      */
-    @Parameter( property = "branchBase" )
+    @Parameter(property = "branchBase")
     private String branchBase;
 
     /**
@@ -67,7 +64,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0-beta-6
      */
-    @Parameter( defaultValue = "false", property = "updateBranchVersions" )
+    @Parameter(defaultValue = "false", property = "updateBranchVersions")
     private boolean updateBranchVersions;
 
     /**
@@ -75,7 +72,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0-beta-6
      */
-    @Parameter( defaultValue = "true", property = "updateWorkingCopyVersions" )
+    @Parameter(defaultValue = "true", property = "updateWorkingCopyVersions")
     private boolean updateWorkingCopyVersions;
 
     /**
@@ -90,7 +87,7 @@ public class BranchReleaseMojo
      *
      * @since 2.1
      */
-    @Parameter( defaultValue = "false", property = "suppressCommitBeforeBranch" )
+    @Parameter(defaultValue = "false", property = "suppressCommitBeforeBranch")
     private boolean suppressCommitBeforeBranch;
 
     /**
@@ -98,7 +95,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0-beta-6
      */
-    @Parameter( defaultValue = "true", property = "updateVersionsToSnapshot" )
+    @Parameter(defaultValue = "true", property = "updateVersionsToSnapshot")
     private boolean updateVersionsToSnapshot;
 
     /**
@@ -106,7 +103,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0-beta-6
      */
-    @Parameter( defaultValue = "false", property = "useEditMode" )
+    @Parameter(defaultValue = "false", property = "useEditMode")
     private boolean useEditMode;
 
     /**
@@ -114,7 +111,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0-beta-6
      */
-    @Parameter( defaultValue = "true", property = "updateDependencies" )
+    @Parameter(defaultValue = "true", property = "updateDependencies")
     private boolean updateDependencies;
 
     /**
@@ -123,7 +120,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0-beta-6
      */
-    @Parameter( defaultValue = "false", property = "autoVersionSubmodules" )
+    @Parameter(defaultValue = "false", property = "autoVersionSubmodules")
     private boolean autoVersionSubmodules;
 
     /**
@@ -134,7 +131,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0-beta-6
      */
-    @Parameter( defaultValue = "false", property = "dryRun" )
+    @Parameter(defaultValue = "false", property = "dryRun")
     private boolean dryRun;
 
     /**
@@ -142,7 +139,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0-beta-6
      */
-    @Parameter( defaultValue = "true", property = "addSchema" )
+    @Parameter(defaultValue = "true", property = "addSchema")
     private boolean addSchema;
 
     /**
@@ -151,10 +148,10 @@ public class BranchReleaseMojo
      *
      * @since 2.0
      */
-    @Parameter( defaultValue = "true", property = "remoteTagging" )
+    @Parameter(defaultValue = "true", property = "remoteTagging")
     private boolean remoteTagging;
 
-     /**
+    /**
      * A list of additional exclude filters that will be skipped when checking for
      * modifications on the working copy.
      *
@@ -170,7 +167,7 @@ public class BranchReleaseMojo
      *
      * @since 2.1
      */
-    @Parameter( property = "checkModificationExcludeList" )
+    @Parameter(property = "checkModificationExcludeList")
     private String checkModificationExcludeList;
 
     /**
@@ -179,7 +176,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0
      */
-    @Parameter( property = "releaseVersion" )
+    @Parameter(property = "releaseVersion")
     private String releaseVersion;
 
     /**
@@ -188,7 +185,7 @@ public class BranchReleaseMojo
      *
      * @since 2.0
      */
-    @Parameter( property = "developmentVersion" )
+    @Parameter(property = "developmentVersion")
     private String developmentVersion;
 
     /**
@@ -198,7 +195,7 @@ public class BranchReleaseMojo
      * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.policies.DefaultVersionPolicy
      */
-    @Parameter( defaultValue = "default", property = "projectVersionPolicyId" )
+    @Parameter(defaultValue = "default", property = "projectVersionPolicyId")
     private String projectVersionPolicyId;
 
     /**
@@ -206,7 +203,7 @@ public class BranchReleaseMojo
      *
      * @since 3.0.0-M8
      */
-    @Parameter( property = "projectVersionPolicyConfig" )
+    @Parameter(property = "projectVersionPolicyConfig")
     private XmlPlexusConfiguration projectVersionPolicyConfig;
 
     /**
@@ -216,7 +213,7 @@ public class BranchReleaseMojo
      * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.policies.DefaultNamingPolicy
      */
-    @Parameter( property = "projectNamingPolicyId" )
+    @Parameter(property = "projectNamingPolicyId")
     private String projectBranchNamingPolicyId;
 
     /**
@@ -235,7 +232,7 @@ public class BranchReleaseMojo
      *
      * @since 3.0.0-M1
      */
-    @Parameter( defaultValue = "@{prefix} prepare branch @{releaseLabel}", property = "scmBranchCommitComment" )
+    @Parameter(defaultValue = "@{prefix} prepare branch @{releaseLabel}", property = "scmBranchCommitComment")
     private String scmBranchCommitComment = "@{prefix} prepare branch @{releaseLabel}";
 
     /**
@@ -244,68 +241,59 @@ public class BranchReleaseMojo
      *
      * @since 3.0.0-M5
      */
-    @Parameter( defaultValue = "false", property = "pinExternals" )
+    @Parameter(defaultValue = "false", property = "pinExternals")
     private boolean pinExternals;
 
     @Override
-    public void execute()
-        throws MojoExecutionException, MojoFailureException
-    {
+    public void execute() throws MojoExecutionException, MojoFailureException {
         super.execute();
 
         final ReleaseDescriptorBuilder config = createReleaseDescriptor();
-        config.setAddSchema( addSchema );
-        config.setScmUseEditMode( useEditMode );
-        config.setUpdateDependencies( updateDependencies );
-        config.setAutoVersionSubmodules( autoVersionSubmodules );
-        config.setScmReleaseLabel( branchName );
-        config.setScmBranchBase( branchBase );
-        config.setBranchCreation( true );
-        config.setUpdateBranchVersions( updateBranchVersions );
-        config.setUpdateWorkingCopyVersions( updateWorkingCopyVersions );
-        config.setUpdateVersionsToSnapshot( updateVersionsToSnapshot );
-        config.setRemoteTagging( remoteTagging );
-        config.setDefaultReleaseVersion( releaseVersion );
-        config.setDefaultDevelopmentVersion( developmentVersion );
-        config.setSuppressCommitBeforeTagOrBranch( suppressCommitBeforeBranch );
-        config.setProjectVersionPolicyId( projectVersionPolicyId );
-        if ( projectVersionPolicyConfig != null )
-        {
-            config.setProjectVersionPolicyConfig( projectVersionPolicyConfig.toString() );
+        config.setAddSchema(addSchema);
+        config.setScmUseEditMode(useEditMode);
+        config.setUpdateDependencies(updateDependencies);
+        config.setAutoVersionSubmodules(autoVersionSubmodules);
+        config.setScmReleaseLabel(branchName);
+        config.setScmBranchBase(branchBase);
+        config.setBranchCreation(true);
+        config.setUpdateBranchVersions(updateBranchVersions);
+        config.setUpdateWorkingCopyVersions(updateWorkingCopyVersions);
+        config.setUpdateVersionsToSnapshot(updateVersionsToSnapshot);
+        config.setRemoteTagging(remoteTagging);
+        config.setDefaultReleaseVersion(releaseVersion);
+        config.setDefaultDevelopmentVersion(developmentVersion);
+        config.setSuppressCommitBeforeTagOrBranch(suppressCommitBeforeBranch);
+        config.setProjectVersionPolicyId(projectVersionPolicyId);
+        if (projectVersionPolicyConfig != null) {
+            config.setProjectVersionPolicyConfig(projectVersionPolicyConfig.toString());
         }
-        config.setProjectNamingPolicyId( projectBranchNamingPolicyId );
-        config.setScmBranchCommitComment( scmBranchCommitComment );
-        config.setPinExternals( pinExternals );
+        config.setProjectNamingPolicyId(projectBranchNamingPolicyId);
+        config.setScmBranchCommitComment(scmBranchCommitComment);
+        config.setPinExternals(pinExternals);
 
-        if ( checkModificationExcludeList != null )
-        {
-            checkModificationExcludes = checkModificationExcludeList.replaceAll( "\\s", "" ).split( "," );
-        }
-
-        if ( checkModificationExcludes != null )
-        {
-            config.setCheckModificationExcludes( Arrays.asList( checkModificationExcludes ) );
+        if (checkModificationExcludeList != null) {
+            checkModificationExcludes =
+                    checkModificationExcludeList.replaceAll("\\s", "").split(",");
         }
 
-        try
-        {
+        if (checkModificationExcludes != null) {
+            config.setCheckModificationExcludes(Arrays.asList(checkModificationExcludes));
+        }
+
+        try {
             ReleaseBranchRequest branchRequest = new ReleaseBranchRequest();
-            branchRequest.setReleaseDescriptorBuilder( config );
-            branchRequest.setReleaseEnvironment( getReleaseEnvironment() );
-            branchRequest.setReactorProjects( getReactorProjects() );
-            branchRequest.setReleaseManagerListener( new DefaultReleaseManagerListener( getLog(), dryRun ) );
-            branchRequest.setDryRun( dryRun );
-            branchRequest.setUserProperties( session.getUserProperties() );
+            branchRequest.setReleaseDescriptorBuilder(config);
+            branchRequest.setReleaseEnvironment(getReleaseEnvironment());
+            branchRequest.setReactorProjects(getReactorProjects());
+            branchRequest.setReleaseManagerListener(new DefaultReleaseManagerListener(getLog(), dryRun));
+            branchRequest.setDryRun(dryRun);
+            branchRequest.setUserProperties(session.getUserProperties());
 
-            releaseManager.branch( branchRequest );
-        }
-        catch ( ReleaseExecutionException e )
-        {
-            throw new MojoExecutionException( e.getMessage(), e );
-        }
-        catch ( ReleaseFailureException e )
-        {
-            throw new MojoFailureException( e.getMessage(), e );
+            releaseManager.branch(branchRequest);
+        } catch (ReleaseExecutionException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (ReleaseFailureException e) {
+            throw new MojoFailureException(e.getMessage(), e);
         }
     }
 }

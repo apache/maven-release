@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.exec;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.exec;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.exec;
 
 import java.io.PrintStream;
 
@@ -28,9 +27,7 @@ import org.codehaus.plexus.util.cli.StreamConsumer;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class TeeConsumer
-        implements StreamConsumer
-{
+public class TeeConsumer implements StreamConsumer {
     private final PrintStream stream;
 
     /**
@@ -38,7 +35,7 @@ public class TeeConsumer
      */
     private final StringBuffer content = new StringBuffer();
 
-    private static final String LS = System.getProperty( "line.separator" );
+    private static final String LS = System.getProperty("line.separator");
 
     private final String indent;
 
@@ -47,9 +44,8 @@ public class TeeConsumer
      *
      * @param stream a {@link java.io.PrintStream} object
      */
-    public TeeConsumer( PrintStream stream )
-    {
-        this( stream, "    " );
+    public TeeConsumer(PrintStream stream) {
+        this(stream, "    ");
     }
 
     /**
@@ -58,19 +54,17 @@ public class TeeConsumer
      * @param stream a {@link java.io.PrintStream} object
      * @param indent a {@link java.lang.String} object
      */
-    public TeeConsumer( PrintStream stream, String indent )
-    {
+    public TeeConsumer(PrintStream stream, String indent) {
         this.stream = stream;
         this.indent = indent;
     }
 
     @Override
-    public void consumeLine( String line )
-    {
-        stream.println( indent + line );
+    public void consumeLine(String line) {
+        stream.println(indent + line);
 
-        content.append( line );
-        content.append( LS );
+        content.append(line);
+        content.append(LS);
     }
 
     /**
@@ -78,14 +72,12 @@ public class TeeConsumer
      *
      * @return a {@link java.lang.String} object
      */
-    public String getContent()
-    {
+    public String getContent() {
         return content.toString();
     }
 
     @Override
-    public String toString()
-    {
+    public String toString() {
         return getContent();
     }
 }

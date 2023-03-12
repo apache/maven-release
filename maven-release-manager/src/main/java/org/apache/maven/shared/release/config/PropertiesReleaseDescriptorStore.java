@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.config;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.config;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -50,25 +49,21 @@ import static java.util.Objects.requireNonNull;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
-@Named( "properties" )
-public class PropertiesReleaseDescriptorStore
-        implements ReleaseDescriptorStore
-{
-    private final Logger logger = LoggerFactory.getLogger( getClass() );
+@Named("properties")
+public class PropertiesReleaseDescriptorStore implements ReleaseDescriptorStore {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private final MavenCrypto mavenCrypto;
 
     @Inject
-    public PropertiesReleaseDescriptorStore( MavenCrypto mavenCrypto )
-    {
-        this.mavenCrypto = requireNonNull( mavenCrypto );
+    public PropertiesReleaseDescriptorStore(MavenCrypto mavenCrypto) {
+        this.mavenCrypto = requireNonNull(mavenCrypto);
     }
 
     @Override
-    public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor )
-            throws ReleaseDescriptorStoreException
-    {
-        return read( mergeDescriptor, getDefaultReleasePropertiesFile( mergeDescriptor.build() ) );
+    public ReleaseDescriptorBuilder read(ReleaseDescriptorBuilder mergeDescriptor)
+            throws ReleaseDescriptorStoreException {
+        return read(mergeDescriptor, getDefaultReleasePropertiesFile(mergeDescriptor.build()));
     }
 
     /**
@@ -78,10 +73,8 @@ public class PropertiesReleaseDescriptorStore
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
-    public ReleaseDescriptorBuilder read( File file )
-            throws ReleaseDescriptorStoreException
-    {
-        return read( null, file );
+    public ReleaseDescriptorBuilder read(File file) throws ReleaseDescriptorStoreException {
+        return read(null, file);
     }
 
     /**
@@ -92,62 +85,46 @@ public class PropertiesReleaseDescriptorStore
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
-    public ReleaseDescriptorBuilder read( ReleaseDescriptorBuilder mergeDescriptor, File file )
-            throws ReleaseDescriptorStoreException
-    {
+    public ReleaseDescriptorBuilder read(ReleaseDescriptorBuilder mergeDescriptor, File file)
+            throws ReleaseDescriptorStoreException {
         Properties properties = new Properties();
 
-        try ( InputStream inStream = new FileInputStream( file ) )
-        {
-            properties.load( inStream );
-        }
-        catch ( FileNotFoundException e )
-        {
-            logger.debug( file.getName() + " not found - using empty properties" );
-        }
-        catch ( IOException e )
-        {
+        try (InputStream inStream = new FileInputStream(file)) {
+            properties.load(inStream);
+        } catch (FileNotFoundException e) {
+            logger.debug(file.getName() + " not found - using empty properties");
+        } catch (IOException e) {
             throw new ReleaseDescriptorStoreException(
-                    "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e );
+                    "Error reading properties file '" + file.getName() + "': " + e.getMessage(), e);
         }
 
-        try
-        {
-            mavenCrypto.decryptProperties( properties );
-        }
-        catch ( MavenCryptoException e )
-        {
-            logger.debug( e.getMessage() );
+        try {
+            mavenCrypto.decryptProperties(properties);
+        } catch (MavenCryptoException e) {
+            logger.debug(e.getMessage());
         }
 
         ReleaseDescriptorBuilder builder;
-        if ( mergeDescriptor != null )
-        {
+        if (mergeDescriptor != null) {
             builder = mergeDescriptor;
-        }
-        else
-        {
+        } else {
             builder = new ReleaseDescriptorBuilder();
         }
 
-        ReleaseUtils.copyPropertiesToReleaseDescriptor( properties, builder );
+        ReleaseUtils.copyPropertiesToReleaseDescriptor(properties, builder);
 
         return builder;
     }
 
     @Override
-    public void write( ReleaseDescriptor config )
-            throws ReleaseDescriptorStoreException
-    {
-        write( (BuilderReleaseDescriptor) config, getDefaultReleasePropertiesFile( config ) );
+    public void write(ReleaseDescriptor config) throws ReleaseDescriptorStoreException {
+        write((BuilderReleaseDescriptor) config, getDefaultReleasePropertiesFile(config));
     }
 
     @Override
-    public void delete( ReleaseDescriptor config )
-    {
-        File file = getDefaultReleasePropertiesFile( config );
-        if ( file.exists() )
-        {
+    public void delete(ReleaseDescriptor config) {
+        File file = getDefaultReleasePropertiesFile(config);
+        if (file.exists()) {
             file.delete();
         }
     }
@@ -160,232 +137,182 @@ public class PropertiesReleaseDescriptorStore
      * @param file   a {@link java.io.File} object
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
-    public void write( BuilderReleaseDescriptor config, File file )
-            throws ReleaseDescriptorStoreException
-    {
+    public void write(BuilderReleaseDescriptor config, File file) throws ReleaseDescriptorStoreException {
         Properties properties = new Properties();
-        properties.setProperty( "completedPhase", config.getCompletedPhase() );
-        if ( config.isCommitByProject() ) //default is false
+        properties.setProperty("completedPhase", config.getCompletedPhase());
+        if (config.isCommitByProject()) // default is false
         {
-            properties.setProperty( "commitByProject", "true" );
+            properties.setProperty("commitByProject", "true");
         }
-        properties.setProperty( "scm.url", config.getScmSourceUrl() );
-        if ( config.getScmId() != null )
-        {
-            properties.setProperty( "scm.id", config.getScmId() );
+        properties.setProperty("scm.url", config.getScmSourceUrl());
+        if (config.getScmId() != null) {
+            properties.setProperty("scm.id", config.getScmId());
         }
-        if ( config.getScmUsername() != null )
-        {
-            properties.setProperty( "scm.username", config.getScmUsername() );
+        if (config.getScmUsername() != null) {
+            properties.setProperty("scm.username", config.getScmUsername());
         }
-        if ( config.getScmPassword() != null )
-        {
+        if (config.getScmPassword() != null) {
             String password = config.getScmPassword();
-            try
-            {
-                password = mavenCrypto.encryptAndDecorate( password );
+            try {
+                password = mavenCrypto.encryptAndDecorate(password);
+            } catch (MavenCryptoException e) {
+                logger.debug(e.getMessage());
             }
-            catch ( MavenCryptoException e )
-            {
-                logger.debug( e.getMessage() );
-            }
-            properties.setProperty( "scm.password", password );
+            properties.setProperty("scm.password", password);
         }
-        if ( config.getScmPrivateKey() != null )
-        {
-            properties.setProperty( "scm.privateKey", config.getScmPrivateKey() );
+        if (config.getScmPrivateKey() != null) {
+            properties.setProperty("scm.privateKey", config.getScmPrivateKey());
         }
-        if ( config.getScmPrivateKeyPassPhrase() != null )
-        {
+        if (config.getScmPrivateKeyPassPhrase() != null) {
             String passPhrase = config.getScmPrivateKeyPassPhrase();
-            try
-            {
-                passPhrase = mavenCrypto.encryptAndDecorate( passPhrase );
+            try {
+                passPhrase = mavenCrypto.encryptAndDecorate(passPhrase);
+            } catch (MavenCryptoException e) {
+                logger.debug(e.getMessage());
             }
-            catch ( MavenCryptoException e )
-            {
-                logger.debug( e.getMessage() );
-            }
-            properties.setProperty( "scm.passphrase", passPhrase );
+            properties.setProperty("scm.passphrase", passPhrase);
         }
-        if ( config.getScmTagBase() != null )
-        {
-            properties.setProperty( "scm.tagBase", config.getScmTagBase() );
+        if (config.getScmTagBase() != null) {
+            properties.setProperty("scm.tagBase", config.getScmTagBase());
         }
-        if ( config.getScmBranchBase() != null )
-        {
-            properties.setProperty( "scm.branchBase", config.getScmBranchBase() );
+        if (config.getScmBranchBase() != null) {
+            properties.setProperty("scm.branchBase", config.getScmBranchBase());
         }
-        if ( config.getScmReleaseLabel() != null )
-        {
-            properties.setProperty( "scm.tag", config.getScmReleaseLabel() );
+        if (config.getScmReleaseLabel() != null) {
+            properties.setProperty("scm.tag", config.getScmReleaseLabel());
         }
-        if ( config.getScmTagNameFormat() != null )
-        {
-            properties.setProperty( "scm.tagNameFormat", config.getScmTagNameFormat() );
+        if (config.getScmTagNameFormat() != null) {
+            properties.setProperty("scm.tagNameFormat", config.getScmTagNameFormat());
         }
-        if ( config.getScmCommentPrefix() != null )
-        {
-            properties.setProperty( "scm.commentPrefix", config.getScmCommentPrefix() );
+        if (config.getScmCommentPrefix() != null) {
+            properties.setProperty("scm.commentPrefix", config.getScmCommentPrefix());
         }
-        if ( config.getScmDevelopmentCommitComment() != null )
-        {
-            properties.setProperty( "scm.developmentCommitComment", config.getScmDevelopmentCommitComment() );
+        if (config.getScmDevelopmentCommitComment() != null) {
+            properties.setProperty("scm.developmentCommitComment", config.getScmDevelopmentCommitComment());
         }
-        if ( config.getScmReleaseCommitComment() != null )
-        {
-            properties.setProperty( "scm.releaseCommitComment", config.getScmReleaseCommitComment() );
+        if (config.getScmReleaseCommitComment() != null) {
+            properties.setProperty("scm.releaseCommitComment", config.getScmReleaseCommitComment());
         }
-        if ( config.getScmBranchCommitComment() != null )
-        {
-            properties.setProperty( "scm.branchCommitComment", config.getScmBranchCommitComment() );
+        if (config.getScmBranchCommitComment() != null) {
+            properties.setProperty("scm.branchCommitComment", config.getScmBranchCommitComment());
         }
-        if ( config.getScmRollbackCommitComment() != null )
-        {
-            properties.setProperty( "scm.rollbackCommitComment", config.getScmRollbackCommitComment() );
+        if (config.getScmRollbackCommitComment() != null) {
+            properties.setProperty("scm.rollbackCommitComment", config.getScmRollbackCommitComment());
         }
-        if ( config.getAdditionalArguments() != null )
-        {
-            properties.setProperty( "exec.additionalArguments", config.getAdditionalArguments() );
+        if (config.getAdditionalArguments() != null) {
+            properties.setProperty("exec.additionalArguments", config.getAdditionalArguments());
         }
-        if ( config.getPomFileName() != null )
-        {
-            properties.setProperty( "exec.pomFileName", config.getPomFileName() );
+        if (config.getPomFileName() != null) {
+            properties.setProperty("exec.pomFileName", config.getPomFileName());
         }
-        if ( !config.getActivateProfiles().isEmpty() )
-        {
-            properties.setProperty( "exec.activateProfiles",
-                    StringUtils.join( config.getActivateProfiles().iterator(), "," ) );
+        if (!config.getActivateProfiles().isEmpty()) {
+            properties.setProperty(
+                    "exec.activateProfiles",
+                    StringUtils.join(config.getActivateProfiles().iterator(), ","));
         }
-        if ( config.getPreparationGoals() != null )
-        {
-            properties.setProperty( "preparationGoals", config.getPreparationGoals() );
+        if (config.getPreparationGoals() != null) {
+            properties.setProperty("preparationGoals", config.getPreparationGoals());
         }
-        if ( config.getCompletionGoals() != null )
-        {
-            properties.setProperty( "completionGoals", config.getCompletionGoals() );
+        if (config.getCompletionGoals() != null) {
+            properties.setProperty("completionGoals", config.getCompletionGoals());
         }
-        if ( config.getProjectVersionPolicyId() != null )
-        {
-            properties.setProperty( "projectVersionPolicyId", config.getProjectVersionPolicyId() );
+        if (config.getProjectVersionPolicyId() != null) {
+            properties.setProperty("projectVersionPolicyId", config.getProjectVersionPolicyId());
         }
-        if ( config.getProjectVersionPolicyConfig() != null )
-        {
-            properties.setProperty( "projectVersionPolicyConfig", config.getProjectVersionPolicyConfig().toString() );
+        if (config.getProjectVersionPolicyConfig() != null) {
+            properties.setProperty(
+                    "projectVersionPolicyConfig",
+                    config.getProjectVersionPolicyConfig().toString());
         }
-        if ( config.getProjectNamingPolicyId() != null )
-        {
-            properties.setProperty( "projectNamingPolicyId", config.getProjectNamingPolicyId() );
+        if (config.getProjectNamingPolicyId() != null) {
+            properties.setProperty("projectNamingPolicyId", config.getProjectNamingPolicyId());
         }
-        if ( config.getReleaseStrategyId() != null )
-        {
-            properties.setProperty( "releaseStrategyId", config.getReleaseStrategyId() );
+        if (config.getReleaseStrategyId() != null) {
+            properties.setProperty("releaseStrategyId", config.getReleaseStrategyId());
         }
 
-        properties.setProperty( "exec.snapshotReleasePluginAllowed",
-                Boolean.toString( config.isSnapshotReleasePluginAllowed() ) );
+        properties.setProperty(
+                "exec.snapshotReleasePluginAllowed", Boolean.toString(config.isSnapshotReleasePluginAllowed()));
 
-        properties.setProperty( "remoteTagging", Boolean.toString( config.isRemoteTagging() ) );
+        properties.setProperty("remoteTagging", Boolean.toString(config.isRemoteTagging()));
 
-        properties.setProperty( "pinExternals", Boolean.toString( config.isPinExternals() ) );
+        properties.setProperty("pinExternals", Boolean.toString(config.isPinExternals()));
 
-        properties.setProperty( "pushChanges", Boolean.toString( config.isPushChanges() ) );
+        properties.setProperty("pushChanges", Boolean.toString(config.isPushChanges()));
 
-        if ( config.getWorkItem() != null )
-        {
-            properties.setProperty( "workItem", config.getWorkItem() );
+        if (config.getWorkItem() != null) {
+            properties.setProperty("workItem", config.getWorkItem());
         }
 
-        if ( config.getAutoResolveSnapshots() != null )
-        {
-            properties.setProperty( "autoResolveSnapshots", config.getAutoResolveSnapshots() );
+        if (config.getAutoResolveSnapshots() != null) {
+            properties.setProperty("autoResolveSnapshots", config.getAutoResolveSnapshots());
         }
 
         // others boolean properties are not written to the properties file because the value from the caller is always
         // used
 
-
-        for ( Map.Entry<String, ReleaseStageVersions> entry : config.getProjectVersions().entrySet() )
-        {
-            if ( entry.getValue().getRelease() != null )
-            {
-                properties.setProperty( "project.rel." + entry.getKey(), entry.getValue().getRelease() );
+        for (Map.Entry<String, ReleaseStageVersions> entry :
+                config.getProjectVersions().entrySet()) {
+            if (entry.getValue().getRelease() != null) {
+                properties.setProperty(
+                        "project.rel." + entry.getKey(), entry.getValue().getRelease());
             }
-            if ( entry.getValue().getDevelopment() != null )
-            {
-                properties.setProperty( "project.dev." + entry.getKey(), entry.getValue().getDevelopment() );
+            if (entry.getValue().getDevelopment() != null) {
+                properties.setProperty(
+                        "project.dev." + entry.getKey(), entry.getValue().getDevelopment());
             }
         }
 
-        for ( Map.Entry<String, Scm> entry : config.getOriginalScmInfo().entrySet() )
-        {
+        for (Map.Entry<String, Scm> entry : config.getOriginalScmInfo().entrySet()) {
             Scm scm = entry.getValue();
             String prefix = "project.scm." + entry.getKey();
-            if ( scm != null )
-            {
-                if ( scm.getConnection() != null )
-                {
-                    properties.setProperty( prefix + ".connection", scm.getConnection() );
+            if (scm != null) {
+                if (scm.getConnection() != null) {
+                    properties.setProperty(prefix + ".connection", scm.getConnection());
                 }
-                if ( scm.getDeveloperConnection() != null )
-                {
-                    properties.setProperty( prefix + ".developerConnection", scm.getDeveloperConnection() );
+                if (scm.getDeveloperConnection() != null) {
+                    properties.setProperty(prefix + ".developerConnection", scm.getDeveloperConnection());
                 }
-                if ( scm.getUrl() != null )
-                {
-                    properties.setProperty( prefix + ".url", scm.getUrl() );
+                if (scm.getUrl() != null) {
+                    properties.setProperty(prefix + ".url", scm.getUrl());
                 }
-                if ( scm.getTag() != null )
-                {
-                    properties.setProperty( prefix + ".tag", scm.getTag() );
+                if (scm.getTag() != null) {
+                    properties.setProperty(prefix + ".tag", scm.getTag());
                 }
-                if ( scm instanceof IdentifiedScm )
-                {
+                if (scm instanceof IdentifiedScm) {
                     IdentifiedScm identifiedScm = (IdentifiedScm) scm;
-                    if ( identifiedScm.getId() != null )
-                    {
-                        properties.setProperty( prefix + ".id", identifiedScm.getId() );
+                    if (identifiedScm.getId() != null) {
+                        properties.setProperty(prefix + ".id", identifiedScm.getId());
                     }
                 }
-            }
-            else
-            {
-                properties.setProperty( prefix + ".empty", "true" );
+            } else {
+                properties.setProperty(prefix + ".empty", "true");
             }
         }
 
-        if ( ( config.getResolvedSnapshotDependencies() != null )
-                && ( config.getResolvedSnapshotDependencies().size() > 0 ) )
-        {
-            processResolvedDependencies( properties, config.getResolvedSnapshotDependencies() );
+        if ((config.getResolvedSnapshotDependencies() != null)
+                && (config.getResolvedSnapshotDependencies().size() > 0)) {
+            processResolvedDependencies(properties, config.getResolvedSnapshotDependencies());
         }
 
-        try ( OutputStream outStream = new FileOutputStream( file ) )
-        {
-            properties.store( outStream, "release configuration" );
-        }
-        catch ( IOException e )
-        {
+        try (OutputStream outStream = new FileOutputStream(file)) {
+            properties.store(outStream, "release configuration");
+        } catch (IOException e) {
             throw new ReleaseDescriptorStoreException(
-                    "Error writing properties file '" + file.getName() + "': " + e.getMessage(), e );
+                    "Error writing properties file '" + file.getName() + "': " + e.getMessage(), e);
         }
     }
 
-    private void processResolvedDependencies( Properties prop, Map<String, ReleaseStageVersions> resolvedDependencies )
-    {
-        for ( Map.Entry<String, ReleaseStageVersions> currentEntry : resolvedDependencies.entrySet() )
-        {
+    private void processResolvedDependencies(Properties prop, Map<String, ReleaseStageVersions> resolvedDependencies) {
+        for (Map.Entry<String, ReleaseStageVersions> currentEntry : resolvedDependencies.entrySet()) {
             ReleaseStageVersions versionMap = currentEntry.getValue();
 
-            prop.setProperty( "dependency." + currentEntry.getKey() + ".release",
-                    versionMap.getRelease() );
-            prop.setProperty( "dependency." + currentEntry.getKey() + ".development",
-                    versionMap.getDevelopment() );
+            prop.setProperty("dependency." + currentEntry.getKey() + ".release", versionMap.getRelease());
+            prop.setProperty("dependency." + currentEntry.getKey() + ".development", versionMap.getDevelopment());
         }
     }
 
-    private static File getDefaultReleasePropertiesFile( ReleaseDescriptor mergeDescriptor )
-    {
-        return new File( mergeDescriptor.getWorkingDirectory(), "release.properties" );
+    private static File getDefaultReleasePropertiesFile(ReleaseDescriptor mergeDescriptor) {
+        return new File(mergeDescriptor.getWorkingDirectory(), "release.properties");
     }
 }

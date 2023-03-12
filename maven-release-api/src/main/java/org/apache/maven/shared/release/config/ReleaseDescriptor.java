@@ -1,5 +1,3 @@
-package org.apache.maven.shared.release.config;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -18,6 +16,7 @@ package org.apache.maven.shared.release.config;
  * specific language governing permissions and limitations
  * under the License.
  */
+package org.apache.maven.shared.release.config;
 
 import java.util.List;
 
@@ -28,8 +27,7 @@ import org.apache.maven.model.Scm;
  *
  * @author Robert Scholte
  */
-public interface ReleaseDescriptor
-{
+public interface ReleaseDescriptor {
     /**
      * Get if updateDependencies is false, dependencies version won't be updated to the next development version.
      *
@@ -116,7 +114,6 @@ public interface ReleaseDescriptor
      * @return boolean
      */
     boolean isRemoteTagging();
-
 
     /**
      * Get if the scm provider should sign the tag. NOTE: currently only implemented with git-exe.
@@ -446,7 +443,7 @@ public interface ReleaseDescriptor
      * @return {@code String} The original version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
      */
-    String getDependencyOriginalVersion( String artifactKey );
+    String getDependencyOriginalVersion(String artifactKey);
 
     /**
      * <p>getDependencyReleaseVersion.</p>
@@ -454,7 +451,7 @@ public interface ReleaseDescriptor
      * @return {@code String} the release version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
      */
-    String getDependencyReleaseVersion( String artifactKey );
+    String getDependencyReleaseVersion(String artifactKey);
 
     /**
      * <p>getDependencyDevelopmentVersion.</p>
@@ -462,8 +459,7 @@ public interface ReleaseDescriptor
      * @return {@code String} the release version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
      */
-    String getDependencyDevelopmentVersion( String artifactKey );
-
+    String getDependencyDevelopmentVersion(String artifactKey);
 
     /**
      * <p>getProjectOriginalVersion.</p>
@@ -471,7 +467,7 @@ public interface ReleaseDescriptor
      * @param projectKey a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
-    String getProjectOriginalVersion( String projectKey );
+    String getProjectOriginalVersion(String projectKey);
 
     /**
      * <p>getProjectDevelopmentVersion.</p>
@@ -479,7 +475,7 @@ public interface ReleaseDescriptor
      * @param projectKey a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
-    String getProjectDevelopmentVersion( String projectKey );
+    String getProjectDevelopmentVersion(String projectKey);
 
     /**
      * <p>getProjectReleaseVersion.</p>
@@ -487,7 +483,7 @@ public interface ReleaseDescriptor
      * @param key a {@link java.lang.String} object
      * @return a {@link java.lang.String} object
      */
-    String getProjectReleaseVersion( String key );
+    String getProjectReleaseVersion(String key);
 
     /**
      * <p>getOriginalScmInfo.</p>
@@ -495,7 +491,7 @@ public interface ReleaseDescriptor
      * @param projectKey the project key {@code String}
      * @return the original {@code Scm} information.
      */
-    Scm getOriginalScmInfo( String projectKey );
+    Scm getOriginalScmInfo(String projectKey);
 
     /**
      * <p>hasOriginalScmInfo.</p>
@@ -503,8 +499,7 @@ public interface ReleaseDescriptor
      * @param projectKey the project key {@code String}
      * @return has original Scm info.
      */
-    boolean hasOriginalScmInfo( String projectKey );
-
+    boolean hasOriginalScmInfo(String projectKey);
 
     // Modifiable
     /**
@@ -513,7 +508,7 @@ public interface ReleaseDescriptor
      * @param versionlessKey a {@link java.lang.String} object
      * @param string a {@link java.lang.String} object
      */
-    void addDependencyOriginalVersion( String versionlessKey, String string );
+    void addDependencyOriginalVersion(String versionlessKey, String string);
 
     /**
      * <p>addDependencyReleaseVersion.</p>
@@ -521,7 +516,7 @@ public interface ReleaseDescriptor
      * @param versionlessKey a {@link java.lang.String} object
      * @param version a {@link java.lang.String} object
      */
-    void addDependencyReleaseVersion( String versionlessKey, String version );
+    void addDependencyReleaseVersion(String versionlessKey, String version);
 
     /**
      * <p>addDependencyDevelopmentVersion.</p>
@@ -529,7 +524,7 @@ public interface ReleaseDescriptor
      * @param versionlessKey a {@link java.lang.String} object
      * @param version a {@link java.lang.String} object
      */
-    void addDependencyDevelopmentVersion( String versionlessKey, String version );
+    void addDependencyDevelopmentVersion(String versionlessKey, String version);
 
     /**
      * <p>addReleaseVersion.</p>
@@ -537,7 +532,7 @@ public interface ReleaseDescriptor
      * @param projectId a {@link java.lang.String} object
      * @param nextVersion a {@link java.lang.String} object
      */
-    void addReleaseVersion( String projectId, String nextVersion );
+    void addReleaseVersion(String projectId, String nextVersion);
 
     /**
      * <p>addDevelopmentVersion.</p>
@@ -545,35 +540,35 @@ public interface ReleaseDescriptor
      * @param projectId a {@link java.lang.String} object
      * @param nextVersion a {@link java.lang.String} object
      */
-    void addDevelopmentVersion( String projectId, String nextVersion );
+    void addDevelopmentVersion(String projectId, String nextVersion);
 
     /**
      * <p>setScmReleaseLabel.</p>
      *
      * @param tag a {@link java.lang.String} object
      */
-    void setScmReleaseLabel( String tag );
+    void setScmReleaseLabel(String tag);
 
     /**
      * <p>setScmReleasedPomRevision.</p>
      *
      * @param scmRevision a {@link java.lang.String} object
      */
-    void setScmReleasedPomRevision( String scmRevision );
+    void setScmReleasedPomRevision(String scmRevision);
 
     /**
      * <p>setScmRelativePathProjectDirectory.</p>
      *
      * @param scmRelativePathProjectDirectory a {@link java.lang.String} object
      */
-    void setScmRelativePathProjectDirectory( String scmRelativePathProjectDirectory );
+    void setScmRelativePathProjectDirectory(String scmRelativePathProjectDirectory);
 
     /**
      * <p>setScmSourceUrl.</p>
      *
      * @param scmUrl a {@link java.lang.String} object
      */
-    void setScmSourceUrl( String scmUrl );
+    void setScmSourceUrl(String scmUrl);
 
     /**
      * Returns whether unresolved SNAPSHOT dependencies should automatically be resolved.
