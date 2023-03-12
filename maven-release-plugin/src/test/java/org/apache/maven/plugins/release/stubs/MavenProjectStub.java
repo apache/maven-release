@@ -21,6 +21,7 @@ package org.apache.maven.plugins.release.stubs;
 
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
+import org.apache.maven.model.Scm;
 
 /**
  * <p>Stub for MavenProject.</p>
@@ -46,6 +47,26 @@ public class MavenProjectStub
             model = new Model();
             setModel( model );
         }
+        return model;
+    }
+
+    public Scm getScm()
+    {
+        Scm scm = new Scm();
+        scm.setConnection( "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project" );
+
+        return scm;
+    }
+
+    public Model getOriginalModel() {
+        Model model = super.getOriginalModel();
+
+        if (model == null) {
+            model = new Model();
+            model.setScm(getScm());
+            setOriginalModel(model);
+        }
+
         return model;
     }
 

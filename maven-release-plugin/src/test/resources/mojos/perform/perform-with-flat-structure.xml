@@ -31,6 +31,7 @@
           </reactorProjects>
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
+          <tag>test-tag</tag>
           <connectionUrl>scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project</connectionUrl>
           <goals>deploy</goals>
         </configuration>

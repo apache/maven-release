@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.apache.maven.model.DistributionManagement;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.Scm;
 
 /**
  * <p>Stub for a MavenProject with a flat structure.</p>
@@ -39,7 +38,7 @@ import org.apache.maven.model.Scm;
  * @noinspection ClassNameSameAsAncestorName
  */
 public class FlatMultiModuleMavenProjectStub
-    extends org.apache.maven.plugin.testing.stubs.MavenProjectStub
+    extends MavenProjectStub
 {   
     public void setDistributionManagement( DistributionManagement distributionManagement )
     {
@@ -75,14 +74,6 @@ public class FlatMultiModuleMavenProjectStub
     public File getBasedir()
     {
         return new File( "/flat-multi-module/root-project" ).getAbsoluteFile();
-    }
-    
-    public Scm getScm()
-    {
-        Scm scm = new Scm();
-        scm.setConnection( "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project" );
-        
-        return scm;
     }
     
     @Override

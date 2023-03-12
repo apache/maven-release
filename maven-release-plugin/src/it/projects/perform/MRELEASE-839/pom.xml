@@ -17,21 +17,28 @@
   ~ specific language governing permissions and limitations
   ~ under the License.
   -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
 
-<project>
+  <groupId>org.apache.maven.plugin.release.its</groupId>
+  <artifactId>mrelease-832</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-release-plugin</artifactId>
+        <version>@project.version@</version>
+        <dependencies>
+          <dependency>
+            <groupId>org.apache.maven.its.release</groupId>
+            <artifactId>maven-scm-provider-dummy</artifactId>
+            <version>1.0</version>
+          </dependency>
+        </dependencies>
         <configuration>
-          <settings implementation="org.apache.maven.settings.Settings"/>
-          <project implementation="org.apache.maven.plugins.release.stubs.MavenProjectStub"/>
-          <reactorProjects>
-            <reactorProject implementation="org.apache.maven.plugins.release.stubs.MavenProjectStub"/>
-          </reactorProjects>
-          <workingDirectory>${basedir}/target/checkout</workingDirectory>
-		  <goals>deploy site-deploy</goals>
-          <useReleaseProfile>true</useReleaseProfile>
+          <connectionUrl>scm:dummy|nul</connectionUrl>
           <tag>test-tag</tag>
         </configuration>
       </plugin>
