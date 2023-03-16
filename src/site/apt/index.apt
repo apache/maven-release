@@ -27,7 +27,7 @@ Maven Release
 
  Maven Release provides tooling to release a project with Maven, saving a lot of repetitive, manual work.
 
- It consists of following modules:
+ It consists of the following modules:
 
 *----------------------------------------------------------+----------------+
 || Module                                                  || Description   ||
@@ -40,5 +40,5 @@ Maven Release
 *----------------------------------------------------------+----------------+
 | {{{./maven-release-policies/maven-release-oddeven-policy/}maven-release-oddeven-policy}} | a version policy that proposes even version numbers only for releases and odd numbers for development
 *----------------------------------------------------------+----------------+
-| {{{./maven-release-policies/maven-release-semver-policy/}maven-release-semver-policy}} | a version policy that enforce SemVer format and upgrades minor element for next development version
+| {{{./maven-release-policies/maven-release-semver-policy/}maven-release-semver-policy}} | a version policy that enforces SemVer format and upgrades the minor element for the next development version
 *----------------------------------------------------------+----------------+
