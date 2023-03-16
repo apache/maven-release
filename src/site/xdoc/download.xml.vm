@@ -33,7 +33,7 @@ under the License.
       hours to reach all mirrors.<p/>
 
       <p>In order to guard against corrupted downloads/installations, it is highly recommended to
-      <a href="http://www.apache.org/dev/release-signing#verifying-signature">verify the signature</a>
+      <a href="https://www.apache.org/dev/release-signing#verifying-signature">verify the signature</a>
       of the release bundles against the public <a href="https://www.apache.org/dist/maven/KEYS">KEYS</a> used by the Apache Maven
       developers.</p>
 
@@ -117,7 +117,7 @@ under the License.
 
       <subsection name="Previous Versions">
         
-      <p>Older non-recommended releases can be found on our <a href="http://archive.apache.org/dist/maven/release/">archive site</a>.</p>
+      <p>Older non-recommended releases can be found on our <a href="https://archive.apache.org/dist/maven/release/">archive site</a>.</p>
 
       </subsection>
     </section>
