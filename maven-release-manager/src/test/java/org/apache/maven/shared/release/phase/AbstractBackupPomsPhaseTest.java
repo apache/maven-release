@@ -20,6 +20,8 @@ package org.apache.maven.shared.release.phase;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,8 +29,6 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
@@ -72,12 +72,11 @@ public abstract class AbstractBackupPomsPhaseTest extends PlexusJUnit4TestCase {
 
     private MavenProject createMavenProject(File pomFile) throws IOException, XmlPullParserException {
         MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model;
-        try (XmlStreamReader xmlStreamReader = ReaderFactory.newXmlReader(pomFile)) {
-            model = reader.read(xmlStreamReader);
+        try (InputStream in = Files.newInputStream(pomFile.toPath())) {
+            Model model = reader.read(in);
+            MavenProject project = new MavenProject(model);
+            project.setFile(pomFile);
+            return project;
         }
-        MavenProject project = new MavenProject(model);
-        project.setFile(pomFile);
-        return project;
     }
 }
