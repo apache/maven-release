@@ -40,7 +40,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.IOUtil;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -162,14 +161,9 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
         ReleaseResult result = phase.execute(
                 ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new StringReader(result.getOutput()));
-
+        try (BufferedReader reader = new BufferedReader(new StringReader(result.getOutput()))) {
             assertEquals("[INFO] Removing release POM for 'artifactId'...", reader.readLine());
             assertEquals("Expected EOF", null, reader.readLine());
-        } finally {
-            IOUtil.close(reader);
         }
 
         // never invoke scmProviderMock
@@ -193,18 +187,13 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
         ReleaseResult result = phase.simulate(
                 ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new StringReader(result.getOutput()));
-
+        try (BufferedReader reader = new BufferedReader(new StringReader(result.getOutput()))) {
             assertEquals("[INFO] Removing release POM for 'artifactId'...", reader.readLine());
             assertEquals(
                     "[INFO] Full run would be removing ["
                             + reactorProjects.get(0).getFile().getParent() + File.separator + "release-pom.xml]",
                     reader.readLine());
             assertEquals("Expected EOF", null, reader.readLine());
-        } finally {
-            IOUtil.close(reader);
         }
 
         // never invoke scmProviderMock
