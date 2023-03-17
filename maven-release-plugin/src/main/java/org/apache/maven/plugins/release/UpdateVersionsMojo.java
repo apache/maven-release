@@ -94,7 +94,7 @@ public class UpdateVersionsMojo extends AbstractReleaseMojo {
     /**
      * Optional config for the VersionPolicy implementation used to calculate the project versions.
      *
-     * @since 3.0.0-M8
+     * @since 3.0.0
      */
     @Parameter(property = "projectVersionPolicyConfig")
     private XmlPlexusConfiguration projectVersionPolicyConfig;
