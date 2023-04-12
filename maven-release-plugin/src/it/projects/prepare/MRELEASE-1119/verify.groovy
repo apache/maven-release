@@ -1,0 +1,26 @@
+
+/*
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+File releaseProperties = new File( basedir, 'release.properties' )
+assert releaseProperties.exists()
+
+assert 1 == releaseProperties.getText().count("project.dev.org.apache.maven.plugin.release.its\\:mrelease-1119=3.1.0-SNAPSHOT")
+assert 1 == releaseProperties.getText().count("project.rel.org.apache.maven.plugin.release.its\\:mrelease-1119=3.0.4")
+assert 1 == releaseProperties.getText().count("scm.tag=release-3.0.4")
