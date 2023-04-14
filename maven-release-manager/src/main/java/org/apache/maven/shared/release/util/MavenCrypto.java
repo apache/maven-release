@@ -63,6 +63,9 @@ public class MavenCrypto {
     public MavenCrypto(DefaultSecDispatcher secDispatcher, PlexusCipher plexusCipher) {
         this.secDispatcher = secDispatcher;
         this.plexusCipher = plexusCipher;
+
+        // Adjust the default path (def path != maven path)
+        this.secDispatcher.setConfigurationFile("~/.m2/settings-security.xml");
     }
 
     public String decrypt(String value) throws MavenCryptoException {
