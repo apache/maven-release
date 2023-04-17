@@ -91,7 +91,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     private File mavenHome;
 
     /**
-     * The {@code JAVA_HOME} parameter to use for forked Maven invocations.
+     * The Java home parameter to use for forked Maven invocations.
      *
      * @since 2.0-beta-8
      */

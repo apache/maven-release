@@ -76,6 +76,7 @@ public class InvokerMavenExecutor extends AbstractMavenExecutor {
                 // fix for MRELEASE-1105
                 // .addShellEnvironment( "MAVEN_DEBUG_OPTS", "" )
                 .setBatchMode(true)
+                .setJavaHome(releaseEnvironment.getJavaHome())
                 .setOutputHandler(getLogger()::info)
                 .setErrorHandler(getLogger()::error);
 

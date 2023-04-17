@@ -106,6 +106,10 @@ public class ForkedMavenExecutor extends AbstractMavenExecutor {
 
             cl.addEnvironment("MAVEN_TERMINATE_CMD", "on");
 
+            if (releaseEnvironment.getJavaHome() != null) {
+                cl.addEnvironment("JAVA_HOME", releaseEnvironment.getJavaHome().getAbsolutePath());
+            }
+
             if (settingsFile != null) {
                 cl.createArg().setValue("-s");
                 cl.createArg().setFile(settingsFile);
