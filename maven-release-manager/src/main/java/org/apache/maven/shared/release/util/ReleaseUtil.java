@@ -26,7 +26,6 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -164,7 +163,7 @@ public class ReleaseUtil {
     }
 
     public static String realignScmUrl(int parentLevels, String url) {
-        if (!StringUtils.isEmpty(url)) {
+        if (!(url == null || url.isEmpty())) {
             // normalize
             url = url.replaceAll("/\\./", "/")
                     .replaceAll("/\\.$", "")

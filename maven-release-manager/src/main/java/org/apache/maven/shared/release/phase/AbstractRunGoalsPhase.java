@@ -74,7 +74,7 @@ public abstract class AbstractRunGoalsPhase extends AbstractReleasePhase {
 
         try {
             String goals = getGoals(releaseDescriptor);
-            if (!StringUtils.isEmpty(goals)) {
+            if (!(goals == null || goals.isEmpty())) {
                 logInfo(result, "Executing goals '" + buffer().strong(goals) + "'...");
                 if (logArguments) {
                     // logging arguments may log secrets: should be activated only on dryRun
@@ -151,7 +151,7 @@ public abstract class AbstractRunGoalsPhase extends AbstractReleasePhase {
     protected File determineWorkingDirectory(File checkoutDirectory, String relativePathProjectDirectory) {
         File workingDirectory = checkoutDirectory;
 
-        if (StringUtils.isNotEmpty(relativePathProjectDirectory)) {
+        if (relativePathProjectDirectory != null && !relativePathProjectDirectory.isEmpty()) {
             workingDirectory = new File(checkoutDirectory, relativePathProjectDirectory);
         }
 

@@ -41,7 +41,6 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.phase.ResourceGenerator;
 import org.apache.maven.shared.release.strategy.Strategy;
-import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -459,7 +458,7 @@ public class DefaultReleaseManager implements ReleaseManager {
      * @return The working directory
      */
     protected File determineWorkingDirectory(File checkoutDirectory, String relativePathProjectDirectory) {
-        if (StringUtils.isNotEmpty(relativePathProjectDirectory)) {
+        if (relativePathProjectDirectory != null && !relativePathProjectDirectory.isEmpty()) {
             return new File(checkoutDirectory, relativePathProjectDirectory);
         } else {
             return checkoutDirectory;

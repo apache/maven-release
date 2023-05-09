@@ -198,13 +198,13 @@ public class Version implements Comparable<Version>, Cloneable {
             sb.append(joinDigitString(info.digits));
         }
 
-        if (StringUtils.isNotEmpty(info.annotation)) {
+        if (info.annotation != null && !info.annotation.isEmpty()) {
             sb.append(StringUtils.defaultString(info.annotationSeparator));
             sb.append(info.annotation);
         }
 
-        if (StringUtils.isNotEmpty(info.annotationRevision)) {
-            if (StringUtils.isEmpty(info.annotation)) {
+        if (info.annotationRevision != null && !info.annotationRevision.isEmpty()) {
+            if (info.annotation == null || info.annotation.isEmpty()) {
                 sb.append(StringUtils.defaultString(info.annotationSeparator));
             } else {
                 sb.append(StringUtils.defaultString(info.annotationRevSeparator));
@@ -212,7 +212,7 @@ public class Version implements Comparable<Version>, Cloneable {
             sb.append(info.annotationRevision);
         }
 
-        if (StringUtils.isNotEmpty(buildSpecifier)) {
+        if (buildSpecifier != null && !buildSpecifier.isEmpty()) {
             sb.append(StringUtils.defaultString(buildSeparator));
             sb.append(buildSpecifier);
         }
@@ -240,7 +240,7 @@ public class Version implements Comparable<Version>, Cloneable {
     }
 
     private static String nullIfEmpty(String s) {
-        return StringUtils.isEmpty(s) ? null : s;
+        return (s == null || s.isEmpty()) ? null : s;
     }
 
     /**
