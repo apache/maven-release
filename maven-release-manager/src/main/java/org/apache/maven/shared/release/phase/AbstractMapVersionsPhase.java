@@ -39,7 +39,6 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 
 import static java.util.Objects.requireNonNull;
@@ -336,11 +335,11 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
     private String getDevelopmentVersion(String projectId, ReleaseDescriptor releaseDescriptor) {
         String projectVersion = releaseDescriptor.getProjectDevelopmentVersion(projectId);
 
-        if (StringUtils.isEmpty(projectVersion)) {
+        if (projectVersion == null || projectVersion.isEmpty()) {
             projectVersion = releaseDescriptor.getDefaultDevelopmentVersion();
         }
 
-        if (StringUtils.isEmpty(projectVersion)) {
+        if (projectVersion == null || projectVersion.isEmpty()) {
             return null;
         }
 
@@ -350,11 +349,11 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
     private String getReleaseVersion(String projectId, ReleaseDescriptor releaseDescriptor) {
         String projectVersion = releaseDescriptor.getProjectReleaseVersion(projectId);
 
-        if (StringUtils.isEmpty(projectVersion)) {
+        if (projectVersion == null || projectVersion.isEmpty()) {
             projectVersion = releaseDescriptor.getDefaultReleaseVersion();
         }
 
-        if (StringUtils.isEmpty(projectVersion)) {
+        if (projectVersion == null || projectVersion.isEmpty()) {
             return null;
         }
 

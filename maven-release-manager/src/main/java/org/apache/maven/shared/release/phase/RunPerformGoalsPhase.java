@@ -65,7 +65,7 @@ public class RunPerformGoalsPhase extends AbstractRunGoalsPhase {
         String additionalArguments = getAdditionalArguments(releaseDescriptor);
 
         if (releaseDescriptor.isUseReleaseProfile()) {
-            if (!StringUtils.isEmpty(additionalArguments)) {
+            if (!(additionalArguments == null || additionalArguments.isEmpty())) {
                 additionalArguments = additionalArguments + " -DperformRelease=true";
             } else {
                 additionalArguments = "-DperformRelease=true";
@@ -79,7 +79,7 @@ public class RunPerformGoalsPhase extends AbstractRunGoalsPhase {
 
         // ensure we don't use the release pom for the perform goals
         // ^^ paranoia? A MavenExecutor has already access to this. Probably worth refactoring.
-        if (!StringUtils.isEmpty(additionalArguments)) {
+        if (!(additionalArguments == null || additionalArguments.isEmpty())) {
             additionalArguments = additionalArguments + " -f " + pomFileName;
         } else {
             additionalArguments = "-f " + pomFileName;

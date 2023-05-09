@@ -50,7 +50,6 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
@@ -208,7 +207,7 @@ public class CheckoutProjectFromScm extends AbstractReleasePhase {
         }
 
         String scmRelativePathProjectDirectory = scmResult.getRelativePathProjectDirectory();
-        if (StringUtils.isEmpty(scmRelativePathProjectDirectory)) {
+        if (scmRelativePathProjectDirectory == null || scmRelativePathProjectDirectory.isEmpty()) {
             Path workingDirectory = Paths.get(releaseDescriptor.getWorkingDirectory());
 
             Path rootProjectBasedir;

@@ -48,7 +48,6 @@ import org.codehaus.plexus.interpolation.PrefixAwareRecursionInterceptor;
 import org.codehaus.plexus.interpolation.PrefixedPropertiesValueSource;
 import org.codehaus.plexus.interpolation.RecursionInterceptor;
 import org.codehaus.plexus.interpolation.StringSearchInterpolator;
-import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
@@ -201,7 +200,7 @@ public abstract class AbstractInputVariablesPhase extends AbstractReleasePhase {
                         tag = prompter.get()
                                 .prompt("What is the branch name for \"" + project.getName() + "\"? ("
                                         + buffer().project(project.getArtifactId()) + ")");
-                        if (StringUtils.isEmpty(tag)) {
+                        if (tag == null || tag.isEmpty()) {
                             throw new ReleaseExecutionException("No branch name was given.");
                         }
                     } else {

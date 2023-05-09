@@ -37,7 +37,6 @@ import org.apache.maven.settings.Settings;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.util.MavenCrypto;
 import org.apache.maven.shared.release.util.MavenCrypto.MavenCryptoException;
-import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -134,20 +133,20 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
             }
         }
 
-        if (!StringUtils.isEmpty(username)) {
+        if (!(username == null || username.isEmpty())) {
             scmRepo.setUser(username);
         }
-        if (!StringUtils.isEmpty(password)) {
+        if (!(password == null || password.isEmpty())) {
             scmRepo.setPassword(password);
         }
 
         if (scmRepo instanceof ScmProviderRepositoryWithHost) {
             ScmProviderRepositoryWithHost repositoryWithHost = (ScmProviderRepositoryWithHost) scmRepo;
-            if (!StringUtils.isEmpty(privateKey)) {
+            if (!(privateKey == null || privateKey.isEmpty())) {
                 repositoryWithHost.setPrivateKey(privateKey);
             }
 
-            if (!StringUtils.isEmpty(passphrase)) {
+            if (!(passphrase == null || passphrase.isEmpty())) {
                 repositoryWithHost.setPassphrase(passphrase);
             }
         }
@@ -156,12 +155,12 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
             SvnScmProviderRepository svnRepo = (SvnScmProviderRepository) repository.getProviderRepository();
 
             String tagBase = releaseDescriptor.getScmTagBase();
-            if (!StringUtils.isEmpty(tagBase)) {
+            if (!(tagBase == null || tagBase.isEmpty())) {
                 svnRepo.setTagBase(tagBase);
             }
 
             String branchBase = releaseDescriptor.getScmBranchBase();
-            if (!StringUtils.isEmpty(branchBase)) {
+            if (!(branchBase == null || branchBase.isEmpty())) {
                 svnRepo.setBranchBase(branchBase);
             }
         }

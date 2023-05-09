@@ -34,7 +34,6 @@ import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.MavenCrypto;
-import org.codehaus.plexus.util.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
 
@@ -128,7 +127,7 @@ public class ForkedMavenExecutor extends AbstractMavenExecutor {
                 cl.createArg().setValue("--batch-mode");
             }
 
-            if (!StringUtils.isEmpty(additionalArguments)) {
+            if (!(additionalArguments == null || additionalArguments.isEmpty())) {
                 cl.createArg().setLine(additionalArguments);
             }
 
