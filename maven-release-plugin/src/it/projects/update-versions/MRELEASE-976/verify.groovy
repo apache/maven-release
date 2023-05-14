@@ -18,6 +18,8 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 // verifies that the version is unchanged because of the custom policy: 1.0-SNAPSHOT -> 1.0 -> 1.0-SNAPSHOT
 def project = new XmlSlurper().parse( new File( basedir, "pom.xml" ) )
 assert project.version.text() == "1.0-SNAPSHOT"

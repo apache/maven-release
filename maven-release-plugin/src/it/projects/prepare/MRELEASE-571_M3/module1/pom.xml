@@ -40,7 +40,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>
-            <version>1.0.1</version>
+            <version>@mavenEnforcerPluginVersion@</version>
             <executions>
               <execution>
                 <goals>
@@ -64,7 +64,7 @@ under the License.
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-enforcer-plugin</artifactId>
-            <version>1.0.1</version>
+            <version>@mavenEnforcerPluginVersion@</version>
             <executions>
               <execution>
                 <goals>

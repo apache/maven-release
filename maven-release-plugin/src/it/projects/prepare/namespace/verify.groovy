@@ -17,6 +17,8 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 def project = new XmlSlurper().parse( new File( basedir, "pom.xml" ) )
 assert project['@xsi:schemaLocation'] == "http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd"
 

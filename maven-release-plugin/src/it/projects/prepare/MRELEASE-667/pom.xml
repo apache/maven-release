@@ -37,14 +37,14 @@
           </dependency>
         </dependencies>
         <configuration>
-          <arguments>-Prelease,!mrelease-677 ${arguments}</arguments>
+          <arguments>-P!mrelease-677 ${arguments}</arguments>
           <preparationGoals>help:all-profiles</preparationGoals>
         </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-help-plugin</artifactId>
-        <version>2.1.1</version>
+        <version>@mavenHelpPluginVersion@</version>
       </plugin>
     </plugins>
   </build>
