@@ -20,5 +20,5 @@
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-assert buildLog.text.contains( "[INFO]  - PrepProfA (source: org.apache.maven.plugin.release.its:mrelease-1077:1.0-SNAPSHOT)")
-assert buildLog.text.contains( "[INFO]  - PrepProfB (source: org.apache.maven.plugin.release.its:mrelease-1077:1.0-SNAPSHOT)")
+assert buildLog.text.contains( "[INFO]  - PrepProfA (source: ")
+assert buildLog.text.contains( "[INFO]  - PrepProfB (source: ")

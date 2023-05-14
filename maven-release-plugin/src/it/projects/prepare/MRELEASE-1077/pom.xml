@@ -51,7 +51,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-help-plugin</artifactId>
-        <version>3.3.0</version>
+        <version>@mavenHelpPluginVersion@</version>
         <executions>
           <execution>
             <id>Show profiles</id>

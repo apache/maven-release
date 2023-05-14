@@ -18,6 +18,9 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
+
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 

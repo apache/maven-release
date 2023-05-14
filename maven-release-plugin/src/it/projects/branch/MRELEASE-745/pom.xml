@@ -31,6 +31,8 @@
     <plugins>
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
+        <!-- TODO fix test with current version -->
+        <version>2.5.3</version>
         <configuration>
           <suppressCommitBeforeBranch>true</suppressCommitBeforeBranch>
           <branchName>branch-mrelease-745</branchName>

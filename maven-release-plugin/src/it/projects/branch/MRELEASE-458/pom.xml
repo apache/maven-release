@@ -61,6 +61,7 @@
     <plugins>
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
+        <version>@project.version@</version>
         <configuration>
           <updateWorkingCopyVersions>false</updateWorkingCopyVersions>
           <updateBranchVersions>true</updateBranchVersions>

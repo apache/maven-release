@@ -18,6 +18,8 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 def projectBranch = new XmlSlurper().parse( new File( basedir, "pom.xml.branch" ) )
 assert projectBranch.version.text() == "2.6.0-BRANCH-SNAPSHOT"
 

@@ -102,6 +102,8 @@
 
     <mavenCompilerPluginVersion>3.11.0</mavenCompilerPluginVersion>
     <mavenInvokerPluginVersion>3.5.0</mavenInvokerPluginVersion>
+    <mavenEnforcerPluginVersion>3.3.0</mavenEnforcerPluginVersion>
+    <mavenHelpPluginVersion>3.4.0</mavenHelpPluginVersion>
   </properties>
 
   <dependencyManagement>

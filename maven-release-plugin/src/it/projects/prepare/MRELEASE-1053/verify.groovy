@@ -17,6 +17,8 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 // check parent project
 def project = new XmlSlurper().parse( new File( new File ( basedir, 'module-parent' ), 'pom.xml.next' ) )
 assert project.version.text() == '1.1-SNAPSHOT'

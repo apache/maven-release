@@ -18,6 +18,8 @@
  * under the License.
  */
 
+import groovy.xml.XmlSlurper
+
 def project = new XmlSlurper().parse( new File( basedir, "pom.xml" ) )
 assert project.version.text() == "1.0-SNAPSHOT"
 

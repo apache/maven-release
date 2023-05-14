@@ -543,9 +543,10 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
                     }
                     releasePlugin.setExecutions(plugin.getExecutions());
                     releasePlugin.setDependencies(plugin.getDependencies());
-                    releasePlugin.setGoals(plugin.getGoals());
                     releasePlugin.setInherited(plugin.getInherited());
-                    releasePlugin.setConfiguration(plugin.getConfiguration());
+                    if (plugin.getConfiguration() != null) {
+                        releasePlugin.setConfiguration(plugin.getConfiguration());
+                    }
 
                     releasePlugins.add(releasePlugin);
                 }
