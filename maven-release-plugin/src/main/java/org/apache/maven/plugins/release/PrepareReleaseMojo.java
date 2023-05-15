@@ -33,7 +33,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
  * Prepare for a release in SCM. Steps through several phases to ensure the POM is ready to be released and then
@@ -250,7 +250,7 @@ public class PrepareReleaseMojo extends AbstractScmReleaseMojo {
      * @since 3.0.0
      */
     @Parameter(property = "projectVersionPolicyConfig")
-    private XmlPlexusConfiguration projectVersionPolicyConfig;
+    private PlexusConfiguration projectVersionPolicyConfig;
 
     /**
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}

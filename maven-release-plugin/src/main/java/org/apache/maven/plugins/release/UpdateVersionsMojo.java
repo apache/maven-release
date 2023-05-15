@@ -28,7 +28,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseUpdateVersionsRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
  * Update the POM versions for a project. This performs the normal version updates of the <code>release:prepare</code>
@@ -97,7 +97,7 @@ public class UpdateVersionsMojo extends AbstractReleaseMojo {
      * @since 3.0.0
      */
     @Parameter(property = "projectVersionPolicyConfig")
-    private XmlPlexusConfiguration projectVersionPolicyConfig;
+    private PlexusConfiguration projectVersionPolicyConfig;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

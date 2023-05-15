@@ -29,7 +29,7 @@ import org.apache.maven.shared.release.ReleaseBranchRequest;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.codehaus.plexus.configuration.xml.XmlPlexusConfiguration;
+import org.codehaus.plexus.configuration.PlexusConfiguration;
 
 /**
  * Branch a project in SCM, using the same steps as the <code>release:prepare</code> goal, creating a branch instead of
@@ -204,7 +204,7 @@ public class BranchReleaseMojo extends AbstractScmReleaseMojo {
      * @since 3.0.0
      */
     @Parameter(property = "projectVersionPolicyConfig")
-    private XmlPlexusConfiguration projectVersionPolicyConfig;
+    private PlexusConfiguration projectVersionPolicyConfig;
 
     /**
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
