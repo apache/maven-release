@@ -75,10 +75,15 @@ public class InvokerMavenExecutor extends AbstractMavenExecutor {
                 .setBaseDirectory(workingDirectory)
                 // fix for MRELEASE-1105
                 // .addShellEnvironment( "MAVEN_DEBUG_OPTS", "" )
-                .setBatchMode(true)
+                .setBatchMode(!interactive)
                 .setJavaHome(releaseEnvironment.getJavaHome())
                 .setOutputHandler(getLogger()::info)
                 .setErrorHandler(getLogger()::error);
+
+        // for interactive mode we need some inputs stream
+        if (interactive) {
+            req.setInputStream(System.in);
+        }
 
         if (pomFileName != null) {
             req.setPomFileName(pomFileName);
