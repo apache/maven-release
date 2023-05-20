@@ -104,6 +104,7 @@ public class PrepareReleaseMojo extends AbstractScmReleaseMojo {
 
     /**
      * Comma separated profiles to enable on release prepare, in addition to active profiles for project execution.
+     * @since 3.0.0
      */
     @Parameter(property = "preparationProfiles")
     private String preparationProfiles;
