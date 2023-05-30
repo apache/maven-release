@@ -29,7 +29,7 @@
 
   <groupId>org.apache.maven.release</groupId>
   <artifactId>maven-release</artifactId>
-  <version>3.0.1</version>
+  <version>3.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Maven Release</name>
@@ -70,7 +70,7 @@
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-release.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-release.git</developerConnection>
-    <tag>maven-release-3.0.1</tag>
+    <tag>maven-release-3.0.0-M7</tag>
     <url>https://github.com/apache/maven-release/tree/${project.scm.tag}</url>
   </scm>
   <issueManagement>
@@ -98,7 +98,7 @@
     <slf4jVersion>1.7.36</slf4jVersion>
     <junitVersion>4.13.2</junitVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
-    <project.build.outputTimestamp>2023-05-30T21:23:37Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2023-05-30T21:24:43Z</project.build.outputTimestamp>
 
     <mavenCompilerPluginVersion>3.11.0</mavenCompilerPluginVersion>
     <mavenInvokerPluginVersion>3.5.0</mavenInvokerPluginVersion>
