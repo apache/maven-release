@@ -20,7 +20,6 @@ package org.apache.maven.plugins.release;
 
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Perform a release from SCM to a staging repository.
@@ -55,8 +54,8 @@ public class StageReleaseMojo extends PerformReleaseMojo {
             }
         }
 
-        goals = StringUtils.replace(goals, "site-deploy", "site:stage-deploy");
-        goals = StringUtils.replace(goals, "site:deploy", "site:stage-deploy");
+        goals = goals.replace("site-deploy", "site:stage-deploy");
+        goals = goals.replace("site:deploy", "site:stage-deploy");
     }
 
     @Override
