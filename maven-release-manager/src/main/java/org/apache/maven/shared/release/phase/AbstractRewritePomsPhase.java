@@ -19,16 +19,19 @@
 package org.apache.maven.shared.release.phase;
 
 import java.io.File;
-import java.net.URI;
+import java.nio.file.FileSystems;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,6 +109,8 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
 
     private long startTime = -1 * 1000;
 
+    private final Set<String> exclusionPatterns = new HashSet<>();
+
     protected AbstractRewritePomsPhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator,
             Map<String, ModelETLFactory> modelETLFactories,
@@ -156,6 +161,12 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             List<MavenProject> reactorProjects)
             throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
+
+        List<String> additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
+
+        if (additionalExcludes != null) {
+            exclusionPatterns.addAll(additionalExcludes);
+        }
 
         transform(releaseDescriptor, releaseEnvironment, reactorProjects, false, result);
 
@@ -210,17 +221,19 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             throws ReleaseExecutionException, ReleaseFailureException {
         result.setStartTime((startTime >= 0) ? startTime : System.currentTimeMillis());
 
-        URI root = ReleaseUtil.getRootProject(reactorProjects).getBasedir().toURI();
-
         for (MavenProject project : reactorProjects) {
-            URI pom = project.getFile().toURI();
-            logInfo(
-                    result,
-                    "Transforming " + root.relativize(pom).getPath() + ' '
-                            + buffer().project(project.getArtifactId()) + " '" + project.getName() + "'"
-                            + (simulate ? " with ." + getPomSuffix() + " suffix" : "") + "...");
+            final String path = project.getFile().getPath();
+            if (exclusionPatterns.stream().noneMatch(exclusionPattern -> FileSystems.getDefault()
+                    .getPathMatcher("glob:" + exclusionPattern)
+                    .matches(Paths.get(path)))) {
+                logDebug(
+                        result,
+                        "Transforming " + path + ' '
+                                + buffer().project(project.getArtifactId()) + " '" + project.getName() + "'"
+                                + (simulate ? " with ." + getPomSuffix() + " suffix" : "") + "...");
 
-            transformProject(project, releaseDescriptor, releaseEnvironment, simulate, result);
+                transformProject(project, releaseDescriptor, releaseEnvironment, simulate, result);
+            }
         }
     }
 

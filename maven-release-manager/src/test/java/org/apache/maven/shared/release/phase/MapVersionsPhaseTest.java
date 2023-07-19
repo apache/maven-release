@@ -18,6 +18,7 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -2447,11 +2448,44 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         }
     }
 
+    @Test
+    public void testSimulateRelease_CheckModificationExcludes() throws Exception {
+        // verify
+        MapReleaseVersionsPhase phase =
+                new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
+
+        List<MavenProject> reactorProjects = Collections.singletonList(createProjectWithPomFile("artifactId", "1.2"));
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCheckModificationExcludes(Collections.singletonList("**/pom1.xml"));
+
+        // test
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        // verify
+        assertNull(
+                "Check release versions",
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+        assertNull(
+                "Check development versions",
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+    }
+
     private static MavenProject createProject(String artifactId, String version) {
         Model model = new Model();
         model.setGroupId("groupId");
         model.setArtifactId(artifactId);
         model.setVersion(version);
         return new MavenProject(model);
+    }
+
+    private static MavenProject createProjectWithPomFile(String artifactId, String version) {
+        Model model = new Model();
+        model.setGroupId("groupId");
+        model.setArtifactId(artifactId);
+        model.setVersion(version);
+        MavenProject mavenProject = new MavenProject(model);
+        mavenProject.setFile(new File("src/test/resources/pomfinder/pom1.xml"));
+        return mavenProject;
     }
 }
