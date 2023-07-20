@@ -164,7 +164,9 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
                 svnRepo.setBranchBase(branchBase);
             }
         }
-
+        if (!releaseDescriptor.isInteractive()) {
+            scmManager.get().getProviderByRepository(repository).setInteractive(releaseDescriptor.isInteractive());
+        }
         return repository;
     }
 
