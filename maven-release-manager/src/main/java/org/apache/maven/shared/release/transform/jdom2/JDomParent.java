@@ -41,7 +41,7 @@ public class JDomParent extends Parent {
 
     @Override
     public String getVersion() {
-        throw new UnsupportedOperationException();
+        return parent.getChildText("version", parent.getNamespace());
     }
 
     @Override

@@ -18,9 +18,11 @@
  */
 package org.apache.maven.shared.release.transform.jdom2;
 
+import java.io.IOException;
 import java.io.StringReader;
 
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.junit.Test;
 
@@ -44,9 +46,12 @@ public class JDomParentTest {
         new JDomParent(null).getRelativePath();
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetVersion() {
-        new JDomParent(null).getVersion();
+    @Test
+    public void testGetVersion() throws JDOMException, IOException {
+        String content = "<parent><version>1.0</version></parent>";
+        Element parentElm = builder.build(new StringReader(content)).getRootElement();
+
+        assertEquals("1.0", new JDomParent(parentElm).getVersion());
     }
 
     @Test(expected = UnsupportedOperationException.class)
