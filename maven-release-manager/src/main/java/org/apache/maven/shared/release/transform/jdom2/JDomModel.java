@@ -194,10 +194,8 @@ public class JDomModel extends Model {
         } else {
             if (AbstractRewritePomsPhase.isCiFriendlyVersion(versionElement.getTextNormalize())) {
                 // try to rewrite property if CI friendly expression is used
-                String ciFriendlyPropertyName = AbstractRewritePomsPhase.extractPropertyFromExpression(
-                                versionElement.getTextNormalize())
-                        .orElseThrow(() -> new IllegalArgumentException(
-                                "Could not retrieve property from CI friendly expression"));
+                String ciFriendlyPropertyName =
+                        AbstractRewritePomsPhase.extractPropertyFromExpression(versionElement.getTextNormalize());
                 Properties properties = getProperties();
                 if (properties != null) {
                     properties.computeIfPresent(ciFriendlyPropertyName, (k, v) -> version);

@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
@@ -461,18 +460,16 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      * @param expression the expression
      * @return either {@code null} if value is no expression otherwise the property referenced in the expression
      */
-    public static Optional<String> extractPropertyFromExpression(String expression) {
+    public static String extractPropertyFromExpression(String expression) {
         Matcher matcher = EXPRESSION_PATTERN.matcher(expression);
         if (!matcher.matches()) {
-            return Optional.empty();
+            return null;
         }
-        return Optional.of(matcher.group(1));
+        return matcher.group(1);
     }
 
     public static boolean isCiFriendlyVersion(String version) {
-        return extractPropertyFromExpression(version)
-                .map(CI_FRIENDLY_PROPERTIES::contains)
-                .orElse(false);
+        return CI_FRIENDLY_PROPERTIES.contains(extractPropertyFromExpression(version));
     }
 
     private String rewriteParent(
@@ -567,9 +564,8 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                     logInfo(result, "  Updating " + artifactId + " to " + mappedVersion);
                     coordinate.setVersion(mappedVersion);
                 } else {
-                    Optional<String> optionalProperty = extractPropertyFromExpression(rawVersion);
-                    if (optionalProperty.isPresent()) {
-                        String property = optionalProperty.get();
+                    String property = extractPropertyFromExpression(rawVersion);
+                    if (property != null) {
                         if (property.startsWith("project.")
                                 || property.startsWith("pom.")
                                 || "version".equals(property)) {
