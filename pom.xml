@@ -89,7 +89,7 @@
   </distributionManagement>
 
   <properties>
-    <scmVersion>2.0.0</scmVersion>
+    <scmVersion>2.0.1</scmVersion>
     <javaVersion>8</javaVersion>
     <mavenVersion>3.2.5</mavenVersion>
     <resolverVersion>1.0.0.v20140518</resolverVersion>
