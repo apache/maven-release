@@ -114,7 +114,9 @@ public class JDomProperties extends Properties {
 
     @Override
     public String getProperty(String key, String defaultValue) {
-        throw new UnsupportedOperationException();
+        String property = getProperty(key);
+
+        return property == null ? defaultValue : property;
     }
 
     @Override
