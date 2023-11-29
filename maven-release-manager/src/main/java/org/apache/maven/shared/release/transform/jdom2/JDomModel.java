@@ -198,7 +198,7 @@ public class JDomModel extends Model {
                         AbstractRewritePomsPhase.extractPropertyFromExpression(versionElement.getTextNormalize());
                 Properties properties = getProperties();
                 if (properties != null) {
-                    properties.computeIfPresent(ciFriendlyPropertyName, (k, v) -> version);
+                    properties.setProperty(ciFriendlyPropertyName, version);
                 }
             } else {
                 JDomUtils.rewriteValue(versionElement, version);
