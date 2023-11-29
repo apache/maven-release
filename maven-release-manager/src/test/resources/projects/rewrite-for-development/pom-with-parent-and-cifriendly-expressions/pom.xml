@@ -31,7 +31,7 @@
 
   <properties>
     <revision>1.0</revision>
-    <changelist></changelist>
+    <changelist>-SNAPSHOT</changelist>
   </properties>
 
   <modules>

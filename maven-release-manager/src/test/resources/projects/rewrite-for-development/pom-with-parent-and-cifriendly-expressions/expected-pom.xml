@@ -24,14 +24,14 @@
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</connection>
-    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</developerConnection>
-    <url>file://localhost/tmp/scm-repo/tags/release-label</url>
+    <connection>scm:svn:file://localhost/tmp/scm-repo/trunk</connection>
+    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/trunk</developerConnection>
+    <url>file://localhost/tmp/scm-repo/trunk</url>
   </scm>
 
   <properties>
-    <revision>1.0</revision>
-    <changelist></changelist>
+    <revision>1.1</revision>
+    <changelist>-SNAPSHOT</changelist>
   </properties>
 
   <modules>

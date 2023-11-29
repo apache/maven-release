@@ -224,13 +224,7 @@
                 <setupInclude>setup/*/pom.xml</setupInclude>
               </setupIncludes>
               <pomIncludes>
-                <pomInclude>projects/prepare/*/*pom.xml</pomInclude>
-                <pomInclude>projects/prepare/flat-multi-module/parent-project/pom.xml</pomInclude>
-                <pomInclude>projects/prepare-with-pom/*/*pom.xml</pomInclude>
-                <pomInclude>projects/branch/*/pom.xml</pomInclude>
-                <pomInclude>projects/perform/*/pom.xml</pomInclude>
-                <pomInclude>projects/update-versions/*/pom.xml</pomInclude>
-                <pomInclude>projects/stage/*/pom.xml</pomInclude>
+                <pomInclude>projects/prepare/ci-friendly-multi-module/*pom.xml</pomInclude>
               </pomIncludes>
               <pomExcludes>
                 <pomExclude>projects/prepare/MRELEASE-966/pom.xml</pomExclude>
