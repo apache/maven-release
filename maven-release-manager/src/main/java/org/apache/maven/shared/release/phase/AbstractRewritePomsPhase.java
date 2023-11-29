@@ -96,7 +96,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      * Regular expression pattern matching Maven expressions (i.e. references to Maven properties).
      * The first group selects the property name the expression refers to.
      */
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+)\\}");
+    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+?)\\}");
 
     /**
      * All Maven properties allowed to be referenced in parent versions via expressions
@@ -462,7 +462,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      */
     public static String extractPropertyFromExpression(String expression) {
         Matcher matcher = EXPRESSION_PATTERN.matcher(expression);
-        if (!matcher.matches()) {
+        if (!matcher.find()) {
             return null;
         }
         return matcher.group(1);
@@ -565,6 +565,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                     coordinate.setVersion(mappedVersion);
                 } else {
                     String property = extractPropertyFromExpression(rawVersion);
+                    logInfo(result, "CI Friendly property " + property + " and rawVersion is " + rawVersion);
                     if (property != null) {
                         if (property.startsWith("project.")
                                 || property.startsWith("pom.")
@@ -610,6 +611,8 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                                 }
                             } else {
                                 if (CI_FRIENDLY_PROPERTIES.contains(property)) {
+                                    // the parent's pom revision is set inside
+                                    // org.apache.maven.shared.release.transform.jdom2.JDomModel.setVersion
                                     logInfo(
                                             result,
                                             "  Ignoring artifact version update for CI friendly expression "
@@ -629,6 +632,10 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                         }
                     } else {
                         // different/previous version not related to current release
+                        // this is the only place where the returned null from `extractPropertyFromExpression` is
+                        // supposed to be handled.
+                        // And the unit test RewritePomsForBranchPhaseTest depends on null result from
+                        // `extractPropertyFromExpression`.
                     }
                 }
             } else if (resolvedSnapshotVersion != null) {
