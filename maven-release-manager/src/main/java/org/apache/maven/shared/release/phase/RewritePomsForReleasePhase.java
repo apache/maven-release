@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
@@ -34,8 +35,10 @@ import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseExecutionException;
+import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
@@ -212,6 +215,15 @@ public class RewritePomsForReleasePhase extends AbstractRewritePomsPhase {
             getLogger().debug(message);
         }
         return result;
+    }
+
+    @Override
+    public ReleaseResult execute(
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment,
+            List<MavenProject> reactorProjects)
+            throws ReleaseExecutionException, ReleaseFailureException {
+        return super.execute(releaseDescriptor, releaseEnvironment, reactorProjects);
     }
 
     @Override

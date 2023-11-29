@@ -404,11 +404,14 @@ public class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritin
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-parent-and-cifriendly-expressions");
 
         ReleaseDescriptorBuilder builder =
-            createDescriptorFromProjects(reactorProjects, "pom-with-parent-and-cifriendly-expressions");
+                createDescriptorFromProjects(reactorProjects, "pom-with-parent-and-cifriendly-expressions");
         builder.addReleaseVersion("groupId:artifactId", RELEASE_VERSION);
         builder.addDevelopmentVersion("groupId:artifactId", NEXT_VERSION);
         builder.addReleaseVersion("groupId:subproject1", RELEASE_VERSION);
         builder.addDevelopmentVersion("groupId:subproject1", NEXT_VERSION);
+
+        mapScm(builder);
+
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         assertTrue(comparePomFiles(reactorProjects));
