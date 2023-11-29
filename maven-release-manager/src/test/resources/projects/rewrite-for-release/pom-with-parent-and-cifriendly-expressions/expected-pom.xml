@@ -31,7 +31,10 @@
 
   <properties>
     <revision>1.0</revision>
+<<<<<<< Upstream, based on master
     <changelist></changelist>
+=======
+>>>>>>> ab5c8d5 MRELEASE-1109 patch JDomModel
   </properties>
 
   <modules>
