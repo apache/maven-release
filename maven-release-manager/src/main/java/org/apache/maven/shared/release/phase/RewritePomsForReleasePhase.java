@@ -218,15 +218,6 @@ public class RewritePomsForReleasePhase extends AbstractRewritePomsPhase {
     }
 
     @Override
-    public ReleaseResult execute(
-            ReleaseDescriptor releaseDescriptor,
-            ReleaseEnvironment releaseEnvironment,
-            List<MavenProject> reactorProjects)
-            throws ReleaseExecutionException, ReleaseFailureException {
-        return super.execute(releaseDescriptor, releaseEnvironment, reactorProjects);
-    }
-
-    @Override
     protected String getOriginalVersion(ReleaseDescriptor releaseDescriptor, String projectKey, boolean simulate) {
         return releaseDescriptor.getProjectOriginalVersion(projectKey);
     }
