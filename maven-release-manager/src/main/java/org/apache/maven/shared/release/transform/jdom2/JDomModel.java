@@ -202,11 +202,12 @@ public class JDomModel extends Model {
                     String sha1 = properties.getProperty("sha1", "");
                     String changelist = properties.getProperty("changelist", "");
                     properties.setProperty(
-                            ciFriendlyPropertyName, version.replaceAll(sha1, "").replaceAll(changelist, ""));
+                            ciFriendlyPropertyName,
+                            // assume that everybody follows the example and properties are simply chained
+                            version.replaceAll(sha1, "").replaceAll(changelist, ""));
                     if (ArtifactUtils.isSnapshot(version)) {
                         properties.setProperty("changelist", changelist);
                     } else {
-                        properties.setProperty(ciFriendlyPropertyName, version);
                         properties.setProperty("changelist", "");
                     }
                 }
