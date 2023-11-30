@@ -18,7 +18,7 @@
  */
 package org.apache.maven.shared.release.util;
 
-import java.util.Properties;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,12 +30,12 @@ public class MavenExpression {
 
     private MavenExpression() {}
 
-    public static String evaluate(String expression, Properties properties) {
+    public static String evaluate(String expression, Map<?, ?> properties) {
         StringBuilder result = new StringBuilder(expression);
         Matcher matcher = EXPRESSION_PATTERN.matcher(result);
         while (matcher.find()) {
             String propertyName = matcher.group(1);
-            String propertyValue = properties.getProperty(propertyName);
+            Object propertyValue = properties.get(propertyName);
             result.replace(matcher.start(), matcher.end(), String.valueOf(propertyValue));
             matcher.reset();
         }
