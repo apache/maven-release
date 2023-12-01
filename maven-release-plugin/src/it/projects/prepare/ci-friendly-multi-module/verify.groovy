@@ -22,17 +22,22 @@ import groovy.xml.XmlSlurper
 File buildLog = new File( basedir, 'build.log' )
 assert buildLog.exists()
 
-// next development versions
+// tag versions
 def projectRootTag = new XmlSlurper().parse( new File( basedir, 'pom.xml.tag' ) )
 assert projectRootTag.version.text() == '${revision}${changelist}'
-// updating of the revision property is not implemented
 assert projectRootTag.properties.revision.text() == "1.0"
 assert projectRootTag.properties.changelist.text() == ""
+
+def projectATag = new XmlSlurper().parse( new File( basedir, 'module-a/pom.xml.tag' ) )
+assert projectATag.parent.version.text() == '${revision}${changelist}'
+
+def projectBTag = new XmlSlurper().parse( new File( basedir, 'module-b/pom.xml.tag' ) )
+assert projectBTag.parent.version.text() == '${revision}${changelist}'
+
 
 // next development versions
 def projectRoot = new XmlSlurper().parse( new File( basedir, 'pom.xml.next' ) )
 assert projectRoot.version.text() == '${revision}${changelist}'
-// updating of the revision property is not implemented
 assert projectRoot.properties.revision.text() == "1.1"
 assert projectRoot.properties.changelist.text() == "-SNAPSHOT"
 
