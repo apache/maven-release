@@ -42,6 +42,10 @@
     </dependency>
     <dependency>
       <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-xml</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
       <artifactId>plexus-interactivity-api</artifactId>
       <version>1.2</version>
     </dependency>
