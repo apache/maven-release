@@ -334,6 +334,19 @@ public class RewritePomsForReleasePhaseTest extends AbstractEditModeRewritingRel
         assertTrue(comparePomFiles(reactorProjects));
     }
 
+    @Test
+    public void testRewritePomWithCiFriendlyReactorWithOnlyRevision() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("pom-with-parent-and-cifriendly-revision");
+
+        ReleaseDescriptorBuilder builder =
+                createDescriptorFromProjects(reactorProjects, "pom-with-parent-and-cifriendly-revision");
+        builder.addReleaseVersion("groupId:artifactId", NEXT_VERSION);
+        builder.addReleaseVersion("groupId:subproject1", NEXT_VERSION);
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        assertTrue(comparePomFiles(reactorProjects));
+    }
+
     // MRELEASE-311
     @Test
     public void testRewritePomWithDependencyPropertyCoordinate() throws Exception {

@@ -31,6 +31,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.MavenExpression;
 import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
@@ -89,7 +90,8 @@ public abstract class AbstractCheckPomPhase extends AbstractReleasePhase {
         boolean containsSnapshotProjects = false;
 
         for (MavenProject project : reactorProjects) {
-            if (ArtifactUtils.isSnapshot(project.getVersion())) {
+            String projectVersion = MavenExpression.evaluate(project.getVersion(), project.getProperties());
+            if (ArtifactUtils.isSnapshot(projectVersion)) {
                 containsSnapshotProjects = true;
 
                 break;

@@ -101,9 +101,12 @@ public class JDomPropertiesTest {
         assertEquals("VALUE", new JDomProperties(propertiesElm).getProperty("KEY"));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetPropertyDefault() {
-        new JDomProperties(null).getProperty(null, null);
+    @Test
+    public void testGetPropertyDefault() throws Exception {
+        String content = "<properties></properties>";
+        Element propertiesElm = builder.build(new StringReader(content)).getRootElement();
+        assertNull(new JDomProperties(propertiesElm).getProperty("KEY", null));
+        assertEquals("", new JDomProperties(propertiesElm).getProperty("KEY", ""));
     }
 
     @Test(expected = UnsupportedOperationException.class)

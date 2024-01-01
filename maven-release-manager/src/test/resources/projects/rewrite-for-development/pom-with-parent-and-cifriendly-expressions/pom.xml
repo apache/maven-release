@@ -32,7 +32,7 @@
   <properties>
     <revision>1.0</revision>
     <sha1>.123</sha1>
-    <changelist></changelist>
+    <changelist>-SNAPSHOT</changelist>
   </properties>
 
   <modules>

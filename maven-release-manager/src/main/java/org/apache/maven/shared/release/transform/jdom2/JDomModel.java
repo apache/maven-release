@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
@@ -198,7 +199,17 @@ public class JDomModel extends Model {
                         AbstractRewritePomsPhase.extractPropertyFromExpression(versionElement.getTextNormalize());
                 Properties properties = getProperties();
                 if (properties != null) {
-                    properties.computeIfPresent(ciFriendlyPropertyName, (k, v) -> version);
+                    String sha1 = properties.getProperty("sha1", "");
+                    String changelist = properties.getProperty("changelist", "");
+                    properties.setProperty(
+                            ciFriendlyPropertyName,
+                            // assume that everybody follows the example and properties are simply chained
+                            version.replaceAll(sha1, "").replaceAll(changelist, ""));
+                    if (ArtifactUtils.isSnapshot(version)) {
+                        properties.setProperty("changelist", changelist);
+                    } else {
+                        properties.setProperty("changelist", "");
+                    }
                 }
             } else {
                 JDomUtils.rewriteValue(versionElement, version);

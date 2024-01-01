@@ -18,24 +18,11 @@
 
 <project>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>groupId</groupId>
-  <artifactId>artifactId</artifactId>
-  <version>${revision}${sha1}${changelist}</version>
-  <packaging>pom</packaging>
+  <parent>
+    <groupId>groupId</groupId>
+    <artifactId>artifactId</artifactId>
+    <version>${revision}</version>
+  </parent>
 
-  <scm>
-    <connection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</connection>
-    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</developerConnection>
-    <url>file://localhost/tmp/scm-repo/tags/release-label</url>
-  </scm>
-
-  <properties>
-    <revision>1.0</revision>
-    <sha1>.123</sha1>
-    <changelist></changelist>
-  </properties>
-
-  <modules>
-    <module>subproject1</module>
-  </modules>
+  <artifactId>subproject1</artifactId>
 </project>
