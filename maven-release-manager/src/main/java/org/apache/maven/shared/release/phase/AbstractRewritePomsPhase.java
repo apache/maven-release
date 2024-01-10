@@ -96,7 +96,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      * Regular expression pattern matching Maven expressions (i.e. references to Maven properties).
      * The first group selects the property name the expression refers to.
      */
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+)\\}");
+    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+?)\\}");
 
     /**
      * All Maven properties allowed to be referenced in parent versions via expressions
@@ -462,7 +462,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      */
     public static String extractPropertyFromExpression(String expression) {
         Matcher matcher = EXPRESSION_PATTERN.matcher(expression);
-        if (!matcher.matches()) {
+        if (!matcher.find()) {
             return null;
         }
         return matcher.group(1);
