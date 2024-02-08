@@ -139,7 +139,8 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
 
                 if (passphrase == null && server.getPassphrase() != null) {
                     logger.debug(
-                            "Using passphrase from server id '{}' found in Maven settings", releaseDescriptor.getScmId());
+                            "Using passphrase from server id '{}' found in Maven settings",
+                            releaseDescriptor.getScmId());
                     passphrase = decrypt(server.getPassphrase(), server.getId());
                 }
             }
@@ -194,8 +195,8 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
         try {
             return mavenCrypto.decrypt(str);
         } catch (MavenCryptoException e) {
-            String msg = "Failed to decrypt password/passphrase for server with id '" + serverId + "', using auth token as is: "
-                    + e.getMessage();
+            String msg = "Failed to decrypt password/passphrase for server with id '" + serverId
+                    + "', using auth token as is: " + e.getMessage();
             if (logger.isDebugEnabled()) {
                 logger.warn(msg, e);
             } else {
