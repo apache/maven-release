@@ -366,9 +366,11 @@ public interface ReleaseDescriptor {
     String getScmBranchBase();
 
     /**
-     * Get the id can be used to get the credentials by the server-id from the settings.xml.
+     * Get the id which can be used to get the (optionally encrypted) credentials with the given id from the {@code settings.xml}.
+     * Explicit credentials in {@link #getScmUsername()}, {@link #getScmPassword()}, {@link #getScmPrivateKey()} or
+     * {@link #getScmPrivateKeyPassPhrase()} always take precedence, though.
      *
-     * @return String
+     * @return the server id of a server in {@code settings.xml}
      */
     String getScmId();
 
