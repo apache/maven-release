@@ -209,7 +209,6 @@
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-invoker-plugin</artifactId>
-            <version>3.5.1</version>
             <configuration>
               <projectsDirectory>src/it</projectsDirectory>
               <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
@@ -257,7 +256,7 @@
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>mrm-maven-plugin</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.0</version>
             <configuration>
               <repositories>
                 <mockRepo>

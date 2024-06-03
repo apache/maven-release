@@ -535,7 +535,6 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                     coordinate.setVersion(mappedVersion);
                 } else {
                     String property = CiFriendlyVersion.extractPropertyFromExpression(rawVersion);
-                    logInfo(result, "CI Friendly property " + property + " and rawVersion is " + rawVersion);
                     if (property != null) {
                         if (property.startsWith("project.")
                                 || property.startsWith("pom.")

@@ -23,7 +23,7 @@
   <parent>
     <groupId>org.apache.maven</groupId>
     <artifactId>maven-parent</artifactId>
-    <version>39</version>
+    <version>41</version>
     <relativePath />
   </parent>
 
@@ -90,20 +90,19 @@
 
   <properties>
     <scmVersion>2.0.1</scmVersion>
-    <javaVersion>8</javaVersion>
     <mavenVersion>3.2.5</mavenVersion>
     <resolverVersion>1.0.0.v20140518</resolverVersion>
     <wagonVersion>3.5.3</wagonVersion>
-    <surefire.version>3.0.0</surefire.version>
     <slf4jVersion>1.7.36</slf4jVersion>
     <junitVersion>4.13.2</junitVersion>
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
     <project.build.outputTimestamp>2023-05-30T21:24:43Z</project.build.outputTimestamp>
 
-    <mavenCompilerPluginVersion>3.11.0</mavenCompilerPluginVersion>
-    <mavenInvokerPluginVersion>3.5.0</mavenInvokerPluginVersion>
-    <mavenEnforcerPluginVersion>3.3.0</mavenEnforcerPluginVersion>
-    <mavenHelpPluginVersion>3.4.0</mavenHelpPluginVersion>
+    <mavenCompilerPluginVersion>${version.maven-compiler-plugin}</mavenCompilerPluginVersion>
+    <mavenInvokerPluginVersion>${version.maven-invoker-plugin}</mavenInvokerPluginVersion>
+    <mavenEnforcerPluginVersion>${version.maven-enforcer-plugin}</mavenEnforcerPluginVersion>
+    <mavenHelpPluginVersion>${version.maven-help-plugin}</mavenHelpPluginVersion>
+    <sisuVersion>${version.sisu-maven-plugin}</sisuVersion>
   </properties>
 
   <dependencyManagement>
@@ -276,11 +275,6 @@
         <version>1</version>
       </dependency>
 
-      <dependency>
-        <groupId>org.codehaus.plexus</groupId>
-        <artifactId>plexus-utils</artifactId>
-        <version>3.5.1</version>
-      </dependency>
       <dependency>
         <groupId>org.jdom</groupId>
         <artifactId>jdom2</artifactId>

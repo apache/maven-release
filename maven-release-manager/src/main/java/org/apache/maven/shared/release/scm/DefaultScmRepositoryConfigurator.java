@@ -96,6 +96,9 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
 
             if (releaseDescriptor.getScmId() != null) {
                 server = settings.getServer(releaseDescriptor.getScmId());
+                if (server == null) {
+                    logger.warn("No server with id '{}' found in Maven settings", releaseDescriptor.getScmId());
+                }
             }
 
             if (server == null && repository.getProviderRepository() instanceof ScmProviderRepositoryWithHost) {
@@ -115,19 +118,29 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
             }
 
             if (server != null) {
-                if (username == null) {
+                if (username == null && server.getUsername() != null) {
+                    logger.debug(
+                            "Using username from server id '{}' found in Maven settings", releaseDescriptor.getScmId());
                     username = server.getUsername();
                 }
 
-                if (password == null) {
+                if (password == null && server.getPassword() != null) {
+                    logger.debug(
+                            "Using password from server id '{}' found in Maven settings", releaseDescriptor.getScmId());
                     password = decrypt(server.getPassword(), server.getId());
                 }
 
-                if (privateKey == null) {
+                if (privateKey == null && server.getPrivateKey() != null) {
+                    logger.debug(
+                            "Using private key from server id '{}' found in Maven settings",
+                            releaseDescriptor.getScmId());
                     privateKey = server.getPrivateKey();
                 }
 
-                if (passphrase == null) {
+                if (passphrase == null && server.getPassphrase() != null) {
+                    logger.debug(
+                            "Using passphrase from server id '{}' found in Maven settings",
+                            releaseDescriptor.getScmId());
                     passphrase = decrypt(server.getPassphrase(), server.getId());
                 }
             }
@@ -135,19 +148,27 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
 
         if (!(username == null || username.isEmpty())) {
             scmRepo.setUser(username);
+        } else {
+            logger.debug("No explicit username configured");
         }
         if (!(password == null || password.isEmpty())) {
             scmRepo.setPassword(password);
+        } else {
+            logger.debug("No explicit password configured");
         }
 
         if (scmRepo instanceof ScmProviderRepositoryWithHost) {
             ScmProviderRepositoryWithHost repositoryWithHost = (ScmProviderRepositoryWithHost) scmRepo;
             if (!(privateKey == null || privateKey.isEmpty())) {
                 repositoryWithHost.setPrivateKey(privateKey);
+            } else {
+                logger.debug("No explicit private key configured");
             }
 
             if (!(passphrase == null || passphrase.isEmpty())) {
                 repositoryWithHost.setPassphrase(passphrase);
+            } else {
+                logger.debug("No explicit passphrase configured");
             }
         }
 
@@ -170,12 +191,12 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
         return repository;
     }
 
-    private String decrypt(String str, String server) {
+    private String decrypt(String str, String serverId) {
         try {
             return mavenCrypto.decrypt(str);
         } catch (MavenCryptoException e) {
-            String msg = "Failed to decrypt password/passphrase for server " + server + ", using auth token as is: "
-                    + e.getMessage();
+            String msg = "Failed to decrypt password/passphrase for server with id '" + serverId
+                    + "', using auth token as is: " + e.getMessage();
             if (logger.isDebugEnabled()) {
                 logger.warn(msg, e);
             } else {
