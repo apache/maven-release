@@ -20,20 +20,17 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>groupId</groupId>
   <artifactId>artifactId</artifactId>
-  <version>${revision}${sha1}${changelist}</version>
+  <version>${revision}</version>
   <packaging>pom</packaging>
 
   <scm>
-    <connection>scm:svn:file://localhost/tmp/scm-repo/trunk</connection>
-    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/trunk</developerConnection>
-    <url>file://localhost/tmp/scm-repo/trunk</url>
+    <connection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</connection>
+    <developerConnection>scm:svn:file://localhost/tmp/scm-repo/tags/release-label</developerConnection>
+    <url>file://localhost/tmp/scm-repo/tags/release-label</url>
   </scm>
 
   <properties>
-    <revision>1.1</revision>
-    <!-- usually the sha1 is passed as command-line option, the release:perform will store it in released pom and will remove it for the next dev pom-->
-    <sha1 />
-    <changelist>-SNAPSHOT</changelist>
+    <revision>1.1-SNAPSHOT</revision>
   </properties>
 
   <modules>

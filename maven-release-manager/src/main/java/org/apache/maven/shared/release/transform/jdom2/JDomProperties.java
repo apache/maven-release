@@ -51,13 +51,13 @@ public class JDomProperties extends Properties {
     }
 
     @Override
-    public synchronized Object setProperty(String key, String value) {
-        Element property = properties.getChild(key, properties.getNamespace());
+    public synchronized Object put(Object key, Object value) {
+        Element property = properties.getChild((String) key, properties.getNamespace());
 
         if (property == null) {
-            property = new Element(key, properties.getNamespace());
+            property = new Element((String) key, properties.getNamespace());
         }
-        JDomUtils.rewriteValue(property, value);
+        JDomUtils.rewriteValue(property, (String) value);
 
         // todo follow specs of Hashtable.put
         return null;
@@ -113,6 +113,15 @@ public class JDomProperties extends Properties {
         } else {
             return property.getTextTrim();
         }
+    }
+
+    @Override
+    public boolean containsKey(Object key) {
+        if (key instanceof String) {
+            Element property = properties.getChild((String) key, properties.getNamespace());
+            return property != null;
+        }
+        return false;
     }
 
     @Override

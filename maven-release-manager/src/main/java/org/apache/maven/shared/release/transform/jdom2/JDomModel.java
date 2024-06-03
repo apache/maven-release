@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.DependencyManagement;
@@ -32,7 +31,7 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
-import org.apache.maven.shared.release.phase.AbstractRewritePomsPhase;
+import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
@@ -181,7 +180,7 @@ public class JDomModel extends Model {
 
         if (versionElement == null) {
             // never add version when parent references CI friendly property
-            if (!(parentVersion != null && AbstractRewritePomsPhase.isCiFriendlyVersion(parentVersion))
+            if (!(parentVersion != null && CiFriendlyVersion.isCiFriendlyVersion(parentVersion))
                     && !version.equals(parentVersion)) {
                 // we will add this after artifactId, since it was missing but different from the inherited version
                 Element artifactIdElement = project.getChild("artifactId", project.getNamespace());
@@ -193,24 +192,10 @@ public class JDomModel extends Model {
                 project.addContent(index + 2, versionElement);
             }
         } else {
-            if (AbstractRewritePomsPhase.isCiFriendlyVersion(versionElement.getTextNormalize())) {
+            if (CiFriendlyVersion.isCiFriendlyVersion(versionElement.getTextNormalize())) {
                 // try to rewrite property if CI friendly expression is used
-                String ciFriendlyPropertyName =
-                        AbstractRewritePomsPhase.extractPropertyFromExpression(versionElement.getTextNormalize());
-                Properties properties = getProperties();
-                if (properties != null) {
-                    String sha1 = properties.getProperty("sha1", "");
-                    String changelist = properties.getProperty("changelist", "");
-                    properties.setProperty(
-                            ciFriendlyPropertyName,
-                            // assume that everybody follows the example and properties are simply chained
-                            version.replaceAll(sha1, "").replaceAll(changelist, ""));
-                    if (ArtifactUtils.isSnapshot(version)) {
-                        properties.setProperty("changelist", changelist);
-                    } else {
-                        properties.setProperty("changelist", "");
-                    }
-                }
+                CiFriendlyVersion.rewriteVersionAndProperties(
+                        version, versionElement.getTextNormalize(), getProperties());
             } else {
                 JDomUtils.rewriteValue(versionElement, version);
             }
