@@ -21,7 +21,7 @@ under the License.
   <parent>
     <artifactId>ci-friendly-multi-module-project</artifactId>
     <groupId>org.apache.maven.plugin.release</groupId>
-    <version>${revision}${changelist}</version>
+    <version>${revision}${sha1}${changelist}</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.apache.maven.plugin.release</groupId>

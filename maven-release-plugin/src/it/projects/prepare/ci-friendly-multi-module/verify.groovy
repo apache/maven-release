@@ -24,27 +24,29 @@ assert buildLog.exists()
 
 // tag versions
 def projectRootTag = new XmlSlurper().parse( new File( basedir, 'pom.xml.tag' ) )
-assert projectRootTag.version.text() == '${revision}${changelist}'
+assert projectRootTag.version.text() == '${revision}${sha1}${changelist}'
 assert projectRootTag.properties.revision.text() == "1.0"
+assert projectRootTag.properties.sha1.text() == ""
 assert projectRootTag.properties.changelist.text() == ""
 
 def projectATag = new XmlSlurper().parse( new File( basedir, 'module-a/pom.xml.tag' ) )
-assert projectATag.parent.version.text() == '${revision}${changelist}'
+assert projectATag.parent.version.text() == '${revision}${sha1}${changelist}'
 
 def projectBTag = new XmlSlurper().parse( new File( basedir, 'module-b/pom.xml.tag' ) )
-assert projectBTag.parent.version.text() == '${revision}${changelist}'
+assert projectBTag.parent.version.text() == '${revision}${sha1}${changelist}'
 
 
 // next development versions
 def projectRoot = new XmlSlurper().parse( new File( basedir, 'pom.xml.next' ) )
-assert projectRoot.version.text() == '${revision}${changelist}'
+assert projectRoot.version.text() == '${revision}${sha1}${changelist}'
 assert projectRoot.properties.revision.text() == "1.1"
+assert projectRoot.properties.sha1.text() == ""
 assert projectRoot.properties.changelist.text() == "-SNAPSHOT"
 
 def projectA = new XmlSlurper().parse( new File( basedir, 'module-a/pom.xml.next' ) )
-assert projectA.parent.version.text() == '${revision}${changelist}'
+assert projectA.parent.version.text() == '${revision}${sha1}${changelist}'
 
 def projectB = new XmlSlurper().parse( new File( basedir, 'module-b/pom.xml.next' ) )
-assert projectB.parent.version.text() == '${revision}${changelist}'
+assert projectB.parent.version.text() == '${revision}${sha1}${changelist}'
 
 return true

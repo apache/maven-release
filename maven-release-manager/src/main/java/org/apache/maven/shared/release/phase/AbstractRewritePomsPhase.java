@@ -24,7 +24,6 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
@@ -33,8 +32,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
@@ -66,6 +63,7 @@ import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
 import org.apache.maven.shared.release.transform.ModelETLRequest;
 import org.apache.maven.shared.release.transform.jdom2.JDomModelETLFactory;
+import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -94,18 +92,6 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      * Use jdom2-sax as default
      */
     private String modelETL = JDomModelETLFactory.NAME;
-
-    /**
-     * Regular expression pattern matching Maven expressions (i.e. references to Maven properties).
-     * The first group selects the property name the expression refers to.
-     */
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+?)\\}");
-
-    /**
-     * All Maven properties allowed to be referenced in parent versions via expressions
-     * @see <a href="https://maven.apache.org/maven-ci-friendly.html">CI-Friendly Versions</a>
-     */
-    private static final List<String> CI_FRIENDLY_PROPERTIES = Arrays.asList("revision", "sha1", "changelist");
 
     private long startTime = -1 * 1000;
 
@@ -468,6 +454,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
         modelTarget.setVersion(version);
     }
 
+<<<<<<< Upstream, based on master
     /**
      * Extracts the Maven property name from a given expression.
      * @param expression the expression
@@ -486,6 +473,9 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
     }
 
     private void rewriteParent(
+=======
+    private String rewriteParent(
+>>>>>>> 4032941 MRELEASE-1109 addressed review comments and replaced `replaceAll` with `replace`. Added more tests after using this version for a while in a real project.
             MavenProject project,
             Model targetModel,
             ReleaseResult result,
@@ -506,7 +496,8 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                     throw new ReleaseFailureException("Version for parent '" + parent.getName() + "' was not mapped");
                 }
             } else {
-                if (!isCiFriendlyVersion(targetModel.getParent().getVersion())) {
+                if (!CiFriendlyVersion.isCiFriendlyVersion(
+                        targetModel.getParent().getVersion())) {
                     targetModel.getParent().setVersion(parentVersion);
                 } else {
                     logInfo(
@@ -582,7 +573,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                     logInfo(result, "  Updating " + artifactId + " to " + mappedVersion);
                     coordinate.setVersion(mappedVersion);
                 } else {
-                    String property = extractPropertyFromExpression(rawVersion);
+                    String property = CiFriendlyVersion.extractPropertyFromExpression(rawVersion);
                     logInfo(result, "CI Friendly property " + property + " and rawVersion is " + rawVersion);
                     if (property != null) {
                         if (property.startsWith("project.")
@@ -628,7 +619,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                                     }
                                 }
                             } else {
-                                if (CI_FRIENDLY_PROPERTIES.contains(property)) {
+                                if (CiFriendlyVersion.containsCiFriendlyProperties(property)) {
                                     // the parent's pom revision is set inside
                                     // org.apache.maven.shared.release.transform.jdom2.JDomModel.setVersion
                                     logInfo(

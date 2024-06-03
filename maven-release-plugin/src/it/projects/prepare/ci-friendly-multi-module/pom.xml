@@ -22,7 +22,7 @@
   <groupId>org.apache.maven.plugin.release</groupId>
   <artifactId>ci-friendly-multi-module-project</artifactId>
   <packaging>pom</packaging>
-  <version>${revision}${changelist}</version>
+  <version>${revision}${sha1}${changelist}</version>
   <name>parent-project</name>
   <url>http://maven.apache.org</url>
   <scm>
@@ -33,6 +33,7 @@
   
   <properties>
     <revision>1.0</revision>
+    <sha1/>
     <changelist>-SNAPSHOT</changelist>
     <maven.compiler.source>@maven.compiler.source@</maven.compiler.source>
     <maven.compiler.target>@maven.compiler.target@</maven.compiler.target>
