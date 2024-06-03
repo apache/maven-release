@@ -602,10 +602,6 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                         }
                     } else {
                         // different/previous version not related to current release
-                        // this is the only place where the returned null from `extractPropertyFromExpression` is
-                        // supposed to be handled.
-                        // And the unit test RewritePomsForBranchPhaseTest depends on null result from
-                        // `extractPropertyFromExpression`.
                     }
                 }
             } else if (resolvedSnapshotVersion != null) {
