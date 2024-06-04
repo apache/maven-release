@@ -19,8 +19,9 @@
 package org.apache.maven.shared.release.util;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,9 +41,9 @@ public class CiFriendlyVersion {
      */
     private static final String REVISION = "revision";
 
-    private static final String SHA_1 = "sha1";
+    private static final String SHA1 = "sha1";
     private static final String CHANGELIST = "changelist";
-    private static final List<String> CI_FRIENDLY_PROPERTIES = Arrays.asList(REVISION, SHA_1, CHANGELIST);
+    private static final Set<String> CI_FRIENDLY_PROPERTIES = new HashSet<>(Arrays.asList(REVISION, SHA1, CHANGELIST));
 
     private static final String SNAPSHOT = "-SNAPSHOT";
 
@@ -73,7 +74,7 @@ public class CiFriendlyVersion {
         // try to rewrite property if CI friendly expression is used
         String ciFriendlyPropertyName = extractPropertyFromExpression(versionElement);
         if (properties != null) {
-            String sha1 = properties.getProperty(SHA_1, System.getProperty(SHA_1, ""));
+            String sha1 = properties.getProperty(SHA1, System.getProperty(SHA1, ""));
             // assume that everybody follows the example and properties are simply chained
             //  and the changelist can only be '-SNAPSHOT'
             if (ArtifactUtils.isSnapshot(version)) {
