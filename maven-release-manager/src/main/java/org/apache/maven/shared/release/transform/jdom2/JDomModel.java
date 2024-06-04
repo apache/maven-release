@@ -31,6 +31,7 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -48,12 +49,17 @@ public class JDomModel extends Model {
     private final JDomModelBase modelBase;
 
     /**
+     * The currently running MavenProject
+     */
+    private final MavenProject mavenProject;
+
+    /**
      * <p>Constructor for JDomModel.</p>
      *
      * @param document a {@link org.jdom2.Document} object
      */
-    public JDomModel(Document document) {
-        this(document.getRootElement());
+    public JDomModel(Document document, MavenProject mavenProject) {
+        this(document.getRootElement(), mavenProject);
     }
 
     /**
@@ -61,8 +67,9 @@ public class JDomModel extends Model {
      *
      * @param project a {@link org.jdom2.Element} object
      */
-    public JDomModel(Element project) {
+    public JDomModel(Element project, MavenProject mavenProject) {
         this.project = project;
+        this.mavenProject = mavenProject;
         this.modelBase = new JDomModelBase(project);
     }
 
@@ -195,7 +202,10 @@ public class JDomModel extends Model {
             if (CiFriendlyVersion.isCiFriendlyVersion(versionElement.getTextNormalize())) {
                 // try to rewrite property if CI friendly expression is used
                 CiFriendlyVersion.rewriteVersionAndProperties(
-                        version, versionElement.getTextNormalize(), getProperties());
+                        version,
+                        versionElement.getTextNormalize(),
+                        (JDomProperties) getProperties(),
+                        mavenProject.getProperties());
             } else {
                 JDomUtils.rewriteValue(versionElement, version);
             }
