@@ -26,6 +26,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.ArtifactUtils;
+import org.apache.maven.shared.release.transform.jdom2.JDomProperties;
 
 public class CiFriendlyVersion {
 
@@ -70,26 +71,27 @@ public class CiFriendlyVersion {
         return CI_FRIENDLY_PROPERTIES.contains(property);
     }
 
-    public static void rewriteVersionAndProperties(String version, String versionElement, Properties properties) {
+    public static void rewriteVersionAndProperties(
+            String version, String versionElement, JDomProperties jDomProperties, Properties mavenProperties) {
         // try to rewrite property if CI friendly expression is used
         String ciFriendlyPropertyName = extractPropertyFromExpression(versionElement);
-        if (properties != null) {
-            String sha1 = properties.getProperty(SHA1, System.getProperty(SHA1, ""));
+        if (jDomProperties != null) {
+            String sha1 = jDomProperties.getProperty(SHA1, mavenProperties.getProperty(SHA1, ""));
             // assume that everybody follows the example and properties are simply chained
             //  and the changelist can only be '-SNAPSHOT'
             if (ArtifactUtils.isSnapshot(version)) {
-                if (properties.containsKey(CHANGELIST)) {
-                    properties.setProperty(
+                if (jDomProperties.containsKey(CHANGELIST)) {
+                    jDomProperties.setProperty(
                             ciFriendlyPropertyName, version.replace(sha1, "").replace(SNAPSHOT, ""));
-                    properties.setProperty(CHANGELIST, SNAPSHOT);
+                    jDomProperties.setProperty(CHANGELIST, SNAPSHOT);
                 } else {
-                    properties.setProperty(ciFriendlyPropertyName, version.replace(sha1, ""));
+                    jDomProperties.setProperty(ciFriendlyPropertyName, version.replace(sha1, ""));
                 }
             } else {
-                properties.setProperty(
+                jDomProperties.setProperty(
                         ciFriendlyPropertyName, version.replace(sha1, "").replace(SNAPSHOT, ""));
-                if (properties.containsKey(CHANGELIST)) {
-                    properties.setProperty(CHANGELIST, "");
+                if (jDomProperties.containsKey(CHANGELIST)) {
+                    jDomProperties.setProperty(CHANGELIST, "");
                 }
             }
         }
