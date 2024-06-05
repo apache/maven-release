@@ -26,7 +26,7 @@ assert buildLog.exists()
 def projectRootTag = new XmlSlurper().parse( new File( basedir, 'pom.xml.tag' ) )
 assert projectRootTag.version.text() == '${revision}${sha1}${changelist}'
 assert projectRootTag.properties.revision.text() == "1.0"
-assert projectRootTag.properties.sha1.text() == ""
+assert projectRootTag.properties.sha1.text() == "-abcdef12"
 assert projectRootTag.properties.changelist.text() == ""
 
 def projectATag = new XmlSlurper().parse( new File( basedir, 'module-a/pom.xml.tag' ) )
