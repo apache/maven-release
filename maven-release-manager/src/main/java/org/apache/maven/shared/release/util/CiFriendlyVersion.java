@@ -110,6 +110,6 @@ public class CiFriendlyVersion {
 
     private static String resolveSha1Property(JDomProperties jDomProperties, ReleaseDescriptor releaseDescriptor) {
         String scmVersion = releaseDescriptor.getScmReleasedPomRevision();
-        return jDomProperties.getProperty(SHA1, System.getProperty(SHA1, scmVersion == null ? "" : scmVersion));
+        return System.getProperty(SHA1, scmVersion == null ? "" : scmVersion);
     }
 }
