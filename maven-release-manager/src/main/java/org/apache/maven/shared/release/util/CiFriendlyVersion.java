@@ -20,13 +20,13 @@ package org.apache.maven.shared.release.util;
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
-import org.apache.maven.shared.release.transform.jdom2.JDomProperties;
 
 public class CiFriendlyVersion {
 
@@ -72,43 +72,43 @@ public class CiFriendlyVersion {
     }
 
     public static void rewriteVersionAndProperties(
-            String version, String versionElement, JDomProperties jDomProperties, ReleaseDescriptor releaseDescriptor) {
+            String version, String versionElement, Properties properties, ReleaseDescriptor releaseDescriptor) {
         // try to rewrite property if CI friendly expression is used
         String ciFriendlyPropertyName = extractPropertyFromExpression(versionElement);
-        if (jDomProperties != null) {
-            String sha1 = resolveSha1Property(jDomProperties, releaseDescriptor);
+        if (properties != null) {
+            String sha1 = resolveSha1Property(releaseDescriptor);
             // assume that everybody follows the example and properties are simply chained
             //  and the changelist can only be '-SNAPSHOT'
             if (ArtifactUtils.isSnapshot(version)) {
-                if (jDomProperties.containsKey(CHANGELIST)) {
-                    jDomProperties.setProperty(
+                if (properties.containsKey(CHANGELIST)) {
+                    properties.setProperty(
                             ciFriendlyPropertyName, version.replace(sha1, "").replace(SNAPSHOT, ""));
-                    jDomProperties.setProperty(CHANGELIST, SNAPSHOT);
+                    properties.setProperty(CHANGELIST, SNAPSHOT);
                 } else {
-                    jDomProperties.setProperty(ciFriendlyPropertyName, version.replace(sha1, ""));
+                    properties.setProperty(ciFriendlyPropertyName, version.replace(sha1, ""));
                 }
-                if (jDomProperties.containsKey(SHA1)) {
+                if (properties.containsKey(SHA1)) {
                     // drop the value for the next version
-                    jDomProperties.setProperty(SHA1, "");
+                    properties.setProperty(SHA1, "");
                 }
             } else {
-                jDomProperties.setProperty(
+                properties.setProperty(
                         ciFriendlyPropertyName, version.replace(sha1, "").replace(SNAPSHOT, ""));
-                if (jDomProperties.containsKey(CHANGELIST)) {
-                    jDomProperties.setProperty(CHANGELIST, "");
+                if (properties.containsKey(CHANGELIST)) {
+                    properties.setProperty(CHANGELIST, "");
                 }
-                if (jDomProperties.containsKey(SHA1) && !sha1.isEmpty()) {
+                if (properties.containsKey(SHA1) && !sha1.isEmpty()) {
                     // we need this to restore the revision for the next development
                     // or release:prepare should provide sha1 after a commit
                     // or a user should provide it as an additional `arguments` in plugin configuration
                     // see maven-release-plugin/src/it/projects/prepare/ci-friendly-multi-module
-                    jDomProperties.setProperty(SHA1, sha1);
+                    properties.setProperty(SHA1, sha1);
                 }
             }
         }
     }
 
-    private static String resolveSha1Property(JDomProperties jDomProperties, ReleaseDescriptor releaseDescriptor) {
+    private static String resolveSha1Property(ReleaseDescriptor releaseDescriptor) {
         String scmVersion = releaseDescriptor.getScmReleasedPomRevision();
         return System.getProperty(SHA1, scmVersion == null ? "" : scmVersion);
     }
