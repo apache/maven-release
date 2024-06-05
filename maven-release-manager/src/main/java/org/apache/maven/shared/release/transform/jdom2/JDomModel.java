@@ -31,7 +31,7 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
-import org.apache.maven.project.MavenProject;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -49,17 +49,18 @@ public class JDomModel extends Model {
     private final JDomModelBase modelBase;
 
     /**
-     * The currently running MavenProject
+     * The ReleaseDescriptor after a commit performed
+     *
      */
-    private final MavenProject mavenProject;
+    private final ReleaseDescriptor releaseDescriptor;
 
     /**
      * <p>Constructor for JDomModel.</p>
      *
      * @param document a {@link org.jdom2.Document} object
      */
-    public JDomModel(Document document, MavenProject mavenProject) {
-        this(document.getRootElement(), mavenProject);
+    public JDomModel(Document document, ReleaseDescriptor releaseDescriptor) {
+        this(document.getRootElement(), releaseDescriptor);
     }
 
     /**
@@ -67,9 +68,9 @@ public class JDomModel extends Model {
      *
      * @param project a {@link org.jdom2.Element} object
      */
-    public JDomModel(Element project, MavenProject mavenProject) {
+    public JDomModel(Element project, ReleaseDescriptor releaseDescriptor) {
         this.project = project;
-        this.mavenProject = mavenProject;
+        this.releaseDescriptor = releaseDescriptor;
         this.modelBase = new JDomModelBase(project);
     }
 
@@ -205,7 +206,7 @@ public class JDomModel extends Model {
                         version,
                         versionElement.getTextNormalize(),
                         (JDomProperties) getProperties(),
-                        mavenProject.getProperties());
+                        releaseDescriptor);
             } else {
                 JDomUtils.rewriteValue(versionElement, version);
             }
