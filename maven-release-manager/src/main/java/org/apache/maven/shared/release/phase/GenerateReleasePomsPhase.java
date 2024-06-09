@@ -459,7 +459,7 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
 
     private List<Dependency> createReleaseDependencies(ReleaseDescriptor releaseDescriptor, MavenProject project)
             throws ReleaseFailureException {
-        Set<Artifact> artifacts = project.getArtifacts();
+        Set<Artifact> artifacts = project.getDependencyArtifacts();
 
         List<Dependency> releaseDependencies = null;
 
@@ -471,6 +471,12 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
             releaseDependencies = new ArrayList<>();
 
             for (Artifact artifact : orderedArtifacts) {
+                if (artifact.getVersion() == null) {
+                    artifact.setVersion(project.getArtifactMap()
+                            .get(ArtifactUtils.versionlessKey(artifact))
+                            .getVersion());
+                }
+
                 Dependency releaseDependency = new Dependency();
 
                 releaseDependency.setGroupId(artifact.getGroupId());

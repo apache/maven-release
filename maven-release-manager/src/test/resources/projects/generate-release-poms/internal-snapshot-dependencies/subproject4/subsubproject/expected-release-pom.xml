@@ -66,12 +66,6 @@ under the License.
   <dependencies>
     <dependency>
       <groupId>groupId</groupId>
-      <artifactId>subproject1</artifactId>
-      <version>1.0</version>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>groupId</groupId>
       <artifactId>subproject2</artifactId>
       <version>1.0</version>
       <scope>compile</scope>
