@@ -89,7 +89,7 @@
   </distributionManagement>
 
   <properties>
-    <scmVersion>2.0.1</scmVersion>
+    <scmVersion>2.1.0</scmVersion>
     <mavenVersion>3.6.3</mavenVersion>
     <resolverVersion>1.4.1</resolverVersion>
     <wagonVersion>3.5.3</wagonVersion>
