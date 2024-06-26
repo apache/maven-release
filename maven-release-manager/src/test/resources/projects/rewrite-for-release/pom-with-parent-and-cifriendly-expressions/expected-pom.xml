@@ -31,15 +31,8 @@
 
   <properties>
     <revision>1.0</revision>
-<<<<<<< Upstream, based on master
-<<<<<<< Upstream, based on master
-    <changelist></changelist>
-=======
->>>>>>> ab5c8d5 MRELEASE-1109 patch JDomModel
-=======
     <sha1>.123</sha1>
     <changelist></changelist>
->>>>>>> 0ad7bb6 MRELEASE-1109 Full support for revision sha1 and changelist properties.
   </properties>
 
   <modules>

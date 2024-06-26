@@ -32,8 +32,8 @@
   </scm>
   
   <properties>
-    <revision>1.0</revision>
-    <sha1/>
+    <revision>1.0.0</revision>
+    <sha1></sha1>
     <changelist>-SNAPSHOT</changelist>
     <maven.compiler.source>@maven.compiler.source@</maven.compiler.source>
     <maven.compiler.target>@maven.compiler.target@</maven.compiler.target>
@@ -46,6 +46,9 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
           <version>@project.version@</version>
+          <configuration>
+            <arguments>-Dsha1=${sha1}</arguments>
+          </configuration>
           <dependencies>
             <dependency>
               <groupId>org.apache.maven.its.release</groupId>

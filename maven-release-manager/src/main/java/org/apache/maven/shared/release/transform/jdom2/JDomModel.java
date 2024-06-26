@@ -202,8 +202,7 @@ public class JDomModel extends Model {
         } else {
             if (CiFriendlyVersion.isCiFriendlyVersion(versionElement.getTextNormalize())) {
                 // try to rewrite property if CI friendly expression is used
-                CiFriendlyVersion.rewriteVersionAndProperties(
-                        version, versionElement.getTextNormalize(), getProperties(), releaseDescriptor);
+                CiFriendlyVersion.rewriteVersionAndProperties(version, getProperties(), releaseDescriptor);
             } else {
                 JDomUtils.rewriteValue(versionElement, version);
             }

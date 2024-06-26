@@ -25,7 +25,7 @@ assert buildLog.exists()
 // tag versions
 def projectRootTag = new XmlSlurper().parse( new File( basedir, 'pom.xml.tag' ) )
 assert projectRootTag.version.text() == '${revision}${sha1}${changelist}'
-assert projectRootTag.properties.revision.text() == "1.0"
+assert projectRootTag.properties.revision.text() == "1.0.0"
 assert projectRootTag.properties.sha1.text() == "-abcdef12"
 assert projectRootTag.properties.changelist.text() == ""
 
@@ -39,7 +39,7 @@ assert projectBTag.parent.version.text() == '${revision}${sha1}${changelist}'
 // next development versions
 def projectRoot = new XmlSlurper().parse( new File( basedir, 'pom.xml.next' ) )
 assert projectRoot.version.text() == '${revision}${sha1}${changelist}'
-assert projectRoot.properties.revision.text() == "1.1"
+assert projectRoot.properties.revision.text() == "1.0.1"
 assert projectRoot.properties.sha1.text() == ""
 assert projectRoot.properties.changelist.text() == "-SNAPSHOT"
 
