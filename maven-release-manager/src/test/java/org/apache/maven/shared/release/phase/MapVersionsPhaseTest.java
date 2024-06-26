@@ -2452,6 +2452,8 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         model.setGroupId("groupId");
         model.setArtifactId(artifactId);
         model.setVersion(version);
-        return new MavenProject(model);
+        MavenProject mavenProject = new MavenProject(model);
+        mavenProject.setOriginalModel(model);
+        return mavenProject;
     }
 }

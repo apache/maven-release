@@ -26,7 +26,11 @@ import java.util.regex.Pattern;
  * @author <a href="mailto:mikhail_kolesnikov@outlook.com">Mikhail Kolesnikov</a>
  */
 public class MavenExpression {
-    public static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+?)\\}");
+    /**
+     * Regular expression pattern matching Maven expressions (i.e. references to Maven properties).
+     * The first group selects the property name the expression refers to.
+     */
+    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+?)}");
 
     private MavenExpression() {}
 
@@ -40,5 +44,18 @@ public class MavenExpression {
             matcher.reset();
         }
         return result.toString();
+    }
+
+    /**
+     * Extracts the Maven property name from a given expression.
+     * @param expression the expression
+     * @return either {@code null} if value is no expression otherwise the property referenced in the expression
+     */
+    public static String extractPropertyFromExpression(String expression) {
+        Matcher matcher = EXPRESSION_PATTERN.matcher(expression);
+        if (!matcher.find()) {
+            return null;
+        }
+        return matcher.group(1);
     }
 }

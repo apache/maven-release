@@ -61,6 +61,7 @@ import org.apache.maven.shared.release.transform.ModelETLFactory;
 import org.apache.maven.shared.release.transform.ModelETLRequest;
 import org.apache.maven.shared.release.transform.jdom2.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.CiFriendlyVersion;
+import org.apache.maven.shared.release.util.MavenExpression;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.StringUtils;
 
@@ -534,7 +535,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                     logInfo(result, "  Updating " + artifactId + " to " + mappedVersion);
                     coordinate.setVersion(mappedVersion);
                 } else {
-                    String property = CiFriendlyVersion.extractPropertyFromExpression(rawVersion);
+                    String property = MavenExpression.extractPropertyFromExpression(rawVersion);
                     if (property != null) {
                         if (property.startsWith("project.")
                                 || property.startsWith("pom.")
@@ -579,7 +580,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                                     }
                                 }
                             } else {
-                                if (CiFriendlyVersion.containsCiFriendlyProperties(property)) {
+                                if (CiFriendlyVersion.isCiFriendlyProperty(property)) {
                                     // the parent's pom revision is set inside
                                     // org.apache.maven.shared.release.transform.jdom2.JDomModel.setVersion
                                     logInfo(

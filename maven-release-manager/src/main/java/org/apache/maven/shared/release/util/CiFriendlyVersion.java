@@ -22,94 +22,91 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CiFriendlyVersion {
-
-    /**
-     * Regular expression pattern matching Maven expressions (i.e. references to Maven properties).
-     * The first group selects the property name the expression refers to.
-     */
-    private static final Pattern EXPRESSION_PATTERN = Pattern.compile("\\$\\{(.+?)\\}");
+    private static final Logger LOGGER = LoggerFactory.getLogger(CiFriendlyVersion.class);
 
     /**
      * All Maven properties allowed to be referenced in parent versions via expressions
      * @see <a href="https://maven.apache.org/maven-ci-friendly.html">CI-Friendly Versions</a>
      */
-    private static final String REVISION = "revision";
+    public static final String REVISION = "revision";
 
-    private static final String SHA1 = "sha1";
-    private static final String CHANGELIST = "changelist";
+    public static final String SHA1 = "sha1";
+    public static final String CHANGELIST = "changelist";
+
     private static final Set<String> CI_FRIENDLY_PROPERTIES = new HashSet<>(Arrays.asList(REVISION, SHA1, CHANGELIST));
 
     private static final String SNAPSHOT = "-SNAPSHOT";
 
     private CiFriendlyVersion() {}
 
-    /**
-     * Extracts the Maven property name from a given expression.
-     * @param expression the expression
-     * @return either {@code null} if value is no expression otherwise the property referenced in the expression
-     */
-    public static String extractPropertyFromExpression(String expression) {
-        Matcher matcher = EXPRESSION_PATTERN.matcher(expression);
-        if (!matcher.find()) {
-            return null;
-        }
-        return matcher.group(1);
-    }
-
     public static boolean isCiFriendlyVersion(String version) {
-        return containsCiFriendlyProperties(extractPropertyFromExpression(version));
+        if (StringUtils.isEmpty(version)) {
+            return false;
+        }
+        return isCiFriendlyProperty(MavenExpression.extractPropertyFromExpression(version));
     }
 
-    public static boolean containsCiFriendlyProperties(String property) {
+    public static boolean isCiFriendlyProperty(String property) {
         return CI_FRIENDLY_PROPERTIES.contains(property);
     }
 
     public static void rewriteVersionAndProperties(
-            String version, String versionElement, Properties properties, ReleaseDescriptor releaseDescriptor) {
+            String version, Properties properties, ReleaseDescriptor releaseDescriptor) {
         // try to rewrite property if CI friendly expression is used
-        String ciFriendlyPropertyName = extractPropertyFromExpression(versionElement);
         if (properties != null) {
-            String sha1 = resolveSha1Property(releaseDescriptor);
+            String sha1 = resolveSha1Property(properties, releaseDescriptor);
             // assume that everybody follows the example and properties are simply chained
             //  and the changelist can only be '-SNAPSHOT'
             if (ArtifactUtils.isSnapshot(version)) {
                 if (properties.containsKey(CHANGELIST)) {
-                    properties.setProperty(
-                            ciFriendlyPropertyName, version.replace(sha1, "").replace(SNAPSHOT, ""));
-                    properties.setProperty(CHANGELIST, SNAPSHOT);
+                    String revision = version.replace(sha1, "").replace(SNAPSHOT, "");
+                    setAndLogPropertyChange(properties, REVISION, revision);
+                    setAndLogPropertyChange(properties, CHANGELIST, SNAPSHOT);
                 } else {
-                    properties.setProperty(ciFriendlyPropertyName, version.replace(sha1, ""));
+                    String revision = version.replace(sha1, "");
+                    setAndLogPropertyChange(properties, REVISION, revision);
                 }
                 if (properties.containsKey(SHA1)) {
                     // drop the value for the next version
-                    properties.setProperty(SHA1, "");
+                    setAndLogPropertyChange(properties, SHA1, "");
                 }
             } else {
-                properties.setProperty(
-                        ciFriendlyPropertyName, version.replace(sha1, "").replace(SNAPSHOT, ""));
+                properties.setProperty(REVISION, version.replace(sha1, ""));
                 if (properties.containsKey(CHANGELIST)) {
-                    properties.setProperty(CHANGELIST, "");
+                    setAndLogPropertyChange(properties, CHANGELIST, "");
                 }
                 if (properties.containsKey(SHA1) && !sha1.isEmpty()) {
                     // we need this to restore the revision for the next development
                     // or release:prepare should provide sha1 after a commit
                     // or a user should provide it as an additional `arguments` in plugin configuration
                     // see maven-release-plugin/src/it/projects/prepare/ci-friendly-multi-module
-                    properties.setProperty(SHA1, sha1);
+                    setAndLogPropertyChange(properties, SHA1, sha1);
                 }
             }
         }
     }
 
-    private static String resolveSha1Property(ReleaseDescriptor releaseDescriptor) {
+    private static void setAndLogPropertyChange(Properties properties, String key, String value) {
+        LOGGER.info("Updating {} property to {}", key, value);
+        properties.setProperty(key, value);
+    }
+
+    public static String resolveSha1Property(Properties properties, ReleaseDescriptor releaseDescriptor) {
+        String sha1 = properties.getProperty(SHA1);
         String scmVersion = releaseDescriptor.getScmReleasedPomRevision();
-        return System.getProperty(SHA1, scmVersion == null ? "" : scmVersion);
+        String systemSha1 = System.getProperty(SHA1);
+        String result = StringUtils.isNotEmpty(systemSha1)
+                ? systemSha1
+                : StringUtils.isNotEmpty(sha1) ? sha1 : scmVersion != null ? scmVersion : "";
+        LOGGER.info("Resolved SHA1 property value {}", result);
+        return result;
     }
 }

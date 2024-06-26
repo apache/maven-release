@@ -35,6 +35,7 @@ import org.apache.maven.shared.release.policy.PolicyException;
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
@@ -238,12 +239,12 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
 
                     try {
                         try {
-                            suggestedVersion =
-                                    resolveSuggestedVersion(baseVersion, releaseDescriptor, releaseEnvironment);
+                            suggestedVersion = resolveSuggestedVersion(
+                                    project, baseVersion, releaseDescriptor, releaseEnvironment);
                         } catch (VersionParseException e) {
                             if (releaseDescriptor.isInteractive()) {
                                 suggestedVersion =
-                                        resolveSuggestedVersion("1.0", releaseDescriptor, releaseEnvironment);
+                                        resolveSuggestedVersion(project, "1.0", releaseDescriptor, releaseEnvironment);
                             } else {
                                 throw new ReleaseExecutionException(
                                         "Error parsing version, cannot determine next " + "version: " + e.getMessage(),
@@ -292,7 +293,10 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
     }
 
     private String resolveSuggestedVersion(
-            String baseVersion, ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment)
+            MavenProject project,
+            String baseVersion,
+            ReleaseDescriptor releaseDescriptor,
+            ReleaseEnvironment releaseEnvironment)
             throws PolicyException, VersionParseException {
         String policyId = releaseDescriptor.getProjectVersionPolicyId();
         VersionPolicy policy = versionPolicies.get(policyId);
@@ -306,6 +310,11 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
             request.setConfig(releaseDescriptor.getProjectVersionPolicyConfig().toString());
         }
         request.setWorkingDirectory(releaseDescriptor.getWorkingDirectory());
+
+        if (CiFriendlyVersion.isCiFriendlyVersion(getOriginalVersion(project))) {
+            String sha1 = CiFriendlyVersion.resolveSha1Property(project.getProperties(), releaseDescriptor);
+            request.setVersion(baseVersion.replace(sha1, ""));
+        }
 
         if (scmRepositoryConfigurator != null && releaseDescriptor.getScmSourceUrl() != null) {
             try {
@@ -330,6 +339,15 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
         return convertToSnapshot
                 ? policy.getDevelopmentVersion(request).getVersion()
                 : policy.getReleaseVersion(request).getVersion();
+    }
+
+    private static String getOriginalVersion(MavenProject project) {
+        String version = null;
+        while (version == null && project != null) {
+            version = project.getOriginalModel().getVersion();
+            project = project.getParent();
+        }
+        return version;
     }
 
     private String getDevelopmentVersion(String projectId, ReleaseDescriptor releaseDescriptor) {
