@@ -575,7 +575,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                             } else {
                                 logInfo(result, "  Ignoring artifact version update for expression " + rawVersion);
                             }
-                        } else if (properties != null) {
+                        } else if (properties != null && !properties.isEmpty()) {
                             // version is an expression, check for properties to update instead
                             String propertyValue = properties.getProperty(property);
                             if (propertyValue != null) {
