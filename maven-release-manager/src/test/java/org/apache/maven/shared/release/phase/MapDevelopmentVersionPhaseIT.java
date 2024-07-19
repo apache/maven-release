@@ -18,6 +18,7 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,7 +47,10 @@ public class MapDevelopmentVersionPhaseIT extends PlexusJUnit4TestCase {
         model.setGroupId("groupId");
         model.setArtifactId(artifactId);
         model.setVersion(version);
-        return new MavenProject(model);
+
+        MavenProject mavenProject = new MavenProject(model);
+        mavenProject.setFile(new File("src/test/resources/pomfinder/pom1.xml"));
+        return mavenProject;
     }
 
     @Test
