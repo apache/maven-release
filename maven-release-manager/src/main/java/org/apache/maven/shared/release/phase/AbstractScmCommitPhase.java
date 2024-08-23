@@ -19,9 +19,13 @@
 package org.apache.maven.shared.release.phase;
 
 import java.io.File;
+import java.nio.file.FileSystems;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
@@ -61,6 +65,8 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
      */
     protected final String descriptorCommentGetter;
 
+    private final Set<String> exclusionPatterns = new HashSet<>();
+
     protected AbstractScmCommitPhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator, String descriptorCommentGetter) {
         this.scmRepositoryConfigurator = requireNonNull(scmRepositoryConfigurator);
@@ -76,6 +82,12 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
         ReleaseResult relResult = new ReleaseResult();
 
         validateConfiguration(releaseDescriptor);
+
+        List<String> additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
+
+        if (additionalExcludes != null) {
+            exclusionPatterns.addAll(additionalExcludes);
+        }
 
         runLogic(releaseDescriptor, releaseEnvironment, reactorProjects, relResult, false);
 
@@ -166,9 +178,12 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
             }
         } else {
             List<File> pomFiles = createPomFiles(releaseDescriptor, reactorProjects);
-            ScmFileSet fileSet = new ScmFileSet(new File(releaseDescriptor.getWorkingDirectory()), pomFiles);
 
-            checkin(provider, repository, fileSet, releaseDescriptor, message);
+            if (!pomFiles.isEmpty()) {
+                ScmFileSet fileSet = new ScmFileSet(new File(releaseDescriptor.getWorkingDirectory()), pomFiles);
+
+                checkin(provider, repository, fileSet, releaseDescriptor, message);
+            }
         }
     }
 
@@ -288,11 +303,25 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
      * @param reactorProjects   a {@link java.util.List} object
      * @return a {@link java.util.List} object
      */
-    protected static List<File> createPomFiles(
-            ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects) {
+    protected List<File> createPomFiles(ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects) {
+
         List<File> pomFiles = new ArrayList<>();
         for (MavenProject project : reactorProjects) {
-            pomFiles.addAll(createPomFiles(releaseDescriptor, project));
+
+            final String path = project.getFile().getPath();
+
+            boolean isExcludedPathFound = false;
+            for (String exclusionPattern : exclusionPatterns) {
+                if (FileSystems.getDefault()
+                        .getPathMatcher("glob:" + exclusionPattern)
+                        .matches(Paths.get(path))) {
+                    isExcludedPathFound = true;
+                    break;
+                }
+            }
+            if (!isExcludedPathFound) {
+                pomFiles.addAll(createPomFiles(releaseDescriptor, project));
+            }
         }
         return pomFiles;
     }

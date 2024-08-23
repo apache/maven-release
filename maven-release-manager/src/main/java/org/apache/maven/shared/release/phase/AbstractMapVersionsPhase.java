@@ -18,8 +18,12 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import java.nio.file.FileSystems;
+import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
@@ -97,6 +101,8 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
      */
     private final boolean convertToBranch;
 
+    private final Set<String> exclusionPatterns = new HashSet<>();
+
     public AbstractMapVersionsPhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator,
             Prompter prompter,
@@ -117,6 +123,12 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
             List<MavenProject> reactorProjects)
             throws ReleaseExecutionException {
         ReleaseResult result = new ReleaseResult();
+
+        List<String> additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
+
+        if (additionalExcludes != null) {
+            exclusionPatterns.addAll(additionalExcludes);
+        }
 
         MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
 
@@ -165,17 +177,31 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
                 }
             }
         } else {
+
             for (MavenProject project : reactorProjects) {
                 String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
                 String nextVersion = resolveNextVersion(project, projectId, releaseDescriptor, releaseEnvironment);
 
-                if (!convertToSnapshot) {
-                    releaseDescriptor.addReleaseVersion(projectId, nextVersion);
-                } else if (releaseDescriptor.isBranchCreation() && convertToBranch) {
-                    releaseDescriptor.addReleaseVersion(projectId, nextVersion);
-                } else {
-                    releaseDescriptor.addDevelopmentVersion(projectId, nextVersion);
+                final String path = project.getFile().getPath();
+
+                boolean isExcludedPathFound = false;
+                for (String exclusionPattern : exclusionPatterns) {
+                    if (FileSystems.getDefault()
+                            .getPathMatcher("glob:" + exclusionPattern)
+                            .matches(Paths.get(path))) {
+                        isExcludedPathFound = true;
+                        break;
+                    }
+                }
+                if (!isExcludedPathFound) {
+                    if (!convertToSnapshot) {
+                        releaseDescriptor.addReleaseVersion(projectId, nextVersion);
+                    } else if (releaseDescriptor.isBranchCreation() && convertToBranch) {
+                        releaseDescriptor.addReleaseVersion(projectId, nextVersion);
+                    } else {
+                        releaseDescriptor.addDevelopmentVersion(projectId, nextVersion);
+                    }
                 }
             }
         }
