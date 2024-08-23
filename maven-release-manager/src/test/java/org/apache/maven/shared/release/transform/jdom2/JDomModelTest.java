@@ -68,14 +68,7 @@ public class JDomModelTest {
         model.setVersion(null);
         assertNull(model.getVersion());
 
-        // inherit from parent via CI friendly
-        content = "<project><parent><version>${revision}</version></parent></project>";
-        projectElm = builder.build(new StringReader(content)).getRootElement();
-        model = new JDomModel(projectElm);
-        assertNull(model.getVersion());
-        model.setVersion("PARENT_VERSION");
-        assertNull(getVersion(projectElm));
-
+        // inherit from parent
         // this business logic might need to moved.
         content = "<project><parent><version>PARENT_VERSION</version></parent></project>";
         projectElm = builder.build(new StringReader(content)).getRootElement();

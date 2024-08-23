@@ -31,7 +31,6 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
-import org.apache.maven.shared.release.phase.AbstractRewritePomsPhase;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
@@ -179,9 +178,7 @@ public class JDomModel extends Model {
         }
 
         if (versionElement == null) {
-            // never add version when parent references CI friendly property
-            if (!(parentVersion != null && AbstractRewritePomsPhase.isCiFriendlyVersion(parentVersion))
-                    && !version.equals(parentVersion)) {
+            if (!version.equals(parentVersion)) {
                 // we will add this after artifactId, since it was missing but different from the inherited version
                 Element artifactIdElement = project.getChild("artifactId", project.getNamespace());
                 int index = project.indexOf(artifactIdElement);
@@ -192,17 +189,7 @@ public class JDomModel extends Model {
                 project.addContent(index + 2, versionElement);
             }
         } else {
-            if (AbstractRewritePomsPhase.isCiFriendlyVersion(versionElement.getTextNormalize())) {
-                // try to rewrite property if CI friendly expression is used
-                String ciFriendlyPropertyName =
-                        AbstractRewritePomsPhase.extractPropertyFromExpression(versionElement.getTextNormalize());
-                Properties properties = getProperties();
-                if (properties != null) {
-                    properties.computeIfPresent(ciFriendlyPropertyName, (k, v) -> version);
-                }
-            } else {
-                JDomUtils.rewriteValue(versionElement, version);
-            }
+            JDomUtils.rewriteValue(versionElement, version);
         }
     }
 }
