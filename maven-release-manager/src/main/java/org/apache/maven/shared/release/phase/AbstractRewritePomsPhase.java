@@ -616,16 +616,17 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                                                     + rawVersion);
                                 } else {
                                     // the expression used to define the version of this artifact may be inherited
-                                    // TODO needs a better error message, what pom? what dependency?
                                     throw new ReleaseFailureException(
-                                            "Could not find property resolving version expression: " + rawVersion);
+                                            "Could not find property resolving version expression: " + rawVersion
+                                                    + " for artifact " + key + " in the project " + projectId
+                                                    + ".");
                                 }
                             }
                         } else {
                             // the expression used to define the version of this artifact may be inherited
-                            // TODO needs a better error message, what pom? what dependency?
                             throw new ReleaseFailureException(
-                                    "Could not find properties resolving version expression : " + rawVersion);
+                                    "Could not find properties resolving version expression : " + rawVersion
+                                            + " for artifact " + key + " in the project " + projectId + ".");
                         }
                     } else {
                         // different/previous version not related to current release
