@@ -517,128 +517,177 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
         if (elements == null) {
             return;
         }
-        String projectId = ArtifactUtils.versionlessKey(projectModel.getGroupId(), projectModel.getArtifactId());
         for (MavenCoordinate coordinate : elements) {
-            String rawVersion = coordinate.getVersion();
-            if (rawVersion == null) {
-                // managed dependency or unversioned plugin
-                continue;
-            }
+            rewriteArtifactVersion(coordinate, projectModel, properties, result, releaseDescriptor, simulate);
+        }
+    }
 
-            String rawGroupId = coordinate.getGroupId();
-            if (rawGroupId == null) {
-                if ("plugin".equals(coordinate.getName())) {
-                    rawGroupId = "org.apache.maven.plugins";
-                } else {
-                    // incomplete dependency
-                    continue;
-                }
-            }
-            String groupId = ReleaseUtil.interpolate(rawGroupId, projectModel);
+    private void rewriteArtifactVersion(
+            MavenCoordinate artifact,
+            Model projectModel,
+            Properties properties,
+            ReleaseResult result,
+            ReleaseDescriptor releaseDescriptor,
+            boolean simulate)
+            throws ReleaseExecutionException, ReleaseFailureException {
+        String projectId = ArtifactUtils.versionlessKey(projectModel.getGroupId(), projectModel.getArtifactId());
+        String rawVersion = artifact.getVersion();
+        if (rawVersion == null) {
+            // managed dependency or unversioned plugin
+            return;
+        }
 
-            String rawArtifactId = coordinate.getArtifactId();
-            if (rawArtifactId == null) {
-                // incomplete element
-                continue;
-            }
-            String artifactId = ReleaseUtil.interpolate(rawArtifactId, projectModel);
-
-            String key = ArtifactUtils.versionlessKey(groupId, artifactId);
-            String resolvedSnapshotVersion = getResolvedSnapshotVersion(key, releaseDescriptor);
-            String mappedVersion = getNextVersion(releaseDescriptor, key);
-            String originalVersion = getOriginalVersion(releaseDescriptor, key, simulate);
-            if (originalVersion == null) {
-                originalVersion = getOriginalResolvedSnapshotVersion(key, releaseDescriptor);
-            }
-
-            // MRELEASE-220
-            if (mappedVersion != null
-                    && mappedVersion.endsWith(Artifact.SNAPSHOT_VERSION)
-                    && !rawVersion.endsWith(Artifact.SNAPSHOT_VERSION)
-                    && !releaseDescriptor.isUpdateDependencies()) {
-                continue;
-            }
-
-            if (mappedVersion != null) {
-                if (rawVersion.equals(originalVersion)) {
-                    logInfo(result, "  Updating " + artifactId + " to " + mappedVersion);
-                    coordinate.setVersion(mappedVersion);
-                } else {
-                    String property = extractPropertyFromExpression(rawVersion);
-                    if (property != null) {
-                        if (property.startsWith("project.")
-                                || property.startsWith("pom.")
-                                || "version".equals(property)) {
-                            if (!mappedVersion.equals(getNextVersion(releaseDescriptor, projectId))) {
-                                logInfo(result, "  Updating " + artifactId + " to " + mappedVersion);
-                                coordinate.setVersion(mappedVersion);
-                            } else {
-                                logInfo(result, "  Ignoring artifact version update for expression " + rawVersion);
-                            }
-                        } else if (properties != null) {
-                            // version is an expression, check for properties to update instead
-                            String propertyValue = properties.getProperty(property);
-                            if (propertyValue != null) {
-                                if (propertyValue.equals(originalVersion)) {
-                                    logInfo(result, "  Updating " + rawVersion + " to " + mappedVersion);
-                                    // change the property only if the property is the same as what's in the reactor
-                                    properties.setProperty(property, mappedVersion);
-                                } else if (mappedVersion.equals(propertyValue)) {
-                                    // this property may have been updated during processing a sibling.
-                                    logInfo(
-                                            result,
-                                            "  Ignoring artifact version update for expression " + rawVersion
-                                                    + " because it is already updated");
-                                } else if (!mappedVersion.equals(rawVersion)) {
-                                    // WARNING: ${pom.*} prefix support and ${version} is about to be dropped in mvn4!
-                                    // https://issues.apache.org/jira/browse/MNG-7404
-                                    // https://issues.apache.org/jira/browse/MNG-7244
-                                    if (mappedVersion.matches("\\$\\{project.+\\}")
-                                            || mappedVersion.matches("\\$\\{pom.+\\}")
-                                            || "${version}".equals(mappedVersion)) {
-                                        logInfo(
-                                                result,
-                                                "  Ignoring artifact version update for expression " + mappedVersion);
-                                        // ignore... we cannot update this expression
-                                    } else {
-                                        // the value of the expression conflicts with what the user wanted to release
-                                        throw new ReleaseFailureException("The artifact (" + key + ") requires a "
-                                                + "different version (" + mappedVersion + ") than what is found ("
-                                                + propertyValue + ") for the expression (" + rawVersion + ") in the "
-                                                + "project (" + projectId + ").");
-                                    }
-                                }
-                            } else {
-                                if (CI_FRIENDLY_PROPERTIES.contains(property)) {
-                                    logInfo(
-                                            result,
-                                            "  Ignoring artifact version update for CI friendly expression "
-                                                    + rawVersion);
-                                } else {
-                                    // the expression used to define the version of this artifact may be inherited
-                                    // TODO needs a better error message, what pom? what dependency?
-                                    throw new ReleaseFailureException(
-                                            "Could not find property resolving version expression: " + rawVersion);
-                                }
-                            }
-                        } else {
-                            // the expression used to define the version of this artifact may be inherited
-                            // TODO needs a better error message, what pom? what dependency?
-                            throw new ReleaseFailureException(
-                                    "Could not find properties resolving version expression : " + rawVersion);
-                        }
-                    } else {
-                        // different/previous version not related to current release
-                    }
-                }
-            } else if (resolvedSnapshotVersion != null) {
-                logInfo(result, "  Updating " + artifactId + " to " + resolvedSnapshotVersion);
-
-                coordinate.setVersion(resolvedSnapshotVersion);
+        String rawGroupId = artifact.getGroupId();
+        if (rawGroupId == null) {
+            if ("plugin".equals(artifact.getName())) {
+                rawGroupId = "org.apache.maven.plugins";
             } else {
-                // artifact not related to current release
+                // incomplete dependency
+                return;
             }
         }
+        String groupId = ReleaseUtil.interpolate(rawGroupId, projectModel);
+
+        String rawArtifactId = artifact.getArtifactId();
+        if (rawArtifactId == null) {
+            // incomplete element
+            return;
+        }
+        String artifactId = ReleaseUtil.interpolate(rawArtifactId, projectModel);
+
+        String key = ArtifactUtils.versionlessKey(groupId, artifactId);
+        String resolvedSnapshotVersion = getResolvedSnapshotVersion(key, releaseDescriptor);
+        String mappedVersion = getNextVersion(releaseDescriptor, key);
+        String originalVersion = getOriginalVersion(releaseDescriptor, key, simulate);
+        if (originalVersion == null) {
+            originalVersion = getOriginalResolvedSnapshotVersion(key, releaseDescriptor);
+        }
+
+        // MRELEASE-220
+        if (mappedVersion != null
+                && mappedVersion.endsWith(Artifact.SNAPSHOT_VERSION)
+                && !rawVersion.endsWith(Artifact.SNAPSHOT_VERSION)
+                && !releaseDescriptor.isUpdateDependencies()) {
+            return;
+        }
+
+        if (mappedVersion != null) {
+            if (rawVersion.equals(originalVersion)) {
+                logInfo(result, "  Updating " + key + " to " + mappedVersion);
+                artifact.setVersion(mappedVersion);
+            } else {
+                String property = extractPropertyFromExpression(rawVersion);
+                if (property != null) {
+                    if (property.startsWith("project.") || property.startsWith("pom.") || "version".equals(property)) {
+                        // those properties are read-only, replace with literal version in case it is supposed to be
+                        // different from the project's version
+                        if (!mappedVersion.equals(getNextVersion(releaseDescriptor, projectId))) {
+                            logInfo(result, "  Updating " + key + " to " + mappedVersion);
+                            artifact.setVersion(mappedVersion);
+                        } else {
+                            logInfo(result, "  Ignoring artifact version update for expression " + rawVersion);
+                        }
+                    } else {
+                        rewritePropertyUsedInVersionExpression(
+                                projectId,
+                                key,
+                                rawVersion,
+                                mappedVersion,
+                                originalVersion,
+                                property,
+                                properties,
+                                result,
+                                releaseDescriptor);
+                    }
+                }
+            }
+        } else if (resolvedSnapshotVersion != null) {
+            logInfo(result, "  Updating " + key + " to " + resolvedSnapshotVersion);
+
+            artifact.setVersion(resolvedSnapshotVersion);
+        } else {
+            // artifact not related to current release
+        }
+    }
+
+    /**
+     * This is a best-effort implementation for adjusting property values used in versions to be adjusted.
+     * It only ever rewrites properties in the non-effective local POM.
+     * If the property used in the version expression cannot be rewritten this is just logged for informational purposes.
+     *
+     * @param projectKey the key of the project where to rewrite
+     * @param artifactKey the key of the artifact whose version is changed
+     * @param rawVersion the non interpolated version of the artifact
+     * @param mappedVersion the new version of the artifact
+     * @param originalVersion the original version (prior modification) of the artifact in the reactor
+     * @param property the property referenced in the version expression
+     * @param properties the local properties of the project (may be {@code null})
+     * @param result
+     * @param releaseDescriptor
+     * @return {@code true} if the property was rewritten, otherwise {@code false}
+     */
+    boolean rewritePropertyUsedInVersionExpression(
+            String projectKey,
+            String artifactKey,
+            String rawVersion,
+            String mappedVersion,
+            String originalVersion,
+            String property,
+            Properties properties,
+            ReleaseResult result,
+            ReleaseDescriptor releaseDescriptor)
+            throws ReleaseFailureException {
+        if (properties == null) {
+            logInfo(
+                    result,
+                    "  Ignoring artifact version update for " + artifactKey + " as expression " + rawVersion
+                            + " cannot be locally resolved");
+            return false;
+        }
+        // check for value of property
+        boolean isUpdated = false;
+        String propertyValue = properties.getProperty(property);
+        if (propertyValue != null) {
+            if (propertyValue.equals(originalVersion)) {
+                logInfo(result, "  Updating " + rawVersion + " to " + mappedVersion);
+                // change the property only if the property is the same as what's in the reactor
+                properties.setProperty(property, mappedVersion);
+                isUpdated = true;
+            } else if (mappedVersion.equals(propertyValue)) {
+                // this property may have been updated during processing a sibling.
+                logInfo(
+                        result,
+                        "  Ignoring artifact version update for expression " + rawVersion
+                                + " because it is already updated");
+            } else if (!mappedVersion.equals(rawVersion)) {
+                // WARNING: ${pom.*} prefix support and ${version} is about to be dropped in mvn4!
+                // https://issues.apache.org/jira/browse/MNG-7404
+                // https://issues.apache.org/jira/browse/MNG-7244
+                if (mappedVersion.matches("\\$\\{project.+\\}")
+                        || mappedVersion.matches("\\$\\{pom.+\\}")
+                        || "${version}".equals(mappedVersion)) {
+                    logInfo(result, "  Ignoring artifact version update for expression " + mappedVersion);
+                    // ignore... we cannot update this expression
+                } else {
+                    // the value of the expression conflicts with what the user wanted to release
+                    throw new ReleaseFailureException("The artifact (" + artifactKey + ") requires a "
+                            + "different version (" + mappedVersion + ") than what is found ("
+                            + propertyValue + ") for the expression (" + rawVersion + ") in the "
+                            + "project (" + projectKey + ").");
+                }
+            }
+        } else {
+            if (CI_FRIENDLY_PROPERTIES.contains(property)) {
+                logInfo(result, "  Ignoring artifact version update for CI friendly expression " + rawVersion);
+            } else {
+                // the expression used to define the version of this artifact may be inherited
+                logInfo(
+                        result,
+                        "  Ignoring artifact version update for " + artifactKey + " as expression " + rawVersion
+                                + " cannot be locally resolved");
+            }
+        }
+        return isUpdated;
     }
 
     private void prepareScm(
