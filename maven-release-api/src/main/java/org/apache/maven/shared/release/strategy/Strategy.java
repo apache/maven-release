@@ -62,4 +62,6 @@ public interface Strategy {
      * @return The release phases to execute the calling the update-versions goal
      */
     List<String> getUpdateVersionsPhases();
+
+    
 }
