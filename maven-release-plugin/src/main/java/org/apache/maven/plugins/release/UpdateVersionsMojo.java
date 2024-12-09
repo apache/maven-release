@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -26,6 +28,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleaseUpdateVersionsRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -98,6 +101,11 @@ public class UpdateVersionsMojo extends AbstractReleaseMojo {
      */
     @Parameter(property = "projectVersionPolicyConfig")
     private PlexusConfiguration projectVersionPolicyConfig;
+
+    @Inject
+    public UpdateVersionsMojo(ReleaseManager releaseManager) {
+        super(releaseManager);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

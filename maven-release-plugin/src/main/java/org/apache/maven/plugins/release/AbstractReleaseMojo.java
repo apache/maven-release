@@ -28,7 +28,6 @@ import java.util.List;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.settings.Settings;
@@ -58,11 +57,6 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
-
-    /**
-     */
-    @Component
-    protected ReleaseManager releaseManager;
 
     /**
      * Additional arguments to pass to the Maven executions, separated by spaces.
@@ -129,6 +123,12 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
      */
     @Parameter(defaultValue = "default", property = "releaseStrategyId")
     private String releaseStrategyId;
+
+    protected ReleaseManager releaseManager;
+
+    protected AbstractReleaseMojo(ReleaseManager releaseManager) {
+        this.releaseManager = releaseManager;
+    }
 
     /**
      * Gets the environment settings configured for this release.

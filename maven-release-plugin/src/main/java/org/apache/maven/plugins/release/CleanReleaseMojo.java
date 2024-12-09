@@ -18,12 +18,15 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseCleanRequest;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
@@ -37,6 +40,12 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  */
 @Mojo(name = "clean", aggregator = true)
 public class CleanReleaseMojo extends AbstractReleaseMojo {
+
+    @Inject
+    public CleanReleaseMojo(ReleaseManager releaseManager) {
+        super(releaseManager);
+    }
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         ReleaseDescriptorBuilder releaseDescriptor = new ReleaseDescriptorBuilder();

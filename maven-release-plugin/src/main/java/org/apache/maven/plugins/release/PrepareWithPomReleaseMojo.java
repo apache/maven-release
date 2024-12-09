@@ -18,11 +18,15 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.shared.release.ReleaseManager;
 
 /**
  * Prepare for a release in SCM, fully resolving dependencies for the purpose of producing a "release POM".
@@ -37,6 +41,11 @@ public class PrepareWithPomReleaseMojo extends PrepareReleaseMojo {
      */
     @Parameter(defaultValue = "true", property = "generateReleasePoms")
     private boolean generateReleasePoms;
+
+    @Inject
+    public PrepareWithPomReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
+        super(releaseManager, scmManager);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

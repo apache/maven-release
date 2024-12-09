@@ -18,16 +18,20 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import java.util.Arrays;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseBranchRequest;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 
@@ -243,6 +247,11 @@ public class BranchReleaseMojo extends AbstractScmReleaseMojo {
      */
     @Parameter(defaultValue = "false", property = "pinExternals")
     private boolean pinExternals;
+
+    @Inject
+    public BranchReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
+        super(releaseManager, scmManager);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

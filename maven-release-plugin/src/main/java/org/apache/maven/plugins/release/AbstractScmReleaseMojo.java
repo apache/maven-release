@@ -18,16 +18,18 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Scm;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
@@ -123,8 +125,13 @@ public abstract class AbstractScmReleaseMojo extends AbstractReleaseMojo {
     /**
      * The SCM manager.
      */
-    @Component
-    private ScmManager scmManager;
+    private final ScmManager scmManager;
+
+    @Inject
+    protected AbstractScmReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
+        super(releaseManager);
+        this.scmManager = scmManager;
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
