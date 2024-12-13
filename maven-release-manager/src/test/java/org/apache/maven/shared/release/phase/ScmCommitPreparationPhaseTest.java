@@ -521,6 +521,52 @@ public class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         verifyNoMoreInteractions(scmProviderMock);
     }
 
+    @Test
+    public void testCommitMultiModuleWithCheckModificationExcludes() throws Exception {
+        // prepare
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        String dir = "scm-commit/multiple-poms";
+        List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
+        builder.setScmSourceUrl("scm-url");
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        builder.setWorkingDirectory(rootProject.getFile().getParentFile().getAbsolutePath());
+        builder.setScmReleaseLabel("release-label");
+        builder.setCheckModificationExcludes(Collections.singletonList("**/subproject2/*"));
+
+        List<File> poms = new ArrayList<>();
+        for (Iterator<MavenProject> i = reactorProjects.iterator(); i.hasNext(); ) {
+            MavenProject project = i.next();
+            // This is a mock match that verifies that the project has not been submitted
+            if (!"subproject2".equals(project.getName())) {
+                poms.add(project.getFile());
+            }
+        }
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile(), poms);
+
+        ScmProvider scmProviderMock = mock(ScmProvider.class);
+        when(scmProviderMock.checkIn(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        isNull(ScmVersion.class),
+                        eq(PREFIX + "release-label")))
+                .thenReturn(new CheckInScmResult(
+                        "...",
+                        Collections.singletonList(
+                                new ScmFile(rootProject.getFile().getPath(), ScmFileStatus.CHECKED_IN))));
+        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
+        stub.setScmProvider(scmProviderMock);
+
+        // execute
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        // verify
+        verify(scmProviderMock)
+                .checkIn(
+                        isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
+                        isNull(ScmVersion.class), eq(PREFIX + "release-label"));
+        verifyNoMoreInteractions(scmProviderMock);
+    }
+
     private List<MavenProject> createReactorProjects() throws Exception {
         String dir = "scm-commit/single-pom";
         return createReactorProjects(dir, dir, null);

@@ -21,6 +21,7 @@ package org.apache.maven.shared.release.phase;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -449,6 +450,21 @@ public class RewritePomsForReleasePhaseTest extends AbstractEditModeRewritingRel
         ReleaseDescriptorBuilder builder =
                 createMappedConfiguration(reactorProjects, "modules-with-different-versions");
         builder.addReleaseVersion("groupId:subproject2", ALTERNATIVE_NEXT_VERSION);
+
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        assertTrue(comparePomFiles(reactorProjects));
+    }
+
+    @Test
+    public void testRewritePomWithCheckModificationExcludes() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("multimodule-with-check-modification-excludes");
+
+        ReleaseDescriptorBuilder builder =
+                createDescriptorFromProjects(reactorProjects, "multimodule-with-check-modification-excludes");
+        builder.addReleaseVersion("groupId:artifactId", NEXT_VERSION);
+        builder.addReleaseVersion("groupId:subproject1", ALTERNATIVE_NEXT_VERSION);
+        builder.setCheckModificationExcludes(Collections.singletonList("**/subproject2/*"));
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 

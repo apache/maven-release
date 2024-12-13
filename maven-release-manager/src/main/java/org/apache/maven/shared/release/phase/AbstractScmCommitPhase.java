@@ -310,15 +310,10 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
 
             final String path = project.getFile().getPath();
 
-            boolean isExcludedPathFound = false;
-            for (String exclusionPattern : exclusionPatterns) {
-                if (FileSystems.getDefault()
-                        .getPathMatcher("glob:" + exclusionPattern)
-                        .matches(Paths.get(path))) {
-                    isExcludedPathFound = true;
-                    break;
-                }
-            }
+            boolean isExcludedPathFound = exclusionPatterns.stream()
+                    .anyMatch(exclusionPattern -> FileSystems.getDefault()
+                            .getPathMatcher("glob:" + exclusionPattern)
+                            .matches(Paths.get(path)));
             if (!isExcludedPathFound) {
                 pomFiles.addAll(createPomFiles(releaseDescriptor, project));
             }

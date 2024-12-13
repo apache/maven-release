@@ -183,15 +183,10 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
 
                 boolean isExcludedPathFound = false;
                 if (project.getFile() != null) {
-                    final String path = project.getFile().getPath();
-                    for (String exclusionPattern : exclusionPatterns) {
-                        if (FileSystems.getDefault()
-                                .getPathMatcher("glob:" + exclusionPattern)
-                                .matches(Paths.get(path))) {
-                            isExcludedPathFound = true;
-                            break;
-                        }
-                    }
+                    isExcludedPathFound = exclusionPatterns.stream()
+                            .anyMatch(exclusionPattern -> FileSystems.getDefault()
+                                    .getPathMatcher("glob:" + exclusionPattern)
+                                    .matches(Paths.get(project.getFile().getPath())));
                 }
                 if (!isExcludedPathFound) {
                     String nextVersion = resolveNextVersion(project, projectId, releaseDescriptor, releaseEnvironment);

@@ -2454,21 +2454,47 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
 
-        List<MavenProject> reactorProjects = Collections.singletonList(createProjectWithPomFile("artifactId", "1.2"));
+        List<MavenProject> reactorProjects = new ArrayList<>();
+        Collections.addAll(
+                reactorProjects,
+                createProject("bar", "1.11-SNAPSHOT"),
+                createProjectWithPomFile(
+                        "artifactId", "1.2-SNAPSHOT", "src/test/resources/projects/scm-commit/multiple-poms/pom.xml"),
+                createProjectWithPomFile(
+                        "subproject1",
+                        "2.0",
+                        "src/test/resources/projects/scm-commit/multiple-poms/subproject1/pom.xml"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setCheckModificationExcludes(Collections.singletonList("**/pom1.xml"));
+        builder.setCheckModificationExcludes(Collections.singletonList("**/subproject1/pom.xml"));
+        builder.setInteractive(false);
 
         // test
         phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertNull(
+        assertEquals(
                 "Check release versions",
+                "1.2",
                 ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
         assertNull(
                 "Check development versions",
                 ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+
+        assertEquals(
+                "Check release versions",
+                "1.11",
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:bar"));
+        assertNull(
+                "Check development versions",
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:bar"));
+
+        assertNull(
+                "Check release versions",
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:subproject1"));
+        assertNull(
+                "Check development versions",
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:subproject1"));
     }
 
     private static MavenProject createProject(String artifactId, String version) {
@@ -2479,13 +2505,13 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         return new MavenProject(model);
     }
 
-    private static MavenProject createProjectWithPomFile(String artifactId, String version) {
+    private static MavenProject createProjectWithPomFile(String artifactId, String version, String pathName) {
         Model model = new Model();
         model.setGroupId("groupId");
         model.setArtifactId(artifactId);
         model.setVersion(version);
         MavenProject mavenProject = new MavenProject(model);
-        mavenProject.setFile(new File("src/test/resources/pomfinder/pom1.xml"));
+        mavenProject.setFile(new File(pathName));
         return mavenProject;
     }
 }
