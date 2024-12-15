@@ -18,6 +18,8 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,9 +30,11 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
@@ -329,6 +333,11 @@ public class PrepareReleaseMojo extends AbstractScmReleaseMojo {
      */
     @Parameter(defaultValue = "false", property = "pinExternals")
     private boolean pinExternals;
+
+    @Inject
+    public PrepareReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
+        super(releaseManager, scmManager);
+    }
 
     /**
      * {@inheritDoc}

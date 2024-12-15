@@ -18,8 +18,12 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.shared.release.ReleaseManager;
 
 /**
  * Perform a release from SCM to a staging repository.
@@ -42,6 +46,11 @@ public class StageReleaseMojo extends PerformReleaseMojo {
      */
     @Parameter(property = "stagingRepository", required = true)
     private String stagingRepository;
+
+    @Inject
+    public StageReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
+        super(releaseManager, scmManager);
+    }
 
     @Override
     void createGoals() {

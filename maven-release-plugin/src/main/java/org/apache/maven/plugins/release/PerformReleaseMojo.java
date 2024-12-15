@@ -18,18 +18,20 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import java.io.File;
 import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.codehaus.plexus.util.StringUtils;
@@ -136,8 +138,13 @@ public class PerformReleaseMojo extends AbstractReleaseMojo {
     /**
      * The SCM manager.
      */
-    @Component
-    private ScmManager scmManager;
+    private final ScmManager scmManager;
+
+    @Inject
+    public PerformReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
+        super(releaseManager);
+        this.scmManager = scmManager;
+    }
 
     @Override
     protected String getAdditionalProfiles() {
@@ -154,7 +161,7 @@ public class PerformReleaseMojo extends AbstractReleaseMojo {
             }
         }
 
-        // goals may be splitted into multiple line in configuration.
+        // goals may be split into multiple lines in configuration.
         // Let's build a single line command
         if (goals != null) {
             goals = StringUtils.join(StringUtils.split(goals), " ");

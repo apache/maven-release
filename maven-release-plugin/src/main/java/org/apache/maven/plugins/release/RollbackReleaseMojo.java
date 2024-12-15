@@ -18,13 +18,17 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.DefaultReleaseManagerListener;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
+import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleaseRollbackRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
@@ -60,6 +64,11 @@ public class RollbackReleaseMojo extends AbstractScmReleaseMojo {
             defaultValue = "@{prefix} rollback the release of @{releaseLabel}",
             property = "scmRollbackCommitComment")
     private String scmRollbackCommitComment = "@{prefix} rollback the release of @{releaseLabel}";
+
+    @Inject
+    public RollbackReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
+        super(releaseManager, scmManager);
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
