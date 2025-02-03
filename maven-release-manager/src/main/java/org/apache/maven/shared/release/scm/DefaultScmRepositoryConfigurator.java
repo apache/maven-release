@@ -90,6 +90,7 @@ public class DefaultScmRepositoryConfigurator implements ScmRepositoryConfigurat
 
         // MRELEASE-76
         scmRepo.setPersistCheckout(false);
+        scmRepo.setPushChanges(releaseDescriptor.isPushChanges());
 
         if (settings != null) {
             Server server = null;
