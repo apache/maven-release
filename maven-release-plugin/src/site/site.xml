@@ -32,7 +32,7 @@ under the License.
     </breadcrumbs>
     <menu name="Overview">
       <item name="Introduction" href="index.html"/>
-      <item name="Goals" href="plugin-info.html" collapse="true">
+      <item name="Plugin Documentation" href="plugin-info.html" collapse="true">
         <item name="release:clean" href="clean-mojo.html"/>
         <item name="release:prepare" href="prepare-mojo.html"/>
         <item name="release:prepare-with-pom" href="prepare-with-pom-mojo.html"/>
