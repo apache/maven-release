@@ -294,7 +294,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
 
         Properties properties = modelTarget.getProperties();
 
-        String parentVersion = rewriteParent(project, modelTarget, result, releaseDescriptor, simulate);
+        rewriteParent(project, modelTarget, result, releaseDescriptor, simulate);
 
         String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
@@ -485,18 +485,17 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
         return CI_FRIENDLY_PROPERTIES.contains(extractPropertyFromExpression(version));
     }
 
-    private String rewriteParent(
+    private void rewriteParent(
             MavenProject project,
             Model targetModel,
             ReleaseResult result,
             ReleaseDescriptor releaseDescriptor,
             boolean simulate)
             throws ReleaseFailureException {
-        String parentVersion = null;
         if (project.hasParent()) {
             MavenProject parent = project.getParent();
             String key = ArtifactUtils.versionlessKey(parent.getGroupId(), parent.getArtifactId());
-            parentVersion = getNextVersion(releaseDescriptor, key);
+            String parentVersion = getNextVersion(releaseDescriptor, key);
             if (parentVersion == null) {
                 // MRELEASE-317
                 parentVersion = getResolvedSnapshotVersion(key, releaseDescriptor);
@@ -516,7 +515,6 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                 }
             }
         }
-        return parentVersion;
     }
 
     private void rewriteArtifactVersions(

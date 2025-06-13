@@ -230,7 +230,6 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
         releaseProject.getBuild().setPluginManagement(null);
 
         // update project version
-        String projectVersion = releaseModel.getVersion();
         String releaseVersion = getNextVersion(releaseDescriptor, project.getGroupId(), project.getArtifactId());
         releaseModel.setVersion(releaseVersion);
 
