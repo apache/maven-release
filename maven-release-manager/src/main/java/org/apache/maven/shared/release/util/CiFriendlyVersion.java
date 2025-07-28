@@ -58,7 +58,13 @@ public class CiFriendlyVersion {
         return CI_FRIENDLY_PROPERTIES.contains(property);
     }
 
-    public static void rewriteVersionAndProperties(
+    /**
+     * Rewrites the CI friendly properties in the given properties object based on the provided version and release descriptor.
+     * @param version
+     * @param properties
+     * @param releaseDescriptor
+     */
+    public static void rewriteCiFriendlyProperties(
             String version, Properties properties, ReleaseDescriptor releaseDescriptor) {
         // try to rewrite property if CI friendly expression is used
         if (properties != null) {
@@ -95,7 +101,7 @@ public class CiFriendlyVersion {
     }
 
     private static void setAndLogPropertyChange(Properties properties, String key, String value) {
-        LOGGER.info("Updating {} property to {}", key, value);
+        LOGGER.info("Updating CI friendly property {} to {}", key, value);
         properties.setProperty(key, value);
     }
 

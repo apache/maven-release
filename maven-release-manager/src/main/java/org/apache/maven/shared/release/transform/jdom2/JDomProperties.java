@@ -34,6 +34,7 @@ import org.jdom2.Element;
 
 /**
  * JDOM2 implementation of poms PROPERTIES element
+ * Only few methods are properly implemented as the underlying data structure of {@link java.util.Hashtable} is never populated.
  *
  * @author Robert Scholte
  * @since 3.0
