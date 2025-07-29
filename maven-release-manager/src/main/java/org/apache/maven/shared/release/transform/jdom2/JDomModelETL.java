@@ -159,7 +159,7 @@ public class JDomModelETL implements ModelETL {
 
     @Override
     public Model getModel() {
-        return new JDomModel(document);
+        return new JDomModel(document, releaseDescriptor);
     }
 
     private void normaliseLineEndings(Document document) {

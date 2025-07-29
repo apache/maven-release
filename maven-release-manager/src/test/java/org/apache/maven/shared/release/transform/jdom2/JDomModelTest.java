@@ -22,6 +22,8 @@ import java.io.StringReader;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
@@ -33,19 +35,20 @@ import static org.junit.Assert.assertNull;
 
 public class JDomModelTest {
     private SAXBuilder builder = new SAXBuilder();
+    private ReleaseDescriptor releaseDescriptor = new ReleaseDescriptorBuilder().build();
 
     @Test
     public void testGetScm() throws Exception {
         String content = "<project></project>";
         Document document = builder.build(new StringReader(content));
-        assertNull(new JDomModel(document).getScm());
+        assertNull(new JDomModel(document, releaseDescriptor).getScm());
     }
 
     @Test
     public void testSetScm() throws Exception {
         String content = "<project></project>";
         Document document = builder.build(new StringReader(content));
-        Model model = new JDomModel(document);
+        Model model = new JDomModel(document, releaseDescriptor);
         assertNull(model.getScm());
 
         model.setScm(new Scm());
@@ -59,7 +62,7 @@ public class JDomModelTest {
     public void testSetVersion() throws Exception {
         String content = "<project></project>";
         Element projectElm = builder.build(new StringReader(content)).getRootElement();
-        Model model = new JDomModel(projectElm);
+        Model model = new JDomModel(projectElm, releaseDescriptor);
         assertNull(model.getVersion());
 
         model.setVersion("VERSION");
@@ -69,9 +72,9 @@ public class JDomModelTest {
         assertNull(model.getVersion());
 
         // inherit from parent via CI friendly
-        content = "<project><parent><version>${revision}</version></parent></project>";
+        content = "<project><parent><version>${revision}${changelist}</version></parent></project>";
         projectElm = builder.build(new StringReader(content)).getRootElement();
-        model = new JDomModel(projectElm);
+        model = new JDomModel(projectElm, releaseDescriptor);
         assertNull(model.getVersion());
         model.setVersion("PARENT_VERSION");
         assertNull(getVersion(projectElm));
@@ -79,7 +82,7 @@ public class JDomModelTest {
         // this business logic might need to moved.
         content = "<project><parent><version>PARENT_VERSION</version></parent></project>";
         projectElm = builder.build(new StringReader(content)).getRootElement();
-        model = new JDomModel(projectElm);
+        model = new JDomModel(projectElm, releaseDescriptor);
         assertNull(model.getVersion());
 
         model.setVersion("PARENT_VERSION");

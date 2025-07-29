@@ -11,3 +11,5 @@ build
 .checkstyle
 .DS_Store
 .factorypath
+.mvn/
+mvnw

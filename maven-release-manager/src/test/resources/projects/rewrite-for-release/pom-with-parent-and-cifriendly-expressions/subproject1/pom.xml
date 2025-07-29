@@ -21,7 +21,7 @@
   <parent>
     <groupId>groupId</groupId>
     <artifactId>artifactId</artifactId>
-    <version>${revision}</version>
+    <version>${revision}${sha1}${changelist}</version>
   </parent>
 
   <artifactId>subproject1</artifactId>

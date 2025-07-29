@@ -31,7 +31,8 @@ import org.apache.maven.model.Parent;
 import org.apache.maven.model.Profile;
 import org.apache.maven.model.Reporting;
 import org.apache.maven.model.Scm;
-import org.apache.maven.shared.release.phase.AbstractRewritePomsPhase;
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Text;
@@ -48,12 +49,18 @@ public class JDomModel extends Model {
     private final JDomModelBase modelBase;
 
     /**
+     * The ReleaseDescriptor after a commit performed
+     *
+     */
+    private final ReleaseDescriptor releaseDescriptor;
+
+    /**
      * <p>Constructor for JDomModel.</p>
      *
      * @param document a {@link org.jdom2.Document} object
      */
-    public JDomModel(Document document) {
-        this(document.getRootElement());
+    public JDomModel(Document document, ReleaseDescriptor releaseDescriptor) {
+        this(document.getRootElement(), releaseDescriptor);
     }
 
     /**
@@ -61,8 +68,9 @@ public class JDomModel extends Model {
      *
      * @param project a {@link org.jdom2.Element} object
      */
-    public JDomModel(Element project) {
+    public JDomModel(Element project, ReleaseDescriptor releaseDescriptor) {
         this.project = project;
+        this.releaseDescriptor = releaseDescriptor;
         this.modelBase = new JDomModelBase(project);
     }
 
@@ -180,7 +188,7 @@ public class JDomModel extends Model {
 
         if (versionElement == null) {
             // never add version when parent references CI friendly property
-            if (!(parentVersion != null && AbstractRewritePomsPhase.isCiFriendlyVersion(parentVersion))
+            if (!(parentVersion != null && CiFriendlyVersion.isCiFriendlyVersion(parentVersion))
                     && !version.equals(parentVersion)) {
                 // we will add this after artifactId, since it was missing but different from the inherited version
                 Element artifactIdElement = project.getChild("artifactId", project.getNamespace());
@@ -192,14 +200,9 @@ public class JDomModel extends Model {
                 project.addContent(index + 2, versionElement);
             }
         } else {
-            if (AbstractRewritePomsPhase.isCiFriendlyVersion(versionElement.getTextNormalize())) {
+            if (CiFriendlyVersion.isCiFriendlyVersion(versionElement.getTextNormalize())) {
                 // try to rewrite property if CI friendly expression is used
-                String ciFriendlyPropertyName =
-                        AbstractRewritePomsPhase.extractPropertyFromExpression(versionElement.getTextNormalize());
-                Properties properties = getProperties();
-                if (properties != null) {
-                    properties.computeIfPresent(ciFriendlyPropertyName, (k, v) -> version);
-                }
+                CiFriendlyVersion.rewriteCiFriendlyProperties(version, getProperties(), releaseDescriptor);
             } else {
                 JDomUtils.rewriteValue(versionElement, version);
             }

@@ -20,7 +20,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>groupId</groupId>
   <artifactId>artifactId</artifactId>
-  <version>${revision}</version>
+  <version>${revision}${sha1}${changelist}</version>
   <packaging>pom</packaging>
 
   <scm>
@@ -30,7 +30,9 @@
   </scm>
 
   <properties>
-    <revision>1.0-SNAPSHOT</revision>
+    <revision>1.0</revision>
+    <sha1>.123</sha1>
+    <changelist>-SNAPSHOT</changelist>
   </properties>
 
   <modules>

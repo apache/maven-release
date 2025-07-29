@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @since 3.0.0-M5
  */
 public class ReleaseDescriptorBuilder {
-    private static final Pattern PROPERTY_PATTERN = Pattern.compile("\\$\\{[^}]+}");
+    private static final Pattern PROPERTY_PATTERN = Pattern.compile("\\$\\{[^}]+?}");
 
     private final Logger logger;
 
