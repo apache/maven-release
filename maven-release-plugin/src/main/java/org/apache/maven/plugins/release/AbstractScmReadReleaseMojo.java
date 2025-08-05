@@ -18,8 +18,7 @@
  */
 package org.apache.maven.plugins.release;
 
-import javax.inject.Inject;
-
+import java.io.File;
 import java.util.Map;
 
 import org.apache.maven.artifact.ArtifactUtils;
@@ -33,83 +32,41 @@ import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 
 /**
- * Abstract Mojo containing SCM parameters
- *
- * @author Robert Scholte
+ * Abstract Mojo containing SCM parameters for read operations.
  */
-// Extra layer since 2.4. Don't use @since doclet, these would be inherited by the subclasses
-public abstract class AbstractScmReleaseMojo extends AbstractReleaseMojo {
+public abstract class AbstractScmReadReleaseMojo extends AbstractReleaseMojo {
+
     /**
-     * The SCM username to use.
+     * The server id of the server which provides the credentials for the SCM in the <a href="https://maven.apache.org/settings.html">settings.xml</a> file.
+     * If not set the default lookup uses the SCM URL to construct the server id like this:
+     * {@code server-id=scm-host[":"scm-port]}.
+     * <p>
+     * Currently the POM does not allow to specify a server id for the SCM section.
+     * <p>
+     * Explicit authentication information provided via {@link #username}, {@link #password} or {@link #privateKey} will take precedence.
+     * @since 3.2.0
+     */
+    @Parameter(property = "project.scm.id", defaultValue = "${project.scm.id}")
+    private String serverId;
+
+    /**
+     * The username to use for authentication with the SCM.
      */
     @Parameter(property = "username")
     private String username;
 
     /**
-     * The SCM password to use.
+     * The password to use for authentication with the SCM.
      */
     @Parameter(property = "password")
     private String password;
 
     /**
-     * The SCM tag to use.
+     * The path to the SSH private key to use for authentication with the SCM.
+     * @since 3.2.0
      */
-    @Parameter(alias = "releaseLabel", property = "tag")
-    private String tag;
-
-    /**
-     * Format to use when generating the tag name if none is specified. Property interpolation is performed on the
-     * tag, but in order to ensure that the interpolation occurs during release, you must use <code>@{...}</code>
-     * to reference the properties rather than <code>${...}</code>. The following properties are available:
-     * <ul>
-     *     <li><code>groupId</code> or <code>project.groupId</code> - The groupId of the root project.
-     *     <li><code>artifactId</code> or <code>project.artifactId</code> - The artifactId of the root project.
-     *     <li><code>version</code> or <code>project.version</code> - The release version of the root project.
-     * </ul>
-     *
-     * @since 2.2.0
-     */
-    @Parameter(defaultValue = "@{project.artifactId}-@{project.version}", property = "tagNameFormat")
-    private String tagNameFormat;
-
-    /**
-     * The tag base directory in SVN, you must define it if you don't use the standard svn layout (trunk/tags/branches).
-     * For example, <code>http://svn.apache.org/repos/asf/maven/plugins/tags</code>. The URL is an SVN URL and does not
-     * include the SCM provider and protocol.
-     */
-    @Parameter(property = "tagBase")
-    private String tagBase;
-
-    /**
-     * The message prefix to use for all SCM changes.
-     *
-     * @since 2.0-beta-5
-     */
-    @Parameter(defaultValue = "[maven-release-plugin] ", property = "scmCommentPrefix")
-    private String scmCommentPrefix;
-
-    /**
-     * When cloning a repository if it should be a shallow clone or a full clone.
-     */
-    @Parameter(defaultValue = "true", property = "scmShallowClone")
-    private boolean scmShallowClone = true;
-
-    /**
-     * Implemented with git will or not push changes to the upstream repository.
-     * <code>true</code> by default to preserve backward compatibility.
-     * @since 2.1
-     */
-    @Parameter(defaultValue = "true", property = "pushChanges")
-    private boolean pushChanges = true;
-
-    /**
-     * A workItem for SCMs like RTC, TFS etc, that may require additional
-     * information to perform a pushChange operation.
-     *
-     * @since 3.0.0-M5
-     */
-    @Parameter(property = "workItem")
-    private String workItem;
+    @Parameter(property = "privateKey")
+    private File privateKey;
 
     /**
      * Add a new or overwrite the default implementation per provider.
@@ -123,12 +80,17 @@ public abstract class AbstractScmReleaseMojo extends AbstractReleaseMojo {
     private Map<String, String> providerImplementations;
 
     /**
+     * When cloning a repository if it should be a shallow clone or a full clone.
+     */
+    @Parameter(defaultValue = "true", property = "scmShallowClone")
+    private boolean scmShallowClone = true;
+
+    /**
      * The SCM manager.
      */
     private final ScmManager scmManager;
 
-    @Inject
-    protected AbstractScmReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
+    protected AbstractScmReadReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
         super(releaseManager);
         this.scmManager = scmManager;
     }
@@ -148,16 +110,12 @@ public abstract class AbstractScmReleaseMojo extends AbstractReleaseMojo {
     protected ReleaseDescriptorBuilder createReleaseDescriptor() {
         ReleaseDescriptorBuilder descriptor = super.createReleaseDescriptor();
 
+        if (privateKey != null) {
+            descriptor.setScmPrivateKey(privateKey.getAbsolutePath());
+        }
         descriptor.setScmPassword(password);
-        descriptor.setScmReleaseLabel(tag);
-        descriptor.setScmTagNameFormat(tagNameFormat);
-        descriptor.setScmTagBase(tagBase);
         descriptor.setScmUsername(username);
-        descriptor.setScmCommentPrefix(scmCommentPrefix);
         descriptor.setScmShallowClone(scmShallowClone);
-
-        descriptor.setPushChanges(pushChanges);
-        descriptor.setWorkItem(workItem);
 
         if (project.getScm() != null) {
             if (project.getScm().getDeveloperConnection() != null) {
@@ -167,11 +125,11 @@ public abstract class AbstractScmReleaseMojo extends AbstractReleaseMojo {
             }
         }
 
-        // As long as Scm.getId() does not exist, read it as a property
-        descriptor.setScmId(project.getProperties().getProperty("project.scm.id"));
+        descriptor.setScmId(serverId);
 
         for (MavenProject reactorProject : session.getProjects()) {
-            if (reactorProject.getScm() != null) {
+            if (reactorProject.getOriginalModel() != null
+                    && reactorProject.getOriginalModel().getScm() != null) {
                 String projectId =
                         ArtifactUtils.versionlessKey(reactorProject.getGroupId(), reactorProject.getArtifactId());
 

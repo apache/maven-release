@@ -42,7 +42,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * @author Edwin Punzalan
  */
 @Mojo(name = "rollback", aggregator = true)
-public class RollbackReleaseMojo extends AbstractScmReleaseMojo {
+public class RollbackReleaseMojo extends AbstractScmReadWriteReleaseMojo {
 
     /**
      * The SCM commit comment when rolling back.
