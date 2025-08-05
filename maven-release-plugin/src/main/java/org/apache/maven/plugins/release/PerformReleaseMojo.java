@@ -21,7 +21,6 @@ package org.apache.maven.plugins.release;
 import javax.inject.Inject;
 
 import java.io.File;
-import java.util.Map;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -46,7 +45,7 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Mojo(name = "perform", aggregator = true, requiresProject = false)
-public class PerformReleaseMojo extends AbstractReleaseMojo {
+public class PerformReleaseMojo extends AbstractScmReadReleaseMojo {
     /**
      * A space separated list of goals to execute on release perform. Default value is either <code>deploy</code> or
      * <code>deploy site-deploy</code>, if the project has a &lt;distributionManagement&gt;/&lt;site&gt; element.
@@ -88,24 +87,6 @@ public class PerformReleaseMojo extends AbstractReleaseMojo {
     private boolean localCheckout;
 
     /**
-     * The SCM username to use.
-     */
-    @Parameter(property = "username")
-    private String username;
-
-    /**
-     * The SCM password to use.
-     */
-    @Parameter(property = "password")
-    private String password;
-
-    /**
-     * When cloning a repository if it should be a shallow clone or a full clone.
-     */
-    @Parameter(defaultValue = "true", property = "scmShallowClone")
-    private boolean scmShallowClone = true;
-
-    /**
      * Whether to use the default release profile (Maven 2 and 3) that adds sources and javadocs to the released
      * artifact, if appropriate. If set to true, the release plugin sets the property "<code>performRelease</code>" to
      * true, which activates the profile "<code>release-profile</code>" as inherited from
@@ -124,26 +105,9 @@ public class PerformReleaseMojo extends AbstractReleaseMojo {
     @Parameter(defaultValue = "false", property = "dryRun")
     private boolean dryRun;
 
-    /**
-     * Add a new or overwrite the default implementation per provider.
-     * The key is the scm prefix and the value is the role hint of the
-     * {@link org.apache.maven.scm.provider.ScmProvider}.
-     *
-     * @since 2.5.3
-     * @see ScmManager#setScmProviderImplementation(String, String)
-     */
-    @Parameter
-    private Map<String, String> providerImplementations;
-
-    /**
-     * The SCM manager.
-     */
-    private final ScmManager scmManager;
-
     @Inject
     public PerformReleaseMojo(ReleaseManager releaseManager, ScmManager scmManager) {
-        super(releaseManager);
-        this.scmManager = scmManager;
+        super(releaseManager, scmManager);
     }
 
     @Override
@@ -153,13 +117,7 @@ public class PerformReleaseMojo extends AbstractReleaseMojo {
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        if (providerImplementations != null) {
-            for (Map.Entry<String, String> providerEntry : providerImplementations.entrySet()) {
-                getLog().info("Change the default '" + providerEntry.getKey() + "' provider implementation to '"
-                        + providerEntry.getValue() + "'.");
-                scmManager.setScmProviderImplementation(providerEntry.getKey(), providerEntry.getValue());
-            }
-        }
+        super.execute();
 
         // goals may be split into multiple lines in configuration.
         // Let's build a single line command
@@ -174,16 +132,6 @@ public class PerformReleaseMojo extends AbstractReleaseMojo {
             if (connectionUrl != null) {
                 releaseDescriptor.setScmSourceUrl(connectionUrl);
             }
-
-            if (username != null) {
-                releaseDescriptor.setScmUsername(username);
-            }
-
-            if (password != null) {
-                releaseDescriptor.setScmPassword(password);
-            }
-
-            releaseDescriptor.setScmShallowClone(scmShallowClone);
 
             releaseDescriptor.setLocalCheckout(localCheckout);
 
