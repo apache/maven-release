@@ -44,7 +44,7 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
  * @since 2.0-beta-6
  */
 @Mojo(name = "branch", aggregator = true)
-public class BranchReleaseMojo extends AbstractScmReleaseMojo {
+public class BranchReleaseMojo extends AbstractScmReadWriteReleaseMojo {
     /**
      * The branch name to use.
      *
