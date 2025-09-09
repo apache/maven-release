@@ -53,7 +53,7 @@ import org.codehaus.plexus.configuration.PlexusConfiguration;
  */
 // TODO [!] check how this works with version ranges
 @Mojo(name = "prepare", aggregator = true, requiresDependencyCollection = ResolutionScope.TEST)
-public class PrepareReleaseMojo extends AbstractScmReleaseMojo {
+public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
 
     /**
      * Resume a previous release attempt from the point where it was stopped.
