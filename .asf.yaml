@@ -24,14 +24,17 @@ github:
     - maven-plugins
     - maven-release-plugin
     - maven
+  protected_branches:
+    master: { }
+  pull_requests:
+    del_branch_on_merge: true
   enabled_merge_buttons:
     squash: true
     merge: false
     rebase: true
-  del_branch_on_merge: true
   features:
     issues: true
 notifications:
   commits: commits@maven.apache.org
-  #issues: issues@maven.apache.org
-  #pullrequests: issues@maven.apache.org
+  issues: issues@maven.apache.org
+  pullrequests: issues@maven.apache.org
