@@ -30,7 +30,9 @@ under the License.
         this parent?
       </question>
       <answer>
-        <p>Maven Release Plugin will prompt for each project's version.</p>
+        <p>By default Maven Release Plugin will prompt for each project's version.
+          However, you can set the <a href="./prepare-mojo.html#autoVersionSubmodules"><code>autoVersionSubmodules</code> parameter</a>
+          to <code>true</code> to automatically use the parent version.</p>
       </answer>
     </faq>
     <faq id="nonrecursive">
@@ -89,12 +91,45 @@ mvn -N -Darguments=-N release:perform
     </faq>
     <faq id="inheritScm">
       <question>Why is <code>release:prepare</code> failing when trying to tag with
-        <code>"svn: Path '...' does not exist in revision ..."</code></question>
+        <code>"svn: Path '...' does not exist in revision ..."</code>?</question>
       <answer>
         <p>If the <code>pom.xml</code> has no scm-section but inherits one from its parent, the prepare goal will fail
          when trying to tag. The message will be something like:</p>
         <pre>svn: Path '...' does not exist in revision ...</pre>
         <p>To fix it, roll-back the release, add the <code>scm</code> section to the <code>pom.xml</code>, commit and retry the release.</p>
+      </answer>
+    </faq>
+    <faq id="customDeployPlugin">
+      <question>Can I use a plugin other than Maven Deploy Plugin for deployment?</question>
+      <answer>
+        <p>Yes, you can use any other plugin for deployment. There is no strong interconnection between the
+          Maven Release Plugin and the Maven Deploy Plugin. The Maven Release Plugin simply runs the <code>deploy</code>
+          Maven goal during release (or any <a href="./perform-mojo.html#goals">other goals you specified</a>).
+          This allows you for example to use the <code>central-publishing-maven-plugin</code> when
+          <a href="https://central.sonatype.org/publish/publish-portal-maven/">deploying to Maven Central</a>.</p>
+        <p>However, it might be necessary to configure the Maven Deploy Plugin to skip execution because the
+          plugin is <a href="https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging">
+          automatically configured by default</a> (note that some custom deploy plugins automatically disable
+          the Maven Deploy Plugin):</p>
+<source>
+<![CDATA[
+  <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Skip execution of Maven Deploy Plugin due to usage of custom deploy plugin -->
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-deploy-plugin</artifactId>
+          <version>...</version>
+          <configuration>
+            <skip>true</skip>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
+]]>
+</source>
       </answer>
     </faq>
   </part>
