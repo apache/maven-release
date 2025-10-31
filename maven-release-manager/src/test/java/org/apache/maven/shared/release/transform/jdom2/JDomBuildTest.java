@@ -84,7 +84,6 @@ public class JDomBuildTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testAddExtension() {
         new JDomBuild(null).addExtension(null);
-        ;
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -120,7 +119,6 @@ public class JDomBuildTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testSetExtensions() {
         new JDomBuild(null).setExtensions(null);
-        ;
     }
 
     @Test(expected = UnsupportedOperationException.class)

@@ -106,25 +106,21 @@ public class JDomDependencyTest {
     @Test(expected = UnsupportedOperationException.class)
     public void testRemoveExclusion() {
         new JDomDependency(null).removeExclusion(null);
-        ;
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testSetArtifactIdString() {
         new JDomDependency(null).setArtifactId(null);
-        ;
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testSetClassifierString() {
         new JDomDependency(null).setClassifier(null);
-        ;
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testSetExclusions() {
         new JDomDependency(null).setExclusions(null);
-        ;
     }
 
     @Test(expected = UnsupportedOperationException.class)

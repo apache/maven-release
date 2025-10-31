@@ -68,7 +68,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     @Test
     public void testNoSnapshotDependencies() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        ;
+
         List<MavenProject> reactorProjects = createDescriptorFromProjects("no-snapshot-dependencies");
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -609,7 +609,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     @Test
     public void testNoSnapshotReportPlugins() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        ;
+
         List<MavenProject> reactorProjects = createDescriptorFromProjects("no-snapshot-report-plugins");
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -699,7 +699,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     @Test
     public void testNoSnapshotPlugins() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        ;
+
         List<MavenProject> reactorProjects = createDescriptorFromProjects("no-snapshot-plugins");
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -910,7 +910,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     @Test
     public void testReleaseExternalParent() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        ;
+
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-parent/child");
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -968,7 +968,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     @Test
     public void testReleaseExternalExtension() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        ;
+
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-extension");
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -1088,7 +1088,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
         String developmentVersion;
 
-        public VersionPair(String releaseVersion, String developmentVersion) {
+        VersionPair(String releaseVersion, String developmentVersion) {
             this.releaseVersion = releaseVersion;
             this.developmentVersion = developmentVersion;
         }

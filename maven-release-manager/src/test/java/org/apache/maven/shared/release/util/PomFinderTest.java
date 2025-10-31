@@ -47,19 +47,15 @@ public class PomFinderTest {
         found = pf.parsePom(pomFile);
         assertTrue("pomFile not found pomUrl " + pomUrl + ", pomFile " + pomFile.getPath(), found);
 
-        {
-            File foundPom = pf.findMatchingPom(pomFile.getParentFile());
-            assertNotNull(foundPom);
+        File foundPom = pf.findMatchingPom(pomFile.getParentFile());
+        assertNotNull(foundPom);
 
-            assertEquals(pomFile.getAbsolutePath(), foundPom.getAbsolutePath());
-        }
+        assertEquals(pomFile.getAbsolutePath(), foundPom.getAbsolutePath());
 
-        {
-            // try from 1 directory higher
-            File foundPom = pf.findMatchingPom(pomFile.getParentFile().getParentFile());
-            assertNotNull(foundPom);
+        // try from 1 directory higher
+        File foundPom2 = pf.findMatchingPom(pomFile.getParentFile().getParentFile());
+        assertNotNull(foundPom2);
 
-            assertEquals(pomFile.getAbsolutePath(), foundPom.getAbsolutePath());
-        }
+        assertEquals(pomFile.getAbsolutePath(), foundPom2.getAbsolutePath());
     }
 }

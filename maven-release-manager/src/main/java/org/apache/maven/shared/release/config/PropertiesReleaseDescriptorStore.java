@@ -137,6 +137,7 @@ public class PropertiesReleaseDescriptorStore implements ReleaseDescriptorStore 
      * @param file   a {@link java.io.File} object
      * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
      */
+    @SuppressWarnings("checkstyle:MethodLength")
     public void write(BuilderReleaseDescriptor config, File file) throws ReleaseDescriptorStoreException {
         Properties properties = new Properties();
         properties.setProperty("completedPhase", config.getCompletedPhase());
