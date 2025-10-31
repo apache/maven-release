@@ -519,7 +519,6 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         ScmManager scmManager = (ScmManager) lookup(ScmManager.class);
         if (scmManager instanceof ScmManagerStub) {
             ((ScmManagerStub) scmManager).setException(new NoSuchScmProviderException("..."));
-            ;
         }
 
         // execute

@@ -30,6 +30,10 @@
 
   <name>Maven Release Manager</name>
 
+  <properties>
+    <checkstyle.violation.ignore>FileLength</checkstyle.violation.ignore>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.maven.release</groupId>

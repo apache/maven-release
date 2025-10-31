@@ -608,6 +608,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      * @param releaseDescriptor
      * @return {@code true} if the property was rewritten, otherwise {@code false}
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     boolean rewritePropertyUsedInVersionExpression(
             String projectKey,
             String artifactKey,

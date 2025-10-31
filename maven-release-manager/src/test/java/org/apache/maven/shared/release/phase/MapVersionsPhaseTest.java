@@ -84,7 +84,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshot_MapRelease() throws Exception {
+    public void testExecuteSnapshotMapRelease() throws Exception {
         // prepare
         MavenProject project = createProject("artifactId", "1.0-SNAPSHOT");
         when(mockPrompter.prompt(
@@ -111,7 +111,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshot_MapReleaseVersions() throws Exception {
+    public void testSimulateSnapshotMapReleaseVersions() throws Exception {
         // prepare
         MavenProject project = createProject("artifactId", "1.0-SNAPSHOT");
         when(mockPrompter.prompt(
@@ -354,7 +354,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotNonInteractive_MapRelease() throws Exception {
+    public void testExecuteSnapshotNonInteractiveMapRelease() throws Exception {
         // prepare
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -375,7 +375,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotNonInteractive_MapReleaseVersions() throws Exception {
+    public void testSimulateSnapshotNonInteractiveMapReleaseVersions() throws Exception {
         // prepare
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -663,7 +663,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_DefaultDevelopmentVersion_MapDevelopment() throws Exception {
+    public void testExecuteSnapshotBranchCreationDefaultDevelopmentVersionMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -688,7 +688,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_DefaultDevelopmentVersion_MapDevelopment() throws Exception {
+    public void testSimulateSnapshotBranchCreationDefaultDevelopmentVersionMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -713,7 +713,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_DefaultDevelopmentVersion_NonInteractive_MapDevelopment()
+    public void testExecuteSnapshotBranchCreationDefaultDevelopmentVersionNonInteractiveMapDevelopment()
             throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
@@ -740,7 +740,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_DefaultDevelopmentVersion_NonInteractive_MapDevelopment()
+    public void testSimulateSnapshotBranchCreationDefaultDevelopmentVersionNonInteractiveMapDevelopment()
             throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
@@ -767,7 +767,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_NonInteractive_MapDevelopment() throws Exception {
+    public void testExecuteSnapshotBranchCreationNonInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -792,7 +792,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_NonInteractive_MapDevelopment() throws Exception {
+    public void testSimulateSnapshotBranchCreationNonInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -817,7 +817,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotDefaultDevelopmentVersion_MapDevelopment() throws Exception {
+    public void testExecuteSnapshotDefaultDevelopmentVersionMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -841,7 +841,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotDefaultDevelopmentVersion_MapDevelopment() throws Exception {
+    public void testSimulateSnapshotDefaultDevelopmentVersionMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -865,7 +865,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotDefaultDevelopmentVersion_NonInteractive_MapDevelopment() throws Exception {
+    public void testExecuteSnapshotDefaultDevelopmentVersionNonInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -890,7 +890,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotDefaultDevelopmentVersion_NonInteractive_MapDevelopment() throws Exception {
+    public void testSimulateSnapshotDefaultDevelopmentVersionNonInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -915,7 +915,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotNonInteractive_MapDevelopment() throws Exception {
+    public void testExecuteSnapshotNonInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -939,7 +939,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotNonInteractive_MapDevelopment() throws Exception {
+    public void testSimulateSnapshotNonInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -963,7 +963,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotAutoVersionSubmodules_NotInteractive_MapDevelopment() throws Exception {
+    public void testExecuteSnapshotAutoVersionSubmodulesNotInteractiveMapDevelopment() throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -988,7 +988,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotAutoVersionSubmodules_NotInteractive_MapDevelopment() throws Exception {
+    public void testSimulateSnapshotAutoVersionSubmodulesNotInteractiveMapDevelopment() throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1013,7 +1013,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseAutoVersionSubmodules_NotInteractive_MapDevelopment() throws Exception {
+    public void testExecuteReleaseAutoVersionSubmodulesNotInteractiveMapDevelopment() throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1038,7 +1038,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateReleaseAutoVersionSubmodules_NotInteractive_MapDevelopment() throws Exception {
+    public void testSimulateReleaseAutoVersionSubmodulesNotInteractiveMapDevelopment() throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1063,7 +1063,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotAutoVersionSubmodules_NotInteractive_MapRelease() throws Exception {
+    public void testExecuteSnapshotAutoVersionSubmodulesNotInteractiveMapRelease() throws Exception {
         // verify
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1088,7 +1088,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotAutoVersionSubmodules_NotInteractive_MapRelease() throws Exception {
+    public void testSimulateSnapshotAutoVersionSubmodulesNotInteractiveMapRelease() throws Exception {
         // verify
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1113,7 +1113,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseAutoVersionSubmodules_NotInteractive_MapRelease() throws Exception {
+    public void testExecuteReleaseAutoVersionSubmodulesNotInteractiveMapRelease() throws Exception {
         // verify
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1138,7 +1138,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateReleaseAutoVersionSubmodules_NotInteractive_MapRelease() throws Exception {
+    public void testSimulateReleaseAutoVersionSubmodulesNotInteractiveMapRelease() throws Exception {
         // verify
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1163,8 +1163,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotAutoVersionSubmodules_BranchCreation_NotInteractive_MapDevelopment()
-            throws Exception {
+    public void testExecuteSnapshotAutoVersionSubmodulesBranchCreationNotInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1190,8 +1189,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotAutoVersionSubmodules_BranchCreation_NotInteractive_MapDevelopment()
-            throws Exception {
+    public void testSimulateSnapshotAutoVersionSubmodulesBranchCreationNotInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1217,8 +1215,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseAutoVersionSubmodules_BranchCreation_NotInteractive_MapDevelopment()
-            throws Exception {
+    public void testExecuteReleaseAutoVersionSubmodulesBranchCreationNotInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1244,8 +1241,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateReleaseAutoVersionSubmodules_BranchCreation_NotInteractive_MapDevelopment()
-            throws Exception {
+    public void testSimulateReleaseAutoVersionSubmodulesBranchCreationNotInteractiveMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1271,7 +1267,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotAutoVersionSubmodules_BranchCreation_NotInteractive_MapBranch() throws Exception {
+    public void testExecuteSnapshotAutoVersionSubmodulesBranchCreationNotInteractiveMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1297,7 +1293,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotAutoVersionSubmodules_BranchCreation_NotInteractive_MapBranch() throws Exception {
+    public void testSimulateSnapshotAutoVersionSubmodulesBranchCreationNotInteractiveMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1323,7 +1319,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseAutoVersionSubmodules_BranchCreation_NotInteractive_MapBranch() throws Exception {
+    public void testExecuteReleaseAutoVersionSubmodulesBranchCreationNotInteractiveMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1354,7 +1350,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateReleaseAutoVersionSubmodules_BranchCreation_NotInteractive_MapBranch() throws Exception {
+    public void testSimulateReleaseAutoVersionSubmodulesBranchCreationNotInteractiveMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1385,7 +1381,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_NonInteractive_UpdateBranchVersions_MapBranch() throws Exception {
+    public void testExecuteSnapshotBranchCreationNonInteractiveUpdateBranchVersionsMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1414,7 +1410,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_NonInteractive_UpdateBranchVersions_MapBranch() throws Exception {
+    public void testSimulateSnapshotBranchCreationNonInteractiveUpdateBranchVersionsMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1443,7 +1439,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_DefaultReleaseVersion_NonInteractive_UpdateBranchVersions_MapBranch()
+    public void testExecuteSnapshotBranchCreationDefaultReleaseVersionNonInteractiveUpdateBranchVersionsMapBranch()
             throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
@@ -1471,7 +1467,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_DefaultReleaseVersion_NonInteractive_UpdateBranchVersions_MapBranch()
+    public void testSimulateSnapshotBranchCreationDefaultReleaseVersionNonInteractiveUpdateBranchVersionsMapBranch()
             throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
@@ -1499,8 +1495,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_DefaultReleaseVersion_UpdateBranchVersions_MapBranch()
-            throws Exception {
+    public void testExecuteSnapshotBranchCreationDefaultReleaseVersionUpdateBranchVersionsMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1526,7 +1521,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_DefaultReleaseVersion_UpdateBranchVersions_MapBranch()
+    public void testSimulateSnapshotBranchCreationDefaultReleaseVersionUpdateBranchVersionsMapBranch()
             throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
@@ -1553,7 +1548,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_UpdateBranchVersions_MapBranch() throws Exception {
+    public void testExecuteSnapshotBranchCreationUpdateBranchVersionsMapBranch() throws Exception {
         // prepare
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1579,7 +1574,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_UpdateBranchVersions_MapBranch() throws Exception {
+    public void testSimulateSnapshotBranchCreationUpdateBranchVersionsMapBranch() throws Exception {
         // prepare
         // updateBranchVersions is set to true, so suggest the next snapshot version
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
@@ -1605,7 +1600,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
+    public void testExecuteReleaseBranchCreationUpdateBranchVersionsUpdateVersionsToSnapshotMapBranch()
             throws Exception {
         // prepare
         // updateBranchVersions is set to true, so suggest the next snapshot version
@@ -1640,7 +1635,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateReleaseBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
+    public void testSimulateReleaseBranchCreationUpdateBranchVersionsUpdateVersionsToSnapshotMapBranch()
             throws Exception {
         // prepare
         // updateBranchVersions is set to true, so suggest the next snapshot version
@@ -1675,7 +1670,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
+    public void testExecuteSnapshotBranchCreationUpdateBranchVersionsUpdateVersionsToSnapshotMapBranch()
             throws Exception {
         // prepare
         // updateBranchVersions is set to true, so suggest the next snapshot version
@@ -1703,7 +1698,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_UpdateBranchVersions_UpdateVersionsToSnapshot_MapBranch()
+    public void testSimulateSnapshotBranchCreationUpdateBranchVersionsUpdateVersionsToSnapshotMapBranch()
             throws Exception {
         // prepare
         // updateBranchVersions is set to true, so suggest the next snapshot version
@@ -1731,7 +1726,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseBranchCreation_MapBranch() throws Exception {
+    public void testExecuteReleaseBranchCreationMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1760,7 +1755,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateReleaseBranchCreation_MapBranch() throws Exception {
+    public void testSimulateReleaseBranchCreationMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1789,7 +1784,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseBranchCreation_NonUpdateWorkingCopyVersions_MapDevelopment() throws Exception {
+    public void testExecuteReleaseBranchCreationNonUpdateWorkingCopyVersionsMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1814,7 +1809,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateReleaseBranchCreation_NonUpdateWorkingCopyVersions_MapDevelopment() throws Exception {
+    public void testSimulateReleaseBranchCreationNonUpdateWorkingCopyVersionsMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1839,7 +1834,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseBranchCreation_MapDevelopment() throws Exception {
+    public void testExecuteReleaseBranchCreationMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1864,7 +1859,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateReleaseBranchCreation_MapDevelopment() throws Exception {
+    public void testSimulateReleaseBranchCreationMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1891,7 +1886,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_MapBranch() throws Exception {
+    public void testExecuteSnapshotBranchCreationMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1915,7 +1910,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_MapBranch() throws Exception {
+    public void testSimulateSnapshotBranchCreationMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1939,7 +1934,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_NonUpdateWorkingCopyVersions_MapDevelopment() throws Exception {
+    public void testExecuteSnapshotBranchCreationNonUpdateWorkingCopyVersionsMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1964,7 +1959,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_NonUpdateWorkingCopyVersions_MapDevelopment() throws Exception {
+    public void testSimulateSnapshotBranchCreationNonUpdateWorkingCopyVersionsMapDevelopment() throws Exception {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -1989,35 +1984,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteReleaseBranchCreation_UpdateBranchVersions_MapBranch() throws Exception {
-        // prepare
-        MapBranchVersionsPhase phase =
-                new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
-
-        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.2"));
-
-        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setBranchCreation(true);
-        builder.setUpdateBranchVersions(true);
-        // org.apache.maven.release:maven-release-manager:(,2.4) > true
-        // org.apache.maven.release:maven-release-manager:[2.4,) > false
-        builder.setInteractive(false);
-
-        // test
-        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
-
-        // verify
-        assertEquals(
-                "Check release versions",
-                "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
-        assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
-    }
-
-    @Test
-    public void testSimulateReleaseBranchCreation_UpdateBranchVersions_MapBranch() throws Exception {
+    public void testExecuteReleaseBranchCreationUpdateBranchVersionsMapBranch() throws Exception {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -2032,6 +1999,34 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         builder.setInteractive(false);
 
         // test
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        // verify
+        assertEquals(
+                "Check release versions",
+                "1.2",
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+        assertNull(
+                "Check development versions",
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+    }
+
+    @Test
+    public void testSimulateReleaseBranchCreationUpdateBranchVersionsMapBranch() throws Exception {
+        // prepare
+        MapBranchVersionsPhase phase =
+                new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
+
+        List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.2"));
+
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setBranchCreation(true);
+        builder.setUpdateBranchVersions(true);
+        // org.apache.maven.release:maven-release-manager:(,2.4) > true
+        // org.apache.maven.release:maven-release-manager:[2.4,) > false
+        builder.setInteractive(false);
+
+        // test
         phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
@@ -2045,7 +2040,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotBranchCreation_UpdateWorkingCopyVersions_MapDevelopment() throws Exception {
+    public void testExecuteSnapshotBranchCreationUpdateWorkingCopyVersionsMapDevelopment() throws Exception {
         // prepare
         when(mockPrompter.prompt(startsWith("What is the new working copy version for"), eq("1.3-SNAPSHOT")))
                 .thenReturn("2.0-SNAPSHOT");
@@ -2066,7 +2061,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotBranchCreation_UpdateWorkingCopyVersions_MapDevelopment() throws Exception {
+    public void testSimulateSnapshotBranchCreationUpdateWorkingCopyVersionsMapDevelopment() throws Exception {
         // prepare
         when(mockPrompter.prompt(startsWith("What is the new working copy version for"), eq("1.3-SNAPSHOT")))
                 .thenReturn("2.0-SNAPSHOT");
@@ -2087,7 +2082,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteMultiModuleAutoVersionSubmodules__MapDevelopment() throws Exception {
+    public void testExecuteMultiModuleAutoVersionSubmodulesMapDevelopment() throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -2121,7 +2116,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateMultiModuleAutoVersionSubmodules__MapDevelopment() throws Exception {
+    public void testSimulateMultiModuleAutoVersionSubmodulesMapDevelopment() throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -2155,7 +2150,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotAutoVersionSubmodules_DefaultReleaseVersion_NonInteractive_MapDevelopment()
+    public void testExecuteSnapshotAutoVersionSubmodulesDefaultReleaseVersionNonInteractiveMapDevelopment()
             throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
@@ -2182,7 +2177,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotAutoVersionSubmodules_DefaultReleaseVersion_NonInteractive_MapDevelopment()
+    public void testSimulateSnapshotAutoVersionSubmodulesDefaultReleaseVersionNonInteractiveMapDevelopment()
             throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
@@ -2209,7 +2204,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteSnapshotAutoVersionSubmodules_DefaultDevelopmentVersion_NonInteractive_MapDevelopment()
+    public void testExecuteSnapshotAutoVersionSubmodulesDefaultDevelopmentVersionNonInteractiveMapDevelopment()
             throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
@@ -2236,7 +2231,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateSnapshotAutoVersionSubmodules_DefaultDevelopmentVersion_NonInteractive_MapDevelopment()
+    public void testSimulateSnapshotAutoVersionSubmodulesDefaultDevelopmentVersionNonInteractiveMapDevelopment()
             throws Exception {
         // verify
         MapDevelopmentVersionsPhase phase =
@@ -2382,7 +2377,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testUpdateBranchInvalidDefaultReleaseVersion_NonInteractive() {
+    public void testUpdateBranchInvalidDefaultReleaseVersionNonInteractive() {
         // prepare
         MapBranchVersionsPhase phase =
                 new MapBranchVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -2405,7 +2400,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testUpdateReleaseInvalidDefaultReleaseVersion_NonInteractive() {
+    public void testUpdateReleaseInvalidDefaultReleaseVersionNonInteractive() {
         // prepare
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -2427,7 +2422,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testUpdateDevelopmentInvalidDefaultDevelopmentVersion_NonInteractive() {
+    public void testUpdateDevelopmentInvalidDefaultDevelopmentVersionNonInteractive() {
         // prepare
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -2449,7 +2444,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateRelease_CheckModificationExcludes() throws Exception {
+    public void testSimulateReleaseCheckModificationExcludes() throws Exception {
         // verify
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
