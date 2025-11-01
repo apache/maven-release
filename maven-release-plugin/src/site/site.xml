@@ -18,10 +18,9 @@ KIND, either express or implied.  See the License for the
 specific language governing permissions and limitations
 under the License.
 -->
-
-<project xmlns="http://maven.apache.org/DECORATION/1.0.0"
+<site xmlns="http://maven.apache.org/SITE/2.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd"
+  xsi:schemaLocation="http://maven.apache.org/SITE/2.0.0 https://maven.apache.org/xsd/site-2.0.0.xsd"
   name="Maven Release plugin">
   <body>
     <breadcrumbs>
@@ -31,37 +30,37 @@ under the License.
       <item name="Maven Release Plugin" href="https://maven.apache.org/maven-release/maven-release-plugin/index.html" />
     </breadcrumbs>
     <menu name="Overview">
-      <item name="Introduction" href="index.html"/>
+      <item name="Introduction" href="index.html" />
       <item name="Plugin Documentation" href="plugin-info.html" collapse="true">
-        <item name="release:clean" href="clean-mojo.html"/>
-        <item name="release:prepare" href="prepare-mojo.html"/>
-        <item name="release:prepare-with-pom" href="prepare-with-pom-mojo.html"/>
-        <item name="release:rollback" href="rollback-mojo.html"/>
-        <item name="release:perform" href="perform-mojo.html"/>
-        <item name="release:stage" href="stage-mojo.html"/>
-        <item name="release:branch" href="branch-mojo.html"/>
-        <item name="release:update-versions" href="update-versions-mojo.html"/>
-        <item name="release:help" href="help-mojo.html"/>
+        <item name="release:clean" href="clean-mojo.html" />
+        <item name="release:prepare" href="prepare-mojo.html" />
+        <item name="release:prepare-with-pom" href="prepare-with-pom-mojo.html" />
+        <item name="release:rollback" href="rollback-mojo.html" />
+        <item name="release:perform" href="perform-mojo.html" />
+        <item name="release:stage" href="stage-mojo.html" />
+        <item name="release:branch" href="branch-mojo.html" />
+        <item name="release:update-versions" href="update-versions-mojo.html" />
+        <item name="release:help" href="help-mojo.html" />
       </item>
       <item name="Usage" href="usage.html" collapse="false">
-        <item name="Non-interactive Release" href="usage/non-interactive-release.html"/>
-        <item name="Prepare a Release" href="usage/prepare-release.html"/>
-        <item name="Perform a Release" href="usage/perform-release.html"/>
-        <item name="Generate Release POMs" href="usage/generate-release-poms.html"/>
-        <item name="Rollback a Release" href="usage/rollback-release.html"/>
-        <item name="Clean a Release" href="usage/clean-release.html"/>
-        <item name="Create a Branch" href="usage/branch.html"/>
-        <item name="Update POM Versions" href="usage/update-versions.html"/>
+        <item name="Non-interactive Release" href="usage/non-interactive-release.html" />
+        <item name="Prepare a Release" href="usage/prepare-release.html" />
+        <item name="Perform a Release" href="usage/perform-release.html" />
+        <item name="Generate Release POMs" href="usage/generate-release-poms.html" />
+        <item name="Rollback a Release" href="usage/rollback-release.html" />
+        <item name="Clean a Release" href="usage/clean-release.html" />
+        <item name="Create a Branch" href="usage/branch.html" />
+        <item name="Update POM Versions" href="usage/update-versions.html" />
       </item>
-      <item name="Migrate" href="migrate.html"/>
-      <item name="FAQ" href="faq.html"/>
+      <item name="Migrate" href="migrate.html" />
+      <item name="FAQ" href="faq.html" />
       <!-- According to https://issues.apache.org/jira/browse/MNGSITE-152 -->
-      <item name="License" href="http://www.apache.org/licenses/"/>
-      <item name="Download" href="../download.html"/>
+      <item name="License" href="http://www.apache.org/licenses/" />
+      <item name="Download" href="../download.html" />
     </menu>
     <menu name="Examples">
-      <item name="Run Additional Goals Before Commit" href="examples/run-goals-before-commit.html"/>
-      <item name="Lock Files During Release" href="examples/lock-files.html"/>
+      <item name="Run Additional Goals Before Commit" href="examples/run-goals-before-commit.html" />
+      <item name="Lock Files During Release" href="examples/lock-files.html" />
     </menu>
   </body>
-</project>
+</site>
