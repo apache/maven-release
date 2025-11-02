@@ -45,13 +45,14 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -66,6 +67,7 @@ import static org.mockito.Mockito.when;
 public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
     private ReleasePhase phase;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -90,9 +92,9 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
             assertEquals(
-                    "check cause",
                     NoSuchScmProviderException.class,
-                    e.getCause().getClass());
+                    e.getCause().getClass(),
+                    "check cause");
         }
 
         try {
@@ -102,9 +104,9 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
         } catch (ReleaseExecutionException e) {
             // verify
             assertEquals(
-                    "check cause",
                     NoSuchScmProviderException.class,
-                    e.getCause().getClass());
+                    e.getCause().getClass(),
+                    "check cause");
         }
     }
 
@@ -124,7 +126,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseScmRepositoryException e) {
-            assertNull("Check no additional cause", e.getCause());
+            assertNull(e.getCause(), "Check no additional cause");
         }
 
         try {
@@ -132,7 +134,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseScmRepositoryException e) {
-            assertNull("Check no additional cause", e.getCause());
+            assertNull(e.getCause(), "Check no additional cause");
         }
     }
 
@@ -156,7 +158,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", ScmException.class, e.getCause().getClass());
+            assertEquals(ScmException.class, e.getCause().getClass(), "check cause");
         }
 
         try {
@@ -164,7 +166,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", ScmException.class, e.getCause().getClass());
+            assertEquals(ScmException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -187,7 +189,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseScmCommandException e) {
-            assertNull("check no other cause", e.getCause());
+            assertNull(e.getCause(), "check no other cause");
         }
 
         try {
@@ -195,7 +197,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseScmCommandException e) {
-            assertNull("check no other cause", e.getCause());
+            assertNull(e.getCause(), "check no other cause");
         }
     }
 

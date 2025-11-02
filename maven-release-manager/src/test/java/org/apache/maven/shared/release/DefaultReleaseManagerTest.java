@@ -48,14 +48,15 @@ import org.apache.maven.shared.release.phase.ReleasePhaseStub;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.codehaus.plexus.util.FileUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -73,6 +74,7 @@ import static org.mockito.Mockito.when;
 public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
     private ReleaseDescriptorStoreStub configStore;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -108,14 +110,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step1 executed");
+        assertFalse(phase.isSimulated(), "step1 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step2 executed");
+        assertFalse(phase.isSimulated(), "step2 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step3 executed");
+        assertFalse(phase.isSimulated(), "step3 not simulated");
     }
 
     @Test
@@ -133,14 +135,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 not executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
+        assertFalse(phase.isExecuted(), "step1 not executed");
+        assertFalse(phase.isSimulated(), "step1 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step2 executed");
+        assertFalse(phase.isSimulated(), "step2 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step3 executed");
+        assertFalse(phase.isSimulated(), "step3 not simulated");
     }
 
     @Test
@@ -160,14 +162,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
+        assertFalse(phase.isExecuted(), "step1 executed");
+        assertFalse(phase.isSimulated(), "step1 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step2 executed");
+        assertFalse(phase.isSimulated(), "step2 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step3 executed");
+        assertFalse(phase.isSimulated(), "step3 not simulated");
     }
 
     @Test
@@ -185,14 +187,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 not executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
+        assertFalse(phase.isExecuted(), "step1 not executed");
+        assertFalse(phase.isSimulated(), "step1 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertFalse("step2 not executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
+        assertFalse(phase.isExecuted(), "step2 not executed");
+        assertFalse(phase.isSimulated(), "step2 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertFalse("step3 not executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertFalse(phase.isExecuted(), "step3 not executed");
+        assertFalse(phase.isSimulated(), "step3 not simulated");
     }
 
     @Test
@@ -210,14 +212,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step1 executed");
+        assertFalse(phase.isSimulated(), "step1 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step2 executed");
+        assertFalse(phase.isSimulated(), "step2 not simulated");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertTrue(phase.isExecuted(), "step3 executed");
+        assertFalse(phase.isSimulated(), "step3 not simulated");
     }
 
     @Test
@@ -237,14 +239,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 simulated", phase.isSimulated());
-        assertFalse("step1 not executed", phase.isExecuted());
+        assertTrue(phase.isSimulated(), "step1 simulated");
+        assertFalse(phase.isExecuted(), "step1 not executed");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 simulated", phase.isSimulated());
-        assertFalse("step2 not executed", phase.isExecuted());
+        assertTrue(phase.isSimulated(), "step2 simulated");
+        assertFalse(phase.isExecuted(), "step2 not executed");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 simulated", phase.isSimulated());
-        assertFalse("step3 not executed", phase.isExecuted());
+        assertTrue(phase.isSimulated(), "step3 simulated");
+        assertFalse(phase.isExecuted(), "step3 not executed");
     }
 
     @Test
@@ -264,14 +266,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 not simulated", phase.isSimulated());
-        assertFalse("step1 not executed", phase.isExecuted());
+        assertFalse(phase.isSimulated(), "step1 not simulated");
+        assertFalse(phase.isExecuted(), "step1 not executed");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 simulated", phase.isSimulated());
-        assertFalse("step2 not executed", phase.isExecuted());
+        assertTrue(phase.isSimulated(), "step2 simulated");
+        assertFalse(phase.isExecuted(), "step2 not executed");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 simulated", phase.isSimulated());
-        assertFalse("step3 not executed", phase.isExecuted());
+        assertTrue(phase.isSimulated(), "step3 simulated");
+        assertFalse(phase.isExecuted(), "step3 not executed");
     }
 
     @Test
@@ -291,14 +293,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 not simulated", phase.isSimulated());
-        assertFalse("step1 not executed", phase.isExecuted());
+        assertFalse(phase.isSimulated(), "step1 not simulated");
+        assertFalse(phase.isExecuted(), "step1 not executed");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertFalse("step2 not simulated", phase.isSimulated());
-        assertFalse("step2 not executed", phase.isExecuted());
+        assertFalse(phase.isSimulated(), "step2 not simulated");
+        assertFalse(phase.isExecuted(), "step2 not executed");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertFalse("step3 not simulated", phase.isSimulated());
-        assertFalse("step3 not executed", phase.isExecuted());
+        assertFalse(phase.isSimulated(), "step3 not simulated");
+        assertFalse(phase.isExecuted(), "step3 not executed");
     }
 
     @Test
@@ -318,17 +320,17 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         releaseManager.prepare(prepareRequest);
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 simulated", phase.isSimulated());
-        assertFalse("step1 not executed", phase.isExecuted());
+        assertTrue(phase.isSimulated(), "step1 simulated");
+        assertFalse(phase.isExecuted(), "step1 not executed");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 simulated", phase.isSimulated());
-        assertFalse("step2 not executed", phase.isExecuted());
+        assertTrue(phase.isSimulated(), "step2 simulated");
+        assertFalse(phase.isExecuted(), "step2 not executed");
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 simulated", phase.isSimulated());
-        assertFalse("step3 not executed", phase.isExecuted());
+        assertTrue(phase.isSimulated(), "step3 simulated");
+        assertFalse(phase.isExecuted(), "step3 not executed");
     }
 
-    @Ignore("This is testing messed up XML?")
+    @Disabled("This is testing messed up XML?")
     @Test
     public void testPrepareUnknownPhaseConfigured() throws Exception {
         ReleaseManager releaseManager = lookup(ReleaseManager.class, "bad-phase-configured");
@@ -375,9 +377,9 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         } catch (ReleaseExecutionException e) {
             // good
             assertEquals(
-                    "check cause",
                     ReleaseDescriptorStoreException.class,
-                    e.getCause().getClass());
+                    e.getCause().getClass(),
+                    "check cause");
         }
 
         // verify
@@ -415,9 +417,9 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         } catch (ReleaseExecutionException e) {
             // good
             assertEquals(
-                    "check cause",
                     ReleaseDescriptorStoreException.class,
-                    e.getCause().getClass());
+                    e.getCause().getClass(),
+                    "check cause");
         }
 
         // verify
@@ -446,16 +448,16 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
         // verify
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 not cleaned", phase.isCleaned());
+        assertTrue(phase.isCleaned(), "step1 not cleaned");
 
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 not cleaned", phase.isCleaned());
+        assertTrue(phase.isCleaned(), "step2 not cleaned");
 
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 not cleaned", phase.isCleaned());
+        assertTrue(phase.isCleaned(), "step3 not cleaned");
 
         phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "branch1");
-        assertTrue("branch1 not cleaned", phase.isCleaned());
+        assertTrue(phase.isCleaned(), "branch1 not cleaned");
 
         verify(configStoreMock).delete(any(ReleaseDescriptor.class));
         verifyNoMoreInteractions(configStoreMock);
@@ -521,9 +523,9 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         } catch (ReleaseExecutionException e) {
             // good
             assertEquals(
-                    "check cause",
                     ReleaseDescriptorStoreException.class,
-                    e.getCause().getClass());
+                    e.getCause().getClass(),
+                    "check cause");
         }
 
         // verify
@@ -610,7 +612,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
             fail("perform should have failed");
         } catch (ReleaseFailureException e) {
-            assertNull("check no cause", e.getCause());
+            assertNull(e.getCause(), "check no cause");
         }
     }
 
@@ -646,7 +648,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
             fail("commit should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", ScmException.class, e.getCause().getClass());
+            assertEquals(ScmException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -682,7 +684,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
             fail("commit should have failed");
         } catch (ReleaseScmCommandException e) {
-            assertNull("check no other cause", e.getCause());
+            assertNull(e.getCause(), "check no other cause");
         }
     }
 
@@ -756,7 +758,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "rollbackPhase1");
 
-        assertTrue("rollbackPhase1 executed", phase.isExecuted());
+        assertTrue(phase.isExecuted(), "rollbackPhase1 executed");
     }
 
     // MRELEASE-765
@@ -772,6 +774,6 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
         ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "updateVersionsPhase1");
 
-        assertTrue("updateVersionsPhase1 executed", phase.isExecuted());
+        assertTrue(phase.isExecuted(), "updateVersionsPhase1 executed");
     }
 }

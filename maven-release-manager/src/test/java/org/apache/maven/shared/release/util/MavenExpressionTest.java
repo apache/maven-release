@@ -22,23 +22,21 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 
-import junit.framework.TestCase;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author <a href="mailto:mikhail_kolesnikov@outlook.com">Mikhail Kolesnikov</a>
  */
-@RunWith(Parameterized.class)
-public class MavenExpressionTest extends TestCase {
+public class MavenExpressionTest {
 
-    private final String expected;
-    private final String expression;
+    private String expected;
+    private String expression;
     private final Properties properties = new Properties();
 
-    public MavenExpressionTest(String expected, String expression) {
+    public void initMavenExpressionTest(String expected, String expression) {
         this.expected = expected;
         this.expression = expression;
         properties.setProperty("revision", "12");
@@ -46,7 +44,6 @@ public class MavenExpressionTest extends TestCase {
         properties.setProperty("changelist", "56");
     }
 
-    @Parameters(name = "expected result {0} for expression {1}")
     public static Collection<Object[]> parameters() {
         return Arrays.asList(
                 new Object[] {"123456", "${revision}${sha1}${changelist}"},
@@ -54,8 +51,10 @@ public class MavenExpressionTest extends TestCase {
                 new Object[] {"12-null-56", "${revision}-${unknown}-${changelist}"});
     }
 
-    @Test
-    public void testEvaluate() {
+    @MethodSource("parameters")
+    @ParameterizedTest(name = "expected result {0} for expression {1}")
+    public void testEvaluate(String expected, String expression) {
+        initMavenExpressionTest(expected, expression);
         assertEquals(expected, MavenExpression.evaluate(expression, properties));
     }
 }

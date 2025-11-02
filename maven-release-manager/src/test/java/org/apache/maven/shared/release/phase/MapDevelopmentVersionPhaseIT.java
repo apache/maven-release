@@ -27,13 +27,15 @@ import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MapDevelopmentVersionPhaseIT extends PlexusJUnit4TestCase {
     private MapDevelopmentVersionsPhase mapDevelopmentVersionsPhase;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

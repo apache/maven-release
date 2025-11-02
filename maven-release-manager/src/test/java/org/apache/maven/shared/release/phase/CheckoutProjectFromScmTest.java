@@ -38,11 +38,12 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -54,6 +55,7 @@ import static org.mockito.Mockito.when;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -184,10 +186,10 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
 
         // verify
         assertEquals(
-                "not found root-project but "
-                        + ReleaseUtils.buildReleaseDescriptor(builder).getScmRelativePathProjectDirectory(),
                 "root-project",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmRelativePathProjectDirectory());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmRelativePathProjectDirectory(),
+                "not found root-project but "
+                        + ReleaseUtils.buildReleaseDescriptor(builder).getScmRelativePathProjectDirectory());
 
         verify(scmProviderMock)
                 .checkOut(
@@ -221,9 +223,9 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
             fail("commit should have failed");
         } catch (ReleaseExecutionException e) {
             assertEquals(
-                    "check cause",
                     NoSuchScmProviderException.class,
-                    e.getCause().getClass());
+                    e.getCause().getClass(),
+                    "check cause");
         }
     }
 
@@ -249,7 +251,7 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
 
             fail("commit should have failed");
         } catch (ReleaseScmRepositoryException e) {
-            assertNull("Check no additional cause", e.getCause());
+            assertNull(e.getCause(), "Check no additional cause");
         }
     }
 }

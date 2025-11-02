@@ -41,16 +41,15 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.transform.jdom2.JDomModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -59,19 +58,18 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-@RunWith(Parameterized.class)
 public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTestCase {
-    private final String modelETL;
+    private String modelETL;
 
-    @Parameters
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {{JDomModelETLFactory.NAME}});
     }
 
-    public AbstractRewritingReleasePhaseTestCase(String modelETL) {
+    public void initAbstractRewritingReleasePhaseTestCase(String modelETL) {
         this.modelETL = modelETL;
     }
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -85,8 +83,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
 
     protected abstract String getRoleHint();
 
-    @Test
-    public void testRewriteBasicPom() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteBasicPom(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom");
         mapNextVersion(builder, "groupId:artifactId");
@@ -96,8 +96,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteBasicPomEntities() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteBasicPomEntities(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom-entities");
         ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom-entities");
         mapNextVersion(builder, "groupId:artifactId");
@@ -107,8 +109,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteBasicPomNamespace() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteBasicPomNamespace(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom-namespace");
         ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom-namespace");
         mapNextVersion(builder, "groupId:artifactId");
@@ -118,8 +122,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteBasicPomWithEncoding() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteBasicPomWithEncoding(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom-with-encoding");
         ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom-with-encoding");
         mapNextVersion(builder, "groupId:artifactId");
@@ -129,8 +135,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewritePomWithParent() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomWithParent(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-parent");
         ReleaseDescriptorBuilder builder =
                 createConfigurationForPomWithParentAlternateNextVersion(reactorProjects, "pom-with-parent");
@@ -140,8 +148,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewritePomWithUnmappedParent() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomWithUnmappedParent(String modelETL) throws Exception {
+
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
 
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-parent");
         ReleaseDescriptorBuilder builder = createDescriptorFromProjects(reactorProjects, "pom-with-parent");
@@ -162,8 +173,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    public void testRewritePomWithReleasedParent() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomWithReleasedParent(String modelETL) throws Exception {
+
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
 
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-released-parent");
         ReleaseDescriptorBuilder builder = createDescriptorFromProjects(reactorProjects, "pom-with-released-parent");
@@ -179,8 +193,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
 
     protected abstract void mapAlternateNextVersion(ReleaseDescriptorBuilder config, String projectId);
 
-    @Test
-    public void testRewritePomWithInheritedVersion() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomWithInheritedVersion(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-inherited-version");
         ReleaseDescriptorBuilder builder =
                 createConfigurationForWithParentNextVersion(reactorProjects, "pom-with-inherited-version");
@@ -190,8 +206,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewritePomWithChangedInheritedVersion() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomWithChangedInheritedVersion(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-inherited-version");
         ReleaseDescriptorBuilder builder =
                 createConfigurationForPomWithParentAlternateNextVersion(reactorProjects, "pom-with-inherited-version");
@@ -205,8 +223,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
     protected abstract ReleaseDescriptorBuilder createConfigurationForPomWithParentAlternateNextVersion(
             List<MavenProject> reactorProjects, String workingDirectory) throws Exception;
 
-    @Test
-    public void testRewritePomDependencies() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomDependencies(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-snapshot-dependencies");
         ReleaseDescriptorBuilder builder =
                 createDefaultConfiguration(reactorProjects, "internal-snapshot-dependencies");
@@ -217,8 +237,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewritePomUnmappedDependencies() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomUnmappedDependencies(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-snapshot-dependencies");
         ReleaseDescriptorBuilder builder =
                 createUnmappedConfiguration(reactorProjects, "internal-snapshot-dependencies");
@@ -233,8 +255,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    public void testRewritePomDependenciesDifferentVersion() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomDependenciesDifferentVersion(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-differing-snapshot-dependencies");
         ReleaseDescriptorBuilder builder =
                 createDifferingVersionConfiguration(reactorProjects, "internal-differing-snapshot-dependencies");
@@ -244,8 +268,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteManagedPomDependencies() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteManagedPomDependencies(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-managed-snapshot-dependency");
         ReleaseDescriptorBuilder builder =
                 createMappedConfiguration(reactorProjects, "internal-managed-snapshot-dependency");
@@ -255,8 +281,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteManagedPomUnmappedDependencies() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteManagedPomUnmappedDependencies(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-managed-snapshot-dependency");
         ReleaseDescriptorBuilder builder =
                 createUnmappedConfiguration(reactorProjects, "internal-managed-snapshot-dependency");
@@ -271,8 +299,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    public void testRewritePomPlugins() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomPlugins(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-snapshot-plugins");
         ReleaseDescriptorBuilder builder = createDefaultConfiguration(reactorProjects, "internal-snapshot-plugins");
 
@@ -281,8 +311,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewritePomUnmappedPlugins() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomUnmappedPlugins(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-snapshot-plugins");
         ReleaseDescriptorBuilder builder = createUnmappedConfiguration(reactorProjects, "internal-snapshot-plugins");
 
@@ -296,8 +328,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    public void testRewritePomPluginsDifferentVersion() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomPluginsDifferentVersion(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-differing-snapshot-plugins");
         ReleaseDescriptorBuilder builder =
                 createDifferingVersionConfiguration(reactorProjects, "internal-differing-snapshot-plugins");
@@ -307,8 +341,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteManagedPomPlugins() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteManagedPomPlugins(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-managed-snapshot-plugin");
         ReleaseDescriptorBuilder builder =
                 createMappedConfiguration(reactorProjects, "internal-managed-snapshot-plugin");
@@ -318,8 +354,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteManagedPomUnmappedPlugins() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteManagedPomUnmappedPlugins(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-managed-snapshot-plugin");
         ReleaseDescriptorBuilder builder =
                 createUnmappedConfiguration(reactorProjects, "internal-managed-snapshot-plugin");
@@ -334,8 +372,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    public void testRewritePomReportPlugins() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomReportPlugins(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-snapshot-report-plugins");
         ReleaseDescriptorBuilder builder =
                 createDefaultConfiguration(reactorProjects, "internal-snapshot-report-plugins");
@@ -345,8 +385,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewritePomUnmappedReportPlugins() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomUnmappedReportPlugins(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-snapshot-report-plugins");
         ReleaseDescriptorBuilder builder =
                 createUnmappedConfiguration(reactorProjects, "internal-snapshot-report-plugins");
@@ -361,8 +403,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    public void testRewritePomReportPluginsDifferentVersion() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomReportPluginsDifferentVersion(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-differing-snapshot-report-plugins");
         ReleaseDescriptorBuilder builder =
                 createDifferingVersionConfiguration(reactorProjects, "internal-differing-snapshot-report-plugins");
@@ -372,9 +416,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    @Ignore("Extensions being part of reactor is not supported anymore")
-    public void testRewritePomExtension() throws Exception {
+    @ParameterizedTest
+    @Disabled("Extensions being part of reactor is not supported anymore")
+    @MethodSource("data")
+    public void testRewritePomExtension(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-snapshot-extension");
         ReleaseDescriptorBuilder builder = createDefaultConfiguration(reactorProjects, "internal-snapshot-extension");
 
@@ -383,9 +429,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    @Ignore("Extensions being part of reactor is not supported anymore")
-    public void testRewritePomUnmappedExtension() throws Exception {
+    @ParameterizedTest
+    @Disabled("Extensions being part of reactor is not supported anymore")
+    @MethodSource("data")
+    public void testRewritePomUnmappedExtension(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-snapshot-extension");
         ReleaseDescriptorBuilder builder = createUnmappedConfiguration(reactorProjects, "internal-snapshot-extension");
 
@@ -399,9 +447,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    @Ignore("Extensions being part of reactor is not supported anymore")
-    public void testRewritePomExtensionDifferentVersion() throws Exception {
+    @ParameterizedTest
+    @Disabled("Extensions being part of reactor is not supported anymore")
+    @MethodSource("data")
+    public void testRewritePomExtensionDifferentVersion(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("internal-differing-snapshot-extension");
         ReleaseDescriptorBuilder builder =
                 createDifferingVersionConfiguration(reactorProjects, "internal-differing-snapshot-extension");
@@ -411,9 +461,11 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    @Ignore("Extensions being part of reactor is not supported anymore")
-    public void testRewritePomExtensionUndefinedVersion() throws Exception {
+    @ParameterizedTest
+    @Disabled("Extensions being part of reactor is not supported anymore")
+    @MethodSource("data")
+    public void testRewritePomExtensionUndefinedVersion(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("pom-without-extension-version");
         ReleaseDescriptorBuilder builder = createDefaultConfiguration(reactorProjects, "pom-without-extension-version");
 
@@ -422,8 +474,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteAddSchema() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteAddSchema(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         boolean copyFiles = true;
 
         // Run a second time to check they are not duplicated
@@ -445,8 +499,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    public void testSimulateRewriteEditModeSkipped() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testSimulateRewriteEditModeSkipped(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom");
@@ -468,8 +524,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         verifyNoMoreInteractions(scmProviderMock);
     }
 
-    @Test
-    public void testRewriteUnmappedPom() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteUnmappedPom(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom");
 
@@ -483,8 +541,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         }
     }
 
-    @Test
-    public void testRewriteBasicPomWithScmRepoException() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteBasicPomWithScmRepoException(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom");
@@ -503,12 +563,14 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
 
             fail("Should have thrown an exception");
         } catch (ReleaseScmRepositoryException e) {
-            assertNull("Check no additional cause", e.getCause());
+            assertNull(e.getCause(), "Check no additional cause");
         }
     }
 
-    @Test
-    public void testRewriteBasicPomWithNoSuchProviderException() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteBasicPomWithNoSuchProviderException(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom");
@@ -530,14 +592,16 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         } catch (ReleaseExecutionException e) {
             // verify
             assertEquals(
-                    "Check cause",
                     NoSuchScmProviderException.class,
-                    e.getCause().getClass());
+                    e.getCause().getClass(),
+                    "Check cause");
         }
     }
 
-    @Test
-    public void testRewriteWhitespaceAroundValues() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteWhitespaceAroundValues(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("whitespace-around-values");
         ReleaseDescriptorBuilder builder =
                 createConfigurationForPomWithParentAlternateNextVersion(reactorProjects, "whitespace-around-values");
@@ -548,8 +612,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteCommentsAroundValues() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteCommentsAroundValues(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("comments-around-values");
         ReleaseDescriptorBuilder builder =
                 createConfigurationForPomWithParentAlternateNextVersion(reactorProjects, "comments-around-values");
@@ -560,8 +626,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testRewriteCDataAroundValues() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewriteCDataAroundValues(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("cdata-around-values");
         ReleaseDescriptorBuilder builder =
                 createConfigurationForPomWithParentAlternateNextVersion(reactorProjects, "cdata-around-values");
@@ -572,8 +640,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
         assertTrue(comparePomFiles(reactorProjects));
     }
 
-    @Test
-    public void testCleanNoProjects() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testCleanNoProjects(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         // This occurs when it is release:perform run standalone. Just check there are no errors.
         ((ResourceGenerator) phase).clean(Collections.<MavenProject>emptyList());
     }
@@ -632,8 +702,10 @@ public abstract class AbstractRewritingReleasePhaseTestCase extends AbstractRele
 
     protected abstract String readTestProjectFile(String fileName) throws IOException;
 
-    @Test
-    public void testRewritePomDependenciesWithNamespace() throws Exception {
+    @MethodSource("data")
+    @ParameterizedTest
+    public void testRewritePomDependenciesWithNamespace(String modelETL) throws Exception {
+        initAbstractRewritingReleasePhaseTestCase(modelETL);
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-namespace");
         ReleaseDescriptorBuilder builder = createDefaultConfiguration(reactorProjects, "pom-with-namespace");
 

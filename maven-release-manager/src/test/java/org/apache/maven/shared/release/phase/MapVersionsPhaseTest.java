@@ -39,15 +39,17 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.hamcrest.CoreMatchers;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.startsWith;
@@ -62,6 +64,7 @@ import static org.mockito.Mockito.when;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
+    private AutoCloseable mocks;
     @Mock
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
@@ -70,17 +73,20 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
     private Map<String, VersionPolicy> versionPolicies;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        MockitoAnnotations.initMocks(this);
+        mocks = MockitoAnnotations.openMocks(this);
         versionPolicies = lookupMap(VersionPolicy.class);
     }
 
+    @AfterEach
     @Override
     public void tearDown() throws Exception {
         super.tearDown();
         verifyNoMoreInteractions(mockPrompter);
+        mocks.close();
     }
 
     @Test
@@ -88,7 +94,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // prepare
         MavenProject project = createProject("artifactId", "1.0-SNAPSHOT");
         when(mockPrompter.prompt(
-                        startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0")))
+                startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0")))
                 .thenReturn("2.0");
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -102,9 +108,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         verify(mockPrompter)
                 .prompt(startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0"));
@@ -115,7 +121,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // prepare
         MavenProject project = createProject("artifactId", "1.0-SNAPSHOT");
         when(mockPrompter.prompt(
-                        startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0")))
+                startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0")))
                 .thenReturn("2.0");
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -129,9 +135,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
         verify(mockPrompter)
                 .prompt(startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0"));
     }
@@ -142,7 +148,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // prepare
         MavenProject project = createProject("artifactId", "1.0-SNAPSHOT");
         when(mockPrompter.prompt(
-                        startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0")))
+                startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0")))
                 .thenReturn("1.0.0");
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -156,9 +162,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.0.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -168,9 +174,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.0.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
         verify(mockPrompter, times(2))
                 .prompt(startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0"));
     }
@@ -183,7 +189,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // prepare
         MavenProject project = createProject("artifactId", "SNAPSHOT");
         when(mockPrompter.prompt(
-                        startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0")))
+                startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0")))
                 .thenReturn("2.0");
         MapReleaseVersionsPhase phase =
                 new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -197,9 +203,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -209,9 +215,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         verify(mockPrompter, times(2))
                 .prompt(startsWith("What is the release version for \"" + project.getName() + "\"?"), eq("1.0"));
@@ -236,9 +242,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -249,9 +255,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
     }
 
     /**
@@ -281,26 +287,26 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:rootArtifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:rootArtifactId"),
+                "Check mapped versions");
         assertEquals(
-                "Check mapped versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // execute
         phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:rootArtifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:rootArtifactId"),
+                "Check mapped versions");
         assertEquals(
-                "Check mapped versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
     }
 
     /**
@@ -331,26 +337,26 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:rootArtifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:rootArtifactId"),
+                "Check mapped versions");
         assertEquals(
-                "Check mapped versions",
                 "2.0-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // execute
         phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:rootArtifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:rootArtifactId"),
+                "Check mapped versions");
         assertEquals(
-                "Check mapped versions",
                 "2.0-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
     }
 
     @Test
@@ -369,9 +375,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
     }
 
     @Test
@@ -390,9 +396,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check mapped versions");
     }
 
     @Test
@@ -400,8 +406,8 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // prepare
         MavenProject project = createProject("artifactId", "1.0");
         when(mockPrompter.prompt(
-                        startsWith("What is the new development version for \"" + project.getName() + "\"?"),
-                        eq("1.1-SNAPSHOT")))
+                startsWith("What is the new development version for \"" + project.getName() + "\"?"),
+                eq("1.1-SNAPSHOT")))
                 .thenReturn("2.0-SNAPSHOT");
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -415,9 +421,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -427,9 +433,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         verify(mockPrompter, times(2))
                 .prompt(
@@ -457,9 +463,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -470,9 +476,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
     }
 
     @Test
@@ -491,9 +497,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -504,9 +510,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
     }
 
     /**
@@ -528,9 +534,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -542,9 +548,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
     }
 
     @Test
@@ -565,7 +571,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", PrompterException.class, e.getCause().getClass());
+            assertEquals(PrompterException.class, e.getCause().getClass(), "check cause");
         }
 
         // prepare
@@ -578,7 +584,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", PrompterException.class, e.getCause().getClass());
+            assertEquals(PrompterException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -591,8 +597,8 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         MavenProject project = createProject("artifactId", "foo");
 
         when(mockPrompter.prompt(
-                        startsWith("What is the new development version for \"" + project.getName() + "\"?"),
-                        eq("1.1-SNAPSHOT")))
+                startsWith("What is the new development version for \"" + project.getName() + "\"?"),
+                eq("1.1-SNAPSHOT")))
                 .thenReturn("2.0-SNAPSHOT");
         MapDevelopmentVersionsPhase phase =
                 new MapDevelopmentVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
@@ -606,9 +612,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -618,9 +624,9 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check mapped versions",
                 "2.0-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check mapped versions");
 
         verify(mockPrompter, times(2))
                 .prompt(
@@ -645,7 +651,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
             assertEquals(
-                    "check cause", VersionParseException.class, e.getCause().getClass());
+                    VersionParseException.class, e.getCause().getClass(), "check cause");
         }
 
         builder = new ReleaseDescriptorBuilder();
@@ -658,7 +664,7 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
             assertEquals(
-                    "check cause", VersionParseException.class, e.getCause().getClass());
+                    VersionParseException.class, e.getCause().getClass(), "check cause");
         }
     }
 
@@ -679,12 +685,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -704,12 +710,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -731,12 +737,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -758,12 +764,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -783,12 +789,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -808,12 +814,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -832,12 +838,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -856,12 +862,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -881,12 +887,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -906,12 +912,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.1.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -930,12 +936,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -954,12 +960,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -979,12 +985,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -1004,12 +1010,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -1029,12 +1035,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -1054,12 +1060,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -1079,12 +1085,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1104,12 +1110,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1129,12 +1135,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1154,12 +1160,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1180,12 +1186,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -1206,12 +1212,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -1232,12 +1238,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -1258,12 +1264,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -1284,12 +1290,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1310,12 +1316,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1341,12 +1347,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
          * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
          */
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1372,12 +1378,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
          * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
          */
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1401,12 +1407,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         assertEquals(
-                "Check release versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1430,12 +1436,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // org.apache.maven.release:maven-release-manager:(,2.4) > 1.2-SNAPSHOT
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         assertEquals(
-                "Check release versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1458,12 +1464,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "2.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1486,12 +1492,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "2.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1512,12 +1518,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "2.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1539,12 +1545,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "2.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1626,12 +1632,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         verify(mockPrompter).prompt(startsWith("What is the branch version for"), eq("1.3-SNAPSHOT"));
         assertEquals(
-                "Check release versions",
                 "2.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1661,12 +1667,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
         // org.apache.maven.release:maven-release-manager:[2.4,) > 1.3-SNAPSHOT
         verify(mockPrompter).prompt(startsWith("What is the branch version for"), eq("1.3-SNAPSHOT"));
         assertEquals(
-                "Check release versions",
                 "2.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1746,12 +1752,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
          * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
          */
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1775,12 +1781,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
          * '1.2' instead of '1.3-SNAPSHOT' until further investigation.
          */
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1800,12 +1806,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1825,12 +1831,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1850,12 +1856,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1877,12 +1883,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1901,12 +1907,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1925,12 +1931,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1950,12 +1956,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.2-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -1975,12 +1981,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertEquals(
-                "Check development versions",
                 "1.2-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -2003,12 +2009,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -2031,12 +2037,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
     }
 
     @Test
@@ -2100,19 +2106,19 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertEquals(
-                "Check development versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:module1"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:module1"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:module1"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:module1"),
+                "Check release versions");
     }
 
     @Test
@@ -2134,19 +2140,19 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "1.3-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertEquals(
-                "Check development versions",
                 "2.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:module1"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:module1"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:module1"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:module1"),
+                "Check release versions");
     }
 
     @Test
@@ -2168,12 +2174,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "3.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -2195,12 +2201,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "3.1-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -2222,12 +2228,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "3.0-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     @Test
@@ -2249,12 +2255,12 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "3.0-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     // MRELEASE-511
@@ -2280,13 +2286,13 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check development versions",
                 "MYB_200909-SNAPSHOT",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
         assertEquals(
-                "Check release versions",
                 "PPX",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
     }
 
     // MRELEASE-269
@@ -2469,27 +2475,27 @@ public class MapVersionsPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check release versions",
                 "1.2",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:artifactId"),
+                "Check development versions");
 
         assertEquals(
-                "Check release versions",
                 "1.11",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:bar"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:bar"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:bar"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:bar"),
+                "Check development versions");
 
         assertNull(
-                "Check release versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:subproject1"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:subproject1"),
+                "Check release versions");
         assertNull(
-                "Check development versions",
-                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:subproject1"));
+                ReleaseUtils.buildReleaseDescriptor(builder).getProjectDevelopmentVersion("groupId:subproject1"),
+                "Check development versions");
     }
 
     private static MavenProject createProject(String artifactId, String version) {

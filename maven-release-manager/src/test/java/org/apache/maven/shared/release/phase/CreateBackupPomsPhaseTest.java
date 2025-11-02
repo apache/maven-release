@@ -25,10 +25,10 @@ import java.util.List;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Edwin Punzalan
@@ -100,15 +100,15 @@ public class CreateBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
             File backupFile = new File(pomFile.getAbsolutePath() + releaseBackupSuffix);
 
             if (created) {
-                assertTrue("Check if backup file was created.", backupFile.exists());
+                assertTrue(backupFile.exists(), "Check if backup file was created.");
 
                 String pomContents = ReleaseUtil.readXmlFile(pomFile);
 
                 String backupContents = ReleaseUtil.readXmlFile(backupFile);
 
-                assertTrue("Check if pom and backup files are identical", pomContents.equals(backupContents));
+                assertTrue(pomContents.equals(backupContents), "Check if pom and backup files are identical");
             } else {
-                assertFalse("Check if backup file is not present", backupFile.exists());
+                assertFalse(backupFile.exists(), "Check if backup file is not present");
             }
         }
     }

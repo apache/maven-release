@@ -37,10 +37,10 @@ import org.codehaus.plexus.PlexusContainerException;
 import org.codehaus.plexus.configuration.PlexusConfiguration;
 import org.codehaus.plexus.context.Context;
 import org.codehaus.plexus.context.DefaultContext;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Based on PlexusTestCase from org.sonatype.sisu:sisu-inject-plexus
@@ -52,7 +52,7 @@ public abstract class PlexusJUnit4TestCase {
 
     private static String basedir;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         basedir = getBasedir();
     }
@@ -137,7 +137,7 @@ public abstract class PlexusJUnit4TestCase {
         return null;
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (container != null) {
             container.dispose();

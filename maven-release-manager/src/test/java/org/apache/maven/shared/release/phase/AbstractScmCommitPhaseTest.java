@@ -25,10 +25,10 @@ import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractScmCommitPhaseTest {
     @Test
@@ -36,7 +36,7 @@ public class AbstractScmCommitPhaseTest {
         List<File> files = AbstractScmCommitPhase.createPomFiles(
                 ReleaseUtils.buildReleaseDescriptor(new ReleaseDescriptorBuilder()),
                 createProject("artifactId", "1.0-SNAPSHOT", new File("pom.xml")));
-        assertEquals("Number of created files", files.size(), 1);
+        assertEquals(files.size(), 1, "Number of created files");
         assertTrue(files.contains(new File("pom.xml")));
     }
 
@@ -47,7 +47,7 @@ public class AbstractScmCommitPhaseTest {
         List<File> files = AbstractScmCommitPhase.createPomFiles(
                 ReleaseUtils.buildReleaseDescriptor(builder),
                 createProject("artifactId", "1.0-SNAPSHOT", new File("pom.xml")));
-        assertEquals("Number of created files", files.size(), 1);
+        assertEquals(files.size(), 1, "Number of created files");
         assertTrue(files.contains(new File("pom.xml")));
     }
 
@@ -58,7 +58,7 @@ public class AbstractScmCommitPhaseTest {
         List<File> files = AbstractScmCommitPhase.createPomFiles(
                 ReleaseUtils.buildReleaseDescriptor(builder),
                 createProject("artifactId", "1.0-SNAPSHOT", new File("pom.xml")));
-        assertEquals("Number of created files", files.size(), 2);
+        assertEquals(files.size(), 2, "Number of created files");
         assertTrue(files.contains(new File("pom.xml")));
         assertTrue(files.contains(new File("release-pom.xml")));
     }
@@ -71,7 +71,7 @@ public class AbstractScmCommitPhaseTest {
         List<File> files = AbstractScmCommitPhase.createPomFiles(
                 ReleaseUtils.buildReleaseDescriptor(builder),
                 createProject("artifactId", "1.0-SNAPSHOT", new File("pom.xml")));
-        assertEquals("Number of created files", files.size(), 1);
+        assertEquals(files.size(), 1, "Number of created files");
         assertTrue(files.contains(new File("pom.xml")));
     }
 

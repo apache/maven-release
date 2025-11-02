@@ -25,9 +25,10 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the the end release phase. Nothing to see here really, but we want to make sure it is configured.
@@ -37,6 +38,7 @@ import static org.junit.Assert.assertEquals;
 public class EndReleasePhaseTest extends PlexusJUnit4TestCase {
     private ReleasePhase phase;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

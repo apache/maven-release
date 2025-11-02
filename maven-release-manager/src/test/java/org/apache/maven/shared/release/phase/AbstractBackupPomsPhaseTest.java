@@ -30,6 +30,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * @author Edwin Punzalan
@@ -41,6 +42,7 @@ public abstract class AbstractBackupPomsPhaseTest extends PlexusJUnit4TestCase {
 
     protected ReleasePhase phase;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();

@@ -60,6 +60,7 @@ import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.WorkspaceReader;
 import org.eclipse.aether.repository.WorkspaceRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -69,7 +70,7 @@ import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.ElementSelectors;
 
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Base class for some release tests.
@@ -85,6 +86,7 @@ public abstract class AbstractReleaseTestCase extends PlexusJUnit4TestCase {
 
     protected ReleasePhase phase;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -314,7 +316,7 @@ public abstract class AbstractReleaseTestCase extends PlexusJUnit4TestCase {
 
         sb.append(diff.toString());
 
-        assertFalse(sb.toString(), diff.hasDifferences());
+        assertFalse(diff.hasDifferences(), sb.toString());
     }
 
     private String getRemoteRepositoryURL() throws IOException {

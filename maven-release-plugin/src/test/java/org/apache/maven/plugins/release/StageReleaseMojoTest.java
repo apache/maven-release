@@ -27,8 +27,12 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -41,6 +45,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 public class StageReleaseMojoTest extends AbstractMojoTestCase {
     private File workingDirectory;
 
+    @Test
     public void testStage() throws Exception {
         StageReleaseMojo mojo = getMojoWithProjectSite("stage.xml");
 
@@ -72,6 +77,7 @@ public class StageReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testCreateGoals() throws Exception {
         StageReleaseMojo mojo = getMojoWithProjectSite("stage.xml");
         mojo.createGoals();
@@ -81,6 +87,7 @@ public class StageReleaseMojoTest extends AbstractMojoTestCase {
         assertEquals("deploy site:stage-deploy", mojo.goals);
     }
 
+    @Test
     public void testCreateArguments() throws Exception {
         StageReleaseMojo mojo = getMojoWithProjectSite("stage.xml");
         mojo.setDeploymentRepository();
@@ -104,7 +111,8 @@ public class StageReleaseMojoTest extends AbstractMojoTestCase {
         return mojo;
     }
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         super.setUp();
         workingDirectory = getTestFile("target/test-classes/mojos/stage");
     }

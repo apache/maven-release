@@ -40,11 +40,12 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -56,6 +57,7 @@ import static org.mockito.Mockito.when;
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
 public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -163,7 +165,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
 
         try (BufferedReader reader = new BufferedReader(new StringReader(result.getOutput()))) {
             assertEquals("[INFO] Removing release POM for 'artifactId'...", reader.readLine());
-            assertEquals("Expected EOF", null, reader.readLine());
+            assertEquals(null, reader.readLine(), "Expected EOF");
         }
 
         // never invoke scmProviderMock
@@ -193,7 +195,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
                     "[INFO] Full run would be removing ["
                             + reactorProjects.get(0).getFile().getParent() + File.separator + "release-pom.xml]",
                     reader.readLine());
-            assertEquals("Expected EOF", null, reader.readLine());
+            assertEquals(null, reader.readLine(), "Expected EOF");
         }
 
         // never invoke scmProviderMock

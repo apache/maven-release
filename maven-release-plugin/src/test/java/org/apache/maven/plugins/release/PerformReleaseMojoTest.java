@@ -35,9 +35,14 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import static org.mockito.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -51,6 +56,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 public class PerformReleaseMojoTest extends AbstractMojoTestCase {
     private File workingDirectory;
 
+    @Test
     public void testPerform() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
 
@@ -76,6 +82,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testPerformWithFlatStructure() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-flat-structure.xml");
 
@@ -102,6 +109,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testPerformWithoutSite() throws Exception {
         File testFileDirectory = getTestFile("target/test-classes/mojos/perform/");
         PerformReleaseMojo mojo =
@@ -149,6 +157,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         return mojo;
     }
 
+    @Test
     public void testPerformWithExecutionException() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
 
@@ -169,7 +178,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
             fail("Should have thrown an exception");
         } catch (MojoExecutionException e) {
             assertEquals(
-                    "Check cause", ReleaseExecutionException.class, e.getCause().getClass());
+                    ReleaseExecutionException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify
@@ -183,6 +192,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testPerformWithExecutionFailure() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
 
@@ -204,7 +214,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
 
             fail("Should have thrown an exception");
         } catch (MojoFailureException e) {
-            assertEquals("Check cause exists", cause, e.getCause());
+            assertEquals(cause, e.getCause(), "Check cause exists");
         }
 
         // verify
@@ -218,6 +228,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testPerformWithScm() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-scm.xml");
 
@@ -245,6 +256,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testPerformWithProfiles() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
 
@@ -281,6 +293,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testPerformWithProfilesAndArguments() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-args.xml");
 
@@ -317,6 +330,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testPerformWithMultilineGoals() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-multiline-goals.xml");
 
@@ -356,7 +370,8 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         return builder;
     }
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         super.setUp();
         workingDirectory = getTestFile("target/test-classes/mojos/perform");
     }

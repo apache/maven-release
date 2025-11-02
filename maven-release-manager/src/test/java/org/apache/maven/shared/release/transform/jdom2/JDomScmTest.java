@@ -22,32 +22,37 @@ import java.io.StringReader;
 
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JDomScmTest {
     private SAXBuilder builder = new SAXBuilder();
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetConnection() {
-        new JDomScm(null).getConnection();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomScm(null).getConnection());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetDeveloperConnection() {
-        new JDomScm(null).getDeveloperConnection();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomScm(null).getDeveloperConnection());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetTag() {
-        new JDomScm(null).getTag();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomScm(null).getTag());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetUrl() {
-        new JDomScm(null).getUrl();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomScm(null).getUrl());
     }
 
     @Test

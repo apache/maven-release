@@ -22,27 +22,31 @@ import java.io.StringReader;
 
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JDomDependencyTest {
     private SAXBuilder builder = new SAXBuilder();
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testIsOptional() {
-        new JDomDependency(null).isOptional();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).isOptional());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetOptional() {
-        new JDomDependency(null).setOptional(true);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).setOptional(true));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testAddExclusion() {
-        new JDomDependency(null).addExclusion(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).addExclusion(null));
     }
 
     @Test
@@ -56,14 +60,16 @@ public class JDomDependencyTest {
         assertEquals("ARTIFACTID", new JDomDependency(dependencyElm).getArtifactId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetClassifier() {
-        new JDomDependency(null).getClassifier();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).getClassifier());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetExclusions() {
-        new JDomDependency(null).getExclusions();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).getExclusions());
     }
 
     @Test
@@ -77,19 +83,22 @@ public class JDomDependencyTest {
         assertEquals("GROUPID", new JDomDependency(dependencyElm).getGroupId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetScope() {
-        new JDomDependency(null).getScope();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).getScope());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetSystemPath() {
-        new JDomDependency(null).getSystemPath();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).getSystemPath());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetType() {
-        new JDomDependency(null).getType();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).getType());
     }
 
     @Test
@@ -103,44 +112,52 @@ public class JDomDependencyTest {
         assertEquals("VERSION", new JDomDependency(dependencyElm).getVersion());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemoveExclusion() {
-        new JDomDependency(null).removeExclusion(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).removeExclusion(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetArtifactIdString() {
-        new JDomDependency(null).setArtifactId(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).setArtifactId(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetClassifierString() {
-        new JDomDependency(null).setClassifier(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).setClassifier(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetExclusions() {
-        new JDomDependency(null).setExclusions(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).setExclusions(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetGroupIdString() {
-        new JDomDependency(null).setGroupId(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).setGroupId(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetScopeString() {
-        new JDomDependency(null).setScope(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).setScope(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetSystemPathString() {
-        new JDomDependency(null).setSystemPath(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).setSystemPath(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetTypeString() {
-        new JDomDependency(null).setType(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependency(null).setType(null));
     }
 
     @Test

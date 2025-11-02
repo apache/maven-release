@@ -21,20 +21,20 @@ package org.apache.maven.shared.release.versions;
 import java.util.Properties;
 
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DefaultVersionInfoTest {
     private String mavenVersion;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         Properties pomProperties = new Properties();
         pomProperties.load(DefaultArtifactVersion.class.getResourceAsStream(
@@ -326,9 +326,9 @@ public class DefaultVersionInfoTest {
             assertEquals(0, lesserV.compareTo(greaterV));
             assertEquals(lesserV, greaterV);
         } else if (comparison < 0) {
-            assertTrue("Expected less but was " + lesserV.compareTo(greaterV), lesserV.compareTo(greaterV) < 0);
+            assertTrue(lesserV.compareTo(greaterV) < 0, "Expected less but was " + lesserV.compareTo(greaterV));
         } else if (comparison > 0) {
-            assertTrue("Expected more but was " + lesserV.compareTo(greaterV), lesserV.compareTo(greaterV) > 0);
+            assertTrue(lesserV.compareTo(greaterV) > 0, "Expected more but was " + lesserV.compareTo(greaterV));
         }
     }
 }

@@ -33,14 +33,15 @@ import org.apache.maven.shared.release.policy.naming.NamingPolicy;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -59,6 +60,7 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
     private Map<String, NamingPolicy> namingPolicies;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -85,9 +87,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -99,9 +101,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         verify(mockPrompter, times(2)).prompt(isA(String.class), eq("artifactId-1.0"));
         verifyNoMoreInteractions(mockPrompter);
@@ -122,7 +124,7 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertNull("check no cause", e.getCause());
+            assertNull(e.getCause(), "check no cause");
         }
 
         builder = new ReleaseDescriptorBuilder();
@@ -133,7 +135,7 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertNull("check no cause", e.getCause());
+            assertNull(e.getCause(), "check no cause");
         }
     }
 
@@ -155,9 +157,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "artifactId-1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -170,9 +172,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "artifactId-1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);
@@ -195,9 +197,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -209,9 +211,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);
@@ -233,9 +235,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -246,9 +248,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);
@@ -274,7 +276,7 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", PrompterException.class, e.getCause().getClass());
+            assertEquals(PrompterException.class, e.getCause().getClass(), "check cause");
         }
 
         // prepare
@@ -289,7 +291,7 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", PrompterException.class, e.getCause().getClass());
+            assertEquals(PrompterException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -316,9 +318,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "artifactId-1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -331,9 +333,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "artifactId-1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);
@@ -357,9 +359,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "artifactId-1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -373,9 +375,9 @@ public class InputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-artifactId-1.0",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);

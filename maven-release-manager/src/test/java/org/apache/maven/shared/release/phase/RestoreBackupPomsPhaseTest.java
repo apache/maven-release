@@ -27,9 +27,9 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.util.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Edwin Punzalan
@@ -86,13 +86,13 @@ public class RestoreBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
 
             File expectedFile = new File(pomFile.getParentFile(), expectedPomFilename);
 
-            assertTrue("Check if expected file exists.", expectedFile.exists());
+            assertTrue(expectedFile.exists(), "Check if expected file exists.");
 
             String pomContents = ReleaseUtil.readXmlFile(pomFile);
 
             String expectedContents = ReleaseUtil.readXmlFile(expectedFile);
 
-            assertTrue("Check if pom and backup files are identical", pomContents.equals(expectedContents));
+            assertTrue(pomContents.equals(expectedContents), "Check if pom and backup files are identical");
         }
     }
 }

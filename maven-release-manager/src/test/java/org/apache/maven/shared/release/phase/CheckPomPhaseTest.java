@@ -30,11 +30,12 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test the POM verification check phase.
@@ -44,6 +45,7 @@ import static org.junit.Assert.fail;
 public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
     private ReleasePhase phase;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -88,9 +90,9 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
                 Collections.singletonList(project));
 
         assertEquals(
-                "Check URL",
                 "scm:svn:file://localhost/tmp/repo",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl(),
+                "Check URL");
     }
 
     @Test
@@ -106,9 +108,9 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
                 Collections.singletonList(project));
 
         assertEquals(
-                "Check URL",
                 "scm:svn:file://localhost/tmp/repo",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl(),
+                "Check URL");
     }
 
     @Test
@@ -124,9 +126,9 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
                 Collections.singletonList(project));
 
         assertEquals(
-                "Check URL",
                 "scm:svn:https://localhost/tmp/repo",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl(),
+                "Check URL");
     }
 
     @Test
@@ -142,9 +144,9 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
                 Collections.singletonList(project));
 
         assertEquals(
-                "Check URL",
                 "scm:svn:https://localhost/tmp/repo",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl(),
+                "Check URL");
     }
 
     @Test

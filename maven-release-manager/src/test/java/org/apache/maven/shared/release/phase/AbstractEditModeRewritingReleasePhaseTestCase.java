@@ -37,12 +37,12 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.DefaultScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -98,7 +98,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase extends Abst
 
             fail("Should have thrown an exception");
         } catch (ReleaseScmCommandException e) {
-            assertNull("Check no other cause", e.getCause());
+            assertNull(e.getCause(), "Check no other cause");
         }
     }
 
@@ -127,7 +127,7 @@ public abstract class AbstractEditModeRewritingReleasePhaseTestCase extends Abst
 
             fail("Should have thrown an exception");
         } catch (ReleaseExecutionException e) {
-            assertEquals("Check cause", ScmException.class, e.getCause().getClass());
+            assertEquals(ScmException.class, e.getCause().getClass(), "Check cause");
         }
         // verify
         verify(scmProviderMock).edit(isA(ScmRepository.class), isA(ScmFileSet.class));

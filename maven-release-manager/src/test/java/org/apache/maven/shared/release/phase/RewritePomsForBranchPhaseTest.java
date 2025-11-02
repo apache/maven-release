@@ -29,11 +29,11 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the SCM modification check phase.
@@ -81,11 +81,11 @@ public class RewritePomsForBranchPhaseTest extends AbstractEditModeRewritingRele
         phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         String actual = readTestProjectFile("basic-pom/pom.xml");
-        assertEquals("Check the original POM untouched", expected, actual);
+        assertEquals(expected, actual, "Check the original POM untouched");
 
         expected = readTestProjectFile("basic-pom/expected-pom.xml");
         actual = readTestProjectFile("basic-pom/pom.xml.branch");
-        assertEquals("Check the transformed POM", expected, actual);
+        assertEquals(expected, actual, "Check the transformed POM");
     }
 
     @Test
@@ -100,11 +100,11 @@ public class RewritePomsForBranchPhaseTest extends AbstractEditModeRewritingRele
         phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         String actual = readTestProjectFile("basic-pom-with-dashes-in-comment/pom.xml");
-        assertEquals("Check the original POM is untouched", expected, actual);
+        assertEquals(expected, actual, "Check the original POM is untouched");
 
         expected = readTestProjectFile("basic-pom-with-dashes-in-comment/expected-pom.xml");
         actual = readTestProjectFile("basic-pom-with-dashes-in-comment/pom.xml.branch");
-        assertEquals("Check the transformed POM", expected, actual);
+        assertEquals(expected, actual, "Check the transformed POM");
     }
 
     @Test

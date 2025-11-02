@@ -22,10 +22,11 @@ import java.io.StringReader;
 
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JDomDependencyManagementTest {
     private SAXBuilder builder = new SAXBuilder();
@@ -60,18 +61,21 @@ public class JDomDependencyManagementTest {
 
     // All other methods throw UnsupportedOperationException
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testAddDependency() {
-        new JDomDependencyManagement(null).addDependency(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependencyManagement(null).addDependency(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemoveDependency() {
-        new JDomDependencyManagement(null).addDependency(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependencyManagement(null).addDependency(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetDependenciesListOfDependency() {
-        new JDomDependencyManagement(null).setDependencies(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomDependencyManagement(null).setDependencies(null));
     }
 }

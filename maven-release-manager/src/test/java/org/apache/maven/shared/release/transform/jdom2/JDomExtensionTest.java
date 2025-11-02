@@ -22,10 +22,11 @@ import java.io.StringReader;
 
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JDomExtensionTest {
     private SAXBuilder builder = new SAXBuilder();
@@ -63,14 +64,16 @@ public class JDomExtensionTest {
         assertEquals("VERSION", new JDomExtension(extensionElm).getVersion());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetArtifactId() {
-        new JDomExtension(null).setArtifactId(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomExtension(null).setArtifactId(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetGroupId() {
-        new JDomExtension(null).setGroupId(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomExtension(null).setGroupId(null));
     }
 
     @Test

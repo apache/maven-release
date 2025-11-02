@@ -32,11 +32,12 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -58,6 +59,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
     private static final List<String> CHOICE_ARRAY = Arrays.asList("0", DEFAULT_CHOICE, "2", "3");
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -272,7 +274,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
             fail("Should have failed execution");
         } catch (ReleaseExecutionException e) {
-            assertEquals("Check cause", PrompterException.class, e.getCause().getClass());
+            assertEquals(PrompterException.class, e.getCause().getClass(), "Check cause");
         }
 
         mockPrompter = mock(Prompter.class);
@@ -284,7 +286,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
             fail("Should have failed execution");
         } catch (ReleaseExecutionException e) {
-            assertEquals("Check cause", PrompterException.class, e.getCause().getClass());
+            assertEquals(PrompterException.class, e.getCause().getClass(), "Check cause");
         }
     }
 

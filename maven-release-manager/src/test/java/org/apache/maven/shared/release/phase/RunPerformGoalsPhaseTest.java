@@ -42,10 +42,11 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.apache.maven.shared.release.stubs.MavenExecutorWrapper;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -66,6 +67,7 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
 
     private DefaultReleaseEnvironment releaseEnvironment;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -112,7 +114,7 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
             fail("Should have thrown an exception");
         } catch (ReleaseExecutionException e) {
             assertEquals(
-                    "Check cause", MavenExecutorException.class, e.getCause().getClass());
+                    MavenExecutorException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify

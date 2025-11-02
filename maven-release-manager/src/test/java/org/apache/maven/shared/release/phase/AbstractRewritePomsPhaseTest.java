@@ -25,12 +25,13 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AbstractRewritePomsPhaseTest extends AbstractReleaseTestCase {
 
@@ -39,6 +40,7 @@ public class AbstractRewritePomsPhaseTest extends AbstractReleaseTestCase {
     private static final String PROJECT_KEY = "mygroup:myproject";
     private static final String ARTIFACT_KEY = "mygroup:myotherproject";
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -113,7 +115,7 @@ public class AbstractRewritePomsPhaseTest extends AbstractReleaseTestCase {
                 releaseDescriptor));
         assertNotEquals(ReleaseResult.ERROR, result.getResultCode());
         // property value not equal to either original nor mapped version
-        assertThrows(ReleaseFailureException.class, () -> {
+        assertThrows(ReleaseFailureException.class, () ->
             phase.rewritePropertyUsedInVersionExpression(
                     PROJECT_KEY,
                     ARTIFACT_KEY,
@@ -123,8 +125,7 @@ public class AbstractRewritePomsPhaseTest extends AbstractReleaseTestCase {
                     "myprop",
                     properties,
                     result,
-                    releaseDescriptor);
-        });
+                    releaseDescriptor));
         assertNotEquals(ReleaseResult.ERROR, result.getResultCode());
         // ci-friendly property (no local properties available)
         assertFalse(phase.rewritePropertyUsedInVersionExpression(

@@ -34,14 +34,15 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.isA;
 
@@ -50,6 +51,7 @@ import static org.mockito.ArgumentMatchers.isA;
  */
 public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase {
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
 
@@ -86,7 +88,7 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase {
                 ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify, actual contains trailing newline
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "[INFO] Removing tag with the label release-label ...",
                 actual.getOutput().trim());
     }
@@ -119,11 +121,11 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase {
                 ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        Assert.assertEquals(0, actual.getResultCode());
+        Assertions.assertEquals(0, actual.getResultCode());
     }
 
     @Test
-    @Ignore("We changed the behaviour to warning instead of error.")
+    @Disabled("We changed the behaviour to warning instead of error.")
     public void testExecuteError() throws Exception {
 
         // prepare
@@ -187,7 +189,7 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase {
                 ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        Assert.assertEquals(0, actual.getResultCode());
+        Assertions.assertEquals(0, actual.getResultCode());
     }
 
     @Test
@@ -207,7 +209,7 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase {
                 ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify, actual contains newline
-        Assert.assertEquals(
+        Assertions.assertEquals(
                 "[INFO] Full run would remove tag with label: 'release-label'",
                 actual.getOutput().trim());
     }
@@ -228,7 +230,7 @@ public class RemoveScmTagPhaseTest extends AbstractReleaseTestCase {
         ReleaseResult actual = phase.simulate(
                 ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        Assert.assertEquals(0, actual.getResultCode());
+        Assertions.assertEquals(0, actual.getResultCode());
     }
 
     private List<MavenProject> createReactorProjects() throws Exception {

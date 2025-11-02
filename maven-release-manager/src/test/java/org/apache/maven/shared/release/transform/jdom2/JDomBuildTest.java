@@ -22,11 +22,12 @@ import java.io.StringReader;
 
 import org.jdom2.Document;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JDomBuildTest {
     private SAXBuilder builder = new SAXBuilder();
@@ -76,188 +77,225 @@ public class JDomBuildTest {
 
     // All other methods throw UnsupportedOperationException
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testFlushPluginMap() {
-        new JDomBuild(null).flushPluginMap();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).flushPluginMap());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testAddExtension() {
-        new JDomBuild(null).addExtension(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).addExtension(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetOutputDirectory() {
-        new JDomBuild(null).getOutputDirectory();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getOutputDirectory());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetScriptSourceDirectory() {
-        new JDomBuild(null).getScriptSourceDirectory();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getScriptSourceDirectory());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetSourceDirectory() {
-        new JDomBuild(null).getSourceDirectory();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getSourceDirectory());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetTestOutputDirectory() {
-        new JDomBuild(null).getTestOutputDirectory();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getTestOutputDirectory());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetTestSourceDirectory() {
-        new JDomBuild(null).getTestSourceDirectory();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getTestSourceDirectory());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemoveExtension() {
-        new JDomBuild(null).removeExtension(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).removeExtension(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetExtensions() {
-        new JDomBuild(null).setExtensions(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setExtensions(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetOutputDirectory() {
-        new JDomBuild(null).setOutputDirectory(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setOutputDirectory(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetScriptSourceDirectory() {
-        new JDomBuild(null).setScriptSourceDirectory(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setScriptSourceDirectory(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetSourceDirectory() {
-        new JDomBuild(null).setSourceDirectory(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setSourceDirectory(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetTestOutputDirectoryString() {
-        new JDomBuild(null).setTestOutputDirectory(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setTestOutputDirectory(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetTestSourceDirectory() {
-        new JDomBuild(null).setTestSourceDirectory(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setTestSourceDirectory(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testAddFilter() {
-        new JDomBuild(null).addFilter(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).addFilter(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testAddResource() {
-        new JDomBuild(null).addResource(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).addResource(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testAddTestResource() {
-        new JDomBuild(null).addTestResource(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).addTestResource(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetDefaultGoal() {
-        new JDomBuild(null).getDefaultGoal();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getDefaultGoal());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetDirectory() {
-        new JDomBuild(null).getDirectory();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getDirectory());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetFilters() {
-        new JDomBuild(null).getFilters();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getFilters());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetFinalName() {
-        new JDomBuild(null).getFinalName();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getFinalName());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetResources() {
-        new JDomBuild(null).getResources();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getResources());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetTestResources() {
-        new JDomBuild(null).getTestResources();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getTestResources());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemoveFilter() {
-        new JDomBuild(null).removeFilter(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).removeFilter(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemoveResource() {
-        new JDomBuild(null).removeResource(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).removeResource(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemoveTestResource() {
-        new JDomBuild(null).removeTestResource(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).removeTestResource(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetDefaultGoal() {
-        new JDomBuild(null).setDefaultGoal(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setDefaultGoal(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetDirectory() {
-        new JDomBuild(null).setDirectory(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setDirectory(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetFilters() {
-        new JDomBuild(null).setFilters(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setFilters(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetFinalName() {
-        new JDomBuild(null).setFinalName(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setFinalName(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetResources() {
-        new JDomBuild(null).setResources(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setResources(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetTestResources() {
-        new JDomBuild(null).setTestResources(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setTestResources(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetPluginManagement() {
-        new JDomBuild(null).setPluginManagement(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setPluginManagement(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testAddPlugin() {
-        new JDomBuild(null).addPlugin(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).addPlugin(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testRemovePlugin() {
-        new JDomBuild(null).removePlugin(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).removePlugin(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetPlugins() {
-        new JDomBuild(null).setPlugins(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).setPlugins(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetPluginsAsMap() {
-        new JDomBuild(null).getPluginsAsMap();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomBuild(null).getPluginsAsMap());
     }
 }

@@ -30,12 +30,13 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -51,6 +52,7 @@ import static org.mockito.Mockito.when;
 public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
     private BranchInputVariablesPhase phase;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -76,9 +78,9 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -90,9 +92,9 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         verify(mockPrompter, times(2)).prompt(isA(String.class));
         verifyNoMoreInteractions(mockPrompter);
@@ -110,7 +112,7 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertNull("check no cause", e.getCause());
+            assertNull(e.getCause(), "check no cause");
         }
 
         builder = new ReleaseDescriptorBuilder();
@@ -121,7 +123,7 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertNull("check no cause", e.getCause());
+            assertNull(e.getCause(), "check no cause");
         }
     }
 
@@ -142,9 +144,9 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -156,9 +158,9 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);
@@ -180,9 +182,9 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -193,9 +195,9 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);

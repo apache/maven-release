@@ -25,7 +25,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
-import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.manager.ScmManagerStub;
@@ -35,13 +34,14 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -66,6 +66,7 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
 
     private ScmProvider scmProviderMock;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -142,7 +143,7 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq(message)))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -157,7 +158,7 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
         verify(scmProviderMock)
                 .checkIn(
                         isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class), eq(message));
+                        isNull(), eq(message));
         verifyNoMoreInteractions(scmProviderMock);
     }
 

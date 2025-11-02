@@ -34,6 +34,7 @@ import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -42,6 +43,8 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -61,6 +64,7 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
         setVariableValueToObject(mojo, "updateWorkingCopyVersions", Boolean.TRUE);
     }
 
+    @Test
     public void testPrepare() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
         final PrepareReleaseMojo mojo = spy((PrepareReleaseMojo) lookupMojo("prepare", testFile));
@@ -114,6 +118,7 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
         verify(prepareRequest.getValue().getReleaseDescriptorBuilder()).setScmSignTags(false);
     }
 
+    @Test
     public void testPrepareWithExecutionException() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
         final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo("prepare", testFile);
@@ -144,7 +149,7 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
             fail("Should have thrown an exception");
         } catch (MojoExecutionException e) {
             assertEquals(
-                    "Check cause", ReleaseExecutionException.class, e.getCause().getClass());
+                    ReleaseExecutionException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify
@@ -152,6 +157,7 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testPrepareWithExecutionFailure() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
         final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo("prepare", testFile);
@@ -182,13 +188,14 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
 
             fail("Should have thrown an exception");
         } catch (MojoFailureException e) {
-            assertEquals("Check cause exists", cause, e.getCause());
+            assertEquals(cause, e.getCause(), "Check cause exists");
         }
         // verify
         verify(mock).prepare(isA(ReleasePrepareRequest.class));
         verifyNoMoreInteractions(mock);
     }
 
+    @Test
     public void testLineSeparatorInPrepareWithPom() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
         final PrepareWithPomReleaseMojo mojo = (PrepareWithPomReleaseMojo) lookupMojo("prepare-with-pom", testFile);
@@ -222,6 +229,7 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
         testLineSeparator("system", System.lineSeparator(), mojo, mock, times++);
     }
 
+    @Test
     public void testLineSeparatorInPrepare() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
         final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo("prepare", testFile);
@@ -254,6 +262,7 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
         testLineSeparator("system", System.lineSeparator(), mojo, mock, times++);
     }
 
+    @Test
     private void testLineSeparator(
             String lineSeparator, String expected, PrepareReleaseMojo mojo, ReleaseManager releaseManager, int times)
             throws Exception {

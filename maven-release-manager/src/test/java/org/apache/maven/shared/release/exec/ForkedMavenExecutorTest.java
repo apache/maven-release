@@ -34,14 +34,15 @@ import org.apache.maven.shared.release.util.MavenCrypto;
 import org.codehaus.plexus.util.cli.Arg;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -60,6 +61,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
     private MavenCrypto mavenCrypto;
     private SecDispatcher secDispatcher;
 
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -250,7 +252,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
 
             fail("Should have thrown an exception");
         } catch (MavenExecutorException e) {
-            assertEquals("Check exit code", 1, e.getExitCode());
+            assertEquals(1, e.getExitCode(), "Check exit code");
         }
 
         // verify
@@ -300,7 +302,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
 
             fail("Should have thrown an exception");
         } catch (MavenExecutorException e) {
-            assertEquals("Check cause", CommandLineException.class, e.getCause().getClass());
+            assertEquals(CommandLineException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify

@@ -24,27 +24,31 @@ import java.io.StringReader;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class JDomParentTest {
     private SAXBuilder builder = new SAXBuilder();
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetArtifactId() {
-        new JDomParent(null).getArtifactId();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomParent(null).getArtifactId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetGroupId() {
-        new JDomParent(null).getGroupId();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomParent(null).getGroupId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetRelativePath() {
-        new JDomParent(null).getRelativePath();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomParent(null).getRelativePath());
     }
 
     @Test
@@ -55,19 +59,22 @@ public class JDomParentTest {
         assertEquals("1.0", new JDomParent(parentElm).getVersion());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetArtifactId() {
-        new JDomParent(null).setArtifactId(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomParent(null).setArtifactId(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetGroupId() {
-        new JDomParent(null).setGroupId(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomParent(null).setGroupId(null));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testSetRelativePath() {
-        new JDomParent(null).setRelativePath(null);
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomParent(null).setRelativePath(null));
     }
 
     @Test
@@ -84,9 +91,10 @@ public class JDomParentTest {
         assertNull(getVersion(parentElm));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void testGetId() {
-        new JDomParent(null).getId();
+        assertThrows(UnsupportedOperationException.class, () ->
+            new JDomParent(null).getId());
     }
 
     private String getVersion(Element parentElm) {
