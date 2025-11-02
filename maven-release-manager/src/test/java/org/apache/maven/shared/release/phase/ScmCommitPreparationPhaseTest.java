@@ -52,6 +52,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -83,7 +84,7 @@ public class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
 
     @Test
     public void testResolvesCorrectBranchImplementation() throws Exception {
-        assertTrue(lookup(ReleasePhase.class, "scm-commit-branch") instanceof ScmCommitBranchPhase);
+        assertInstanceOf(ScmCommitBranchPhase.class, lookup(ReleasePhase.class, "scm-commit-branch"));
     }
 
     @Test

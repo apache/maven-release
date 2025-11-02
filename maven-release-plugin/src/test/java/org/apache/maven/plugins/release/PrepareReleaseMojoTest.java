@@ -40,8 +40,8 @@ import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -105,9 +105,9 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
 
         assertThat(
                 prepareRequest.getValue().getReleaseDescriptorBuilder(),
-                is(instanceOf(ReleaseDescriptorBuilder.class)));
-        assertThat(prepareRequest.getValue().getReleaseEnvironment(), is(instanceOf(ReleaseEnvironment.class)));
-        assertThat(prepareRequest.getValue().getReactorProjects(), is(notNullValue()));
+                instanceOf(ReleaseDescriptorBuilder.class));
+        assertThat(prepareRequest.getValue().getReleaseEnvironment(), instanceOf(ReleaseEnvironment.class));
+        assertNotNull(prepareRequest.getValue().getReactorProjects());
         assertThat(prepareRequest.getValue().getResume(), is(true));
         assertThat(prepareRequest.getValue().getDryRun(), is(false));
 
