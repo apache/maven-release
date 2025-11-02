@@ -22,17 +22,18 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Properties;
 
-import junit.framework.TestCase;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * @author <a href="mailto:mikhail_kolesnikov@outlook.com">Mikhail Kolesnikov</a>
  */
 @RunWith(Parameterized.class)
-public class MavenExpressionTest extends TestCase {
+public class MavenExpressionTest {
 
     private final String expected;
     private final String expression;

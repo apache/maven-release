@@ -23,8 +23,11 @@ import java.io.File;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.shared.release.ReleaseCleanRequest;
 import org.apache.maven.shared.release.ReleaseManager;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -39,7 +42,8 @@ public class CleanReleaseMojoTest extends AbstractMojoTestCase {
 
     private File workingDirectory;
 
-    protected void setUp() throws Exception {
+    @BeforeEach
+    public void setUp() throws Exception {
         super.setUp();
 
         File testFile = getTestFile("target/test-classes/mojos/clean/clean.xml");
@@ -48,6 +52,7 @@ public class CleanReleaseMojoTest extends AbstractMojoTestCase {
         mojo.setBasedir(workingDirectory);
     }
 
+    @Test
     public void testClean() throws Exception {
         // prepare
         ArgumentCaptor<ReleaseCleanRequest> request = ArgumentCaptor.forClass(ReleaseCleanRequest.class);
