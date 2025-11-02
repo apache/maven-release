@@ -122,7 +122,7 @@ public class PerformReleaseMojo extends AbstractScmReadReleaseMojo {
         // goals may be split into multiple lines in configuration.
         // Let's build a single line command
         if (goals != null) {
-            goals = StringUtils.join(StringUtils.split(goals), " ");
+            goals = StringUtils.join(goals.split("\\s+"), " ");
         }
 
         try {

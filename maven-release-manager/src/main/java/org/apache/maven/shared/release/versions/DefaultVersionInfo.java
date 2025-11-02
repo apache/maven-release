@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -333,21 +334,21 @@ public class DefaultVersionInfo implements VersionInfo {
         }
 
         if (info.annotation != null && !info.annotation.isEmpty()) {
-            sb.append(StringUtils.defaultString(info.annotationSeparator));
+            sb.append(Objects.toString(info.annotationSeparator, ""));
             sb.append(info.annotation);
         }
 
         if (info.annotationRevision != null && !info.annotationRevision.isEmpty()) {
             if (info.annotation == null || info.annotation.isEmpty()) {
-                sb.append(StringUtils.defaultString(info.annotationSeparator));
+                sb.append(Objects.toString(info.annotationSeparator, ""));
             } else {
-                sb.append(StringUtils.defaultString(info.annotationRevSeparator));
+                sb.append(Objects.toString(info.annotationRevSeparator, ""));
             }
             sb.append(info.annotationRevision);
         }
 
         if (buildSpecifier != null && !buildSpecifier.isEmpty()) {
-            sb.append(StringUtils.defaultString(buildSeparator));
+            sb.append(Objects.toString(buildSeparator, ""));
             sb.append(buildSpecifier);
         }
 
