@@ -1,0 +1,35 @@
+---
+title: Maven Release Manager
+author: 
+  - Hervé Boutemy
+date: 2019-11-03
+---
+
+<!-- Licensed to the Apache Software Foundation (ASF) under one-->
+<!-- or more contributor license agreements.  See the NOTICE file-->
+<!-- distributed with this work for additional information-->
+<!-- regarding copyright ownership.  The ASF licenses this file-->
+<!-- to you under the Apache License, Version 2.0 (the-->
+<!-- "License"); you may not use this file except in compliance-->
+<!-- with the License.  You may obtain a copy of the License at-->
+<!---->
+<!--   http://www.apache.org/licenses/LICENSE-2.0-->
+<!---->
+<!-- Unless required by applicable law or agreed to in writing,-->
+<!-- software distributed under the License is distributed on an-->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY-->
+<!-- KIND, either express or implied.  See the License for the-->
+<!-- specific language governing permissions and limitations-->
+<!-- under the License.-->
+# Maven Release Manager
+
+Maven Release Manager implements:
+
+- the release management engine \([ReleaseManager](./apidocs/org/apache/maven/shared/release/ReleaseManager.html) API with [DefaultReleaseManager](./xref/org/apache/maven/shared/release/DefaultReleaseManager.html) implementation\),
+- available release phases \(in [phase package](./apidocs/org/apache/maven/shared/release/phase/package-summary.html)\) to be used in [Strategy](./apidocs/org/apache/maven/shared/release/strategies/DefaultStrategy.html) configuration,
+- and the default phases configuration for each release goal:
+    - <a id="prepare"></a>`prepare`:<!-- MACRO{snippet|id=prepare|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java} -->
+    - <a id="perform"></a>`perform`:<!-- MACRO{snippet|id=perform|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java} -->
+    - <a id="rollback"></a>`rollback`:<!-- MACRO{snippet|id=rollback|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java} -->
+    - <a id="branch"></a>`branch`:<!-- MACRO{snippet|id=branch|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java} -->
+    - <a id="update-versions"></a>`update-versions`:<!-- MACRO{snippet|id=update-versions|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java} -->

@@ -1,48 +1,44 @@
-  ------
-  Lock Files During Release
-  ------
-  Carlos Sanchez <carlos@apache.org>
-  Brett Porter <brett@apache.org>
-  John Tolentino <jtolentino@apache.org>
-  ------
-  2010-01-03
-  ------
+---
+title: Lock Files During Release
+author: 
+  - Carlos Sanchez _carlos@apache.org_
+  - Brett Porter _brett@apache.org_
+  - John Tolentino _jtolentino@apache.org_
+date: 2010-01-03
+---
 
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~   http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.
+<!-- Licensed to the Apache Software Foundation (ASF) under one-->
+<!-- or more contributor license agreements.  See the NOTICE file-->
+<!-- distributed with this work for additional information-->
+<!-- regarding copyright ownership.  The ASF licenses this file-->
+<!-- to you under the Apache License, Version 2.0 (the-->
+<!-- "License"); you may not use this file except in compliance-->
+<!-- with the License.  You may obtain a copy of the License at-->
+<!---->
+<!--   http://www.apache.org/licenses/LICENSE-2.0-->
+<!---->
+<!-- Unless required by applicable law or agreed to in writing,-->
+<!-- software distributed under the License is distributed on an-->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY-->
+<!-- KIND, either express or implied.  See the License for the-->
+<!-- specific language governing permissions and limitations-->
+<!-- under the License.-->
+<!-- NOTE: For help with the syntax of this file, see:-->
+<!-- http://maven.apache.org/doxia/references/apt-format.html-->
+# Lock Files During Release
 
-~~ NOTE: For help with the syntax of this file, see:
-~~ http://maven.apache.org/doxia/references/apt-format.html
+If you want to lock the files during a release operation set the property `useEditMode` to `true`. The default value of this property is `false`.
 
-Lock Files During Release
-
-  If you want to lock the files during a release operation set the property <<<useEditMode>>> to <<<true>>>. The default
-  value of this property is <<<false>>>.
-
--------
+```
 mvn release:perform -DuseEditMode=true
--------
+```
 
-  This relies on <<<release.properties>>> being present from a previous release preparation. If this is not the case,
-  you need to give the goal the name of the URL and optional tag to perform the release from. For example:
+This relies on `release.properties` being present from a previous release preparation. If this is not the case, you need to give the goal the name of the URL and optional tag to perform the release from. For example:
 
--------
+```
 mvn release:perform -DuseEditMode=true
   -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
--------
+```
 
-  After the release is complete, the <<<release.properties>>> and other release files will be removed from the checkout.
+After the release is complete, the `release.properties` and other release files will be removed from the checkout.
+

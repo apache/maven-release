@@ -1,10 +1,10 @@
 ---
-title: Generate Release POMs
+title: Run Additional Goals Before Commit
 author: 
   - Carlos Sanchez _carlos@apache.org_
   - Brett Porter _brett@apache.org_
   - John Tolentino _jtolentino@apache.org_
-date: 2010-01-04
+date: 2010-01-03
 ---
 
 <!-- Licensed to the Apache Software Foundation (ASF) under one-->
@@ -23,20 +23,30 @@ date: 2010-01-04
 <!-- KIND, either express or implied.  See the License for the-->
 <!-- specific language governing permissions and limitations-->
 <!-- under the License.-->
-# Generate Release POMs
+# Run Additional Goals Before Commit
 
-To generate POMs with resolved information \(e.g. version numbers\) to check the values that the Release Plugin will use, execute the `prepare-with-pom` goal. Resolved values will be saved in `release-pom.xml`.
+To run additional goals after release preparation \(tag\) but before committing with new -SNAPSHOT version, specify them using the `preparationGoals` property.
 
+```unknown
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <preparationGoals>clean verify</preparationGoals>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+  [...]
+</project>
 ```
-mvn release:prepare-with-pom
-```
-
-This relies on `release.properties` being present from a previous release preparation. If this is not the case, you need to give the goal the name of the URL and optional tag to perform the release from. For example:
-
-```
-mvn release:prepare-with-pom
-  -DconnectionUrl=scm:svn:https://svn.apache.org/repos/asf/maven/plugins/tags/maven-release-plugin-2.0
-```
-
-After the release is complete, the `release.properties` and other release files will be removed from the checkout.
 
