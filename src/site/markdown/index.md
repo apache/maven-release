@@ -1,44 +1,36 @@
- ------
- Maven Release
- ------
- Hervé Boutemy
- ------
- 2011-06-24
- ------
+---
+title: Maven Release
+author: 
+  - Hervé Boutemy
+date: 2011-06-24
+---
 
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~   http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.
+<!-- Licensed to the Apache Software Foundation (ASF) under one-->
+<!-- or more contributor license agreements.  See the NOTICE file-->
+<!-- distributed with this work for additional information-->
+<!-- regarding copyright ownership.  The ASF licenses this file-->
+<!-- to you under the Apache License, Version 2.0 (the-->
+<!-- "License"); you may not use this file except in compliance-->
+<!-- with the License.  You may obtain a copy of the License at-->
+<!---->
+<!--   http://www.apache.org/licenses/LICENSE-2.0-->
+<!---->
+<!-- Unless required by applicable law or agreed to in writing,-->
+<!-- software distributed under the License is distributed on an-->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY-->
+<!-- KIND, either express or implied.  See the License for the-->
+<!-- specific language governing permissions and limitations-->
+<!-- under the License.-->
+# Maven Release
 
-Maven Release
+Maven Release provides tooling to release a project with Maven, saving a lot of repetitive, manual work.
 
- Maven Release provides tooling to release a project with Maven, saving a lot of repetitive, manual work.
+It consists of the following modules:
 
- It consists of the following modules:
-
-*----------------------------------------------------------+----------------+
-|| Module                                                  || Description   ||
-*----------------------------------------------------------+----------------+
-| {{{./maven-release-api/}maven-release-api}}              | APIs to implement to extend maven-release-plugin
-*----------------------------------------------------------+----------------+
-| {{{./maven-release-manager/}maven-release-manager}}      | core classes
-*----------------------------------------------------------+----------------+
-| {{{./maven-release-plugin/}maven-release-plugin}}        | release plugin to use from Maven
-*----------------------------------------------------------+----------------+
-| {{{./maven-release-policies/maven-release-oddeven-policy/}maven-release-oddeven-policy}} | a version policy that proposes even version numbers only for releases and odd numbers for development
-*----------------------------------------------------------+----------------+
-| {{{./maven-release-policies/maven-release-semver-policy/}maven-release-semver-policy}} | a version policy that enforces SemVer format and upgrades the minor element for the next development version
-*----------------------------------------------------------+----------------+
+|Module|Description|
+|:---|:---|
+|[maven-release-api](./maven-release-api/)|APIs to implement to extend maven-release-plugin|
+|[maven-release-manager](./maven-release-manager/)|core classes|
+|[maven-release-plugin](./maven-release-plugin/)|release plugin to use from Maven|
+|[maven-release-oddeven-policy](./maven-release-policies/maven-release-oddeven-policy/)|a version policy that proposes even version numbers only for releases and odd numbers for development|
+|[maven-release-semver-policy](./maven-release-policies/maven-release-semver-policy/)|a version policy that enforces SemVer format and upgrades the minor element for the next development version|

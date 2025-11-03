@@ -1,77 +1,62 @@
-  ------
-  Create a Branch
-  ------
-  Emmanuel Venisse <evenisse@apache.org>
-  ------
-  2010-01-03
-  ------
+---
+title: Create a Branch
+author: 
+  - Emmanuel Venisse _evenisse@apache.org_
+date: 2010-01-03
+---
 
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~   http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.
+<!-- Licensed to the Apache Software Foundation (ASF) under one-->
+<!-- or more contributor license agreements.  See the NOTICE file-->
+<!-- distributed with this work for additional information-->
+<!-- regarding copyright ownership.  The ASF licenses this file-->
+<!-- to you under the Apache License, Version 2.0 (the-->
+<!-- "License"); you may not use this file except in compliance-->
+<!-- with the License.  You may obtain a copy of the License at-->
+<!---->
+<!--   http://www.apache.org/licenses/LICENSE-2.0-->
+<!---->
+<!-- Unless required by applicable law or agreed to in writing,-->
+<!-- software distributed under the License is distributed on an-->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY-->
+<!-- KIND, either express or implied.  See the License for the-->
+<!-- specific language governing permissions and limitations-->
+<!-- under the License.-->
+# Create a Branch
 
-Create a Branch
+[`release:branch` goal](../branch-mojo.html) branches a project in SCM, using the same steps as the [`release:prepare` goal](./prepare-release.html), creating a branch instead of a tag.
 
-  {{{../branch-mojo.html}<<<release:branch>>> goal}} branches a project in SCM, using the same steps as the {{{./prepare-release.html}<<<release:prepare>>> goal}}, creating a branch instead of a tag.
+Creating a branch involves the following release phases [by default](../../maven-release-manager/#branch):
 
-  Creating a branch involves the following release phases {{{../../maven-release-manager/#branch}by default}}:
+- Check that there are no uncommitted changes in the sources
+- Change the version in the POMs if you want to change it in the branch \(you will be prompted for the versions to use\)
+- Transform the SCM information in the POM to include the final destination of the tag
+- Commit the modified POMs
+- Tag the code in the SCM as a new branch with a version name \(this will be prompted for\)
+- Bump the version in the POMs if you want to change it to a new value y-SNAPSHOT \(these values will also be prompted for\)
+- Commit the modified POMs
 
-   * Check that there are no uncommitted changes in the sources
+To create a branch execute this command:
 
-   * Change the version in the POMs if you want to change it in the branch (you will be prompted for the versions to use)
-
-   * Transform the SCM information in the POM to include the final destination of the tag
-
-   * Commit the modified POMs
-
-   * Tag the code in the SCM as a new branch with a version name (this will be prompted for)
-
-   * Bump the version in the POMs if you want to change it to a new value y-SNAPSHOT (these values will also be prompted for)
-
-   * Commit the modified POMs
-
-   []
-
-  To create a branch execute this command:
-
--------
+```
 mvn release:branch -DbranchName=my-branch
--------
+```
 
-  By default, the POM in the new branch keeps the same version as the local working copy, and the local POM is incremented
-  to the next revision. If you want to update versions in the new branch and not in the working copy, run:
+By default, the POM in the new branch keeps the same version as the local working copy, and the local POM is incremented to the next revision. If you want to update versions in the new branch and not in the working copy, run:
 
--------
+```
 mvn release:branch -DbranchName=my-branch -DupdateBranchVersions=true -DupdateWorkingCopyVersions=false
--------
+```
 
-  <<Note:>> This can be useful if you want to create a branch from a tag
+**Note:** This can be useful if you want to create a branch from a tag
 
+## Specify versions on the command line
 
-* Specify versions on the command line
+You may want to specify the versions to use on the command line. This can be useful for example if you are running the release in non-interactive mode. The `branch` goal can use the same properties used by the `prepare` goal for specifying the versions to be used.
 
-  You may want to specify the versions to use on the command line.  This can be useful for example if you are running
-  the release in non-interactive mode.  The <<<branch>>> goal can use the same properties used by the <<<prepare>>> goal for
-  specifying the versions to be used.
-
-
------------
+```
 mvn --batch-mode release:branch -DbranchName=my-branch-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
      -Dproject.dev.org.myCompany:projectA=2.0-SNAPSHOT
------------
+```
 
-  In this example, the POM in the new branch will be set to the version 1.2-SNAPSHOT, and the
-  local POM will be set to the version 2.0-SNAPSHOT.
+In this example, the POM in the new branch will be set to the version 1\.2-SNAPSHOT, and the local POM will be set to the version 2\.0-SNAPSHOT.
+

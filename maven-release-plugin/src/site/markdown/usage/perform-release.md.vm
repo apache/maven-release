@@ -1,0 +1,68 @@
+---
+title: Perform a Release
+author: 
+  - Carlos Sanchez _carlos@apache.org_
+  - Brett Porter _brett@apache.org_
+  - John Tolentino _jtolentino@apache.org_
+date: 2011-09-23
+---
+
+<!-- Licensed to the Apache Software Foundation (ASF) under one-->
+<!-- or more contributor license agreements.  See the NOTICE file-->
+<!-- distributed with this work for additional information-->
+<!-- regarding copyright ownership.  The ASF licenses this file-->
+<!-- to you under the Apache License, Version 2.0 (the-->
+<!-- "License"); you may not use this file except in compliance-->
+<!-- with the License.  You may obtain a copy of the License at-->
+<!---->
+<!--   http://www.apache.org/licenses/LICENSE-2.0-->
+<!---->
+<!-- Unless required by applicable law or agreed to in writing,-->
+<!-- software distributed under the License is distributed on an-->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY-->
+<!-- KIND, either express or implied.  See the License for the-->
+<!-- specific language governing permissions and limitations-->
+<!-- under the License.-->
+# Perform a Release
+
+[`release:perform` goal](../perform-mojo.html) performs a release from SCM, either from a specified tag, or usually the tag representing the previous release in the working copy created by [`release:prepare`](./prepare-release.html).
+
+Performing a release runs the following release phases [by default](../../maven-release-manager/#perform):
+
+- Checkout from an SCM URL with optional tag to `workingDirectory` \(`target/checkout` by default\)
+- Run the perform Maven goals to release the project \(by default, `deploy site-deploy`\), eventually with release profile\(s\) active
+
+To perform a release, execute this command:
+
+```
+mvn release:perform
+```
+
+This relies on `release.properties` being present from a previous release preparation. If this is not the case, you need to give the goal the URL and an optional tag to perform the release from. For example:
+
+```
+mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -DconnectionUrl=scm:svn:https://svn.mycompany.com/repos/path/to/myproject/tags/myproject-1.2.3
+```
+
+`release:perform` will fork a new Maven instance to build the checked-out project. This new Maven instance will use the same system configuration and Maven profiles used by the one running the `release:perform` goal. Since there&apos;s no pom.xml, you should use the fully qualified name of the goal to ensure the right version of the maven-release-plugin is used.
+
+It is possible to force some profiles to get enabled during release \(for example to enable time-consuming tasks that are only relevant at release-time\) by setting a comma separated list of profiles names in the `releaseProfiles` parameter. The goals and profiles required to release the project can then be configured in the POM:
+
+```unknown
+  <plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-release-plugin</artifactId>
+    <version>${project.version}</version>
+    <configuration>
+      <!--
+        During release:perform, enable the "release" profile
+       -->
+      <releaseProfiles>release</releaseProfiles>
+    </configuration>
+  </plugin>
+```
+
+Maven Release Plugin 2\.x also activated a default profile by default, but not Maven Release Plugin 3\.x: see [migrate documentation](../migrate.html) for more details.
+
+After the release is complete, the `release.properties` and other release files will be removed from the checkout.
+

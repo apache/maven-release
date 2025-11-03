@@ -1,0 +1,89 @@
+---
+title: Migrate Maven Release Plugin From 2 to 3
+date: 2022-04-24
+---
+
+<!-- Licensed to the Apache Software Foundation (ASF) under one-->
+<!-- or more contributor license agreements.  See the NOTICE file-->
+<!-- distributed with this work for additional information-->
+<!-- regarding copyright ownership.  The ASF licenses this file-->
+<!-- to you under the Apache License, Version 2.0 (the-->
+<!-- "License"); you may not use this file except in compliance-->
+<!-- with the License.  You may obtain a copy of the License at-->
+<!---->
+<!--   http://www.apache.org/licenses/LICENSE-2.0-->
+<!---->
+<!-- Unless required by applicable law or agreed to in writing,-->
+<!-- software distributed under the License is distributed on an-->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY-->
+<!-- KIND, either express or implied.  See the License for the-->
+<!-- specific language governing permissions and limitations-->
+<!-- under the License.-->
+<!-- NOTE: For help with the syntax of this file, see:-->
+<!-- http://maven.apache.org/doxia/references/apt-format.html-->
+# Migrate Maven Release Plugin From 2 to 3
+
+## Context: Maven 3 and Maven 4
+
+Maven 3 \(and previously 2\) provides a default release profile named `release-profile` that builds and attaches source and javadoc jar: this is defined in [the super POM](/ref/3.8.5/maven-model-builder/super-pom.html). This profile is activated by default during `release:perform` with Maven Release Plugin 2\.x, unless deactivated by configuring `useReleaseProfile` parameter to `false`.
+
+In Maven 4, this default profile will be removed from super POM \(see [MNG-7029](https://issues.apache.org/jira/browse/MNG-7029)\).
+
+To prepare for this removal, Maven Release Plugin 3\.0 stopped invoking this profile by default: `useReleaseProfile` parameter is `false` by default.
+
+## Upgrading Maven Release Plugin 2 to 3
+
+### Write And Configure Your Own Release Profile 
+
+In order to prepare for Maven 4, each project will instead require to define their own release profile that they&apos;ll be able to customise to match their needs:
+
+- for internal projects, just configure the `maven-source-plugin` for example
+- for projects [published to Maven Central repository](/repository/guide-central-repository-upload.html), you&apos;ll need to add also `maven-javadoc-plugin` and `maven-gpg-plugin`: see [the documentation](https://central.sonatype.org/publish/publish-maven/).   
+    Notice: if you already published to Maven Central, there is a good chance the configuration has already been done in a parent POM.
+
+Then configure `maven-release-plugin` to use that profile during `release:perform` with `releaseProfiles` parameter:
+
+```unknown
+<project>
+  [...]
+  <build>
+    [...]
+    <plugins>
+      [...]
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-release-plugin</artifactId>
+        <version>${project.version}</version>
+        <configuration>
+          <releaseProfiles>my-project-release</releaseProfiles>
+        </configuration>
+      </plugin>
+      [...]
+    </plugins>
+    [...]
+  </build>
+
+  [...]
+
+  <profiles>
+    <profile>
+      <id>my-project-release</id>
+      <build>
+        <plugins>
+         [...
+          put here your release-specific plugins invocations, like maven-source-plugin, maven-javadoc-plugin, maven-gpg-plugin, ...
+          ...]
+        </plugins>
+      </build>
+    </profile>
+    [...]
+  </profiles>
+</project>
+```
+
+### Short Term: Force Using Maven 3-only Default Release Profile
+
+Configuring explicitely `useReleaseProfile` parameter to `true` will force Maven Release Plugin 3 to work like version 2\.
+
+It provides an easy but temporary solution, working only with Maven 3, when you can&apos;t yet write your own release profile.
+

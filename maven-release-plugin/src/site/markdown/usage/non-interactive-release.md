@@ -1,98 +1,76 @@
-  ------
-  Performing a Non-interactive Release
-  ------
-  Paul Gier
-  ------
-  2010-01-03
-  ------
+---
+title: Performing a Non-interactive Release
+author: 
+  - Paul Gier
+date: 2010-01-03
+---
 
-~~ Licensed to the Apache Software Foundation (ASF) under one
-~~ or more contributor license agreements.  See the NOTICE file
-~~ distributed with this work for additional information
-~~ regarding copyright ownership.  The ASF licenses this file
-~~ to you under the Apache License, Version 2.0 (the
-~~ "License"); you may not use this file except in compliance
-~~ with the License.  You may obtain a copy of the License at
-~~
-~~   http://www.apache.org/licenses/LICENSE-2.0
-~~
-~~ Unless required by applicable law or agreed to in writing,
-~~ software distributed under the License is distributed on an
-~~ "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-~~ KIND, either express or implied.  See the License for the
-~~ specific language governing permissions and limitations
-~~ under the License.
+<!-- Licensed to the Apache Software Foundation (ASF) under one-->
+<!-- or more contributor license agreements.  See the NOTICE file-->
+<!-- distributed with this work for additional information-->
+<!-- regarding copyright ownership.  The ASF licenses this file-->
+<!-- to you under the Apache License, Version 2.0 (the-->
+<!-- "License"); you may not use this file except in compliance-->
+<!-- with the License.  You may obtain a copy of the License at-->
+<!---->
+<!--   http://www.apache.org/licenses/LICENSE-2.0-->
+<!---->
+<!-- Unless required by applicable law or agreed to in writing,-->
+<!-- software distributed under the License is distributed on an-->
+<!-- "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY-->
+<!-- KIND, either express or implied.  See the License for the-->
+<!-- specific language governing permissions and limitations-->
+<!-- under the License.-->
+# Performing a Non-interactive Release
 
-Performing a Non-interactive Release
+In some environments, it may be necessary to perform a non-interactive release. This means that the Release Plugin will obtain the required parameters from system properties \(set on the command line\) or from a properties file \(`release.properties`\).
 
-  In some environments, it may be necessary to perform a non-interactive release.  This means that
-  the Release Plugin will obtain the required parameters from system properties (set on the command line)
-  or from a properties file (<<<release.properties>>>).
+To prevent the Release Plugin from prompting the user for any information, Maven should be put into batch mode.
 
-  To prevent the Release Plugin from prompting the user for any information, Maven should be put into
-  batch mode.
-
------------
+```
 mvn -B release:prepare
------------
+```
 
-  or
+or
 
------------
+```
 mvn --batch-mode release:prepare
------------
+```
 
-* Using system properties
+## Using system properties
 
-  Using batch mode with no other configuration will cause the Release Plugin to use default values
-  for the release version, the SCM tag, and the next development version.  These values can also
-  be set from the command line.
+Using batch mode with no other configuration will cause the Release Plugin to use default values for the release version, the SCM tag, and the next development version. These values can also be set from the command line.
 
-  The SCM tag name can be set using the <<<tag>>> property.  And default values for the release version
-  and new development version can be set using the properties <<<releaseVersion>>> and
-  <<<developmentVersion>>> respectively.
+The SCM tag name can be set using the `tag` property. And default values for the release version and new development version can be set using the properties `releaseVersion` and `developmentVersion` respectively.
 
------------
+```
 mvn --batch-mode -Dtag=my-proj-1.2 release:prepare \
                  -DreleaseVersion=1.2 \
                  -DdevelopmentVersion=2.0-SNAPSHOT
------------
+```
 
-* Multi-module releases
+## Multi-module releases
 
-  Because there is the possibility that a release will include multiple release versions and
-  SNAPSHOT versions (for a multi-module project), there is a specific format for setting these
-  values.  The property name should start with <<<project.rel>>> for release versions and
-  <<<project.dev>>> for the new development version.  These prefixes are followed by the
-  project's groupId and artifactId (separated by a colon).  So the result looks something like
-  the following example.
+Because there is the possibility that a release will include multiple release versions and SNAPSHOT versions \(for a multi-module project\), there is a specific format for setting these values. The property name should start with `project.rel` for release versions and `project.dev` for the new development version. These prefixes are followed by the project&apos;s groupId and artifactId \(separated by a colon\). So the result looks something like the following example.
 
------------
+```
 mvn --batch-mode -Dtag=my-proj-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
      -Dproject.dev.org.myCompany:projectA=1.3-SNAPSHOT release:prepare
------------
+```
 
-  Using this convention, multiple release versions and SNAPSHOT versions (one for each
-  project module) can be specified on the command line.
+Using this convention, multiple release versions and SNAPSHOT versions \(one for each project module\) can be specified on the command line.
 
-  These properties can be used in combination with the <<<releaseVersion>>> and
-  <<<developmentVersion>>>.  In the case where both are used, <<<releaseVersion>>> and
-  <<<developmentVersion>>> act as defaults for modules that have not been given specific
-  values using the <<<groupId:artifactId>>> format.
+These properties can be used in combination with the `releaseVersion` and `developmentVersion`. In the case where both are used, `releaseVersion` and `developmentVersion` act as defaults for modules that have not been given specific values using the `groupId:artifactId` format.
 
+## Using a properties file
 
-* Using a properties file
+Another option is to create a properties file that contains the version information for the project you would like to release. The properties file should be called `release.properties` and the release and SNAPSHOT versions follow the same conventions as they do on the command line.
 
-  Another option is to create a properties file that contains the version information for
-  the project you would like to release.  The properties file should be called <<<release.properties>>>
-  and the release and SNAPSHOT versions follow the same conventions as they do on the
-  command line.
-
-+-----------
+```unknown
 scm.tag=my-proj-1.2
 project.rel.org.myCompany\:projectA=1.2
 project.dev.org.myCompany\:projectA=1.3-SNAPSHOT
-+-----------
+```
 
-  <<Note:>> Remember to escape the colon with a backslash, otherwise the property will not be
-  interpreted correctly.
+**Note:** Remember to escape the colon with a backslash, otherwise the property will not be interpreted correctly.
+
