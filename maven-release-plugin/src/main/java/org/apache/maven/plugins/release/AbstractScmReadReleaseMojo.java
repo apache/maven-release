@@ -45,18 +45,21 @@ public abstract class AbstractScmReadReleaseMojo extends AbstractReleaseMojo {
      * <p>
      * Explicit authentication information provided via {@link #username}, {@link #password} or {@link #privateKey} will take precedence.
      * @since 3.2.0
+     * @see <a href="https://maven.apache.org/scm/authentication.html">SCM Authentication</a>
      */
     @Parameter(property = "project.scm.id", defaultValue = "${project.scm.id}")
     private String serverId;
 
     /**
      * The username to use for authentication with the SCM.
+     * @see <a href="https://maven.apache.org/scm/authentication.html">SCM Authentication</a>
      */
     @Parameter(property = "username")
     private String username;
 
     /**
      * The password to use for authentication with the SCM.
+     * @see <a href="https://maven.apache.org/scm/authentication.html">SCM Authentication</a>
      */
     @Parameter(property = "password")
     private String password;
@@ -64,17 +67,19 @@ public abstract class AbstractScmReadReleaseMojo extends AbstractReleaseMojo {
     /**
      * The path to the SSH private key to use for authentication with the SCM.
      * @since 3.2.0
+     * @see <a href="https://maven.apache.org/scm/authentication.html">SCM Authentication</a>
      */
     @Parameter(property = "privateKey")
     private File privateKey;
 
     /**
      * Add a new or overwrite the default implementation per provider.
-     * The key is the scm prefix and the value is the role hint of the
+     * The key is the scm prefix and the value is the role hint/provider id of the
      * {@link org.apache.maven.scm.provider.ScmProvider}.
      *
      * @since 2.0-beta-6
      * @see ScmManager#setScmProviderImplementation(String, String)
+     * @see <a href="https://maven.apache.org/scm/scms-overview.html">SCM Providers</a>
      */
     @Parameter
     private Map<String, String> providerImplementations;
