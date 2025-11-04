@@ -56,9 +56,6 @@ under the License.
   </repositories>
   <pluginRepositories>
     <pluginRepository>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
       <snapshots>
         <enabled>false</enabled>
       </snapshots>

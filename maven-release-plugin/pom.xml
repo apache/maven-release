@@ -34,7 +34,7 @@
   <description>This plugin is used to release a project with Maven, saving a lot of repetitive, manual work.</description>
 
   <prerequisites>
-    <maven>${mavenVersion}</maven>
+    <maven>3.6.3</maven>
   </prerequisites>
 
   <dependencies>
