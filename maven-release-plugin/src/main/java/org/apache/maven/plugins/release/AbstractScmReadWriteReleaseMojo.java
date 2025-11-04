@@ -70,8 +70,9 @@ public abstract class AbstractScmReadWriteReleaseMojo extends AbstractScmReadRel
     private String scmCommentPrefix;
 
     /**
-     * Implemented with git will or not push changes to the upstream repository.
-     * <code>true</code> by default to preserve backward compatibility.
+     * Whether to push changes to the upstream repository or not.
+     * Only applicable to distributed version control like Git.
+     * Is set to <code>true</code> by default to preserve backward compatibility.
      * @since 2.1
      */
     @Parameter(defaultValue = "true", property = "pushChanges")
