@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Interface to override default strategy.
  *
- * If a method returns {@code null}, the default will be used, otherwise the provided collection of phaseIds
+ * If a method returns {@code null}, the default will be used, otherwise the provided collection of phaseIds.
  *
  * @author Robert Scholte
  */
@@ -31,35 +31,35 @@ public interface Strategy {
     /**
      * <p>getPreparePhases.</p>
      *
-     * @return The release phases to execute the calling the prepare goal
+     * @return the release phases to execute the calling the prepare goal
      */
     List<String> getPreparePhases();
 
     /**
      * <p>getPerformPhases.</p>
      *
-     * @return The release phases to execute the calling the perform goal
+     * @return the release phases to execute the calling the perform goal
      */
     List<String> getPerformPhases();
 
     /**
      * <p>getBranchPhases.</p>
      *
-     * @return The release phases to execute the calling the branch goal
+     * @return the release phases to execute the calling the branch goal
      */
     List<String> getBranchPhases();
 
     /**
      * <p>getRollbackPhases.</p>
      *
-     * @return The release phases to execute the calling the rollback goal
+     * @return the release phases to execute the calling the rollback goal
      */
     List<String> getRollbackPhases();
 
     /**
      * <p>getUpdateVersionsPhases.</p>
      *
-     * @return The release phases to execute the calling the update-versions goal
+     * @return the release phases to execute the calling the update-versions goal
      */
     List<String> getUpdateVersionsPhases();
 }

@@ -30,8 +30,7 @@ import org.semver.Version;
 import org.semver.Version.Element;
 
 /**
- *
- * Uses SemVer implementation to increase minor element when resolving the development version
+ * Uses SemVer implementation to increase minor element when resolving the development version.
  */
 @Singleton
 @Named("SemVerVersionPolicy")

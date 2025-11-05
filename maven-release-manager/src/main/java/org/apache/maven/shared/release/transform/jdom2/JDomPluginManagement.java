@@ -28,7 +28,7 @@ import org.apache.maven.model.PluginManagement;
 import org.jdom2.Element;
 
 /**
- * JDOM2 implementation of poms PLUGINMANAGEMENT element
+ * JDOM2 implementation of poms PLUGINMANAGEMENT element.
  *
  * @author Robert Scholte
  * @since 3.0

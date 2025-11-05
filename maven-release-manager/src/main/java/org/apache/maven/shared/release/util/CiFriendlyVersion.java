@@ -33,7 +33,8 @@ public class CiFriendlyVersion {
     private static final Logger LOGGER = LoggerFactory.getLogger(CiFriendlyVersion.class);
 
     /**
-     * All Maven properties allowed to be referenced in parent versions via expressions
+     * All Maven properties allowed to be referenced in parent versions via expressions.
+     *
      * @see <a href="https://maven.apache.org/maven-ci-friendly.html">CI-Friendly Versions</a>
      */
     public static final String REVISION = "revision";
@@ -60,6 +61,7 @@ public class CiFriendlyVersion {
 
     /**
      * Rewrites the CI friendly properties in the given properties object based on the provided version and release descriptor.
+     *
      * @param version
      * @param properties
      * @param releaseDescriptor

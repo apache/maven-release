@@ -39,7 +39,7 @@ public class ReleaseDescriptorBuilder {
     private final Logger logger;
 
     /**
-     * Hides inner logic of the release descriptor
+     * Hides inner logic of the release descriptor.
      *
      * @author Robert Scholte
      */

@@ -90,7 +90,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
     private Map<String, ScmTranslator> scmTranslators;
 
     /**
-     * Use jdom2-sax as default
+     * Use jdom2-sax as default.
      */
     private String modelETL = JDomModelETLFactory.NAME;
 
@@ -729,7 +729,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      * @param projectId         a {@link java.lang.String} object
      * @param scmRepository     a {@link org.apache.maven.scm.repository.ScmRepository} object
      * @param result            a {@link org.apache.maven.shared.release.ReleaseResult} object
-     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any
      */
     protected abstract void transformScm(
             MavenProject project,
@@ -766,10 +766,10 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
      * Determines the relative path from trunk to tag, and adds this relative path
      * to the url.
      *
-     * @param trunkPath - The trunk url
-     * @param tagPath   - The tag base
-     * @param urlPath   - scm.url or scm.connection
-     * @return The url path for the tag.
+     * @param trunkPath the trunk url
+     * @param tagPath   the tag base
+     * @param urlPath   scm.url or scm.connection
+     * @return the url path for the tag
      */
     protected static String translateUrlPath(String trunkPath, String tagPath, String urlPath) {
         trunkPath = trunkPath.trim();

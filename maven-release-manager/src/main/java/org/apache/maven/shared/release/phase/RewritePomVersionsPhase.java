@@ -34,7 +34,7 @@ import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
 
 /**
- * Rewrite POMs for future development
+ * Rewrite POMs for future development.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */

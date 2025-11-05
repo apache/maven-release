@@ -28,7 +28,7 @@ import org.apache.maven.model.Reporting;
 import org.jdom2.Element;
 
 /**
- * JDOM2 implementation of poms REPORTING element
+ * JDOM2 implementation of poms REPORTING element.
  *
  * @author Robert Scholte
  * @since 3.0

@@ -164,7 +164,7 @@ public class ForkedMavenExecutor extends AbstractMavenExecutor {
      * @param systemOut a {@link java.io.OutputStream} object
      * @param systemErr a {@link java.io.OutputStream} object
      * @return a int
-     * @throws org.codehaus.plexus.util.cli.CommandLineException if any.
+     * @throws org.codehaus.plexus.util.cli.CommandLineException if any
      */
     public static int executeCommandLine(
             Commandline cl, InputStream systemIn, OutputStream systemOut, OutputStream systemErr)

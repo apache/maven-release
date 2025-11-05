@@ -71,7 +71,7 @@ public class PropertiesReleaseDescriptorStore implements ReleaseDescriptorStore 
      *
      * @param file a {@link java.io.File} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
-     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
+     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any
      */
     public ReleaseDescriptorBuilder read(File file) throws ReleaseDescriptorStoreException {
         return read(null, file);
@@ -83,7 +83,7 @@ public class PropertiesReleaseDescriptorStore implements ReleaseDescriptorStore 
      * @param mergeDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
      * @param file            a {@link java.io.File} object
      * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
-     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
+     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any
      */
     public ReleaseDescriptorBuilder read(ReleaseDescriptorBuilder mergeDescriptor, File file)
             throws ReleaseDescriptorStoreException {
@@ -135,7 +135,7 @@ public class PropertiesReleaseDescriptorStore implements ReleaseDescriptorStore 
      * @param config a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor}
      *               object
      * @param file   a {@link java.io.File} object
-     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
+     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any
      */
     @SuppressWarnings("checkstyle:MethodLength")
     public void write(BuilderReleaseDescriptor config, File file) throws ReleaseDescriptorStoreException {

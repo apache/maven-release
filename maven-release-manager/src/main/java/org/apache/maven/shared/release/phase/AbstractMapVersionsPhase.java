@@ -88,7 +88,7 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
     private final Prompter prompter;
 
     /**
-     * Component used for custom or default version policy
+     * Component used for custom or default version policy.
      */
     private final Map<String, VersionPolicy> versionPolicies;
 

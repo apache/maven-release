@@ -108,6 +108,7 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
 
     /**
      * Comma separated profiles to enable on release prepare, in addition to active profiles for project execution.
+     *
      * @since 3.0.0
      */
     @Parameter(property = "preparationProfiles")
@@ -243,8 +244,8 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy}
      * implementation used to calculate the project versions.
      *
-     * @since 2.5.1
      * @see org.apache.maven.shared.release.policies.DefaultVersionPolicy
+     * @since 2.5.1
      */
     @Parameter(defaultValue = "default", property = "projectVersionPolicyId")
     private String projectVersionPolicyId;
@@ -261,8 +262,8 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project branch and tag names.
      *
-     * @since 3.0.0-M1
      * @see org.apache.maven.shared.release.policies.DefaultNamingPolicy
+     * @since 3.0.0-M1
      */
     @Parameter(property = "projectNamingPolicyId")
     private String projectTagNamingPolicyId;
@@ -380,8 +381,8 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      * <p>prepareRelease.</p>
      *
      * @param generateReleasePoms a boolean
-     * @throws org.apache.maven.plugin.MojoExecutionException if any.
-     * @throws org.apache.maven.plugin.MojoFailureException if any.
+     * @throws org.apache.maven.plugin.MojoExecutionException if any
+     * @throws org.apache.maven.plugin.MojoFailureException if any
      */
     protected void prepareRelease(boolean generateReleasePoms) throws MojoExecutionException, MojoFailureException {
         // this is here so the subclass can call it without getting the extra generateReleasePoms check in execute()

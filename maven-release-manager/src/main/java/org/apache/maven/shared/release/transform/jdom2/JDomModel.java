@@ -38,7 +38,7 @@ import org.jdom2.Element;
 import org.jdom2.Text;
 
 /**
- * JDOM2 implementation of poms PROJECT element
+ * JDOM2 implementation of poms PROJECT element.
  *
  * @author Robert Scholte
  * @since 3.0
@@ -49,8 +49,7 @@ public class JDomModel extends Model {
     private final JDomModelBase modelBase;
 
     /**
-     * The ReleaseDescriptor after a commit performed
-     *
+     * The ReleaseDescriptor after a commit performed.
      */
     private final ReleaseDescriptor releaseDescriptor;
 

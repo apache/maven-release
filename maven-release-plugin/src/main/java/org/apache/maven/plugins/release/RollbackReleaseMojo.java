@@ -38,8 +38,8 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
  * href="https://maven.apache.org/plugins/maven-release-plugin/usage/rollback-release.html"
  * >https://maven.apache.org/plugins/maven-release-plugin/usage/rollback-release.html</a>.
  *
- * @since 2.0-beta-5
  * @author Edwin Punzalan
+ * @since 2.0-beta-5
  */
 @Mojo(name = "rollback", aggregator = true)
 public class RollbackReleaseMojo extends AbstractScmReadWriteReleaseMojo {

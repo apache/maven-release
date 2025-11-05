@@ -39,7 +39,7 @@ import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
  */
 public abstract class AbstractScmCommitDevelopmentPhase extends AbstractScmCommitPhase {
     /**
-     * The format for the
+     * The format for the.
      */
     private final String rollbackMessageFormat;
 

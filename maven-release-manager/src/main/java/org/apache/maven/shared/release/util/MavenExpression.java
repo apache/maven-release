@@ -48,6 +48,7 @@ public class MavenExpression {
 
     /**
      * Extracts the Maven property name from a given expression.
+     *
      * @param expression the expression
      * @return either {@code null} if value is no expression otherwise the property referenced in the expression
      */

@@ -24,11 +24,10 @@ import org.apache.maven.settings.Settings;
 
 /**
  * <p>ReleaseEnvironment interface.</p>
- *
  */
 public interface ReleaseEnvironment {
 
-    /** Constant <code>DEFAULT_MAVEN_EXECUTOR_ID="forked-path"</code> */
+    /** Constant <code>DEFAULT_MAVEN_EXECUTOR_ID="forked-path"</code>. */
     String DEFAULT_MAVEN_EXECUTOR_ID = "forked-path";
 
     /**

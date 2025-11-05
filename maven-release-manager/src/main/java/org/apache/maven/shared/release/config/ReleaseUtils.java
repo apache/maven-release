@@ -28,7 +28,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderRe
 import org.apache.maven.shared.release.scm.IdentifiedScm;
 
 /**
- * Class providing utility methods used during the release process
+ * Class providing utility methods used during the release process.
  *
  * @author <a href="mailto:jwhitlock@apache.org">Jeremy Whitlock</a>
  */

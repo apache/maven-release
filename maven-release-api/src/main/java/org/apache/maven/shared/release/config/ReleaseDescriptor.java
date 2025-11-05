@@ -147,42 +147,42 @@ public interface ReleaseDescriptor {
      * This field allows you to specify that Work Item
      * or Task. It is optional, and only relevant if pushChanges is true.
      *
-     * @return String
+     * @return string
      */
     String getWorkItem();
 
     /**
      * Get default version to use for new working copy.
      *
-     * @return String
+     * @return string
      */
     String getDefaultDevelopmentVersion();
 
     /**
      * Get relative path of the project returned by the checkout command.
      *
-     * @return String
+     * @return string
      */
     String getScmRelativePathProjectDirectory();
 
     /**
      * Get the directory where the tag will be checked out.
      *
-     * @return String
+     * @return string
      */
     String getCheckoutDirectory();
 
     /**
      * Get the goals to execute in perform phase for the release.
      *
-     * @return String
+     * @return string
      */
     String getPerformGoals();
 
     /**
      * Get default version to use for the tagged release or the new branch.
      *
-     * @return String
+     * @return string
      */
     String getDefaultReleaseVersion();
 
@@ -190,7 +190,7 @@ public interface ReleaseDescriptor {
      * Get nOTE : currently only implemented with svn scm. It contains the revision of the committed released pom to
      * remotely tag the source code with this revision.
      *
-     * @return String
+     * @return string
      */
     String getScmReleasedPomRevision();
 
@@ -235,49 +235,49 @@ public interface ReleaseDescriptor {
     /**
      * Get the last completed phase.
      *
-     * @return String
+     * @return string
      */
     String getCompletedPhase();
 
     /**
      * Method getCheckModificationExcludes.
      *
-     * @return List
+     * @return list
      */
     List<String> getCheckModificationExcludes();
 
     /**
      * Get additional arguments to pass to any executed Maven process.
      *
-     * @return String
+     * @return string
      */
     String getAdditionalArguments();
 
     /**
      * Get the goals to execute in preparation for the release.
      *
-     * @return String
+     * @return string
      */
     String getPreparationGoals();
 
     /**
      * Get the goals to execute in on completion of preparation for the release.
      *
-     * @return String
+     * @return string
      */
     String getCompletionGoals();
 
     /**
      * Get the file name of the POM to pass to any executed Maven process.
      *
-     * @return String
+     * @return string
      */
     String getPomFileName();
 
     /**
      * Get the prefix of SCM modification messages.
      *
-     * @return String
+     * @return string
      */
     String getScmCommentPrefix();
 
@@ -293,7 +293,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the SCM commit comment when setting pom.xml to release.
      *
-     * @return String
+     * @return string
      * @since 3.0.0-M1
      */
     String getScmReleaseCommitComment();
@@ -301,7 +301,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the SCM commit comment when setting pom.xml back to development.
      *
-     * @return String
+     * @return string
      * @since 3.0.0-M1
      */
     String getScmDevelopmentCommitComment();
@@ -309,7 +309,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the SCM commit comment when branching.
      *
-     * @return String
+     * @return string
      * @since 3.0.0-M1
      */
     String getScmBranchCommitComment();
@@ -317,7 +317,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the SCM commit comment when rolling back.
      *
-     * @return String
+     * @return string
      * @since 3.0.0-M1
      */
     String getScmRollbackCommitComment();
@@ -325,35 +325,35 @@ public interface ReleaseDescriptor {
     /**
      * Get pass phrase for the private key.
      *
-     * @return String
+     * @return string
      */
     String getScmPrivateKeyPassPhrase();
 
     /**
      * Get the password for the user interacting with the scm.
      *
-     * @return String
+     * @return string
      */
     String getScmPassword();
 
     /**
      * Get private key for an SSH based SCM repository.
      *
-     * @return String
+     * @return string
      */
     String getScmPrivateKey();
 
     /**
      * Get tag or branch name: the identifier for the tag/branch. Example: maven-release-plugin-2.0.
      *
-     * @return String
+     * @return string
      */
     String getScmReleaseLabel();
 
     /**
      * Get where you are going to put your tagged sources Example https://svn.apache.org/repos/asf/maven/plugins/tags.
      *
-     * @return String
+     * @return string
      */
     String getScmTagBase();
 
@@ -361,7 +361,7 @@ public interface ReleaseDescriptor {
      * Get where you are going to put your branched sources Example
      * https://svn.apache.org/repos/asf/maven/plugins/branches.
      *
-     * @return String
+     * @return string
      */
     String getScmBranchBase();
 
@@ -378,14 +378,14 @@ public interface ReleaseDescriptor {
      * Get this is a MavenSCM of where you're going to get the sources to make the release with. Example:
      * scm:svn:https://svn.apache.org/repos/asf/maven/plugins/trunk/maven-release-plugin.
      *
-     * @return String
+     * @return string
      */
     String getScmSourceUrl();
 
     /**
      * Get the user name to interact with the scm.
      *
-     * @return String
+     * @return string
      */
     String getScmUsername();
 
@@ -399,7 +399,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the directory where the release is performed.
      *
-     * @return String
+     * @return string
      */
     String getWorkingDirectory();
 
@@ -407,59 +407,59 @@ public interface ReleaseDescriptor {
      * Get specifies the format for generating a tag name. Property expansion is used with the optional prefix of
      * project, where properties are delimited with @{ and }.
      *
-     * @return String
+     * @return string
      */
     String getScmTagNameFormat();
 
     /**
      * Get the role-hint for the NamingPolicy implementation used to calculate the project branch and tag names.
      *
-     * @return String
+     * @return string
      */
     String getProjectNamingPolicyId();
 
     /**
      * Get the role-hint for the VersionPolicy implementation used to calculate the project versions.
      *
-     * @return String
+     * @return string
      */
     String getProjectVersionPolicyId();
 
     /**
      * Get the (optional) config for the VersionPolicy implementation used to calculate the project versions.
      *
-     * @return The parsed XML of the provided config (an instance of PlexusConfiguration) or null.
+     * @return the parsed XML of the provided config (an instance of PlexusConfiguration) or null
      */
     Object getProjectVersionPolicyConfig();
 
     /**
      * Get the role-hint for the release Strategy implementation.
      *
-     * @return String
+     * @return string
      */
     String getReleaseStrategyId();
 
     /**
      * <p>getDependencyOriginalVersion.</p>
      *
-     * @return {@code String} The original version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
+     * @return {@code String} The original version for the resolved snapshot dependency
      */
     String getDependencyOriginalVersion(String artifactKey);
 
     /**
      * <p>getDependencyReleaseVersion.</p>
      *
-     * @return {@code String} the release version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
+     * @return {@code String} the release version for the resolved snapshot dependency
      */
     String getDependencyReleaseVersion(String artifactKey);
 
     /**
      * <p>getDependencyDevelopmentVersion.</p>
      *
-     * @return {@code String} the release version for the resolved snapshot dependency.
      * @param artifactKey the artifact key {@code String}
+     * @return {@code String} the release version for the resolved snapshot dependency
      */
     String getDependencyDevelopmentVersion(String artifactKey);
 
@@ -491,7 +491,7 @@ public interface ReleaseDescriptor {
      * <p>getOriginalScmInfo.</p>
      *
      * @param projectKey the project key {@code String}
-     * @return the original {@code Scm} information.
+     * @return the original {@code Scm} information
      */
     Scm getOriginalScmInfo(String projectKey);
 
@@ -499,7 +499,7 @@ public interface ReleaseDescriptor {
      * <p>hasOriginalScmInfo.</p>
      *
      * @param projectKey the project key {@code String}
-     * @return has original Scm info.
+     * @return has original Scm info
      */
     boolean hasOriginalScmInfo(String projectKey);
 
@@ -585,14 +585,14 @@ public interface ReleaseDescriptor {
      * <li>"extensions" or "4": resolve extension dependencies</li>
      * </ul>
      *
-     * @return String
+     * @return string
      */
     String getAutoResolveSnapshots();
 
     /**
      * Get the line separator to use in the pom.xml.
      *
-     * @return String
+     * @return string
      */
     String getLineSeparator();
 

@@ -43,18 +43,12 @@ import org.codehaus.plexus.util.StringUtils;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public abstract class AbstractReleaseMojo extends AbstractMojo {
-    /**
-     */
     @Parameter(defaultValue = "${basedir}", readonly = true, required = true)
     private File basedir;
 
-    /**
-     */
     @Parameter(defaultValue = "${settings}", readonly = true, required = true)
     private Settings settings;
 
-    /**
-     */
     @Parameter(defaultValue = "${project}", readonly = true, required = true)
     protected MavenProject project;
 
@@ -71,8 +65,6 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     @Parameter(property = "pomFileName", defaultValue = "${project.file.name}")
     private String pomFileName;
 
-    /**
-     */
     @Parameter(defaultValue = "${reactorProjects}", readonly = true, required = true)
     private List<MavenProject> reactorProjects;
 
@@ -118,8 +110,8 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
      * The role-hint for the {@link org.apache.maven.shared.release.strategy.Strategy}
      * implementation used to specify the phases per goal.
      *
-     * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.strategies.DefaultStrategy
+     * @since 3.0.0-M5
      */
     @Parameter(defaultValue = "default", property = "releaseStrategyId")
     private String releaseStrategyId;
@@ -133,7 +125,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     /**
      * Gets the environment settings configured for this release.
      *
-     * @return The release environment, never <code>null</code>.
+     * @return the release environment, never <code>null</code>
      */
     protected ReleaseEnvironment getReleaseEnvironment() {
         return new DefaultReleaseEnvironment()
@@ -147,7 +139,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     /**
      * Creates the release descriptor from the various goal parameters.
      *
-     * @return The release descriptor, never <code>null</code>.
+     * @return the release descriptor, never <code>null</code>
      */
     protected ReleaseDescriptorBuilder createReleaseDescriptor() {
         ReleaseDescriptorBuilder descriptor = new ReleaseDescriptorBuilder();
@@ -209,7 +201,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     /**
      * Sets the component used to perform release actions.
      *
-     * @param releaseManager The release manager implementation to use, must not be <code>null</code>.
+     * @param releaseManager the release manager implementation to use, must not be <code>null</code>
      */
     void setReleaseManager(ReleaseManager releaseManager) {
         this.releaseManager = releaseManager;
@@ -218,7 +210,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     /**
      * Gets the effective settings for this build.
      *
-     * @return The effective settings for this build, never <code>null</code>.
+     * @return the effective settings for this build, never <code>null</code>
      */
     Settings getSettings() {
         return settings;
@@ -231,7 +223,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     /**
      * Sets the base directory of the build.
      *
-     * @param basedir The build's base directory, must not be <code>null</code>.
+     * @param basedir the build's base directory, must not be <code>null</code>
      */
     public void setBasedir(File basedir) {
         this.basedir = basedir;
@@ -242,7 +234,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     }
 
     /**
-     * only used for unit tests in which some required values of the project would be null
+     * Only used for unit tests in which some required values of the project would be null.
      */
     protected MavenProject getProject() {
         return this.project;
@@ -251,7 +243,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     /**
      * Gets the list of projects in the build reactor.
      *
-     * @return The list of reactor project, never <code>null</code>.
+     * @return the list of reactor project, never <code>null</code>
      */
     public List<MavenProject> getReactorProjects() {
         return reactorProjects;
@@ -260,7 +252,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
     /**
      * Add additional arguments.
      *
-     * @param argument The argument to add, must not be <code>null</code>.
+     * @param argument the argument to add, must not be <code>null</code>
      */
     protected void addArgument(String argument) {
         if (arguments != null) {

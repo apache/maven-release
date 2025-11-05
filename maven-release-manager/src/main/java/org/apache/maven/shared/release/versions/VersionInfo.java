@@ -19,13 +19,12 @@
 package org.apache.maven.shared.release.versions;
 
 /**
- * Represent the different version representations during the release-prepare phase
- *
+ * Represent the different version representations during the release-prepare phase.
  */
 public interface VersionInfo extends Comparable<VersionInfo> {
 
     /**
-     * Returns a string representing the version with a snapshot specification
+     * Returns a string representing the version with a snapshot specification.
      *
      * @return the snapshot version transformation of the original value
      */

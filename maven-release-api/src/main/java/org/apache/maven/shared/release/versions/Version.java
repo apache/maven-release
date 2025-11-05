@@ -73,7 +73,7 @@ public class Version implements Comparable<Version>, Cloneable {
 
     private static final String DEFAULT_BUILD_SEPARATOR = "-";
 
-    /** Constant <code>STANDARD_PATTERN</code> */
+    /** Constant <code>STANDARD_PATTERN</code>. */
     public static final Pattern STANDARD_PATTERN = Pattern.compile(
             "^((?:\\d+\\.)*\\d+)" // digit(s) and '.' repeated -
                     // followed by digit (version
@@ -89,7 +89,7 @@ public class Version implements Comparable<Version>, Cloneable {
      * supports version numbers like: trunk-SNAPSHOT branchName-SNAPSHOT SNAPSHOT
      */
     // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
-    /** Constant <code>ALTERNATE_PATTERN</code> */
+    /** Constant <code>ALTERNATE_PATTERN</code>. */
     public static final Pattern ALTERNATE_PATTERN = Pattern.compile("^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)");
 
     private Version(
@@ -118,7 +118,7 @@ public class Version implements Comparable<Version>, Cloneable {
      * <p>Constructor for Version.</p>
      *
      * @param version a {@link java.lang.String} object
-     * @throws org.apache.maven.shared.release.versions.VersionParseException if any.
+     * @throws org.apache.maven.shared.release.versions.VersionParseException if any
      */
     public Version(String version) throws VersionParseException {
         this.strVersion = version;
@@ -221,10 +221,10 @@ public class Version implements Comparable<Version>, Cloneable {
     }
 
     /**
-     * Simply joins the items in the list with "." period
+     * Simply joins the items in the list with "." period.
      *
-     * @return a {@code String} containing the items in the list joined by "." period
      * @param digits the list of digits {@code List<String>}
+     * @return a {@code String} containing the items in the list joined by "." period
      */
     protected static String joinDigitString(List<String> digits) {
         return digits != null ? StringUtils.join(digits.iterator(), DIGIT_SEPARATOR_STRING) : null;
@@ -351,11 +351,11 @@ public class Version implements Comparable<Version>, Cloneable {
     /**
      * <p>compareTo.</p>
      *
+     * @param other a {@link org.apache.maven.shared.release.versions.Version} object
+     * @return a int
      * @throws org.apache.maven.shared.release.versions.VersionComparisonConflictException
      *              if {@link org.eclipse.aether.version.Version} and
      *             {@link org.apache.maven.artifact.versioning.ArtifactVersion ArtifactVersion} give different results
-     * @param other a {@link org.apache.maven.shared.release.versions.Version} object
-     * @return a int
      */
     public int compareTo(Version other) throws VersionComparisonConflictException {
         int aetherComparisonResult = this.aetherVersion.compareTo(other.aetherVersion);

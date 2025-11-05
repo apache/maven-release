@@ -34,7 +34,7 @@ public interface ModelETL {
      * <p>extract.</p>
      *
      * @param pomFile a {@link java.io.File} object
-     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any
      */
     void extract(File pomFile) throws ReleaseExecutionException;
 
@@ -47,7 +47,7 @@ public interface ModelETL {
      * <p>load.</p>
      *
      * @param pomFile a {@link java.io.File} object
-     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any
      */
     void load(File pomFile) throws ReleaseExecutionException;
 
