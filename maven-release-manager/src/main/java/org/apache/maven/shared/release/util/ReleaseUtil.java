@@ -131,7 +131,7 @@ public class ReleaseUtil {
      * @param separator the line separator to use for normalization, typically "\n" or "\r\n", must not be
      *            <code>null</code>
      * @return the input string with normalized line separators or <code>null</code> if the string was <code>null</code>
-     *         
+     *
      */
     public static String normalizeLineEndings(String text, String separator) {
         String norm = text;
