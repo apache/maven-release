@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.release;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -25,8 +28,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
@@ -34,6 +35,7 @@ import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.manager.ScmManager;
+import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -46,16 +48,17 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.phase.ReleasePhase;
 import org.apache.maven.shared.release.phase.ReleasePhaseStub;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
-import org.apache.maven.shared.release.stubs.ScmManagerStub;
+import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestPath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
@@ -70,33 +73,45 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class DefaultReleaseManagerTest {
+
+    @Inject
     private ReleaseDescriptorStoreStub configStore;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    @Inject
+    @Named("test")
+    private ReleaseManager releaseManagerTest;
 
-        configStore = (ReleaseDescriptorStoreStub) lookup(ReleaseDescriptorStore.class, "stub");
-    }
+    @Inject
+    @Named("step1")
+    private ReleasePhase phaseStep1;
 
-    @Override
-    protected Module[] getCustomModules() {
-        return new Module[] {
-            new AbstractModule() {
-                @Override
-                protected void configure() {
-                    bind(ScmManager.class).toInstance(new ScmManagerStub());
-                    bind(ReleaseDescriptorStore.class).toInstance(new ReleaseDescriptorStoreStub());
-                }
-            }
-        };
-    }
+    @Inject
+    @Named("step2")
+    private ReleasePhase phaseStep2;
+
+    @Inject
+    @Named("step3")
+    private ReleasePhase phaseStep3;
+
+    @Inject
+    @Named("rollbackPhase1")
+    private ReleasePhase phaseRollbackPhase1;
+
+    @Inject
+    @Named("updateVersionsPhase1")
+    private ReleasePhase phaseUpdateVersionsPhase1;
+
+    @Inject
+    @Named("branch1")
+    private ReleasePhase phaseBranch1;
+
+    @Inject
+    private ScmManager scmManager;
 
     @Test
-    public void testPrepareNoCompletedPhase() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareNoCompletedPhase() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase(null);
 
@@ -105,23 +120,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertTrue(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 not simulated");
+        assertTrue(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 not simulated");
+        assertTrue(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 not simulated");
     }
 
     @Test
-    public void testPrepareCompletedPhase() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareCompletedPhase() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase("step1");
 
@@ -130,23 +140,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 not executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertFalse(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 not executed");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 not simulated");
+        assertTrue(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 not simulated");
+        assertTrue(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 not simulated");
     }
 
     @Test
-    public void testPrepareCompletedPhaseNoResume() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareCompletedPhaseNoResume() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase("step1");
 
@@ -157,23 +162,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setResume(false);
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertFalse(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 not simulated");
+        assertTrue(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 not simulated");
+        assertTrue(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 not simulated");
     }
 
     @Test
-    public void testPrepareCompletedAllPhases() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareCompletedAllPhases() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase("step3");
 
@@ -182,23 +182,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 not executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertFalse("step2 not executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertFalse("step3 not executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertFalse(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 not executed");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 not simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 not executed");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 not simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 not executed");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 not simulated");
     }
 
     @Test
-    public void testPrepareInvalidCompletedPhase() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareInvalidCompletedPhase() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase("foo");
 
@@ -207,23 +202,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 executed", phase.isExecuted());
-        assertFalse("step1 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 executed", phase.isExecuted());
-        assertFalse("step2 not simulated", phase.isSimulated());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 executed", phase.isExecuted());
-        assertFalse("step3 not simulated", phase.isSimulated());
+        assertTrue(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 not simulated");
+        assertTrue(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 not simulated");
+        assertTrue(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 executed");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 not simulated");
     }
 
     @Test
-    public void testPrepareSimulateNoCompletedPhase() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareSimulateNoCompletedPhase() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase(null);
 
@@ -234,23 +224,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setResume(true);
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 simulated", phase.isSimulated());
-        assertFalse("step1 not executed", phase.isExecuted());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 simulated", phase.isSimulated());
-        assertFalse("step2 not executed", phase.isExecuted());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 simulated", phase.isSimulated());
-        assertFalse("step3 not executed", phase.isExecuted());
+        assertTrue(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 not executed");
+        assertTrue(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 not executed");
+        assertTrue(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 not executed");
     }
 
     @Test
-    public void testPrepareSimulateCompletedPhase() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareSimulateCompletedPhase() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase("step1");
 
@@ -261,23 +246,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setResume(true);
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 not simulated", phase.isSimulated());
-        assertFalse("step1 not executed", phase.isExecuted());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 simulated", phase.isSimulated());
-        assertFalse("step2 not executed", phase.isExecuted());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 simulated", phase.isSimulated());
-        assertFalse("step3 not executed", phase.isExecuted());
+        assertFalse(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 not simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 not executed");
+        assertTrue(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 not executed");
+        assertTrue(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 not executed");
     }
 
     @Test
-    public void testPrepareSimulateCompletedAllPhases() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareSimulateCompletedAllPhases() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase("step3");
 
@@ -288,23 +268,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setResume(true);
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertFalse("step1 not simulated", phase.isSimulated());
-        assertFalse("step1 not executed", phase.isExecuted());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertFalse("step2 not simulated", phase.isSimulated());
-        assertFalse("step2 not executed", phase.isExecuted());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertFalse("step3 not simulated", phase.isSimulated());
-        assertFalse("step3 not executed", phase.isExecuted());
+        assertFalse(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 not simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 not executed");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 not simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 not executed");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 not simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 not executed");
     }
 
     @Test
-    public void testPrepareSimulateInvalidCompletedPhase() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
+    void testPrepareSimulateInvalidCompletedPhase() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase("foo");
 
@@ -315,53 +290,28 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         prepareRequest.setResume(true);
         prepareRequest.setUserProperties(new Properties());
 
-        releaseManager.prepare(prepareRequest);
+        releaseManagerTest.prepare(prepareRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 simulated", phase.isSimulated());
-        assertFalse("step1 not executed", phase.isExecuted());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 simulated", phase.isSimulated());
-        assertFalse("step2 not executed", phase.isExecuted());
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 simulated", phase.isSimulated());
-        assertFalse("step3 not executed", phase.isExecuted());
-    }
-
-    @Ignore("This is testing messed up XML?")
-    @Test
-    public void testPrepareUnknownPhaseConfigured() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "bad-phase-configured");
-
-        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
-        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setReleaseStrategyId("foo");
-        prepareRequest.setReleaseDescriptorBuilder(builder);
-        prepareRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
-        prepareRequest.setUserProperties(new Properties());
-
-        try {
-            releaseManager.prepare(prepareRequest);
-            fail("Should have failed to find a phase");
-        } catch (ReleaseExecutionException e) {
-            // good
-        }
+        assertTrue(((ReleasePhaseStub) phaseStep1).isSimulated(), "step1 simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep1).isExecuted(), "step1 not executed");
+        assertTrue(((ReleasePhaseStub) phaseStep2).isSimulated(), "step2 simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep2).isExecuted(), "step2 not executed");
+        assertTrue(((ReleasePhaseStub) phaseStep3).isSimulated(), "step3 simulated");
+        assertFalse(((ReleasePhaseStub) phaseStep3).isExecuted(), "step3 not executed");
     }
 
     @Test
-    public void testReleaseConfigurationStoreReadFailure() throws Exception {
+    void testReleaseConfigurationStoreReadFailure() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/working-directory").getAbsolutePath());
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup(ReleaseManager.class, "test");
-
         ReleaseDescriptorStore configStoreMock = mock(ReleaseDescriptorStore.class);
         when(configStoreMock.read(builder))
                 .thenThrow(new ReleaseDescriptorStoreException("message", new IOException("ioExceptionMsg")));
 
-        releaseManager.setConfigStore(configStoreMock);
+        ((DefaultReleaseManager) releaseManagerTest).setConfigStore(configStoreMock);
 
         ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
         prepareRequest.setReleaseDescriptorBuilder(builder);
@@ -370,14 +320,11 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
         // execute
         try {
-            releaseManager.prepare(prepareRequest);
+            releaseManagerTest.prepare(prepareRequest);
             fail("Should have failed to read configuration");
         } catch (ReleaseExecutionException e) {
             // good
-            assertEquals(
-                    "check cause",
-                    ReleaseDescriptorStoreException.class,
-                    e.getCause().getClass());
+            assertEquals(ReleaseDescriptorStoreException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -386,20 +333,18 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testReleaseConfigurationStoreWriteFailure() throws Exception {
+    void testReleaseConfigurationStoreWriteFailure() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/working-directory").getAbsolutePath());
-
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup(ReleaseManager.class, "test");
 
         ReleaseDescriptorStore configStoreMock = mock(ReleaseDescriptorStore.class);
         doThrow(new ReleaseDescriptorStoreException("message", new IOException("ioExceptionMsg")))
                 .when(configStoreMock)
                 .write(any(ReleaseDescriptor.class));
 
-        releaseManager.setConfigStore(configStoreMock);
+        ((DefaultReleaseManager) releaseManagerTest).setConfigStore(configStoreMock);
 
         ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
         prepareRequest.setReleaseDescriptorBuilder(builder);
@@ -410,14 +355,11 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
         // execute
         try {
-            releaseManager.prepare(prepareRequest);
+            releaseManagerTest.prepare(prepareRequest);
             fail("Should have failed to read configuration");
         } catch (ReleaseExecutionException e) {
             // good
-            assertEquals(
-                    "check cause",
-                    ReleaseDescriptorStoreException.class,
-                    e.getCause().getClass());
+            assertEquals(ReleaseDescriptorStoreException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -426,36 +368,30 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testReleaseConfigurationStoreClean() throws Exception {
+    void testReleaseConfigurationStoreClean() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/working-directory").getAbsolutePath());
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup(ReleaseManager.class, "test");
-
         ReleaseDescriptorStore configStoreMock = mock(ReleaseDescriptorStore.class);
 
-        releaseManager.setConfigStore(configStoreMock);
+        ((DefaultReleaseManager) releaseManagerTest).setConfigStore(configStoreMock);
 
         ReleaseCleanRequest cleanRequest = new ReleaseCleanRequest();
         cleanRequest.setReleaseDescriptorBuilder(builder);
 
         // execute
-        releaseManager.clean(cleanRequest);
+        releaseManagerTest.clean(cleanRequest);
 
         // verify
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step1");
-        assertTrue("step1 not cleaned", phase.isCleaned());
+        assertTrue(((ReleasePhaseStub) phaseStep1).isCleaned(), "step1 not cleaned");
 
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step2");
-        assertTrue("step2 not cleaned", phase.isCleaned());
+        assertTrue(((ReleasePhaseStub) phaseStep2).isCleaned(), "step2 not cleaned");
 
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "step3");
-        assertTrue("step3 not cleaned", phase.isCleaned());
+        assertTrue(((ReleasePhaseStub) phaseStep3).isCleaned(), "step3 not cleaned");
 
-        phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "branch1");
-        assertTrue("branch1 not cleaned", phase.isCleaned());
+        //        assertTrue("branch1 not cleaned", phaseBranch1.isCleaned());
 
         verify(configStoreMock).delete(any(ReleaseDescriptor.class));
         verifyNoMoreInteractions(configStoreMock);
@@ -474,8 +410,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testReleasePerformWithResult() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
+    void testReleasePerformWithResult() throws Exception {
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
@@ -488,25 +423,23 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         performRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
         performRequest.setReactorProjects(createReactorProjects());
 
-        ReleaseResult result = releaseManager.performWithResult(performRequest);
+        ReleaseResult result = releaseManagerTest.performWithResult(performRequest);
 
         assertTrue(result.getOutput().length() > 0);
     }
 
     @Test
-    public void testReleaseConfigurationStoreReadFailureOnPerform() throws Exception {
+    void testReleaseConfigurationStoreReadFailureOnPerform() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/working-directory").getAbsolutePath());
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup(ReleaseManager.class, "test");
-
         ReleaseDescriptorStore configStoreMock = mock(ReleaseDescriptorStore.class);
         when(configStoreMock.read(builder))
                 .thenThrow(new ReleaseDescriptorStoreException("message", new IOException("ioExceptionMsg")));
 
-        releaseManager.setConfigStore(configStoreMock);
+        ((DefaultReleaseManager) releaseManagerTest).setConfigStore(configStoreMock);
 
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setReleaseDescriptorBuilder(builder);
@@ -516,14 +449,11 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         try {
             builder.setUseReleaseProfile(false);
 
-            releaseManager.perform(performRequest);
+            releaseManagerTest.perform(performRequest);
             fail("Should have failed to read configuration");
         } catch (ReleaseExecutionException e) {
             // good
-            assertEquals(
-                    "check cause",
-                    ReleaseDescriptorStoreException.class,
-                    e.getCause().getClass());
+            assertEquals(ReleaseDescriptorStoreException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -532,16 +462,14 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testReleasePerformWithIncompletePrepare() throws Exception {
+    void testReleasePerformWithIncompletePrepare() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/working-directory").getAbsolutePath());
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup(ReleaseManager.class, "test");
-
         ReleaseDescriptorStoreStub configStore = new ReleaseDescriptorStoreStub();
         builder.setCompletedPhase("scm-tag");
-        releaseManager.setConfigStore(configStore);
+        ((DefaultReleaseManager) releaseManagerTest).setConfigStore(configStore);
 
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setReleaseDescriptorBuilder(builder);
@@ -550,7 +478,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         try {
             builder.setUseReleaseProfile(false);
 
-            releaseManager.perform(performRequest);
+            releaseManagerTest.perform(performRequest);
             fail("Should have failed to perform");
         } catch (ReleaseFailureException e) {
             // good
@@ -560,7 +488,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
     // MRELEASE-758: release:perform no longer removes release.properties
     @Test
-    public void testPerformWithDefaultClean() throws Exception {
+    void testPerformWithDefaultClean() throws Exception {
         // prepare
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setDryRun(true);
@@ -574,10 +502,8 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         builder.setWorkingDirectory(getTestFile("target/working-directory").getAbsolutePath());
         performRequest.setReleaseDescriptorBuilder(builder);
 
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
         // test
-        releaseManager.perform(performRequest);
+        releaseManagerTest.perform(performRequest);
 
         // verify
         verify(managerListener).phaseStart("verify-completed-prepare-phases");
@@ -593,11 +519,9 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testNoScmUrlPerform() throws Exception {
+    void testNoScmUrlPerform() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setWorkingDirectory(getTestFile("target/test/checkout").getAbsolutePath());
-
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
 
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setReleaseDescriptorBuilder(builder);
@@ -606,19 +530,17 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         try {
             builder.setUseReleaseProfile(false);
 
-            releaseManager.perform(performRequest);
+            releaseManagerTest.perform(performRequest);
 
             fail("perform should have failed");
         } catch (ReleaseFailureException e) {
-            assertNull("check no cause", e.getCause());
+            assertNull(e.getCause(), "check no cause");
         }
     }
 
     @Test
-    public void testScmExceptionThrown() throws Exception {
+    void testScmExceptionThrown() throws Exception {
         // prepare
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
-
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         File checkoutDirectory = getTestFile("target/checkout-directory");
@@ -632,8 +554,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
                         any(CommandParameters.class)))
                 .thenThrow(new ScmException("..."));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        ((ScmManagerStub) scmManager).setScmProvider(scmProviderMock);
 
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setReleaseDescriptorBuilder(builder);
@@ -642,11 +563,11 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
         // execute
         try {
-            releaseManager.perform(performRequest);
+            releaseManagerTest.perform(performRequest);
 
             fail("commit should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", ScmException.class, e.getCause().getClass());
+            assertEquals(ScmException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -658,8 +579,7 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testScmResultFailure() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
+    void testScmResultFailure() throws Exception {
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
@@ -667,7 +587,6 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
         builder.setWorkingDirectory(getTestPath("target/dummy-project"));
 
-        ScmManager scmManager = (ScmManager) lookup(ScmManager.class);
         ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl("scm-url");
 
         providerStub.setCheckOutScmResult(new CheckOutScmResult("", "", "", false));
@@ -678,17 +597,17 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         performRequest.setReactorProjects(createReactorProjects());
 
         try {
-            releaseManager.perform(performRequest);
+            releaseManagerTest.perform(performRequest);
 
             fail("commit should have failed");
         } catch (ReleaseScmCommandException e) {
-            assertNull("check no other cause", e.getCause());
+            assertNull(e.getCause(), "check no other cause");
         }
     }
 
     // MRELEASE-1042
     @Test
-    public void testKeepProfilesOnPerform() throws Exception {
+    void testKeepProfilesOnPerform() throws Exception {
         // prepare
         ReleasePerformRequest performRequest = new ReleasePerformRequest();
         performRequest.setDryRun(true);
@@ -702,24 +621,22 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
         builder.setWorkingDirectory(getTestFile("target/working-directory").getAbsolutePath());
         performRequest.setReleaseDescriptorBuilder(builder);
 
-        DefaultReleaseManager releaseManager = (DefaultReleaseManager) lookup(ReleaseManager.class, "test");
-
         ReleaseDescriptorBuilder secondBuilder = new ReleaseDescriptorBuilder();
         secondBuilder.setActivateProfiles(Arrays.asList("aProfile", "bProfile"));
         secondBuilder.setScmSourceUrl("scm-url");
         ReleaseDescriptorStore configStoreMock = mock(ReleaseDescriptorStore.class);
         when(configStoreMock.read(any(ReleaseDescriptorBuilder.class))).thenReturn(secondBuilder);
-        releaseManager.setConfigStore(configStoreMock);
+        ((DefaultReleaseManager) releaseManagerTest).setConfigStore(configStoreMock);
 
         // test
-        ReleaseResult result = releaseManager.performWithResult(performRequest);
+        ReleaseResult result = releaseManagerTest.performWithResult(performRequest);
 
         // verify
         assertTrue(result.getOutput().contains("-P aProfile,bProfile,anotherOne"));
     }
 
     @Test
-    public void testDetermineWorkingDirectory() throws Exception {
+    void testDetermineWorkingDirectory() throws Exception {
         DefaultReleaseManager defaultReleaseManager = new DefaultReleaseManager(
                 Collections.emptyMap(), Collections.emptyMap(), mock(ReleaseDescriptorStore.class));
 
@@ -746,32 +663,26 @@ public class DefaultReleaseManagerTest extends PlexusJUnit4TestCase {
 
     // MRELEASE-761
     @Test
-    public void testRollbackCall() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
+    void testRollbackCall() throws Exception {
 
         ReleaseRollbackRequest rollbackRequest = new ReleaseRollbackRequest();
         rollbackRequest.setReleaseDescriptorBuilder(configStore.getReleaseConfiguration());
 
-        releaseManager.rollback(rollbackRequest);
+        releaseManagerTest.rollback(rollbackRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "rollbackPhase1");
-
-        assertTrue("rollbackPhase1 executed", phase.isExecuted());
+        assertTrue(((ReleasePhaseStub) phaseRollbackPhase1).isExecuted(), "rollbackPhase1 executed");
     }
 
     // MRELEASE-765
     @Test
-    public void testUpdateVersionsCall() throws Exception {
-        ReleaseManager releaseManager = lookup(ReleaseManager.class, "test");
+    void testUpdateVersionsCall() throws Exception {
 
         ReleaseUpdateVersionsRequest updateVersionsRequest = new ReleaseUpdateVersionsRequest();
         updateVersionsRequest.setReleaseDescriptorBuilder(configStore.getReleaseConfiguration());
         updateVersionsRequest.setUserProperties(new Properties());
 
-        releaseManager.updateVersions(updateVersionsRequest);
+        releaseManagerTest.updateVersions(updateVersionsRequest);
 
-        ReleasePhaseStub phase = (ReleasePhaseStub) lookup(ReleasePhase.class, "updateVersionsPhase1");
-
-        assertTrue("updateVersionsPhase1 executed", phase.isExecuted());
+        assertTrue(((ReleasePhaseStub) phaseUpdateVersionsPhase1).isExecuted(), "updateVersionsPhase1 executed");
     }
 }

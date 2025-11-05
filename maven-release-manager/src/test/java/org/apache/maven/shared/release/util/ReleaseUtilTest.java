@@ -21,29 +21,28 @@ package org.apache.maven.shared.release.util;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import org.codehaus.plexus.util.Os;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for ReleaseUtil methods
  */
-public class ReleaseUtilTest {
+class ReleaseUtilTest {
     /**
      * MRELEASE-273 : Tests if there no pom passed as parameter
      */
     @Test
-    public void testProjectIsNull() {
+    void testProjectIsNull() {
         assertNull(ReleaseUtil.getReleasePom(null));
         assertNull(ReleaseUtil.getStandardPom(null));
     }
 
     @Test
-    public void testGetBaseScmUrlSingleLevel() throws Exception {
+    void testGetBaseScmUrlSingleLevel() throws Exception {
         assertEquals(
                 "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
                 ReleaseUtil.realignScmUrl(0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk"));
@@ -53,7 +52,7 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseScmUrlSingleLevelDotCharacter() throws Exception {
+    void testGetBaseScmUrlSingleLevelDotCharacter() throws Exception {
         assertEquals(
                 "scm:svn:http://svn.repo.com/flat-multi-module/trunk",
                 ReleaseUtil.realignScmUrl(0, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/."));
@@ -75,13 +74,13 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseScmUrlReturnOriginal() throws Exception {
+    void testGetBaseScmUrlReturnOriginal() throws Exception {
         assertEquals("no-path-elements", ReleaseUtil.realignScmUrl(1, "no-path-elements"));
         assertEquals("no-path-elements", ReleaseUtil.realignScmUrl(15, "no-path-elements"));
     }
 
     @Test
-    public void testGetBaseScmUrlOfFlatMultiModule() throws Exception {
+    void testGetBaseScmUrlOfFlatMultiModule() throws Exception {
         String actual =
                 ReleaseUtil.realignScmUrl(1, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project");
         assertEquals("scm:svn:http://svn.repo.com/flat-multi-module/trunk", actual);
@@ -91,7 +90,7 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseScmUrlOfFlatMultiModuleMultipleLevels() throws Exception {
+    void testGetBaseScmUrlOfFlatMultiModuleMultipleLevels() throws Exception {
         String actual =
                 ReleaseUtil.realignScmUrl(3, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/1/2");
         assertEquals("scm:svn:http://svn.repo.com/flat-multi-module/trunk", actual);
@@ -101,14 +100,14 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseWorkingDirectoryParentCountSameDirectory() {
+    void testGetBaseWorkingDirectoryParentCountSameDirectory() {
         Path workingDirectory = Paths.get("/working/directory/maven/release");
         Path basedir = Paths.get("/working/directory/maven/release");
         assertEquals(0, ReleaseUtil.getBaseWorkingDirectoryParentCount(basedir, workingDirectory));
     }
 
     @Test
-    public void testGetBaseWorkingDirectoryParentCountSameDirectoryDotCharacter() {
+    void testGetBaseWorkingDirectoryParentCountSameDirectoryDotCharacter() {
         Path workingDirectory = Paths.get("/working/directory/maven/release/.").toAbsolutePath();
         assertTrue(workingDirectory.toString().contains("."));
         Path basedir = Paths.get("/working/directory/maven/release").toAbsolutePath();
@@ -122,7 +121,7 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseWorkingDirectoryParentCountSubdirectory() {
+    void testGetBaseWorkingDirectoryParentCountSubdirectory() {
         Path workingDirectory = Paths.get("/working/directory/maven/release").toAbsolutePath();
         Path basedir = Paths.get("/working/directory/maven/release/maven-release-manager")
                 .toAbsolutePath();
@@ -130,7 +129,7 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseWorkingDirectoryParentCountParentDirectory() {
+    void testGetBaseWorkingDirectoryParentCountParentDirectory() {
         Path workingDirectory = Paths.get("/working/directory/maven/release/maven-release-manager")
                 .toAbsolutePath();
         Path basedir = Paths.get("/working/directory/maven/release").toAbsolutePath();
@@ -138,7 +137,7 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseWorkingDirectoryParentCountParentDirectoryDotCharacter() {
+    void testGetBaseWorkingDirectoryParentCountParentDirectoryDotCharacter() {
         Path workingDirectory = Paths.get("/working/directory/maven/release/maven-release-manager/.")
                 .toAbsolutePath();
         assertTrue(workingDirectory.toString().contains("."));
@@ -154,7 +153,7 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseWorkingDirectoryParentCountParentDirectoryMultiple() {
+    void testGetBaseWorkingDirectoryParentCountParentDirectoryMultiple() {
         Path workingDirectory = Paths.get("/working/directory/maven/release/maven-release-manager")
                 .toAbsolutePath();
         Path basedir = Paths.get("/working/directory").toAbsolutePath();
@@ -162,7 +161,7 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseWorkingDirectoryParentCountParentDirectoryMultipleDotCharacter() {
+    void testGetBaseWorkingDirectoryParentCountParentDirectoryMultipleDotCharacter() {
         Path workingDirectory = Paths.get("/working/directory/maven/release/maven-release-manager/./.")
                 .toAbsolutePath();
         assertTrue(workingDirectory.toString().contains("."));
@@ -178,7 +177,7 @@ public class ReleaseUtilTest {
     }
 
     @Test
-    public void testGetBaseWorkingDirectoryParentCountDifferentCase() {
+    void testGetBaseWorkingDirectoryParentCountDifferentCase() {
         Path workingDirectory = Paths.get("/Working/Directory/maven/release/maven-release-manager")
                 .toAbsolutePath();
         Path basedir = Paths.get("/working/directory").toAbsolutePath();
@@ -189,31 +188,37 @@ public class ReleaseUtilTest {
      * MRELEASE-663
      */
     @Test
-    public void testGetWindowsRootBaseWorkingDirectoryParentCountDifferentCase() {
-        assumeTrue(Os.isFamily(Os.FAMILY_WINDOWS));
+    void testGetWindowsRootBaseWorkingDirectoryParentCountDifferentCase() {
+        Assumptions.assumeTrue(org.codehaus.plexus.util.Os.isFamily(org.codehaus.plexus.util.Os.FAMILY_WINDOWS));
 
-        assertEquals(
-                2,
-                ReleaseUtil.getBaseWorkingDirectoryParentCount(Paths.get("C:"), Paths.get("C:\\working\\directory")));
-        assertEquals(
-                2,
-                ReleaseUtil.getBaseWorkingDirectoryParentCount(Paths.get("C:"), Paths.get("C:\\working\\directory\\")));
-        assertEquals(
-                2,
-                ReleaseUtil.getBaseWorkingDirectoryParentCount(Paths.get("C:\\"), Paths.get("C:\\working\\directory")));
         assertEquals(
                 2,
                 ReleaseUtil.getBaseWorkingDirectoryParentCount(
-                        Paths.get("C:\\"), Paths.get("C:\\working\\directory\\")));
+                        java.nio.file.Paths.get("C:"), java.nio.file.Paths.get("C:\\working\\directory")));
+        assertEquals(
+                2,
+                ReleaseUtil.getBaseWorkingDirectoryParentCount(
+                        java.nio.file.Paths.get("C:"), java.nio.file.Paths.get("C:\\working\\directory\\")));
+        assertEquals(
+                2,
+                ReleaseUtil.getBaseWorkingDirectoryParentCount(
+                        java.nio.file.Paths.get("C:\\"), java.nio.file.Paths.get("C:\\working\\directory")));
+        assertEquals(
+                2,
+                ReleaseUtil.getBaseWorkingDirectoryParentCount(
+                        java.nio.file.Paths.get("C:\\"), java.nio.file.Paths.get("C:\\working\\directory\\")));
 
         assertEquals(
                 2,
-                ReleaseUtil.getBaseWorkingDirectoryParentCount(Paths.get("c:"), Paths.get("C:\\working\\directory")));
+                ReleaseUtil.getBaseWorkingDirectoryParentCount(
+                        java.nio.file.Paths.get("c:"), java.nio.file.Paths.get("C:\\working\\directory")));
         assertEquals(
                 2,
-                ReleaseUtil.getBaseWorkingDirectoryParentCount(Paths.get("C:"), Paths.get("c:\\working\\directory")));
+                ReleaseUtil.getBaseWorkingDirectoryParentCount(
+                        java.nio.file.Paths.get("C:"), java.nio.file.Paths.get("c:\\working\\directory")));
         assertEquals(
                 2,
-                ReleaseUtil.getBaseWorkingDirectoryParentCount(Paths.get("c:"), Paths.get("c:\\working\\directory")));
+                ReleaseUtil.getBaseWorkingDirectoryParentCount(
+                        java.nio.file.Paths.get("c:"), java.nio.file.Paths.get("c:\\working\\directory")));
     }
 }

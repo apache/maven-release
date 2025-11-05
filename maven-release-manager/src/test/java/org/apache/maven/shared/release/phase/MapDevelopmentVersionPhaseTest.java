@@ -18,28 +18,27 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class MapDevelopmentVersionPhaseIT extends PlexusJUnit4TestCase {
+@PlexusTest
+class MapDevelopmentVersionPhaseTest {
+    @Inject
+    @Named("map-development-versions")
     private MapDevelopmentVersionsPhase mapDevelopmentVersionsPhase;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        mapDevelopmentVersionsPhase =
-                (MapDevelopmentVersionsPhase) lookup(ReleasePhase.class, "map-development-versions");
-    }
 
     private static MavenProject createProject(String artifactId, String version) {
         Model model = new Model();
@@ -50,7 +49,7 @@ public class MapDevelopmentVersionPhaseIT extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testNoUpdateWorkingCopyVersions() throws Exception {
+    void testNoUpdateWorkingCopyVersions() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setInteractive(false);
         builder.setUpdateWorkingCopyVersions(false);

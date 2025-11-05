@@ -27,25 +27,25 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class JDomModelTest {
+class JDomModelTest {
     private SAXBuilder builder = new SAXBuilder();
     private ReleaseDescriptor releaseDescriptor = new ReleaseDescriptorBuilder().build();
 
     @Test
-    public void testGetScm() throws Exception {
+    void testGetScm() throws Exception {
         String content = "<project></project>";
         Document document = builder.build(new StringReader(content));
         assertNull(new JDomModel(document, releaseDescriptor).getScm());
     }
 
     @Test
-    public void testSetScm() throws Exception {
+    void testSetScm() throws Exception {
         String content = "<project></project>";
         Document document = builder.build(new StringReader(content));
         Model model = new JDomModel(document, releaseDescriptor);
@@ -59,7 +59,7 @@ public class JDomModelTest {
     }
 
     @Test
-    public void testSetVersion() throws Exception {
+    void testSetVersion() throws Exception {
         String content = "<project></project>";
         Element projectElm = builder.build(new StringReader(content)).getRootElement();
         Model model = new JDomModel(projectElm, releaseDescriptor);

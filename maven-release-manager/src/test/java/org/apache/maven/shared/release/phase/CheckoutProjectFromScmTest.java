@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.util.List;
 
@@ -27,7 +30,6 @@ import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTag;
 import org.apache.maven.scm.command.checkout.CheckOutScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
-import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -37,12 +39,13 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.apache.maven.shared.release.stubs.ScmManagerStub;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -53,16 +56,15 @@ import static org.mockito.Mockito.when;
 /**
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+@PlexusTest
+class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
 
-        phase = lookup(ReleasePhase.class, "checkout-project-from-scm");
-    }
+    @Inject
+    @Named("checkout-project-from-scm")
+    private ReleasePhase phase;
 
     @Test
-    public void testExecuteStandard() throws Exception {
+    void testExecuteStandard() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         File checkoutDirectory = getTestFile("target/checkout-test/standard");
@@ -82,9 +84,8 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
                         argThat(new HasCommandParameter(CommandParameter.SHALLOW, true))))
                 .thenReturn(new CheckOutScmResult("", null));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
-        stub.addScmRepositoryForUrl(scmUrl, repository);
+        scmManager.setScmProvider(scmProviderMock);
+        scmManager.addScmRepositoryForUrl(scmUrl, repository);
 
         String dir = "scm-commit/single-pom";
         List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
@@ -106,7 +107,7 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testExecuteMultiModuleWithDeepSubprojects() throws Exception {
+    void testExecuteMultiModuleWithDeepSubprojects() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         File checkoutDirectory = getTestFile("target/checkout-test/multimodule-with-deep-subprojects");
@@ -126,9 +127,8 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
                         argThat(new HasCommandParameter(CommandParameter.SHALLOW, true))))
                 .thenReturn(new CheckOutScmResult("", null));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
-        stub.addScmRepositoryForUrl(scmUrl, repository);
+        scmManager.setScmProvider(scmProviderMock);
+        scmManager.addScmRepositoryForUrl(scmUrl, repository);
 
         String dir = "scm-commit/multimodule-with-deep-subprojects";
         List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
@@ -150,7 +150,7 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testExecuteFlatMultiModule() throws Exception {
+    void testExecuteFlatMultiModule() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         File checkoutDirectory = getTestFile("target/checkout-test/flat-multi-module");
@@ -170,9 +170,8 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
                         argThat(new HasCommandParameter(CommandParameter.SHALLOW, true))))
                 .thenReturn(new CheckOutScmResult("", null));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
-        stub.addScmRepositoryForUrl(scmUrl, repository);
+        scmManager.setScmProvider(scmProviderMock);
+        scmManager.addScmRepositoryForUrl(scmUrl, repository);
 
         List<MavenProject> reactorProjects =
                 createReactorProjects("rewrite-for-release/pom-with-parent-flat", "root-project");
@@ -184,10 +183,10 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
 
         // verify
         assertEquals(
-                "not found root-project but "
-                        + ReleaseUtils.buildReleaseDescriptor(builder).getScmRelativePathProjectDirectory(),
                 "root-project",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmRelativePathProjectDirectory());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmRelativePathProjectDirectory(),
+                "not found root-project but "
+                        + ReleaseUtils.buildReleaseDescriptor(builder).getScmRelativePathProjectDirectory());
 
         verify(scmProviderMock)
                 .checkOut(
@@ -199,14 +198,13 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testNoSuchScmProviderExceptionThrown() throws Exception {
+    void testNoSuchScmProviderExceptionThrown() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/test/checkout").getAbsolutePath());
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup(ScmManager.class);
-        scmManagerStub.setException(new NoSuchScmProviderException("..."));
+        scmManager.setException(new NoSuchScmProviderException("..."));
 
         String dir = "scm-commit/single-pom";
         List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
@@ -220,22 +218,18 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
 
             fail("commit should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals(
-                    "check cause",
-                    NoSuchScmProviderException.class,
-                    e.getCause().getClass());
+            assertEquals(NoSuchScmProviderException.class, e.getCause().getClass(), "check cause");
         }
     }
 
     @Test
-    public void testScmRepositoryExceptionThrown() throws Exception {
+    void testScmRepositoryExceptionThrown() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/test/checkout").getAbsolutePath());
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup(ScmManager.class);
-        scmManagerStub.setException(new ScmRepositoryException("..."));
+        scmManager.setException(new ScmRepositoryException("..."));
 
         String dir = "scm-commit/single-pom";
         List<MavenProject> reactorProjects = createReactorProjects(dir, dir, null);
@@ -249,7 +243,7 @@ public class CheckoutProjectFromScmTest extends AbstractReleaseTestCase {
 
             fail("commit should have failed");
         } catch (ReleaseScmRepositoryException e) {
-            assertNull("Check no additional cause", e.getCause());
+            assertNull(e.getCause(), "Check no additional cause");
         }
     }
 }

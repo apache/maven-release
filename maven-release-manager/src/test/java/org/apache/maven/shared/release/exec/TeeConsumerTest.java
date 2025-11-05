@@ -21,16 +21,16 @@ package org.apache.maven.shared.release.exec;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the consumer that tees output both to a stream and into an internal buffer for later.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class TeeConsumerTest {
+class TeeConsumerTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     private final TeeConsumer consumer = new TeeConsumer(new PrintStream(out), "xxx ");
@@ -38,13 +38,13 @@ public class TeeConsumerTest {
     private static final String LS = System.getProperty("line.separator");
 
     @Test
-    public void testConsumeLine() {
+    void testConsumeLine() {
         consumer.consumeLine("line");
 
-        assertEquals("Check output", "xxx line" + LS, out.toString());
+        assertEquals("xxx line" + LS, out.toString(), "Check output");
 
-        assertEquals("Check content", "line" + LS, consumer.getContent());
+        assertEquals("line" + LS, consumer.getContent(), "Check content");
 
-        assertEquals("Check toString", "line" + LS, consumer.toString());
+        assertEquals("line" + LS, consumer.toString(), "Check toString");
     }
 }

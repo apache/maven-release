@@ -21,30 +21,30 @@ package org.apache.maven.shared.release.exec;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the output stream that tees output both to a stream and into an internal buffer for later.
  *
  * @author Benjamin Bentmann
  */
-public class TeeOutputStreamTest {
+class TeeOutputStreamTest {
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
     private final TeeOutputStream stream = new TeeOutputStream(new PrintStream(out), "xxx ");
 
-    private static final String LS = System.getProperty("line.separator");
+    private static final String LS = System.lineSeparator();
 
     @Test
-    public void testConsumeLine() throws Exception {
+    void testConsumeLine() throws Exception {
         stream.write(("the first line" + LS + "line2" + LS + "3" + LS).getBytes());
 
-        assertEquals("Check output", "xxx the first line" + LS + "xxx line2" + LS + "xxx 3" + LS, out.toString());
+        assertEquals("xxx the first line" + LS + "xxx line2" + LS + "xxx 3" + LS, out.toString(), "Check output");
 
-        assertEquals("Check content", "the first line" + LS + "line2" + LS + "3" + LS, stream.getContent());
+        assertEquals("the first line" + LS + "line2" + LS + "3" + LS, stream.getContent(), "Check content");
 
-        assertEquals("Check toString", "the first line" + LS + "line2" + LS + "3" + LS, stream.toString());
+        assertEquals("the first line" + LS + "line2" + LS + "3" + LS, stream.toString(), "Check toString");
     }
 }

@@ -18,21 +18,14 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.scm.CommandParameters;
-import org.apache.maven.scm.ScmFile;
-import org.apache.maven.scm.ScmFileSet;
-import org.apache.maven.scm.ScmTag;
-import org.apache.maven.scm.command.checkout.CheckOutScmResult;
-import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.manager.ScmManagerStub;
-import org.apache.maven.scm.provider.ScmProvider;
-import org.apache.maven.scm.repository.ScmRepository;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
@@ -42,11 +35,13 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.apache.maven.shared.release.stubs.MavenExecutorWrapper;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.ArgumentMatchers.argThat;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -54,33 +49,30 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 /**
  * @author <a href="mailto:evenisse@apache.org">Emmanuel Venisse</a>
  */
-public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class RunPerformGoalsPhaseTest {
+    @Inject
+    @Named("run-perform-goals")
     private RunPerformGoalsPhase phase;
 
+    @Inject
+    @Named("wrapper")
     private MavenExecutorWrapper mavenExecutorWrapper;
 
     private DefaultReleaseEnvironment releaseEnvironment;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        phase = (RunPerformGoalsPhase) lookup(ReleasePhase.class, "run-perform-goals");
-
-        mavenExecutorWrapper =
-                (MavenExecutorWrapper) lookup("org.apache.maven.shared.release.exec.MavenExecutor", "wrapper");
-
+    @BeforeEach
+    void setUp() throws Exception {
         releaseEnvironment = new DefaultReleaseEnvironment();
         releaseEnvironment.setMavenExecutorId("wrapper");
     }
 
     @Test
-    public void testExecuteException() throws Exception {
+    void testExecuteException() throws Exception {
         // prepare
         File testFile = getTestFile("target/checkout-directory");
 
@@ -111,8 +103,7 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Should have thrown an exception");
         } catch (ReleaseExecutionException e) {
-            assertEquals(
-                    "Check cause", MavenExecutorException.class, e.getCause().getClass());
+            assertEquals(MavenExecutorException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify
@@ -129,7 +120,7 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testCustomPomFile() throws Exception {
+    void testCustomPomFile() throws Exception {
         // prepare
         File testFile = getTestFile("target/checkout-directory");
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
@@ -156,7 +147,8 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
         verifyNoMoreInteractions(mock);
     }
 
-    public void testReleasePerformWithArgumentsNoReleaseProfile() throws Exception {
+    @Test
+    void testReleasePerformWithArgumentsNoReleaseProfile() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
@@ -167,17 +159,6 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
 
         MavenExecutor mock = mock(MavenExecutor.class);
         mavenExecutorWrapper.setMavenExecutor(mock);
-
-        ScmProvider scmProviderMock = mock(ScmProvider.class);
-        when(scmProviderMock.checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class)))
-                .thenReturn(new CheckOutScmResult("...", Collections.<ScmFile>emptyList()));
-
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
 
         builder.setUseReleaseProfile(false);
 
@@ -194,16 +175,10 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
                         eq("-Dmaven.test.skip=true -f pom.xml"),
                         isNull(),
                         isA(ReleaseResult.class));
-        verify(scmProviderMock)
-                .checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class));
-        verifyNoMoreInteractions(mock, scmProviderMock);
     }
 
-    public void testReleasePerform() throws Exception {
+    @Test
+    void testReleasePerform() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
@@ -213,17 +188,6 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
 
         MavenExecutor mock = mock(MavenExecutor.class);
         mavenExecutorWrapper.setMavenExecutor(mock);
-
-        ScmProvider scmProviderMock = mock(ScmProvider.class);
-        when(scmProviderMock.checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class)))
-                .thenReturn(new CheckOutScmResult("...", Collections.<ScmFile>emptyList()));
-
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
 
         // execute
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), releaseEnvironment, createReactorProjects());
@@ -238,16 +202,10 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
                         eq("-DperformRelease=true -f pom.xml"),
                         isNull(),
                         isA(ReleaseResult.class));
-        verify(scmProviderMock)
-                .checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class));
-        verifyNoMoreInteractions(mock, scmProviderMock);
     }
 
-    public void testReleasePerformNoReleaseProfile() throws Exception {
+    @Test
+    void testReleasePerformNoReleaseProfile() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
@@ -257,17 +215,6 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
 
         MavenExecutor mock = mock(MavenExecutor.class);
         mavenExecutorWrapper.setMavenExecutor(mock);
-
-        ScmProvider scmProviderMock = mock(ScmProvider.class);
-        when(scmProviderMock.checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class)))
-                .thenReturn(new CheckOutScmResult("...", Collections.<ScmFile>emptyList()));
-
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
 
         builder.setUseReleaseProfile(false);
 
@@ -284,16 +231,10 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
                         eq("-f pom.xml"),
                         isNull(),
                         isA(ReleaseResult.class));
-        verify(scmProviderMock)
-                .checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class));
-        verifyNoMoreInteractions(mock, scmProviderMock);
     }
 
-    public void testReleasePerformWithArguments() throws Exception {
+    @Test
+    void testReleasePerformWithArguments() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
@@ -304,17 +245,6 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
 
         MavenExecutor mock = mock(MavenExecutor.class);
         mavenExecutorWrapper.setMavenExecutor(mock);
-
-        ScmProvider scmProviderMock = mock(ScmProvider.class);
-        when(scmProviderMock.checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class)))
-                .thenReturn(new CheckOutScmResult("...", Collections.<ScmFile>emptyList()));
-
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
 
         // execute
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), releaseEnvironment, createReactorProjects());
@@ -329,16 +259,10 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
                         eq("-Dmaven.test.skip=true -DperformRelease=true -f pom.xml"),
                         isNull(),
                         isA(ReleaseResult.class));
-        verify(scmProviderMock)
-                .checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class));
-        verifyNoMoreInteractions(mock, scmProviderMock);
     }
 
-    public void testReleasePerformWithReleasePropertiesCompleted() throws Exception {
+    @Test
+    void testReleasePerformWithReleasePropertiesCompleted() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
@@ -348,17 +272,6 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
 
         MavenExecutor mock = mock(MavenExecutor.class);
         mavenExecutorWrapper.setMavenExecutor(mock);
-
-        ScmProvider scmProviderMock = mock(ScmProvider.class);
-        when(scmProviderMock.checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class)))
-                .thenReturn(new CheckOutScmResult("...", Collections.<ScmFile>emptyList()));
-
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
 
         builder.setCompletedPhase("end-release");
 
@@ -375,13 +288,6 @@ public class RunPerformGoalsPhaseTest extends PlexusJUnit4TestCase {
                         eq("-DperformRelease=true -f pom.xml"),
                         isNull(),
                         isA(ReleaseResult.class));
-        verify(scmProviderMock)
-                .checkOut(
-                        isA(ScmRepository.class),
-                        argThat(new IsScmFileSetEquals(new ScmFileSet(checkoutDirectory))),
-                        isA(ScmTag.class),
-                        isA(CommandParameters.class));
-        verifyNoMoreInteractions(mock, scmProviderMock);
     }
 
     private static List<MavenProject> createReactorProjects() {

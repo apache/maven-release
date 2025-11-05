@@ -22,16 +22,17 @@ import java.io.StringReader;
 
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.AssertionsKt.assertNull;
 
-public class JDomExtensionTest {
+class JDomExtensionTest {
     private SAXBuilder builder = new SAXBuilder();
 
     @Test
-    public void testGetArtifactId() throws Exception {
+    void testGetArtifactId() throws Exception {
         String content = "<extension></extension>";
         Element extensionElm = builder.build(new StringReader(content)).getRootElement();
         assertNull(new JDomExtension(extensionElm).getArtifactId());
@@ -42,7 +43,7 @@ public class JDomExtensionTest {
     }
 
     @Test
-    public void testGetGroupId() throws Exception {
+    void testGetGroupId() throws Exception {
         String content = "<extension></extension>";
         Element extensionElm = builder.build(new StringReader(content)).getRootElement();
         assertNull(new JDomExtension(extensionElm).getGroupId());
@@ -53,7 +54,7 @@ public class JDomExtensionTest {
     }
 
     @Test
-    public void testGetVersion() throws Exception {
+    void testGetVersion() throws Exception {
         String content = "<extension></extension>";
         Element extensionElm = builder.build(new StringReader(content)).getRootElement();
         assertNull(new JDomExtension(extensionElm).getVersion());
@@ -63,18 +64,18 @@ public class JDomExtensionTest {
         assertEquals("VERSION", new JDomExtension(extensionElm).getVersion());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetArtifactId() {
-        new JDomExtension(null).setArtifactId(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetGroupId() {
-        new JDomExtension(null).setGroupId(null);
+    @Test
+    void testSetArtifactId() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomExtension(null).setArtifactId(null));
     }
 
     @Test
-    public void testSetVersion() throws Exception {
+    void testSetGroupId() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomExtension(null).setGroupId(null));
+    }
+
+    @Test
+    void testSetVersion() throws Exception {
         String content = "<extension><version>OLD_VERSION</version></extension>";
         Element extensionElm = builder.build(new StringReader(content)).getRootElement();
         new JDomExtension(extensionElm).setVersion("NEW_VERSION");
@@ -82,7 +83,7 @@ public class JDomExtensionTest {
     }
 
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals("extension", new JDomExtension(null).getName());
     }
 

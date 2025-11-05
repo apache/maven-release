@@ -18,44 +18,34 @@
  */
 package org.apache.maven.shared.release.util;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Properties;
+import java.util.stream.Stream;
 
-import junit.framework.TestCase;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author <a href="mailto:mikhail_kolesnikov@outlook.com">Mikhail Kolesnikov</a>
  */
-@RunWith(Parameterized.class)
-public class MavenExpressionTest extends TestCase {
+class MavenExpressionTest {
 
-    private final String expected;
-    private final String expression;
-    private final Properties properties = new Properties();
+    static Stream<Arguments> parameters() {
+        return Stream.of(
+                Arguments.of("123456", "${revision}${sha1}${changelist}"),
+                Arguments.of("12-34-56", "${revision}-${sha1}-${changelist}"),
+                Arguments.of("12-null-56", "${revision}-${unknown}-${changelist}"));
+    }
 
-    public MavenExpressionTest(String expected, String expression) {
-        this.expected = expected;
-        this.expression = expression;
+    @ParameterizedTest(name = "expected result {0} for expression {1}")
+    @MethodSource("parameters")
+    void testEvaluate(String expected, String expression) {
+        Properties properties = new Properties();
         properties.setProperty("revision", "12");
         properties.setProperty("sha1", "34");
         properties.setProperty("changelist", "56");
-    }
-
-    @Parameters(name = "expected result {0} for expression {1}")
-    public static Collection<Object[]> parameters() {
-        return Arrays.asList(
-                new Object[] {"123456", "${revision}${sha1}${changelist}"},
-                new Object[] {"12-34-56", "${revision}-${sha1}-${changelist}"},
-                new Object[] {"12-null-56", "${revision}-${unknown}-${changelist}"});
-    }
-
-    @Test
-    public void testEvaluate() {
         assertEquals(expected, MavenExpression.evaluate(expression, properties));
     }
 }

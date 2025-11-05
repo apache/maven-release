@@ -18,37 +18,33 @@
  */
 package org.apache.maven.shared.release.scm;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class CvsScmTranslatorTest {
+class CvsScmTranslatorTest {
     private final CvsScmTranslator scmTranslator = new CvsScmTranslator();
 
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
     @Test
-    public void testResolveTag() {
+    void testResolveTag() {
         // with current implementation you can't call your tag 'HEAD' (which is the default)
-        assertEquals(null, scmTranslator.resolveTag("HEAD"));
+        assertNull(scmTranslator.resolveTag("HEAD"));
         assertEquals("project-1.0", scmTranslator.resolveTag("project-1.0"));
     }
 
     @Test
-    public void testTranslateTagUrl() {
+    void testTranslateTagUrl() {
         assertEquals("url", scmTranslator.translateTagUrl("url", "tag", null));
         assertEquals("url", scmTranslator.translateTagUrl("url", "tag", "tagBase"));
     }
 
     @Test
-    public void testTranslateBranchUrl() {
+    void testTranslateBranchUrl() {
         assertEquals("url", scmTranslator.translateBranchUrl("url", "branchName", null));
         assertEquals("url", scmTranslator.translateBranchUrl("url", "branchName", "tagBase"));
-    }
-
-    @Test
-    public void testGetRelativePath() {
-        assertEquals("a/b/c", "a/b/c");
     }
 }

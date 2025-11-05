@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.StringReader;
@@ -31,8 +34,6 @@ import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.command.remove.RemoveScmResult;
-import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -40,11 +41,13 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.isA;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -55,16 +58,15 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
-public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+@PlexusTest
+class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
 
-        phase = lookup(ReleasePhase.class, "remove-release-poms");
-    }
+    @Inject
+    @Named("remove-release-poms")
+    private ReleasePhase phase;
 
     @Test
-    public void testExecuteBasicPom() throws Exception {
+    void testExecuteBasicPom() throws Exception {
         // prepare
         File workingDirectory = getTestFile("target/test/checkout");
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
@@ -80,8 +82,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
                 .thenReturn(new RemoveScmResult(
                         "...", Collections.singletonList(new ScmFile("pom.xml", ScmFileStatus.DELETED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // execute
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -93,7 +94,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testExecutePomWithModules() throws Exception {
+    void testExecutePomWithModules() throws Exception {
         // prepare
         File workingDirectory = getTestFile("target/test/checkout");
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-modules");
@@ -114,8 +115,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
                 .thenReturn(new RemoveScmResult(
                         "...", Collections.singletonList(new ScmFile("pom.xml", ScmFileStatus.DELETED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // execute
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -127,15 +127,14 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSimulateBasicPom() throws Exception {
+    void testSimulateBasicPom() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         ScmProvider scmProviderMock = mock(ScmProvider.class);
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // execute
         phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -145,7 +144,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testExecuteWithSuppressCommitBeforeTag() throws Exception {
+    void testExecuteWithSuppressCommitBeforeTag() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
@@ -154,8 +153,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
 
         ScmProvider scmProviderMock = mock(ScmProvider.class);
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // execute
         ReleaseResult result = phase.execute(
@@ -163,7 +161,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
 
         try (BufferedReader reader = new BufferedReader(new StringReader(result.getOutput()))) {
             assertEquals("[INFO] Removing release POM for 'artifactId'...", reader.readLine());
-            assertEquals("Expected EOF", null, reader.readLine());
+            assertEquals(null, reader.readLine(), "Expected EOF");
         }
 
         // never invoke scmProviderMock
@@ -171,7 +169,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSimulateWithSuppressCommitBeforeTag() throws Exception {
+    void testSimulateWithSuppressCommitBeforeTag() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
@@ -180,8 +178,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
 
         ScmProvider scmProviderMock = mock(ScmProvider.class);
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // execute
         ReleaseResult result = phase.simulate(
@@ -193,7 +190,7 @@ public class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
                     "[INFO] Full run would be removing ["
                             + reactorProjects.get(0).getFile().getParent() + File.separator + "release-pom.xml]",
                     reader.readLine());
-            assertEquals("Expected EOF", null, reader.readLine());
+            assertEquals(null, reader.readLine(), "Expected EOF");
         }
 
         // never invoke scmProviderMock

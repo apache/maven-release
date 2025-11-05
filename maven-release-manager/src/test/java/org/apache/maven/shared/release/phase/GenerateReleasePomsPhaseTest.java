@@ -18,7 +18,8 @@
  */
 package org.apache.maven.shared.release.phase;
 
-import javax.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,28 +28,24 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
-import com.google.inject.name.Names;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.command.add.AddScmResult;
-import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.isA;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -59,45 +56,21 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:markhobson@gmail.com">Mark Hobson</a>
  */
-public class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseTestCase {
+@PlexusTest
+class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseTestCase {
     private static final String NEXT_VERSION = "1.0";
 
     private static final String ALTERNATIVE_NEXT_VERSION = "2.0";
 
     private ScmProvider scmProviderMock;
 
-    public GenerateReleasePomsPhaseTest(String modelETL) {
-        super(modelETL);
-    }
+    @Inject
+    @Named("generate-release-poms")
+    private ReleasePhase phase;
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        scmProviderMock = null;
-    }
-
-    @Override
-    protected Module[] getCustomModules() {
-        return new Module[] {
-            new AbstractModule() {
-                @Override
-                protected void configure() {
-                    bind(ScmManager.class)
-                            .to(org.apache.maven.shared.release.stubs.ScmManagerStub.class)
-                            .in(Singleton.class);
-                    bind(ScmTranslator.class)
-                            .annotatedWith(Names.named("stub-provider"))
-                            .to(org.apache.maven.shared.release.scm.SubversionScmTranslator.class)
-                            .in(Singleton.class);
-                }
-            }
-        };
-    }
-
-    @Override
-    protected String getRoleHint() {
-        return "generate-release-poms";
+    protected ReleasePhase getTestedPhase() {
+        return phase;
     }
 
     // TODO: MRELEASE-262
@@ -112,7 +85,7 @@ public class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseT
     // }
 
     @Test
-    public void testRewriteExternalRangeDependency() throws Exception {
+    void testRewriteExternalRangeDependency() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects("external-range-dependency");
         ReleaseDescriptorBuilder builder = createMappedConfiguration(reactorProjects, "external-range-dependency");
 
@@ -123,7 +96,7 @@ public class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseT
 
     // MRELEASE-787
     @Test
-    public void testSuppressCommitBeforeTagOrBranch() throws Exception {
+    void testSuppressCommitBeforeTagOrBranch() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setGenerateReleasePoms(true);
@@ -140,7 +113,7 @@ public class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseT
     }
 
     @Test
-    public void testSuppressCommitBeforeTagOrBranchAndReomoteTagging() throws Exception {
+    void testSuppressCommitBeforeTagOrBranchAndReomoteTagging() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setGenerateReleasePoms(true);
@@ -158,7 +131,7 @@ public class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseT
 
     // MRELEASE-808
     @Test
-    public void testFinalName() throws Exception {
+    void testFinalName() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects("pom-with-finalname");
         ReleaseDescriptorBuilder builder =
                 createConfigurationForWithParentNextVersion(reactorProjects, "pom-with-finalname");
@@ -207,8 +180,7 @@ public class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseT
                 .thenReturn(new AddScmResult(
                         "...", Collections.singletonList(new ScmFile("pom.xml", ScmFileStatus.ADDED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         return reactorProjects;
     }

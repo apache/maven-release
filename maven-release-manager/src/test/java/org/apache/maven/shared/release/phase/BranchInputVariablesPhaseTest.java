@@ -18,24 +18,27 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -48,17 +51,15 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class BranchInputVariablesPhaseTest {
+
+    @Inject
+    @Named("branch-input-variables")
     private BranchInputVariablesPhase phase;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        phase = (BranchInputVariablesPhase) lookup(ReleasePhase.class, "branch-input-variables");
-    }
-
     @Test
-    public void testInputVariablesInteractive() throws Exception {
+    void testInputVariablesInteractive() throws Exception {
         // prepare
         Prompter mockPrompter = mock(Prompter.class);
         when(mockPrompter.prompt(isA(String.class))).thenReturn("tag-value", "simulated-tag-value");
@@ -75,10 +76,7 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals(
-                "Check tag",
-                "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+        assertEquals("tag-value", ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(), "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -90,16 +88,16 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         verify(mockPrompter, times(2)).prompt(isA(String.class));
         verifyNoMoreInteractions(mockPrompter);
     }
 
     @Test
-    public void testUnmappedVersion() {
+    void testUnmappedVersion() {
         List<MavenProject> reactorProjects = Collections.singletonList(createProject("artifactId", "1.0"));
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
@@ -110,7 +108,7 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertNull("check no cause", e.getCause());
+            assertNull(e.getCause(), "check no cause");
         }
 
         builder = new ReleaseDescriptorBuilder();
@@ -121,12 +119,12 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Expected an exception");
         } catch (ReleaseExecutionException e) {
-            assertNull("check no cause", e.getCause());
+            assertNull(e.getCause(), "check no cause");
         }
     }
 
     @Test
-    public void testInputVariablesNonInteractiveConfigured() throws Exception {
+    void testInputVariablesNonInteractiveConfigured() throws Exception {
         // prepare
         Prompter mockPrompter = mock(Prompter.class);
         phase.setPrompter(mockPrompter);
@@ -141,10 +139,7 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals(
-                "Check tag",
-                "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+        assertEquals("tag-value", ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(), "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -156,16 +151,16 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);
     }
 
     @Test
-    public void testInputVariablesInteractiveConfigured() throws Exception {
+    void testInputVariablesInteractiveConfigured() throws Exception {
         // prepare
         Prompter mockPrompter = mock(Prompter.class);
         phase.setPrompter(mockPrompter);
@@ -179,10 +174,7 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         // verify
-        assertEquals(
-                "Check tag",
-                "tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+        assertEquals("tag-value", ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(), "Check tag");
 
         // prepare
         builder = new ReleaseDescriptorBuilder();
@@ -193,16 +185,16 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
 
         // verify
         assertEquals(
-                "Check tag",
                 "simulated-tag-value",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmReleaseLabel(),
+                "Check tag");
 
         // never use prompter
         verifyNoMoreInteractions(mockPrompter);
     }
 
     @Test
-    public void testPrompterException() throws Exception {
+    void testPrompterException() throws Exception {
         // prepare
         Prompter mockPrompter = mock(Prompter.class);
         when(mockPrompter.prompt(isA(String.class), isA(String.class))).thenThrow(new PrompterException("..."));
@@ -245,12 +237,12 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testBranchOperation() {
+    void testBranchOperation() {
         assertTrue(phase.isBranchOperation());
     }
 
     @Test
-    public void testEmptyBranchName() {
+    void testEmptyBranchName() {
         // prepare
         Prompter mockPrompter = mock(Prompter.class);
         phase.setPrompter(mockPrompter);
@@ -295,7 +287,7 @@ public class BranchInputVariablesPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testNamingPolicy() throws Exception {
+    void testNamingPolicy() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.addReleaseVersion("groupId:artifactId", "1.0");
         builder.setInteractive(false);

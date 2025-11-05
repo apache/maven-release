@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -27,21 +30,21 @@ import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
-import org.apache.maven.scm.manager.ScmManager;
-import org.apache.maven.scm.manager.ScmManagerStub;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -52,7 +55,8 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:me@lcorneliussen.de">Lars Corneliussen</a>
  */
-public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
+@PlexusTest
+class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
     private static final String COMMIT_MESSAGE = "[maven-release-manager] prepare for next development iteration";
 
     private static final String ROLLBACK_PREFIX =
@@ -66,24 +70,24 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
 
     private ScmProvider scmProviderMock;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    @Inject
+    @Named("scm-commit-development")
+    private ReleasePhase phase;
 
-        phase = (ReleasePhase) lookup(ReleasePhase.class, "scm-commit-development");
-
+    @BeforeEach
+    void setUp() throws Exception {
         reactorProjects = createReactorProjects();
         rootProject = ReleaseUtil.getRootProject(reactorProjects);
         builder = createReleaseDescriptorBuilder(rootProject);
     }
 
     @Test
-    public void testIsCorrectImplementation() {
+    void testIsCorrectImplementation() {
         assertEquals(ScmCommitDevelopmentPhase.class, phase.getClass());
     }
 
     @Test
-    public void testNoCommitOrRollbackRequired() throws Exception {
+    void testNoCommitOrRollbackRequired() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(rootProject);
         List<MavenProject> reactorProjects = createReactorProjects();
 
@@ -100,7 +104,7 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testCommitsNextVersions() throws Exception {
+    void testCommitsNextVersions() throws Exception {
         builder.setUpdateWorkingCopyVersions(true);
 
         prepareCheckin(COMMIT_MESSAGE);
@@ -111,7 +115,7 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testCommitsNextVersionsAlternateMessage() throws Exception {
+    void testCommitsNextVersionsAlternateMessage() throws Exception {
         builder.setUpdateWorkingCopyVersions(true);
         builder.setScmCommentPrefix("[release]");
         builder.setScmDevelopmentCommitComment("@{prefix} Development of @{groupId}:@{artifactId}");
@@ -124,7 +128,7 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testCommitsRollbackPrepare() throws Exception {
+    void testCommitsRollbackPrepare() throws Exception {
         builder.setUpdateWorkingCopyVersions(false);
 
         String message = ROLLBACK_PREFIX + "release-label";
@@ -148,8 +152,7 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
                         "...",
                         Collections.singletonList(
                                 new ScmFile(rootProject.getFile().getPath(), ScmFileStatus.CHECKED_IN))));
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
     }
 
     private void verifyCheckin(String message) throws Exception {
@@ -163,8 +166,7 @@ public class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
 
     private void prepareNoCheckin() throws Exception {
         scmProviderMock = mock(ScmProvider.class);
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
     }
 
     private void verifyNoCheckin() {

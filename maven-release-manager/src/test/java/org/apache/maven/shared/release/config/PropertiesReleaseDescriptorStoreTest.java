@@ -18,56 +18,58 @@
  */
 package org.apache.maven.shared.release.config;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderReleaseDescriptor;
 import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 import org.apache.maven.shared.release.scm.IdentifiedScm;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the properties store.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class PropertiesReleaseDescriptorStoreTest {
+
+    @Inject
+    @Named("properties")
     private PropertiesReleaseDescriptorStore store;
 
+    @Inject
     private SecDispatcher secDispatcher;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-        store = (PropertiesReleaseDescriptorStore) lookup(ReleaseDescriptorStore.class, "properties");
-        secDispatcher = lookup(SecDispatcher.class);
-    }
-
     @Test
-    public void testReadFromFile() throws ReleaseDescriptorStoreException {
+    void testReadFromFile() throws ReleaseDescriptorStoreException {
         File file = getTestFile("target/test-classes/release.properties");
 
         ReleaseDescriptor config = store.read(file).build();
 
         ReleaseDescriptor expected = createExpectedReleaseConfiguration().build();
 
-        assertEquals("check matches", expected, config);
+        assertEquals(expected, config, "check matches");
     }
 
     @Test
-    public void testReadFromFileUsingWorkingDirectory() throws Exception {
+    void testReadFromFileUsingWorkingDirectory() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setWorkingDirectory(AbstractReleaseTestCase.getPath(getTestFile("target/test-classes")));
         ReleaseDescriptor config = store.read(builder).build();
@@ -75,11 +77,11 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
         ReleaseDescriptorBuilder expected = createExpectedReleaseConfiguration();
         expected.setWorkingDirectory(builder.build().getWorkingDirectory());
 
-        assertEquals("check matches", expected.build(), config);
+        assertEquals(expected.build(), config, "check matches");
     }
 
     @Test
-    public void testReadFromEmptyFile() throws ReleaseDescriptorStoreException {
+    void testReadFromEmptyFile() throws ReleaseDescriptorStoreException {
         File file = getTestFile("target/test-classes/empty-release.properties");
 
         BuilderReleaseDescriptor config = store.read(file).build();
@@ -88,7 +90,7 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testReadMissingFile() throws ReleaseDescriptorStoreException {
+    void testReadMissingFile() throws ReleaseDescriptorStoreException {
         File file = getTestFile("target/test-classes/no-release.properties");
 
         BuilderReleaseDescriptor config = store.read(file).build();
@@ -97,30 +99,30 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testMergeFromEmptyFile() throws ReleaseDescriptorStoreException, IOException {
+    void testMergeFromEmptyFile() throws ReleaseDescriptorStoreException, IOException {
         File file = getTestFile("target/test-classes/empty-release.properties");
 
         ReleaseDescriptorBuilder mergeDescriptor = createMergeConfiguration();
         ReleaseDescriptor config = store.read(mergeDescriptor, file).build();
 
-        assertEquals("Check configurations merged", mergeDescriptor.build(), config);
+        assertEquals(mergeDescriptor.build(), config, "Check configurations merged");
     }
 
     @Test
-    public void testMergeFromMissingFile() throws ReleaseDescriptorStoreException, IOException {
+    void testMergeFromMissingFile() throws ReleaseDescriptorStoreException, IOException {
         File file = getTestFile("target/test-classes/no-release.properties");
 
         ReleaseDescriptorBuilder mergeDescriptor = createMergeConfiguration();
         ReleaseDescriptor config = store.read(mergeDescriptor, file).build();
 
-        assertEquals("Check configurations merged", mergeDescriptor.build(), config);
+        assertEquals(mergeDescriptor.build(), config, "Check configurations merged");
     }
 
     @Test
-    public void testWriteToNewFile() throws Exception {
+    void testWriteToNewFile() throws Exception {
         File file = getTestFile("target/test-classes/new-release.properties");
         file.delete();
-        assertFalse("Check file doesn't exist", file.exists());
+        assertFalse(file.exists(), "Check file doesn't exist");
 
         ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
 
@@ -131,14 +133,14 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
         assertAndAdjustScmPassword(config, rereadDescriptor);
         assertAndAdjustScmPrivateKeyPassPhrase(config, rereadDescriptor);
 
-        assertEquals("compare configuration", config.build(), rereadDescriptor);
+        assertEquals(config.build(), rereadDescriptor, "compare configuration");
     }
 
     @Test
-    public void testWriteToWorkingDirectory() throws Exception {
+    void testWriteToWorkingDirectory() throws Exception {
         File file = getTestFile("target/test-classes/new/release.properties");
         file.delete();
-        assertFalse("Check file doesn't exist", file.exists());
+        assertFalse(file.exists(), "Check file doesn't exist");
         file.getParentFile().mkdirs();
 
         ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
@@ -152,14 +154,14 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
         assertAndAdjustScmPassword(config, rereadDescriptorBuilder.build());
         assertAndAdjustScmPrivateKeyPassPhrase(config, rereadDescriptorBuilder.build());
 
-        assertEquals("compare configuration", config.build(), rereadDescriptorBuilder.build());
+        assertEquals(config.build(), rereadDescriptorBuilder.build(), "compare configuration");
     }
 
     @Test
-    public void testWriteToNewFileRequiredOnly() throws ReleaseDescriptorStoreException {
+    void testWriteToNewFileRequiredOnly() throws ReleaseDescriptorStoreException {
         File file = getTestFile("target/test-classes/new-release.properties");
         file.delete();
-        assertFalse("Check file doesn't exist", file.exists());
+        assertFalse(file.exists(), "Check file doesn't exist");
 
         ReleaseDescriptorBuilder config = new ReleaseDescriptorBuilder();
         config.setCompletedPhase("completed-phase-write");
@@ -169,14 +171,14 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
 
         ReleaseDescriptor rereadDescriptor = store.read(file).build();
 
-        assertEquals("compare configuration", config.build(), rereadDescriptor);
+        assertEquals(config.build(), rereadDescriptor, "compare configuration");
     }
 
     @Test
-    public void testWriteToNewFileDottedIds() throws ReleaseDescriptorStoreException {
+    void testWriteToNewFileDottedIds() throws ReleaseDescriptorStoreException {
         File file = getTestFile("target/test-classes/new-release.properties");
         file.delete();
-        assertFalse("Check file doesn't exist", file.exists());
+        assertFalse(file.exists(), "Check file doesn't exist");
 
         ReleaseDescriptorBuilder config = new ReleaseDescriptorBuilder();
         config.setCompletedPhase("completed-phase-write");
@@ -197,14 +199,14 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
 
         ReleaseDescriptor rereadDescriptor = store.read(file).build();
 
-        assertEquals("compare configuration", config.build(), rereadDescriptor);
+        assertEquals(config.build(), rereadDescriptor, "compare configuration");
     }
 
     @Test
-    public void testWriteToNewFileNullMappedScm() throws ReleaseDescriptorStoreException {
+    void testWriteToNewFileNullMappedScm() throws ReleaseDescriptorStoreException {
         File file = getTestFile("target/test-classes/new-release.properties");
         file.delete();
-        assertFalse("Check file doesn't exist", file.exists());
+        assertFalse(file.exists(), "Check file doesn't exist");
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setCompletedPhase("completed-phase-write");
@@ -219,15 +221,15 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
 
         ReleaseDescriptor rereadDescriptor = store.read(file).build();
 
-        assertNull("check null scm is mapped correctly", rereadDescriptor.getOriginalScmInfo("group.id:artifact.id"));
+        assertNull(rereadDescriptor.getOriginalScmInfo("group.id:artifact.id"), "check null scm is mapped correctly");
 
-        assertEquals("compare configuration", builder.build(), rereadDescriptor);
+        assertEquals(builder.build(), rereadDescriptor, "compare configuration");
     }
 
     @Test
-    public void testOverwriteFile() throws Exception {
+    void testOverwriteFile() throws Exception {
         File file = getTestFile("target/test-classes/rewrite-release.properties");
-        assertTrue("Check file already exists", file.exists());
+        assertTrue(file.exists(), "Check file already exists");
 
         ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
 
@@ -238,41 +240,41 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
         assertAndAdjustScmPassword(config, rereadDescriptor);
         assertAndAdjustScmPrivateKeyPassPhrase(config, rereadDescriptor);
 
-        assertEquals("compare configuration", config.build(), rereadDescriptor);
+        assertEquals(config.build(), rereadDescriptor, "compare configuration");
     }
 
     @Test
-    public void testDeleteFile() throws ReleaseDescriptorStoreException, IOException {
+    void testDeleteFile() throws IOException {
         File file = getTestFile("target/test-classes/delete/release.properties");
         file.getParentFile().mkdirs();
         file.createNewFile();
-        assertTrue("Check file already exists", file.exists());
+        assertTrue(file.exists(), "Check file already exists");
 
         ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
         config.setWorkingDirectory(AbstractReleaseTestCase.getPath(file.getParentFile()));
 
         store.delete(config.build());
 
-        assertFalse("Check file already exists", file.exists());
+        assertFalse(file.exists(), "Check file already exists");
     }
 
     @Test
-    public void testMissingDeleteFile() throws ReleaseDescriptorStoreException, IOException {
+    void testMissingDeleteFile() throws ReleaseDescriptorStoreException, IOException {
         File file = getTestFile("target/test-classes/delete/release.properties");
         file.getParentFile().mkdirs();
         file.delete();
-        assertFalse("Check file already exists", file.exists());
+        assertFalse(file.exists(), "Check file already exists");
 
         ReleaseDescriptorBuilder config = createReleaseConfigurationForWriting();
         config.setWorkingDirectory(AbstractReleaseTestCase.getPath(file.getParentFile()));
 
         store.delete(config.build());
 
-        assertFalse("Check file already exists", file.exists());
+        assertFalse(file.exists(), "Check file already exists");
     }
 
     @Test
-    public void testWriteEncryptedProperties() throws Exception {
+    void testWriteEncryptedProperties() throws Exception {
         final String scmPassword = "s3cr3t_SCMPASSWORD";
         final String scmPassPhrase = "s3cr3t_SCMPASSPHRASE";
 
@@ -349,33 +351,33 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
     }
 
     private static void assertDefaultReleaseConfiguration(BuilderReleaseDescriptor config) {
-        assertNull("Expected no completedPhase", config.getCompletedPhase());
-        assertFalse("Expected no commitPerProject", config.isCommitByProject());
-        assertNull("Expected no id", config.getScmId());
-        assertNull("Expected no url", config.getScmSourceUrl());
-        assertNull("Expected no username", config.getScmUsername());
-        assertNull("Expected no password", config.getScmPassword());
-        assertNull("Expected no privateKey", config.getScmPrivateKey());
-        assertNull("Expected no passphrase", config.getScmPrivateKeyPassPhrase());
-        assertNull("Expected no tagBase", config.getScmTagBase());
-        assertNull("Expected no tag", config.getScmReleaseLabel());
-        assertNull("Expected no additional arguments", config.getAdditionalArguments());
-        assertNull("Expected no preparation goals", config.getPreparationGoals());
-        assertNull("Expected no completion goals", config.getCompletionGoals());
-        assertNull("Expected no pom file name", config.getPomFileName());
+        assertNull(config.getCompletedPhase(), "Expected no completedPhase");
+        assertFalse(config.isCommitByProject(), "Expected no commitPerProject");
+        assertNull(config.getScmId(), "Expected no id");
+        assertNull(config.getScmSourceUrl(), "Expected no url");
+        assertNull(config.getScmUsername(), "Expected no username");
+        assertNull(config.getScmPassword(), "Expected no password");
+        assertNull(config.getScmPrivateKey(), "Expected no privateKey");
+        assertNull(config.getScmPrivateKeyPassPhrase(), "Expected no passphrase");
+        assertNull(config.getScmTagBase(), "Expected no tagBase");
+        assertNull(config.getScmReleaseLabel(), "Expected no tag");
+        assertNull(config.getAdditionalArguments(), "Expected no additional arguments");
+        assertNull(config.getPreparationGoals(), "Expected no preparation goals");
+        assertNull(config.getCompletionGoals(), "Expected no completion goals");
+        assertNull(config.getPomFileName(), "Expected no pom file name");
 
-        assertNull("Expected no workingDirectory", config.getWorkingDirectory());
-        assertFalse("Expected no generateReleasePoms", config.isGenerateReleasePoms());
-        assertFalse("Expected no useEditMode", config.isScmUseEditMode());
-        assertTrue("Expected default interactive", config.isInteractive());
-        assertFalse("Expected no addScema", config.isAddSchema());
+        assertNull(config.getWorkingDirectory(), "Expected no workingDirectory");
+        assertFalse(config.isGenerateReleasePoms(), "Expected no generateReleasePoms");
+        assertFalse(config.isScmUseEditMode(), "Expected no useEditMode");
+        assertTrue(config.isInteractive(), "Expected default interactive");
+        assertFalse(config.isAddSchema(), "Expected no addScema");
 
         for (ReleaseStageVersions versions : config.getProjectVersions().values()) {
-            assertNull("Expected no release version mappings", versions.getRelease());
-            assertNull("Expected no dev version mappings", versions.getDevelopment());
+            assertNull(versions.getRelease(), "Expected no release version mappings");
+            assertNull(versions.getDevelopment(), "Expected no dev version mappings");
         }
-        assertTrue("Expected no scm mappings", config.getOriginalScmInfo().isEmpty());
-        assertNotNull("Expected resolved snapshot dependencies map", config.getResolvedSnapshotDependencies());
+        assertTrue(config.getOriginalScmInfo().isEmpty(), "Expected no scm mappings");
+        assertNotNull(config.getResolvedSnapshotDependencies(), "Expected resolved snapshot dependencies map");
     }
 
     public ReleaseDescriptorBuilder createMergeConfiguration() throws IOException {
@@ -388,7 +390,7 @@ public class PropertiesReleaseDescriptorStoreTest extends PlexusJUnit4TestCase {
         File workingDir = getTestFile("target/test-working-directory");
         if (!workingDir.exists()) {
             assertTrue(
-                    "Failed to create the directory, along with all necessary parent directories", workingDir.mkdirs());
+                    workingDir.mkdirs(), "Failed to create the directory, along with all necessary parent directories");
         }
 
         releaseDescriptor.setWorkingDirectory(AbstractReleaseTestCase.getPath(workingDir));

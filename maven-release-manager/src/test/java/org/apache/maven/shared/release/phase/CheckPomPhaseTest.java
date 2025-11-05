@@ -18,46 +18,39 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.util.Collections;
 
-import com.google.inject.Module;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test the POM verification check phase.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class CheckPomPhaseTest {
+    @Inject
+    @Named("check-poms")
     private ReleasePhase phase;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        phase = lookup(ReleasePhase.class, "check-poms");
-    }
-
-    @Override
-    protected Module[] getCustomModules() {
-        return new Module[0]; // real SCM needed
-    }
-
     @Test
-    public void testCorrectlyConfigured() throws Exception {
+    void testCorrectlyConfigured() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:file://localhost/tmp/repo");
 
@@ -76,7 +69,7 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testGetUrlFromProjectConnection() throws Exception {
+    void testGetUrlFromProjectConnection() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:file://localhost/tmp/repo");
 
@@ -88,13 +81,13 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
                 Collections.singletonList(project));
 
         assertEquals(
-                "Check URL",
                 "scm:svn:file://localhost/tmp/repo",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl(),
+                "Check URL");
     }
 
     @Test
-    public void testGetUrlFromProjectConnectionSimulate() throws Exception {
+    void testGetUrlFromProjectConnectionSimulate() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:file://localhost/tmp/repo");
 
@@ -106,13 +99,13 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
                 Collections.singletonList(project));
 
         assertEquals(
-                "Check URL",
                 "scm:svn:file://localhost/tmp/repo",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl(),
+                "Check URL");
     }
 
     @Test
-    public void testGetUrlFromProjectDevConnection() throws Exception {
+    void testGetUrlFromProjectDevConnection() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:https://localhost/tmp/repo");
 
@@ -124,13 +117,13 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
                 Collections.singletonList(project));
 
         assertEquals(
-                "Check URL",
                 "scm:svn:https://localhost/tmp/repo",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl(),
+                "Check URL");
     }
 
     @Test
-    public void testGetUrlFromProjectDevConnectionSimulate() throws Exception {
+    void testGetUrlFromProjectDevConnectionSimulate() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:https://localhost/tmp/repo");
 
@@ -142,13 +135,13 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
                 Collections.singletonList(project));
 
         assertEquals(
-                "Check URL",
                 "scm:svn:https://localhost/tmp/repo",
-                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl());
+                ReleaseUtils.buildReleaseDescriptor(builder).getScmSourceUrl(),
+                "Check URL");
     }
 
     @Test
-    public void testGetInvalidUrl() throws Exception {
+    void testGetInvalidUrl() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:");
 
@@ -167,7 +160,7 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testGetInvalidProvider() throws Exception {
+    void testGetInvalidProvider() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         MavenProject project = createProject("1.0-SNAPSHOT");
         Scm scm = new Scm();
@@ -187,7 +180,7 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testMissingUrl() throws Exception {
+    void testMissingUrl() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         try {
@@ -214,7 +207,7 @@ public class CheckPomPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testReleasingNonSnapshot() throws Exception {
+    void testReleasingNonSnapshot() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:file://localhost/tmp/repo");
 

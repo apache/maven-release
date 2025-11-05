@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -35,7 +38,6 @@ import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -45,13 +47,17 @@ import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.stubs.ScmManagerStub;
-import org.junit.Test;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.codehaus.plexus.testing.PlexusTestConfiguration;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.isA;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -63,24 +69,27 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class ScmCheckModificationsPhaseTest implements PlexusTestConfiguration {
+    @Inject
+    @Named("scm-check-modifications")
     private ReleasePhase phase;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    private ScmManagerStub scmManagerStub;
 
-        phase = (ReleasePhase) lookup(ReleasePhase.class, "scm-check-modifications");
+    @Override
+    public void customizeContainer(PlexusContainer container) {
+        scmManagerStub = new ScmManagerStub();
+        container.addComponent(scmManagerStub, ScmManager.class.getName());
     }
 
     @Test
-    public void testNoSuchScmProviderExceptionThrown() throws Exception {
+    void testNoSuchScmProviderExceptionThrown() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/test/checkout").getAbsolutePath());
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup(ScmManager.class);
         scmManagerStub.setException(new NoSuchScmProviderException("..."));
 
         // execute
@@ -89,10 +98,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals(
-                    "check cause",
-                    NoSuchScmProviderException.class,
-                    e.getCause().getClass());
+            assertEquals(NoSuchScmProviderException.class, e.getCause().getClass(), "check cause");
         }
 
         try {
@@ -101,21 +107,17 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
             // verify
-            assertEquals(
-                    "check cause",
-                    NoSuchScmProviderException.class,
-                    e.getCause().getClass());
+            assertEquals(NoSuchScmProviderException.class, e.getCause().getClass(), "check cause");
         }
     }
 
     @Test
-    public void testScmRepositoryExceptionThrown() throws Exception {
+    void testScmRepositoryExceptionThrown() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
         builder.setWorkingDirectory(getTestFile("target/test/checkout").getAbsolutePath());
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup(ScmManager.class);
         scmManagerStub.setException(new ScmRepositoryException("..."));
 
         // execute
@@ -124,7 +126,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseScmRepositoryException e) {
-            assertNull("Check no additional cause", e.getCause());
+            assertNull(e.getCause(), "Check no additional cause");
         }
 
         try {
@@ -132,12 +134,12 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseScmRepositoryException e) {
-            assertNull("Check no additional cause", e.getCause());
+            assertNull(e.getCause(), "Check no additional cause");
         }
     }
 
     @Test
-    public void testScmExceptionThrown() throws Exception {
+    void testScmExceptionThrown() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
@@ -147,8 +149,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
         when(scmProviderMock.status(isA(ScmRepository.class), isA(ScmFileSet.class)))
                 .thenThrow(new ScmException("..."));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManagerStub.setScmProvider(scmProviderMock);
 
         // execute
         try {
@@ -156,7 +157,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", ScmException.class, e.getCause().getClass());
+            assertEquals(ScmException.class, e.getCause().getClass(), "check cause");
         }
 
         try {
@@ -164,7 +165,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", ScmException.class, e.getCause().getClass());
+            assertEquals(ScmException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -173,12 +174,11 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testScmResultFailure() throws Exception {
+    void testScmResultFailure() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmManager scmManager = lookup(ScmManager.class);
         ScmProviderStub providerStub =
-                (ScmProviderStub) scmManager.getProviderByUrl("scm:svn:file://localhost/tmp/scm-repo");
+                (ScmProviderStub) scmManagerStub.getProviderByUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         providerStub.setStatusScmResult(new StatusScmResult("", "", "", false));
 
@@ -187,7 +187,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseScmCommandException e) {
-            assertNull("check no other cause", e.getCause());
+            assertNull(e.getCause(), "check no other cause");
         }
 
         try {
@@ -195,15 +195,15 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseScmCommandException e) {
-            assertNull("check no other cause", e.getCause());
+            assertNull(e.getCause(), "check no other cause");
         }
     }
 
     @Test
-    public void testNoModifications() throws Exception {
+    void testNoModifications() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        setChangedFiles(builder, Collections.<String>emptyList());
+        setChangedFiles(builder, Collections.emptyList());
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), null);
 
@@ -214,7 +214,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testModificationsToExcludedFilesOnly() throws Exception {
+    void testModificationsToExcludedFilesOnly() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         setChangedFiles(builder, Arrays.asList("release.properties", "pom.xml.backup", "pom.xml.tag", "pom.xml.next"));
@@ -229,7 +229,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
     // MRELEASE-645: Allow File/Directory Patterns for the checkModificationExcludes Option
     @Test
-    public void testModificationsToCustomExcludedFilesOnly() throws Exception {
+    void testModificationsToCustomExcludedFilesOnly() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         builder.setCheckModificationExcludes(Collections.singletonList("**/keep.me"));
@@ -257,7 +257,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testModificationsToPoms() throws Exception {
+    void testModificationsToPoms() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         setChangedFiles(builder, Arrays.asList("pom.xml", "module/pom.xml"));
@@ -280,7 +280,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testModificationsToIncludedFilesOnly() throws Exception {
+    void testModificationsToIncludedFilesOnly() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         setChangedFiles(builder, Collections.singletonList("something.txt"));
@@ -303,7 +303,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testModificationsToIncludedAndExcludedFiles() throws Exception {
+    void testModificationsToIncludedAndExcludedFiles() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         setChangedFiles(
@@ -329,7 +329,7 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testModificationsToAdditionalExcludedFiles() throws Exception {
+    void testModificationsToAdditionalExcludedFiles() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
         builder.setCheckModificationExcludes(Collections.singletonList("something.*"));
 
@@ -348,12 +348,12 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
 
     // MRELEASE-775
     @Test
-    public void testMultipleExclusionPatternMatch() throws Exception {
+    void testMultipleExclusionPatternMatch() throws Exception {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         builder.setCheckModificationExcludes(Collections.singletonList("release.properties"));
 
-        setChangedFiles(builder, Arrays.asList("release.properties"));
+        setChangedFiles(builder, Collections.singletonList("release.properties"));
 
         assertEquals(
                 ReleaseResult.SUCCESS,
@@ -367,9 +367,8 @@ public class ScmCheckModificationsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     private void setChangedFiles(ReleaseDescriptorBuilder builder, List<String> changedFiles) throws Exception {
-        ScmManager scmManager = (ScmManager) lookup(ScmManager.class);
         ScmProviderStub providerStub =
-                (ScmProviderStub) scmManager.getProviderByUrl("scm:svn:file://localhost/tmp/scm-repo");
+                (ScmProviderStub) scmManagerStub.getProviderByUrl("scm:svn:file://localhost/tmp/scm-repo");
 
         providerStub.setStatusScmResult(new StatusScmResult("", createScmFiles(changedFiles)));
     }

@@ -18,6 +18,8 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -32,11 +34,12 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -47,7 +50,8 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
+@PlexusTest
+class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     private static final String NO = "no";
 
     private static final String YES = "yes";
@@ -58,15 +62,11 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
     private static final List<String> CHOICE_ARRAY = Arrays.asList("0", DEFAULT_CHOICE, "2", "3");
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        phase = lookup(ReleasePhase.class, "check-dependency-snapshots");
-    }
+    @Inject
+    private CheckDependencySnapshotsPhase phase;
 
     @Test
-    public void testNoSnapshotDependencies() throws Exception {
+    void testNoSnapshotDependencies() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         List<MavenProject> reactorProjects = createDescriptorFromProjects("no-snapshot-dependencies");
@@ -80,9 +80,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testNoSnapshotRangeDependencies() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
+    void testNoSnapshotRangeDependencies() throws Exception {
 
         List<MavenProject> reactorProjects = createDescriptorFromProjects("no-snapshot-range-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
@@ -101,7 +99,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
     // MRELEASE-985
     @Test
-    public void testSnapshotDependenciesInProjectAndResolveFromCommandLine() throws Exception {
+    void testSnapshotDependenciesInProjectAndResolveFromCommandLine() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-snapshot-dependencies-no-reactor");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
         builder.addDependencyReleaseVersion("groupId:test", "1.0");
@@ -125,7 +123,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotDependenciesInProjectOnly() throws Exception {
+    void testSnapshotDependenciesInProjectOnly() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -138,7 +136,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReleasePluginNonInteractive() throws Exception {
+    void testSnapshotReleasePluginNonInteractive() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("snapshot-release-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
         builder.setInteractive(false);
@@ -163,10 +161,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReleasePluginInteractiveDeclined() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotReleasePluginInteractiveDeclined() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("snapshot-release-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -194,10 +189,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReleasePluginInteractiveAcceptedForExecution() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotReleasePluginInteractiveAcceptedForExecution() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("snapshot-release-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -209,10 +201,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReleasePluginInteractiveAcceptedForSimulation() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotReleasePluginInteractiveAcceptedForSimulation() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("snapshot-release-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -224,10 +213,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReleasePluginInteractiveInvalid() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotReleasePluginInteractiveInvalid() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("snapshot-release-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -255,10 +241,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReleasePluginInteractiveException() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotReleasePluginInteractiveException() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("snapshot-release-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -272,7 +255,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
             fail("Should have failed execution");
         } catch (ReleaseExecutionException e) {
-            assertEquals("Check cause", PrompterException.class, e.getCause().getClass());
+            assertEquals(PrompterException.class, e.getCause().getClass(), "Check cause");
         }
 
         mockPrompter = mock(Prompter.class);
@@ -284,15 +267,12 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
             fail("Should have failed execution");
         } catch (ReleaseExecutionException e) {
-            assertEquals("Check cause", PrompterException.class, e.getCause().getClass());
+            assertEquals(PrompterException.class, e.getCause().getClass(), "Check cause");
         }
     }
 
     @Test
-    public void testSnapshotDependenciesInProjectOnlyMismatchedVersion() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotDependenciesInProjectOnlyMismatchedVersion() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-differing-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -320,7 +300,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotManagedDependenciesInProjectOnly() throws Exception {
+    void testSnapshotManagedDependenciesInProjectOnly() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-managed-snapshot-dependency");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -333,7 +313,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotUnusedInternalManagedDependency() throws Exception {
+    void testSnapshotUnusedInternalManagedDependency() throws Exception {
         List<MavenProject> reactorProjects =
                 createDescriptorFromProjects("unused-internal-managed-snapshot-dependency");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
@@ -347,7 +327,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotUnusedExternalManagedDependency() throws Exception {
+    void testSnapshotUnusedExternalManagedDependency() throws Exception {
         List<MavenProject> reactorProjects =
                 createDescriptorFromProjects("unused-external-managed-snapshot-dependency");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
@@ -361,7 +341,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotExternalManagedDependency() throws Exception {
+    void testSnapshotExternalManagedDependency() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-managed-snapshot-dependency");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -387,7 +367,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotDependenciesOutsideProjectOnlyNonInteractive() throws Exception {
+    void testSnapshotDependenciesOutsideProjectOnlyNonInteractive() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -413,7 +393,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testRangeSnapshotDependenciesOutsideProjectOnlyNonInteractive() throws Exception {
+    void testRangeSnapshotDependenciesOutsideProjectOnlyNonInteractive() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-range-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -439,10 +419,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotDependenciesOutsideProjectOnlyInteractiveWithSnapshotsResolved() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotDependenciesOutsideProjectOnlyInteractiveWithSnapshotsResolved() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -465,9 +442,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotDependenciesSelectOlderRelease() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
+    void testSnapshotDependenciesSelectOlderRelease() throws Exception {
 
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
@@ -485,10 +460,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotDependenciesSelectDefaults() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotDependenciesSelectDefaults() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -504,10 +476,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotDependenciesUpdateAllOnlyDependenciesNeeded() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotDependenciesUpdateAllOnlyDependenciesNeeded() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -523,10 +492,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotDependenciesUpdateAll() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotDependenciesUpdateAll() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-all");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -549,11 +515,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
 
     // MRELEASE-589
     @Test
-    public void testSnapshotDependenciesOutsideMultimoduleProjectOnlyInteractiveWithSnapshotsResolved()
-            throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotDependenciesOutsideMultimoduleProjectOnlyInteractiveWithSnapshotsResolved() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("multimodule-external-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -575,10 +537,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotDependenciesInsideAndOutsideProject() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotDependenciesInsideAndOutsideProject() throws Exception {
         List<MavenProject> reactorProjects =
                 createDescriptorFromProjects("internal-and-external-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
@@ -607,7 +566,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testNoSnapshotReportPlugins() throws Exception {
+    void testNoSnapshotReportPlugins() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         List<MavenProject> reactorProjects = createDescriptorFromProjects("no-snapshot-report-plugins");
@@ -621,7 +580,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReportPluginsInProjectOnly() throws Exception {
+    void testSnapshotReportPluginsInProjectOnly() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-snapshot-report-plugins");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -634,10 +593,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReportPluginsOutsideProjectOnly() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotReportPluginsOutsideProjectOnly() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-report-plugins");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -665,10 +621,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotReportPluginsInsideAndOutsideProject() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotReportPluginsInsideAndOutsideProject() throws Exception {
         List<MavenProject> reactorProjects =
                 createDescriptorFromProjects("internal-and-external-snapshot-report-plugins");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
@@ -697,7 +650,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testNoSnapshotPlugins() throws Exception {
+    void testNoSnapshotPlugins() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         List<MavenProject> reactorProjects = createDescriptorFromProjects("no-snapshot-plugins");
@@ -711,7 +664,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotPluginsInProjectOnly() throws Exception {
+    void testSnapshotPluginsInProjectOnly() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-snapshot-plugins");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -724,7 +677,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotManagedPluginInProjectOnly() throws Exception {
+    void testSnapshotManagedPluginInProjectOnly() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-managed-snapshot-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -737,7 +690,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotUnusedInternalManagedPlugin() throws Exception {
+    void testSnapshotUnusedInternalManagedPlugin() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("unused-internal-managed-snapshot-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -750,7 +703,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotUnusedExternalManagedPlugin() throws Exception {
+    void testSnapshotUnusedExternalManagedPlugin() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("unused-external-managed-snapshot-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -763,10 +716,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotExternalManagedPlugin() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotExternalManagedPlugin() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-managed-snapshot-plugin");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -794,10 +744,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotPluginsOutsideProjectOnly() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotPluginsOutsideProjectOnly() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-plugins");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -825,10 +772,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotPluginsInsideAndOutsideProject() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotPluginsInsideAndOutsideProject() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-and-external-snapshot-plugins");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -856,10 +800,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotExternalParent() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotExternalParent() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-parent/child");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -887,10 +828,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotExternalParentAdjusted() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotExternalParentAdjusted() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-parent/child");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -908,7 +846,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testReleaseExternalParent() throws Exception {
+    void testReleaseExternalParent() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-parent/child");
@@ -922,10 +860,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotExternalExtension() throws Exception {
-        CheckDependencySnapshotsPhase phase =
-                (CheckDependencySnapshotsPhase) lookup(ReleasePhase.class, "check-dependency-snapshots");
-
+    void testSnapshotExternalExtension() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-snapshot-extension");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -953,7 +888,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSnapshotInternalExtension() throws Exception {
+    void testSnapshotInternalExtension() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("internal-snapshot-extension");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 
@@ -966,7 +901,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testReleaseExternalExtension() throws Exception {
+    void testReleaseExternalExtension() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
 
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-extension");
@@ -980,7 +915,7 @@ public class CheckDependencySnapshotsPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testAllowTimestampedSnapshots() throws Exception {
+    void testAllowTimestampedSnapshots() throws Exception {
         List<MavenProject> reactorProjects = createDescriptorFromProjects("external-timestamped-snapshot-dependencies");
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(reactorProjects);
 

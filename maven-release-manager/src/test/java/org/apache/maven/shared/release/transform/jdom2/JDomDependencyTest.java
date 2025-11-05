@@ -22,129 +22,127 @@ import java.io.StringReader;
 
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class JDomDependencyTest {
+class JDomDependencyTest {
     private SAXBuilder builder = new SAXBuilder();
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testIsOptional() {
-        new JDomDependency(null).isOptional();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetOptional() {
-        new JDomDependency(null).setOptional(true);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testAddExclusion() {
-        new JDomDependency(null).addExclusion(null);
+    @Test
+    void testIsOptional() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).isOptional());
     }
 
     @Test
-    public void testGetArtifactId() throws Exception {
+    void testSetOptional() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).setOptional(true));
+    }
+
+    @Test
+    void testAddExclusion() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).addExclusion(null));
+    }
+
+    @Test
+    void testGetArtifactId() throws Exception {
         String content = "<dependency></dependency>";
         Element dependencyElm = builder.build(new StringReader(content)).getRootElement();
         assertNull(new JDomDependency(dependencyElm).getArtifactId());
-
         content = "<dependency><artifactId>ARTIFACTID</artifactId></dependency>";
         dependencyElm = builder.build(new StringReader(content)).getRootElement();
         assertEquals("ARTIFACTID", new JDomDependency(dependencyElm).getArtifactId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetClassifier() {
-        new JDomDependency(null).getClassifier();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetExclusions() {
-        new JDomDependency(null).getExclusions();
+    @Test
+    void testGetClassifier() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).getClassifier());
     }
 
     @Test
-    public void testGetGroupId() throws Exception {
+    void testGetExclusions() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).getExclusions());
+    }
+
+    @Test
+    void testGetGroupId() throws Exception {
         String content = "<dependency></dependency>";
         Element dependencyElm = builder.build(new StringReader(content)).getRootElement();
         assertNull(new JDomDependency(dependencyElm).getGroupId());
-
         content = "<dependency><groupId>GROUPID</groupId></dependency>";
         dependencyElm = builder.build(new StringReader(content)).getRootElement();
         assertEquals("GROUPID", new JDomDependency(dependencyElm).getGroupId());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetScope() {
-        new JDomDependency(null).getScope();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetSystemPath() {
-        new JDomDependency(null).getSystemPath();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetType() {
-        new JDomDependency(null).getType();
+    @Test
+    void testGetScope() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).getScope());
     }
 
     @Test
-    public void testGetVersion() throws Exception {
+    void testGetSystemPath() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).getSystemPath());
+    }
+
+    @Test
+    void testGetType() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).getType());
+    }
+
+    @Test
+    void testGetVersion() throws Exception {
         String content = "<dependency></dependency>";
         Element dependencyElm = builder.build(new StringReader(content)).getRootElement();
         assertNull(new JDomDependency(dependencyElm).getVersion());
-
         content = "<dependency><version>VERSION</version></dependency>";
         dependencyElm = builder.build(new StringReader(content)).getRootElement();
         assertEquals("VERSION", new JDomDependency(dependencyElm).getVersion());
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testRemoveExclusion() {
-        new JDomDependency(null).removeExclusion(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetArtifactIdString() {
-        new JDomDependency(null).setArtifactId(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetClassifierString() {
-        new JDomDependency(null).setClassifier(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetExclusions() {
-        new JDomDependency(null).setExclusions(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetGroupIdString() {
-        new JDomDependency(null).setGroupId(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetScopeString() {
-        new JDomDependency(null).setScope(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetSystemPathString() {
-        new JDomDependency(null).setSystemPath(null);
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testSetTypeString() {
-        new JDomDependency(null).setType(null);
+    @Test
+    void testRemoveExclusion() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).removeExclusion(null));
     }
 
     @Test
-    public void testSetVersionString() throws Exception {
+    void testSetArtifactIdString() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).setArtifactId(null));
+    }
+
+    @Test
+    void testSetClassifierString() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).setClassifier(null));
+    }
+
+    @Test
+    void testSetExclusions() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).setExclusions(null));
+    }
+
+    @Test
+    void testSetGroupIdString() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).setGroupId(null));
+    }
+
+    @Test
+    void testSetScopeString() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).setScope(null));
+    }
+
+    @Test
+    void testSetSystemPathString() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).setSystemPath(null));
+    }
+
+    @Test
+    void testSetTypeString() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomDependency(null).setType(null));
+    }
+
+    @Test
+    void testSetVersionString() throws Exception {
         String content = "<dependency><version>OLD_VERSION</version></dependency>";
         Element dependencyElm = builder.build(new StringReader(content)).getRootElement();
         new JDomDependency(dependencyElm).setVersion("NEW_VERSION");
@@ -152,7 +150,7 @@ public class JDomDependencyTest {
     }
 
     @Test
-    public void testGetName() {
+    void testGetName() {
         assertEquals("dependency", new JDomDependency(null).getName());
     }
 

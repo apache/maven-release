@@ -31,10 +31,10 @@ import org.apache.maven.shared.release.exec.MavenExecutorException;
 @Singleton
 @Named("wrapper")
 public class MavenExecutorWrapper implements MavenExecutor {
-    private MavenExecutor executor;
+    private ThreadLocal<MavenExecutor> executor = new ThreadLocal<>();
 
     public void setMavenExecutor(MavenExecutor executor) {
-        this.executor = executor;
+        this.executor.set(executor);
     }
 
     @Override
@@ -47,7 +47,14 @@ public class MavenExecutorWrapper implements MavenExecutor {
             String pomFileName,
             ReleaseResult result)
             throws MavenExecutorException {
-        executor.executeGoals(
-                workingDirectory, goals, releaseEnvironment, interactive, additionalArguments, pomFileName, result);
+        executor.get()
+                .executeGoals(
+                        workingDirectory,
+                        goals,
+                        releaseEnvironment,
+                        interactive,
+                        additionalArguments,
+                        pomFileName,
+                        result);
     }
 }

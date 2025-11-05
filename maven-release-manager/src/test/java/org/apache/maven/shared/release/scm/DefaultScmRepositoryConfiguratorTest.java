@@ -18,7 +18,8 @@
  */
 package org.apache.maven.shared.release.scm;
 
-import com.google.inject.Module;
+import javax.inject.Inject;
+
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderRepositoryWithHost;
@@ -27,63 +28,51 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.scm.repository.ScmRepositoryException;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test the default SCM repository configurator.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class DefaultScmRepositoryConfiguratorTest {
+    @Inject
     private ScmRepositoryConfigurator scmRepositoryConfigurator;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        scmRepositoryConfigurator = lookup(ScmRepositoryConfigurator.class);
-    }
-
-    @Override
-    protected Module[] getCustomModules() {
-        return new Module[0]; // real SCM needed
-    }
-
     @Test
-    public void testGetConfiguredRepository() throws ScmRepositoryException, NoSuchScmProviderException {
+    void testGetConfiguredRepository() throws ScmRepositoryException, NoSuchScmProviderException {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         ScmRepository repository =
                 scmRepositoryConfigurator.getConfiguredRepository(ReleaseUtils.buildReleaseDescriptor(builder), null);
 
-        assertEquals("check provider", "svn", repository.getProvider());
-        assertNull("check username", repository.getProviderRepository().getUser());
-        assertNull("check password", repository.getProviderRepository().getPassword());
+        assertEquals("svn", repository.getProvider(), "check provider");
+        assertNull(repository.getProviderRepository().getUser(), "check username");
+        assertNull(repository.getProviderRepository().getPassword(), "check password");
     }
 
     @Test
-    public void testGetConfiguredRepositoryWithUsernameAndPassword()
+    void testGetConfiguredRepositoryWithUsernameAndPassword()
             throws ScmRepositoryException, NoSuchScmProviderException {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder("username", "password");
 
         ScmRepository repository =
                 scmRepositoryConfigurator.getConfiguredRepository(ReleaseUtils.buildReleaseDescriptor(builder), null);
 
-        assertEquals(
-                "check username", "username", repository.getProviderRepository().getUser());
-        assertEquals(
-                "check password", "password", repository.getProviderRepository().getPassword());
+        assertEquals("username", repository.getProviderRepository().getUser(), "check username");
+        assertEquals("password", repository.getProviderRepository().getPassword(), "check password");
     }
 
     @Test
-    public void testGetConfiguredRepositoryWithTagBase() throws ScmRepositoryException, NoSuchScmProviderException {
+    void testGetConfiguredRepositoryWithTagBase() throws ScmRepositoryException, NoSuchScmProviderException {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:http://localhost/home/svn/module/trunk");
         builder.setScmTagBase("http://localhost/home/svn/module/tags");
@@ -92,11 +81,11 @@ public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase {
                 scmRepositoryConfigurator.getConfiguredRepository(ReleaseUtils.buildReleaseDescriptor(builder), null);
 
         SvnScmProviderRepository providerRepository = (SvnScmProviderRepository) repository.getProviderRepository();
-        assertEquals("check tag base", "http://localhost/home/svn/module/tags", providerRepository.getTagBase());
+        assertEquals("http://localhost/home/svn/module/tags", providerRepository.getTagBase(), "check tag base");
     }
 
     @Test
-    public void testGetConfiguredRepositoryWithHost() throws ScmRepositoryException, NoSuchScmProviderException {
+    void testGetConfiguredRepositoryWithHost() throws ScmRepositoryException, NoSuchScmProviderException {
         Settings settings = new Settings();
         Server server = new Server();
         server.setId("localhost");
@@ -114,17 +103,16 @@ public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase {
 
         ScmProviderRepositoryWithHost providerRepository =
                 (ScmProviderRepositoryWithHost) repository.getProviderRepository();
-        assertEquals("check host", "localhost", providerRepository.getHost());
-        assertEquals("check port", 0, providerRepository.getPort());
-        assertEquals("check username", "settings-username", providerRepository.getUser());
-        assertEquals("check password", "settings-password", providerRepository.getPassword());
-        assertEquals("check private key", "settings-private-key", providerRepository.getPrivateKey());
-        assertEquals("check passphrase", "settings-passphrase", providerRepository.getPassphrase());
+        assertEquals("localhost", providerRepository.getHost(), "check host");
+        assertEquals(0, providerRepository.getPort(), "check port");
+        assertEquals("settings-username", providerRepository.getUser(), "check username");
+        assertEquals("settings-password", providerRepository.getPassword(), "check password");
+        assertEquals("settings-private-key", providerRepository.getPrivateKey(), "check private key");
+        assertEquals("settings-passphrase", providerRepository.getPassphrase(), "check passphrase");
     }
 
     @Test
-    public void testGetConfiguredRepositoryWithEncryptedPasswords()
-            throws ScmRepositoryException, NoSuchScmProviderException {
+    void testGetConfiguredRepositoryWithEncryptedPasswords() throws ScmRepositoryException, NoSuchScmProviderException {
         Settings settings = new Settings();
         Server server = new Server();
         server.setId("localhost");
@@ -141,14 +129,14 @@ public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase {
 
         ScmProviderRepositoryWithHost providerRepository =
                 (ScmProviderRepositoryWithHost) repository.getProviderRepository();
-        assertEquals("check host", "localhost", providerRepository.getHost());
-        assertEquals("check username", "testuser", providerRepository.getUser());
-        assertEquals("check password", "testpass", providerRepository.getPassword());
-        assertEquals("check passphrase", "testphrase", providerRepository.getPassphrase());
+        assertEquals("localhost", providerRepository.getHost(), "check host");
+        assertEquals("testuser", providerRepository.getUser(), "check username");
+        assertEquals("testpass", providerRepository.getPassword(), "check password");
+        assertEquals("testphrase", providerRepository.getPassphrase(), "check passphrase");
     }
 
     @Test
-    public void testGetConfiguredRepositoryInvalidScmUrl() throws Exception {
+    void testGetConfiguredRepositoryInvalidScmUrl() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm-url");
 
@@ -162,7 +150,7 @@ public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testGetConfiguredRepositoryInvalidScmProvider() throws ScmRepositoryException {
+    void testGetConfiguredRepositoryInvalidScmProvider() throws ScmRepositoryException {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:url:");
 
@@ -176,7 +164,7 @@ public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testGetConfiguredRepositoryInvalidScmUrlParameters() throws NoSuchScmProviderException {
+    void testGetConfiguredRepositoryInvalidScmUrlParameters() throws NoSuchScmProviderException {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setScmSourceUrl("scm:svn:");
 
@@ -190,14 +178,14 @@ public class DefaultScmRepositoryConfiguratorTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testGetRepositoryProvider() throws ScmRepositoryException, NoSuchScmProviderException {
+    void testGetRepositoryProvider() throws ScmRepositoryException, NoSuchScmProviderException {
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
         ScmRepository repository =
                 scmRepositoryConfigurator.getConfiguredRepository(ReleaseUtils.buildReleaseDescriptor(builder), null);
 
         ScmProvider provider = scmRepositoryConfigurator.getRepositoryProvider(repository);
-        assertEquals("Check SCM provider", "svn", provider.getScmType());
+        assertEquals("svn", provider.getScmType(), "Check SCM provider");
     }
 
     private static ReleaseDescriptorBuilder createReleaseDescriptorBuilder() {

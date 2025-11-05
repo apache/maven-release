@@ -22,36 +22,37 @@ import java.io.StringReader;
 
 import org.jdom2.Element;
 import org.jdom2.input.SAXBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-public class JDomScmTest {
+class JDomScmTest {
     private SAXBuilder builder = new SAXBuilder();
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetConnection() {
-        new JDomScm(null).getConnection();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetDeveloperConnection() {
-        new JDomScm(null).getDeveloperConnection();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetTag() {
-        new JDomScm(null).getTag();
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetUrl() {
-        new JDomScm(null).getUrl();
+    @Test
+    void testGetConnection() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomScm(null).getConnection());
     }
 
     @Test
-    public void testSetConnectionString() throws Exception {
+    void testGetDeveloperConnection() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomScm(null).getDeveloperConnection());
+    }
+
+    @Test
+    void testGetTag() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomScm(null).getTag());
+    }
+
+    @Test
+    void testGetUrl() {
+        assertThrows(UnsupportedOperationException.class, () -> new JDomScm(null).getUrl());
+    }
+
+    @Test
+    void testSetConnectionString() throws Exception {
         String content = "<scm></scm>";
         Element scmElm = builder.build(new StringReader(content)).getRootElement();
 
@@ -65,7 +66,7 @@ public class JDomScmTest {
     }
 
     @Test
-    public void testSetDeveloperConnectionString() throws Exception {
+    void testSetDeveloperConnectionString() throws Exception {
         String content = "<scm></scm>";
         Element scmElm = builder.build(new StringReader(content)).getRootElement();
 
@@ -79,7 +80,7 @@ public class JDomScmTest {
     }
 
     @Test
-    public void testSetTagString() throws Exception {
+    void testSetTagString() throws Exception {
         String content = "<scm></scm>";
         Element scmElm = builder.build(new StringReader(content)).getRootElement();
 
@@ -93,7 +94,7 @@ public class JDomScmTest {
     }
 
     @Test
-    public void testSetUrlString() throws Exception {
+    void testSetUrlString() throws Exception {
         String content = "<scm></scm>";
         Element scmElm = builder.build(new StringReader(content)).getRootElement();
 
