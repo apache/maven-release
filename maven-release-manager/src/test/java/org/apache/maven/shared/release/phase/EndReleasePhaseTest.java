@@ -18,34 +18,33 @@
  */
 package org.apache.maven.shared.release.phase;
 
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test the the end release phase. Nothing to see here really, but we want to make sure it is configured.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class EndReleasePhaseTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class EndReleasePhaseTest {
+    @Inject
+    @Named("end-release")
     private ReleasePhase phase;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        phase = lookup(ReleasePhase.class, "end-release");
-    }
-
     @Test
-    public void testExecute() throws ReleaseExecutionException, ReleaseFailureException {
+    void testExecute() throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = phase.execute(
                 ReleaseUtils.buildReleaseDescriptor(new ReleaseDescriptorBuilder()),
                 new DefaultReleaseEnvironment(),
@@ -55,7 +54,7 @@ public class EndReleasePhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulate() throws ReleaseExecutionException, ReleaseFailureException {
+    void testSimulate() throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = phase.simulate(
                 ReleaseUtils.buildReleaseDescriptor(new ReleaseDescriptorBuilder()),
                 new DefaultReleaseEnvironment(),

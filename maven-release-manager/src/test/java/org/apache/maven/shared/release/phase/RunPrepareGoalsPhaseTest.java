@@ -18,13 +18,14 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseExecutionException;
-import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
@@ -33,13 +34,16 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
 import org.apache.maven.shared.release.stubs.MavenExecutorWrapper;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
-import static org.mockito.Matchers.isNull;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -50,28 +54,27 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class RunPrepareGoalsPhaseTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class RunPrepareGoalsPhaseTest {
+    @Inject
+    @Named("run-preparation-goals")
     private RunPrepareGoalsPhase phase;
 
+    @Inject
+    @Named("wrapper")
     private MavenExecutorWrapper mavenExecutorWrapper;
 
     private DefaultReleaseEnvironment releaseEnvironment;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        phase = (RunPrepareGoalsPhase) lookup(ReleasePhase.class, "run-preparation-goals");
-
-        mavenExecutorWrapper =
-                (MavenExecutorWrapper) lookup("org.apache.maven.shared.release.exec.MavenExecutor", "wrapper");
+    @BeforeEach
+    void setUp() throws Exception {
 
         releaseEnvironment = new DefaultReleaseEnvironment();
         releaseEnvironment.setMavenExecutorId("wrapper");
     }
 
     @Test
-    public void testExecute() throws ReleaseExecutionException, ReleaseFailureException, MavenExecutorException {
+    void testExecute() throws ReleaseExecutionException, MavenExecutorException {
         // prepare
         File testFile = getTestFile("target/working-directory");
 
@@ -100,7 +103,7 @@ public class RunPrepareGoalsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulate() throws ReleaseExecutionException, MavenExecutorException {
+    void testSimulate() throws ReleaseExecutionException, MavenExecutorException {
         // prepare
         File testFile = getTestFile("target/working-directory");
 
@@ -129,7 +132,7 @@ public class RunPrepareGoalsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecuteException() throws ReleaseFailureException, MavenExecutorException {
+    void testExecuteException() throws MavenExecutorException {
         // prepare
         File testFile = getTestFile("target/working-directory");
 
@@ -157,8 +160,7 @@ public class RunPrepareGoalsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Should have thrown an exception");
         } catch (ReleaseExecutionException e) {
-            assertEquals(
-                    "Check cause", MavenExecutorException.class, e.getCause().getClass());
+            assertEquals(MavenExecutorException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify
@@ -175,7 +177,7 @@ public class RunPrepareGoalsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testSimulateException() throws MavenExecutorException {
+    void testSimulateException() throws MavenExecutorException {
         // prepare
         File testFile = getTestFile("target/working-directory");
 
@@ -203,8 +205,7 @@ public class RunPrepareGoalsPhaseTest extends PlexusJUnit4TestCase {
 
             fail("Should have thrown an exception");
         } catch (ReleaseExecutionException e) {
-            assertEquals(
-                    "Check cause", MavenExecutorException.class, e.getCause().getClass());
+            assertEquals(MavenExecutorException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify
@@ -221,7 +222,7 @@ public class RunPrepareGoalsPhaseTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testEmptyGoals() throws Exception {
+    void testEmptyGoals() throws Exception {
         // prepare
         File testFile = getTestFile("target/working-directory");
 

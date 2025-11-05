@@ -20,12 +20,12 @@ package org.apache.maven.shared.release.scm;
 
 import java.io.File;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class JazzScmTranslatorTest {
+class JazzScmTranslatorTest {
 
     private final JazzScmTranslator scmTranslator = new JazzScmTranslator();
 
@@ -33,25 +33,25 @@ public class JazzScmTranslatorTest {
      * @see org.apache.maven.model.Scm#getTag()
      */
     @Test
-    public void testResolveTag() {
+    void testResolveTag() {
         assertNull(scmTranslator.resolveTag("HEAD"));
         assertNull(scmTranslator.resolveTag("project-1.0"));
     }
 
     @Test
-    public void testTranslateTagUrl() {
+    void testTranslateTagUrl() {
         assertEquals("url:tag", scmTranslator.translateTagUrl("url:module", "tag", null));
         assertEquals("url:tag", scmTranslator.translateTagUrl("url:module", "tag", "tagBase"));
     }
 
     @Test
-    public void testTranslateBranchUrl() {
+    void testTranslateBranchUrl() {
         assertEquals("url:branchName", scmTranslator.translateBranchUrl("url:module", "branchName", null));
         assertEquals("url:branchName", scmTranslator.translateBranchUrl("url:module", "branchName", "tagBase"));
     }
 
     @Test
-    public void testGetRelativePath() {
+    void testGetRelativePath() {
         assertEquals(
                 "BogusTest" + File.separator + "release.properties",
                 scmTranslator.toRelativePath("BogusTest/release.properties"));

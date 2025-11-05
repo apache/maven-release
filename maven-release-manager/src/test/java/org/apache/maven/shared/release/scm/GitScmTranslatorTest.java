@@ -18,11 +18,11 @@
  */
 package org.apache.maven.shared.release.scm;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class GitScmTranslatorTest {
+class GitScmTranslatorTest {
 
     private final GitScmTranslator scmTranslator = new GitScmTranslator();
 
@@ -30,25 +30,20 @@ public class GitScmTranslatorTest {
      * @see org.apache.maven.model.Scm#getTag()
      */
     @Test
-    public void testResolveTag() {
+    void testResolveTag() {
         assertEquals("HEAD", scmTranslator.resolveTag("HEAD"));
         assertEquals("project-1.0", scmTranslator.resolveTag("project-1.0"));
     }
 
     @Test
-    public void testTranslateTagUrl() {
+    void testTranslateTagUrl() {
         assertEquals("url", scmTranslator.translateTagUrl("url", "tag", null));
         assertEquals("url", scmTranslator.translateTagUrl("url", "tag", "tagBase"));
     }
 
     @Test
-    public void testTranslateBranchUrl() {
+    void testTranslateBranchUrl() {
         assertEquals("url", scmTranslator.translateBranchUrl("url", "branchName", null));
         assertEquals("url", scmTranslator.translateBranchUrl("url", "branchName", "tagBase"));
-    }
-
-    @Test
-    public void testGetRelativePath() {
-        assertEquals("a/b/c", "a/b/c");
     }
 }

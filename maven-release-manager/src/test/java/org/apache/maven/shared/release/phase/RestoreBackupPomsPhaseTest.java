@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.util.List;
 
@@ -26,24 +29,27 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
+import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestPath;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Edwin Punzalan
  */
-public class RestoreBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
+@PlexusTest
+class RestoreBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
     private String expectedPomFilename = "expected-pom.xml";
 
-    @Override
-    ReleasePhase getReleasePhase() throws Exception {
-        return lookup(ReleasePhase.class, "restore-backup-poms");
-    }
+    @Inject
+    @Named("restore-backup-poms")
+    private ReleasePhase phase;
 
     @Test
-    public void testBasicPom() throws Exception {
+    void testBasicPom() throws Exception {
         String projectPath = "/projects/restore-backup-poms/basic-pom";
 
         // copy poms so tests are valid without clean
@@ -57,7 +63,7 @@ public class RestoreBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
     }
 
     @Test
-    public void testMultiModulePom() throws Exception {
+    void testMultiModulePom() throws Exception {
         String projectPath = "/projects/restore-backup-poms/pom-with-modules";
 
         // copy poms so tests are valid without clean
@@ -86,13 +92,13 @@ public class RestoreBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
 
             File expectedFile = new File(pomFile.getParentFile(), expectedPomFilename);
 
-            assertTrue("Check if expected file exists.", expectedFile.exists());
+            assertTrue(expectedFile.exists(), "Check if expected file exists.");
 
             String pomContents = ReleaseUtil.readXmlFile(pomFile);
 
             String expectedContents = ReleaseUtil.readXmlFile(expectedFile);
 
-            assertTrue("Check if pom and backup files are identical", pomContents.equals(expectedContents));
+            assertTrue(pomContents.equals(expectedContents), "Check if pom and backup files are identical");
         }
     }
 }

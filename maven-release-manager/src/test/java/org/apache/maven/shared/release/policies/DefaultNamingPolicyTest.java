@@ -19,15 +19,15 @@
 package org.apache.maven.shared.release.policies;
 
 import org.apache.maven.shared.release.policy.naming.NamingPolicyRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DefaultNamingPolicyTest {
+class DefaultNamingPolicyTest {
     private final DefaultNamingPolicy policy = new DefaultNamingPolicy();
 
     @Test
-    public void testName() throws Exception {
+    void testName() throws Exception {
         assertEquals(
                 "ARTIFACTID-VERSION",
                 policy.getName(newNamingPolicyRequest("ARTIFACTID", "VERSION")).getName());

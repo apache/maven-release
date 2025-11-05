@@ -27,7 +27,7 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.MavenCrypto;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isA;
@@ -37,10 +37,10 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
-public class AbstractMavenExecutorTest {
+class AbstractMavenExecutorTest {
 
     @Test
-    public void testGoalSeparation() throws MavenExecutorException {
+    void testGoalSeparation() throws MavenExecutorException {
         AbstractMavenExecutor executor = spy(new AbstractMavenExecutorSpy(mock(MavenCrypto.class)));
 
         executor.executeGoals(null, (String) null, new DefaultReleaseEnvironment(), true, null, null, null);

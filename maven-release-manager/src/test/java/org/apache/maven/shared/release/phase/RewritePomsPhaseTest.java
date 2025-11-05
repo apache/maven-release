@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.util.Properties;
 
 import org.apache.maven.shared.release.ReleaseFailureException;
@@ -25,29 +28,26 @@ import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AbstractRewritePomsPhaseTest extends AbstractReleaseTestCase {
+@PlexusTest
+class RewritePomsPhaseTest extends AbstractReleaseTestCase {
 
+    @Inject
+    @Named("rewrite-pom-versions")
     private AbstractRewritePomsPhase phase;
 
     private static final String PROJECT_KEY = "mygroup:myproject";
     private static final String ARTIFACT_KEY = "mygroup:myotherproject";
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        phase = lookup(RewritePomVersionsPhase.class, "rewrite-pom-versions");
-    }
-
     @Test
-    public void testRewritePropertyUsedInVersionExpression() throws ReleaseFailureException {
+    void testRewritePropertyUsedInVersionExpression() throws ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
         ReleaseDescriptor releaseDescriptor = ReleaseUtils.buildReleaseDescriptor(new ReleaseDescriptorBuilder());
         // unresolvable property (no local properties available)

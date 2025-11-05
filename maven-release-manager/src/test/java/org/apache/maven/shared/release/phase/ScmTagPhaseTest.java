@@ -18,15 +18,15 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.LinkOption;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Module;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
@@ -35,7 +35,6 @@ import org.apache.maven.scm.ScmFileStatus;
 import org.apache.maven.scm.ScmTagParameters;
 import org.apache.maven.scm.command.tag.TagScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
-import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.provider.ScmProviderStub;
 import org.apache.maven.scm.provider.svn.repository.SvnScmProviderRepository;
@@ -50,17 +49,19 @@ import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.apache.maven.shared.release.stubs.ScmManagerStub;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isA;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -71,37 +72,24 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ScmTagPhaseTest extends AbstractReleaseTestCase {
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        phase = (ReleasePhase) lookup(ReleasePhase.class, "scm-tag");
-    }
+@PlexusTest
+class ScmTagPhaseTest extends AbstractReleaseTestCase {
+    @Inject
+    @Named("scm-tag")
+    private ReleasePhase phase;
 
     @Override
-    protected Module[] getCustomModules() {
-        return new Module[] {
-            new AbstractModule() {
-                @Override
-                protected void configure() {
-                    bind(ScmManager.class).toInstance(new ScmManagerStub());
-                    bind(ReleaseDescriptorStore.class).toInstance(new ReleaseDescriptorStoreStub());
-                }
-            }
-        };
+    public void customizeContainer(PlexusContainer container) {
+        super.customizeContainer(container);
+        container.addComponent(new ReleaseDescriptorStoreStub(), ReleaseDescriptorStore.class.getName());
     }
 
     public static String getPath(File file) throws IOException {
         return file.toPath().toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
     }
 
-    public static String getPath(String file) throws IOException {
-        return Paths.get(file).toRealPath(LinkOption.NOFOLLOW_LINKS).toString();
-    }
-
     @Test
-    public void testTag() throws Exception {
+    void testTag() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
@@ -127,8 +115,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
                 .thenReturn(new TagScmResult(
                         "...",
                         Collections.singletonList(new ScmFile(getPath(rootProject.getFile()), ScmFileStatus.TAGGED))));
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // execute
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -144,7 +131,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testCommitMultiModuleDeepFolders() throws Exception {
+    void testCommitMultiModuleDeepFolders() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects("scm-commit/multimodule-with-deep-subprojects", "");
         String sourceUrl = "http://svn.example.com/repos/project/trunk/";
@@ -174,9 +161,8 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
                         "...",
                         Collections.singletonList(new ScmFile(getPath(rootProject.getFile()), ScmFileStatus.TAGGED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
-        stub.addScmRepositoryForUrl(scmUrl, repository);
+        scmManager.setScmProvider(scmProviderMock);
+        scmManager.addScmRepositoryForUrl(scmUrl, repository);
 
         // execute
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -193,7 +179,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testCommitForFlatMultiModule() throws Exception {
+    void testCommitForFlatMultiModule() throws Exception {
         // prepare
         List<MavenProject> reactorProjects =
                 createReactorProjects("rewrite-for-release/pom-with-parent-flat", "root-project");
@@ -225,9 +211,8 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
                         "...",
                         Collections.singletonList(new ScmFile(getPath(rootProject.getFile()), ScmFileStatus.TAGGED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
-        stub.addScmRepositoryForUrl("scm:svn:" + scmUrl, repository);
+        scmManager.setScmProvider(scmProviderMock);
+        scmManager.addScmRepositoryForUrl("scm:svn:" + scmUrl, repository);
 
         // execute
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -244,7 +229,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testCommitMultiModule() throws Exception {
+    void testCommitMultiModule() throws Exception {
         // prepare
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         String dir = "scm-commit/multiple-poms";
@@ -269,8 +254,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
                         "...",
                         Collections.singletonList(new ScmFile(getPath(rootProject.getFile()), ScmFileStatus.TAGGED))));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // exeucte
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -287,7 +271,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testTagNoReleaseLabel() throws Exception {
+    void testTagNoReleaseLabel() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
 
@@ -301,7 +285,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSimulateTag() throws Exception {
+    void testSimulateTag() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
         builder.setScmSourceUrl("scm-url");
@@ -312,8 +296,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
 
         ScmProvider scmProviderMock = mock(ScmProvider.class);
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // execute
         phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
@@ -324,7 +307,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testSimulateTagNoReleaseLabel() throws Exception {
+    void testSimulateTagNoReleaseLabel() throws Exception {
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         List<MavenProject> reactorProjects = createReactorProjects();
 
@@ -338,13 +321,12 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testNoSuchScmProviderExceptionThrown() throws Exception {
+    void testNoSuchScmProviderExceptionThrown() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup(ScmManager.class);
-        scmManagerStub.setException(new NoSuchScmProviderException("..."));
+        scmManager.setException(new NoSuchScmProviderException("..."));
 
         // execute
         try {
@@ -354,21 +336,17 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
             // verify
-            assertEquals(
-                    "check cause",
-                    NoSuchScmProviderException.class,
-                    e.getCause().getClass());
+            assertEquals(NoSuchScmProviderException.class, e.getCause().getClass(), "check cause");
         }
     }
 
     @Test
-    public void testScmRepositoryExceptionThrown() throws Exception {
+    void testScmRepositoryExceptionThrown() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmManagerStub scmManagerStub = (ScmManagerStub) lookup(ScmManager.class);
-        scmManagerStub.setException(new ScmRepositoryException("..."));
+        scmManager.setException(new ScmRepositoryException("..."));
 
         // execute
         try {
@@ -378,12 +356,12 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
             fail("Status check should have failed");
         } catch (ReleaseScmRepositoryException e) {
             // verify
-            assertNull("Check no additional cause", e.getCause());
+            assertNull(e.getCause(), "Check no additional cause");
         }
     }
 
     @Test
-    public void testScmExceptionThrown() throws Exception {
+    void testScmExceptionThrown() throws Exception {
         // prepare
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
@@ -396,8 +374,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
                         isA(ScmTagParameters.class)))
                 .thenThrow(new ScmException("..."));
 
-        ScmManagerStub stub = (ScmManagerStub) lookup(ScmManager.class);
-        stub.setScmProvider(scmProviderMock);
+        scmManager.setScmProvider(scmProviderMock);
 
         // execute
         try {
@@ -406,7 +383,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
 
             fail("Status check should have failed");
         } catch (ReleaseExecutionException e) {
-            assertEquals("check cause", ScmException.class, e.getCause().getClass());
+            assertEquals(ScmException.class, e.getCause().getClass(), "check cause");
         }
 
         // verify
@@ -416,11 +393,10 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
     }
 
     @Test
-    public void testScmResultFailure() throws Exception {
+    void testScmResultFailure() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects();
         ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder();
 
-        ScmManager scmManager = lookup(ScmManager.class);
         ScmProviderStub providerStub = (ScmProviderStub) scmManager.getProviderByUrl("scm-url");
 
         providerStub.setTagScmResult(new TagScmResult("", "", "", false));
@@ -431,7 +407,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
 
             fail("Commit should have failed");
         } catch (ReleaseScmCommandException e) {
-            assertNull("check no other cause", e.getCause());
+            assertNull(e.getCause(), "check no other cause");
         }
     }
 
@@ -446,7 +422,7 @@ public class ScmTagPhaseTest extends AbstractReleaseTestCase {
         File workingDir = getTestFile("target/test/checkout");
         if (!workingDir.exists()) {
             assertTrue(
-                    "Failed to create the directory, along with all necessary parent directories", workingDir.mkdirs());
+                    workingDir.mkdirs(), "Failed to create the directory, along with all necessary parent directories");
         }
         builder.setWorkingDirectory(getPath(workingDir));
         builder.setPomFileName("pom.xml");

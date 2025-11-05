@@ -18,6 +18,8 @@
  */
 package org.apache.maven.shared.release.exec;
 
+import javax.inject.Inject;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -27,21 +29,22 @@ import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.MavenCrypto;
+import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.cli.Arg;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.fail;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -56,20 +59,17 @@ import static org.mockito.Mockito.when;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class ForkedMavenExecutorTest {
+
+    @Inject
     private MavenCrypto mavenCrypto;
+
+    @Inject
     private SecDispatcher secDispatcher;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        mavenCrypto = lookup(MavenCrypto.class);
-        secDispatcher = lookup(SecDispatcher.class);
-    }
-
     @Test
-    public void testExecution() throws Exception {
+    void testExecution() throws Exception {
         // prepare
         File workingDirectory = getTestFile("target/working-directory");
         Process mockProcess = mock(Process.class);
@@ -118,7 +118,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecutionWithCustomPomFile() throws Exception {
+    void testExecutionWithCustomPomFile() throws Exception {
         File workingDirectory = getTestFile("target/working-directory");
         Process mockProcess = mock(Process.class);
         when(mockProcess.getInputStream()).thenReturn(mock(InputStream.class));
@@ -167,7 +167,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecutionWithArguments() throws Exception {
+    void testExecutionWithArguments() throws Exception {
         File workingDirectory = getTestFile("target/working-directory");
         Process mockProcess = mock(Process.class);
         when(mockProcess.getInputStream()).thenReturn(mock(InputStream.class));
@@ -216,7 +216,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecutionWithNonZeroExitCode() throws Exception {
+    void testExecutionWithNonZeroExitCode() throws Exception {
         // prepare
         File workingDirectory = getTestFile("target/working-directory");
         Process mockProcess = mock(Process.class);
@@ -250,7 +250,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
 
             fail("Should have thrown an exception");
         } catch (MavenExecutorException e) {
-            assertEquals("Check exit code", 1, e.getExitCode());
+            assertEquals(1, e.getExitCode(), "Check exit code");
         }
 
         // verify
@@ -272,7 +272,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testExecutionWithCommandLineException() throws Exception {
+    void testExecutionWithCommandLineException() throws Exception {
         // prepare
         File workingDirectory = getTestFile("target/working-directory");
 
@@ -300,7 +300,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
 
             fail("Should have thrown an exception");
         } catch (MavenExecutorException e) {
-            assertEquals("Check cause", CommandLineException.class, e.getCause().getClass());
+            assertEquals(CommandLineException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify
@@ -317,7 +317,7 @@ public class ForkedMavenExecutorTest extends PlexusJUnit4TestCase {
     }
 
     @Test
-    public void testEncryptSettings() throws Exception {
+    void testEncryptSettings() throws Exception {
         // prepare
         File workingDirectory = getTestFile("target/working-directory");
         Process mockProcess = mock(Process.class);

@@ -21,20 +21,20 @@ package org.apache.maven.shared.release.util;
 import java.io.File;
 import java.net.URL;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author <a href="mailto:struberg@yahoo.de">Mark Struberg</a>
  */
-public class PomFinderTest {
+class PomFinderTest {
     @Test
-    public void testPomFinderParser() {
+    void testPomFinderParser() {
         PomFinder pf = new PomFinder(LoggerFactory.getLogger("test"));
 
         boolean found = pf.parsePom(new File("src/test/resources/pomfinder/pomNothere.xml"));
@@ -45,7 +45,7 @@ public class PomFinderTest {
 
         File pomFile = new File(pomUrl.getFile());
         found = pf.parsePom(pomFile);
-        assertTrue("pomFile not found pomUrl " + pomUrl + ", pomFile " + pomFile.getPath(), found);
+        assertTrue(found, "pomFile not found pomUrl " + pomUrl + ", pomFile " + pomFile.getPath());
 
         File foundPom = pf.findMatchingPom(pomFile.getParentFile());
         assertNotNull(foundPom);

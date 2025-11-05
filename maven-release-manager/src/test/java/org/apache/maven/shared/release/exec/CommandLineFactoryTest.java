@@ -18,36 +18,34 @@
  */
 package org.apache.maven.shared.release.exec;
 
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
-import org.codehaus.plexus.util.cli.Commandline;
-import org.junit.Test;
+import javax.inject.Inject;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.codehaus.plexus.util.cli.Commandline;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test the command line factory.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class CommandLineFactoryTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class CommandLineFactoryTest {
+
+    @Inject
     private CommandLineFactory factory;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        factory = lookup(CommandLineFactory.class);
-    }
-
     @Test
-    public void testCreation() throws Exception {
+    void testCreation() throws Exception {
         Commandline cl = factory.createCommandLine("exec");
 
         String executable = cl.getExecutable();
-        assertTrue("Check executable " + executable, executable.contains("exec"));
-        assertNotNull("Check environment", cl.getEnvironmentVariables());
-        assertFalse("Check environment", cl.getEnvironmentVariables().length == 0);
+        assertTrue(executable.contains("exec"), "Check executable " + executable);
+        assertNotNull(cl.getEnvironmentVariables(), "Check environment");
+        assertFalse(cl.getEnvironmentVariables().length == 0, "Check environment");
     }
 }

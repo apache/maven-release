@@ -20,45 +20,45 @@ package org.apache.maven.shared.release.policies;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class DefaultVersionPolicyTest {
+class DefaultVersionPolicyTest {
     private final VersionPolicy policy = new DefaultVersionPolicy();
 
     @Test
-    public void testOneDigitReleaseVersion() throws Exception {
+    void testOneDigitReleaseVersion() throws Exception {
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion("1-SNAPSHOT");
         assertEquals("1", policy.getReleaseVersion(request).getVersion());
     }
 
     @Test
-    public void testOneDigitDevelopmentVersion() throws Exception {
+    void testOneDigitDevelopmentVersion() throws Exception {
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion("1");
         assertEquals("2-SNAPSHOT", policy.getDevelopmentVersion(request).getVersion());
     }
 
     @Test
-    public void testTwoDigitsReleaseVersion() throws Exception {
+    void testTwoDigitsReleaseVersion() throws Exception {
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion("1.0-SNAPSHOT");
         assertEquals("1.0", policy.getReleaseVersion(request).getVersion());
     }
 
     @Test
-    public void testTwoDigitsDevelopmentVersion() throws Exception {
+    void testTwoDigitsDevelopmentVersion() throws Exception {
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion("1.0");
         assertEquals("1.1-SNAPSHOT", policy.getDevelopmentVersion(request).getVersion());
     }
 
     @Test
-    public void testThreeDigitsReleaseVersion() throws Exception {
+    void testThreeDigitsReleaseVersion() throws Exception {
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion("1.0.0-SNAPSHOT");
         assertEquals("1.0.0", policy.getReleaseVersion(request).getVersion());
     }
 
     @Test
-    public void testThreeDigitsDevelopmentVersion() throws Exception {
+    void testThreeDigitsDevelopmentVersion() throws Exception {
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion("1.0.0");
         assertEquals("1.0.1-SNAPSHOT", policy.getDevelopmentVersion(request).getVersion());
     }

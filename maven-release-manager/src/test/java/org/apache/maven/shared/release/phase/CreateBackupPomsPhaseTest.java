@@ -18,6 +18,9 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
@@ -25,22 +28,25 @@ import java.util.List;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.junit.Test;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestPath;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Edwin Punzalan
  */
-public class CreateBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
-    @Override
-    ReleasePhase getReleasePhase() throws Exception {
-        return (ReleasePhase) lookup(ReleasePhase.class, "create-backup-poms");
-    }
+@PlexusTest
+class CreateBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
+
+    @Inject
+    @Named("create-backup-poms")
+    private ReleasePhase phase;
 
     @Test
-    public void testBasicPom() throws Exception {
+    void testBasicPom() throws Exception {
         String projectPath = "target/test-classes/projects/create-backup-poms/basic-pom";
 
         // should create backup files
@@ -54,7 +60,7 @@ public class CreateBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
     }
 
     @Test
-    public void testMultiModulePom() throws Exception {
+    void testMultiModulePom() throws Exception {
         String projectPath = "target/test-classes/projects/create-backup-poms/pom-with-modules";
 
         // should create backup files
@@ -100,15 +106,15 @@ public class CreateBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
             File backupFile = new File(pomFile.getAbsolutePath() + releaseBackupSuffix);
 
             if (created) {
-                assertTrue("Check if backup file was created.", backupFile.exists());
+                assertTrue(backupFile.exists(), "Check if backup file was created.");
 
                 String pomContents = ReleaseUtil.readXmlFile(pomFile);
 
                 String backupContents = ReleaseUtil.readXmlFile(backupFile);
 
-                assertTrue("Check if pom and backup files are identical", pomContents.equals(backupContents));
+                assertTrue(pomContents.equals(backupContents), "Check if pom and backup files are identical");
             } else {
-                assertFalse("Check if backup file is not present", backupFile.exists());
+                assertFalse(backupFile.exists(), "Check if backup file is not present");
             }
         }
     }

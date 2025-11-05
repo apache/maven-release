@@ -178,7 +178,7 @@ public class CheckoutProjectFromScm extends AbstractReleasePhase {
 
         if (checkoutDirectory.exists()) {
             try {
-                org.apache.commons.io.FileUtils.deleteDirectory(checkoutDirectory);
+                FileUtils.deleteDirectory(checkoutDirectory);
             } catch (IOException e) {
                 result.setResultCode(ReleaseResult.ERROR);
                 logError(result, e.getMessage());

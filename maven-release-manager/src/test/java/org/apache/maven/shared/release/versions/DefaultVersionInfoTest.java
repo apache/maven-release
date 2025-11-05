@@ -18,37 +18,24 @@
  */
 package org.apache.maven.shared.release.versions;
 
-import java.util.Properties;
+import org.junit.jupiter.api.Test;
 
-import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-public class DefaultVersionInfoTest {
-    private String mavenVersion;
-
-    @Before
-    public void setUp() throws Exception {
-        Properties pomProperties = new Properties();
-        pomProperties.load(DefaultArtifactVersion.class.getResourceAsStream(
-                "/META-INF/maven/org.apache.maven/maven-artifact/pom.properties"));
-        mavenVersion = pomProperties.getProperty("version");
-    }
+class DefaultVersionInfoTest {
 
     @Test
-    public void testParse() throws Exception {
+    void testParse() throws Exception {
         checkParsing("1.0", "1.0", null, null, null);
     }
 
     @Test
-    public void testParseWithBadVersion() throws Exception {
+    void testParseWithBadVersion() throws Exception {
         try {
             checkParsing("foo", null, null, null, "foo");
             fail("version is incorrect, must fail.");
@@ -57,20 +44,20 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testParseMultiDigit() throws Exception {
+    void testParseMultiDigit() throws Exception {
         checkParsing("99.99", "99.99", null, null, null);
         checkParsing("990.990.990", "990.990.990", null, null, null);
     }
 
     @Test
-    public void testParseSnapshotVersion() throws Exception {
+    void testParseSnapshotVersion() throws Exception {
         checkParsing("SNAPSHOT", null, null, null, "SNAPSHOT");
         checkParsing("1.0-beta-4-SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT");
         checkParsing("1.0-beta-4_SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT");
     }
 
     @Test
-    public void testParseAnnotationVersion() throws Exception {
+    void testParseAnnotationVersion() throws Exception {
         checkParsing("1.0-beta-4-SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT");
         checkParsing("1.0-beta-4", "1.0", "beta", "4", null);
         checkParsing("1.2.3-beta-99", "1.2.3", "beta", "99", null);
@@ -80,7 +67,7 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testParseSeparators() throws Exception {
+    void testParseSeparators() throws Exception {
         checkParsing("1.2.9-beta-9-SNAPSHOT", "1.2.9", "beta", "9", "SNAPSHOT");
         checkParsing("1.2.9beta9SNAPSHOT", "1.2.9", "beta", "9", "SNAPSHOT");
         checkParsing("1.2.9beta-9SNAPSHOT", "1.2.9", "beta", "9", "SNAPSHOT");
@@ -88,14 +75,14 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testParseAnnotationNoVersionButSnapshot() throws Exception {
+    void testParseAnnotationNoVersionButSnapshot() throws Exception {
         checkParsing("1.0-beta-SNAPSHOT", "1.0", "beta", null, "SNAPSHOT");
         checkParsing("1.2.3-beta99", "1.2.3", "beta", "99", null);
         checkParsing("1.2.3-RC4-SNAPSHOT", "1.2.3", "RC", "4", "SNAPSHOT");
     }
 
     @Test
-    public void testParseAnnotationVersionWithRevision() throws Exception {
+    void testParseAnnotationVersionWithRevision() throws Exception {
         checkParsing("1.0-beta-4-SNAPSHOT", "1.0", "beta", "4", "SNAPSHOT");
         checkParsing("1.0-beta-4", "1.0", "beta", "4", null);
         checkParsing("1.2.3-beta-99", "1.2.3", "beta", "99", null);
@@ -106,29 +93,29 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testParseAnnotationVersionWithoutRevision() throws Exception {
+    void testParseAnnotationVersionWithoutRevision() throws Exception {
         checkParsing("1.0-beta", "1.0", "beta", null, null);
         checkParsing("1.0-beta-SNAPSHOT", "1.0", "beta", null, "SNAPSHOT");
     }
 
     @Test
-    public void testParseAnnotationRevisionOnly() throws Exception {
+    void testParseAnnotationRevisionOnly() throws Exception {
         checkParsing("1.0-4", "1.0", null, "4", null);
     }
 
     @Test
-    public void testParseLeadingZeros() throws Exception {
+    void testParseLeadingZeros() throws Exception {
         checkParsing("1.01-beta-04-SNAPSHOT", "1.01", "beta", "04", "SNAPSHOT");
         checkParsing("01.01.001-beta-04-SNAPSHOT", "01.01.001", "beta", "04", "SNAPSHOT");
     }
 
     @Test
-    public void testParseBuildNumber() throws Exception {
+    void testParseBuildNumber() throws Exception {
         checkParsing("1.0-alpha-2-20051013.095555-2", "1.0", "alpha", "2", "20051013.095555-2");
     }
 
     @Test
-    public void testNextVersion() throws Exception {
+    void testNextVersion() throws Exception {
         VersionInfo v = new DefaultVersionInfo("SNAPSHOT");
         assertNull(v.getNextVersion());
 
@@ -145,7 +132,7 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testNextAnnotationRevision() throws Exception {
+    void testNextAnnotationRevision() throws Exception {
         checkNextVersion("1.01-beta-04", "1.01-beta-05");
         checkNextVersion("1.01-beta-04-SNAPSHOT", "1.01-beta-05-SNAPSHOT");
         checkNextVersion("9.99.999-beta-9-SNAPSHOT", "9.99.999-beta-10-SNAPSHOT");
@@ -155,7 +142,7 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testCompareToDigitsOnly() throws Exception {
+    void testCompareToDigitsOnly() throws Exception {
         checkVersionLessThanVersion("1.01", "1.02");
 
         // M2.2.1
@@ -179,7 +166,7 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testCompareToAnnotation() throws Exception {
+    void testCompareToAnnotation() throws Exception {
         checkVersionLessThanVersion("1.01-alpha", "1.01");
         checkVersionLessThanVersion("1.01-alpha", "1.01-beta");
         checkVersionLessThanVersion("1.01-beta", "1.01-RC1");
@@ -196,7 +183,7 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testCompareToAnnotationRevision() throws Exception {
+    void testCompareToAnnotationRevision() throws Exception {
         checkVersionLessThanVersion("1.01-beta-04-SNAPSHOT", "1.01-beta-05-SNAPSHOT");
         checkVersionLessThanVersion("1.01-beta-0004-SNAPSHOT", "1.01-beta-5-SNAPSHOT");
         checkVersionLessThanVersion("1.01-beta-4-SNAPSHOT", "1.01.1-beta-4-SNAPSHOT");
@@ -208,22 +195,18 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testCompareToBuildSpecifier() throws Exception {
+    void testCompareToBuildSpecifier() throws Exception {
         checkVersionLessThanVersion("1.01-SNAPSHOT", "1.01");
         checkVersionLessThanVersion("1.01-beta-04-SNAPSHOT", "1.01-beta-04");
 
         checkVersionEqualVersion("1.01-beta-04-SNAPSHOT", "1.01-beta-04-SNAPSHOT");
 
-        if (!"3.0".equals(mavenVersion)) {
-            // TODO: bug??
-            // checkVersionLessThanVersion( "1.01-beta-04-20051112.134500-2", "1.01-beta-04-SNAPSHOT" );
-        }
         checkVersionLessThanVersion("1.01-beta-04-20051112.134500-1", "1.01-beta-04-20051112.134500-2");
         checkVersionLessThanVersion("1.01-beta-04-20051112.134500-1", "1.01-beta-04-20051113.134500-1");
     }
 
     @Test
-    public void testGetReleaseVersion() throws Exception {
+    void testGetReleaseVersion() throws Exception {
         checkGetReleaseVersion("1-SNAPSHOT", "1");
         checkGetReleaseVersion("1", "1");
 
@@ -236,7 +219,7 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testGetSnapshotVersion() throws Exception {
+    void testGetSnapshotVersion() throws Exception {
         checkGetSnapshotVersion("1", "1-SNAPSHOT");
         checkGetSnapshotVersion("1.01", "1.01-SNAPSHOT");
         checkGetSnapshotVersion("1.01-beta", "1.01-beta-SNAPSHOT");
@@ -251,7 +234,7 @@ public class DefaultVersionInfoTest {
     }
 
     @Test
-    public void testSnapshot() throws VersionParseException {
+    void testSnapshot() throws VersionParseException {
         assertFalse(new DefaultVersionInfo("1.01").isSnapshot());
         assertFalse(new DefaultVersionInfo("1.01-beta").isSnapshot());
         assertFalse(new DefaultVersionInfo("1.01-beta-04").isSnapshot());
@@ -263,19 +246,13 @@ public class DefaultVersionInfoTest {
 
     // MRELEASE-623 SNAPSHOT is case-insensitive
     @Test
-    public void testCaseInsensitiveSnapshot() throws VersionParseException {
+    void testCaseInsensitiveSnapshot() throws VersionParseException {
         DefaultVersionInfo currentVersionInfo = new DefaultVersionInfo("2.2-SNAPshot");
         assertTrue(currentVersionInfo.isSnapshot());
         assertEquals("2.2", currentVersionInfo.getReleaseVersionString());
         VersionInfo nextVersionInfo = currentVersionInfo.getNextVersion();
         assertEquals("2.3-SNAPSHOT", nextVersionInfo.getSnapshotVersionString());
     }
-
-    //    Ignore, new DefaultVersionInfo( "LATEST") throws VersionParseException
-    //    public void testLatest() throws VersionParseException
-    //    {
-    //        assertTrue( new DefaultVersionInfo( "LATEST") .isSnapshot() );
-    //    }
 
     private static void checkGetReleaseVersion(String strVersion, String expected) throws Exception {
         VersionInfo v = new DefaultVersionInfo(strVersion);
@@ -326,9 +303,9 @@ public class DefaultVersionInfoTest {
             assertEquals(0, lesserV.compareTo(greaterV));
             assertEquals(lesserV, greaterV);
         } else if (comparison < 0) {
-            assertTrue("Expected less but was " + lesserV.compareTo(greaterV), lesserV.compareTo(greaterV) < 0);
+            assertTrue(lesserV.compareTo(greaterV) < 0, "Expected less but was " + lesserV.compareTo(greaterV));
         } else if (comparison > 0) {
-            assertTrue("Expected more but was " + lesserV.compareTo(greaterV), lesserV.compareTo(greaterV) > 0);
+            assertTrue(lesserV.compareTo(greaterV) > 0, "Expected more but was " + lesserV.compareTo(greaterV));
         }
     }
 }

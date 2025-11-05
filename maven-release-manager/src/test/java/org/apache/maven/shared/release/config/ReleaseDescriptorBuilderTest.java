@@ -18,25 +18,25 @@
  */
 package org.apache.maven.shared.release.config;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.Logger;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.verifyZeroInteractions;
 
-public class ReleaseDescriptorBuilderTest {
+class ReleaseDescriptorBuilderTest {
     private final Logger logger = Mockito.mock(Logger.class);
 
     @Test
-    public void testCleanupArguments() {
+    void testCleanupArguments() {
         setAdditionalArguments("abc abc -Dxxx", "abc abc -Dxxx");
-        verifyZeroInteractions(logger);
+        verifyNoInteractions(logger);
         reset(logger);
 
         setAdditionalArguments("abc abc ${arguments}", "abc abc ");

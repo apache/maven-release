@@ -18,6 +18,8 @@
  */
 package org.apache.maven.shared.release.exec;
 
+import javax.inject.Inject;
+
 import java.io.File;
 import java.io.Writer;
 
@@ -25,37 +27,35 @@ import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.util.MavenCrypto;
+import org.codehaus.plexus.testing.PlexusTest;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.sonatype.plexus.components.sec.dispatcher.SecDispatcher;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.mockito.Matchers.isA;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class InvokerMavenExecutorTest extends PlexusJUnit4TestCase {
+@PlexusTest
+class InvokerMavenExecutorTest {
 
+    @Inject
     private MavenCrypto mavenCrypto;
 
+    @Inject
     private SecDispatcher secDispatcher;
 
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        mavenCrypto = lookup(MavenCrypto.class);
-        secDispatcher = lookup(SecDispatcher.class);
-    }
-
-    public void testEncryptSettings() throws Exception {
+    @Test
+    void testEncryptSettings() throws Exception {
         InvokerMavenExecutor executor = new InvokerMavenExecutor(mavenCrypto);
 
         // prepare

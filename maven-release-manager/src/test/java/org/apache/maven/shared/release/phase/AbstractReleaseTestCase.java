@@ -18,6 +18,8 @@
  */
 package org.apache.maven.shared.release.phase;
 
+import javax.inject.Inject;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitResult;
@@ -53,13 +55,19 @@ import org.apache.maven.project.ProjectBuildingRequest.RepositoryMerging;
 import org.apache.maven.project.ProjectBuildingResult;
 import org.apache.maven.project.ProjectSorter;
 import org.apache.maven.project.artifact.InvalidDependencyVersionException;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
+import org.apache.maven.scm.manager.ScmManager;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.scm.ScmTranslator;
+import org.apache.maven.shared.release.scm.SubversionScmTranslator;
+import org.apache.maven.shared.release.stubs.ScmManagerStub;
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.testing.PlexusTestConfiguration;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.internal.impl.SimpleLocalRepositoryManagerFactory;
 import org.eclipse.aether.repository.LocalRepository;
 import org.eclipse.aether.repository.WorkspaceReader;
 import org.eclipse.aether.repository.WorkspaceRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.diff.Comparison;
 import org.xmlunit.diff.ComparisonResult;
@@ -69,30 +77,38 @@ import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.ElementSelectors;
 
-import static org.junit.Assert.assertFalse;
+import static org.codehaus.plexus.testing.PlexusExtension.getBasedir;
+import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * Base class for some release tests.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public abstract class AbstractReleaseTestCase extends PlexusJUnit4TestCase {
+public abstract class AbstractReleaseTestCase implements PlexusTestConfiguration {
+    @Inject
     protected ProjectBuilder projectBuilder;
 
     protected ArtifactRepository localRepository;
 
+    @Inject
     private ArtifactFactory artifactFactory;
 
-    protected ReleasePhase phase;
+    @Inject
+    private ArtifactRepositoryLayout layout;
+
+    protected ScmManagerStub scmManager;
 
     @Override
-    public void setUp() throws Exception {
-        super.setUp();
+    public void customizeContainer(PlexusContainer container) {
+        scmManager = new ScmManagerStub();
+        container.addComponent(scmManager, ScmManager.class.getName());
+        container.addComponent(new SubversionScmTranslator(), ScmTranslator.class, "stub-provider");
+    }
 
-        projectBuilder = lookup(ProjectBuilder.class);
-        artifactFactory = lookup(ArtifactFactory.class);
-
-        ArtifactRepositoryLayout layout = lookup(ArtifactRepositoryLayout.class, "default");
+    @BeforeEach
+    void setupAbstractReleaseTestCase() throws Exception {
         String localRepoPath =
                 getTestFile("target/local-repository").getAbsolutePath().replace('\\', '/');
         localRepository = new MavenArtifactRepository("local", "file://" + localRepoPath, layout, null, null);
@@ -314,7 +330,7 @@ public abstract class AbstractReleaseTestCase extends PlexusJUnit4TestCase {
 
         sb.append(diff.toString());
 
-        assertFalse(sb.toString(), diff.hasDifferences());
+        assertFalse(diff.hasDifferences(), sb.toString());
     }
 
     private String getRemoteRepositoryURL() throws IOException {

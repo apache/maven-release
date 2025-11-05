@@ -20,16 +20,16 @@ package org.apache.maven.shared.release.policy.oddeven;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public final class OddEvenVersionPolicyTestCase {
+final class OddEvenVersionPolicyTestCase {
 
     private final VersionPolicy versionPolicy = new OddEvenVersionPolicy();
 
     @Test
-    public void testConvertToSnapshot() throws Exception {
+    void testConvertToSnapshot() throws Exception {
         String suggestedVersion = versionPolicy
                 .getDevelopmentVersion(newVersionPolicyRequest("1.0.0"))
                 .getVersion();
@@ -38,7 +38,7 @@ public final class OddEvenVersionPolicyTestCase {
     }
 
     @Test
-    public void testConvertToRelease() throws Exception {
+    void testConvertToRelease() throws Exception {
         String suggestedVersion = versionPolicy
                 .getReleaseVersion(newVersionPolicyRequest("1.0.0-SNAPSHOT"))
                 .getVersion();
@@ -47,7 +47,7 @@ public final class OddEvenVersionPolicyTestCase {
     }
 
     @Test
-    public void testConvertOddToRelease() throws Exception {
+    void testConvertOddToRelease() throws Exception {
         String suggestedVersion = versionPolicy
                 .getReleaseVersion(newVersionPolicyRequest("1.0.1-SNAPSHOT"))
                 .getVersion();

@@ -28,27 +28,15 @@ import java.util.List;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.shared.release.PlexusJUnit4TestCase;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 /**
  * @author Edwin Punzalan
  */
-public abstract class AbstractBackupPomsPhaseTest extends PlexusJUnit4TestCase {
+abstract class AbstractBackupPomsPhaseTest {
     private final String pomFilename = "pom.xml";
 
     protected final String releaseBackupSuffix = ".releaseBackup";
-
-    protected ReleasePhase phase;
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        phase = getReleasePhase();
-    }
-
-    abstract ReleasePhase getReleasePhase() throws Exception;
 
     protected List<MavenProject> getReactorProjects(String projectPath) throws Exception {
         List<MavenProject> reactorProjects = new ArrayList<>();
