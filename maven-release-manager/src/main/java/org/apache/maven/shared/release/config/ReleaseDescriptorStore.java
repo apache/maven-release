@@ -30,7 +30,7 @@ public interface ReleaseDescriptorStore {
      * @param mergeDescriptor configuration to merge with the loaded configuration. Some values are used as defaults,
      *                        while others are used to override
      * @return the configuration
-     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
+     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any
      */
     ReleaseDescriptorBuilder read(ReleaseDescriptorBuilder mergeDescriptor) throws ReleaseDescriptorStoreException;
 
@@ -38,7 +38,7 @@ public interface ReleaseDescriptorStore {
      * Save a configuration.
      *
      * @param config the configuration
-     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any.
+     * @throws org.apache.maven.shared.release.config.ReleaseDescriptorStoreException if any
      */
     void write(ReleaseDescriptor config) throws ReleaseDescriptorStoreException;
 

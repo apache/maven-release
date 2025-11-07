@@ -69,7 +69,7 @@ public abstract class AbstractInputVariablesPhase extends AbstractReleasePhase {
     private final ScmRepositoryConfigurator scmRepositoryConfigurator;
 
     /**
-     * Component used for custom or default naming policy
+     * Component used for custom or default naming policy.
      */
     private final Map<String, NamingPolicy> namingPolicies;
 
@@ -79,7 +79,7 @@ public abstract class AbstractInputVariablesPhase extends AbstractReleasePhase {
     private final boolean branchOperation;
 
     /**
-     * The default naming policy to apply, if any
+     * The default naming policy to apply, if any.
      */
     private final String defaultNamingPolicy;
 
@@ -113,8 +113,8 @@ public abstract class AbstractInputVariablesPhase extends AbstractReleasePhase {
      * @param releaseDescriptor  a {@link ReleaseDescriptor} object
      * @param releaseEnvironment a {@link ReleaseEnvironment} object
      * @return a {@link ScmProvider} object
-     * @throws ReleaseScmRepositoryException if any.
-     * @throws ReleaseExecutionException     if any.
+     * @throws ReleaseExecutionException     if any
+     * @throws ReleaseScmRepositoryException if any
      */
     protected ScmProvider getScmProvider(ReleaseDescriptor releaseDescriptor, ReleaseEnvironment releaseEnvironment)
             throws ReleaseScmRepositoryException, ReleaseExecutionException {

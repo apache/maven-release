@@ -44,14 +44,16 @@ public abstract class AbstractScmReadReleaseMojo extends AbstractReleaseMojo {
      * Currently the POM does not allow to specify a server id for the SCM section.
      * <p>
      * Explicit authentication information provided via {@link #username}, {@link #password} or {@link #privateKey} will take precedence.
-     * @since 3.2.0
+     *
      * @see <a href="https://maven.apache.org/scm/authentication.html">SCM Authentication</a>
+     * @since 3.2.0
      */
     @Parameter(property = "project.scm.id", defaultValue = "${project.scm.id}")
     private String serverId;
 
     /**
      * The username to use for authentication with the SCM.
+     *
      * @see <a href="https://maven.apache.org/scm/authentication.html">SCM Authentication</a>
      */
     @Parameter(property = "username")
@@ -59,6 +61,7 @@ public abstract class AbstractScmReadReleaseMojo extends AbstractReleaseMojo {
 
     /**
      * The password to use for authentication with the SCM.
+     *
      * @see <a href="https://maven.apache.org/scm/authentication.html">SCM Authentication</a>
      */
     @Parameter(property = "password")
@@ -66,8 +69,9 @@ public abstract class AbstractScmReadReleaseMojo extends AbstractReleaseMojo {
 
     /**
      * The path to the SSH private key to use for authentication with the SCM.
-     * @since 3.2.0
+     *
      * @see <a href="https://maven.apache.org/scm/authentication.html">SCM Authentication</a>
+     * @since 3.2.0
      */
     @Parameter(property = "privateKey")
     private File privateKey;
@@ -77,9 +81,9 @@ public abstract class AbstractScmReadReleaseMojo extends AbstractReleaseMojo {
      * The key is the scm prefix and the value is the role hint/provider id of the
      * {@link org.apache.maven.scm.provider.ScmProvider}.
      *
-     * @since 2.0-beta-6
      * @see ScmManager#setScmProviderImplementation(String, String)
      * @see <a href="https://maven.apache.org/scm/scms-overview.html">SCM Providers</a>
+     * @since 2.0-beta-6
      */
     @Parameter
     private Map<String, String> providerImplementations;

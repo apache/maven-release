@@ -120,9 +120,9 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
      * @param reactorProjects    a {@link java.util.List} object
      * @param result             a {@link org.apache.maven.shared.release.ReleaseResult} object
      * @param simulating         a boolean
-     * @throws org.apache.maven.shared.release.scm.ReleaseScmCommandException    if any.
-     * @throws org.apache.maven.shared.release.ReleaseExecutionException         if any.
-     * @throws org.apache.maven.shared.release.scm.ReleaseScmRepositoryException if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException         if any
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmCommandException    if any
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmRepositoryException if any
      */
     protected abstract void runLogic(
             ReleaseDescriptor releaseDescriptor,
@@ -139,9 +139,9 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
      * @param releaseEnvironment a {@link org.apache.maven.shared.release.env.ReleaseEnvironment} object
      * @param reactorProjects    a {@link java.util.List} object
      * @param message            a {@link java.lang.String} object
-     * @throws org.apache.maven.shared.release.scm.ReleaseScmRepositoryException if any.
-     * @throws org.apache.maven.shared.release.ReleaseExecutionException         if any.
-     * @throws org.apache.maven.shared.release.scm.ReleaseScmCommandException    if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException         if any
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmCommandException    if any
+     * @throws org.apache.maven.shared.release.scm.ReleaseScmRepositoryException if any
      */
     protected void performCheckins(
             ReleaseDescriptor releaseDescriptor,
@@ -230,7 +230,7 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
      * <p>validateConfiguration.</p>
      *
      * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
-     * @throws org.apache.maven.shared.release.ReleaseFailureException if any.
+     * @throws org.apache.maven.shared.release.ReleaseFailureException if any
      */
     protected void validateConfiguration(ReleaseDescriptor releaseDescriptor) throws ReleaseFailureException {
         if (releaseDescriptor.getScmReleaseLabel() == null) {
@@ -244,7 +244,7 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
      * @param reactorProjects   a {@link java.util.List} object
      * @param releaseDescriptor a {@link org.apache.maven.shared.release.config.ReleaseDescriptor} object
      * @return a {@link java.lang.String} object
-     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any.
+     * @throws org.apache.maven.shared.release.ReleaseExecutionException if any
      */
     protected String createMessage(List<MavenProject> reactorProjects, ReleaseDescriptor releaseDescriptor)
             throws ReleaseExecutionException {

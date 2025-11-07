@@ -89,7 +89,7 @@ public class DefaultVersionInfo implements VersionInfo {
 
     private static final String DIGIT_SEPARATOR_STRING = ".";
 
-    /** Constant <code>STANDARD_PATTERN</code> */
+    /** Constant <code>STANDARD_PATTERN</code>. */
     public static final Pattern STANDARD_PATTERN = Pattern.compile(
             "^((?:\\d+\\.)*\\d+)" // digit(s) and '.' repeated - followed by digit (version digits 1.22.0, etc)
                     + "([-_])?" // optional - or _  (annotation separator)
@@ -107,7 +107,7 @@ public class DefaultVersionInfo implements VersionInfo {
      * SNAPSHOT
      */
     // for SNAPSHOT releases only (possible versions include: trunk-SNAPSHOT or SNAPSHOT)
-    /** Constant <code>ALTERNATE_PATTERN</code> */
+    /** Constant <code>ALTERNATE_PATTERN</code>. */
     public static final Pattern ALTERNATE_PATTERN = Pattern.compile("^(SNAPSHOT|[a-zA-Z]+[_-]SNAPSHOT)");
 
     /**
@@ -269,7 +269,7 @@ public class DefaultVersionInfo implements VersionInfo {
      *
      * @param s the version number
      * @return {@code String} increments the input {@code String} as an integer
-     * and Preserves any lpad of "0" zeros.
+     * and Preserves any lpad of "0" zeros
      */
     protected String incrementVersionString(String s) {
         int n = Integer.valueOf(s).intValue() + 1;
@@ -356,10 +356,10 @@ public class DefaultVersionInfo implements VersionInfo {
     }
 
     /**
-     * Simply joins the items in the list with "." period
+     * Simply joins the items in the list with "." period.
      *
-     * @return a single {@code String} of the items in the passed list, joined with a "."
      * @param digits {@code List<String>} of digits
+     * @return a single {@code String} of the items in the passed list, joined with a "."
      */
     protected static String joinDigitString(List<String> digits) {
         return digits != null ? StringUtils.join(digits.iterator(), DIGIT_SEPARATOR_STRING) : null;

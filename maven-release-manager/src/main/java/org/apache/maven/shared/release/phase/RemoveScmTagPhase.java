@@ -47,7 +47,7 @@ import org.apache.maven.shared.release.util.ReleaseUtil;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Remove tag from SCM repository during rollback
+ * Remove tag from SCM repository during rollback.
  */
 @Singleton
 @Named("remove-scm-tag")

@@ -51,7 +51,7 @@ public interface ReleaseManager {
     ReleaseResult performWithResult(ReleasePerformRequest performRequest);
 
     /**
-     * Perform a release
+     * Perform a release.
      *
      * @param performRequest   all perform arguments
      * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem performing the release
@@ -70,7 +70,7 @@ public interface ReleaseManager {
     void clean(ReleaseCleanRequest cleanRequest) throws ReleaseFailureException;
 
     /**
-     * Rollback changes made by the previous release
+     * Rollback changes made by the previous release.
      *
      * @param rollbackRequest            all rollback arguments
      * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem during release rollback
@@ -80,7 +80,7 @@ public interface ReleaseManager {
     void rollback(ReleaseRollbackRequest rollbackRequest) throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
-     * Branch a project
+     * Branch a project.
      *
      * @param branchRequest              all branch arguments
      * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem during release branch
@@ -90,7 +90,7 @@ public interface ReleaseManager {
     void branch(ReleaseBranchRequest branchRequest) throws ReleaseExecutionException, ReleaseFailureException;
 
     /**
-     * Update version numbers for a project
+     * Update version numbers for a project.
      *
      * @param updateVersionsRequest      all update versions arguments
      * @throws org.apache.maven.shared.release.ReleaseExecutionException if there is a problem during update versions

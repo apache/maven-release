@@ -47,7 +47,7 @@ public class DefaultStrategy implements Strategy {
     private final List<String> performPhases;
 
     /**
-     * The phases of release to run to rollback changes
+     * The phases of release to run to rollback changes.
      */
     private final List<String> rollbackPhases;
 

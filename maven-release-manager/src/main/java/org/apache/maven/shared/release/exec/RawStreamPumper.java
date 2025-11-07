@@ -71,7 +71,7 @@ public class RawStreamPumper extends Thread {
     /**
      * <p>closeInput.</p>
      *
-     * @throws java.io.IOException if any.
+     * @throws java.io.IOException if any
      */
     public void closeInput() throws IOException {
         in.close();
@@ -80,7 +80,7 @@ public class RawStreamPumper extends Thread {
     /**
      * <p>closeOutput.</p>
      *
-     * @throws java.io.IOException if any.
+     * @throws java.io.IOException if any
      */
     public void closeOutput() throws IOException {
         out.close();

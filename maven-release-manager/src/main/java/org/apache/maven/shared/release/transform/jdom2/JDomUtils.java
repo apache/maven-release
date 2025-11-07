@@ -25,7 +25,7 @@ import org.jdom2.Namespace;
 import org.jdom2.Text;
 
 /**
- * Common JDOM2 functions
+ * Common JDOM2 functions.
  *
  * @author Robert Scholte
  * @since 3.0
@@ -40,8 +40,8 @@ public final class JDomUtils {
      * Updates the text value of the given element. The primary purpose of this method is to preserve any whitespace and
      * comments around the original text value.
      *
-     * @param element The element to update, must not be <code>null</code>.
-     * @param value   The text string to set, must not be <code>null</code>.
+     * @param element the element to update, must not be <code>null</code>
+     * @param value   the text string to set, must not be <code>null</code>
      */
     public static void rewriteValue(Element element, String value) {
         Text text = null;

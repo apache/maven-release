@@ -110,9 +110,9 @@ public class ReleaseUtil {
      * the returned string will be normalized to use the platform's native line separator. This is basically to save
      * another normalization step when writing the string contents back to an XML file.
      *
-     * @param file The path to the XML file to read in, must not be <code>null</code>.
-     * @return The string contents of the XML file.
-     * @throws IOException If the file could not be opened/read.
+     * @param file the path to the XML file to read in, must not be <code>null</code>
+     * @return the string contents of the XML file
+     * @throws IOException if the file could not be opened/read
      */
     public static String readXmlFile(File file) throws IOException {
         return readXmlFile(file, LS);
@@ -127,11 +127,11 @@ public class ReleaseUtil {
     /**
      * Normalizes the line separators in the specified string.
      *
-     * @param text The string to normalize, may be <code>null</code>.
-     * @param separator The line separator to use for normalization, typically "\n" or "\r\n", must not be
-     *            <code>null</code>.
-     * @return The input string with normalized line separators or <code>null</code> if the string was <code>null</code>
-     *         .
+     * @param text the string to normalize, may be <code>null</code>
+     * @param separator the line separator to use for normalization, typically "\n" or "\r\n", must not be
+     *            <code>null</code>
+     * @return the input string with normalized line separators or <code>null</code> if the string was <code>null</code>
+     *
      */
     public static String normalizeLineEndings(String text, String separator) {
         String norm = text;

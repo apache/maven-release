@@ -39,9 +39,9 @@ public interface ReleasePhase {
      * @param releaseDescriptor the configuration to use
      * @param releaseEnvironment the environmental configuration, such as Maven settings, Maven home, etc.
      * @param reactorProjects   the reactor projects
+     * @return the release result
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
-     * @return the release result
      */
     ReleaseResult execute(
             ReleaseDescriptor releaseDescriptor,
@@ -55,9 +55,9 @@ public interface ReleasePhase {
      * @param releaseDescriptor the configuration to use
      * @param releaseEnvironment the environmental configuration, such as Maven settings, Maven home, etc.
      * @param reactorProjects   the reactor projects
+     * @return the release result
      * @throws ReleaseExecutionException an exception during the execution of the phase
      * @throws ReleaseFailureException   a failure during the execution of the phase
-     * @return the release result
      */
     ReleaseResult simulate(
             ReleaseDescriptor releaseDescriptor,

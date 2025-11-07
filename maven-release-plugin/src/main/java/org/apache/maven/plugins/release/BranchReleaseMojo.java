@@ -147,7 +147,7 @@ public class BranchReleaseMojo extends AbstractScmReadWriteReleaseMojo {
     private boolean addSchema;
 
     /**
-     * currently only implemented with svn scm. Enable a workaround to prevent issue
+     * Currently only implemented with svn scm. Enable a workaround to prevent issue
      * due to svn client > 1.5.0 (https://issues.apache.org/jira/browse/SCM-406)
      *
      * @since 2.0
@@ -196,8 +196,8 @@ public class BranchReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy}
      * implementation used to calculate the project versions.
      *
-     * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.policies.DefaultVersionPolicy
+     * @since 3.0.0-M5
      */
     @Parameter(defaultValue = "default", property = "projectVersionPolicyId")
     private String projectVersionPolicyId;
@@ -214,8 +214,8 @@ public class BranchReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      * The role-hint for the {@link org.apache.maven.shared.release.policy.naming.NamingPolicy}
      * implementation used to calculate the project names.
      *
-     * @since 3.0.0-M5
      * @see org.apache.maven.shared.release.policies.DefaultNamingPolicy
+     * @since 3.0.0-M5
      */
     @Parameter(property = "projectNamingPolicyId")
     private String projectBranchNamingPolicyId;

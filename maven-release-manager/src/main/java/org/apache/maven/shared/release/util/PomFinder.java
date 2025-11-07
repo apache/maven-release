@@ -70,7 +70,6 @@ public class PomFinder {
     }
 
     /**
-     *
      * @param originPom the pom File which should be used as blueprint for the search
      * @return <code>true</code> if a pom got parsed successfully, <code>false</code> otherwise
      */
@@ -92,9 +91,10 @@ public class PomFinder {
     /**
      * Search for the previously with {@link #parsePom(java.io.File)}
      * parsed pom in the given directory.
+     *
      * @param startDirectory the initial directory
      * @return the pom file which matches the previously parsed pom or <code>null</code>
-     * if no matching pom file could have been found.
+     * if no matching pom file could have been found
      */
     public File findMatchingPom(File startDirectory) {
         if (!startDirectory.exists()) {
@@ -151,7 +151,8 @@ public class PomFinder {
     }
 
     /**
-     * Read the {@link PomInfo} from the given pom file
+     * Read the {@link PomInfo} from the given pom file.
+     *
      * @param pomFile pom.xml file
      * @return the PomInfo or <code>null</code
      */
@@ -185,7 +186,7 @@ public class PomFinder {
         return pomInfo;
     }
 
-    /***
+    /**
      * Data container which helds information about a pom.
      * Information may partially be empty.
      */

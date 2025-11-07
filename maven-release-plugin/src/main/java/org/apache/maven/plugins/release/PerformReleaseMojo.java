@@ -156,10 +156,10 @@ public class PerformReleaseMojo extends AbstractScmReadReleaseMojo {
         }
     }
 
-    /** Just here so it may be overridden by StageReleaseMojo */
+    /** Just here so it may be overridden by StageReleaseMojo. */
     void setDeploymentRepository() {}
 
-    /** Just here so it may be overridden by StageReleaseMojo */
+    /** Just here so it may be overridden by StageReleaseMojo. */
     void createGoals() {
         if (goals == null) {
             // set default

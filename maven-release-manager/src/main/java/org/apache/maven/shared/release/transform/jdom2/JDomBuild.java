@@ -31,7 +31,7 @@ import org.apache.maven.model.Resource;
 import org.jdom2.Element;
 
 /**
- * JDOM2 implementation of poms BUILD element
+ * JDOM2 implementation of poms BUILD element.
  *
  * @author Robert Scholte
  * @since 3.0

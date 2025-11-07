@@ -27,7 +27,7 @@ import org.apache.maven.model.Profile;
 import org.jdom2.Element;
 
 /**
- * JDOM2 implementation of poms PROFILE element
+ * JDOM2 implementation of poms PROFILE element.
  *
  * @author Robert Scholte
  * @since 3.0

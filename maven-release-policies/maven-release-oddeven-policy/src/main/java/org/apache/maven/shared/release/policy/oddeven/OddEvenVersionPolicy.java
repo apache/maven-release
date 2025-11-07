@@ -40,7 +40,6 @@ import org.eclipse.sisu.Description;
  * <li><code>1.0.1-SNAPSHOT</code> gets <code>1.0.2</code> for next release,</li>
  * <li><code>1.0.2</code> gets <code>1.0.3-SNAPSHOT</code> for next development version.</li>
  * </ul>
- *
  */
 @Singleton
 @Named("OddEvenVersionPolicy")

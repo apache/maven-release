@@ -44,6 +44,7 @@ public class ReleaseResult {
 
     /**
      * Append Info message to the output.
+     *
      * @param message the message to append
      */
     public void appendInfo(String message) {
@@ -51,6 +52,7 @@ public class ReleaseResult {
     }
     /**
      * Append warning message to the output.
+     *
      * @param message the message to append
      */
     public void appendWarn(String message) {
@@ -59,6 +61,7 @@ public class ReleaseResult {
 
     /**
      * Append debug message to the output.
+     *
      * @param message the message to append
      */
     public void appendDebug(String message) {
@@ -67,6 +70,7 @@ public class ReleaseResult {
 
     /**
      * Append error message to the output.
+     *
      * @param message the message to append
      * @param e the exception to append
      */
@@ -88,7 +92,7 @@ public class ReleaseResult {
     }
 
     /**
-     * Append error exception to the output
+     * Append error exception to the output.
      *
      * @param e the exception to append
      */
@@ -97,7 +101,7 @@ public class ReleaseResult {
     }
 
     /**
-     * Append stack trace to the output
+     * Append stack trace to the output.
      *
      * @param message the message to append
      * @param e the exception to append

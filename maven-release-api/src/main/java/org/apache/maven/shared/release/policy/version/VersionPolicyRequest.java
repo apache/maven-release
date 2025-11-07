@@ -91,7 +91,7 @@ public class VersionPolicyRequest {
     /**
      * <p>Setter for the field <code>scmRepository</code>.</p>
      *
-     * @param scmRepository The {@link ScmRepository} where the history can be retrieved.
+     * @param scmRepository the {@link ScmRepository} where the history can be retrieved
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
     public VersionPolicyRequest setScmRepository(ScmRepository scmRepository) {
@@ -111,7 +111,7 @@ public class VersionPolicyRequest {
     /**
      * <p>Setter for the field <code>scmProvider</code>.</p>
      *
-     * @param scmProvider The {@link ScmProvider} where the history can be retrieved.
+     * @param scmProvider the {@link ScmProvider} where the history can be retrieved
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
     public VersionPolicyRequest setScmProvider(ScmProvider scmProvider) {
@@ -122,7 +122,7 @@ public class VersionPolicyRequest {
     /**
      * <p>Getter for the field <code>workingDirectory</code>.</p>
      *
-     * @return the {@link String} that contains the workingDirectory (can be null or empty).
+     * @return the {@link String} that contains the workingDirectory (can be null or empty)
      */
     public String getWorkingDirectory() {
         return workingDirectory;
@@ -131,7 +131,7 @@ public class VersionPolicyRequest {
     /**
      * <p>Setter for the field <code>workingDirectory</code>.</p>
      *
-     * @param workingDirectory The {@link String} that contains the workingDirectory (can be null or empty).
+     * @param workingDirectory the {@link String} that contains the workingDirectory (can be null or empty)
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
     public VersionPolicyRequest setWorkingDirectory(String workingDirectory) {
@@ -142,7 +142,7 @@ public class VersionPolicyRequest {
     /**
      * <p>Getter for the field <code>config</code>.</p>
      *
-     * @return the {@link String} that contains the config (can be null or empty).
+     * @return the {@link String} that contains the config (can be null or empty)
      */
     public String getConfig() {
         return config;
@@ -151,7 +151,7 @@ public class VersionPolicyRequest {
     /**
      * <p>Setter for the field <code>config</code>.</p>
      *
-     * @param config The {@link String} that contains the config (can be null or empty).
+     * @param config the {@link String} that contains the config (can be null or empty)
      * @return a {@link org.apache.maven.shared.release.policy.version.VersionPolicyRequest} object
      */
     public VersionPolicyRequest setConfig(String config) {

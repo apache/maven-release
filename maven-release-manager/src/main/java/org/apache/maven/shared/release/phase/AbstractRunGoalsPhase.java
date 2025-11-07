@@ -143,10 +143,10 @@ public abstract class AbstractRunGoalsPhase extends AbstractReleasePhase {
      * checkout directory. For some SCMs, the project root directory is not the
      * checkout directory itself, but a SCM-specific subdirectory.
      *
-     * @param checkoutDirectory            The checkout directory as java.io.File
-     * @param relativePathProjectDirectory The relative path of the project directory within the checkout
+     * @param checkoutDirectory            the checkout directory as java.io.File
+     * @param relativePathProjectDirectory the relative path of the project directory within the checkout
      *                                     directory or ""
-     * @return The working directory
+     * @return the working directory
      */
     protected File determineWorkingDirectory(File checkoutDirectory, String relativePathProjectDirectory) {
         File workingDirectory = checkoutDirectory;

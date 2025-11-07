@@ -34,7 +34,7 @@ public class ReleaseExecutionException extends Exception {
     /**
      * Constructs an instance of <code>ReleaseExecutionException</code> with the specified detail message.
      *
-     * @param message the detail message.
+     * @param message the detail message
      */
     public ReleaseExecutionException(String message, Throwable cause) {
         super(message, cause);
