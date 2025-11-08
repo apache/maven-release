@@ -24,10 +24,10 @@
       <plugin>
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
-          <settings implementation="org.apache.maven.settings.Settings"/>
-          <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub"/>
+          <settings implementation="org.apache.maven.settings.Settings" />
+          <project implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub" />
           <reactorProjects>
-            <reactorProject implementation="org.apache.maven.plugins.release.stubs.MavenProjectStub"/>
+            <reactorProject implementation="org.apache.maven.plugins.release.stubs.MavenProjectStub" />
           </reactorProjects>
           <resume>true</resume>
         </configuration>

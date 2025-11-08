@@ -25,7 +25,7 @@
         <artifactId>maven-release-plugin</artifactId>
         <configuration>
           <reactorProjects>
-            <reactorProject implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub"/>
+            <reactorProject implementation="org.apache.maven.plugin.testing.stubs.MavenProjectStub" />
           </reactorProjects>
         </configuration>
       </plugin>

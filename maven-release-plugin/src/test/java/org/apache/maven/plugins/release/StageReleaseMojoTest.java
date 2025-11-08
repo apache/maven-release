@@ -44,19 +44,6 @@ public class StageReleaseMojoTest extends AbstractMojoTestCase {
     public void testStage() throws Exception {
         StageReleaseMojo mojo = getMojoWithProjectSite("stage.xml");
 
-        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy site:stage-deploy");
-        builder.setAdditionalArguments("-DaltDeploymentRepository=\"staging\"");
-
-        ReleasePerformRequest performRequest = new ReleasePerformRequest();
-        performRequest.setReleaseDescriptorBuilder(builder);
-        performRequest.setReleaseEnvironment(mojo.getReleaseEnvironment());
-        performRequest.setReactorProjects(mojo.getReactorProjects());
-        performRequest.setDryRun(false);
-
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
 
@@ -69,6 +56,12 @@ public class StageReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
+
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy site:stage-deploy", releaseDescriptor.getPerformGoals());
+        assertEquals("-DskipTests -DaltDeploymentRepository=\"staging\"", releaseDescriptor.getAdditionalArguments());
+
         verifyNoMoreInteractions(mock);
     }
 
@@ -90,11 +83,11 @@ public class StageReleaseMojoTest extends AbstractMojoTestCase {
     }
 
     private StageReleaseMojo getMojoWithProjectSite(String fileName) throws Exception {
-        StageReleaseMojo mojo = (StageReleaseMojo) lookupMojo("stage", new File(workingDirectory, fileName));
+        StageReleaseMojo mojo = lookupMojo("stage", new File(workingDirectory, fileName));
         mojo.setBasedir(workingDirectory);
         mojo.setPomFileName("pom.xml");
 
-        MavenProject project = (MavenProject) getVariableValueFromObject(mojo, "project");
+        MavenProject project = getVariableValueFromObject(mojo, "project");
         DistributionManagement distributionManagement = new DistributionManagement();
         distributionManagement.setSite(new Site());
         project.setDistributionManagement(distributionManagement);

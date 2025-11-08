@@ -20,11 +20,9 @@ package org.apache.maven.plugins.release;
 
 import java.io.File;
 import java.util.Arrays;
-import java.util.List;
 
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Profile;
 import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -54,12 +52,6 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
     public void testPerform() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
 
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy site-deploy");
-
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
 
@@ -73,19 +65,17 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
+
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
+
         verifyNoMoreInteractions(mock);
     }
 
     public void testPerformWithFlatStructure() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-flat-structure.xml");
 
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy");
-        builder.setScmSourceUrl("scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project");
-
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
 
@@ -99,24 +89,25 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
+
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy", releaseDescriptor.getPerformGoals());
+        assertEquals(
+                "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project",
+                releaseDescriptor.getScmSourceUrl());
+
         verifyNoMoreInteractions(mock);
     }
 
     public void testPerformWithoutSite() throws Exception {
         File testFileDirectory = getTestFile("target/test-classes/mojos/perform/");
-        PerformReleaseMojo mojo =
-                (PerformReleaseMojo) lookupMojo("perform", new File(testFileDirectory, "perform-without-site.xml"));
+        PerformReleaseMojo mojo = lookupMojo("perform", new File(testFileDirectory, "perform-without-site.xml"));
         mojo.setBasedir(testFileDirectory);
         mojo.setPomFileName("pom.xml");
 
-        MavenProject project = (MavenProject) getVariableValueFromObject(mojo, "project");
+        MavenProject project = getVariableValueFromObject(mojo, "project");
         setVariableValueToObject(mojo, "session", newMavenSession(project));
-
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy");
 
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
@@ -132,14 +123,18 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
         verifyNoMoreInteractions(mock);
+
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy", releaseDescriptor.getPerformGoals());
     }
 
     private PerformReleaseMojo getMojoWithProjectSite(String fileName) throws Exception {
-        PerformReleaseMojo mojo = (PerformReleaseMojo) lookupMojo("perform", new File(workingDirectory, fileName));
+        PerformReleaseMojo mojo = lookupMojo("perform", new File(workingDirectory, fileName));
         mojo.setBasedir(workingDirectory);
         mojo.setPomFileName(fileName);
 
-        MavenProject project = (MavenProject) getVariableValueFromObject(mojo, "project");
+        MavenProject project = getVariableValueFromObject(mojo, "project");
         DistributionManagement distributionManagement = new DistributionManagement();
         distributionManagement.setSite(new Site());
         project.setDistributionManagement(distributionManagement);
@@ -151,12 +146,6 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
 
     public void testPerformWithExecutionException() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
-
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy site-deploy");
 
         ReleaseManager mock = mock(ReleaseManager.class);
         doThrow(new ReleaseExecutionException("...")).when(mock).perform(isA(ReleasePerformRequest.class));
@@ -180,17 +169,15 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
 
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
+
         verifyNoMoreInteractions(mock);
     }
 
     public void testPerformWithExecutionFailure() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
-
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy site-deploy");
 
         ReleaseManager mock = mock(ReleaseManager.class);
         ReleaseFailureException cause = new ReleaseFailureException("...");
@@ -215,18 +202,15 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
 
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
+
         verifyNoMoreInteractions(mock);
     }
 
     public void testPerformWithScm() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-scm.xml");
-
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy site-deploy");
-        builder.setScmSourceUrl("scm-url");
 
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
@@ -241,6 +225,11 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
+
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
+        assertEquals("scm-url", releaseDescriptor.getScmSourceUrl());
 
         verifyNoMoreInteractions(mock);
     }
@@ -248,20 +237,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
     public void testPerformWithProfiles() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
 
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy site-deploy");
-        builder.setAdditionalArguments("-P prof1,2prof");
-
-        MavenSession session = (MavenSession) getVariableValueFromObject(mojo, "session");
-        Profile profile1 = new Profile();
-        profile1.setId("prof1");
-        session.getRequest().addProfile(profile1);
-        Profile profile2 = new Profile();
-        profile2.setId("2prof");
-        session.getRequest().addProfile(profile2);
+        MavenSession session = getVariableValueFromObject(mojo, "session");
         session.getRequest().setActiveProfiles(Arrays.asList("prof1", "2prof"));
 
         ReleaseManager mock = mock(ReleaseManager.class);
@@ -277,6 +253,12 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
+
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
+        assertTrue(releaseDescriptor.getActivateProfiles().contains("prof1"));
+        assertTrue(releaseDescriptor.getActivateProfiles().contains("2prof"));
 
         verifyNoMoreInteractions(mock);
     }
@@ -284,20 +266,7 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
     public void testPerformWithProfilesAndArguments() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-args.xml");
 
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy site-deploy");
-        builder.setAdditionalArguments("-Dmaven.test.skip=true -P prof1,2prof");
-
-        MavenSession session = (MavenSession) getVariableValueFromObject(mojo, "session");
-        Profile profile1 = new Profile();
-        profile1.setId("prof1");
-        session.getRequest().addProfile(profile1);
-        Profile profile2 = new Profile();
-        profile2.setId("2prof");
-        session.getRequest().addProfile(profile2);
+        MavenSession session = getVariableValueFromObject(mojo, "session");
         session.getRequest().setActiveProfiles(Arrays.asList("prof1", "2prof"));
 
         ReleaseManager mock = mock(ReleaseManager.class);
@@ -314,17 +283,18 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
 
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
+        assertTrue(releaseDescriptor.getActivateProfiles().contains("prof1"));
+        assertTrue(releaseDescriptor.getActivateProfiles().contains("2prof"));
+        assertEquals("-Dmaven.test.skip=true", releaseDescriptor.getAdditionalArguments());
+
         verifyNoMoreInteractions(mock);
     }
 
     public void testPerformWithMultilineGoals() throws Exception {
         PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-multiline-goals.xml");
-
-        ReleaseDescriptorBuilder builder = createReleaseDescriptorBuilder(mojo);
-        builder.setWorkingDirectory(workingDirectory.getAbsolutePath());
-        File checkoutDirectory = getTestFile("target/checkout");
-        builder.setCheckoutDirectory(checkoutDirectory.getAbsolutePath());
-        builder.setPerformGoals("deploy site-deploy");
 
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
@@ -340,20 +310,11 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
 
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                argument.getValue().getReleaseDescriptorBuilder().build();
+        assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
+
         verifyNoMoreInteractions(mock);
-    }
-
-    private ReleaseDescriptorBuilder createReleaseDescriptorBuilder(PerformReleaseMojo mojo) throws Exception {
-        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-
-        @SuppressWarnings("unchecked")
-        List<MavenProject> reactorProjects = (List<MavenProject>) getVariableValueFromObject(mojo, "reactorProjects");
-
-        for (MavenProject project : reactorProjects) {
-            builder.putOriginalVersion(project.getGroupId() + ':' + project.getArtifactId(), project.getVersion());
-        }
-
-        return builder;
     }
 
     protected void setUp() throws Exception {
