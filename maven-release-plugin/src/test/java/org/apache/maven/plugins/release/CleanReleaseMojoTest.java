@@ -37,14 +37,12 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 public class CleanReleaseMojoTest extends AbstractMojoTestCase {
     protected CleanReleaseMojo mojo;
 
-    private File workingDirectory;
-
     protected void setUp() throws Exception {
         super.setUp();
 
         File testFile = getTestFile("target/test-classes/mojos/clean/clean.xml");
-        mojo = (CleanReleaseMojo) lookupMojo("clean", testFile);
-        workingDirectory = testFile.getParentFile();
+        mojo = lookupMojo("clean", testFile);
+        File workingDirectory = testFile.getParentFile();
         mojo.setBasedir(workingDirectory);
     }
 

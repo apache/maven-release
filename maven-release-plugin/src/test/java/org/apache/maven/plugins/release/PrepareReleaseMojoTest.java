@@ -19,15 +19,10 @@
 package org.apache.maven.plugins.release;
 
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
 
-import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
@@ -35,8 +30,6 @@ import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.mockito.ArgumentCaptor;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -45,11 +38,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
 
 /**
  * Test release:prepare.
@@ -63,37 +54,15 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
 
     public void testPrepare() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareReleaseMojo mojo = spy((PrepareReleaseMojo) lookupMojo("prepare", testFile));
+        final PrepareReleaseMojo mojo = lookupMojo("prepare", testFile);
         mojo.getProject().setFile(testFile);
         setDefaults(mojo);
         mojo.setBasedir(testFile.getParentFile());
         mojo.setPomFileName("pom.xml");
-        mojo.session = new MavenSession(null, null, null, null, null, null, null, null, null) {
-            public Properties getExecutionProperties() {
-                return new Properties();
-            }
-            ;
-
-            @Override
-            public List<MavenProject> getProjects() {
-                return Collections.singletonList(mojo.project);
-            }
-        };
-
-        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
-        builder.setWorkingDirectory(testFile.getParentFile().getAbsolutePath());
-        builder.setUpdateDependencies(false);
+        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
 
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
-
-        when(mojo.createReleaseDescriptor()).thenAnswer(new Answer<ReleaseDescriptorBuilder>() {
-            @Override
-            public ReleaseDescriptorBuilder answer(InvocationOnMock invocationOnMock) throws Throwable {
-                ReleaseDescriptorBuilder original = (ReleaseDescriptorBuilder) invocationOnMock.callRealMethod();
-                return spy(original);
-            }
-        });
 
         // execute
         mojo.execute();
@@ -111,27 +80,20 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
         assertThat(prepareRequest.getValue().getResume(), is(true));
         assertThat(prepareRequest.getValue().getDryRun(), is(false));
 
-        verify(prepareRequest.getValue().getReleaseDescriptorBuilder()).setScmSignTags(false);
+        ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
+                prepareRequest.getValue().getReleaseDescriptorBuilder().build();
+        assertThat(releaseDescriptor.isScmSignTags(), is(false));
+        assertThat(releaseDescriptor.isUpdateDependencies(), is(false));
     }
 
     public void testPrepareWithExecutionException() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo("prepare", testFile);
+        final PrepareReleaseMojo mojo = lookupMojo("prepare", testFile);
         mojo.getProject().setFile(testFile);
         setDefaults(mojo);
         mojo.setBasedir(testFile.getParentFile());
         mojo.setPomFileName("pom.xml");
-        mojo.session = new MavenSession(null, null, null, null, null, null, null, null, null) {
-            public Properties getExecutionProperties() {
-                return new Properties();
-            }
-            ;
-
-            @Override
-            public List<MavenProject> getProjects() {
-                return Collections.singletonList(mojo.project);
-            }
-        };
+        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
 
         ReleaseManager mock = mock(ReleaseManager.class);
         doThrow(new ReleaseExecutionException("...")).when(mock).prepare(isA(ReleasePrepareRequest.class));
@@ -154,22 +116,12 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
 
     public void testPrepareWithExecutionFailure() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo("prepare", testFile);
+        final PrepareReleaseMojo mojo = lookupMojo("prepare", testFile);
         mojo.getProject().setFile(testFile);
         setDefaults(mojo);
         mojo.setBasedir(testFile.getParentFile());
         mojo.setPomFileName("pom.xml");
-        mojo.session = new MavenSession(null, null, null, null, null, null, null, null, null) {
-            public Properties getExecutionProperties() {
-                return new Properties();
-            }
-            ;
-
-            @Override
-            public List<MavenProject> getProjects() {
-                return Collections.singletonList(mojo.project);
-            }
-        };
+        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
 
         ReleaseManager mock = mock(ReleaseManager.class);
         ReleaseFailureException cause = new ReleaseFailureException("...");
@@ -191,24 +143,14 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
 
     public void testLineSeparatorInPrepareWithPom() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareWithPomReleaseMojo mojo = (PrepareWithPomReleaseMojo) lookupMojo("prepare-with-pom", testFile);
+        final PrepareWithPomReleaseMojo mojo = lookupMojo("prepare-with-pom", testFile);
         mojo.getProject().setFile(testFile);
         setDefaults(mojo);
         setVariableValueToObject(mojo, "generateReleasePoms", Boolean.TRUE);
         mojo.setBasedir(testFile.getParentFile());
         mojo.setPomFileName("pom.xml");
         mojo.project.setFile(testFile);
-        mojo.session = new MavenSession(null, null, null, null, null, null, null, null, null) {
-            public Properties getExecutionProperties() {
-                return new Properties();
-            }
-            ;
-
-            @Override
-            public List<MavenProject> getProjects() {
-                return Collections.singletonList(mojo.project);
-            }
-        };
+        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
 
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
@@ -224,23 +166,13 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
 
     public void testLineSeparatorInPrepare() throws Exception {
         File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareReleaseMojo mojo = (PrepareReleaseMojo) lookupMojo("prepare", testFile);
+        final PrepareReleaseMojo mojo = lookupMojo("prepare", testFile);
         mojo.getProject().setFile(testFile);
         setDefaults(mojo);
         mojo.setBasedir(testFile.getParentFile());
         mojo.setPomFileName("pom.xml");
         mojo.project.setFile(testFile);
-        mojo.session = new MavenSession(null, null, null, null, null, null, null, null, null) {
-            public Properties getExecutionProperties() {
-                return new Properties();
-            }
-            ;
-
-            @Override
-            public List<MavenProject> getProjects() {
-                return Collections.singletonList(mojo.project);
-            }
-        };
+        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
 
         ReleaseManager mock = mock(ReleaseManager.class);
         mojo.setReleaseManager(mock);
