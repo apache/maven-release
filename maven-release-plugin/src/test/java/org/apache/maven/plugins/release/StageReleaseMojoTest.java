@@ -18,40 +18,81 @@
  */
 package org.apache.maven.plugins.release;
 
-import java.io.File;
+import javax.inject.Inject;
 
-import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Site;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import java.io.File;
+import java.util.Collections;
+
+import org.apache.maven.api.di.Provides;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoTest;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.AssertionsKt.assertNotNull;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Test release:stage.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class StageReleaseMojoTest extends AbstractMojoTestCase {
-    private File workingDirectory;
+@ExtendWith(MockitoExtension.class)
+@MojoTest
+class StageReleaseMojoTest {
+    @Mock
+    private ReleaseManager releaseManagerMock;
 
-    public void testStage() throws Exception {
-        StageReleaseMojo mojo = getMojoWithProjectSite("stage.xml");
+    @Inject
+    private MavenProject mavenProject;
 
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
+    @Inject
+    private MavenSession mavenSession;
+
+    @Provides
+    private ReleaseManager releaseManager() {
+        return releaseManagerMock;
+    }
+
+    @BeforeEach
+    void setup() {
+        when(mavenProject.getFile()).thenReturn(new File("pom.xml"));
+        when(mavenSession.getProjects()).thenReturn(Collections.singletonList(mavenProject));
+    }
+
+    private void prepareMocks() {
+        when(mavenSession.getRequest()).thenReturn(new DefaultMavenExecutionRequest());
+
+        when(mavenProject.getGroupId()).thenReturn("groupId");
+        when(mavenProject.getArtifactId()).thenReturn("artifactId");
+        when(mavenProject.getVersion()).thenReturn("1.0.0-SNAPSHOT");
+    }
+
+    @Test
+    @Basedir("/mojos/stage")
+    @InjectMojo(goal = "stage", pom = "stage.xml")
+    void testStage(StageReleaseMojo mojo) throws Exception {
+        prepareMocks();
 
         mojo.execute();
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -62,11 +103,13 @@ public class StageReleaseMojoTest extends AbstractMojoTestCase {
         assertEquals("deploy site:stage-deploy", releaseDescriptor.getPerformGoals());
         assertEquals("-DskipTests -DaltDeploymentRepository=\"staging\"", releaseDescriptor.getAdditionalArguments());
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testCreateGoals() throws Exception {
-        StageReleaseMojo mojo = getMojoWithProjectSite("stage.xml");
+    @Test
+    @Basedir("/mojos/stage")
+    @InjectMojo(goal = "stage", pom = "stage.xml")
+    void testCreateGoals(StageReleaseMojo mojo) {
         mojo.createGoals();
         assertEquals("deploy site:stage-deploy", mojo.goals);
         mojo.goals = "deploy site:deploy";
@@ -74,31 +117,15 @@ public class StageReleaseMojoTest extends AbstractMojoTestCase {
         assertEquals("deploy site:stage-deploy", mojo.goals);
     }
 
-    public void testCreateArguments() throws Exception {
-        StageReleaseMojo mojo = getMojoWithProjectSite("stage.xml");
+    @Test
+    @Basedir("/mojos/stage")
+    @InjectMojo(goal = "stage", pom = "stage.xml")
+    void testCreateArguments(StageReleaseMojo mojo) {
+        prepareMocks();
+
         mojo.setDeploymentRepository();
         ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
                 mojo.createReleaseDescriptor().build();
         assertEquals("-DskipTests -DaltDeploymentRepository=\"staging\"", releaseDescriptor.getAdditionalArguments());
-    }
-
-    private StageReleaseMojo getMojoWithProjectSite(String fileName) throws Exception {
-        StageReleaseMojo mojo = lookupMojo("stage", new File(workingDirectory, fileName));
-        mojo.setBasedir(workingDirectory);
-        mojo.setPomFileName("pom.xml");
-
-        MavenProject project = getVariableValueFromObject(mojo, "project");
-        DistributionManagement distributionManagement = new DistributionManagement();
-        distributionManagement.setSite(new Site());
-        project.setDistributionManagement(distributionManagement);
-
-        setVariableValueToObject(mojo, "session", newMavenSession(project));
-
-        return mojo;
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        workingDirectory = getTestFile("target/test-classes/mojos/stage");
     }
 }

@@ -45,14 +45,6 @@
   <version>1.0</version>
   <name>Maven Quick Start Archetype</name>
   <url>http://maven.apache.org</url>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>@junitVersion@</version>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
   <scm>
     <connection>scm:stub|</connection>
     <developerConnection>scm:stub|</developerConnection>
