@@ -31,7 +31,7 @@ public interface VersionPolicy {
      * <p>getReleaseVersion.</p>
      *
      * @param request the {@code VersionPolicyRequest}
-     * @return the calculation of the release version from development state
+     * @return the release version derived from the development state
      * @throws org.apache.maven.shared.release.policy.PolicyException if exception in the policy
      * @throws org.apache.maven.shared.release.versions.VersionParseException if exception parsing the version
      */
@@ -41,7 +41,7 @@ public interface VersionPolicy {
      * <p>getDevelopmentVersion.</p>
      *
      * @param request the {@code VersionPolicyRequest}
-     * @return the calculation of the next development version from release state
+     * @return the next development version derived from release state
      * @throws org.apache.maven.shared.release.policy.PolicyException if exception in the policy
      * @throws org.apache.maven.shared.release.versions.VersionParseException if exception parsing the version
      */
