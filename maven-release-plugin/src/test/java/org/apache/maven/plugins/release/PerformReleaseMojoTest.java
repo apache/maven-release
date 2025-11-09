@@ -18,49 +18,90 @@
  */
 package org.apache.maven.plugins.release;
 
+import javax.inject.Inject;
+
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 
+import org.apache.maven.api.di.Provides;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoTest;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
 import org.apache.maven.execution.MavenSession;
-import org.apache.maven.model.DistributionManagement;
-import org.apache.maven.model.Site;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Test release:perform.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class PerformReleaseMojoTest extends AbstractMojoTestCase {
-    private File workingDirectory;
+@ExtendWith(MockitoExtension.class)
+@MojoTest
+class PerformReleaseMojoTest {
 
-    public void testPerform() throws Exception {
-        PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
+    @Mock
+    private ReleaseManager releaseManagerMock;
 
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
+    @Inject
+    private MavenProject mavenProject;
 
+    @Inject
+    private MavenSession mavenSession;
+
+    @Provides
+    private ReleaseManager releaseManager() {
+        return releaseManagerMock;
+    }
+
+    @BeforeEach
+    void setup() {
+        when(mavenProject.getFile()).thenReturn(new File("pom.xml"));
+
+        when(mavenProject.getGroupId()).thenReturn("groupId");
+        when(mavenProject.getArtifactId()).thenReturn("artifactId");
+        when(mavenProject.getVersion()).thenReturn("1.0.0-SNAPSHOT");
+
+        when(mavenSession.getProjects()).thenReturn(Collections.singletonList(mavenProject));
+        when(mavenSession.getRequest()).thenReturn(new DefaultMavenExecutionRequest());
+    }
+
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform.xml")
+    void testPerform(PerformReleaseMojo mojo) throws Exception {
         // execute
         mojo.execute();
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -70,21 +111,19 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
                 argument.getValue().getReleaseDescriptorBuilder().build();
         assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testPerformWithFlatStructure() throws Exception {
-        PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-flat-structure.xml");
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
-
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform-with-flat-structure.xml")
+    void testPerformWithFlatStructure(PerformReleaseMojo mojo) throws Exception {
         // execute
         mojo.execute();
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -97,59 +136,37 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
                 "scm:svn:file://localhost/target/svnroot/flat-multi-module/trunk/root-project",
                 releaseDescriptor.getScmSourceUrl());
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testPerformWithoutSite() throws Exception {
-        File testFileDirectory = getTestFile("target/test-classes/mojos/perform/");
-        PerformReleaseMojo mojo = lookupMojo("perform", new File(testFileDirectory, "perform-without-site.xml"));
-        mojo.setBasedir(testFileDirectory);
-        mojo.setPomFileName("pom.xml");
-
-        MavenProject project = getVariableValueFromObject(mojo, "project");
-        setVariableValueToObject(mojo, "session", newMavenSession(project));
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
-
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform-without-site.xml")
+    void testPerformWithoutSite(PerformReleaseMojo mojo) throws Exception {
         // execute
         mojo.execute();
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
         assertEquals(Boolean.FALSE, argument.getValue().getDryRun());
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
 
         ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
                 argument.getValue().getReleaseDescriptorBuilder().build();
         assertEquals("deploy", releaseDescriptor.getPerformGoals());
     }
 
-    private PerformReleaseMojo getMojoWithProjectSite(String fileName) throws Exception {
-        PerformReleaseMojo mojo = lookupMojo("perform", new File(workingDirectory, fileName));
-        mojo.setBasedir(workingDirectory);
-        mojo.setPomFileName(fileName);
-
-        MavenProject project = getVariableValueFromObject(mojo, "project");
-        DistributionManagement distributionManagement = new DistributionManagement();
-        distributionManagement.setSite(new Site());
-        project.setDistributionManagement(distributionManagement);
-
-        setVariableValueToObject(mojo, "session", newMavenSession(project));
-
-        return mojo;
-    }
-
-    public void testPerformWithExecutionException() throws Exception {
-        PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        doThrow(new ReleaseExecutionException("...")).when(mock).perform(isA(ReleasePerformRequest.class));
-        mojo.setReleaseManager(mock);
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform.xml")
+    void testPerformWithExecutionException(PerformReleaseMojo mojo) throws Exception {
+        doThrow(new ReleaseExecutionException("..."))
+                .when(releaseManagerMock)
+                .perform(isA(ReleasePerformRequest.class));
 
         // execute
         try {
@@ -157,13 +174,12 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
 
             fail("Should have thrown an exception");
         } catch (MojoExecutionException e) {
-            assertEquals(
-                    "Check cause", ReleaseExecutionException.class, e.getCause().getClass());
+            assertEquals(ReleaseExecutionException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -173,17 +189,17 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
                 argument.getValue().getReleaseDescriptorBuilder().build();
         assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testPerformWithExecutionFailure() throws Exception {
-        PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
-
-        ReleaseManager mock = mock(ReleaseManager.class);
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform.xml")
+    void testPerformWithExecutionFailure(PerformReleaseMojo mojo) throws Exception {
         ReleaseFailureException cause = new ReleaseFailureException("...");
-        doThrow(cause).when(mock).perform(isA(ReleasePerformRequest.class));
+        doThrow(cause).when(releaseManagerMock).perform(isA(ReleasePerformRequest.class));
 
-        mojo.setReleaseManager(mock);
+        mojo.setReleaseManager(releaseManagerMock);
 
         // execute
         try {
@@ -191,12 +207,12 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
 
             fail("Should have thrown an exception");
         } catch (MojoFailureException e) {
-            assertEquals("Check cause exists", cause, e.getCause());
+            assertEquals(cause, e.getCause(), "Check cause exists");
         }
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -206,21 +222,19 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
                 argument.getValue().getReleaseDescriptorBuilder().build();
         assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testPerformWithScm() throws Exception {
-        PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-scm.xml");
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
-
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform-with-scm.xml")
+    void testPerformWithScm(PerformReleaseMojo mojo) throws Exception {
         // execute
         mojo.execute();
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -231,24 +245,23 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
         assertEquals("scm-url", releaseDescriptor.getScmSourceUrl());
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testPerformWithProfiles() throws Exception {
-        PerformReleaseMojo mojo = getMojoWithProjectSite("perform.xml");
-
-        MavenSession session = getVariableValueFromObject(mojo, "session");
-        session.getRequest().setActiveProfiles(Arrays.asList("prof1", "2prof"));
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform.xml")
+    void testPerformWithProfiles(PerformReleaseMojo mojo) throws Exception {
+        MavenExecutionRequest request = mock(MavenExecutionRequest.class);
+        when(request.getActiveProfiles()).thenReturn(Arrays.asList("prof1", "2prof"));
+        when(mavenSession.getRequest()).thenReturn(request);
 
         // execute
         mojo.execute();
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -260,24 +273,23 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertTrue(releaseDescriptor.getActivateProfiles().contains("prof1"));
         assertTrue(releaseDescriptor.getActivateProfiles().contains("2prof"));
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testPerformWithProfilesAndArguments() throws Exception {
-        PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-args.xml");
-
-        MavenSession session = getVariableValueFromObject(mojo, "session");
-        session.getRequest().setActiveProfiles(Arrays.asList("prof1", "2prof"));
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform-with-args.xml")
+    void testPerformWithProfilesAndArguments(PerformReleaseMojo mojo) throws Exception {
+        MavenExecutionRequest request = mock(MavenExecutionRequest.class);
+        when(request.getActiveProfiles()).thenReturn(Arrays.asList("prof1", "2prof"));
+        when(mavenSession.getRequest()).thenReturn(request);
 
         // execute
         mojo.execute();
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -290,21 +302,19 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
         assertTrue(releaseDescriptor.getActivateProfiles().contains("2prof"));
         assertEquals("-Dmaven.test.skip=true", releaseDescriptor.getAdditionalArguments());
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testPerformWithMultilineGoals() throws Exception {
-        PerformReleaseMojo mojo = getMojoWithProjectSite("perform-with-multiline-goals.xml");
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
-
+    @Test
+    @Basedir("/mojos/perform")
+    @InjectMojo(goal = "perform", pom = "perform-with-multiline-goals.xml")
+    void testPerformWithMultilineGoals(PerformReleaseMojo mojo) throws Exception {
         // execute
         mojo.execute();
 
         // verify
         ArgumentCaptor<ReleasePerformRequest> argument = ArgumentCaptor.forClass(ReleasePerformRequest.class);
-        verify(mock).perform(argument.capture());
+        verify(releaseManagerMock).perform(argument.capture());
         assertNotNull(argument.getValue().getReleaseDescriptorBuilder());
         assertNotNull(argument.getValue().getReleaseEnvironment());
         assertNotNull(argument.getValue().getReactorProjects());
@@ -314,11 +324,6 @@ public class PerformReleaseMojoTest extends AbstractMojoTestCase {
                 argument.getValue().getReleaseDescriptorBuilder().build();
         assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
 
-        verifyNoMoreInteractions(mock);
-    }
-
-    protected void setUp() throws Exception {
-        super.setUp();
-        workingDirectory = getTestFile("target/test-classes/mojos/perform");
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 }

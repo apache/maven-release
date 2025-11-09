@@ -30,9 +30,9 @@ under the License.
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>@junitVersion@</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>@versions.junit5@</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

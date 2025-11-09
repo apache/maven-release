@@ -18,59 +18,96 @@
  */
 package org.apache.maven.plugins.release;
 
-import java.io.File;
+import javax.inject.Inject;
 
+import java.io.File;
+import java.util.Collections;
+
+import org.apache.maven.api.di.Provides;
+import org.apache.maven.api.plugin.testing.Basedir;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoParameter;
+import org.apache.maven.api.plugin.testing.MojoTest;
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenSession;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePrepareRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.apache.maven.api.plugin.testing.MojoExtension.getBasedir;
+import static org.apache.maven.api.plugin.testing.MojoExtension.setVariableValueToObject;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 /**
  * Test release:prepare.
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
-    private void setDefaults(PrepareReleaseMojo mojo) throws IllegalAccessException {
-        setVariableValueToObject(mojo, "updateWorkingCopyVersions", Boolean.TRUE);
+@ExtendWith(MockitoExtension.class)
+@MojoTest
+class PrepareReleaseMojoTest {
+
+    @Mock
+    private ReleaseManager releaseManagerMock;
+
+    @Inject
+    private MavenProject mavenProject;
+
+    @Inject
+    private MavenSession mavenSession;
+
+    @Provides
+    private ReleaseManager releaseManager() {
+        return releaseManagerMock;
     }
 
-    public void testPrepare() throws Exception {
-        File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareReleaseMojo mojo = lookupMojo("prepare", testFile);
-        mojo.getProject().setFile(testFile);
-        setDefaults(mojo);
-        mojo.setBasedir(testFile.getParentFile());
-        mojo.setPomFileName("pom.xml");
-        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
+    @BeforeEach
+    void setup() {
+        when(mavenProject.getFile()).thenReturn(new File(getBasedir(), "prepare.xml"));
 
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
+        when(mavenProject.getGroupId()).thenReturn("groupId");
+        when(mavenProject.getArtifactId()).thenReturn("artifactId");
+        when(mavenProject.getVersion()).thenReturn("1.0.0-SNAPSHOT");
 
+        when(mavenSession.getProjects()).thenReturn(Collections.singletonList(mavenProject));
+        when(mavenSession.getRequest()).thenReturn(new DefaultMavenExecutionRequest());
+    }
+
+    @Test
+    @Basedir("/mojos/prepare")
+    @InjectMojo(goal = "prepare", pom = "prepare.xml")
+    @MojoParameter(name = "updateDependencies", value = "false")
+    void testPrepare(PrepareReleaseMojo mojo) throws Exception {
         // execute
         mojo.execute();
 
         ArgumentCaptor<ReleasePrepareRequest> prepareRequest = ArgumentCaptor.forClass(ReleasePrepareRequest.class);
 
         // verify
-        verify(mock).prepare(prepareRequest.capture());
+        verify(releaseManagerMock).prepare(prepareRequest.capture());
 
         assertThat(
                 prepareRequest.getValue().getReleaseDescriptorBuilder(),
@@ -86,18 +123,13 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
         assertThat(releaseDescriptor.isUpdateDependencies(), is(false));
     }
 
-    public void testPrepareWithExecutionException() throws Exception {
-        File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareReleaseMojo mojo = lookupMojo("prepare", testFile);
-        mojo.getProject().setFile(testFile);
-        setDefaults(mojo);
-        mojo.setBasedir(testFile.getParentFile());
-        mojo.setPomFileName("pom.xml");
-        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        doThrow(new ReleaseExecutionException("...")).when(mock).prepare(isA(ReleasePrepareRequest.class));
-        mojo.setReleaseManager(mock);
+    @Test
+    @Basedir("/mojos/prepare")
+    @InjectMojo(goal = "prepare", pom = "prepare.xml")
+    void testPrepareWithExecutionException(PrepareReleaseMojo mojo) throws Exception {
+        doThrow(new ReleaseExecutionException("..."))
+                .when(releaseManagerMock)
+                .prepare(isA(ReleasePrepareRequest.class));
 
         // execute
         try {
@@ -105,28 +137,21 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
 
             fail("Should have thrown an exception");
         } catch (MojoExecutionException e) {
-            assertEquals(
-                    "Check cause", ReleaseExecutionException.class, e.getCause().getClass());
+            assertEquals(ReleaseExecutionException.class, e.getCause().getClass(), "Check cause");
         }
 
         // verify
-        verify(mock).prepare(isA(ReleasePrepareRequest.class));
-        verifyNoMoreInteractions(mock);
+        verify(releaseManagerMock).prepare(isA(ReleasePrepareRequest.class));
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testPrepareWithExecutionFailure() throws Exception {
-        File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareReleaseMojo mojo = lookupMojo("prepare", testFile);
-        mojo.getProject().setFile(testFile);
-        setDefaults(mojo);
-        mojo.setBasedir(testFile.getParentFile());
-        mojo.setPomFileName("pom.xml");
-        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
+    @Test
+    @Basedir("/mojos/prepare")
+    @InjectMojo(goal = "prepare", pom = "prepare.xml")
+    void testPrepareWithExecutionFailure(PrepareReleaseMojo mojo) throws Exception {
 
-        ReleaseManager mock = mock(ReleaseManager.class);
         ReleaseFailureException cause = new ReleaseFailureException("...");
-        doThrow(cause).when(mock).prepare(isA(ReleasePrepareRequest.class));
-        mojo.setReleaseManager(mock);
+        doThrow(cause).when(releaseManagerMock).prepare(isA(ReleasePrepareRequest.class));
 
         // execute
         try {
@@ -134,56 +159,37 @@ public class PrepareReleaseMojoTest extends AbstractMojoTestCase {
 
             fail("Should have thrown an exception");
         } catch (MojoFailureException e) {
-            assertEquals("Check cause exists", cause, e.getCause());
+            assertEquals(cause, e.getCause(), "Check cause exists");
         }
         // verify
-        verify(mock).prepare(isA(ReleasePrepareRequest.class));
-        verifyNoMoreInteractions(mock);
+        verify(releaseManagerMock).prepare(isA(ReleasePrepareRequest.class));
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 
-    public void testLineSeparatorInPrepareWithPom() throws Exception {
-        File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareWithPomReleaseMojo mojo = lookupMojo("prepare-with-pom", testFile);
-        mojo.getProject().setFile(testFile);
-        setDefaults(mojo);
-        setVariableValueToObject(mojo, "generateReleasePoms", Boolean.TRUE);
-        mojo.setBasedir(testFile.getParentFile());
-        mojo.setPomFileName("pom.xml");
-        mojo.project.setFile(testFile);
-        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
-
+    @Test
+    @Basedir("/mojos/prepare")
+    @InjectMojo(goal = "prepare-with-pom", pom = "prepare.xml")
+    void testLineSeparatorInPrepareWithPom(PrepareReleaseMojo mojo) throws Exception {
         int times = 1;
-        testLineSeparator(null, "\n", mojo, mock, times++);
-        testLineSeparator("source", "\n", mojo, mock, times++);
-        testLineSeparator("cr", "\r", mojo, mock, times++);
-        testLineSeparator("lf", "\n", mojo, mock, times++);
-        testLineSeparator("crlf", "\r\n", mojo, mock, times++);
-        testLineSeparator("system", System.lineSeparator(), mojo, mock, times++);
+        testLineSeparator(null, "\n", mojo, releaseManagerMock, times++);
+        testLineSeparator("source", "\n", mojo, releaseManagerMock, times++);
+        testLineSeparator("cr", "\r", mojo, releaseManagerMock, times++);
+        testLineSeparator("lf", "\n", mojo, releaseManagerMock, times++);
+        testLineSeparator("crlf", "\r\n", mojo, releaseManagerMock, times++);
+        testLineSeparator("system", System.lineSeparator(), mojo, releaseManagerMock, times++);
     }
 
-    public void testLineSeparatorInPrepare() throws Exception {
-        File testFile = getTestFile("target/test-classes/mojos/prepare/prepare.xml");
-        final PrepareReleaseMojo mojo = lookupMojo("prepare", testFile);
-        mojo.getProject().setFile(testFile);
-        setDefaults(mojo);
-        mojo.setBasedir(testFile.getParentFile());
-        mojo.setPomFileName("pom.xml");
-        mojo.project.setFile(testFile);
-        setVariableValueToObject(mojo, "session", newMavenSession(mojo.project));
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
-
+    @Test
+    @Basedir("/mojos/prepare")
+    @InjectMojo(goal = "prepare", pom = "prepare.xml")
+    void testLineSeparatorInPrepare(PrepareReleaseMojo mojo) throws Exception {
         int times = 1;
-        testLineSeparator(null, "\n", mojo, mock, times++);
-        testLineSeparator("source", "\n", mojo, mock, times++);
-        testLineSeparator("cr", "\r", mojo, mock, times++);
-        testLineSeparator("lf", "\n", mojo, mock, times++);
-        testLineSeparator("crlf", "\r\n", mojo, mock, times++);
-        testLineSeparator("system", System.lineSeparator(), mojo, mock, times++);
+        testLineSeparator(null, "\n", mojo, releaseManagerMock, times++);
+        testLineSeparator("source", "\n", mojo, releaseManagerMock, times++);
+        testLineSeparator("cr", "\r", mojo, releaseManagerMock, times++);
+        testLineSeparator("lf", "\n", mojo, releaseManagerMock, times++);
+        testLineSeparator("crlf", "\r\n", mojo, releaseManagerMock, times++);
+        testLineSeparator("system", System.lineSeparator(), mojo, releaseManagerMock, times++);
     }
 
     private void testLineSeparator(

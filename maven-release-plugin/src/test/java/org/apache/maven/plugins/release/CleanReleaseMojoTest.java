@@ -18,14 +18,18 @@
  */
 package org.apache.maven.plugins.release;
 
-import java.io.File;
-
-import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.api.di.Provides;
+import org.apache.maven.api.plugin.testing.InjectMojo;
+import org.apache.maven.api.plugin.testing.MojoTest;
 import org.apache.maven.shared.release.ReleaseCleanRequest;
 import org.apache.maven.shared.release.ReleaseManager;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.Mockito.mock;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
@@ -34,33 +38,32 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
  *
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
-public class CleanReleaseMojoTest extends AbstractMojoTestCase {
-    protected CleanReleaseMojo mojo;
+@ExtendWith(MockitoExtension.class)
+@MojoTest
+class CleanReleaseMojoTest {
 
-    protected void setUp() throws Exception {
-        super.setUp();
+    @Mock
+    private ReleaseManager releaseManagerMock;
 
-        File testFile = getTestFile("target/test-classes/mojos/clean/clean.xml");
-        mojo = lookupMojo("clean", testFile);
-        File workingDirectory = testFile.getParentFile();
-        mojo.setBasedir(workingDirectory);
+    @Provides
+    private ReleaseManager releaseManager() {
+        return releaseManagerMock;
     }
 
-    public void testClean() throws Exception {
+    @Test
+    @InjectMojo(goal = "clean")
+    void testClean(CleanReleaseMojo mojo) throws Exception {
         // prepare
         ArgumentCaptor<ReleaseCleanRequest> request = ArgumentCaptor.forClass(ReleaseCleanRequest.class);
-
-        ReleaseManager mock = mock(ReleaseManager.class);
-        mojo.setReleaseManager(mock);
 
         // execute
         mojo.execute();
 
         // verify
-        verify(mock).clean(request.capture());
+        verify(releaseManagerMock).clean(request.capture());
 
         assertEquals(mojo.getReactorProjects(), request.getValue().getReactorProjects());
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(releaseManagerMock);
     }
 }
