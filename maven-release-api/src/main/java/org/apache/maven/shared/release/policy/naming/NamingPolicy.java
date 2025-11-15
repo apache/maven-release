@@ -30,7 +30,7 @@ public interface NamingPolicy {
      * <p>getName.</p>
      *
      * @param request the {@code NamingPolicyRequest}
-     * @return the calculation of the name used for branching or tagging
+     * @return the name used for branching or tagging
      * @throws org.apache.maven.shared.release.policy.PolicyException if exception in the policy
      */
     NamingPolicyResult getName(NamingPolicyRequest request) throws PolicyException;
