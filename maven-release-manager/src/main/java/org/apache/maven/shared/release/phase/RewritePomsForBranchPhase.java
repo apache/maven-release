@@ -28,7 +28,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 
-import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Scm;
 import org.apache.maven.project.MavenProject;
@@ -82,24 +81,21 @@ public class RewritePomsForBranchPhase extends AbstractRewritePomsPhase {
                     throw new ReleaseExecutionException(e.getMessage(), e);
                 }
             } else {
-                MavenProject parent = project.getParent();
-                if (parent != null) {
-                    // If the SCM element is not present, only add it if the parent was not mapped (ie, it's external to
-                    // the release process and so has not been modified, so the values will not be correct on the tag),
-                    String parentId = ArtifactUtils.versionlessKey(parent.getGroupId(), parent.getArtifactId());
-                    if (!releaseDescriptor.hasOriginalScmInfo(parentId)) {
-                        // we need to add it, since it has changed from the inherited value
-                        scmRoot = new Scm();
-                        // reset default value (HEAD)
-                        scmRoot.setTag(null);
+                // If the SCM element is not present, only add it if the parent was not mapped (ie, it's external to
+                // the release process and so has not been modified,
+                // so the values otherwise won't be correct on the tag),
+                if (ReleaseUtil.hasNoOriginalScmInfoInParents(project, releaseDescriptor)) {
+                    // we need to add it, since it has changed from the inherited value
+                    scmRoot = new Scm();
+                    // reset default value (HEAD)
+                    scmRoot.setTag(null);
 
-                        try {
-                            if (translateScm(project, releaseDescriptor, scmRoot, scmRepository, result)) {
-                                modelTarget.setScm(scmRoot);
-                            }
-                        } catch (IOException e) {
-                            throw new ReleaseExecutionException(e.getMessage(), e);
+                    try {
+                        if (translateScm(project, releaseDescriptor, scmRoot, scmRepository, result)) {
+                            modelTarget.setScm(scmRoot);
                         }
+                    } catch (IOException e) {
+                        throw new ReleaseExecutionException(e.getMessage(), e);
                     }
                 }
             }

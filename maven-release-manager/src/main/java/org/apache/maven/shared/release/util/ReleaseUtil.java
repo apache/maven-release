@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
@@ -203,5 +204,21 @@ public class ReleaseUtil {
             }
         }
         return value;
+    }
+
+    /**
+     * Check if none of the parent projects have original SCM info in the release descriptor.
+     */
+    public static boolean hasNoOriginalScmInfoInParents(MavenProject project, ReleaseDescriptor releaseDescriptor) {
+        MavenProject parent = project.getParent();
+        while (parent != null) {
+            String parentId = ArtifactUtils.versionlessKey(parent.getGroupId(), parent.getArtifactId());
+            if (releaseDescriptor.hasOriginalScmInfo(parentId)) {
+                return false;
+            }
+            parent = parent.getParent();
+        }
+
+        return true;
     }
 }
