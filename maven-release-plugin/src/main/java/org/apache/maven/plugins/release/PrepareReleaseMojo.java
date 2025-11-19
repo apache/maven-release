@@ -269,7 +269,7 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
     private String projectTagNamingPolicyId;
 
     /**
-     * The SCM commit comment when setting pom.xml to release.
+     * The SCM commit comment for the commit setting pom.xml to release version.
      * Defaults to "@{prefix} prepare release @{releaseLabel}".
      * <p>
      * Property interpolation is performed on the value, but in order to ensure that the interpolation occurs
@@ -281,14 +281,21 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      *     <li><code>artifactId</code> - The artifactId of the root project.
      *     <li><code>releaseLabel</code> - The release version of the root project.
      * </ul>
-     *
+     * It is recommended to automatically skip this commit from the default CI/CD build by including the string {@code ci skip}
+     * in the commit message which is understood
+     * by most CI systems, like <a href="https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs">GitHub Actions</a>,
+     * <a href="https://docs.gitlab.com/ci/pipelines/#skip-a-pipeline">GitLab Pipelines</a>, and probably some more.
+     * Otherwise the non-SNAPSHOT version is built again (outside the actual release) and potentially also deployed somewhere
+     * (which often leads to failed builds).
      * @since 3.0.0-M1
      */
-    @Parameter(defaultValue = "@{prefix} prepare release @{releaseLabel}", property = "scmReleaseCommitComment")
-    private String scmReleaseCommitComment = "@{prefix} prepare release @{releaseLabel}";
+    @Parameter(
+            defaultValue = "@{prefix} prepare release @{releaseLabel} [ci skip]",
+            property = "scmReleaseCommitComment")
+    private String scmReleaseCommitComment = "@{prefix} prepare release @{releaseLabel} [ci skip]";
 
     /**
-     * The SCM commit comment when setting pom.xml back to development.
+     * The SCM commit comment for the commit setting pom.xml back to development version.
      * Defaults to "@{prefix} prepare for next development iteration".
      * <p>
      * Property interpolation is performed on the value, but in order to ensure that the interpolation occurs
