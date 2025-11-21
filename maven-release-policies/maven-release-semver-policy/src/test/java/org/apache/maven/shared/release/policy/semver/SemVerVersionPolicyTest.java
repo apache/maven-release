@@ -20,7 +20,8 @@ package org.apache.maven.shared.release.policy.semver;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,22 +29,34 @@ public final class SemVerVersionPolicyTest {
 
     private final VersionPolicy versionPolicy = new SemVerVersionPolicy();
 
-    @Test
-    public void testConvertToSnapshot() throws Exception {
+    @ParameterizedTest
+    @CsvSource({
+        "1.0.0, 1.1.0-SNAPSHOT",
+        "1.2.3, 1.3.0-SNAPSHOT",
+        "1.0.0-alpha, 1.0.0-SNAPSHOT",
+        "1.0.0+build.1, 1.0.0-SNAPSHOT"
+    })
+    public void testConvertToSnapshot(String requested, String expected) throws Exception {
         String suggestedVersion = versionPolicy
-                .getDevelopmentVersion(newVersionPolicyRequest("1.0.0"))
+                .getDevelopmentVersion(newVersionPolicyRequest(requested))
                 .getVersion();
 
-        assertEquals("1.1.0-SNAPSHOT", suggestedVersion);
+        assertEquals(expected, suggestedVersion);
     }
 
-    @Test
-    public void testConvertToRelease() throws Exception {
+    @ParameterizedTest
+    @CsvSource({
+        "1.0.0-SNAPSHOT, 1.0.0",
+        "1.2.3-SNAPSHOT, 1.2.3",
+        "1.0.0-alpha-SNAPSHOT, 1.0.0",
+        "1.0.0+build.1-SNAPSHOT, 1.0.0"
+    })
+    public void testConvertToRelease(String requested, String expected) throws Exception {
         String suggestedVersion = versionPolicy
-                .getReleaseVersion(newVersionPolicyRequest("1.0.0-SNAPSHOT"))
+                .getReleaseVersion(newVersionPolicyRequest(requested))
                 .getVersion();
 
-        assertEquals("1.0.0", suggestedVersion);
+        assertEquals(expected, suggestedVersion);
     }
 
     private static VersionPolicyRequest newVersionPolicyRequest(String version) {
