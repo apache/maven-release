@@ -52,6 +52,7 @@ under the License.
         <item name="Create a Branch" href="usage/branch.html" />
         <item name="Update POM Versions" href="usage/update-versions.html" />
       </item>
+      <item name="Versioning Policies" href="versioning-policies.html" />
       <item name="Migrate" href="migrate.html" />
       <item name="FAQ" href="faq.html" />
       <!-- According to https://issues.apache.org/jira/browse/MNGSITE-152 -->

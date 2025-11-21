@@ -89,6 +89,7 @@ public class UpdateVersionsMojo extends AbstractReleaseMojo {
     /**
      * The role-hint for the VersionPolicy implementation used to calculate the project versions.
      *
+     *  @see <a href="./versioning-policies.html">Versioning Policies</a>
      * @since 3.0.0-M5
      */
     @Parameter(defaultValue = "default", property = "projectVersionPolicyId")

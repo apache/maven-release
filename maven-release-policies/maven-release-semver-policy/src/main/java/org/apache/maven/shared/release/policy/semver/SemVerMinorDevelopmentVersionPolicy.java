@@ -24,25 +24,26 @@ import javax.inject.Singleton;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.semver.Version;
 
 /**
  * Uses SemVer implementation to increase minor element when resolving the development version.
  *
- * @deprecated use {@link SemVerMinorDevelopmentVersionPolicy} instead.
+ * @since 3.3.0
  */
 @Singleton
-@Named("SemVerVersionPolicy")
-@Deprecated
-public class SemVerVersionPolicy extends SemVerMinorDevelopmentVersionPolicy {
-
-    private final Logger logger = LoggerFactory.getLogger(SemVerVersionPolicy.class);
+@Named("SemVerMinorDevelopment")
+public class SemVerMinorDevelopmentVersionPolicy extends AbstarctSemVerVersionPolicy {
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {
-        logger.warn("SemVerVersionPolicy is deprecated and will be removed in future releases. "
-                + "Please use SemVerMinorDevelopment instead.");
-        return super.getReleaseVersion(request);
+        Version version = createVersionFromRequest(request).toReleaseVersion();
+        return createResult(version);
+    }
+
+    @Override
+    public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws VersionParseException {
+        Version version = createVersionFromRequest(request).next(Version.Element.MINOR);
+        return createSnapshotResult(version);
     }
 }

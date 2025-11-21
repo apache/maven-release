@@ -244,7 +244,7 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      * The role-hint for the {@link org.apache.maven.shared.release.policy.version.VersionPolicy}
      * implementation used to calculate the project versions.
      *
-     * @see org.apache.maven.shared.release.policies.DefaultVersionPolicy
+     * @see <a href="./versioning-policies.html">Versioning Policies</a>
      * @since 2.5.1
      */
     @Parameter(defaultValue = "default", property = "projectVersionPolicyId")

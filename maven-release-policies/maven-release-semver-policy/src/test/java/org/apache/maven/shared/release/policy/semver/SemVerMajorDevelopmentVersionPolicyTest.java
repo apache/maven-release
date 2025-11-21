@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.shared.release.policy.oddeven;
+package org.apache.maven.shared.release.policy.semver;
 
 import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
@@ -25,19 +25,17 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-final class OddEvenVersionPolicyTestCase {
-
-    private final VersionPolicy versionPolicy = new OddEvenVersionPolicy();
+class SemVerMajorDevelopmentVersionPolicyTest {
+    private final VersionPolicy versionPolicy = new SemVerMajorDevelopmentVersionPolicy();
 
     @ParameterizedTest
     @CsvSource({
-        "1.0.0, 1.0.1-SNAPSHOT",
-        "1.0.1, 1.0.3-SNAPSHOT",
-        "1.0.2, 1.0.3-SNAPSHOT",
-        "1.1.0, 1.1.1-SNAPSHOT",
-        "1.1.1, 1.1.3-SNAPSHOT"
+        "1.0.0, 2.0.0-SNAPSHOT",
+        "1.2.3, 2.0.0-SNAPSHOT",
+        "1.0.0-alpha, 1.0.0-SNAPSHOT",
+        "1.0.0+build.1, 1.0.0-SNAPSHOT"
     })
-    void testConvertToSnapshot(String requested, String expected) throws Exception {
+    public void testConvertToSnapshot(String requested, String expected) throws Exception {
         String suggestedVersion = versionPolicy
                 .getDevelopmentVersion(newVersionPolicyRequest(requested))
                 .getVersion();
@@ -48,13 +46,11 @@ final class OddEvenVersionPolicyTestCase {
     @ParameterizedTest
     @CsvSource({
         "1.0.0-SNAPSHOT, 1.0.0",
-        "1.0.1-SNAPSHOT, 1.0.2",
-        "1.0.2-SNAPSHOT, 1.0.2",
-        "1.0.3-SNAPSHOT, 1.0.4",
-        "1.1.0-SNAPSHOT, 1.1.0",
-        "1.1.1-SNAPSHOT, 1.1.2"
+        "1.2.3-SNAPSHOT, 1.2.3",
+        "1.0.0-alpha-SNAPSHOT, 1.0.0",
+        "1.0.0+build.1-SNAPSHOT, 1.0.0"
     })
-    void testConvertToRelease(String requested, String expected) throws Exception {
+    public void testConvertToRelease(String requested, String expected) throws Exception {
         String suggestedVersion = versionPolicy
                 .getReleaseVersion(newVersionPolicyRequest(requested))
                 .getVersion();

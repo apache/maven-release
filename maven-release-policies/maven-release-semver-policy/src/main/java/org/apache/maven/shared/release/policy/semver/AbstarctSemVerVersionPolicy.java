@@ -18,31 +18,32 @@
  */
 package org.apache.maven.shared.release.policy.semver;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
-
+import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.semver.Version;
 
 /**
- * Uses SemVer implementation to increase minor element when resolving the development version.
+ * Abstract base class for SemVer-based VersionPolicy implementations.
  *
- * @deprecated use {@link SemVerMinorDevelopmentVersionPolicy} instead.
+ * @since 3.3.0
  */
-@Singleton
-@Named("SemVerVersionPolicy")
-@Deprecated
-public class SemVerVersionPolicy extends SemVerMinorDevelopmentVersionPolicy {
+abstract class AbstarctSemVerVersionPolicy implements VersionPolicy {
 
-    private final Logger logger = LoggerFactory.getLogger(SemVerVersionPolicy.class);
+    protected Version createVersionFromRequest(VersionPolicyRequest request) throws VersionParseException {
+        try {
+            return Version.parse(request.getVersion());
+        } catch (IllegalArgumentException e) {
+            throw new VersionParseException(e.getMessage());
+        }
+    }
 
-    @Override
-    public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {
-        logger.warn("SemVerVersionPolicy is deprecated and will be removed in future releases. "
-                + "Please use SemVerMinorDevelopment instead.");
-        return super.getReleaseVersion(request);
+    protected VersionPolicyResult createResult(Version version) {
+        return new VersionPolicyResult().setVersion(version.toString());
+    }
+
+    protected VersionPolicyResult createSnapshotResult(Version version) {
+        return new VersionPolicyResult().setVersion(version.toString() + "-SNAPSHOT");
     }
 }

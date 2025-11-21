@@ -27,10 +27,10 @@ Maven Release provides tooling to release a project with Maven, saving a lot of 
 
 It consists of the following modules:
 
-|Module|Description|
-|:---|:---|
-|[maven-release-api](./maven-release-api/)|APIs to implement to extend maven-release-plugin|
-|[maven-release-manager](./maven-release-manager/)|core classes|
-|[maven-release-plugin](./maven-release-plugin/)|release plugin to use from Maven|
-|[maven-release-oddeven-policy](./maven-release-policies/maven-release-oddeven-policy/)|a version policy that proposes even version numbers only for releases and odd numbers for development|
-|[maven-release-semver-policy](./maven-release-policies/maven-release-semver-policy/)|a version policy that enforces SemVer format and upgrades the minor element for the next development version|
+| Module                                                                                 | Description                                                                                           |
+|:---------------------------------------------------------------------------------------|:------------------------------------------------------------------------------------------------------|
+| [maven-release-api](./maven-release-api/)                                              | APIs to implement to extend maven-release-plugin                                                      |
+| [maven-release-manager](./maven-release-manager/)                                      | core classes                                                                                          |
+| [maven-release-plugin](./maven-release-plugin/)                                        | release plugin to use from Maven                                                                      |
+| [maven-release-oddeven-policy](./maven-release-policies/maven-release-oddeven-policy/) | a version policy that proposes even version numbers only for releases and odd numbers for development |
+| [maven-release-semver-policy](./maven-release-policies/maven-release-semver-policy/)   | version policies that enforces [Semantic Versioning](https://semver.org/) format                      |
