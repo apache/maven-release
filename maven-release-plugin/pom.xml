@@ -197,25 +197,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-plugin-report-plugin</artifactId>
-        <configuration>
-          <requirementsHistories>
-            <requirementsHistory>
-              <version>3.0.0-M5</version>
-              <maven>3.0</maven>
-              <jdk>1.8</jdk>
-            </requirementsHistory>
-            <requirementsHistory>
-              <version>3.0.0-M2</version>
-              <maven>3.0</maven>
-              <jdk>1.7</jdk>
-            </requirementsHistory>
-            <requirementsHistory>
-              <version>2.5.3</version>
-              <maven>2.2.1</maven>
-              <jdk>1.7</jdk>
-            </requirementsHistory>
-          </requirementsHistories>
-        </configuration>
       </plugin>
     </plugins>
   </reporting>
