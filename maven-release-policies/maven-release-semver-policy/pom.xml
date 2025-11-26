@@ -39,17 +39,6 @@
       <version>${project.parent.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.semver</groupId>
-      <artifactId>api</artifactId>
-      <version>0.9.33</version>
-      <exclusions>
-        <exclusion>
-          <groupId>junit</groupId>
-          <artifactId>junit</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
 
     <dependency>
       <groupId>javax.inject</groupId>

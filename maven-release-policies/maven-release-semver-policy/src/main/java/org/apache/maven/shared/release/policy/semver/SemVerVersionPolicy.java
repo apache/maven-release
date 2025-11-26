@@ -26,8 +26,6 @@ import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
 import org.eclipse.sisu.Description;
-import org.semver.Version;
-import org.semver.Version.Element;
 
 /**
  * Uses SemVer implementation to increase minor element when resolving the development version.
@@ -39,9 +37,9 @@ public class SemVerVersionPolicy implements VersionPolicy {
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {
-        Version version;
+        SemVer version;
         try {
-            version = Version.parse(request.getVersion());
+            version = SemVer.parse(request.getVersion());
         } catch (IllegalArgumentException e) {
             throw new VersionParseException(e.getMessage());
         }
@@ -53,14 +51,14 @@ public class SemVerVersionPolicy implements VersionPolicy {
 
     @Override
     public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws VersionParseException {
-        Version version;
+        SemVer version;
         try {
-            version = Version.parse(request.getVersion());
+            version = SemVer.parse(request.getVersion());
         } catch (IllegalArgumentException e) {
             throw new VersionParseException(e.getMessage());
         }
 
-        version = version.next(Element.MINOR);
+        version = version.next(SemVer.Element.MINOR);
         VersionPolicyResult result = new VersionPolicyResult();
         result.setVersion(version + "-SNAPSHOT");
         return result;
