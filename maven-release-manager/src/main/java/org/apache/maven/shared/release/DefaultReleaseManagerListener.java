@@ -21,7 +21,6 @@ package org.apache.maven.shared.release;
 import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
-import org.codehaus.plexus.util.StringUtils;
 
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
@@ -70,7 +69,7 @@ public class DefaultReleaseManagerListener implements ReleaseManagerListener {
 
     public void goalStart(String goal, List<String> phases) {
         log.info("starting " + buffer().mojo(goal) + " goal" + (dryRun ? " in dry-run mode" : "") + ", composed of "
-                + phases.size() + " phases: " + StringUtils.join(phases.iterator(), ", "));
+                + phases.size() + " phases: " + String.join(", ", phases));
         currentPhase = -1;
         this.phases = phases;
         this.goal = goal;
