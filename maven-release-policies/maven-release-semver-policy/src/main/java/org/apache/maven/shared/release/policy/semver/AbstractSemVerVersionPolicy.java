@@ -29,7 +29,7 @@ import org.semver.Version;
  *
  * @since 3.3.0
  */
-abstract class AbstarctSemVerVersionPolicy implements VersionPolicy {
+abstract class AbstractSemVerVersionPolicy implements VersionPolicy {
 
     protected Version createVersionFromRequest(VersionPolicyRequest request) throws VersionParseException {
         try {
