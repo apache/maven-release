@@ -22,7 +22,6 @@ import org.apache.maven.shared.release.policy.version.VersionPolicy;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.semver.Version;
 
 /**
  * Abstract base class for SemVer-based VersionPolicy implementations.
@@ -31,19 +30,19 @@ import org.semver.Version;
  */
 abstract class AbstarctSemVerVersionPolicy implements VersionPolicy {
 
-    protected Version createVersionFromRequest(VersionPolicyRequest request) throws VersionParseException {
+    protected SemVer createVersionFromRequest(VersionPolicyRequest request) throws VersionParseException {
         try {
-            return Version.parse(request.getVersion());
+            return SemVer.parse(request.getVersion());
         } catch (IllegalArgumentException e) {
             throw new VersionParseException(e.getMessage());
         }
     }
 
-    protected VersionPolicyResult createResult(Version version) {
+    protected VersionPolicyResult createResult(SemVer version) {
         return new VersionPolicyResult().setVersion(version.toString());
     }
 
-    protected VersionPolicyResult createSnapshotResult(Version version) {
+    protected VersionPolicyResult createSnapshotResult(SemVer version) {
         return new VersionPolicyResult().setVersion(version.toString() + "-SNAPSHOT");
     }
 }

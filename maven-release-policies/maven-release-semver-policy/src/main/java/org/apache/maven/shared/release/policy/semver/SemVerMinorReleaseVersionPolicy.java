@@ -24,7 +24,6 @@ import javax.inject.Singleton;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.semver.Version;
 
 /**
  * Uses SemVer implementation to increase minor element when resolving the release version.
@@ -37,13 +36,13 @@ public class SemVerMinorReleaseVersionPolicy extends AbstarctSemVerVersionPolicy
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {
-        Version version = createVersionFromRequest(request).toReleaseVersion().next(Version.Element.MINOR);
+        SemVer version = createVersionFromRequest(request).toReleaseVersion().next(SemVer.Element.MINOR);
         return createResult(version);
     }
 
     @Override
     public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws VersionParseException {
-        Version version = createVersionFromRequest(request).next(Version.Element.PATCH);
+        SemVer version = createVersionFromRequest(request).next(SemVer.Element.PATCH);
         return createSnapshotResult(version);
     }
 }

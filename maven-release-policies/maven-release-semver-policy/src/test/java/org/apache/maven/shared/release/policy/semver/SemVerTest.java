@@ -136,15 +136,6 @@ public class SemVerTest {
     }
 
     @Test
-    public void testToSnapshotVersionPreservesMetadata() {
-        SemVer version = SemVer.parse("1.2.3+build.456");
-        SemVer snapshotVersion = version.toSnapshotVersion();
-        assertEquals("1.2.3-SNAPSHOT+build.456", snapshotVersion.toString());
-        assertEquals("SNAPSHOT", snapshotVersion.getPreRelease());
-        assertEquals("build.456", snapshotVersion.getMetadata());
-    }
-
-    @Test
     public void testToSnapshotVersionAlreadySnapshot() {
         SemVer version = SemVer.parse("1.2.3-SNAPSHOT");
         SemVer snapshotVersion = version.toSnapshotVersion();
@@ -186,7 +177,7 @@ public class SemVerTest {
     public void testNextClearsPreReleaseAndMetadata() {
         SemVer version = SemVer.parse("1.2.3-beta+build");
         SemVer next = version.next(SemVer.Element.MINOR);
-        assertEquals("1.3.0", next.toString());
+        assertEquals("1.2.3", next.toString());
         assertNull(next.getPreRelease());
         assertNull(next.getMetadata());
     }

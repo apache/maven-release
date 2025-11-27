@@ -123,31 +123,38 @@ public class SemVer {
     /**
      * Returns a new SemVer with -SNAPSHOT appended as pre-release identifier.
      * If the version already has a pre-release identifier, it will be replaced with SNAPSHOT.
-     * Metadata is preserved.
+     * Metadata is removed.
      * <p>
      * Examples:
      * <ul>
      *   <li>1.2.3 → 1.2.3-SNAPSHOT</li>
      *   <li>1.2.3-beta → 1.2.3-SNAPSHOT</li>
-     *   <li>1.2.3+build → 1.2.3-SNAPSHOT+build</li>
+     *   <li>1.2.3+build → 1.2.3-SNAPSHOT</li>
      *   <li>1.2.3-SNAPSHOT → 1.2.3-SNAPSHOT (no change)</li>
      * </ul>
      *
      * @return a new SemVer with SNAPSHOT pre-release identifier
      */
     public SemVer toSnapshotVersion() {
-        return new SemVer(major, minor, patch, "SNAPSHOT", metadata);
+        return new SemVer(major, minor, patch, "SNAPSHOT", null);
     }
 
     /**
      * Returns a new SemVer with the specified element incremented.
-     * When incrementing, all lower elements are reset to 0, and pre-release and metadata are cleared.
+     * If the version has pre-release or metadata, returns the release version without incrementing.
+     * Otherwise, increments the specified element and all lower elements are reset to 0.
+     * Pre-release and metadata are always cleared in the result.
      *
      * @param element the element to increment (MAJOR, MINOR, or PATCH)
-     * @return a new SemVer with the specified element incremented
+     * @return a new SemVer with the specified element incremented (or release version if pre-release/metadata present)
      */
     public SemVer next(Element element) {
         Objects.requireNonNull(element, "Element cannot be null");
+
+        // If version has pre-release or metadata, just return release version without incrementing
+        if (hasPreRelease() || hasMetadata()) {
+            return toReleaseVersion();
+        }
 
         switch (element) {
             case MAJOR:
@@ -159,6 +166,24 @@ public class SemVer {
             default:
                 throw new IllegalArgumentException("Unknown element: " + element);
         }
+    }
+
+    /**
+     * Checks if this version has a pre-release identifier.
+     *
+     * @return true if pre-release identifier is present, false otherwise
+     */
+    public boolean hasPreRelease() {
+        return preRelease != null && !preRelease.isEmpty();
+    }
+
+    /**
+     * Checks if this version has build metadata.
+     *
+     * @return true if build metadata is present, false otherwise
+     */
+    public boolean hasMetadata() {
+        return metadata != null && !metadata.isEmpty();
     }
 
     /**
