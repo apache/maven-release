@@ -23,14 +23,14 @@
   <parent>
     <groupId>org.apache.maven.release</groupId>
     <artifactId>maven-release</artifactId>
-    <version>3.2.1-SNAPSHOT</version>
+    <version>3.3.1-SNAPSHOT</version>
     <relativePath>../../pom.xml</relativePath>
   </parent>
 
   <artifactId>maven-release-semver-policy</artifactId>
 
   <name>Maven Release SemVer Policy</name>
-  <description>A version policy that enforce SemVer format and upgrades minor element for next development version.</description>
+  <description>Version policies that enforce SemVer format</description>
 
   <dependencies>
     <dependency>
@@ -39,21 +39,50 @@
       <version>${project.parent.version}</version>
       <scope>provided</scope>
     </dependency>
+    <dependency>
+      <groupId>org.semver</groupId>
+      <artifactId>api</artifactId>
+      <version>0.9.33</version>
+      <exclusions>
+        <!-- only one class Version from semver api is used, avoid bringing in unnecessary dependencies -->
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.ow2.asm</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>de.tototec</groupId>
+          <artifactId>de.tototec.cmdoption</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.google.code.findbugs</groupId>
+          <artifactId>jsr305</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
 
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.sisu</groupId>
-      <artifactId>org.eclipse.sisu.inject</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter-api</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>

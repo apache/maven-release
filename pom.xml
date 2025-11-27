@@ -29,7 +29,7 @@
 
   <groupId>org.apache.maven.release</groupId>
   <artifactId>maven-release</artifactId>
-  <version>3.2.1-SNAPSHOT</version>
+  <version>3.3.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Maven Release</name>
@@ -99,7 +99,7 @@
     <version.maven-invoker-plugin>3.9.1</version.maven-invoker-plugin>
 
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
-    <project.build.outputTimestamp>2025-11-04T17:13:33Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-11-26T22:51:18Z</project.build.outputTimestamp>
 
     <mavenCompilerPluginVersion>${version.maven-compiler-plugin}</mavenCompilerPluginVersion>
     <mavenInvokerPluginVersion>${version.maven-invoker-plugin}</mavenInvokerPluginVersion>

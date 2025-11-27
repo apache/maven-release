@@ -31,7 +31,7 @@ public interface ReleaseDescriptor {
     /**
      * Get if updateDependencies is false, dependencies version won't be updated to the next development version.
      *
-     * @return boolean
+     * @return {@code true} if dependencies should be updated to the next development version, {@code false} otherwise
      */
     boolean isUpdateDependencies();
 
@@ -39,56 +39,56 @@ public interface ReleaseDescriptor {
      * Get whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
      * If set to true, this will set the property "performRelease" to true.
      *
-     * @return boolean
+     * @return {@code true} if the release profile should be used, {@code false} otherwise
      */
     boolean isUseReleaseProfile();
 
     /**
      * Get whether to use the parent pom version for submodule versions.
      *
-     * @return boolean
+     * @return {@code true} if parent pom version should be used for submodules, {@code false} otherwise
      */
     boolean isAutoVersionSubmodules();
 
     /**
      * Get whether a SNAPSHOT of the release plugin is allowed.
      *
-     * @return boolean
+     * @return {@code true} if SNAPSHOT release plugin is allowed, {@code false} otherwise
      */
     boolean isSnapshotReleasePluginAllowed();
 
     /**
      * Get the commits must be done by modules or not. Set it to true in case of flat directory structure.
      *
-     * @return boolean
+     * @return {@code true} if commits should be done by project, {@code false} otherwise
      */
     boolean isCommitByProject();
 
     /**
      * Get whether to create a branch instead of do a release.
      *
-     * @return boolean
+     * @return {@code true} if a branch should be created instead of a release, {@code false} otherwise
      */
     boolean isBranchCreation();
 
     /**
      * Get whether to update branch POM versions.
      *
-     * @return boolean
+     * @return {@code true} if branch POM versions should be updated, {@code false} otherwise
      */
     boolean isUpdateBranchVersions();
 
     /**
      * Get whether to update working copy POM versions.
      *
-     * @return boolean
+     * @return {@code true} if working copy POM versions should be updated, {@code false} otherwise
      */
     boolean isUpdateWorkingCopyVersions();
 
     /**
      * Get whether to suppress a commit of changes to the working copy before a tag or branch is created.
      *
-     * @return boolean
+     * @return {@code true} if commit should be suppressed before tag or branch creation, {@code false} otherwise
      */
     boolean isSuppressCommitBeforeTagOrBranch();
 
@@ -103,7 +103,7 @@ public interface ReleaseDescriptor {
     /**
      * Get whether to update branch versions to SNAPSHOT.
      *
-     * @return boolean
+     * @return {@code true} if branch versions should be updated to SNAPSHOT, {@code false} otherwise
      */
     boolean isUpdateVersionsToSnapshot();
 
@@ -154,35 +154,35 @@ public interface ReleaseDescriptor {
     /**
      * Get default version to use for new working copy.
      *
-     * @return string
+     * @return the default development version
      */
     String getDefaultDevelopmentVersion();
 
     /**
      * Get relative path of the project returned by the checkout command.
      *
-     * @return string
+     * @return the relative path of the project directory
      */
     String getScmRelativePathProjectDirectory();
 
     /**
      * Get the directory where the tag will be checked out.
      *
-     * @return string
+     * @return the checkout directory path
      */
     String getCheckoutDirectory();
 
     /**
      * Get the goals to execute in perform phase for the release.
      *
-     * @return string
+     * @return the perform goals
      */
     String getPerformGoals();
 
     /**
      * Get default version to use for the tagged release or the new branch.
      *
-     * @return string
+     * @return the default release version
      */
     String getDefaultReleaseVersion();
 
@@ -205,7 +205,7 @@ public interface ReleaseDescriptor {
     /**
      * Get whether to generate release POMs.
      *
-     * @return boolean
+     * @return {@code true} if release POMs should be generated, {@code false} otherwise
      */
     boolean isGenerateReleasePoms();
 
@@ -235,49 +235,49 @@ public interface ReleaseDescriptor {
     /**
      * Get the last completed phase.
      *
-     * @return string
+     * @return the name of the last completed phase
      */
     String getCompletedPhase();
 
     /**
      * Method getCheckModificationExcludes.
      *
-     * @return list
+     * @return list of file patterns to exclude from modification checks
      */
     List<String> getCheckModificationExcludes();
 
     /**
      * Get additional arguments to pass to any executed Maven process.
      *
-     * @return string
+     * @return the additional Maven arguments
      */
     String getAdditionalArguments();
 
     /**
      * Get the goals to execute in preparation for the release.
      *
-     * @return string
+     * @return the preparation goals
      */
     String getPreparationGoals();
 
     /**
      * Get the goals to execute in on completion of preparation for the release.
      *
-     * @return string
+     * @return the completion goals
      */
     String getCompletionGoals();
 
     /**
      * Get the file name of the POM to pass to any executed Maven process.
      *
-     * @return string
+     * @return the POM file name
      */
     String getPomFileName();
 
     /**
      * Get the prefix of SCM modification messages.
      *
-     * @return string
+     * @return the SCM comment prefix
      */
     String getScmCommentPrefix();
 
@@ -293,7 +293,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the SCM commit comment when setting pom.xml to release.
      *
-     * @return string
+     * @return the SCM release commit comment
      * @since 3.0.0-M1
      */
     String getScmReleaseCommitComment();
@@ -301,7 +301,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the SCM commit comment when setting pom.xml back to development.
      *
-     * @return string
+     * @return the SCM development commit comment
      * @since 3.0.0-M1
      */
     String getScmDevelopmentCommitComment();
@@ -309,7 +309,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the SCM commit comment when branching.
      *
-     * @return string
+     * @return the SCM branch commit comment
      * @since 3.0.0-M1
      */
     String getScmBranchCommitComment();
@@ -317,7 +317,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the SCM commit comment when rolling back.
      *
-     * @return string
+     * @return the SCM rollback commit comment
      * @since 3.0.0-M1
      */
     String getScmRollbackCommitComment();
@@ -325,35 +325,35 @@ public interface ReleaseDescriptor {
     /**
      * Get pass phrase for the private key.
      *
-     * @return string
+     * @return the private key passphrase
      */
     String getScmPrivateKeyPassPhrase();
 
     /**
      * Get the password for the user interacting with the scm.
      *
-     * @return string
+     * @return the SCM password
      */
     String getScmPassword();
 
     /**
      * Get private key for an SSH based SCM repository.
      *
-     * @return string
+     * @return the private key path or content
      */
     String getScmPrivateKey();
 
     /**
      * Get tag or branch name: the identifier for the tag/branch. Example: maven-release-plugin-2.0.
      *
-     * @return string
+     * @return the SCM release label (tag or branch name)
      */
     String getScmReleaseLabel();
 
     /**
      * Get where you are going to put your tagged sources Example https://svn.apache.org/repos/asf/maven/plugins/tags.
      *
-     * @return string
+     * @return the SCM tag base URL
      */
     String getScmTagBase();
 
@@ -385,21 +385,21 @@ public interface ReleaseDescriptor {
     /**
      * Get the user name to interact with the scm.
      *
-     * @return string
+     * @return the SCM username
      */
     String getScmUsername();
 
     /**
      * Get wait the specified number of seconds before creating a tag.
      *
-     * @return int
+     * @return the number of seconds to wait before tagging
      */
     int getWaitBeforeTagging();
 
     /**
      * Get the directory where the release is performed.
      *
-     * @return string
+     * @return the working directory path
      */
     String getWorkingDirectory();
 
@@ -414,14 +414,14 @@ public interface ReleaseDescriptor {
     /**
      * Get the role-hint for the NamingPolicy implementation used to calculate the project branch and tag names.
      *
-     * @return string
+     * @return the project naming policy ID
      */
     String getProjectNamingPolicyId();
 
     /**
      * Get the role-hint for the VersionPolicy implementation used to calculate the project versions.
      *
-     * @return string
+     * @return the project version policy ID
      */
     String getProjectVersionPolicyId();
 
@@ -435,7 +435,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the role-hint for the release Strategy implementation.
      *
-     * @return string
+     * @return the release strategy ID
      */
     String getReleaseStrategyId();
 
@@ -467,7 +467,7 @@ public interface ReleaseDescriptor {
      * <p>getProjectOriginalVersion.</p>
      *
      * @param projectKey a {@link java.lang.String} object
-     * @return a {@link java.lang.String} object
+     * @return the original version of the project
      */
     String getProjectOriginalVersion(String projectKey);
 
@@ -475,7 +475,7 @@ public interface ReleaseDescriptor {
      * <p>getProjectDevelopmentVersion.</p>
      *
      * @param projectKey a {@link java.lang.String} object
-     * @return a {@link java.lang.String} object
+     * @return the development version of the project
      */
     String getProjectDevelopmentVersion(String projectKey);
 
@@ -483,7 +483,7 @@ public interface ReleaseDescriptor {
      * <p>getProjectReleaseVersion.</p>
      *
      * @param key a {@link java.lang.String} object
-     * @return a {@link java.lang.String} object
+     * @return the release version of the project
      */
     String getProjectReleaseVersion(String key);
 
@@ -592,7 +592,7 @@ public interface ReleaseDescriptor {
     /**
      * Get the line separator to use in the pom.xml.
      *
-     * @return string
+     * @return the line separator character(s)
      */
     String getLineSeparator();
 
@@ -600,7 +600,7 @@ public interface ReleaseDescriptor {
      * Determines whether the {@code --pin-externals} option in {@code svn copy} command is enabled
      * which is new in Subversion 1.9.
      *
-     * @return boolean
+     * @return {@code true} if externals should be pinned, {@code false} otherwise
      */
     boolean isPinExternals();
 }
