@@ -29,6 +29,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Uses SemVer implementation to increase minor element when resolving the development version.
+ *
+ * @deprecated use {@link SemVerMinorDevelopmentVersionPolicy} instead.
  */
 @Singleton
 @Named("SemVerVersionPolicy")
