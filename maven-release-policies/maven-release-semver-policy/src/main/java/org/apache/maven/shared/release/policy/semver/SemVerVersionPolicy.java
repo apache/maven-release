@@ -24,9 +24,9 @@ import javax.inject.Singleton;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 /**
  * Uses SemVer implementation to increase minor element when resolving the development version.
  */
