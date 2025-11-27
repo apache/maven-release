@@ -424,7 +424,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
 
     private void rewriteBuildOutputTimestampProperty(Properties properties, ReleaseResult result) {
         String buildOutputTimestamp = properties.getProperty("project.build.outputTimestamp");
-        if (buildOutputTimestamp == null || (buildOutputTimestamp == null || buildOutputTimestamp.isEmpty())) {
+        if (buildOutputTimestamp == null || buildOutputTimestamp.isEmpty()) {
             // no Reproducible Builds output timestamp defined
             return;
         }

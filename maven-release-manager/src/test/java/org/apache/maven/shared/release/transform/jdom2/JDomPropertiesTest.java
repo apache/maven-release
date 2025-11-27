@@ -90,7 +90,7 @@ class JDomPropertiesTest {
     @Test
     void testStoreToXMLEncoded() {
         assertThrows(UnsupportedOperationException.class, () -> new JDomProperties(null)
-                .storeToXML((OutputStream) null, null, (String) null));
+                .storeToXML(null, null, (String) null));
     }
 
     @Test
