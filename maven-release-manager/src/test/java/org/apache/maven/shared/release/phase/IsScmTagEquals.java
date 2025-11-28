@@ -34,9 +34,7 @@ public class IsScmTagEquals implements ArgumentMatcher<ScmTag> {
     }
 
     @Override
-    public boolean matches(ScmTag argument) {
-        ScmTag tag = (ScmTag) argument;
-
+    public boolean matches(ScmTag tag) {
         return tag.getName().equals(this.tag.getName());
     }
 }
