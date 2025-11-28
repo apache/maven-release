@@ -250,7 +250,7 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -269,7 +269,7 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -287,7 +287,7 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -312,7 +312,7 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -347,7 +347,7 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -395,7 +395,7 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -409,7 +409,7 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -427,7 +427,7 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -442,6 +442,6 @@ class RewritePomsForDevelopmentPhaseTest extends AbstractEditModeRewritingReleas
         builder.addDevelopmentVersion("groupId:subproject1", NEXT_VERSION);
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 }

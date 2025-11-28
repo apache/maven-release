@@ -43,7 +43,6 @@ import org.codehaus.plexus.testing.PlexusTest;
 import org.junit.jupiter.api.Test;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -139,7 +138,7 @@ class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseTestCase
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     /*

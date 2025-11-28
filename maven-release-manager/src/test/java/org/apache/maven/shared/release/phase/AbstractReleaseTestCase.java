@@ -243,16 +243,13 @@ public abstract class AbstractReleaseTestCase implements PlexusTestConfiguration
         return map;
     }
 
-    protected boolean comparePomFiles(List<MavenProject> reactorProjects) throws IOException {
-        return comparePomFiles(reactorProjects, true);
+    protected void comparePomFiles(List<MavenProject> reactorProjects) throws IOException {
+        comparePomFiles(reactorProjects, true);
     }
 
-    protected boolean comparePomFiles(List<MavenProject> reactorProjects, boolean normalizeLineEndings)
+    protected void comparePomFiles(List<MavenProject> reactorProjects, boolean normalizeLineEndings)
             throws IOException {
         comparePomFiles(reactorProjects, "", normalizeLineEndings);
-
-        // TODO: return void since this is redundant
-        return true;
     }
 
     protected void comparePomFiles(List<MavenProject> reactorProjects, String expectedFileSuffix) throws IOException {
@@ -277,10 +274,6 @@ public abstract class AbstractReleaseTestCase implements PlexusTestConfiguration
         File expectedFile = new File(actualFile.getParentFile(), "expected-pom" + expectedFileSuffix + ".xml");
 
         comparePomFiles(expectedFile, actualFile, normalizeLineEndings, false);
-    }
-
-    protected void comparePomFiles(File expectedFile, File actualFile) throws IOException {
-        comparePomFiles(expectedFile, actualFile, true, false);
     }
 
     protected void comparePomFiles(
