@@ -33,7 +33,6 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseManager;
 import org.apache.maven.shared.release.ReleasePerformRequest;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * Perform a release from SCM, either from a specified tag, or the tag representing the previous release in
@@ -122,7 +121,7 @@ public class PerformReleaseMojo extends AbstractScmReadReleaseMojo {
         // goals may be split into multiple lines in configuration.
         // Let's build a single line command
         if (goals != null) {
-            goals = StringUtils.join(goals.split("\\s+"), " ");
+            goals = String.join(" ", goals.split("\\s+"));
         }
 
         try {
