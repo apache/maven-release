@@ -20,6 +20,8 @@ package org.apache.maven.shared.release.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
@@ -165,25 +167,24 @@ public class PomFinder {
 
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
-        Model model;
-        try (XmlStreamReader xmlReader = ReaderFactory.newXmlReader(pomFile)) {
-            model = reader.read(xmlReader);
-        }
+        try (InputStream in = Files.newInputStream(pomFile.toPath())) {
+          Model model = reader.read(in);
 
-        if (model != null) {
+          if (model != null) {
             pomInfo = new PomInfo();
             pomInfo.setArtifactId(model.getArtifactId());
             pomInfo.setGroupId(model.getGroupId());
 
             Parent parent = model.getParent();
             if (parent != null) {
-                pomInfo.setParentArtifactId(parent.getArtifactId());
-                pomInfo.setParentGroupId(parent.getGroupId());
+              pomInfo.setParentArtifactId(parent.getArtifactId());
+              pomInfo.setParentGroupId(parent.getGroupId());
             }
 
             pomInfo.setFileName(pomFile.getName());
+          }
+          return pomInfo;
         }
-        return pomInfo;
     }
 
     /**
