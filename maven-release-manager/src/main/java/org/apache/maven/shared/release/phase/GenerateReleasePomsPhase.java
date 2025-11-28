@@ -174,7 +174,7 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
             throw new ReleaseExecutionException("Cannot generate release POM : pom file is null");
         }
 
-        try (Writer fileWriter =  new XmlStreamWriter(releasePomFile)) {
+        try (Writer fileWriter = new XmlStreamWriter(releasePomFile)) {
             pomWriter.write(fileWriter, releasePom);
         } catch (IOException exception) {
             throw new ReleaseExecutionException("Cannot generate release POM", exception);

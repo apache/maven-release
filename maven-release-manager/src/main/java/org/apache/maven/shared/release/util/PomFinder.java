@@ -26,8 +26,6 @@ import java.nio.file.Files;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.Parent;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
-import org.codehaus.plexus.util.ReaderFactory;
-import org.codehaus.plexus.util.xml.XmlStreamReader;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.slf4j.Logger;
 
@@ -168,22 +166,22 @@ public class PomFinder {
         MavenXpp3Reader reader = new MavenXpp3Reader();
 
         try (InputStream in = Files.newInputStream(pomFile.toPath())) {
-          Model model = reader.read(in);
+            Model model = reader.read(in);
 
-          if (model != null) {
-            pomInfo = new PomInfo();
-            pomInfo.setArtifactId(model.getArtifactId());
-            pomInfo.setGroupId(model.getGroupId());
+            if (model != null) {
+                pomInfo = new PomInfo();
+                pomInfo.setArtifactId(model.getArtifactId());
+                pomInfo.setGroupId(model.getGroupId());
 
-            Parent parent = model.getParent();
-            if (parent != null) {
-              pomInfo.setParentArtifactId(parent.getArtifactId());
-              pomInfo.setParentGroupId(parent.getGroupId());
+                Parent parent = model.getParent();
+                if (parent != null) {
+                    pomInfo.setParentArtifactId(parent.getArtifactId());
+                    pomInfo.setParentGroupId(parent.getGroupId());
+                }
+
+                pomInfo.setFileName(pomFile.getName());
             }
-
-            pomInfo.setFileName(pomFile.getName());
-          }
-          return pomInfo;
+            return pomInfo;
         }
     }
 
