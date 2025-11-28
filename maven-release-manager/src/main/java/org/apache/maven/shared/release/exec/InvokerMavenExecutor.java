@@ -113,7 +113,7 @@ public class InvokerMavenExecutor extends AbstractMavenExecutor {
                 targetGoals.add(additionalArguments);
             }
 
-            req.setGoals(targetGoals);
+            req.addArgs(targetGoals);
 
             try {
                 InvocationResult invocationResult = invoker.execute(req);
