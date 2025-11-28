@@ -65,7 +65,7 @@ import org.apache.maven.shared.release.scm.ReleaseScmCommandException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.XmlStreamWriter;
 
 import static java.util.Objects.requireNonNull;
 
@@ -174,7 +174,7 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
             throw new ReleaseExecutionException("Cannot generate release POM : pom file is null");
         }
 
-        try (Writer fileWriter = WriterFactory.newXmlWriter(releasePomFile)) {
+        try (Writer fileWriter =  new XmlStreamWriter(releasePomFile)) {
             pomWriter.write(fileWriter, releasePom);
         } catch (IOException exception) {
             throw new ReleaseExecutionException("Cannot generate release POM", exception);
