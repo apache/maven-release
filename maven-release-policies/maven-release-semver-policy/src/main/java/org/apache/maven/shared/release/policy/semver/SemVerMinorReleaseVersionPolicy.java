@@ -32,7 +32,7 @@ import org.apache.maven.shared.release.versions.VersionParseException;
  */
 @Singleton
 @Named("SemVerMinorRelease")
-public class SemVerMinorReleaseVersionPolicy extends AbstarctSemVerVersionPolicy {
+public class SemVerMinorReleaseVersionPolicy extends AbstractSemVerVersionPolicy {
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {

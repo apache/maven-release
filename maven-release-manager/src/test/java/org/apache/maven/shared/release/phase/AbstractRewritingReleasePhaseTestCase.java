@@ -618,7 +618,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
     @Test
     public void testCleanNoProjects() {
         // This occurs when it is release:perform run standalone. Just check there are no errors.
-        ((ResourceGenerator) getTestedPhase()).clean(Collections.<MavenProject>emptyList());
+        ((ResourceGenerator) getTestedPhase()).clean(Collections.emptyList());
     }
 
     protected ReleaseDescriptorBuilder createUnmappedConfiguration(

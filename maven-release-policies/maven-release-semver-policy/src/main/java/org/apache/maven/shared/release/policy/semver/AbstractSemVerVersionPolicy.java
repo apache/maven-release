@@ -28,7 +28,7 @@ import org.apache.maven.shared.release.versions.VersionParseException;
  *
  * @since 3.3.0
  */
-abstract class AbstarctSemVerVersionPolicy implements VersionPolicy {
+abstract class AbstractSemVerVersionPolicy implements VersionPolicy {
 
     protected SemVer createVersionFromRequest(VersionPolicyRequest request) throws VersionParseException {
         try {

@@ -125,10 +125,10 @@ public class JDomModelETL implements ModelETL {
                  */
                 // CHECKSTYLE_OFF: LocalFinalVariableName
                 final String SPACE = "\\s++";
-                final String XML = "<\\?(?:(?:[^\"'>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+>";
-                final String INTSUB = "\\[(?:(?:[^\"'\\]]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+\\]";
+                final String XML = "<\\?(?:(?:[^\"'>]++)|(?:\"[^\"]*+\")|(?:'[^']*+'))*+>";
+                final String INTSUB = "\\[(?:(?:[^\"'\\]]++)|(?:\"[^\"]*+\")|(?:'[^']*+'))*+\\]";
                 final String DOCTYPE =
-                        "<!DOCTYPE(?:(?:[^\"'\\[>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+')|(?:" + INTSUB + "))*+>";
+                        "<!DOCTYPE(?:(?:[^\"'\\[>]++)|(?:\"[^\"]*+\")|(?:'[^']*+')|(?:" + INTSUB + "))*+>";
                 final String PI = XML;
                 final String COMMENT = "<!--(?:[^-]|(?:-[^-]))*+-->";
 
