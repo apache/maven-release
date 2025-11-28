@@ -33,7 +33,7 @@ import org.semver.Version;
  */
 @Singleton
 @Named("SemVerMajorRelease")
-public class SemVerMajorReleaseVersionPolicy extends AbstractSemVerVersionPolicy {
+class SemVerMajorReleaseVersionPolicy extends AbstractSemVerVersionPolicy {
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {
