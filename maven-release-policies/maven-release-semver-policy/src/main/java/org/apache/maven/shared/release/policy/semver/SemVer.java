@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
  *
  * @see <a href="https://semver.org/">Semantic Versioning 2.0.0</a>
  */
-public class SemVer {
+class SemVer {
 
     /**
      * Regex pattern for parsing semantic versions from semver.org.
@@ -67,7 +67,7 @@ public class SemVer {
      * @param preRelease the pre-release identifier (can be null)
      * @param metadata the build metadata (can be null)
      */
-    public SemVer(int major, int minor, int patch, String preRelease, String metadata) {
+    protected SemVer(int major, int minor, int patch, String preRelease, String metadata) {
         if (major < 0 || minor < 0 || patch < 0) {
             throw new IllegalArgumentException("Version numbers must be non-negative");
         }
@@ -85,7 +85,7 @@ public class SemVer {
      * @return the parsed SemVer object
      * @throws IllegalArgumentException if the version string is invalid
      */
-    public static SemVer parse(String version) {
+    static SemVer parse(String version) {
         if (version == null || version.trim().isEmpty()) {
             throw new IllegalArgumentException("Version string cannot be null or empty");
         }
@@ -116,7 +116,7 @@ public class SemVer {
      *
      * @return a new SemVer representing the release version
      */
-    public SemVer toReleaseVersion() {
+    SemVer toReleaseVersion() {
         return new SemVer(major, minor, patch, null, null);
     }
 
@@ -133,9 +133,12 @@ public class SemVer {
      *   <li>1.2.3-SNAPSHOT → 1.2.3-SNAPSHOT (no change)</li>
      * </ul>
      *
-     * @return a new SemVer with SNAPSHOT pre-release identifier
+     * @return a new SemVer with SNAPSHOT pre-release identifier, or this instance if already a SNAPSHOT version
      */
-    public SemVer toSnapshotVersion() {
+    SemVer toSnapshotVersion() {
+        if ("SNAPSHOT".equals(preRelease) && metadata == null) {
+            return this;
+        }
         return new SemVer(major, minor, patch, "SNAPSHOT", null);
     }
 
@@ -148,7 +151,7 @@ public class SemVer {
      * @param element the element to increment (MAJOR, MINOR, or PATCH)
      * @return a new SemVer with the specified element incremented (or release version if pre-release/metadata present)
      */
-    public SemVer next(Element element) {
+    SemVer next(Element element) {
         Objects.requireNonNull(element, "Element cannot be null");
 
         // If version has pre-release or metadata, just return release version without incrementing
@@ -173,7 +176,7 @@ public class SemVer {
      *
      * @return true if pre-release identifier is present, false otherwise
      */
-    public boolean hasPreRelease() {
+    private boolean hasPreRelease() {
         return preRelease != null && !preRelease.isEmpty();
     }
 
@@ -182,7 +185,7 @@ public class SemVer {
      *
      * @return true if build metadata is present, false otherwise
      */
-    public boolean hasMetadata() {
+    private boolean hasMetadata() {
         return metadata != null && !metadata.isEmpty();
     }
 
@@ -191,7 +194,7 @@ public class SemVer {
      *
      * @return the major version
      */
-    public int getMajor() {
+    int getMajor() {
         return major;
     }
 
@@ -200,7 +203,7 @@ public class SemVer {
      *
      * @return the minor version
      */
-    public int getMinor() {
+    int getMinor() {
         return minor;
     }
 
@@ -209,7 +212,7 @@ public class SemVer {
      *
      * @return the patch version
      */
-    public int getPatch() {
+    int getPatch() {
         return patch;
     }
 
@@ -218,7 +221,7 @@ public class SemVer {
      *
      * @return the pre-release identifier, or null if not present
      */
-    public String getPreRelease() {
+    String getPreRelease() {
         return preRelease;
     }
 
@@ -227,7 +230,7 @@ public class SemVer {
      *
      * @return the build metadata, or null if not present
      */
-    public String getMetadata() {
+    String getMetadata() {
         return metadata;
     }
 
@@ -245,26 +248,5 @@ public class SemVer {
         }
 
         return sb.toString();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        SemVer semVer = (SemVer) o;
-        return major == semVer.major
-                && minor == semVer.minor
-                && patch == semVer.patch
-                && Objects.equals(preRelease, semVer.preRelease)
-                && Objects.equals(metadata, semVer.metadata);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(major, minor, patch, preRelease, metadata);
     }
 }

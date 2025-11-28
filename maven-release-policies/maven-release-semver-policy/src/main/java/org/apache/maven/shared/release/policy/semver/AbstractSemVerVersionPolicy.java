@@ -43,6 +43,6 @@ abstract class AbstractSemVerVersionPolicy implements VersionPolicy {
     }
 
     protected VersionPolicyResult createSnapshotResult(SemVer version) {
-        return new VersionPolicyResult().setVersion(version.toString() + "-SNAPSHOT");
+        return new VersionPolicyResult().setVersion(version.toSnapshotVersion().toString());
     }
 }

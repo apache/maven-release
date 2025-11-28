@@ -19,162 +19,88 @@
 package org.apache.maven.shared.release.policy.semver;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Unit tests for the SemVer class.
  */
-public class SemVerTest {
+class SemVerTest {
 
-    @Test
-    public void testParseSimpleVersion() {
-        SemVer version = SemVer.parse("1.2.3");
-        assertEquals(1, version.getMajor());
-        assertEquals(2, version.getMinor());
-        assertEquals(3, version.getPatch());
-        assertNull(version.getPreRelease());
-        assertNull(version.getMetadata());
-        assertEquals("1.2.3", version.toString());
+    @ParameterizedTest
+    @CsvSource({
+        "'1.2.3', 1, 2, 3, , , '1.2.3'",
+        "'1.2.3-alpha.1', 1, 2, 3, 'alpha.1', , '1.2.3-alpha.1'",
+        "'1.2.3+build.123', 1, 2, 3, , 'build.123', '1.2.3+build.123'",
+        "'1.2.3-beta.2+build.456', 1, 2, 3, 'beta.2', 'build.456', '1.2.3-beta.2+build.456'",
+        "'1.0.0-SNAPSHOT', 1, 0, 0, 'SNAPSHOT', , '1.0.0-SNAPSHOT'",
+        "'  1.2.3  ', 1, 2, 3, , , '1.2.3'",
+        "'0.0.0', 0, 0, 0, , , '0.0.0'",
+        "'123.456.789', 123, 456, 789, , , '123.456.789'"
+    })
+    void testParseVersion(
+            String version,
+            int expectedMajor,
+            int expectedMinor,
+            int expectedPatch,
+            String expectedPreRelease,
+            String expectedMetadata,
+            String expectedToString) {
+        SemVer semVer = SemVer.parse(version);
+        assertEquals(expectedMajor, semVer.getMajor());
+        assertEquals(expectedMinor, semVer.getMinor());
+        assertEquals(expectedPatch, semVer.getPatch());
+        assertEquals(expectedPreRelease, semVer.getPreRelease());
+        assertEquals(expectedMetadata, semVer.getMetadata());
+        assertEquals(expectedToString, semVer.toString());
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"invalid", "1.2", "1.2.3.4", ""})
+    void testParseInvalidVersionThrowsException(String invalidVersion) {
+        assertThrows(IllegalArgumentException.class, () -> SemVer.parse(invalidVersion));
     }
 
     @Test
-    public void testParseVersionWithPreRelease() {
-        SemVer version = SemVer.parse("1.2.3-alpha.1");
-        assertEquals(1, version.getMajor());
-        assertEquals(2, version.getMinor());
-        assertEquals(3, version.getPatch());
-        assertEquals("alpha.1", version.getPreRelease());
-        assertNull(version.getMetadata());
-        assertEquals("1.2.3-alpha.1", version.toString());
-    }
-
-    @Test
-    public void testParseVersionWithMetadata() {
-        SemVer version = SemVer.parse("1.2.3+build.123");
-        assertEquals(1, version.getMajor());
-        assertEquals(2, version.getMinor());
-        assertEquals(3, version.getPatch());
-        assertNull(version.getPreRelease());
-        assertEquals("build.123", version.getMetadata());
-        assertEquals("1.2.3+build.123", version.toString());
-    }
-
-    @Test
-    public void testParseVersionWithPreReleaseAndMetadata() {
-        SemVer version = SemVer.parse("1.2.3-beta.2+build.456");
-        assertEquals(1, version.getMajor());
-        assertEquals(2, version.getMinor());
-        assertEquals(3, version.getPatch());
-        assertEquals("beta.2", version.getPreRelease());
-        assertEquals("build.456", version.getMetadata());
-        assertEquals("1.2.3-beta.2+build.456", version.toString());
-    }
-
-    @Test
-    public void testParseSnapshot() {
-        SemVer version = SemVer.parse("1.0.0-SNAPSHOT");
-        assertEquals(1, version.getMajor());
-        assertEquals(0, version.getMinor());
-        assertEquals(0, version.getPatch());
-        assertEquals("SNAPSHOT", version.getPreRelease());
-        assertEquals("1.0.0-SNAPSHOT", version.toString());
-    }
-
-    @Test
-    public void testParseInvalidVersionThrowsException() {
-        assertThrows(IllegalArgumentException.class, () -> SemVer.parse("invalid"));
-        assertThrows(IllegalArgumentException.class, () -> SemVer.parse("1.2"));
-        assertThrows(IllegalArgumentException.class, () -> SemVer.parse("1.2.3.4"));
-        assertThrows(IllegalArgumentException.class, () -> SemVer.parse(""));
+    void testParseNullVersionThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> SemVer.parse(null));
     }
 
-    @Test
-    public void testToReleaseVersion() {
-        SemVer version = SemVer.parse("1.2.3-SNAPSHOT");
+    @ParameterizedTest
+    @CsvSource({
+        "'1.2.3-SNAPSHOT', '1.2.3'",
+        "'1.2.3-beta+build', '1.2.3'",
+        "'1.0.0-alpha', '1.0.0'",
+        "'2.1.5+metadata', '2.1.5'"
+    })
+    void testToReleaseVersion(String input, String expected) {
+        SemVer version = SemVer.parse(input);
         SemVer releaseVersion = version.toReleaseVersion();
-        assertEquals("1.2.3", releaseVersion.toString());
+        assertEquals(expected, releaseVersion.toString());
         assertNull(releaseVersion.getPreRelease());
         assertNull(releaseVersion.getMetadata());
     }
 
-    @Test
-    public void testToReleaseVersionWithMetadata() {
-        SemVer version = SemVer.parse("1.2.3-beta+build");
-        SemVer releaseVersion = version.toReleaseVersion();
-        assertEquals("1.2.3", releaseVersion.toString());
-        assertNull(releaseVersion.getPreRelease());
-        assertNull(releaseVersion.getMetadata());
-    }
-
-    @Test
-    public void testToSnapshotVersion() {
+    @ParameterizedTest
+    @CsvSource({"MAJOR, '2.0.0', 2, 0, 0", "MINOR, '1.3.0', 1, 3, 0", "PATCH, '1.2.4', 1, 2, 4"})
+    void testNext(
+            SemVer.Element element, String expectedVersion, int expectedMajor, int expectedMinor, int expectedPatch) {
         SemVer version = SemVer.parse("1.2.3");
-        SemVer snapshotVersion = version.toSnapshotVersion();
-        assertEquals("1.2.3-SNAPSHOT", snapshotVersion.toString());
-        assertEquals("SNAPSHOT", snapshotVersion.getPreRelease());
-        assertNull(snapshotVersion.getMetadata());
+        SemVer next = version.next(element);
+        assertEquals(expectedVersion, next.toString());
+        assertEquals(expectedMajor, next.getMajor());
+        assertEquals(expectedMinor, next.getMinor());
+        assertEquals(expectedPatch, next.getPatch());
     }
 
     @Test
-    public void testToSnapshotVersionFromRelease() {
-        SemVer version = SemVer.parse("1.0.0");
-        SemVer snapshotVersion = version.toSnapshotVersion();
-        assertEquals("1.0.0-SNAPSHOT", snapshotVersion.toString());
-    }
-
-    @Test
-    public void testToSnapshotVersionReplacesPreRelease() {
-        SemVer version = SemVer.parse("1.2.3-beta.1");
-        SemVer snapshotVersion = version.toSnapshotVersion();
-        assertEquals("1.2.3-SNAPSHOT", snapshotVersion.toString());
-        assertEquals("SNAPSHOT", snapshotVersion.getPreRelease());
-    }
-
-    @Test
-    public void testToSnapshotVersionAlreadySnapshot() {
-        SemVer version = SemVer.parse("1.2.3-SNAPSHOT");
-        SemVer snapshotVersion = version.toSnapshotVersion();
-        assertEquals("1.2.3-SNAPSHOT", snapshotVersion.toString());
-        assertEquals(version, snapshotVersion);
-    }
-
-    @Test
-    public void testNextMajor() {
-        SemVer version = SemVer.parse("1.2.3");
-        SemVer next = version.next(SemVer.Element.MAJOR);
-        assertEquals("2.0.0", next.toString());
-        assertEquals(2, next.getMajor());
-        assertEquals(0, next.getMinor());
-        assertEquals(0, next.getPatch());
-    }
-
-    @Test
-    public void testNextMinor() {
-        SemVer version = SemVer.parse("1.2.3");
-        SemVer next = version.next(SemVer.Element.MINOR);
-        assertEquals("1.3.0", next.toString());
-        assertEquals(1, next.getMajor());
-        assertEquals(3, next.getMinor());
-        assertEquals(0, next.getPatch());
-    }
-
-    @Test
-    public void testNextPatch() {
-        SemVer version = SemVer.parse("1.2.3");
-        SemVer next = version.next(SemVer.Element.PATCH);
-        assertEquals("1.2.4", next.toString());
-        assertEquals(1, next.getMajor());
-        assertEquals(2, next.getMinor());
-        assertEquals(4, next.getPatch());
-    }
-
-    @Test
-    public void testNextClearsPreReleaseAndMetadata() {
+    void testNextClearsPreReleaseAndMetadata() {
         SemVer version = SemVer.parse("1.2.3-beta+build");
         SemVer next = version.next(SemVer.Element.MINOR);
         assertEquals("1.2.3", next.toString());
@@ -183,50 +109,39 @@ public class SemVerTest {
     }
 
     @Test
-    public void testNextWithNullElementThrowsException() {
+    void testNextWithNullElementThrowsException() {
         SemVer version = SemVer.parse("1.2.3");
         assertThrows(NullPointerException.class, () -> version.next(null));
     }
 
-    @Test
-    public void testConstructorValidation() {
-        assertThrows(IllegalArgumentException.class, () -> new SemVer(-1, 0, 0, null, null));
-        assertThrows(IllegalArgumentException.class, () -> new SemVer(0, -1, 0, null, null));
-        assertThrows(IllegalArgumentException.class, () -> new SemVer(0, 0, -1, null, null));
+    @ParameterizedTest
+    @CsvSource({
+        "'1.2.3', '1.2.3-SNAPSHOT', 'SNAPSHOT', , false",
+        "'1.0.0', '1.0.0-SNAPSHOT', 'SNAPSHOT', , false",
+        "'1.2.3-beta.1', '1.2.3-SNAPSHOT', 'SNAPSHOT', , false",
+        "'1.2.3-SNAPSHOT', '1.2.3-SNAPSHOT', 'SNAPSHOT', , true"
+    })
+    void testToSnapshotVersion(
+            String input,
+            String expectedVersion,
+            String expectedPreRelease,
+            String expectedMetadata,
+            boolean shouldBeSameObject) {
+        SemVer version = SemVer.parse(input);
+        SemVer snapshotVersion = version.toSnapshotVersion();
+        assertEquals(expectedVersion, snapshotVersion.toString());
+        assertEquals(expectedPreRelease, snapshotVersion.getPreRelease());
+        assertEquals(expectedMetadata, snapshotVersion.getMetadata());
+
+        // For the already snapshot case, verify it returns the same object
+        if (shouldBeSameObject) {
+            assertSame(version, snapshotVersion);
+        }
     }
 
-    @Test
-    public void testEqualsAndHashCode() {
-        SemVer v1 = SemVer.parse("1.2.3-beta+build");
-        SemVer v2 = SemVer.parse("1.2.3-beta+build");
-        SemVer v3 = SemVer.parse("1.2.3");
-
-        assertEquals(v1, v2);
-        assertEquals(v1.hashCode(), v2.hashCode());
-        assertNotEquals(v1, v3);
-        assertNotEquals(null, v1);
-        assertNotEquals("1.2.3", v1.toString());
-    }
-
-    @Test
-    public void testParseWithWhitespace() {
-        SemVer version = SemVer.parse("  1.2.3  ");
-        assertEquals("1.2.3", version.toString());
-    }
-
-    @Test
-    public void testParseZeroVersion() {
-        SemVer version = SemVer.parse("0.0.0");
-        assertEquals(0, version.getMajor());
-        assertEquals(0, version.getMinor());
-        assertEquals(0, version.getPatch());
-    }
-
-    @Test
-    public void testParseLargeVersionNumbers() {
-        SemVer version = SemVer.parse("123.456.789");
-        assertEquals(123, version.getMajor());
-        assertEquals(456, version.getMinor());
-        assertEquals(789, version.getPatch());
+    @ParameterizedTest
+    @CsvSource({"-1, 0, 0", "0, -1, 0", "0, 0, -1"})
+    void testConstructorValidation(int major, int minor, int patch) {
+        assertThrows(IllegalArgumentException.class, () -> new SemVer(major, minor, patch, null, null));
     }
 }
