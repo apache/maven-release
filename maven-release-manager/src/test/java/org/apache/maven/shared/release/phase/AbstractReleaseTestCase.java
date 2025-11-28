@@ -276,10 +276,6 @@ public abstract class AbstractReleaseTestCase implements PlexusTestConfiguration
         comparePomFiles(expectedFile, actualFile, normalizeLineEndings, false);
     }
 
-    protected void comparePomFiles(File expectedFile, File actualFile) throws IOException {
-        comparePomFiles(expectedFile, actualFile, true, false);
-    }
-
     protected void comparePomFiles(
             File expectedFile, File actualFile, boolean normalizeLineEndings, boolean ignoreComments)
             throws IOException {
