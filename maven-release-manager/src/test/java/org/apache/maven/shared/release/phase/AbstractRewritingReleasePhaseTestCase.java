@@ -73,7 +73,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -86,7 +86,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -99,7 +99,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -112,7 +112,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -125,7 +125,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -167,7 +167,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     protected abstract void mapAlternateNextVersion(ReleaseDescriptorBuilder config, String projectId);
@@ -182,7 +182,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -213,7 +213,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -245,7 +245,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -258,7 +258,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -289,7 +289,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -320,7 +320,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -333,7 +333,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -365,7 +365,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -397,7 +397,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -410,7 +410,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -443,7 +443,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -456,7 +456,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -584,7 +584,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -598,7 +598,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -612,7 +612,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -684,7 +684,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     protected abstract List<MavenProject> prepareReactorProjects(String path) throws Exception;

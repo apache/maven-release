@@ -63,7 +63,7 @@ abstract class AbstractEditModeRewritingReleasePhaseTestCase extends AbstractRew
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -130,7 +130,7 @@ abstract class AbstractEditModeRewritingReleasePhaseTestCase extends AbstractRew
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
@@ -161,7 +161,7 @@ abstract class AbstractEditModeRewritingReleasePhaseTestCase extends AbstractRew
                 .execute(
                         ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
-        assertTrue(comparePomFiles(reactorProjects));
+        comparePomFiles(reactorProjects);
     }
 
     @Test
