@@ -91,7 +91,7 @@ public final class OddEvenVersionPolicy implements VersionPolicy {
 
             int skip = getVersionIncrements(development, mostSignificantSegment % 2 == 0);
 
-            digits.set(digits.size() - 1, String.valueOf(String.valueOf(mostSignificantSegment + skip)));
+            digits.set(digits.size() - 1, String.valueOf(mostSignificantSegment + skip));
 
             newVersion = defaultVersionInfo.setDigits(digits);
         }

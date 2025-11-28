@@ -39,9 +39,7 @@ public class HasCommandParameter implements ArgumentMatcher<CommandParameters> {
     }
 
     @Override
-    public boolean matches(CommandParameters argument) {
-        CommandParameters commandParameters = (CommandParameters) argument;
-
+    public boolean matches(CommandParameters commandParameters) {
         try {
             return commandParameters.getString(this.commandParameter).equals(String.valueOf(expected));
         } catch (ScmException e) {

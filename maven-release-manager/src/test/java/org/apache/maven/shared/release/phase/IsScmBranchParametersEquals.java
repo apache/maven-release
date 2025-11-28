@@ -34,8 +34,7 @@ public class IsScmBranchParametersEquals implements ArgumentMatcher<ScmBranchPar
     }
 
     @Override
-    public boolean matches(ScmBranchParameters argument) {
-        ScmBranchParameters sbp = (ScmBranchParameters) argument;
+    public boolean matches(ScmBranchParameters sbp) {
         return sbp.getMessage().equals(this.scmBranchParameters.getMessage())
                 && sbp.isRemoteBranching() == this.scmBranchParameters.isRemoteBranching()
                 && sbp.isPinExternals() == this.scmBranchParameters.isPinExternals();
