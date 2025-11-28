@@ -34,8 +34,7 @@ public class IsScmTagParametersEquals implements ArgumentMatcher<ScmTagParameter
     }
 
     @Override
-    public boolean matches(ScmTagParameters argument) {
-        ScmTagParameters stp = (ScmTagParameters) argument;
+    public boolean matches(ScmTagParameters stp) {
         return stp.getMessage().equals(this.scmTagParameters.getMessage())
                 && stp.isRemoteTagging() == this.scmTagParameters.isRemoteTagging()
                 && stp.isPinExternals() == this.scmTagParameters.isPinExternals()

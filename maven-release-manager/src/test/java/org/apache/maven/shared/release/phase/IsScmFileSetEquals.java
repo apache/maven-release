@@ -36,16 +36,14 @@ public class IsScmFileSetEquals implements ArgumentMatcher<ScmFileSet> {
     }
 
     @Override
-    public boolean matches(ScmFileSet argument) {
-        ScmFileSet fs = (ScmFileSet) argument;
-
+    public boolean matches(ScmFileSet fs) {
         try {
             return fs.getBasedir()
                             .getCanonicalPath()
                             .equals(fileSet.getBasedir().getCanonicalPath())
                     && fs.getFileList().equals(fileSet.getFileList());
         } catch (IOException e) {
-            // should not happened so RuntimeException
+            // should not have happened so RuntimeException
             throw new RuntimeException(e.getMessage(), e);
         }
     }

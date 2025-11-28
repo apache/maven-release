@@ -32,6 +32,7 @@ import org.codehaus.plexus.testing.PlexusTest;
 import org.junit.jupiter.api.Test;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestPath;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -112,7 +113,7 @@ class CreateBackupPomsPhaseTest extends AbstractBackupPomsPhaseTest {
 
                 String backupContents = ReleaseUtil.readXmlFile(backupFile);
 
-                assertTrue(pomContents.equals(backupContents), "Check if pom and backup files are identical");
+                assertEquals(pomContents, backupContents, "Check if pom and backup files are identical");
             } else {
                 assertFalse(backupFile.exists(), "Check if backup file is not present");
             }

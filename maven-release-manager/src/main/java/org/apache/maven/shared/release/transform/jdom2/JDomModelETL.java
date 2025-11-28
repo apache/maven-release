@@ -33,7 +33,7 @@ import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.WriterFactory;
+import org.codehaus.plexus.util.xml.XmlStreamWriter;
 import org.jdom2.CDATA;
 import org.jdom2.Comment;
 import org.jdom2.Document;
@@ -125,10 +125,10 @@ public class JDomModelETL implements ModelETL {
                  */
                 // CHECKSTYLE_OFF: LocalFinalVariableName
                 final String SPACE = "\\s++";
-                final String XML = "<\\?(?:(?:[^\"'>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+>";
-                final String INTSUB = "\\[(?:(?:[^\"'\\]]++)|(?:\"[^\"]*+\")|(?:'[^\']*+'))*+\\]";
+                final String XML = "<\\?(?:(?:[^\"'>]++)|(?:\"[^\"]*+\")|(?:'[^']*+'))*+>";
+                final String INTSUB = "\\[(?:(?:[^\"'\\]]++)|(?:\"[^\"]*+\")|(?:'[^']*+'))*+\\]";
                 final String DOCTYPE =
-                        "<!DOCTYPE(?:(?:[^\"'\\[>]++)|(?:\"[^\"]*+\")|(?:'[^\']*+')|(?:" + INTSUB + "))*+>";
+                        "<!DOCTYPE(?:(?:[^\"'\\[>]++)|(?:\"[^\"]*+\")|(?:'[^']*+')|(?:" + INTSUB + "))*+>";
                 final String PI = XML;
                 final String COMMENT = "<!--(?:[^-]|(?:-[^-]))*+-->";
 
@@ -205,7 +205,7 @@ public class JDomModelETL implements ModelETL {
             }
         }
 
-        try (Writer writer = WriterFactory.newXmlWriter(pomFile)) {
+        try (Writer writer = new XmlStreamWriter(pomFile)) {
             if (intro != null) {
                 writer.write(intro);
             }

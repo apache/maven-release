@@ -46,6 +46,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -161,7 +162,7 @@ class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
 
         try (BufferedReader reader = new BufferedReader(new StringReader(result.getOutput()))) {
             assertEquals("[INFO] Removing release POM for 'artifactId'...", reader.readLine());
-            assertEquals(null, reader.readLine(), "Expected EOF");
+            assertNull(reader.readLine(), "Expected EOF");
         }
 
         // never invoke scmProviderMock
@@ -190,7 +191,7 @@ class RemoveReleasePomsPhaseTest extends AbstractReleaseTestCase {
                     "[INFO] Full run would be removing ["
                             + reactorProjects.get(0).getFile().getParent() + File.separator + "release-pom.xml]",
                     reader.readLine());
-            assertEquals(null, reader.readLine(), "Expected EOF");
+            assertNull(reader.readLine(), "Expected EOF");
         }
 
         // never invoke scmProviderMock

@@ -24,7 +24,7 @@ import org.codehaus.plexus.testing.PlexusTest;
 import org.codehaus.plexus.util.cli.Commandline;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -46,6 +46,6 @@ class CommandLineFactoryTest {
         String executable = cl.getExecutable();
         assertTrue(executable.contains("exec"), "Check executable " + executable);
         assertNotNull(cl.getEnvironmentVariables(), "Check environment");
-        assertFalse(cl.getEnvironmentVariables().length == 0, "Check environment");
+        assertNotEquals(0, cl.getEnvironmentVariables().length, "Check environment");
     }
 }

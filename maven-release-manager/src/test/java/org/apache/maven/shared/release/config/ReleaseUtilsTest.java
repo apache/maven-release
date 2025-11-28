@@ -30,7 +30,7 @@ import org.apache.maven.shared.release.phase.AbstractReleaseTestCase;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -57,7 +57,7 @@ class ReleaseUtilsTest {
 
         assertEquals(builder, builder, "test ==");
         Object obj = this;
-        assertFalse(builder.equals(obj), "test class instance");
+        assertNotEquals(builder, obj, "test class instance");
     }
 
     private static void doEqualsAssertions(
@@ -71,67 +71,67 @@ class ReleaseUtilsTest {
         assertEquals(configBuilder.build(), origConfig, "Check original comparison");
 
         configBuilder.setScmSourceUrl(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setScmSourceUrl(origConfig.getScmSourceUrl());
 
         configBuilder.setAdditionalArguments(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setAdditionalArguments(origConfig.getAdditionalArguments());
 
         configBuilder.setAddSchema(!origConfig.isAddSchema());
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setAddSchema(origConfig.isAddSchema());
 
         configBuilder.setGenerateReleasePoms(!origConfig.isAddSchema());
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setGenerateReleasePoms(origConfig.isGenerateReleasePoms());
 
         configBuilder.setScmUseEditMode(!origConfig.isScmUseEditMode());
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setScmUseEditMode(origConfig.isScmUseEditMode());
 
         configBuilder.setInteractive(!origConfig.isInteractive());
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setInteractive(origConfig.isInteractive());
 
         configBuilder.setCommitByProject(!origConfig.isCommitByProject());
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setCommitByProject(origConfig.isCommitByProject());
 
         configBuilder.setCompletedPhase(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setCompletedPhase(origConfig.getCompletedPhase());
 
         configBuilder.setScmPrivateKeyPassPhrase(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setScmPrivateKeyPassPhrase(origConfig.getScmPrivateKeyPassPhrase());
 
         configBuilder.setScmPassword(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setScmPassword(origConfig.getScmPassword());
 
         configBuilder.setScmUsername(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setScmUsername(origConfig.getScmUsername());
 
         configBuilder.setScmPrivateKey(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setScmPrivateKey(origConfig.getScmPrivateKey());
 
         configBuilder.setPomFileName(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setPomFileName(origConfig.getPomFileName());
 
         configBuilder.setPreparationGoals(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setPreparationGoals(origConfig.getPreparationGoals());
 
         configBuilder.setScmReleaseLabel(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setScmReleaseLabel(origConfig.getScmReleaseLabel());
 
         configBuilder.setScmTagBase(other);
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder.setScmTagBase(origConfig.getScmTagBase());
 
         if (otherFile != null) {
@@ -141,7 +141,7 @@ class ReleaseUtilsTest {
                         "Failed to create the directory, along with all necessary parent directories");
             }
             configBuilder.setWorkingDirectory(AbstractReleaseTestCase.getPath(otherFile));
-            assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+            assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         }
 
         configBuilder.setWorkingDirectory(origConfig.getWorkingDirectory());
@@ -150,20 +150,20 @@ class ReleaseUtilsTest {
         assertEquals(configBuilder.build(), origConfig, "Check original comparison");
 
         configBuilder.addDevelopmentVersion("groupId:artifactId", "1.0-SNAPSHOT");
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder = copyReleaseDescriptor(origConfig);
 
         configBuilder.addReleaseVersion("groupId:artifactId", "1.0");
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder = copyReleaseDescriptor(origConfig);
 
         configBuilder.addOriginalScmInfo("groupId:artifactId", new Scm());
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         configBuilder = copyReleaseDescriptor(origConfig);
 
         configBuilder.addOriginalScmInfo("groupId:artifactId", new Scm());
         origConfig.addOriginalScmInfo("foo", new Scm());
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         origConfig = createReleaseDescriptor().build();
         configBuilder = copyReleaseDescriptor(origConfig);
 
@@ -181,25 +181,25 @@ class ReleaseUtilsTest {
 
         configBuilder.addOriginalScmInfo("groupId:artifactId", getScm("-", "dev", "url", "tag"));
         origConfig.addOriginalScmInfo("groupId:artifactId", getScm("conn", "dev", "url", "tag"));
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         origConfig = createReleaseDescriptor().build();
         configBuilder = copyReleaseDescriptor(origConfig);
 
         configBuilder.addOriginalScmInfo("groupId:artifactId", getScm("conn", "-", "url", "tag"));
         origConfig.addOriginalScmInfo("groupId:artifactId", getScm("conn", "dev", "url", "tag"));
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         origConfig = createReleaseDescriptor().build();
         configBuilder = copyReleaseDescriptor(origConfig);
 
         configBuilder.addOriginalScmInfo("groupId:artifactId", getScm("conn", "dev", "-", "tag"));
         origConfig.addOriginalScmInfo("groupId:artifactId", getScm("conn", "dev", "url", "tag"));
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
         origConfig = createReleaseDescriptor().build();
         configBuilder = copyReleaseDescriptor(origConfig);
 
         configBuilder.addOriginalScmInfo("groupId:artifactId", getScm("conn", "dev", "url", "-"));
         origConfig.addOriginalScmInfo("groupId:artifactId", getScm("conn", "dev", "url", "tag"));
-        assertFalse(configBuilder.build().equals(origConfig), "Check original comparison");
+        assertNotEquals(configBuilder.build(), origConfig, "Check original comparison");
     }
 
     @Test
