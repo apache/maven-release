@@ -19,7 +19,6 @@
 package org.apache.maven.plugins.release;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -146,12 +145,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
 
         descriptor.setInteractive(settings.isInteractiveMode());
 
-        Path workingDirectory;
-        try {
-            workingDirectory = getCommonBasedir(reactorProjects);
-        } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
-        }
+        Path workingDirectory = getCommonBasedir(reactorProjects);
         descriptor.setWorkingDirectory(workingDirectory.toFile().getAbsolutePath());
 
         Path rootBasedir = basedir.toPath();
@@ -262,7 +256,7 @@ public abstract class AbstractReleaseMojo extends AbstractMojo {
         }
     }
 
-    static Path getCommonBasedir(List<MavenProject> reactorProjects) throws IOException {
+    private static Path getCommonBasedir(List<MavenProject> reactorProjects) {
         Path basePath = reactorProjects.get(0).getBasedir().toPath();
 
         for (MavenProject reactorProject : reactorProjects) {
