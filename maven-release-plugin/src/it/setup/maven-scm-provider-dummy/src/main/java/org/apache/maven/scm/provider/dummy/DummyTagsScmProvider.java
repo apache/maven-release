@@ -39,7 +39,6 @@ import java.util.Date;
 /**
  * A dummy SCM provider used to provide commit messages and tags for testing Version Policies that need this.
  *
- * @plexus.component role="org.apache.maven.scm.provider.ScmProvider" role-hint="dummytags"
  * @author Niels Basjes
  */
 @Singleton
