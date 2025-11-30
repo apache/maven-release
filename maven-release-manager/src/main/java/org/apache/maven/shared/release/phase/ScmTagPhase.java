@@ -26,7 +26,6 @@ import java.io.File;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
-import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmTagParameters;
@@ -116,10 +115,7 @@ public class ScmTagPhase extends AbstractReleasePhase {
             ScmTagParameters scmTagParameters =
                     new ScmTagParameters(releaseDescriptor.getScmCommentPrefix() + "copy for tag " + tagName);
             scmTagParameters.setRemoteTagging(releaseDescriptor.isRemoteTagging());
-            scmTagParameters.setSignOption(
-                    releaseDescriptor.isScmSignTags()
-                            ? CommandParameters.SignOption.FORCE_SIGN
-                            : CommandParameters.SignOption.DEFAULT);
+            scmTagParameters.setSign(releaseDescriptor.isScmSignTags());
             scmTagParameters.setScmRevision(releaseDescriptor.getScmReleasedPomRevision());
             scmTagParameters.setPinExternals(releaseDescriptor.isPinExternals());
             if (getLogger().isDebugEnabled()) {
