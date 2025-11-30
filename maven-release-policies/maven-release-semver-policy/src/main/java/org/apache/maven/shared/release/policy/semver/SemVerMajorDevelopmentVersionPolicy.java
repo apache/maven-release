@@ -24,7 +24,6 @@ import javax.inject.Singleton;
 import org.apache.maven.shared.release.policy.version.VersionPolicyRequest;
 import org.apache.maven.shared.release.policy.version.VersionPolicyResult;
 import org.apache.maven.shared.release.versions.VersionParseException;
-import org.semver.Version;
 
 /**
  * Uses SemVer implementation to increase major element when resolving the development version.
@@ -37,13 +36,13 @@ class SemVerMajorDevelopmentVersionPolicy extends AbstractSemVerVersionPolicy {
 
     @Override
     public VersionPolicyResult getReleaseVersion(VersionPolicyRequest request) throws VersionParseException {
-        Version version = createVersionFromRequest(request).toReleaseVersion();
+        SemVer version = createVersionFromRequest(request).toReleaseVersion();
         return createResult(version);
     }
 
     @Override
     public VersionPolicyResult getDevelopmentVersion(VersionPolicyRequest request) throws VersionParseException {
-        Version version = createVersionFromRequest(request).next(Version.Element.MAJOR);
+        SemVer version = createVersionFromRequest(request).next(SemVer.Element.MAJOR);
         return createSnapshotResult(version);
     }
 }
