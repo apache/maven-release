@@ -29,7 +29,7 @@ under the License.
 
   <groupId>org.apache.maven.release</groupId>
   <artifactId>maven-release</artifactId>
-  <version>3.3.1</version>
+  <version>3.3.2-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>Maven Release</name>
@@ -70,7 +70,7 @@ under the License.
   <scm>
     <connection>scm:git:https://gitbox.apache.org/repos/asf/maven-release.git</connection>
     <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/maven-release.git</developerConnection>
-    <tag>maven-release-3.3.1</tag>
+    <tag>HEAD</tag>
     <url>https://github.com/apache/maven-release/tree/${project.scm.tag}</url>
   </scm>
   <issueManagement>
@@ -99,7 +99,7 @@ under the License.
     <version.maven-invoker-plugin>3.9.1</version.maven-invoker-plugin>
 
     <maven.site.path>maven-release-archives/maven-release-LATEST</maven.site.path>
-    <project.build.outputTimestamp>2025-12-09T21:54:19Z</project.build.outputTimestamp>
+    <project.build.outputTimestamp>2025-12-09T21:54:56Z</project.build.outputTimestamp>
 
     <mavenCompilerPluginVersion>${version.maven-compiler-plugin}</mavenCompilerPluginVersion>
     <mavenInvokerPluginVersion>${version.maven-invoker-plugin}</mavenInvokerPluginVersion>
