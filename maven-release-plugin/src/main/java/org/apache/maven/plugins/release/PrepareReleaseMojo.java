@@ -62,7 +62,10 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
     private boolean resume;
 
     /**
-     * @deprecated Please use release:prepare-with-pom instead.
+     * Controls whether the plugin should generate release POMs during the
+     * prepare phase.
+     *
+     * @deprecated Use the {@code release:prepare-with-pom} goal instead.
      */
     @Deprecated
     @Parameter(defaultValue = "false", property = "generateReleasePoms")
