@@ -28,9 +28,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Uses SemVer implementation to increase minor element when resolving the development version.
+ * Uses the SemVer implementation to increase the minor element when resolving
+ * the development version.
  *
- * @deprecated use {@link SemVerMinorDevelopmentVersionPolicy} instead.
+ * @deprecated This policy has been superseded by
+ *             {@link SemVerMinorDevelopmentVersionPolicy}, which provides a
+ *             clearer and more explicit implementation of SemVer-based
+ *             development version handling.
+ *             This policy remains only for backward compatibility and may be
+ *             removed in a future version of the Maven Release Plugin.
  */
 @Singleton
 @Named("SemVerVersionPolicy")
