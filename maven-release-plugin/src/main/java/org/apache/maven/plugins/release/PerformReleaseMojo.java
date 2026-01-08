@@ -90,7 +90,6 @@ public class PerformReleaseMojo extends AbstractScmReadReleaseMojo {
      * artifact, if appropriate. If set to true, the release plugin sets the property "<code>performRelease</code>" to
      * true, which activates the profile "<code>release-profile</code>" as inherited from
      * <a href="/ref/3.8.5/maven-model-builder/super-pom.html">the super pom</a>.
-     *
      * @deprecated The <code>release-profile</code> profile will be removed from future versions of the super POM
      */
     @Parameter(defaultValue = "false", property = "useReleaseProfile")

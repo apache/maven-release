@@ -51,11 +51,17 @@ public interface ModelETL {
      */
     void load(File pomFile) throws ReleaseExecutionException;
 
-    // will be removed once transform() is implemented
     /**
-     * <p>getModel.</p>
+     * Returns the intermediate {@link Model} representation.
      *
-     * @return a {@link org.apache.maven.model.Model} object
+     * @deprecated This method is a temporary accessor that exists only for
+     *             legacy workflow support. It will be removed once the
+     *             {@link #transform()} processing phase is fully implemented
+     *             and callers no longer need to access the intermediate model
+     *             directly.
+     *             There is no direct replacement. New code should rely on the
+     *             {@link #extract(File)} -> {@link #transform()} -> {@link #load(File)}
+     *             processing pipeline instead of accessing the model explicitly.
      */
     @Deprecated
     Model getModel();
