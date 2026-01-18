@@ -90,8 +90,8 @@ under the License.
 
   <properties>
     <scmVersion>2.2.1</scmVersion>
-    <mavenVersion>3.9.11</mavenVersion>
-    <resolverVersion>1.9.24</resolverVersion>
+    <mavenVersion>3.9.12</mavenVersion>
+    <resolverVersion>1.9.25</resolverVersion>
     <wagonVersion>3.5.3</wagonVersion>
     <slf4jVersion>1.7.36</slf4jVersion>
 
