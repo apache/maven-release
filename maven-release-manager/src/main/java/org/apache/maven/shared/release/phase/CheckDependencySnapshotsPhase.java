@@ -382,7 +382,7 @@ public class CheckDependencySnapshotsPhase extends AbstractReleasePhase {
                 }
 
                 switch (Integer.parseInt(resolveSnapshotType.toLowerCase(Locale.ENGLISH))) {
-                        // all
+                    // all
                     case 0:
                         processSnapshot(projectDependencies, releaseDescriptor, autoResolveSnapshots);
                         processSnapshot(pluginDependencies, releaseDescriptor, autoResolveSnapshots);
@@ -390,22 +390,22 @@ public class CheckDependencySnapshotsPhase extends AbstractReleasePhase {
                         processSnapshot(extensionDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
-                        // project dependencies
+                    // project dependencies
                     case 1:
                         processSnapshot(projectDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
-                        // plugins
+                    // plugins
                     case 2:
                         processSnapshot(pluginDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
-                        // reports
+                    // reports
                     case 3:
                         processSnapshot(reportDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
 
-                        // extensions
+                    // extensions
                     case 4:
                         processSnapshot(extensionDependencies, releaseDescriptor, autoResolveSnapshots);
                         break;
