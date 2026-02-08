@@ -24,7 +24,7 @@ under the License.
   <packaging>pom</packaging>
   <version>${revision}${sha1}${changelist}</version>
   <name>parent-project</name>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
   <scm>
     <connection>scm:stub|</connection>
     <developerConnection>scm:stub|</developerConnection>
@@ -35,8 +35,6 @@ under the License.
     <revision>1.0.0</revision>
     <sha1></sha1>
     <changelist>-SNAPSHOT</changelist>
-    <maven.compiler.source>@maven.compiler.source@</maven.compiler.source>
-    <maven.compiler.target>@maven.compiler.target@</maven.compiler.target>
   </properties>
 
   <build>

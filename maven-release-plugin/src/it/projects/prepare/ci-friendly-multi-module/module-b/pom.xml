@@ -27,7 +27,7 @@ under the License.
   <groupId>org.apache.maven.plugin.release</groupId>
   <artifactId>module-b</artifactId>
   <name>module-b</name>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
   <dependencies>
     <dependency>
       <groupId>org.junit.jupiter</groupId>

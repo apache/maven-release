@@ -25,7 +25,7 @@ under the License.
   <packaging>jar</packaging>
   <version>1.0</version>
   <name>Maven Quick Start Archetype</name>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
   <scm>
     <connection>scm:stub|</connection>
     <developerConnection>scm:stub|</developerConnection>
