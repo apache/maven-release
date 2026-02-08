@@ -30,11 +30,6 @@ under the License.
     <developerConnection>scm:svn:file://localhost/${project.file.parentFile.parentFile}/target/svnroot/flat-multi-module/${project.scm.tag}/</developerConnection>
     <tag>trunk</tag>
   </scm>
-  
-  <properties>
-    <maven.compiler.source>@maven.compiler.source@</maven.compiler.source>
-    <maven.compiler.target>@maven.compiler.target@</maven.compiler.target>
-  </properties>
 
   <build>
     <pluginManagement>
