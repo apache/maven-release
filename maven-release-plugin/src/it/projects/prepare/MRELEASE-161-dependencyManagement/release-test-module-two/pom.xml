@@ -28,7 +28,7 @@ under the License.
   <artifactId>release-test-module-two</artifactId>
   <name>release-test-module-two</name>
   <version>1.0-SNAPSHOT</version>
-  <url>http://maven.apache.org</url>
+  <url>https://maven.apache.org</url>
   <dependencies>
     
     <dependency>
