@@ -60,7 +60,7 @@ public interface ModelETL {
      *             and callers no longer need to access the intermediate model
      *             directly.
      *             There is no direct replacement. New code should rely on the
-     *             {@link #extract(File)} -> {@link #transform()} -> {@link #load(File)}
+     *             {@link #extract(File)} -&gt; {@link #transform()} -&gt; {@link #load(File)}
      *             processing pipeline instead of accessing the model explicitly.
      */
     @Deprecated
