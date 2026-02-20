@@ -28,7 +28,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
-import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.provider.ScmProvider;
 import org.apache.maven.scm.repository.ScmRepository;
@@ -146,7 +145,7 @@ class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq(message)))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -160,7 +159,7 @@ class ScmCommitDevelopmentPhaseTest extends AbstractReleaseTestCase {
         verify(scmProviderMock)
                 .checkIn(
                         isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class), eq(message));
+                        isNull(), eq(message));
         verifyNoMoreInteractions(scmProviderMock);
     }
 

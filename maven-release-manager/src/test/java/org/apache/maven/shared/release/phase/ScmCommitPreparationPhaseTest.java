@@ -32,7 +32,6 @@ import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
 import org.apache.maven.scm.ScmFileStatus;
-import org.apache.maven.scm.ScmVersion;
 import org.apache.maven.scm.command.checkin.CheckInScmResult;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
 import org.apache.maven.scm.provider.ScmProvider;
@@ -109,7 +108,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq(PREFIX + "release-label")))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -126,7 +125,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         verify(scmProviderMock)
                 .checkIn(
                         isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class), eq(PREFIX + "release-label"));
+                        isNull(), eq(PREFIX + "release-label"));
         verifyNoMoreInteractions(scmProviderMock);
     }
 
@@ -148,7 +147,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq("[release] Release of groupId:artifactId release-label")))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -165,7 +164,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         verify(scmProviderMock)
                 .checkIn(
                         isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class), eq("[release] Release of groupId:artifactId release-label"));
+                        isNull(), eq("[release] Release of groupId:artifactId release-label"));
         verifyNoMoreInteractions(scmProviderMock);
     }
 
@@ -191,7 +190,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq(PREFIX + "release-label")))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -207,7 +206,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         verify(scmProviderMock)
                 .checkIn(
                         isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class), eq(PREFIX + "release-label"));
+                        isNull(), eq(PREFIX + "release-label"));
         verifyNoMoreInteractions(scmProviderMock);
     }
 
@@ -228,7 +227,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq("[maven-release-manager] prepare for next development iteration")))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -246,7 +245,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
                 .checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq("[maven-release-manager] prepare for next development iteration"));
         verifyNoMoreInteractions(scmProviderMock);
     }
@@ -270,7 +269,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq("[release] Bump version of groupId:artifactId after release-label")))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -288,7 +287,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
                 .checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq("[release] Bump version of groupId:artifactId after release-label"));
         verifyNoMoreInteractions(scmProviderMock);
     }
@@ -327,7 +326,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq(PREFIX + "release-label")))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -344,7 +343,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         verify(scmProviderMock)
                 .checkIn(
                         isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class), eq(PREFIX + "release-label"));
+                        isNull(), eq(PREFIX + "release-label"));
         verifyNoMoreInteractions(scmProviderMock);
     }
 
@@ -429,7 +428,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
 
         ScmProvider scmProviderMock = mock(ScmProvider.class);
         when(scmProviderMock.checkIn(
-                        isA(ScmRepository.class), isA(ScmFileSet.class), isNull(ScmVersion.class), isA(String.class)))
+                        isA(ScmRepository.class), isA(ScmFileSet.class), isNull(), isA(String.class)))
                 .thenThrow(new ScmException("..."));
 
         scmManager.setScmProvider(scmProviderMock);
@@ -448,7 +447,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         verify(scmProviderMock)
                 .checkIn(
                         isA(ScmRepository.class), isA(ScmFileSet.class),
-                        isNull(ScmVersion.class), isA(String.class));
+                        isNull(), isA(String.class));
         verifyNoMoreInteractions(scmProviderMock);
     }
 
@@ -543,7 +542,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         when(scmProviderMock.checkIn(
                         isA(ScmRepository.class),
                         argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class),
+                        isNull(),
                         eq(PREFIX + "release-label")))
                 .thenReturn(new CheckInScmResult(
                         "...",
@@ -559,7 +558,7 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         verify(scmProviderMock)
                 .checkIn(
                         isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
-                        isNull(ScmVersion.class), eq(PREFIX + "release-label"));
+                        isNull(), eq(PREFIX + "release-label"));
         verifyNoMoreInteractions(scmProviderMock);
     }
 
