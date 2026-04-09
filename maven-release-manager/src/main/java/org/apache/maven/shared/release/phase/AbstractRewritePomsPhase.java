@@ -62,7 +62,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
 import org.apache.maven.shared.release.transform.ModelETLRequest;
-import org.apache.maven.shared.release.transform.jdom2.JDomModelETLFactory;
+import org.apache.maven.shared.release.transform.domtrip.DomTripModelETLFactory;
 import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.apache.maven.shared.release.util.MavenExpression;
 import org.apache.maven.shared.release.util.ReleaseUtil;
@@ -90,9 +90,9 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
     private Map<String, ScmTranslator> scmTranslators;
 
     /**
-     * Use jdom2-sax as default.
+     * Use domtrip as default.
      */
-    private String modelETL = JDomModelETLFactory.NAME;
+    private String modelETL = DomTripModelETLFactory.NAME;
 
     private long startTime = -1 * 1000;
 
