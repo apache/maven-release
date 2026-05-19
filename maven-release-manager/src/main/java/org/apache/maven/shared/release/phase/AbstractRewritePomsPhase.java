@@ -210,9 +210,10 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
 
         for (MavenProject project : reactorProjects) {
             final String path = project.getFile().getPath();
-            if (exclusionPatterns.stream().noneMatch(exclusionPattern -> FileSystems.getDefault()
-                    .getPathMatcher("glob:" + exclusionPattern)
-                    .matches(Paths.get(path)))) {
+            if (exclusionPatterns.stream()
+                    .noneMatch(exclusionPattern -> FileSystems.getDefault()
+                            .getPathMatcher("glob:" + exclusionPattern)
+                            .matches(Paths.get(path)))) {
                 logDebug(
                         result,
                         "Transforming " + path + ' '
