@@ -33,7 +33,7 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
-import org.apache.maven.shared.release.transform.jdom2.JDomModelETLFactory;
+import org.apache.maven.shared.release.transform.domtrip.DomTripModelETLFactory;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -58,7 +58,7 @@ abstract class AbstractRewritingReleasePhaseTestCase extends AbstractReleaseTest
     @BeforeEach
     public void setUpAbstractRewritingReleasePhaseTestCase() throws Exception {
         if (getTestedPhase() instanceof AbstractRewritePomsPhase) {
-            ((AbstractRewritePomsPhase) getTestedPhase()).setModelETL(JDomModelETLFactory.NAME);
+            ((AbstractRewritePomsPhase) getTestedPhase()).setModelETL(DomTripModelETLFactory.NAME);
             ((AbstractRewritePomsPhase) getTestedPhase()).setStartTime(0);
         }
     }

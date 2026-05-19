@@ -23,6 +23,7 @@ import javax.inject.Named;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Iterator;
@@ -500,5 +501,28 @@ class RewritePomsForReleasePhaseTest extends AbstractEditModeRewritingReleasePha
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         comparePomFiles(reactorProjects);
+    }
+
+    @Test
+    void testRewriteFormattingPreservation() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("formatting-preservation");
+        ReleaseDescriptorBuilder builder =
+                createConfigurationForPomWithParentAlternateNextVersion(reactorProjects, "formatting-preservation");
+        builder.addReleaseVersion("groupId:subproject2", ALTERNATIVE_NEXT_VERSION);
+
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        comparePomFiles(reactorProjects);
+
+        // Verify exact formatting preservation (byte-for-byte), which the XMLUnit comparison above does not check.
+        // The old JDOM2 implementation would collapse multi-line attributes, alter self-closing tag spacing,
+        // and reorder attributes — DomTrip preserves all of these exactly.
+        for (MavenProject project : reactorProjects) {
+            File actualFile = project.getFile();
+            File expectedFile = new File(actualFile.getParentFile(), "expected-pom.xml");
+            String expected = new String(Files.readAllBytes(expectedFile.toPath()));
+            String actual = new String(Files.readAllBytes(actualFile.toPath()));
+            assertEquals(expected, actual, "Exact formatting not preserved for " + actualFile.getName());
+        }
     }
 }

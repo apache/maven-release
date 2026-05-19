@@ -263,9 +263,9 @@ under the License.
       </dependency>
 
       <dependency>
-        <groupId>org.jdom</groupId>
-        <artifactId>jdom2</artifactId>
-        <version>2.0.6.1</version>
+        <groupId>eu.maveniverse.maven.domtrip</groupId>
+        <artifactId>domtrip-core</artifactId>
+        <version>1.5.1</version>
       </dependency>
       <dependency>
         <groupId>org.mockito</groupId>
