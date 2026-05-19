@@ -88,223 +88,260 @@ class DomTripBuildTest {
 
     @Test
     void testFlushPluginMap() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .flushPluginMap());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").flushPluginMap());
     }
 
     @Test
     void testAddExtension() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .addExtension(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").addExtension(null));
     }
 
     @Test
     void testGetOutputDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getOutputDirectory());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getOutputDirectory());
     }
 
     @Test
     void testGetScriptSourceDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getScriptSourceDirectory());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getScriptSourceDirectory());
     }
 
     @Test
     void testGetSourceDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getSourceDirectory());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getSourceDirectory());
     }
 
     @Test
     void testGetTestOutputDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getTestOutputDirectory());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getTestOutputDirectory());
     }
 
     @Test
     void testGetTestSourceDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getTestSourceDirectory());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getTestSourceDirectory());
     }
 
     @Test
     void testRemoveExtension() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .removeExtension(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").removeExtension(null));
     }
 
     @Test
     void testSetExtensions() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setExtensions(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setExtensions(null));
     }
 
     @Test
     void testSetOutputDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setOutputDirectory(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setOutputDirectory(null));
     }
 
     @Test
     void testSetScriptSourceDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setScriptSourceDirectory(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setScriptSourceDirectory(null));
     }
 
     @Test
     void testSetSourceDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setSourceDirectory(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setSourceDirectory(null));
     }
 
     @Test
     void testSetTestOutputDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setTestOutputDirectory(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setTestOutputDirectory(null));
     }
 
     @Test
     void testSetTestSourceDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setTestSourceDirectory(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setTestSourceDirectory(null));
     }
 
     @Test
     void testAddFilter() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .addFilter(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").addFilter(null));
     }
 
     @Test
     void testAddResource() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .addResource(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").addResource(null));
     }
 
     @Test
     void testAddTestResource() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .addTestResource(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").addTestResource(null));
     }
 
     @Test
     void testGetDefaultGoal() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getDefaultGoal());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getDefaultGoal());
     }
 
     @Test
     void testGetDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getDirectory());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getDirectory());
     }
 
     @Test
     void testGetFilters() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getFilters());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getFilters());
     }
 
     @Test
     void testGetFinalName() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getFinalName());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getFinalName());
     }
 
     @Test
     void testGetResources() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getResources());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getResources());
     }
 
     @Test
     void testGetTestResources() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getTestResources());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getTestResources());
     }
 
     @Test
     void testRemoveFilter() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .removeFilter(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").removeFilter(null));
     }
 
     @Test
     void testRemoveResource() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .removeResource(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").removeResource(null));
     }
 
     @Test
     void testRemoveTestResource() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .removeTestResource(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").removeTestResource(null));
     }
 
     @Test
     void testSetDefaultGoal() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setDefaultGoal(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setDefaultGoal(null));
     }
 
     @Test
     void testSetDirectory() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setDirectory(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setDirectory(null));
     }
 
     @Test
     void testSetFilters() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setFilters(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setFilters(null));
     }
 
     @Test
     void testSetFinalName() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setFinalName(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setFinalName(null));
     }
 
     @Test
     void testSetResources() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setResources(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setResources(null));
     }
 
     @Test
     void testSetTestResources() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setTestResources(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setTestResources(null));
     }
 
     @Test
     void testSetPluginManagement() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setPluginManagement(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setPluginManagement(null));
     }
 
     @Test
     void testAddPlugin() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .addPlugin(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").addPlugin(null));
     }
 
     @Test
     void testRemovePlugin() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .removePlugin(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").removePlugin(null));
     }
 
     @Test
     void testSetPlugins() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .setPlugins(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").setPlugins(null));
     }
 
     @Test
     void testGetPluginsAsMap() {
-        assertThrows(UnsupportedOperationException.class, () -> createBuild("<build/>")
-                .getPluginsAsMap());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createBuild("<build/>").getPluginsAsMap());
     }
 }

@@ -74,43 +74,50 @@ class DomTripParentTest {
 
     @Test
     void testGetArtifactId() {
-        assertThrows(UnsupportedOperationException.class, () -> createParent("<parent/>")
-                .getArtifactId());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createParent("<parent/>").getArtifactId());
     }
 
     @Test
     void testGetGroupId() {
-        assertThrows(UnsupportedOperationException.class, () -> createParent("<parent/>")
-                .getGroupId());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createParent("<parent/>").getGroupId());
     }
 
     @Test
     void testGetRelativePath() {
-        assertThrows(UnsupportedOperationException.class, () -> createParent("<parent/>")
-                .getRelativePath());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createParent("<parent/>").getRelativePath());
     }
 
     @Test
     void testSetArtifactId() {
-        assertThrows(UnsupportedOperationException.class, () -> createParent("<parent/>")
-                .setArtifactId(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createParent("<parent/>").setArtifactId(null));
     }
 
     @Test
     void testSetGroupId() {
-        assertThrows(UnsupportedOperationException.class, () -> createParent("<parent/>")
-                .setGroupId(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createParent("<parent/>").setGroupId(null));
     }
 
     @Test
     void testSetRelativePath() {
-        assertThrows(UnsupportedOperationException.class, () -> createParent("<parent/>")
-                .setRelativePath(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createParent("<parent/>").setRelativePath(null));
     }
 
     @Test
     void testGetId() {
-        assertThrows(UnsupportedOperationException.class, () -> createParent("<parent/>")
-                .getId());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createParent("<parent/>").getId());
     }
 }

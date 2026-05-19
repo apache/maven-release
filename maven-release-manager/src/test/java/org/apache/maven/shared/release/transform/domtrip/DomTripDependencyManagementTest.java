@@ -66,19 +66,22 @@ class DomTripDependencyManagementTest {
 
     @Test
     void testAddDependency() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependencyManagement("<dependencyManagement/>")
-                .addDependency(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependencyManagement("<dependencyManagement/>").addDependency(null));
     }
 
     @Test
     void testRemoveDependency() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependencyManagement("<dependencyManagement/>")
-                .removeDependency(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependencyManagement("<dependencyManagement/>").removeDependency(null));
     }
 
     @Test
     void testSetDependencies() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependencyManagement("<dependencyManagement/>")
-                .setDependencies(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependencyManagement("<dependencyManagement/>").setDependencies(null));
     }
 }

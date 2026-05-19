@@ -111,73 +111,85 @@ class DomTripPropertiesTest {
 
     @Test
     void testLoadReader() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .load((Reader) null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").load((Reader) null));
     }
 
     @Test
     void testLoadInputStream() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .load((InputStream) null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").load((InputStream) null));
     }
 
     @Test
     void testSave() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .save(null, null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").save(null, null));
     }
 
     @Test
     void testStoreWriter() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .store((Writer) null, null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").store((Writer) null, null));
     }
 
     @Test
     void testStoreOutputStream() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .store((OutputStream) null, null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").store((OutputStream) null, null));
     }
 
     @Test
     void testLoadFromXML() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .loadFromXML(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").loadFromXML(null));
     }
 
     @Test
     void testStoreToXML() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .storeToXML(null, null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").storeToXML(null, null));
     }
 
     @Test
     void testStoreToXMLEncoded() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .storeToXML(null, null, (String) null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").storeToXML(null, null, (String) null));
     }
 
     @Test
     void testPropertyNames() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .propertyNames());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").propertyNames());
     }
 
     @Test
     void testStringPropertyNames() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .stringPropertyNames());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").stringPropertyNames());
     }
 
     @Test
     void testListPrintStream() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .list((PrintStream) null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").list((PrintStream) null));
     }
 
     @Test
     void testListPrintWriter() {
-        assertThrows(UnsupportedOperationException.class, () -> createProperties("<properties/>")
-                .list((PrintWriter) null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createProperties("<properties/>").list((PrintWriter) null));
     }
 }

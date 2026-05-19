@@ -91,97 +91,113 @@ class DomTripDependencyTest {
 
     @Test
     void testIsOptional() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .isOptional());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").isOptional());
     }
 
     @Test
     void testSetOptional() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .setOptional(true));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").setOptional(true));
     }
 
     @Test
     void testAddExclusion() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .addExclusion(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").addExclusion(null));
     }
 
     @Test
     void testGetClassifier() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .getClassifier());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").getClassifier());
     }
 
     @Test
     void testGetExclusions() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .getExclusions());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").getExclusions());
     }
 
     @Test
     void testGetScope() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .getScope());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").getScope());
     }
 
     @Test
     void testGetSystemPath() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .getSystemPath());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").getSystemPath());
     }
 
     @Test
     void testGetType() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .getType());
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").getType());
     }
 
     @Test
     void testRemoveExclusion() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .removeExclusion(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").removeExclusion(null));
     }
 
     @Test
     void testSetArtifactId() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .setArtifactId(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").setArtifactId(null));
     }
 
     @Test
     void testSetClassifier() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .setClassifier(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").setClassifier(null));
     }
 
     @Test
     void testSetExclusions() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .setExclusions(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").setExclusions(null));
     }
 
     @Test
     void testSetGroupId() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .setGroupId(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").setGroupId(null));
     }
 
     @Test
     void testSetScope() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .setScope(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").setScope(null));
     }
 
     @Test
     void testSetSystemPath() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .setSystemPath(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").setSystemPath(null));
     }
 
     @Test
     void testSetType() {
-        assertThrows(UnsupportedOperationException.class, () -> createDependency("<dependency/>")
-                .setType(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createDependency("<dependency/>").setType(null));
     }
 }

@@ -91,13 +91,15 @@ class DomTripExtensionTest {
 
     @Test
     void testSetArtifactId() {
-        assertThrows(UnsupportedOperationException.class, () -> createExtension("<extension/>")
-                .setArtifactId(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createExtension("<extension/>").setArtifactId(null));
     }
 
     @Test
     void testSetGroupId() {
-        assertThrows(UnsupportedOperationException.class, () -> createExtension("<extension/>")
-                .setGroupId(null));
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> createExtension("<extension/>").setGroupId(null));
     }
 }
