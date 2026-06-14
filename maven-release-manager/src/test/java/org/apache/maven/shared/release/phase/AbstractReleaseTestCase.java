@@ -19,6 +19,7 @@
 package org.apache.maven.shared.release.phase;
 
 import javax.inject.Inject;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,6 +77,7 @@ import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.ElementSelectors;
+import org.xmlunit.util.DocumentBuilderFactoryConfigurer;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getBasedir;
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
@@ -87,6 +89,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
  * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 public abstract class AbstractReleaseTestCase implements PlexusTestConfiguration {
+    private static final DocumentBuilderFactory DOCUMENT_BUILDER_FACTORY = DocumentBuilderFactoryConfigurer.builder()
+            // .withDTDParsingDisabled()
+            .build()
+            .configure(DocumentBuilderFactory.newInstance());
+
     @Inject
     protected ProjectBuilder projectBuilder;
 
@@ -279,12 +286,14 @@ public abstract class AbstractReleaseTestCase implements PlexusTestConfiguration
     protected void comparePomFiles(
             File expectedFile, File actualFile, boolean normalizeLineEndings, boolean ignoreComments)
             throws IOException {
-        StringBuffer sb = new StringBuffer("Check the transformed POM " + actualFile);
+        StringBuilder sb = new StringBuilder("Check the transformed POM " + actualFile);
         sb.append(System.lineSeparator());
 
         final String remoteRepositoryURL = getRemoteRepositoryURL();
 
-        DiffBuilder diffBuilder = DiffBuilder.compare(expectedFile).withTest(actualFile);
+        DiffBuilder diffBuilder = DiffBuilder.compare(expectedFile)
+                .withDocumentBuilderFactory(DOCUMENT_BUILDER_FACTORY)
+                .withTest(actualFile);
         if (normalizeLineEndings) {
             diffBuilder = diffBuilder.normalizeWhitespace();
         }
