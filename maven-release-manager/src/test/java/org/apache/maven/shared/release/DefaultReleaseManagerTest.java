@@ -235,6 +235,71 @@ class DefaultReleaseManagerTest {
     }
 
     @Test
+    void testPrepareOverridesConfiguredPushChangesFromUserProperties() throws Exception {
+        // pushChanges=false as if configured in the POM <configuration> (where it wins over -DpushChanges)
+        ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
+        builder.setCompletedPhase(null);
+        builder.setPushChanges(false);
+
+        // pushChanges=true as if passed on the command line with -DpushChanges
+        Properties userProperties = new Properties();
+        userProperties.setProperty("pushChanges", "true");
+
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptorBuilder(builder);
+        prepareRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
+        prepareRequest.setResume(false);
+        prepareRequest.setUserProperties(userProperties);
+
+        releaseManagerTest.prepare(prepareRequest);
+
+        assertTrue(
+                ((ReleasePhaseStub) phaseStep1).getReleaseDescriptor().isPushChanges(),
+                "command-line pushChanges=true should override POM-configured pushChanges=false");
+    }
+
+    @Test
+    void testPrepareUserPropertyCanDisablePushChanges() throws Exception {
+        ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
+        builder.setCompletedPhase(null);
+        builder.setPushChanges(true);
+
+        Properties userProperties = new Properties();
+        userProperties.setProperty("pushChanges", "false");
+
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptorBuilder(builder);
+        prepareRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
+        prepareRequest.setResume(false);
+        prepareRequest.setUserProperties(userProperties);
+
+        releaseManagerTest.prepare(prepareRequest);
+
+        assertFalse(
+                ((ReleasePhaseStub) phaseStep1).getReleaseDescriptor().isPushChanges(),
+                "command-line pushChanges=false should override POM-configured pushChanges=true");
+    }
+
+    @Test
+    void testPrepareKeepsConfiguredPushChangesWhenUserPropertyAbsent() throws Exception {
+        ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
+        builder.setCompletedPhase(null);
+        builder.setPushChanges(false);
+
+        ReleasePrepareRequest prepareRequest = new ReleasePrepareRequest();
+        prepareRequest.setReleaseDescriptorBuilder(builder);
+        prepareRequest.setReleaseEnvironment(new DefaultReleaseEnvironment());
+        prepareRequest.setResume(false);
+        prepareRequest.setUserProperties(new Properties());
+
+        releaseManagerTest.prepare(prepareRequest);
+
+        assertFalse(
+                ((ReleasePhaseStub) phaseStep1).getReleaseDescriptor().isPushChanges(),
+                "configured pushChanges should be preserved when no command-line override is given");
+    }
+
+    @Test
     void testPrepareSimulateCompletedPhase() throws Exception {
         ReleaseDescriptorBuilder builder = configStore.getReleaseConfiguration();
         builder.setCompletedPhase("step1");
