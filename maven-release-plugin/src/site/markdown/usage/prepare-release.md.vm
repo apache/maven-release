@@ -63,11 +63,13 @@ mvn release:clean release:prepare
 
 **Note:** If any changes have been made to your source files they might need to be reverted before you restart the prepare process. You can use `release:rollback` to make the plugin do it for you.
 
-## Multi-module projects
+Multi-module projects
+---------------------
 
 You will be prompted for the version number for each module of the project. If you prefer that every module gets the same version as the parent POM, you can set the option `autoVersionSubmodules` to `true`. Now you will be asked only once for the release version and the next development version.
 
-## Generating release POMs
+Generating release POMs
+-----------------------
 
 It is possible to generate a `release-pom.xml` file for each project that contains the fully resolved project used at release time as a record for later. As of the 2\.0 release, this requires calling an alternate goal:
 
@@ -77,7 +79,8 @@ mvn release:prepare-with-pom
 
 This goal is equivalent to the `release:prepare` goal, except that it requires a previous build of the project to exist to properly populate the `release-pom.xml` files.
 
-## Overriding the default tag name format
+Overriding the default tag name format
+--------------------------------------
 
 By default, if you do not specify a tag name, a default tag name of `artifactId-version` will be suggested \(and used if running non-interactively\).
 
@@ -118,7 +121,8 @@ The following properties are supported:
 
 The `project.` prefix is optional and may be omitted.
 
-## Overriding proposed release and next development versions
+Overriding proposed release and next development versions
+---------------------------------------------------------
 
 The Release Plugin automatically calculates the versions that are proposed for the release and the next development version \(i.e. the next SNAPSHOT\).
 

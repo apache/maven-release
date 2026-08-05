@@ -27,7 +27,8 @@ date: 2011-11-10
 <!-- under the License.-->
 # Usage
 
-## Prepare your project to use the maven-release-plugin
+Prepare your project to use the maven-release-plugin
+----------------------------------------------------
 
 To be able to make a solid start with the maven-release-plugin, there are 2 things you should include in your pom:
 
@@ -61,7 +62,8 @@ The `developerConnection` contains the URL of the Source Control Management syst
 
 The following are some common scenarios in preparing a release.
 
-## Do a Dry Run
+Do a Dry Run
+------------
 
 Since the Release Plugin performs a number of operations that change the project, it may be wise to do a dry run before a big release or on a new project.
 
@@ -79,7 +81,8 @@ mvn release:perform -DdryRun
 
 This will show the perform actions then clean the project, ie. remove all of the files created above, and the project will be ready to execute the proper release.
 
-## Run in Batch Mode
+Run in Batch Mode
+-----------------
 
 Sometimes it is desirable to do the commit/tag process on a regular interval \(e.g. to produce nightly or integration builds through a build server\). To use the default inputs for the versions and tag information and not prompt for any values, use Maven&apos;s `--batch-mode` setting:
 
@@ -87,7 +90,8 @@ Sometimes it is desirable to do the commit/tag process on a regular interval \(e
 mvn --batch-mode release:prepare
 ```
 
-## Use a staging repository
+Use a staging repository
+------------------------
 
 Sometimes it is desirable to deploy a pre-release to be approved before made publicly available. One option is to create release candidates versions using the `release:perform` goal, but the final deployed artifact will NOT be the exact one that has been approved as RCx.
 
@@ -97,7 +101,8 @@ The `release:stage` goal uses this strategy. It replaces the `release:perform` g
 
 After the release is complete, the `release.properties` and other release files will NOT be removed, so that you can still execute a `release:rollback` if some error has been detected and a new candidate must be created after some fixes. You just need to use a distinct tag in SCM, or rename the one that has been created if the SCM provider supports renaming tags.
 
-## Use a different username in the SCM server than the one in the operating system
+Use a different username in the SCM server than the one in the operating system
+-------------------------------------------------------------------------------
 
 Most of the SCMs are simply executed as an external command as the current user on your system. If this username is not the same as the SCM username, you may need to set the following option:
 
@@ -105,7 +110,8 @@ Most of the SCMs are simply executed as an external command as the current user 
 mvn -Dusername=your_scm_username release:prepare
 ```
 
-## Set where to tag the files in Subversion
+Set where to tag the files in Subversion
+----------------------------------------
 
 This example shows how to set the repository location for all tags to be created in Subversion. Note that this is not needed if you use the standard SVN layout, where the root project is in `trunk`, and there is a sibling `tags` directory.
 
