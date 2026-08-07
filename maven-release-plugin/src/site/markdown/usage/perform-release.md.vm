@@ -29,8 +29,8 @@ date: 2011-09-23
 
 Performing a release runs the following release phases [by default](../../maven-release-manager/#perform):
 
-- Checkout from an SCM URL with optional tag to `workingDirectory` \(`target/checkout` by default\)
-- Run the perform Maven goals to release the project \(by default, `deploy site-deploy`\), eventually with release profile\(s\) active
+- Checkout from an SCM URL with optional tag to `workingDirectory` (`target/checkout` by default)
+- Run the perform Maven goals to release the project (by default, `deploy site-deploy`), eventually with release profile(s) active
 
 To perform a release, execute this command:
 
@@ -46,7 +46,7 @@ mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -Dc
 
 `release:perform` will fork a new Maven instance to build the checked-out project. This new Maven instance will use the same system configuration and Maven profiles used by the one running the `release:perform` goal. Since there&apos;s no pom.xml, you should use the fully qualified name of the goal to ensure the right version of the maven-release-plugin is used.
 
-It is possible to force some profiles to get enabled during release \(for example to enable time-consuming tasks that are only relevant at release-time\) by setting a comma separated list of profiles names in the `releaseProfiles` parameter. The goals and profiles required to release the project can then be configured in the POM:
+It is possible to force some profiles to get enabled during release (for example to enable time-consuming tasks that are only relevant at release-time) by setting a comma separated list of profiles names in the `releaseProfiles` parameter. The goals and profiles required to release the project can then be configured in the POM:
 
 ```unknown
   <plugin>

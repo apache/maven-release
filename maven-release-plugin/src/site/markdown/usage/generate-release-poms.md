@@ -25,7 +25,7 @@ date: 2010-01-04
 <!-- under the License.-->
 # Generate Release POMs
 
-To generate POMs with resolved information \(e.g. version numbers\) to check the values that the Release Plugin will use, execute the `prepare-with-pom` goal. Resolved values will be saved in `release-pom.xml`.
+To generate POMs with resolved information (e.g. version numbers) to check the values that the Release Plugin will use, execute the `prepare-with-pom` goal. Resolved values will be saved in `release-pom.xml`.
 
 ```
 mvn release:prepare-with-pom

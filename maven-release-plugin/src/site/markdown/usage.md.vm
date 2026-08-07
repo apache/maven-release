@@ -71,7 +71,7 @@ To do this, commit all of your files as if you were about to run a full release 
 mvn release:prepare -DdryRun
 ```
 
-This will ask all the same questions, run the same tests, and output a copy of how the POMs will look after transformation. You can check the output and review the POMs \(with `.tag` and `.next` suffixes\), then run:
+This will ask all the same questions, run the same tests, and output a copy of how the POMs will look after transformation. You can check the output and review the POMs (with `.tag` and `.next` suffixes), then run:
 
 ```
 mvn release:perform -DdryRun
@@ -81,7 +81,7 @@ This will show the perform actions then clean the project, ie. remove all of the
 
 ## Run in Batch Mode
 
-Sometimes it is desirable to do the commit/tag process on a regular interval \(e.g. to produce nightly or integration builds through a build server\). To use the default inputs for the versions and tag information and not prompt for any values, use Maven&apos;s `--batch-mode` setting:
+Sometimes it is desirable to do the commit/tag process on a regular interval (e.g. to produce nightly or integration builds through a build server). To use the default inputs for the versions and tag information and not prompt for any values, use Maven&apos;s `--batch-mode` setting:
 
 ```
 mvn --batch-mode release:prepare

@@ -41,7 +41,7 @@ In this case you will only be prompted for the desired version number once.
 
 ## Specify versions on the command line.
 
-You may want to specify the version\(s\) to use on the command line. This can be useful for example if you are running the update in non-interactive mode. The `update-versions` goal can use the same properties used by the `prepare` goal for specifying the versions to be used.
+You may want to specify the version(s) to use on the command line. This can be useful for example if you are running the update in non-interactive mode. The `update-versions` goal can use the same properties used by the `prepare` goal for specifying the versions to be used.
 
 ```
 mvn --batch-mode release:update-versions -DdevelopmentVersion=1.2.0-SNAPSHOT

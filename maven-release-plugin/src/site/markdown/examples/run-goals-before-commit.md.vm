@@ -25,7 +25,7 @@ date: 2010-01-03
 <!-- under the License.-->
 # Run Additional Goals Before Commit
 
-To run additional goals after release preparation \(tag\) but before committing with new -SNAPSHOT version, specify them using the `preparationGoals` property.
+To run additional goals after release preparation (tag) but before committing with new -SNAPSHOT version, specify them using the `preparationGoals` property.
 
 ```unknown
 <project>

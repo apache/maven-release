@@ -28,11 +28,11 @@ date: 2010-01-03
 Creating a branch involves the following release phases [by default](../../maven-release-manager/#branch):
 
 - Check that there are no uncommitted changes in the sources
-- Change the version in the POMs if you want to change it in the branch \(you will be prompted for the versions to use\)
+- Change the version in the POMs if you want to change it in the branch (you will be prompted for the versions to use)
 - Transform the SCM information in the POM to include the final destination of the tag
 - Commit the modified POMs
-- Tag the code in the SCM as a new branch with a version name \(this will be prompted for\)
-- Bump the version in the POMs if you want to change it to a new value y-SNAPSHOT \(these values will also be prompted for\)
+- Tag the code in the SCM as a new branch with a version name (this will be prompted for)
+- Bump the version in the POMs if you want to change it to a new value y-SNAPSHOT (these values will also be prompted for)
 - Commit the modified POMs
 
 To create a branch execute this command:

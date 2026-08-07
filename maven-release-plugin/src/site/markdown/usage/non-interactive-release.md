@@ -23,7 +23,7 @@ date: 2010-01-03
 <!-- under the License.-->
 # Performing a Non-interactive Release
 
-In some environments, it may be necessary to perform a non-interactive release. This means that the Release Plugin will obtain the required parameters from system properties \(set on the command line\) or from a properties file \(`release.properties`\).
+In some environments, it may be necessary to perform a non-interactive release. This means that the Release Plugin will obtain the required parameters from system properties (set on the command line) or from a properties file (`release.properties`).
 
 To prevent the Release Plugin from prompting the user for any information, Maven should be put into batch mode.
 
@@ -51,14 +51,14 @@ mvn --batch-mode -Dtag=my-proj-1.2 release:prepare \
 
 ## Multi-module releases
 
-Because there is the possibility that a release will include multiple release versions and SNAPSHOT versions \(for a multi-module project\), there is a specific format for setting these values. The property name should start with `project.rel` for release versions and `project.dev` for the new development version. These prefixes are followed by the project&apos;s groupId and artifactId \(separated by a colon\). So the result looks something like the following example.
+Because there is the possibility that a release will include multiple release versions and SNAPSHOT versions (for a multi-module project), there is a specific format for setting these values. The property name should start with `project.rel` for release versions and `project.dev` for the new development version. These prefixes are followed by the project&apos;s groupId and artifactId (separated by a colon). So the result looks something like the following example.
 
 ```
 mvn --batch-mode -Dtag=my-proj-1.2 -Dproject.rel.org.myCompany:projectA=1.2 \
      -Dproject.dev.org.myCompany:projectA=1.3-SNAPSHOT release:prepare
 ```
 
-Using this convention, multiple release versions and SNAPSHOT versions \(one for each project module\) can be specified on the command line.
+Using this convention, multiple release versions and SNAPSHOT versions (one for each project module) can be specified on the command line.
 
 These properties can be used in combination with the `releaseVersion` and `developmentVersion`. In the case where both are used, `releaseVersion` and `developmentVersion` act as defaults for modules that have not been given specific values using the `groupId:artifactId` format.
 

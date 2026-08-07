@@ -29,7 +29,7 @@ Note that only the working copy is cleaned up, no previous steps are rolled back
 
 Cleaning a release goes through the following release phases:
 
-- Delete the release descriptor \(`release.properties`\)
+- Delete the release descriptor (`release.properties`)
 - Delete any backup POM files
 
 To clean a release execute this command:

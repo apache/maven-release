@@ -38,7 +38,7 @@ This plugin is used to release a project with Maven, saving a lot of repetitive,
 - [release:perform](./perform-mojo.html) Perform a release from SCM.
 - [release:stage](./stage-mojo.html) Perform a release from SCM into a staging folder/repository.
 - [release:branch](./branch-mojo.html) Create a branch of the current project with all versions updated.
-- [release:update-versions](./update-versions-mojo.html) Update the versions in the POM\(s\).
+- [release:update-versions](./update-versions-mojo.html) Update the versions in the POM(s).
 
 ## Usage
 

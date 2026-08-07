@@ -32,13 +32,13 @@ Preparing a release goes through the following release phases [by default](../..
 
 - Check that there are no uncommitted changes in the sources
 - Check that there are no SNAPSHOT dependencies
-- Change the version in the POMs from x-SNAPSHOT to a new release version \(you will be prompted for the versions to use, with a default value proposed by version policy configured as `projectVersionPolicyId`\)
+- Change the version in the POMs from x-SNAPSHOT to a new release version (you will be prompted for the versions to use, with a default value proposed by version policy configured as `projectVersionPolicyId`)
 - Transform the SCM information in the POM to include the final destination of the tag
-- Run the project tests \(preparation goals\) against the modified POMs to confirm everything is in working order
+- Run the project tests (preparation goals) against the modified POMs to confirm everything is in working order
 - Commit the modified POMs
-- Tag the code in the SCM with a version name \(this will be prompted for\)
-- Bump the version in the POMs to a new value y-SNAPSHOT \(these values will also be prompted for, with a default value proposed by version policy configured as `projectVersionPolicyId`\)
-- Eventually run completion goal\(s\) against the project \(since 2\.2\) 
+- Tag the code in the SCM with a version name (this will be prompted for)
+- Bump the version in the POMs to a new value y-SNAPSHOT (these values will also be prompted for, with a default value proposed by version policy configured as `projectVersionPolicyId`)
+- Eventually run completion goal(s) against the project (since 2\.2) 
 - Commit the modified POMs
 
 To prepare a release execute this command:
@@ -79,9 +79,9 @@ This goal is equivalent to the `release:prepare` goal, except that it requires a
 
 ## Overriding the default tag name format
 
-By default, if you do not specify a tag name, a default tag name of `artifactId-version` will be suggested \(and used if running non-interactively\).
+By default, if you do not specify a tag name, a default tag name of `artifactId-version` will be suggested (and used if running non-interactively).
 
-You can override proposed value with the exact tag name to use from the command line by passing the `tag` property \(`-Dtag=my-tag`\). If you want to have the tag name generated, but just change the default pattern, you can use the `tagNameFormat` configuration option.
+You can override proposed value with the exact tag name to use from the command line by passing the `tag` property (`-Dtag=my-tag`). If you want to have the tag name generated, but just change the default pattern, you can use the `tagNameFormat` configuration option.
 
 For example to have the tag name default to the version number prefixed with a `v` you could configure your pom like so:
 
@@ -120,7 +120,7 @@ The `project.` prefix is optional and may be omitted.
 
 ## Overriding proposed release and next development versions
 
-The Release Plugin automatically calculates the versions that are proposed for the release and the next development version \(i.e. the next SNAPSHOT\).
+The Release Plugin automatically calculates the versions that are proposed for the release and the next development version (i.e. the next SNAPSHOT).
 
 The default VersionPolicy compares and increments versions for a common java versioning scheme: the proposed release version is the current version without `-SNAPSHOT`, and the proposed next development version is a minor increment to the release with `-SNAPSHOT`.
 
@@ -149,5 +149,5 @@ It is possible to select a different VersionPolicy by specifying its id:
 There are 3 VersionPolicies bundled with the Release Plugin:
 
 - `default`: increments versions for a common java versioning scheme,
-- `OddEvenVersionPolicy`: even version numbers for releases, and odd version numbers for development \(see [javadoc](../../maven-release-policies/maven-release-oddeven-policy/apidocs/org/apache/maven/shared/release/policy/oddeven/OddEvenVersionPolicy.html)\),
-- `SemVerVersionPolicy`: enforce SemVer format and increase minor element when resolving the development version \(see [javadoc](../../maven-release-policies/maven-release-semver-policy/apidocs/org/apache/maven/shared/release/policy/semver/SemVerVersionPolicy.html)\).
+- `OddEvenVersionPolicy`: even version numbers for releases, and odd version numbers for development (see [javadoc](../../maven-release-policies/maven-release-oddeven-policy/apidocs/org/apache/maven/shared/release/policy/oddeven/OddEvenVersionPolicy.html)),
+- `SemVerVersionPolicy`: enforce SemVer format and increase minor element when resolving the development version (see [javadoc](../../maven-release-policies/maven-release-semver-policy/apidocs/org/apache/maven/shared/release/policy/semver/SemVerVersionPolicy.html)).
