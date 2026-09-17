@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -281,6 +282,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
         Model model = project.getModel();
 
         Properties properties = modelTarget.getProperties();
+        VersionProperties versionProperties = new VersionProperties(properties);
 
         rewriteParent(project, modelTarget, result, releaseDescriptor, simulate);
 
@@ -294,7 +296,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             rewriteArtifactVersions(
                     toMavenCoordinates(buildTarget.getExtensions()),
                     model,
-                    properties,
+                    versionProperties,
                     result,
                     releaseDescriptor,
                     simulate);
@@ -302,7 +304,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             rewriteArtifactVersions(
                     toMavenCoordinates(buildTarget.getPlugins()),
                     model,
-                    properties,
+                    versionProperties,
                     result,
                     releaseDescriptor,
                     simulate);
@@ -311,7 +313,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                 rewriteArtifactVersions(
                         toMavenCoordinates(plugin.getDependencies()),
                         model,
-                        properties,
+                        versionProperties,
                         result,
                         releaseDescriptor,
                         simulate);
@@ -321,7 +323,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                 rewriteArtifactVersions(
                         toMavenCoordinates(buildTarget.getPluginManagement().getPlugins()),
                         model,
-                        properties,
+                        versionProperties,
                         result,
                         releaseDescriptor,
                         simulate);
@@ -330,7 +332,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                     rewriteArtifactVersions(
                             toMavenCoordinates(plugin.getDependencies()),
                             model,
-                            properties,
+                            versionProperties,
                             result,
                             releaseDescriptor,
                             simulate);
@@ -344,7 +346,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                 rewriteArtifactVersions(
                         toMavenCoordinates(profileBuild.getPlugins()),
                         model,
-                        properties,
+                        versionProperties,
                         result,
                         releaseDescriptor,
                         simulate);
@@ -353,7 +355,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                     rewriteArtifactVersions(
                             toMavenCoordinates(plugin.getDependencies()),
                             model,
-                            properties,
+                            versionProperties,
                             result,
                             releaseDescriptor,
                             simulate);
@@ -364,7 +366,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                             toMavenCoordinates(
                                     profileBuild.getPluginManagement().getPlugins()),
                             model,
-                            properties,
+                            versionProperties,
                             result,
                             releaseDescriptor,
                             simulate);
@@ -373,7 +375,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                         rewriteArtifactVersions(
                                 toMavenCoordinates(plugin.getDependencies()),
                                 model,
-                                properties,
+                                versionProperties,
                                 result,
                                 releaseDescriptor,
                                 simulate);
@@ -390,7 +392,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             rewriteArtifactVersions(
                     toMavenCoordinates(modelBase.getDependencies()),
                     model,
-                    properties,
+                    versionProperties,
                     result,
                     releaseDescriptor,
                     simulate);
@@ -399,7 +401,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                 rewriteArtifactVersions(
                         toMavenCoordinates(modelBase.getDependencyManagement().getDependencies()),
                         model,
-                        properties,
+                        versionProperties,
                         result,
                         releaseDescriptor,
                         simulate);
@@ -409,7 +411,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                 rewriteArtifactVersions(
                         toMavenCoordinates(modelBase.getReporting().getPlugins()),
                         model,
-                        properties,
+                        versionProperties,
                         result,
                         releaseDescriptor,
                         simulate);
@@ -421,6 +423,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
         if (properties != null) {
             rewriteBuildOutputTimestampProperty(properties, result);
         }
+        versionProperties.checkPreservedVersions(projectId);
     }
 
     private void rewriteBuildOutputTimestampProperty(Properties properties, ReleaseResult result) {
@@ -492,7 +495,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
     private void rewriteArtifactVersions(
             Collection<MavenCoordinate> elements,
             Model projectModel,
-            Properties properties,
+            VersionProperties properties,
             ReleaseResult result,
             ReleaseDescriptor releaseDescriptor,
             boolean simulate)
@@ -508,7 +511,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
     private void rewriteArtifactVersion(
             MavenCoordinate artifact,
             Model projectModel,
-            Properties properties,
+            VersionProperties properties,
             ReleaseResult result,
             ReleaseDescriptor releaseDescriptor,
             boolean simulate)
@@ -570,6 +573,11 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                         } else {
                             logInfo(result, "  Ignoring artifact version update for expression " + rawVersion);
                         }
+                    } else if (properties.preservePreviousVersion(property, originalVersion)) {
+                        logInfo(
+                                result,
+                                "  Ignoring artifact version update for " + key + " using " + rawVersion
+                                        + " because it refers to a different original version");
                     } else {
                         rewritePropertyUsedInVersionExpression(
                                 projectId,
@@ -578,7 +586,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                                 mappedVersion,
                                 originalVersion,
                                 property,
-                                properties,
+                                properties.current,
                                 result,
                                 releaseDescriptor);
                     }
@@ -590,6 +598,49 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             artifact.setVersion(resolvedSnapshotVersion);
         } else {
             // artifact not related to current release
+        }
+    }
+
+    private static final class VersionProperties {
+        private final Properties current;
+        private final Map<String, String> original = new HashMap<>();
+        private final Set<String> preserved = new HashSet<>();
+
+        private VersionProperties(Properties properties) {
+            current = properties;
+            // Rewriting the project version can update these before artifact versions are visited.
+            originalValue(CiFriendlyVersion.REVISION);
+            originalValue(CiFriendlyVersion.SHA1);
+            originalValue(CiFriendlyVersion.CHANGELIST);
+        }
+
+        private String originalValue(String property) {
+            if (!original.containsKey(property)) {
+                original.put(property, current == null ? null : current.getProperty(property));
+            }
+            return original.get(property);
+        }
+
+        private boolean preservePreviousVersion(String property, String originalVersion) {
+            String value = originalValue(property);
+            if (originalVersion != null && value != null && !value.contains("${") && !value.equals(originalVersion)) {
+                preserved.add(property);
+                return true;
+            }
+            return false;
+        }
+
+        // A later reference may share a property with an earlier one, so validate after all rewrites.
+        private void checkPreservedVersions(String projectId) throws ReleaseFailureException {
+            for (String property : preserved) {
+                String originalValue = original.get(property);
+                String currentValue = current.getProperty(property);
+                if (!originalValue.equals(currentValue)) {
+                    throw new ReleaseFailureException("The expression (${" + property + "}) in the project ("
+                            + projectId + ") is shared by artifacts requiring different versions ("
+                            + originalValue + " and " + currentValue + ").");
+                }
+            }
         }
     }
 
