@@ -170,12 +170,6 @@ under the License.
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.hamcrest</groupId>
-      <artifactId>hamcrest</artifactId>
-      <version>3.0</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.maven.scm</groupId>
       <artifactId>maven-scm-test</artifactId>
       <scope>test</scope>

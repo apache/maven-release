@@ -276,11 +276,6 @@ under the License.
         <artifactId>xmlunit-core</artifactId>
         <version>2.13.0</version>
       </dependency>
-      <dependency>
-        <groupId>org.hamcrest</groupId>
-        <artifactId>hamcrest-core</artifactId>
-        <version>3.0</version>
-      </dependency>
     </dependencies>
   </dependencyManagement>
 

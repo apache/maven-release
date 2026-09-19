@@ -48,11 +48,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.apache.maven.api.plugin.testing.MojoExtension.getBasedir;
 import static org.apache.maven.api.plugin.testing.MojoExtension.setVariableValueToObject;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doThrow;
@@ -109,18 +109,17 @@ class PrepareReleaseMojoTest {
         // verify
         verify(releaseManagerMock).prepare(prepareRequest.capture());
 
-        assertThat(
-                prepareRequest.getValue().getReleaseDescriptorBuilder(),
-                is(instanceOf(ReleaseDescriptorBuilder.class)));
-        assertThat(prepareRequest.getValue().getReleaseEnvironment(), is(instanceOf(ReleaseEnvironment.class)));
-        assertThat(prepareRequest.getValue().getReactorProjects(), is(notNullValue()));
-        assertThat(prepareRequest.getValue().getResume(), is(true));
-        assertThat(prepareRequest.getValue().getDryRun(), is(false));
+        assertInstanceOf(
+                ReleaseDescriptorBuilder.class, prepareRequest.getValue().getReleaseDescriptorBuilder());
+        assertInstanceOf(ReleaseEnvironment.class, prepareRequest.getValue().getReleaseEnvironment());
+        assertNotNull(prepareRequest.getValue().getReactorProjects());
+        assertTrue(prepareRequest.getValue().getResume());
+        assertFalse(prepareRequest.getValue().getDryRun());
 
         ReleaseDescriptorBuilder.BuilderReleaseDescriptor releaseDescriptor =
                 prepareRequest.getValue().getReleaseDescriptorBuilder().build();
-        assertThat(releaseDescriptor.isScmSignTags(), is(false));
-        assertThat(releaseDescriptor.isUpdateDependencies(), is(false));
+        assertFalse(releaseDescriptor.isScmSignTags());
+        assertFalse(releaseDescriptor.isUpdateDependencies());
     }
 
     @Test

@@ -40,8 +40,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -150,9 +148,9 @@ class RemoveScmTagPhaseTest extends AbstractReleaseTestCase {
                         new DefaultReleaseEnvironment(),
                         reactorProjects));
 
-        assertThat(
-                e.getMessage(),
-                equalTo("Unable to remove tag \nProvider message:\nprovider-message\nCommand output:\ncommand-output"));
+        assertEquals(
+                "Unable to remove tag \nProvider message:\nprovider-message\nCommand output:\ncommand-output",
+                e.getMessage());
     }
 
     @Test
