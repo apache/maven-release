@@ -41,7 +41,7 @@ import java.util.Objects;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.factory.ArtifactFactory;
 import org.apache.maven.artifact.repository.ArtifactRepository;
-import org.apache.maven.artifact.repository.DefaultArtifactRepository;
+import org.apache.maven.artifact.repository.ArtifactRepositoryPolicy;
 import org.apache.maven.artifact.repository.MavenArtifactRepository;
 import org.apache.maven.artifact.repository.layout.ArtifactRepositoryLayout;
 import org.apache.maven.artifact.repository.layout.DefaultRepositoryLayout;
@@ -176,8 +176,12 @@ public abstract class AbstractReleaseTestCase implements PlexusTestConfiguration
             projectFile = testCaseRootTo.resolve(Paths.get(executionRoot, "pom.xml"));
         }
 
-        List<ArtifactRepository> repos = Collections.singletonList(
-                new DefaultArtifactRepository("central", getRemoteRepositoryURL(), new DefaultRepositoryLayout()));
+        List<ArtifactRepository> repos = Collections.singletonList(new MavenArtifactRepository(
+                "central",
+                getRemoteRepositoryURL(),
+                new DefaultRepositoryLayout(),
+                new ArtifactRepositoryPolicy(),
+                new ArtifactRepositoryPolicy()));
 
         Repository repository = new Repository();
         repository.setId("central");
