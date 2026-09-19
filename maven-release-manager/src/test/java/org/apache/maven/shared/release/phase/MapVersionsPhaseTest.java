@@ -40,15 +40,14 @@ import org.apache.maven.shared.release.versions.VersionParseException;
 import org.codehaus.plexus.components.interactivity.Prompter;
 import org.codehaus.plexus.components.interactivity.PrompterException;
 import org.codehaus.plexus.testing.PlexusTest;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
@@ -2361,7 +2360,7 @@ class MapVersionsPhaseTest {
                         ReleaseUtils.buildReleaseDescriptor(builder),
                         new DefaultReleaseEnvironment(),
                         reactorProjects));
-        assertThat(e.getCause(), CoreMatchers.instanceOf(PolicyException.class));
+        assertInstanceOf(PolicyException.class, e.getCause());
     }
 
     @Test
