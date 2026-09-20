@@ -27,7 +27,7 @@ under the License.
 
 Maven Release Manager implements:
 
-- the release management engine ([ReleaseManager](./apidocs/org/apache/maven/shared/release/ReleaseManager.html) API with [DefaultReleaseManager](./xref/org/apache/maven/shared/release/DefaultReleaseManager.html) implementation),
+- the release management engine ([ReleaseManager](./apidocs/org/apache/maven/shared/release/ReleaseManager.html) API with [DefaultReleaseManager](https://github.com/apache/maven-release/blob/master/maven-release-manager/src/main/java/org/apache/maven/shared/release/DefaultReleaseManager.java) implementation),
 - available release phases (in [phase package](./apidocs/org/apache/maven/shared/release/phase/package-summary.html)) to be used in [Strategy](./apidocs/org/apache/maven/shared/release/strategies/DefaultStrategy.html) configuration,
 - and the default phases configuration for each release goal:
     - <a id="prepare"></a>`prepare`:<!-- MACRO{snippet|id=prepare|file=${project.basedir}/src/main/java/org/apache/maven/shared/release/strategies/DefaultStrategy.java} -->
