@@ -504,6 +504,31 @@ class RewritePomsForReleasePhaseTest extends AbstractEditModeRewritingReleasePha
     }
 
     @Test
+    void testRewritePomWhenAllPomsMatchCheckModificationExcludes() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
+        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom");
+        builder.addReleaseVersion("groupId:artifactId", NEXT_VERSION);
+        builder.setCheckModificationExcludes(Collections.singletonList("**/pom.xml"));
+
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        comparePomFiles(reactorProjects);
+    }
+
+    @Test
+    void testRewriteAllModulePomsWhenTheyMatchCheckModificationExcludes() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("modules-with-different-versions");
+        ReleaseDescriptorBuilder builder =
+                createMappedConfiguration(reactorProjects, "modules-with-different-versions");
+        builder.addReleaseVersion("groupId:subproject2", ALTERNATIVE_NEXT_VERSION);
+        builder.setCheckModificationExcludes(Collections.singletonList("**/pom.xml"));
+
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        comparePomFiles(reactorProjects);
+    }
+
+    @Test
     void testRewriteFormattingPreservation() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects("formatting-preservation");
         ReleaseDescriptorBuilder builder =
