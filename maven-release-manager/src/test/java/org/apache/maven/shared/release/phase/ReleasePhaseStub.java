@@ -46,6 +46,11 @@ public class ReleasePhaseStub implements ReleasePhase, ResourceGenerator {
      */
     private boolean cleaned;
 
+    /**
+     * The descriptor the phase was last invoked with.
+     */
+    private ReleaseDescriptor releaseDescriptor;
+
     @Override
     public ReleaseResult execute(
             ReleaseDescriptor releaseDescriptor,
@@ -54,6 +59,7 @@ public class ReleasePhaseStub implements ReleasePhase, ResourceGenerator {
         ReleaseResult result = new ReleaseResult();
 
         executed = true;
+        this.releaseDescriptor = releaseDescriptor;
 
         result.setResultCode(ReleaseResult.SUCCESS);
 
@@ -68,6 +74,7 @@ public class ReleasePhaseStub implements ReleasePhase, ResourceGenerator {
         ReleaseResult result = new ReleaseResult();
 
         simulated = true;
+        this.releaseDescriptor = releaseDescriptor;
 
         result.setResultCode(ReleaseResult.SUCCESS);
 
@@ -95,5 +102,9 @@ public class ReleasePhaseStub implements ReleasePhase, ResourceGenerator {
 
     public boolean isCleaned() {
         return cleaned;
+    }
+
+    public ReleaseDescriptor getReleaseDescriptor() {
+        return releaseDescriptor;
     }
 }
