@@ -19,11 +19,8 @@
 package org.apache.maven.shared.release.phase;
 
 import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -65,8 +62,6 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
      */
     protected final String descriptorCommentGetter;
 
-    private final Set<String> exclusionPatterns = new HashSet<>();
-
     protected AbstractScmCommitPhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator, String descriptorCommentGetter) {
         this.scmRepositoryConfigurator = requireNonNull(scmRepositoryConfigurator);
@@ -82,12 +77,6 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
         ReleaseResult relResult = new ReleaseResult();
 
         validateConfiguration(releaseDescriptor);
-
-        List<String> additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
-
-        if (additionalExcludes != null) {
-            exclusionPatterns.addAll(additionalExcludes);
-        }
 
         runLogic(releaseDescriptor, releaseEnvironment, reactorProjects, relResult, false);
 
@@ -306,15 +295,10 @@ public abstract class AbstractScmCommitPhase extends AbstractReleasePhase {
     protected List<File> createPomFiles(ReleaseDescriptor releaseDescriptor, List<MavenProject> reactorProjects) {
 
         List<File> pomFiles = new ArrayList<>();
+        Set<MavenProject> excludedProjects = ProjectExclusionUtil.getExcludedProjects(
+                reactorProjects, releaseDescriptor.getCheckModificationExcludes());
         for (MavenProject project : reactorProjects) {
-
-            final String path = project.getFile().getPath();
-
-            boolean isExcludedPathFound = exclusionPatterns.stream()
-                    .anyMatch(exclusionPattern -> FileSystems.getDefault()
-                            .getPathMatcher("glob:" + exclusionPattern)
-                            .matches(Paths.get(path)));
-            if (!isExcludedPathFound) {
+            if (!excludedProjects.contains(project)) {
                 pomFiles.addAll(createPomFiles(releaseDescriptor, project));
             }
         }

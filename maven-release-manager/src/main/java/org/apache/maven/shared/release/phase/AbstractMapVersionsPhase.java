@@ -18,9 +18,6 @@
  */
 package org.apache.maven.shared.release.phase;
 
-import java.nio.file.FileSystems;
-import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -102,8 +99,6 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
      */
     private final boolean convertToBranch;
 
-    private final Set<String> exclusionPatterns = new HashSet<>();
-
     public AbstractMapVersionsPhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator,
             Prompter prompter,
@@ -125,11 +120,8 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
             throws ReleaseExecutionException {
         ReleaseResult result = new ReleaseResult();
 
-        List<String> additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
-
-        if (additionalExcludes != null) {
-            exclusionPatterns.addAll(additionalExcludes);
-        }
+        Set<MavenProject> excludedProjects = ProjectExclusionUtil.getExcludedProjects(
+                reactorProjects, releaseDescriptor.getCheckModificationExcludes());
 
         MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
 
@@ -182,14 +174,7 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
             for (MavenProject project : reactorProjects) {
                 String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
-                boolean isExcludedPathFound = false;
-                if (project.getFile() != null) {
-                    isExcludedPathFound = exclusionPatterns.stream()
-                            .anyMatch(exclusionPattern -> FileSystems.getDefault()
-                                    .getPathMatcher("glob:" + exclusionPattern)
-                                    .matches(Paths.get(project.getFile().getPath())));
-                }
-                if (!isExcludedPathFound) {
+                if (!excludedProjects.contains(project)) {
                     String nextVersion = resolveNextVersion(project, projectId, releaseDescriptor, releaseEnvironment);
                     if (!convertToSnapshot) {
                         releaseDescriptor.addReleaseVersion(projectId, nextVersion);
