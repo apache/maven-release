@@ -22,7 +22,7 @@ import org.apache.maven.scm.ScmTagParameters;
 import org.mockito.ArgumentMatcher;
 
 /**
- * Mockito constraint to compare tags since it has no equals method.
+ * Mockito constraint to compare tags since ScmTagParameters has no equals method.
  *
  * @author <a href="mailto:olamy@apache.org">olamy</a>
  */
@@ -38,6 +38,6 @@ public class IsScmTagParametersEquals implements ArgumentMatcher<ScmTagParameter
         return stp.getMessage().equals(this.scmTagParameters.getMessage())
                 && stp.isRemoteTagging() == this.scmTagParameters.isRemoteTagging()
                 && stp.isPinExternals() == this.scmTagParameters.isPinExternals()
-                && stp.isSign() == this.scmTagParameters.isSign();
+                && stp.getSignOption() == this.scmTagParameters.getSignOption();
     }
 }
