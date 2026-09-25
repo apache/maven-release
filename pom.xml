@@ -286,12 +286,14 @@ under the License.
           <groupId>org.apache.rat</groupId>
           <artifactId>apache-rat-plugin</artifactId>
           <configuration>
-            <excludes combine.children="append">
+            <inputExcludes combine.children="append">
               <exclude>.repository</exclude>
               <exclude>**/*.iml</exclude>
               <exclude>**/target/**</exclude>
               <exclude>**/.gitattributes</exclude>
-            </excludes>
+              <!-- binary fixtures of the test remote repository -->
+              <exclude>**/src/test/remote-repository/**</exclude>
+            </inputExcludes>
           </configuration>
         </plugin>
       </plugins>
@@ -303,4 +305,5 @@ under the License.
       </plugin>
     </plugins>
   </build>
+  <profiles />
 </project>
