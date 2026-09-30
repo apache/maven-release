@@ -22,32 +22,37 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
+import org.apache.maven.executor.ExecutorException;
+import org.apache.maven.executor.ExecutorRequest;
+import org.apache.maven.executor.ExecutorResult;
+import org.apache.maven.executor.forked.ForkedMavenExecutor;
 import org.apache.maven.settings.io.xpp3.SettingsXpp3Writer;
-import org.apache.maven.shared.invoker.DefaultInvocationRequest;
-import org.apache.maven.shared.invoker.DefaultInvoker;
-import org.apache.maven.shared.invoker.InvocationRequest;
-import org.apache.maven.shared.invoker.InvocationResult;
-import org.apache.maven.shared.invoker.Invoker;
-import org.apache.maven.shared.invoker.InvokerLogger;
-import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.util.MavenCrypto;
-import org.slf4j.Logger;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
 
 /**
- * Fork Maven using the maven-invoker shared library.
+ * Fork Maven through maven-executor, on the Maven installation of the release environment.
+ *
+ * @author <a href="mailto:brett@apache.org">Brett Porter</a>
  */
 @Singleton
 @Named("invoker")
 public class InvokerMavenExecutor extends AbstractMavenExecutor {
+
     @Inject
     public InvokerMavenExecutor(MavenCrypto mavenCrypto) {
         super(mavenCrypto);
@@ -63,30 +68,28 @@ public class InvokerMavenExecutor extends AbstractMavenExecutor {
             String pomFileName,
             ReleaseResult result)
             throws MavenExecutorException {
-        InvokerLogger bridge = getInvokerLogger();
-
-        Invoker invoker = new DefaultInvoker()
-                .setMavenHome(releaseEnvironment.getMavenHome())
-                .setLocalRepositoryDirectory(releaseEnvironment.getLocalRepositoryDirectory())
-                .setLogger(bridge);
-
-        InvocationRequest req = new DefaultInvocationRequest()
-                .setDebug(getLogger().isDebugEnabled())
-                .setBaseDirectory(workingDirectory)
-                // fix for MRELEASE-1105
-                // .addShellEnvironment( "MAVEN_DEBUG_OPTS", "" )
-                .setBatchMode(!interactive)
-                .setJavaHome(releaseEnvironment.getJavaHome())
-                .setOutputHandler(getLogger()::info)
-                .setErrorHandler(getLogger()::error);
-
-        // for interactive mode we need some inputs stream
-        if (interactive) {
-            req.setInputStream(System.in);
+        if (releaseEnvironment.getMavenHome() == null) {
+            throw new MavenExecutorException(
+                    "The release environment does not name a Maven home.", new IllegalStateException("mavenHome"));
         }
 
+        List<String> arguments = new ArrayList<>();
+        if (getLogger().isDebugEnabled()) {
+            arguments.add("-X");
+        }
+        if (!interactive) {
+            arguments.add("-B");
+        }
+        if (releaseEnvironment.getLocalRepositoryDirectory() != null) {
+            arguments.add("-Dmaven.repo.local="
+                    + releaseEnvironment.getLocalRepositoryDirectory().getAbsolutePath());
+        }
         if (pomFileName != null) {
-            req.setPomFileName(pomFileName);
+            getLogger()
+                    .debug("Specified POM file is not named 'pom.xml'. "
+                            + "Using the '-f' command-line option to accommodate non-standard filename...");
+            arguments.add("-f");
+            arguments.add(pomFileName);
         }
 
         File settingsFile = null;
@@ -95,40 +98,49 @@ public class InvokerMavenExecutor extends AbstractMavenExecutor {
             try {
                 settingsFile = Files.createTempFile("release-settings", ".xml").toFile();
                 SettingsXpp3Writer writer = getSettingsWriter();
-
                 try (FileWriter fileWriter = new FileWriter(settingsFile)) {
                     writer.write(fileWriter, encryptSettings(releaseEnvironment.getSettings()));
                 }
-                req.setUserSettingsFile(settingsFile);
+                arguments.add("-s");
+                arguments.add(settingsFile.getAbsolutePath());
             } catch (IOException e) {
                 throw new MavenExecutorException("Could not create temporary file for release settings.xml", e);
             }
         }
 
         try {
-            List<String> targetGoals = new ArrayList<>(goals);
-
+            arguments.addAll(goals);
             if (additionalArguments != null && !additionalArguments.isEmpty()) {
-                // additionalArguments will be parsed be MavenInvoker
-                targetGoals.add(additionalArguments);
+                try {
+                    arguments.addAll(Arrays.asList(CommandLineUtils.translateCommandline(additionalArguments)));
+                } catch (Exception e) {
+                    throw new MavenExecutorException("Cannot parse the additional arguments.", e);
+                }
             }
 
-            req.setGoals(targetGoals);
+            ExecutorRequest.Builder request = ExecutorRequest.mavenBuilder()
+                    .cwd(workingDirectory.toPath())
+                    .arguments(arguments)
+                    .stdOut(new LineOutputStream(getLogger()::info))
+                    .stdErr(new LineOutputStream(getLogger()::error));
+            if (releaseEnvironment.getJavaHome() != null) {
+                request.environmentVariable(
+                        "JAVA_HOME", releaseEnvironment.getJavaHome().getAbsolutePath());
+            }
+            // for interactive mode we need some inputs stream
+            if (interactive) {
+                request.stdIn(System.in);
+            }
 
-            try {
-                InvocationResult invocationResult = invoker.execute(req);
-
-                if (invocationResult.getExecutionException() != null) {
-                    throw new MavenExecutorException(
-                            "Error executing Maven.", invocationResult.getExecutionException());
+            getLogger().debug("Executing: mvn " + String.join(" ", arguments));
+            try (ForkedMavenExecutor executor =
+                    new ForkedMavenExecutor(releaseEnvironment.getMavenHome().toPath())) {
+                ExecutorResult executorResult = executor.execute(request.build());
+                if (!executorResult.success()) {
+                    int exitCode = executorResult.exitCode().orElse(-1);
+                    throw new MavenExecutorException("Maven execution failed, exit code: " + exitCode, exitCode);
                 }
-
-                if (invocationResult.getExitCode() != 0) {
-                    throw new MavenExecutorException(
-                            "Maven execution failed, exit code: " + invocationResult.getExitCode(),
-                            invocationResult.getExitCode());
-                }
-            } catch (MavenInvocationException e) {
+            } catch (ExecutorException e) {
                 throw new MavenExecutorException("Failed to invoke Maven build.", e);
             }
         } finally {
@@ -139,107 +151,43 @@ public class InvokerMavenExecutor extends AbstractMavenExecutor {
     }
 
     /**
-     * <p>getInvokerLogger.</p>
-     *
-     * @return a {@link org.apache.maven.shared.invoker.InvokerLogger} object
+     * Hands the build's output to the logger one line at a time.
      */
-    protected InvokerLogger getInvokerLogger() {
-        return new LoggerBridge(getLogger());
-    }
+    private static final class LineOutputStream extends OutputStream {
+        private final Consumer<String> lines;
 
-    private static final class LoggerBridge implements InvokerLogger {
+        private final ByteArrayOutputStream line = new ByteArrayOutputStream();
 
-        private final Logger logger;
-
-        LoggerBridge(Logger logger) {
-            this.logger = logger;
+        LineOutputStream(Consumer<String> lines) {
+            this.lines = lines;
         }
 
         @Override
-        public void debug(String message, Throwable error) {
-            logger.debug(message, error);
+        public void write(int b) {
+            if (b == '\n') {
+                flushLine();
+            } else if (b != '\r') {
+                line.write(b);
+            }
         }
 
         @Override
-        public void debug(String message) {
-            logger.debug(message);
+        public void write(byte[] b, int off, int len) {
+            for (int i = off; i < off + len; i++) {
+                write(b[i]);
+            }
         }
 
         @Override
-        public void error(String message, Throwable error) {
-            logger.error(message, error);
+        public void close() {
+            if (line.size() > 0) {
+                flushLine();
+            }
         }
 
-        @Override
-        public void error(String message) {
-            logger.error(message);
-        }
-
-        @Override
-        public void fatalError(String message, Throwable error) {
-            logger.error(message, error);
-        }
-
-        @Override
-        public void fatalError(String message) {
-            logger.error(message);
-        }
-
-        @Override
-        public int getThreshold() {
-            return InvokerLogger.DEBUG;
-        }
-
-        @Override
-        public void info(String message, Throwable error) {
-            logger.info(message, error);
-        }
-
-        @Override
-        public void info(String message) {
-            logger.info(message);
-        }
-
-        @Override
-        public boolean isDebugEnabled() {
-            return logger.isDebugEnabled();
-        }
-
-        @Override
-        public boolean isErrorEnabled() {
-            return logger.isErrorEnabled();
-        }
-
-        @Override
-        public boolean isFatalErrorEnabled() {
-            return logger.isErrorEnabled();
-        }
-
-        @Override
-        public boolean isInfoEnabled() {
-            return logger.isInfoEnabled();
-        }
-
-        @Override
-        public boolean isWarnEnabled() {
-            return logger.isWarnEnabled();
-        }
-
-        @Override
-        public void setThreshold(int level) {
-            // NOTE:
-            // logger.setThreshold( level )
-            // is not supported in plexus-container-default:1.0-alpha-9 as used in Maven 2.x
-        }
-
-        @Override
-        public void warn(String message, Throwable error) {
-            logger.warn(message, error);
-        }
-
-        @Override
-        public void warn(String message) {
-            logger.warn(message);
+        private void flushLine() {
+            lines.accept(new String(line.toByteArray(), StandardCharsets.UTF_8));
+            line.reset();
         }
     }
 }
