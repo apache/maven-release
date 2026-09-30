@@ -23,8 +23,9 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +97,7 @@ public class InvokerMavenExecutor extends AbstractMavenExecutor {
                 settingsFile = Files.createTempFile("release-settings", ".xml").toFile();
                 SettingsXpp3Writer writer = getSettingsWriter();
 
-                try (FileWriter fileWriter = new FileWriter(settingsFile)) {
+                try (Writer fileWriter = Files.newBufferedWriter(settingsFile.toPath(), StandardCharsets.UTF_8)) {
                     writer.write(fileWriter, encryptSettings(releaseEnvironment.getSettings()));
                 }
                 req.setUserSettingsFile(settingsFile);

@@ -24,6 +24,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Server;
@@ -45,8 +48,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -314,6 +319,63 @@ class ForkedMavenExecutorTest {
         verify(commandLineFactoryMock).createCommandLine(endsWith("mvn"));
 
         verifyNoMoreInteractions(commandLineMock, argMock, commandLineFactoryMock);
+    }
+
+    /**
+     * The settings file is written in UTF-8 whatever the platform default charset is; the surefire configuration
+     * runs this module with a non-UTF-8 {@code file.encoding}.
+     */
+    @Test
+    void testSettingsFileIsWrittenInUtf8() throws Exception {
+        String nonAscii = "p\u00e4ssw\u00f6rd-\u20ac-\u4e2d";
+
+        Process mockProcess = mock(Process.class);
+        when(mockProcess.getInputStream()).thenReturn(mock(InputStream.class));
+        when(mockProcess.getErrorStream()).thenReturn(mock(InputStream.class));
+        when(mockProcess.getOutputStream()).thenReturn(mock(OutputStream.class));
+        when(mockProcess.waitFor()).thenReturn(0);
+
+        Commandline commandLineMock = mock(Commandline.class);
+        when(commandLineMock.execute()).thenReturn(mockProcess);
+
+        // the settings file is deleted when the execution ends, so read it while the argument is being set
+        AtomicReference<byte[]> written = new AtomicReference<>();
+        Arg argMock = mock(Arg.class);
+        doAnswer(invocation -> {
+                    written.set(
+                            Files.readAllBytes(invocation.<File>getArgument(0).toPath()));
+                    return null;
+                })
+                .when(argMock)
+                .setFile(any(File.class));
+        when(commandLineMock.createArg()).thenReturn(argMock);
+
+        CommandLineFactory commandLineFactoryMock = mock(CommandLineFactory.class);
+        when(commandLineFactoryMock.createCommandLine(isA(String.class))).thenReturn(commandLineMock);
+
+        ForkedMavenExecutor executor = spy(new ForkedMavenExecutor(mavenCrypto, commandLineFactoryMock));
+        SettingsXpp3Writer settingsWriter = mock(SettingsXpp3Writer.class);
+        doAnswer(invocation -> {
+                    invocation.<Writer>getArgument(0).write("<settings>" + nonAscii + "</settings>");
+                    return null;
+                })
+                .when(settingsWriter)
+                .write(isA(Writer.class), isA(Settings.class));
+        when(executor.getSettingsWriter()).thenReturn(settingsWriter);
+
+        DefaultReleaseEnvironment releaseEnvironment = new DefaultReleaseEnvironment();
+        releaseEnvironment.setSettings(new Settings());
+
+        executor.executeGoals(
+                getTestFile("target/working-directory"),
+                "validate",
+                releaseEnvironment,
+                false,
+                null,
+                null,
+                new ReleaseResult());
+
+        assertEquals("<settings>" + nonAscii + "</settings>", new String(written.get(), StandardCharsets.UTF_8));
     }
 
     @Test
