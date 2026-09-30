@@ -232,6 +232,19 @@ under the License.
             <injectedMavenHome>${maven.home}</injectedMavenHome>
           </systemPropertyVariables>
         </configuration>
+        <executions>
+          <execution>
+            <!-- JDK 18+ defaults to UTF-8, so the settings charset test only proves something under another default -->
+            <id>settings-charset</id>
+            <goals>
+              <goal>test</goal>
+            </goals>
+            <configuration>
+              <argLine>-Xmx256m -Dfile.encoding=ISO-8859-1</argLine>
+              <test>ForkedMavenExecutorTest#testSettingsFileIsWrittenInUtf8</test>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.codehaus.modello</groupId>
