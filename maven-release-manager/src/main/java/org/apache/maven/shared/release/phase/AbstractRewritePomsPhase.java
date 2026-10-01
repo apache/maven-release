@@ -35,12 +35,7 @@ import java.util.TimeZone;
 
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
-import org.apache.maven.model.Build;
-import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
-import org.apache.maven.model.ModelBase;
-import org.apache.maven.model.Plugin;
-import org.apache.maven.model.Profile;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFileSet;
@@ -62,6 +57,12 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 import org.apache.maven.shared.release.transform.ModelETL;
 import org.apache.maven.shared.release.transform.ModelETLFactory;
 import org.apache.maven.shared.release.transform.ModelETLRequest;
+import org.apache.maven.shared.release.transform.PomBuild;
+import org.apache.maven.shared.release.transform.PomBuildBase;
+import org.apache.maven.shared.release.transform.PomModel;
+import org.apache.maven.shared.release.transform.PomModelBase;
+import org.apache.maven.shared.release.transform.PomPlugin;
+import org.apache.maven.shared.release.transform.PomProfile;
 import org.apache.maven.shared.release.transform.domtrip.DomTripModelETLFactory;
 import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.apache.maven.shared.release.util.MavenExpression;
@@ -258,7 +259,8 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             }
         }
 
-        transformDocument(project, etl.getModel(), releaseDescriptor, scmRepository, result, simulate);
+        transformDocument(
+                project, etl.getModel(), etl.getPomModel(), releaseDescriptor, scmRepository, result, simulate);
 
         File outputFile;
         if (simulate) {
@@ -273,6 +275,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
     private void transformDocument(
             MavenProject project,
             Model modelTarget,
+            PomModel pomTarget,
             ReleaseDescriptor releaseDescriptor,
             ScmRepository scmRepository,
             ReleaseResult result,
@@ -280,146 +283,70 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             throws ReleaseExecutionException, ReleaseFailureException {
         Model model = project.getModel();
 
-        Properties properties = modelTarget.getProperties();
+        Properties properties = pomTarget.getProperties();
 
-        rewriteParent(project, modelTarget, result, releaseDescriptor, simulate);
+        rewriteParent(project, pomTarget, result, releaseDescriptor, simulate);
 
         String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
-        rewriteVersion(modelTarget, releaseDescriptor, projectId, project);
+        rewriteVersion(pomTarget, releaseDescriptor, projectId, project);
 
-        Build buildTarget = modelTarget.getBuild();
+        PomBuild buildTarget = pomTarget.getBuild();
         if (buildTarget != null) {
             // profile.build.extensions doesn't exist, so only rewrite project.build.extensions
             rewriteArtifactVersions(
-                    toMavenCoordinates(buildTarget.getExtensions()),
-                    model,
-                    properties,
-                    result,
-                    releaseDescriptor,
-                    simulate);
+                    buildTarget.getExtensions(), model, properties, result, releaseDescriptor, simulate);
 
-            rewriteArtifactVersions(
-                    toMavenCoordinates(buildTarget.getPlugins()),
-                    model,
-                    properties,
-                    result,
-                    releaseDescriptor,
-                    simulate);
-
-            for (Plugin plugin : buildTarget.getPlugins()) {
-                rewriteArtifactVersions(
-                        toMavenCoordinates(plugin.getDependencies()),
-                        model,
-                        properties,
-                        result,
-                        releaseDescriptor,
-                        simulate);
-            }
-
-            if (buildTarget.getPluginManagement() != null) {
-                rewriteArtifactVersions(
-                        toMavenCoordinates(buildTarget.getPluginManagement().getPlugins()),
-                        model,
-                        properties,
-                        result,
-                        releaseDescriptor,
-                        simulate);
-
-                for (Plugin plugin : buildTarget.getPluginManagement().getPlugins()) {
-                    rewriteArtifactVersions(
-                            toMavenCoordinates(plugin.getDependencies()),
-                            model,
-                            properties,
-                            result,
-                            releaseDescriptor,
-                            simulate);
-                }
-            }
+            rewriteBuildPlugins(buildTarget, model, properties, result, releaseDescriptor, simulate);
         }
 
-        for (Profile profile : modelTarget.getProfiles()) {
-            BuildBase profileBuild = profile.getBuild();
+        for (PomProfile profile : pomTarget.getProfiles()) {
+            PomBuildBase profileBuild = profile.getBuild();
             if (profileBuild != null) {
-                rewriteArtifactVersions(
-                        toMavenCoordinates(profileBuild.getPlugins()),
-                        model,
-                        properties,
-                        result,
-                        releaseDescriptor,
-                        simulate);
-
-                for (Plugin plugin : profileBuild.getPlugins()) {
-                    rewriteArtifactVersions(
-                            toMavenCoordinates(plugin.getDependencies()),
-                            model,
-                            properties,
-                            result,
-                            releaseDescriptor,
-                            simulate);
-                }
-
-                if (profileBuild.getPluginManagement() != null) {
-                    rewriteArtifactVersions(
-                            toMavenCoordinates(
-                                    profileBuild.getPluginManagement().getPlugins()),
-                            model,
-                            properties,
-                            result,
-                            releaseDescriptor,
-                            simulate);
-
-                    for (Plugin plugin : profileBuild.getPluginManagement().getPlugins()) {
-                        rewriteArtifactVersions(
-                                toMavenCoordinates(plugin.getDependencies()),
-                                model,
-                                properties,
-                                result,
-                                releaseDescriptor,
-                                simulate);
-                    }
-                }
+                rewriteBuildPlugins(profileBuild, model, properties, result, releaseDescriptor, simulate);
             }
         }
 
-        List<ModelBase> modelBases = new ArrayList<>();
-        modelBases.add(modelTarget);
-        modelBases.addAll(modelTarget.getProfiles());
+        List<PomModelBase> modelBases = new ArrayList<>();
+        modelBases.add(pomTarget);
+        modelBases.addAll(pomTarget.getProfiles());
 
-        for (ModelBase modelBase : modelBases) {
+        for (PomModelBase modelBase : modelBases) {
             rewriteArtifactVersions(
-                    toMavenCoordinates(modelBase.getDependencies()),
-                    model,
-                    properties,
-                    result,
-                    releaseDescriptor,
-                    simulate);
+                    modelBase.getDependencies(), model, properties, result, releaseDescriptor, simulate);
 
-            if (modelBase.getDependencyManagement() != null) {
-                rewriteArtifactVersions(
-                        toMavenCoordinates(modelBase.getDependencyManagement().getDependencies()),
-                        model,
-                        properties,
-                        result,
-                        releaseDescriptor,
-                        simulate);
-            }
+            rewriteArtifactVersions(
+                    modelBase.getManagedDependencies(), model, properties, result, releaseDescriptor, simulate);
 
-            if (modelBase.getReporting() != null) {
-                rewriteArtifactVersions(
-                        toMavenCoordinates(modelBase.getReporting().getPlugins()),
-                        model,
-                        properties,
-                        result,
-                        releaseDescriptor,
-                        simulate);
-            }
+            rewriteArtifactVersions(
+                    modelBase.getReportPlugins(), model, properties, result, releaseDescriptor, simulate);
         }
 
         transformScm(project, modelTarget, releaseDescriptor, projectId, scmRepository, result);
 
         if (properties != null) {
             rewriteBuildOutputTimestampProperty(properties, result);
+        }
+    }
+
+    private void rewriteBuildPlugins(
+            PomBuildBase build,
+            Model model,
+            Properties properties,
+            ReleaseResult result,
+            ReleaseDescriptor releaseDescriptor,
+            boolean simulate)
+            throws ReleaseExecutionException, ReleaseFailureException {
+        rewriteArtifactVersions(build.getPlugins(), model, properties, result, releaseDescriptor, simulate);
+
+        for (PomPlugin plugin : build.getPlugins()) {
+            rewriteArtifactVersions(plugin.getDependencies(), model, properties, result, releaseDescriptor, simulate);
+        }
+
+        rewriteArtifactVersions(build.getManagedPlugins(), model, properties, result, releaseDescriptor, simulate);
+
+        for (PomPlugin plugin : build.getManagedPlugins()) {
+            rewriteArtifactVersions(plugin.getDependencies(), model, properties, result, releaseDescriptor, simulate);
         }
     }
 
@@ -446,7 +373,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
     }
 
     private void rewriteVersion(
-            Model modelTarget, ReleaseDescriptor releaseDescriptor, String projectId, MavenProject project)
+            PomModel modelTarget, ReleaseDescriptor releaseDescriptor, String projectId, MavenProject project)
             throws ReleaseFailureException {
         String version = getNextVersion(releaseDescriptor, projectId);
         if (version == null) {
@@ -458,7 +385,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
 
     private void rewriteParent(
             MavenProject project,
-            Model targetModel,
+            PomModel targetModel,
             ReleaseResult result,
             ReleaseDescriptor releaseDescriptor,
             boolean simulate)
@@ -490,7 +417,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
     }
 
     private void rewriteArtifactVersions(
-            Collection<MavenCoordinate> elements,
+            Collection<? extends MavenCoordinate> elements,
             Model projectModel,
             Properties properties,
             ReleaseResult result,
@@ -796,17 +723,5 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
         } else {
             return StringUtils.replace(urlPath, trunkPath.substring(i), tagPath.substring(i));
         }
-    }
-
-    private Collection<MavenCoordinate> toMavenCoordinates(List<?> objects) {
-        Collection<MavenCoordinate> coordinates = new ArrayList<>(objects.size());
-        for (Object object : objects) {
-            if (object instanceof MavenCoordinate) {
-                coordinates.add((MavenCoordinate) object);
-            } else {
-                throw new UnsupportedOperationException();
-            }
-        }
-        return coordinates;
     }
 }

@@ -65,4 +65,16 @@ public interface ModelETL {
      */
     @Deprecated
     Model getModel();
+
+    /**
+     * Returns the editable view of the {@code project} element. It writes to the same document as
+     * {@link #getModel()}.
+     *
+     * @return the view of the POM
+     * @throws UnsupportedOperationException if the implementation does not provide the view
+     * @since 3.4.0
+     */
+    default PomModel getPomModel() {
+        throw new UnsupportedOperationException();
+    }
 }
