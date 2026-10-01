@@ -20,6 +20,7 @@ package org.apache.maven.shared.release.phase;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.manager.NoSuchScmProviderException;
@@ -32,7 +33,6 @@ import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.util.MavenExpression;
-import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 

@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.ReleaseResult;
@@ -33,7 +34,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.util.PomFinder;
-import org.codehaus.plexus.util.StringUtils;
 
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 

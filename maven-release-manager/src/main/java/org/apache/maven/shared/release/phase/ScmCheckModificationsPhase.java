@@ -49,7 +49,6 @@ import org.apache.maven.shared.release.scm.ReleaseScmRepositoryException;
 import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
 import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.codehaus.plexus.util.SelectorUtils;
-import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 
@@ -107,7 +106,7 @@ public class ScmCheckModificationsPhase extends AbstractReleasePhase {
         }
 
         logInfo(relResult, "Verifying that there are no local modifications...");
-        logInfo(relResult, "  ignoring changes on: " + StringUtils.join(exclusionPatterns.toArray(), ", "));
+        logInfo(relResult, "  ignoring changes on: " + String.join(", ", exclusionPatterns));
 
         ScmRepository repository;
         ScmProvider provider;
