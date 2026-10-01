@@ -26,10 +26,10 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.codehaus.plexus.util.StringUtils;
 
 /**
  * This compares and increments versions for a common java versioning scheme.
@@ -199,7 +199,8 @@ public class DefaultVersionInfo implements VersionInfo {
         if (digits != null) {
             List<String> digits = new ArrayList<>(this.digits);
             String annotationRevision = this.annotationRevision;
-            if (StringUtils.isNumeric(annotationRevision)) {
+            // plexus-utils returns true for "" where commons-lang3 returns false; keep the original behaviour
+            if (org.codehaus.plexus.util.StringUtils.isNumeric(annotationRevision)) {
                 annotationRevision = incrementVersionString(annotationRevision);
             } else {
                 digits.set(digits.size() - 1, incrementVersionString(digits.get(digits.size() - 1)));
@@ -362,7 +363,7 @@ public class DefaultVersionInfo implements VersionInfo {
      * @return a single {@code String} of the items in the passed list, joined with a "."
      */
     protected static String joinDigitString(List<String> digits) {
-        return digits != null ? StringUtils.join(digits.iterator(), DIGIT_SEPARATOR_STRING) : null;
+        return digits != null ? String.join(DIGIT_SEPARATOR_STRING, digits) : null;
     }
 
     /**

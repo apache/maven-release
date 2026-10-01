@@ -29,7 +29,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
 import org.apache.maven.shared.release.exec.MavenExecutor;
 import org.apache.maven.shared.release.exec.MavenExecutorException;
-import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
@@ -130,9 +129,7 @@ public abstract class AbstractRunGoalsPhase extends AbstractReleasePhase {
         }
 
         if (!releaseDescriptor.getActivateProfiles().isEmpty()) {
-            builder.append(" -P ")
-                    .append(StringUtils.join(
-                            releaseDescriptor.getActivateProfiles().iterator(), ","));
+            builder.append(" -P ").append(String.join(",", releaseDescriptor.getActivateProfiles()));
         }
 
         return builder.length() > 0 ? builder.toString().trim() : null;

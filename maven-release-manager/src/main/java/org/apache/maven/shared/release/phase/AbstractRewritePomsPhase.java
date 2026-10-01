@@ -33,6 +33,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.TimeZone;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Build;
@@ -66,7 +67,6 @@ import org.apache.maven.shared.release.transform.domtrip.DomTripModelETLFactory;
 import org.apache.maven.shared.release.util.CiFriendlyVersion;
 import org.apache.maven.shared.release.util.MavenExpression;
 import org.apache.maven.shared.release.util.ReleaseUtil;
-import org.codehaus.plexus.util.StringUtils;
 
 import static java.util.Objects.requireNonNull;
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;

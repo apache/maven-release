@@ -37,7 +37,6 @@ import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder.BuilderRe
 import org.apache.maven.shared.release.scm.IdentifiedScm;
 import org.apache.maven.shared.release.util.MavenCrypto;
 import org.apache.maven.shared.release.util.MavenCrypto.MavenCryptoException;
-import org.codehaus.plexus.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -207,9 +206,7 @@ public class PropertiesReleaseDescriptorStore implements ReleaseDescriptorStore 
             properties.setProperty("exec.pomFileName", config.getPomFileName());
         }
         if (!config.getActivateProfiles().isEmpty()) {
-            properties.setProperty(
-                    "exec.activateProfiles",
-                    StringUtils.join(config.getActivateProfiles().iterator(), ","));
+            properties.setProperty("exec.activateProfiles", String.join(",", config.getActivateProfiles()));
         }
         if (config.getPreparationGoals() != null) {
             properties.setProperty("preparationGoals", config.getPreparationGoals());
