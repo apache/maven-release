@@ -47,7 +47,7 @@ public class DefaultReleaseManagerListener implements ReleaseManagerListener {
      * Creates a listener that logs through the given logger.
      *
      * @param logger the {@link org.slf4j.Logger} to log to
-     * @since 3.4.0
+     * @since 3.4
      */
     public DefaultReleaseManagerListener(Logger logger) {
         this(logger, false);
@@ -58,7 +58,7 @@ public class DefaultReleaseManagerListener implements ReleaseManagerListener {
      *
      * @param logger the {@link org.slf4j.Logger} to log to
      * @param dryRun whether the goal runs in dry-run mode
-     * @since 3.4.0
+     * @since 3.4
      */
     public DefaultReleaseManagerListener(Logger logger, boolean dryRun) {
         this.logger = logger;
