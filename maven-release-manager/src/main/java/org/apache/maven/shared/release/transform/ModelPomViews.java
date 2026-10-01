@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.shared.release.transform.domtrip;
+package org.apache.maven.shared.release.transform;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,28 +27,23 @@ import org.apache.maven.model.Build;
 import org.apache.maven.model.BuildBase;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.ModelBase;
+import org.apache.maven.model.Parent;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.model.Profile;
-import org.apache.maven.shared.release.transform.MavenCoordinate;
-import org.apache.maven.shared.release.transform.PomBuild;
-import org.apache.maven.shared.release.transform.PomBuildBase;
-import org.apache.maven.shared.release.transform.PomModel;
-import org.apache.maven.shared.release.transform.PomModelBase;
-import org.apache.maven.shared.release.transform.PomPlugin;
-import org.apache.maven.shared.release.transform.PomProfile;
 
 /**
- * Exposes the DomTrip model classes as {@link PomModel}. The DomTrip classes also extend the Maven 3 model classes,
- * whose list getters have other return types than the views, so the views wrap them instead of being implemented
- * by them. Every call reads through to the DomTrip object, which edits the document.
+ * Exposes a Maven 3 {@link Model} returned by {@link ModelETL#getModel()} as a {@link PomModel}. The list elements
+ * of the model must implement {@link MavenCoordinate}; any other element throws
+ * {@link UnsupportedOperationException} when its list is read. Every call reads through to the model object, which
+ * edits the document.
  *
- * @since 3.4.0
+ * @since 3.4
  */
-public final class DomTripPomViews {
-    private DomTripPomViews() {}
+public final class ModelPomViews {
+    private ModelPomViews() {}
 
     /**
-     * @param model a model backed by DomTrip
+     * @param model the model of a {@link ModelETL}
      * @return the view of that model
      */
     public static PomModel of(Model model) {
@@ -125,7 +120,11 @@ public final class DomTripPomViews {
 
         @Override
         public MavenCoordinate getParent() {
-            return (MavenCoordinate) delegate.getParent();
+            Parent parent = delegate.getParent();
+            if (parent == null) {
+                return null;
+            }
+            return parent instanceof MavenCoordinate ? (MavenCoordinate) parent : new ParentView(parent);
         }
 
         @Override
@@ -156,20 +155,22 @@ public final class DomTripPomViews {
         @Override
         public PomBuildBase getBuild() {
             BuildBase build = delegate.getBuild();
-            return build == null ? null : new BuildView((Build) build);
+            return build == null ? null : new BuildView(build);
         }
     }
 
     private static final class BuildView implements PomBuild {
-        private final Build delegate;
+        private final BuildBase delegate;
 
-        BuildView(Build build) {
+        BuildView(BuildBase build) {
             this.delegate = build;
         }
 
         @Override
         public List<MavenCoordinate> getExtensions() {
-            return coordinates(delegate.getExtensions());
+            return delegate instanceof Build
+                    ? coordinates(((Build) delegate).getExtensions())
+                    : Collections.emptyList();
         }
 
         @Override
@@ -225,6 +226,39 @@ public final class DomTripPomViews {
         @Override
         public String getName() {
             return "plugin";
+        }
+    }
+
+    private static final class ParentView implements MavenCoordinate {
+        private final Parent delegate;
+
+        ParentView(Parent parent) {
+            this.delegate = parent;
+        }
+
+        @Override
+        public String getGroupId() {
+            return delegate.getGroupId();
+        }
+
+        @Override
+        public String getArtifactId() {
+            return delegate.getArtifactId();
+        }
+
+        @Override
+        public String getVersion() {
+            return delegate.getVersion();
+        }
+
+        @Override
+        public void setVersion(String version) {
+            delegate.setVersion(version);
+        }
+
+        @Override
+        public String getName() {
+            return "parent";
         }
     }
 }

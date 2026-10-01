@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Editable view of a {@code plugin} element.
  *
- * @since 3.4.0
+ * @since 3.4
  */
 public interface PomPlugin extends MavenCoordinate {
     /**

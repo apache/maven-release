@@ -27,7 +27,7 @@ import java.util.Properties;
  * with other return types, so this view is a separate object (see {@link ModelETL#getPomModel()}) instead of
  * an interface of those classes.
  *
- * @since 3.4.0
+ * @since 3.4
  */
 public interface PomModel extends PomModelBase {
     @Override

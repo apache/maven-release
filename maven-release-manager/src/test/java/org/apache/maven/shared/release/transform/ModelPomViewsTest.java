@@ -16,14 +16,12 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package org.apache.maven.shared.release.transform.domtrip;
+package org.apache.maven.shared.release.transform;
 
 import eu.maveniverse.domtrip.Document;
 import eu.maveniverse.domtrip.Editor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
-import org.apache.maven.shared.release.transform.PomModel;
-import org.apache.maven.shared.release.transform.PomPlugin;
-import org.apache.maven.shared.release.transform.PomProfile;
+import org.apache.maven.shared.release.transform.domtrip.DomTripModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -31,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class DomTripPomViewsTest {
+class ModelPomViewsTest {
     private static final String POM = "<project>"
             + "<parent><groupId>g</groupId><artifactId>p</artifactId><version>1</version></parent>"
             + "<artifactId>a</artifactId>"
@@ -51,7 +49,7 @@ class DomTripPomViewsTest {
             + "</project>";
 
     private PomModel view(Document document, Editor editor) {
-        return DomTripPomViews.of(new DomTripModel(document.root(), editor, new ReleaseDescriptorBuilder().build()));
+        return ModelPomViews.of(new DomTripModel(document.root(), editor, new ReleaseDescriptorBuilder().build()));
     }
 
     @Test

@@ -21,6 +21,6 @@ package org.apache.maven.shared.release.transform;
 /**
  * Editable view of a {@code profile} element.
  *
- * @since 3.4.0
+ * @since 3.4
  */
 public interface PomProfile extends PomModelBase {}

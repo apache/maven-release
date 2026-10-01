@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Editable view of the {@code build} element of a profile.
  *
- * @since 3.4.0
+ * @since 3.4
  */
 public interface PomBuildBase {
     /**

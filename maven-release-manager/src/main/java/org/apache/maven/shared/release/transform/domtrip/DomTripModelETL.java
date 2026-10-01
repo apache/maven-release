@@ -30,7 +30,6 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.transform.ModelETL;
-import org.apache.maven.shared.release.transform.PomModel;
 import org.codehaus.plexus.util.xml.XmlStreamWriter;
 
 /**
@@ -80,11 +79,6 @@ public class DomTripModelETL implements ModelETL {
     @Override
     public Model getModel() {
         return new DomTripModel(document, editor, releaseDescriptor);
-    }
-
-    @Override
-    public PomModel getPomModel() {
-        return DomTripPomViews.of(new DomTripModel(document, editor, releaseDescriptor));
     }
 
     private void writePom(File pomFile) throws ReleaseExecutionException {

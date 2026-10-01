@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Editable view of what a project and a profile have in common.
  *
- * @since 3.4.0
+ * @since 3.4
  */
 public interface PomModelBase {
     /**

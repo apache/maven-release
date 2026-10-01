@@ -68,13 +68,13 @@ public interface ModelETL {
 
     /**
      * Returns the editable view of the {@code project} element. It writes to the same document as
-     * {@link #getModel()}.
+     * {@link #getModel()}. By default it is a view over {@link #getModel()}, whose list elements must implement
+     * {@link MavenCoordinate}.
      *
      * @return the view of the POM
-     * @throws UnsupportedOperationException if the implementation does not provide the view
-     * @since 3.4.0
+     * @since 3.4
      */
     default PomModel getPomModel() {
-        throw new UnsupportedOperationException();
+        return ModelPomViews.of(getModel());
     }
 }
