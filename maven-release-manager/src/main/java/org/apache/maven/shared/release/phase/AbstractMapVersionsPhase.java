@@ -183,11 +183,12 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
                 String projectId = ArtifactUtils.versionlessKey(project.getGroupId(), project.getArtifactId());
 
                 boolean isExcludedPathFound = false;
-                if (project.getFile() != null) {
+                if (ReleaseUtil.getPomFile(project) != null) {
                     isExcludedPathFound = exclusionPatterns.stream()
                             .anyMatch(exclusionPattern -> FileSystems.getDefault()
                                     .getPathMatcher("glob:" + exclusionPattern)
-                                    .matches(Paths.get(project.getFile().getPath())));
+                                    .matches(Paths.get(
+                                            ReleaseUtil.getPomFile(project).getPath())));
                 }
                 if (!isExcludedPathFound) {
                     String nextVersion = resolveNextVersion(project, projectId, releaseDescriptor, releaseEnvironment);
@@ -282,7 +283,8 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
                         messageFormat = "What is the " + getContextString(releaseDescriptor) + " version for \"%s\"? ("
                                 + buffer().project("%s") + ")";
                     }
-                    String message = String.format(messageFormat, project.getName(), project.getArtifactId());
+                    String message =
+                            String.format(messageFormat, ReleaseUtil.getProjectName(project), project.getArtifactId());
                     nextVersion = prompter.prompt(message, suggestedVersion);
 
                     // @todo validate next version, maybe with DefaultArtifactVersion
@@ -365,8 +367,8 @@ public abstract class AbstractMapVersionsPhase extends AbstractReleasePhase {
     private static String getOriginalVersion(MavenProject project) {
         String version = null;
         while (version == null && project != null) {
-            if (project.getOriginalModel() != null) {
-                version = project.getOriginalModel().getVersion();
+            if (ReleaseUtil.readOriginalModel(project) != null) {
+                version = ReleaseUtil.readOriginalModel(project).getVersion();
             } else {
                 version = project.getVersion();
             }

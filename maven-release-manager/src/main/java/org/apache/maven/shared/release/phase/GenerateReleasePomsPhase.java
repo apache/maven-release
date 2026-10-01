@@ -145,7 +145,7 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
         List<File> releasePoms = new ArrayList<>();
 
         for (MavenProject project : reactorProjects) {
-            logInfo(result, "Generating release POM for '" + project.getName() + "'...");
+            logInfo(result, "Generating release POM for '" + ReleaseUtil.getProjectName(project) + "'...");
 
             releasePoms.add(generateReleasePom(project, releaseDescriptor, releaseEnvironment, result));
         }
@@ -198,7 +198,8 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
             ScmProvider scmProvider = getScmProvider(scmRepository);
 
             MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
-            ScmFileSet scmFileSet = new ScmFileSet(rootProject.getFile().getParentFile(), releasePoms);
+            ScmFileSet scmFileSet =
+                    new ScmFileSet(ReleaseUtil.getPomFile(rootProject).getParentFile(), releasePoms);
 
             try {
                 AddScmResult scmResult = scmProvider.add(scmRepository, scmFileSet);
@@ -284,7 +285,7 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
         // rewrite extensions
         releaseModel.getBuild().setExtensions(createReleaseExtensions(releaseDescriptor, releaseProject));
 
-        unalignFromBaseDirectory(releaseModel, project.getBasedir());
+        unalignFromBaseDirectory(releaseModel, ReleaseUtil.getBasedir(project));
 
         return releaseModel;
     }
@@ -387,9 +388,9 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
     }
 
     private String findOriginalFinalName(MavenProject project) {
-        if (project.getOriginalModel().getBuild() != null
-                && project.getOriginalModel().getBuild().getFinalName() != null) {
-            return project.getOriginalModel().getBuild().getFinalName();
+        if (ReleaseUtil.readOriginalModel(project).getBuild() != null
+                && ReleaseUtil.readOriginalModel(project).getBuild().getFinalName() != null) {
+            return ReleaseUtil.readOriginalModel(project).getBuild().getFinalName();
         } else if (project.hasParent()) {
             return findOriginalFinalName(project.getParent());
         } else {
@@ -524,7 +525,7 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
         List<Plugin> releasePlugins = null;
 
         // Use original - don't want the lifecycle introduced ones
-        Build build = project.getOriginalModel().getBuild();
+        Build build = ReleaseUtil.readOriginalModel(project).getBuild();
 
         if (build != null) {
             List<Plugin> plugins = build.getPlugins();
@@ -601,7 +602,7 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
         List<Extension> releaseExtensions = null;
 
         // Use original - don't want the lifecycle introduced ones
-        Build build = project.getOriginalModel().getBuild();
+        Build build = ReleaseUtil.readOriginalModel(project).getBuild();
 
         if (build != null) {
             List<Extension> extensions = build.getExtensions();
@@ -639,7 +640,7 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
 
             // MRELEASE-273 : A release pom can be null
             if (releasePom != null && releasePom.exists()) {
-                logInfo(result, "Deleting release POM for '" + project.getName() + "'...");
+                logInfo(result, "Deleting release POM for '" + ReleaseUtil.getProjectName(project) + "'...");
 
                 if (!releasePom.delete()) {
                     logWarn(result, "Cannot delete release POM: " + releasePom);

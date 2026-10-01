@@ -111,7 +111,7 @@ public class RewritePomsForReleasePhase extends AbstractRewritePomsPhase {
         ScmTranslator translator = getScmTranslators().get(scmRepository.getProvider());
         boolean result = false;
         if (translator != null) {
-            Scm scm = project.getOriginalModel().getScm();
+            Scm scm = ReleaseUtil.readOriginalModel(project).getScm();
             if (scm == null) {
                 scm = project.getScm();
             }
@@ -124,7 +124,7 @@ public class RewritePomsForReleasePhase extends AbstractRewritePomsPhase {
                 tagBase = "scm:svn:" + tagBase;
             }
 
-            Path projectBasedir = project.getBasedir().toPath().toRealPath(LinkOption.NOFOLLOW_LINKS);
+            Path projectBasedir = ReleaseUtil.getBasedir(project).toPath().toRealPath(LinkOption.NOFOLLOW_LINKS);
             Path workingDirectory = Paths.get(releaseDescriptor.getWorkingDirectory());
 
             int count = ReleaseUtil.getBaseWorkingDirectoryParentCount(workingDirectory, projectBasedir);

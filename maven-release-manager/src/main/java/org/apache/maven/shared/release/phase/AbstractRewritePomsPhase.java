@@ -209,7 +209,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
         result.setStartTime((startTime >= 0) ? startTime : System.currentTimeMillis());
 
         for (MavenProject project : reactorProjects) {
-            final String path = project.getFile().getPath();
+            final String path = ReleaseUtil.getPomFile(project).getPath();
             if (exclusionPatterns.stream()
                     .noneMatch(exclusionPattern -> FileSystems.getDefault()
                             .getPathMatcher("glob:" + exclusionPattern)
@@ -217,7 +217,8 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                 logDebug(
                         result,
                         "Transforming " + path + ' '
-                                + buffer().project(project.getArtifactId()) + " '" + project.getName() + "'"
+                                + buffer().project(project.getArtifactId()) + " '" + ReleaseUtil.getProjectName(project)
+                                + "'"
                                 + (simulate ? " with ." + getPomSuffix() + " suffix" : "") + "...");
 
                 transformProject(project, releaseDescriptor, releaseEnvironment, simulate, result);
@@ -450,7 +451,8 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             throws ReleaseFailureException {
         String version = getNextVersion(releaseDescriptor, projectId);
         if (version == null) {
-            throw new ReleaseFailureException("Version for '" + project.getName() + "' was not mapped");
+            throw new ReleaseFailureException(
+                    "Version for '" + ReleaseUtil.getProjectName(project) + "' was not mapped");
         }
 
         modelTarget.setVersion(version);
@@ -474,7 +476,8 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             if (parentVersion == null) {
                 String original = getOriginalVersion(releaseDescriptor, key, simulate);
                 if (parent.getVersion().equals(original)) {
-                    throw new ReleaseFailureException("Version for parent '" + parent.getName() + "' was not mapped");
+                    throw new ReleaseFailureException(
+                            "Version for parent '" + ReleaseUtil.getProjectName(parent) + "' was not mapped");
                 }
             } else {
                 if (!CiFriendlyVersion.isCiFriendlyVersion(
