@@ -198,7 +198,7 @@ public abstract class AbstractInputVariablesPhase extends AbstractReleasePhase {
                 try {
                     if (branchOperation) {
                         tag = prompter.get()
-                                .prompt("What is the branch name for \"" + project.getName() + "\"? ("
+                                .prompt("What is the branch name for \"" + ReleaseUtil.getProjectName(project) + "\"? ("
                                         + buffer().project(project.getArtifactId()) + ")");
                         if (tag == null || tag.isEmpty()) {
                             throw new ReleaseExecutionException("No branch name was given.");
@@ -206,7 +206,8 @@ public abstract class AbstractInputVariablesPhase extends AbstractReleasePhase {
                     } else {
                         tag = prompter.get()
                                 .prompt(
-                                        "What is the SCM release tag or label for \"" + project.getName() + "\"? ("
+                                        "What is the SCM release tag or label for \""
+                                                + ReleaseUtil.getProjectName(project) + "\"? ("
                                                 + buffer().project(project.getArtifactId()) + ")",
                                         suggestedName);
                     }

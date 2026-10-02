@@ -73,12 +73,52 @@ public class ReleaseUtil {
         return project;
     }
 
+    /**
+     * The POM file of a project. Reads go through here so that the Maven 4 API port only has to change this method.
+     *
+     * @param project the project
+     * @return {@code project.getFile()}
+     */
+    public static File getPomFile(MavenProject project) {
+        return project.getFile();
+    }
+
+    /**
+     * The base directory of a project.
+     *
+     * @param project the project
+     * @return {@code project.getBasedir()}
+     */
+    public static File getBasedir(MavenProject project) {
+        return project.getBasedir();
+    }
+
+    /**
+     * The display name of a project.
+     *
+     * @param project the project
+     * @return {@code project.getName()}, as is
+     */
+    public static String getProjectName(MavenProject project) {
+        return project.getName();
+    }
+
+    /**
+     * The model of a project as written in its POM, without inheritance or interpolation.
+     *
+     * @param project the project
+     * @return {@code project.getOriginalModel()}
+     */
+    public static Model readOriginalModel(MavenProject project) {
+        return project.getOriginalModel();
+    }
+
     public static File getStandardPom(MavenProject project) {
         if (project == null) {
             return null;
         }
 
-        File pom = project.getFile();
+        File pom = getPomFile(project);
 
         if (pom == null) {
             return null;
@@ -97,7 +137,7 @@ public class ReleaseUtil {
             return null;
         }
 
-        File pom = project.getFile();
+        File pom = getPomFile(project);
 
         if (pom == null) {
             return null;

@@ -116,7 +116,8 @@ public class RestoreBackupPomsPhase extends AbstractBackupPomsPhase {
             if (releaseDescriptor.isScmUseEditMode() || provider.requiresEditMode()) {
                 EditScmResult result = provider.edit(
                         scmRepository,
-                        new ScmFileSet(new File(releaseDescriptor.getWorkingDirectory()), project.getFile()));
+                        new ScmFileSet(
+                                new File(releaseDescriptor.getWorkingDirectory()), ReleaseUtil.getPomFile(project)));
 
                 if (!result.isSuccess()) {
                     throw new ReleaseScmCommandException("Unable to enable editing on the POM", result);

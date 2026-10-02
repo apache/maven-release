@@ -102,7 +102,7 @@ public class RemoveReleasePomsPhase extends AbstractReleasePomsPhase {
         List<File> releasePoms = new ArrayList<>();
 
         for (MavenProject project : projects) {
-            logInfo(result, "Removing release POM for '" + project.getName() + "'...");
+            logInfo(result, "Removing release POM for '" + ReleaseUtil.getProjectName(project) + "'...");
 
             releasePoms.add(ReleaseUtil.getReleasePom(project));
         }

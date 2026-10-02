@@ -41,6 +41,7 @@ import org.apache.maven.shared.release.ReleaseFailureException;
 import org.apache.maven.shared.release.ReleaseResult;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.env.ReleaseEnvironment;
+import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.apache.maven.shared.release.versions.DefaultVersionInfo;
 import org.apache.maven.shared.release.versions.VersionInfo;
 import org.apache.maven.shared.release.versions.VersionParseException;
@@ -176,7 +177,7 @@ public class CheckDependencySnapshotsPhase extends AbstractReleasePhase {
                 printSnapshotDependencies(usedSnapshotReports, message);
                 printSnapshotDependencies(usedSnapshotExtensions, message);
                 printSnapshotDependencies(usedSnapshotPlugins, message);
-                message.append("in project '" + project.getName() + "' (" + project.getId() + ")");
+                message.append("in project '" + ReleaseUtil.getProjectName(project) + "' (" + project.getId() + ")");
 
                 throw new ReleaseFailureException(
                         "Can't release project due to non released dependencies :\n" + message);

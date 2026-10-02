@@ -174,7 +174,7 @@ public class CheckoutProjectFromScm extends AbstractReleasePhase {
 
         // TODO: sanity check that it is not . or .. or lower
         File checkoutDirectory =
-                FileUtils.resolveFile(rootProject.getBasedir(), releaseDescriptor.getCheckoutDirectory());
+                FileUtils.resolveFile(ReleaseUtil.getBasedir(rootProject), releaseDescriptor.getCheckoutDirectory());
 
         if (checkoutDirectory.exists()) {
             try {
@@ -212,7 +212,8 @@ public class CheckoutProjectFromScm extends AbstractReleasePhase {
 
             Path rootProjectBasedir;
             try {
-                rootProjectBasedir = rootProject.getBasedir().toPath().toRealPath(LinkOption.NOFOLLOW_LINKS);
+                rootProjectBasedir =
+                        ReleaseUtil.getBasedir(rootProject).toPath().toRealPath(LinkOption.NOFOLLOW_LINKS);
             } catch (IOException e) {
                 throw new ReleaseExecutionException(e.getMessage(), e);
             }
@@ -244,7 +245,7 @@ public class CheckoutProjectFromScm extends AbstractReleasePhase {
 
         MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
         File checkoutDirectory =
-                FileUtils.resolveFile(rootProject.getBasedir(), releaseDescriptor.getCheckoutDirectory());
+                FileUtils.resolveFile(ReleaseUtil.getBasedir(rootProject), releaseDescriptor.getCheckoutDirectory());
 
         if (releaseDescriptor.isLocalCheckout()) {
             logInfo(
