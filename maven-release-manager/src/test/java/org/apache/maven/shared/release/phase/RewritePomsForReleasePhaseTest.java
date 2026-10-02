@@ -383,6 +383,21 @@ class RewritePomsForReleasePhaseTest extends AbstractEditModeRewritingReleasePha
         comparePomFiles(reactorProjects);
     }
 
+    @Test
+    void testRewriteAutoResolvedSnapshotProperty() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("auto-resolve-snapshot-property");
+
+        ReleaseDescriptorBuilder builder =
+                createDescriptorFromProjects(reactorProjects, "auto-resolve-snapshot-property");
+        builder.addReleaseVersion("groupId:artifactId", NEXT_VERSION);
+        builder.addDependencyOriginalVersion("org.example:dep", "1.0-SNAPSHOT");
+        builder.addDependencyReleaseVersion("org.example:dep", "1.0");
+
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        comparePomFiles(reactorProjects);
+    }
+
     // MRELEASE-305
     @Test
     void testRewritePomWithScmOfParentEndingWithASlash() throws Exception {
