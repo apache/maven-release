@@ -21,6 +21,7 @@ package org.apache.maven.shared.release;
 import java.util.List;
 
 import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
 
 import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
 
@@ -30,6 +31,8 @@ import static org.apache.maven.shared.utils.logging.MessageUtils.buffer;
  * @author Hervé Boutemy
  */
 public class DefaultReleaseManagerListener implements ReleaseManagerListener {
+    private final Logger logger;
+
     private final Log log;
 
     private final boolean dryRun;
@@ -41,10 +44,35 @@ public class DefaultReleaseManagerListener implements ReleaseManagerListener {
     private int currentPhase;
 
     /**
+     * Creates a listener that logs through the given logger.
+     *
+     * @param logger the {@link org.slf4j.Logger} to log to
+     * @since 3.4
+     */
+    public DefaultReleaseManagerListener(Logger logger) {
+        this(logger, false);
+    }
+
+    /**
+     * Creates a listener that logs through the given logger.
+     *
+     * @param logger the {@link org.slf4j.Logger} to log to
+     * @param dryRun whether the goal runs in dry-run mode
+     * @since 3.4
+     */
+    public DefaultReleaseManagerListener(Logger logger, boolean dryRun) {
+        this.logger = logger;
+        this.log = null;
+        this.dryRun = dryRun;
+    }
+
+    /**
      * <p>Constructor for DefaultReleaseManagerListener.</p>
      *
      * @param log a {@link org.apache.maven.plugin.logging.Log} object
+     * @deprecated use {@link #DefaultReleaseManagerListener(Logger)}; removed in the Maven 4 API line
      */
+    @Deprecated
     public DefaultReleaseManagerListener(Log log) {
         this(log, false);
     }
@@ -54,21 +82,48 @@ public class DefaultReleaseManagerListener implements ReleaseManagerListener {
      *
      * @param log a {@link org.apache.maven.plugin.logging.Log} object
      * @param dryRun a boolean
+     * @deprecated use {@link #DefaultReleaseManagerListener(Logger, boolean)}; removed in the Maven 4 API line
      */
+    @Deprecated
     public DefaultReleaseManagerListener(Log log, boolean dryRun) {
+        this.logger = null;
         this.log = log;
         this.dryRun = dryRun;
+    }
+
+    private void info(String message) {
+        if (logger != null) {
+            logger.info(message);
+        } else {
+            log.info(message);
+        }
+    }
+
+    private void warn(String message) {
+        if (logger != null) {
+            logger.warn(message);
+        } else {
+            log.warn(message);
+        }
+    }
+
+    private void logError(String message) {
+        if (logger != null) {
+            logger.error(message);
+        } else {
+            log.error(message);
+        }
     }
 
     private void nextPhase(String name) {
         currentPhase++;
         if (!name.equals(phases.get(currentPhase))) {
-            log.warn("inconsistent phase name: expected '" + phases.get(currentPhase) + "' but got '" + name + "'");
+            warn("inconsistent phase name: expected '" + phases.get(currentPhase) + "' but got '" + name + "'");
         }
     }
 
     public void goalStart(String goal, List<String> phases) {
-        log.info("starting " + buffer().mojo(goal) + " goal" + (dryRun ? " in dry-run mode" : "") + ", composed of "
+        info("starting " + buffer().mojo(goal) + " goal" + (dryRun ? " in dry-run mode" : "") + ", composed of "
                 + phases.size() + " phases: " + String.join(", ", phases));
         currentPhase = -1;
         this.phases = phases;
@@ -77,7 +132,7 @@ public class DefaultReleaseManagerListener implements ReleaseManagerListener {
 
     public void phaseStart(String name) {
         nextPhase(name);
-        log.info((currentPhase + 1) + "/" + phases.size() + ' ' + buffer().mojo(goal + ':' + name)
+        info((currentPhase + 1) + "/" + phases.size() + ' ' + buffer().mojo(goal + ':' + name)
                 + (dryRun ? " dry-run" : ""));
     }
 
@@ -101,7 +156,7 @@ public class DefaultReleaseManagerListener implements ReleaseManagerListener {
     }
 
     public void error(String reason) {
-        log.error("error during phase " + (currentPhase + 1) + "/" + phases.size() + " " + phases.get(currentPhase)
+        logError("error during phase " + (currentPhase + 1) + "/" + phases.size() + " " + phases.get(currentPhase)
                 + ": " + reason);
     }
 }
