@@ -21,13 +21,14 @@ package org.apache.maven.shared.release.transform.domtrip;
 import eu.maveniverse.domtrip.Editor;
 import eu.maveniverse.domtrip.Element;
 import org.apache.maven.model.Parent;
+import org.apache.maven.shared.release.transform.MavenCoordinate;
 
 /**
  * DomTrip implementation of poms PARENT element.
  *
  * @since 3.4
  */
-public class DomTripParent extends Parent {
+public class DomTripParent extends Parent implements MavenCoordinate {
     private final Element parent;
     private final Editor editor;
 
@@ -79,5 +80,10 @@ public class DomTripParent extends Parent {
     @Override
     public String getId() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getName() {
+        return "parent";
     }
 }
