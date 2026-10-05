@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.maven.artifact.ArtifactUtils;
 import org.apache.maven.model.Model;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.provider.ScmUrlUtils;
 import org.apache.maven.shared.release.ReleaseExecutionException;
 import org.apache.maven.shared.release.config.ReleaseDescriptor;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
@@ -147,7 +148,10 @@ public class ReleaseUtil {
         int parentLevels = Paths.get(releaseDescriptor.getPomFileName()).getNameCount() - 1;
 
         String url = releaseDescriptor.getScmSourceUrl();
-        url = realignScmUrl(parentLevels, url);
+        // Git URLs identify the repository, not the directory containing the reactor's root POM.
+        if (!ScmUrlUtils.isValid(url) || !"git".equals(ScmUrlUtils.getProvider(url))) {
+            url = realignScmUrl(parentLevels, url);
+        }
 
         ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
         builder.setWorkingDirectory(releaseDescriptor.getWorkingDirectory());
