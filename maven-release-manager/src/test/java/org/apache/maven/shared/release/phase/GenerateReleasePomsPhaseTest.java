@@ -23,11 +23,19 @@ import javax.inject.Named;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 
+import org.apache.maven.model.Model;
+import org.apache.maven.model.interpolation.ModelInterpolator;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.superpom.SuperPomProvider;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -38,11 +46,15 @@ import org.apache.maven.scm.repository.ScmRepository;
 import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
 import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.apache.maven.shared.release.env.DefaultReleaseEnvironment;
+import org.apache.maven.shared.release.scm.ScmRepositoryConfigurator;
+import org.apache.maven.shared.release.scm.ScmTranslator;
 import org.apache.maven.shared.release.util.ReleaseUtil;
 import org.codehaus.plexus.testing.PlexusTest;
 import org.junit.jupiter.api.Test;
 
 import static org.codehaus.plexus.testing.PlexusExtension.getTestFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.mock;
@@ -66,6 +78,18 @@ class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseTestCase
     @Inject
     @Named("generate-release-poms")
     private ReleasePhase phase;
+
+    @Inject
+    private ScmRepositoryConfigurator scmRepositoryConfigurator;
+
+    @Inject
+    private SuperPomProvider superPomProvider;
+
+    @Inject
+    private ModelInterpolator modelInterpolator;
+
+    @Inject
+    private Map<String, ScmTranslator> scmTranslators;
 
     @Override
     protected ReleasePhase getTestedPhase() {
@@ -139,6 +163,102 @@ class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseTestCase
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 
         comparePomFiles(reactorProjects);
+    }
+
+    // Maven 3.10 and Maven 4 declare these in the super POM (apache/maven#12032, MNG-8258)
+    private static final String OUTPUT_TIMESTAMP = "project.build.outputTimestamp";
+
+    private static final String SOURCE_ENCODING = "project.build.sourceEncoding";
+
+    private static final String OUTPUT_ENCODING = "project.reporting.outputEncoding";
+
+    private static final String SUPER_POM_TIMESTAMP = "1980-02-01T00:00:00Z";
+
+    @Test
+    void testSuperPomPropertiesAreNotWrittenToReleasePom() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("pom-with-parent");
+        addSuperPomPropertiesToEffectiveModels(reactorProjects);
+
+        executePhaseWithSuperPomProperties(reactorProjects);
+
+        for (MavenProject project : reactorProjects) {
+            Properties properties = readReleasePom(project).getProperties();
+            assertFalse(properties.containsKey(SOURCE_ENCODING), project.getArtifactId());
+            assertFalse(properties.containsKey(OUTPUT_ENCODING), project.getArtifactId());
+            assertFalse(properties.containsKey(OUTPUT_TIMESTAMP), project.getArtifactId());
+        }
+    }
+
+    @Test
+    void testPropertyDeclaredByProjectIsKeptInReleasePom() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("pom-with-parent");
+        addSuperPomPropertiesToEffectiveModels(reactorProjects);
+        MavenProject sub = reactorProjects.get(1);
+        // declared by the project itself, with the same value as the super POM default
+        sub.getOriginalModel().addProperty(OUTPUT_TIMESTAMP, SUPER_POM_TIMESTAMP);
+
+        executePhaseWithSuperPomProperties(reactorProjects);
+
+        Properties subProperties = readReleasePom(sub).getProperties();
+        assertEquals(SUPER_POM_TIMESTAMP, subProperties.getProperty(OUTPUT_TIMESTAMP));
+        assertFalse(subProperties.containsKey(SOURCE_ENCODING));
+        assertFalse(readReleasePom(reactorProjects.get(0)).getProperties().containsKey(OUTPUT_TIMESTAMP));
+    }
+
+    @Test
+    void testPropertyDeclaredByParentIsKeptInReleasePom() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("pom-with-parent");
+        addSuperPomPropertiesToEffectiveModels(reactorProjects);
+        MavenProject root = reactorProjects.get(0);
+        MavenProject sub = reactorProjects.get(1);
+        root.getOriginalModel().addProperty(OUTPUT_TIMESTAMP, SUPER_POM_TIMESTAMP);
+        sub.setParent(root);
+
+        executePhaseWithSuperPomProperties(reactorProjects);
+
+        assertEquals(SUPER_POM_TIMESTAMP, readReleasePom(root).getProperties().getProperty(OUTPUT_TIMESTAMP));
+        assertEquals(SUPER_POM_TIMESTAMP, readReleasePom(sub).getProperties().getProperty(OUTPUT_TIMESTAMP));
+        assertFalse(readReleasePom(sub).getProperties().containsKey(SOURCE_ENCODING));
+    }
+
+    private static Properties superPomProperties() {
+        Properties properties = new Properties();
+        properties.setProperty(SOURCE_ENCODING, "UTF-8");
+        properties.setProperty(OUTPUT_ENCODING, "UTF-8");
+        properties.setProperty(OUTPUT_TIMESTAMP, SUPER_POM_TIMESTAMP);
+        return properties;
+    }
+
+    /** Mimics Maven 3.10, where the effective model inherits the super POM properties. */
+    private static void addSuperPomPropertiesToEffectiveModels(List<MavenProject> reactorProjects) {
+        for (MavenProject project : reactorProjects) {
+            project.getModel().getProperties().putAll(superPomProperties());
+        }
+    }
+
+    private void executePhaseWithSuperPomProperties(List<MavenProject> reactorProjects) throws Exception {
+        // Maven 3.9's super POM has no properties, so substitute one that looks like Maven 3.10's
+        SuperPomProvider provider = modelVersion -> {
+            Model superModel = superPomProvider.getSuperModel(modelVersion).clone();
+            superModel.getProperties().putAll(superPomProperties());
+            return superModel;
+        };
+        ReleasePhase superPomPhase =
+                new GenerateReleasePomsPhase(scmRepositoryConfigurator, provider, modelInterpolator, scmTranslators);
+
+        ReleaseDescriptorBuilder builder =
+                createConfigurationForWithParentNextVersion(reactorProjects, "pom-with-parent");
+        builder.setGenerateReleasePoms(true);
+
+        superPomPhase.execute(
+                ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+    }
+
+    private static Model readReleasePom(MavenProject project) throws Exception {
+        try (Reader reader =
+                Files.newBufferedReader(ReleaseUtil.getReleasePom(project).toPath())) {
+            return new MavenXpp3Reader().read(reader);
+        }
     }
 
     /*

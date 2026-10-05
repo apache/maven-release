@@ -285,8 +285,36 @@ public class GenerateReleasePomsPhase extends AbstractReleasePomsPhase implement
         releaseModel.getBuild().setExtensions(createReleaseExtensions(releaseDescriptor, releaseProject));
 
         unalignFromBaseDirectory(releaseModel, project.getBasedir());
+        removeSuperPomProperties(releaseModel, project);
 
         return releaseModel;
+    }
+
+    /**
+     * Maven 3.10 adds properties (encodings, {@code project.build.outputTimestamp}) to the super POM, so they show up
+     * in the effective model. Drop those that merely carry the super POM default, as is done for the build paths, but
+     * keep any the project or one of its parents declares itself.
+     */
+    private void removeSuperPomProperties(Model releaseModel, MavenProject project) {
+        Properties superProperties =
+                superPomProvider.getSuperModel(releaseModel.getModelVersion()).getProperties();
+        for (String key : superProperties.stringPropertyNames()) {
+            if (superProperties
+                            .getProperty(key)
+                            .equals(releaseModel.getProperties().getProperty(key))
+                    && !isDeclaredInOriginalModels(project, key)) {
+                releaseModel.getProperties().remove(key);
+            }
+        }
+    }
+
+    private boolean isDeclaredInOriginalModels(MavenProject project, String key) {
+        for (MavenProject current = project; current != null; current = current.getParent()) {
+            if (current.getOriginalModel().getProperties().containsKey(key)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void unalignFromBaseDirectory(Model releaseModel, File basedir) {
