@@ -29,14 +29,14 @@ class DefaultVersionPolicyTest {
     private final VersionPolicy policy = new DefaultVersionPolicy();
 
     @ParameterizedTest
-    @CsvSource({"1-SNAPSHOT, 1", "1.0-SNAPSHOT, 1.0", "1.0.0-SNAPSHOT, 1.0.0"})
+    @CsvSource({"1-SNAPSHOT, 1", "1.0-SNAPSHOT, 1.0", "1.0.0-SNAPSHOT, 1.0.0", "1.0.0+build.1-SNAPSHOT, 1.0.0+build.1"})
     void testReleaseVersion(String version, String expected) throws Exception {
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion(version);
         assertEquals(expected, policy.getReleaseVersion(request).getVersion());
     }
 
     @ParameterizedTest
-    @CsvSource({"1, 2-SNAPSHOT", "1.0, 1.1-SNAPSHOT", "1.0.0, 1.0.1-SNAPSHOT"})
+    @CsvSource({"1, 2-SNAPSHOT", "1.0, 1.1-SNAPSHOT", "1.0.0, 1.0.1-SNAPSHOT", "1.0.0+build.1, 1.0.1+build.1-SNAPSHOT"})
     void testDevelopmentVersion(String version, String expected) throws Exception {
         VersionPolicyRequest request = new VersionPolicyRequest().setVersion(version);
         assertEquals(expected, policy.getDevelopmentVersion(request).getVersion());

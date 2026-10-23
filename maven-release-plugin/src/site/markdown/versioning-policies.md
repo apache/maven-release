@@ -39,6 +39,7 @@ Maven Release Plugin comes with built-in version policies:
 - `SemVerPatchDevelopment` - increases patch element for next development version, similar to default policy
 - `SemVerMajorRelease` - increases major element for release version
 - `SemVerMinorRelease` - increases minor element for release version
+- `SemVerPatchRelease` - keeps the current patch element for release version (only removes `-SNAPSHOT`) and increases patch element for next development version
 
 The `SemVer*` policies enforce [Semantic Versioning](https://semver.org/) rules.
 
@@ -53,4 +54,4 @@ Examples of version policies:
 | SemVerPatchDevelopment | 1.2.3-SNAPSHOT  | 1.2.3                | 1.2.4-SNAPSHOT           |
 | SemVerMajorRelease     | 1.2.3-SNAPSHOT  | 2.0.0                | 2.0.1-SNAPSHOT           |
 | SemVerMinorRelease     | 1.2.3-SNAPSHOT  | 1.3.0                | 1.3.1-SNAPSHOT           |
-
+| SemVerPatchRelease     | 1.2.3+build.1-SNAPSHOT | 1.2.3            | 1.2.4-SNAPSHOT           |
