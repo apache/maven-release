@@ -392,6 +392,8 @@ class RewritePomsForReleasePhaseTest extends AbstractEditModeRewritingReleasePha
         builder.addReleaseVersion("groupId:artifactId", NEXT_VERSION);
         builder.addDependencyOriginalVersion("org.example:dep", "1.0-SNAPSHOT");
         builder.addDependencyReleaseVersion("org.example:dep", "1.0");
+        builder.addDependencyOriginalVersion("org.example:dep2", "1.0-SNAPSHOT");
+        builder.addDependencyReleaseVersion("org.example:dep2", "1.0");
 
         phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
 

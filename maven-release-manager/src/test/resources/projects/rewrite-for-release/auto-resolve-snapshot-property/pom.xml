@@ -38,5 +38,10 @@
       <artifactId>dep</artifactId>
       <version>${dep.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.example</groupId>
+      <artifactId>dep2</artifactId>
+      <version>${dep.version}</version>
+    </dependency>
   </dependencies>
 </project>

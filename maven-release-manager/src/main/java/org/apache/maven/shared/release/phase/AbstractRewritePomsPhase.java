@@ -588,10 +588,13 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             logInfo(result, "  Updating " + key + " to " + resolvedSnapshotVersion);
             String property = MavenExpression.extractPropertyFromExpression(rawVersion);
             boolean rewritten = false;
+            boolean propertyAlreadyUpdated = false;
             if (property != null
                     && !property.startsWith("project.")
                     && !property.startsWith("pom.")
                     && !"version".equals(property)) {
+                propertyAlreadyUpdated =
+                        properties != null && resolvedSnapshotVersion.equals(properties.getProperty(property));
                 rewritten = rewritePropertyUsedInVersionExpression(
                         projectId,
                         key,
@@ -603,7 +606,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
                         result,
                         releaseDescriptor);
             }
-            if (!rewritten) {
+            if (!rewritten && !propertyAlreadyUpdated) {
                 artifact.setVersion(resolvedSnapshotVersion);
             }
         } else {
