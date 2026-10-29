@@ -563,6 +563,39 @@ class ScmCommitPreparationPhaseTest extends AbstractReleaseTestCase {
         verifyNoMoreInteractions(scmProviderMock);
     }
 
+    @Test
+    void testCommitWhenAllPomsMatchCheckModificationExcludes() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects();
+        MavenProject rootProject = ReleaseUtil.getRootProject(reactorProjects);
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setScmSourceUrl("scm-url");
+        builder.setWorkingDirectory(rootProject.getFile().getParentFile().getAbsolutePath());
+        builder.setScmReleaseLabel("release-label");
+        builder.setCheckModificationExcludes(Collections.singletonList("**/pom.xml"));
+
+        ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile(), rootProject.getFile());
+        ScmProvider scmProviderMock = mock(ScmProvider.class);
+        when(scmProviderMock.checkIn(
+                        isA(ScmRepository.class),
+                        argThat(new IsScmFileSetEquals(fileSet)),
+                        isNull(ScmVersion.class),
+                        eq(PREFIX + "release-label")))
+                .thenReturn(new CheckInScmResult(
+                        "...",
+                        Collections.singletonList(
+                                new ScmFile(rootProject.getFile().getPath(), ScmFileStatus.CHECKED_IN))));
+        scmManager.setScmProvider(scmProviderMock);
+
+        phaseScmCommitRelease.execute(
+                ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        verify(scmProviderMock)
+                .checkIn(
+                        isA(ScmRepository.class), argThat(new IsScmFileSetEquals(fileSet)),
+                        isNull(ScmVersion.class), eq(PREFIX + "release-label"));
+        verifyNoMoreInteractions(scmProviderMock);
+    }
+
     private List<MavenProject> createReactorProjects() throws Exception {
         String dir = "scm-commit/single-pom";
         return createReactorProjects(dir, dir, null);
