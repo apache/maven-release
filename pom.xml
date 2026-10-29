@@ -90,6 +90,7 @@ under the License.
 
   <properties>
     <scmVersion>2.2.1</scmVersion>
+    <minaSshdVersion>2.20.0</minaSshdVersion>
     <mavenVersion>3.9.16</mavenVersion>
     <resolverVersion>1.9.27</resolverVersion>
     <wagonVersion>3.5.3</wagonVersion>
@@ -197,6 +198,17 @@ under the License.
         <scope>test</scope>
       </dependency>
 
+      <!-- JGit 5.13 (via the maven-scm JGit provider) pulls in Apache MINA SSHD 2.7.0, which has known vulnerabilities -->
+      <dependency>
+        <groupId>org.apache.sshd</groupId>
+        <artifactId>sshd-sftp</artifactId>
+        <version>${minaSshdVersion}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.sshd</groupId>
+        <artifactId>sshd-osgi</artifactId>
+        <version>${minaSshdVersion}</version>
+      </dependency>
       <dependency>
         <groupId>org.apache.maven.scm</groupId>
         <artifactId>maven-scm-api</artifactId>
