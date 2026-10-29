@@ -118,6 +118,11 @@ public class DefaultReleaseManager implements ReleaseManager {
         // Create a config containing values from the session properties (ie command line properties with cli).
         ReleaseUtils.copyPropertiesToReleaseDescriptor(
                 prepareRequest.getUserProperties(), new ReleaseDescriptorBuilder() {
+                    public ReleaseDescriptorBuilder setPushChanges(boolean pushChanges) {
+                        builder.setPushChanges(pushChanges);
+                        return this;
+                    }
+
                     public ReleaseDescriptorBuilder addDevelopmentVersion(String key, String value) {
                         builder.addDevelopmentVersion(key, value);
                         return this;
