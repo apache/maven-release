@@ -89,6 +89,10 @@ under the License.
   </distributionManagement>
 
   <properties>
+    <!-- the JUnit version maven-parent 50 manages -->
+    <versions.junit>5.14.4</versions.junit>
+    <!-- the name maven-parent 50 and older read; remove with the parent update -->
+    <versions.junit5>${versions.junit}</versions.junit5>
     <scmVersion>2.2.1</scmVersion>
     <minaSshdVersion>2.20.1</minaSshdVersion>
     <mavenVersion>3.9.16</mavenVersion>
