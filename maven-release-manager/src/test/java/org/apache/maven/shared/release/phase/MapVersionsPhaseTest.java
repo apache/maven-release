@@ -2479,6 +2479,48 @@ class MapVersionsPhaseTest {
                 "Check development versions");
     }
 
+    @Test
+    void testMapReleaseVersionWhenAllPomsMatchCheckModificationExcludes() throws Exception {
+        MapReleaseVersionsPhase phase =
+                new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
+        MavenProject project = createProjectWithPomFile(
+                "artifactId", "1.2-SNAPSHOT", "src/test/resources/projects/scm-commit/multiple-poms/pom.xml");
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCheckModificationExcludes(Collections.singletonList("**/pom.xml"));
+        builder.setInteractive(false);
+
+        phase.execute(
+                ReleaseUtils.buildReleaseDescriptor(builder),
+                new DefaultReleaseEnvironment(),
+                Collections.singletonList(project));
+
+        assertEquals(
+                "1.2", ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+    }
+
+    @Test
+    void testMapAllModuleVersionsWhenPomsMatchCheckModificationExcludes() throws Exception {
+        MapReleaseVersionsPhase phase =
+                new MapReleaseVersionsPhase(scmRepositoryConfigurator, mockPrompter, versionPolicies);
+        List<MavenProject> reactorProjects = Arrays.asList(
+                createProjectWithPomFile(
+                        "artifactId", "1.2-SNAPSHOT", "src/test/resources/projects/scm-commit/multiple-poms/pom.xml"),
+                createProjectWithPomFile(
+                        "subproject1",
+                        "1.3-SNAPSHOT",
+                        "src/test/resources/projects/scm-commit/multiple-poms/subproject1/pom.xml"));
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setCheckModificationExcludes(Collections.singletonList("**/pom.xml"));
+        builder.setInteractive(false);
+
+        phase.execute(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        assertEquals(
+                "1.2", ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:artifactId"));
+        assertEquals(
+                "1.3", ReleaseUtils.buildReleaseDescriptor(builder).getProjectReleaseVersion("groupId:subproject1"));
+    }
+
     private static MavenProject createProject(String artifactId, String version) {
         Model model = new Model();
         model.setGroupId("groupId");
