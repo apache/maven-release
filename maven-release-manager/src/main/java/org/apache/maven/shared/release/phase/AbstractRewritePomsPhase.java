@@ -586,8 +586,29 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             }
         } else if (resolvedSnapshotVersion != null) {
             logInfo(result, "  Updating " + key + " to " + resolvedSnapshotVersion);
-
-            artifact.setVersion(resolvedSnapshotVersion);
+            String property = MavenExpression.extractPropertyFromExpression(rawVersion);
+            boolean rewritten = false;
+            boolean propertyAlreadyUpdated = false;
+            if (property != null
+                    && !property.startsWith("project.")
+                    && !property.startsWith("pom.")
+                    && !"version".equals(property)) {
+                propertyAlreadyUpdated =
+                        properties != null && resolvedSnapshotVersion.equals(properties.getProperty(property));
+                rewritten = rewritePropertyUsedInVersionExpression(
+                        projectId,
+                        key,
+                        rawVersion,
+                        resolvedSnapshotVersion,
+                        originalVersion,
+                        property,
+                        properties,
+                        result,
+                        releaseDescriptor);
+            }
+            if (!rewritten && !propertyAlreadyUpdated) {
+                artifact.setVersion(resolvedSnapshotVersion);
+            }
         } else {
             // artifact not related to current release
         }
