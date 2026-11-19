@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.scm.CommandParameters;
 import org.apache.maven.scm.ScmException;
 import org.apache.maven.scm.ScmFile;
 import org.apache.maven.scm.ScmFileSet;
@@ -102,7 +103,7 @@ class ScmTagPhaseTest extends AbstractReleaseTestCase {
         builder.setScmSignTags(true);
 
         ScmTagParameters expectedTagParameters = new ScmTagParameters("[my prefix] copy for tag release-label");
-        expectedTagParameters.setSign(true);
+        expectedTagParameters.setSignOption(CommandParameters.SignOption.FORCE_SIGN);
 
         ScmFileSet fileSet = new ScmFileSet(rootProject.getFile().getParentFile());
 
