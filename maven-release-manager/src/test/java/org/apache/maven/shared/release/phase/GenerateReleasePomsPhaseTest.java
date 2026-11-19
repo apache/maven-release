@@ -72,17 +72,6 @@ class GenerateReleasePomsPhaseTest extends AbstractRewritingReleasePhaseTestCase
         return phase;
     }
 
-    // TODO: MRELEASE-262
-    // @Test public void testRewriteInternalRangeDependency() throws Exception
-    // {
-    // List reactorProjects = createReactorProjects( "internal-snapshot-range-dependency" );
-    // ReleaseDescriptor config = createMappedConfiguration( reactorProjects );
-    //
-    // phase.execute( config, null, reactorProjects );
-    //
-    // compareFiles( reactorProjects );
-    // }
-
     @Test
     void testRewriteExternalRangeDependency() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects("external-range-dependency");
