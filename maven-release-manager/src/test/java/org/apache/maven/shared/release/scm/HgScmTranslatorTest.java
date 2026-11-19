@@ -18,7 +18,8 @@
  */
 package org.apache.maven.shared.release.scm;
 
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,21 +29,25 @@ class HgScmTranslatorTest {
     /**
      * @see org.apache.maven.model.Scm#getTag()
      */
-    @Test
-    void testResolveTag() {
-        assertEquals("HEAD", scmTranslator.resolveTag("HEAD"));
-        assertEquals("project-1.0", scmTranslator.resolveTag("project-1.0"));
+    @ParameterizedTest
+    @CsvSource({"HEAD, HEAD", "project-1.0, project-1.0"})
+    void testResolveTag(String tag, String expected) {
+        assertEquals(expected, scmTranslator.resolveTag(tag));
     }
 
-    @Test
-    void testTranslateTagUrl() {
-        assertEquals("url", scmTranslator.translateTagUrl("url", "tag", null));
-        assertEquals("url", scmTranslator.translateTagUrl("url", "tag", "tagBase"));
+    @ParameterizedTest
+    @CsvSource(
+            value = {"url, url, NULL", "url, url, tagBase"},
+            nullValues = "NULL")
+    void testTranslateTagUrl(String url, String expected, String tagBase) {
+        assertEquals(expected, scmTranslator.translateTagUrl(url, "tag", tagBase));
     }
 
-    @Test
-    void testTranslateBranchUrl() {
-        assertEquals("url", scmTranslator.translateBranchUrl("url", "branchName", null));
-        assertEquals("url", scmTranslator.translateBranchUrl("url", "branchName", "tagBase"));
+    @ParameterizedTest
+    @CsvSource(
+            value = {"url, url, NULL", "url, url, tagBase"},
+            nullValues = "NULL")
+    void testTranslateBranchUrl(String url, String expected, String tagBase) {
+        assertEquals(expected, scmTranslator.translateBranchUrl(url, "branchName", tagBase));
     }
 }
