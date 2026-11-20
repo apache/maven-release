@@ -254,6 +254,17 @@ under the License.
           </description>
         </field>
         <field>
+          <name>updateBuildOutputTimestamp</name>
+          <version>3.0.0+</version>
+          <type>boolean</type>
+          <defaultValue>true</defaultValue>
+          <description>
+            Whether to update the project.build.outputTimestamp property (Reproducible Builds) to the
+            release/build time while rewriting the POMs. When false, an existing
+            project.build.outputTimestamp is left unchanged, so a release can keep a pinned timestamp.
+          </description>
+        </field>
+        <field>
           <name>useReleaseProfile</name>
           <version>1.0.0+</version>
           <type>boolean</type>
@@ -853,6 +864,7 @@ under the License.
         ModelloReleaseDescriptor that = (ModelloReleaseDescriptor) obj;
 
         if ( updateDependencies               != that.isUpdateDependencies()               ||
+             updateBuildOutputTimestamp       != that.isUpdateBuildOutputTimestamp()       ||
              useReleaseProfile                != that.isUseReleaseProfile()                ||
              autoVersionSubmodules            != that.isAutoVersionSubmodules()            ||
              snapshotReleasePluginAllowed     != that.isSnapshotReleasePluginAllowed()     ||
@@ -1120,6 +1132,7 @@ under the License.
         result = 29 * result + java.util.Objects.hashCode( projectVersions );
         result = 29 * result + java.util.Objects.hashCode( originalScmInfo  );
         result = 29 * result + java.util.Objects.hashCode( updateDependencies );
+        result = 29 * result + java.util.Objects.hashCode( updateBuildOutputTimestamp );
         result = 29 * result + java.util.Objects.hashCode( useReleaseProfile );
         result = 29 * result + java.util.Objects.hashCode( autoVersionSubmodules );
         result = 29 * result + java.util.Objects.hashCode( snapshotReleasePluginAllowed );

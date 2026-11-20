@@ -86,6 +86,16 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
     private boolean updateDependencies;
 
     /**
+     * Whether to update the {@code project.build.outputTimestamp} property (Reproducible Builds) to the release/build
+     * time while rewriting the POMs. When set to {@code false}, an existing {@code project.build.outputTimestamp} is
+     * left unchanged, so the release keeps a pinned timestamp. Enabled by default, preserving the historical behaviour.
+     *
+     * @since 3.3.2
+     */
+    @Parameter(defaultValue = "true", property = "updateBuildOutputTimestamp")
+    private boolean updateBuildOutputTimestamp;
+
+    /**
      * Whether to automatically assign submodules the parent version. If set to false, the user will be prompted for the
      * version of each submodules.
      *
@@ -399,6 +409,7 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
         config.setCompletionGoals(completionGoals);
         config.setCommitByProject(commitByProject);
         config.setUpdateDependencies(updateDependencies);
+        config.setUpdateBuildOutputTimestamp(updateBuildOutputTimestamp);
         config.setAutoVersionSubmodules(autoVersionSubmodules);
         config.setAllowTimestampedSnapshots(allowTimestampedSnapshots);
         config.setSnapshotReleasePluginAllowed(allowReleasePluginSnapshot);

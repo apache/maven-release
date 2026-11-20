@@ -418,7 +418,7 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
 
         transformScm(project, modelTarget, releaseDescriptor, projectId, scmRepository, result);
 
-        if (properties != null) {
+        if (properties != null && releaseDescriptor.isUpdateBuildOutputTimestamp()) {
             rewriteBuildOutputTimestampProperty(properties, result);
         }
     }
