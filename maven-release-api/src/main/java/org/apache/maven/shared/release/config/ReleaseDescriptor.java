@@ -36,7 +36,7 @@ public interface ReleaseDescriptor {
     boolean isUpdateDependencies();
 
     /**
-     * Whether the {@code project.build.outputTimestamp} property (Reproducible Builds) is updated to the
+     * Get whether the {@code project.build.outputTimestamp} property (Reproducible Builds) is updated to the
      * release/build time while rewriting the POMs. When {@code false}, an existing
      * {@code project.build.outputTimestamp} is left unchanged, so a release can keep a pinned timestamp.
      *
