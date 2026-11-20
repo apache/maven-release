@@ -289,7 +289,7 @@ public class PropertiesReleaseDescriptorStore implements ReleaseDescriptorStore 
         }
 
         if ((config.getResolvedSnapshotDependencies() != null)
-                && (config.getResolvedSnapshotDependencies().size() > 0)) {
+                && !config.getResolvedSnapshotDependencies().isEmpty()) {
             processResolvedDependencies(properties, config.getResolvedSnapshotDependencies());
         }
 
