@@ -119,6 +119,16 @@ public class BranchReleaseMojo extends AbstractScmReadWriteReleaseMojo {
     private boolean updateDependencies;
 
     /**
+     * Whether to update the {@code project.build.outputTimestamp} property (Reproducible Builds) to the branch/build
+     * time while rewriting the POMs. When set to {@code false}, an existing {@code project.build.outputTimestamp} is
+     * left unchanged. Enabled by default, preserving the historical behaviour.
+     *
+     * @since 3.3.2
+     */
+    @Parameter(defaultValue = "true", property = "updateBuildOutputTimestamp")
+    private boolean updateBuildOutputTimestamp;
+
+    /**
      * Whether to automatically assign submodules the parent version.  If set to false,
      * the user will be prompted for the version of each submodules.
      *
@@ -261,6 +271,7 @@ public class BranchReleaseMojo extends AbstractScmReadWriteReleaseMojo {
         config.setAddSchema(addSchema);
         config.setScmUseEditMode(useEditMode);
         config.setUpdateDependencies(updateDependencies);
+        config.setUpdateBuildOutputTimestamp(updateBuildOutputTimestamp);
         config.setAutoVersionSubmodules(autoVersionSubmodules);
         config.setScmReleaseLabel(branchName);
         config.setScmBranchBase(branchBase);

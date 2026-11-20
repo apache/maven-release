@@ -36,6 +36,16 @@ public interface ReleaseDescriptor {
     boolean isUpdateDependencies();
 
     /**
+     * Get whether the {@code project.build.outputTimestamp} property (Reproducible Builds) is updated to the
+     * release/build time while rewriting the POMs. When {@code false}, an existing
+     * {@code project.build.outputTimestamp} is left unchanged, so a release can keep a pinned timestamp.
+     *
+     * @return {@code true} if {@code project.build.outputTimestamp} should be updated, {@code false} to leave it as is
+     * @since 3.3.2
+     */
+    boolean isUpdateBuildOutputTimestamp();
+
+    /**
      * Get whether to use the release profile that adds sources and javadocs to the released artifact, if appropriate.
      * If set to true, this will set the property "performRelease" to true.
      *
