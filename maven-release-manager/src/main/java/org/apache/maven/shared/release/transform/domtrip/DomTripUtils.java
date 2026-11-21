@@ -26,7 +26,7 @@ import eu.maveniverse.domtrip.Element;
 /**
  * Common DomTrip functions.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public final class DomTripUtils {
 

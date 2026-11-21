@@ -30,7 +30,7 @@ import org.apache.maven.model.DependencyManagement;
 /**
  * DomTrip implementation of poms DEPENDENCYMANAGEMENT element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripDependencyManagement extends DependencyManagement {
     private final Element dependencyManagement;

@@ -30,7 +30,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 /**
  * DomTrip implementation of poms reports PLUGIN element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripReportPlugin extends ReportPlugin implements MavenCoordinate {
     private final MavenCoordinate coordinate;

@@ -41,7 +41,7 @@ public interface ReleaseDescriptor {
      * {@code project.build.outputTimestamp} is left unchanged, so a release can keep a pinned timestamp.
      *
      * @return {@code true} if {@code project.build.outputTimestamp} should be updated, {@code false} to leave it as is
-     * @since 3.3.2
+     * @since 3.4.0
      */
     boolean isUpdateBuildOutputTimestamp();
 

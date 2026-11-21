@@ -27,7 +27,7 @@ import org.apache.maven.shared.release.transform.ModelETLRequest;
 /**
  * Factory for creating {@link DomTripModelETL} instances.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 @Singleton
 @Named(DomTripModelETLFactory.NAME)

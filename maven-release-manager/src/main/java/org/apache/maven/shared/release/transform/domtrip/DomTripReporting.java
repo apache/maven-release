@@ -31,7 +31,7 @@ import org.apache.maven.model.Reporting;
 /**
  * DomTrip implementation of poms REPORTING element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripReporting extends Reporting {
 

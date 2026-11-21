@@ -39,7 +39,7 @@ import org.codehaus.plexus.util.xml.XmlStreamWriter;
  * including comments, whitespace, attribute order, quote styles, and entity encoding.
  * This eliminates the need for the intro/outtro hacks required by the JDOM2 implementation.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripModelETL implements ModelETL {
     private ReleaseDescriptor releaseDescriptor;

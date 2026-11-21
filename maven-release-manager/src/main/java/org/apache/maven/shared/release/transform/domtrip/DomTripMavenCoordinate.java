@@ -25,7 +25,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 /**
  * DomTrip implementation of {@link MavenCoordinate}.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripMavenCoordinate implements MavenCoordinate {
     private final Element element;

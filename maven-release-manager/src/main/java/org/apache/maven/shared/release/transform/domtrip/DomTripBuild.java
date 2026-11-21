@@ -34,7 +34,7 @@ import org.apache.maven.model.Resource;
 /**
  * DomTrip implementation of poms BUILD element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripBuild extends Build {
     private final Element build;

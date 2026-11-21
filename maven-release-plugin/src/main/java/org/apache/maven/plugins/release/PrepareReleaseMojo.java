@@ -90,7 +90,7 @@ public class PrepareReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      * time while rewriting the POMs. When set to {@code false}, an existing {@code project.build.outputTimestamp} is
      * left unchanged, so the release keeps a pinned timestamp. Enabled by default, preserving the historical behaviour.
      *
-     * @since 3.3.2
+     * @since 3.4.0
      */
     @Parameter(defaultValue = "true", property = "updateBuildOutputTimestamp")
     private boolean updateBuildOutputTimestamp;

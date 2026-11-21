@@ -30,7 +30,7 @@ import org.apache.maven.model.Profile;
 /**
  * DomTrip implementation of poms PROFILE element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripProfile extends Profile {
     private final DomTripModelBase modelBase;

@@ -40,7 +40,7 @@ import org.apache.maven.shared.release.util.CiFriendlyVersion;
 /**
  * DomTrip implementation of poms PROJECT element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripModel extends Model {
     private final Element project;

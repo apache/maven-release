@@ -26,7 +26,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 /**
  * DomTrip implementation of poms EXTENSION element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripExtension extends Extension implements MavenCoordinate {
     private final MavenCoordinate coordinate;

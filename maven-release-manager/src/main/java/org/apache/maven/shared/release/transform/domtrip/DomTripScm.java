@@ -25,7 +25,7 @@ import org.apache.maven.model.Scm;
 /**
  * DomTrip implementation of poms SCM element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripScm extends Scm {
     private final Element scm;

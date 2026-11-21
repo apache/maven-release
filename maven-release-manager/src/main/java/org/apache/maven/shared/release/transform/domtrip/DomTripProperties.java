@@ -38,7 +38,7 @@ import eu.maveniverse.domtrip.Element;
  * Only few methods are properly implemented as the underlying data structure of
  * {@link java.util.Hashtable} is never populated.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripProperties extends Properties {
     private final Element properties;
