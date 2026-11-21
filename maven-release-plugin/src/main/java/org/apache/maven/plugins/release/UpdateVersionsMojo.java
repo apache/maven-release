@@ -79,6 +79,16 @@ public class UpdateVersionsMojo extends AbstractReleaseMojo {
     private boolean updateDependencies;
 
     /**
+     * Whether to update the {@code project.build.outputTimestamp} property (Reproducible Builds) to the build time
+     * while rewriting the POMs. When set to {@code false}, an existing {@code project.build.outputTimestamp} is left
+     * unchanged. Enabled by default, preserving the historical behaviour.
+     *
+     * @since 3.3.2
+     */
+    @Parameter(defaultValue = "true", property = "updateBuildOutputTimestamp")
+    private boolean updateBuildOutputTimestamp;
+
+    /**
      * Whether to use "edit" mode on the SCM, to lock the file for editing during SCM operations.
      *
      * @since 2.5.2
@@ -116,6 +126,7 @@ public class UpdateVersionsMojo extends AbstractReleaseMojo {
         config.setDefaultDevelopmentVersion(developmentVersion);
         config.setScmUseEditMode(useEditMode);
         config.setUpdateDependencies(updateDependencies);
+        config.setUpdateBuildOutputTimestamp(updateBuildOutputTimestamp);
         config.setProjectVersionPolicyId(projectVersionPolicyId);
         if (projectVersionPolicyConfig != null) {
             config.setProjectVersionPolicyConfig(projectVersionPolicyConfig.toString());

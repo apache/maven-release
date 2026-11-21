@@ -100,6 +100,23 @@ class RewritePomsForReleasePhaseTest extends AbstractEditModeRewritingReleasePha
     }
 
     @Test
+    void testRewriteKeepsBuildOutputTimestampWhenDisabled() throws Exception {
+        List<MavenProject> reactorProjects = createReactorProjects("basic-pom");
+        ReleaseDescriptorBuilder builder = createDescriptorFromBasicPom(reactorProjects, "basic-pom");
+        builder.addReleaseVersion("groupId:artifactId", NEXT_VERSION);
+        builder.setUpdateBuildOutputTimestamp(false);
+
+        phase.simulate(ReleaseUtils.buildReleaseDescriptor(builder), new DefaultReleaseEnvironment(), reactorProjects);
+
+        // basic-pom carries <project.build.outputTimestamp>initial</...>; by default it would be rewritten to the
+        // release time (see testSimulateRewrite's expected-pom). With the update disabled it must be left untouched.
+        String tag = readTestProjectFile("basic-pom/pom.xml.tag");
+        assertTrue(
+                tag.contains("<project.build.outputTimestamp>initial</project.build.outputTimestamp>"),
+                "project.build.outputTimestamp must be left unchanged when updateBuildOutputTimestamp=false");
+    }
+
+    @Test
     void testRewriteWithDashedComments() throws Exception {
         List<MavenProject> reactorProjects = createReactorProjects("basic-pom-with-dashes-in-comment");
         ReleaseDescriptorBuilder builder =

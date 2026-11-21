@@ -688,6 +688,18 @@ public class ReleaseDescriptorBuilder {
     }
 
     /**
+     * <p>setUpdateBuildOutputTimestamp.</p>
+     *
+     * @param updateBuildOutputTimestamp a boolean
+     * @return a {@link org.apache.maven.shared.release.config.ReleaseDescriptorBuilder} object
+     * @since 3.3.2
+     */
+    public ReleaseDescriptorBuilder setUpdateBuildOutputTimestamp(boolean updateBuildOutputTimestamp) {
+        releaseDescriptor.setUpdateBuildOutputTimestamp(updateBuildOutputTimestamp);
+        return this;
+    }
+
+    /**
      * <p>setUpdateVersionsToSnapshot.</p>
      *
      * @param updateVersionsToSnapshot a boolean
