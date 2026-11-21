@@ -33,7 +33,7 @@ import org.apache.maven.shared.release.transform.MavenCoordinate;
 /**
  * DomTrip implementation of poms PLUGIN element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripPlugin extends Plugin implements MavenCoordinate {
     private final Element plugin;

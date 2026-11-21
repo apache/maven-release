@@ -31,7 +31,7 @@ import org.apache.maven.model.PluginManagement;
 /**
  * DomTrip implementation of poms PLUGINMANAGEMENT element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripPluginManagement extends PluginManagement {
     private final Element pluginManagement;

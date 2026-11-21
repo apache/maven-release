@@ -123,7 +123,7 @@ public class BranchReleaseMojo extends AbstractScmReadWriteReleaseMojo {
      * time while rewriting the POMs. When set to {@code false}, an existing {@code project.build.outputTimestamp} is
      * left unchanged. Enabled by default, preserving the historical behaviour.
      *
-     * @since 3.3.2
+     * @since 3.4.0
      */
     @Parameter(defaultValue = "true", property = "updateBuildOutputTimestamp")
     private boolean updateBuildOutputTimestamp;

@@ -25,7 +25,7 @@ import org.apache.maven.model.Parent;
 /**
  * DomTrip implementation of poms PARENT element.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripParent extends Parent {
     private final Element parent;

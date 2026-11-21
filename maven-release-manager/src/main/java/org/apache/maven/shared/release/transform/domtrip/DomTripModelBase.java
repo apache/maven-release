@@ -31,7 +31,7 @@ import org.apache.maven.model.DependencyManagement;
 /**
  * DomTrip shared model base logic.
  *
- * @since 3.4
+ * @since 3.4.0
  */
 public class DomTripModelBase {
     private final Element modelBase;
