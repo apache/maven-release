@@ -27,6 +27,7 @@ under the License.
           <workingDirectory>${basedir}/target/checkout</workingDirectory>
           <useReleaseProfile>true</useReleaseProfile>
           <connectionUrl>scm-url</connectionUrl>
+          <tag>scm-tag</tag>
           <goals>deploy site-deploy</goals>
         </configuration>
       </plugin>
