@@ -46,6 +46,12 @@ This relies on `release.properties` being present from a previous release prepar
 mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -DconnectionUrl=scm:svn:https://svn.mycompany.com/repos/path/to/myproject/tags/myproject-1.2.3
 ```
 
+For SCMs like Git, where the tag cannot be part of the URL, give the tag with the `tag` parameter:
+
+```
+mvn org.apache.maven.plugins:maven-release-plugin:${project.version}:perform -DconnectionUrl=scm:git:https://git.mycompany.com/repos/path/to/myproject.git -Dtag=myproject-1.2.3
+```
+
 `release:perform` will fork a new Maven instance to build the checked-out project. This new Maven instance will use the same system configuration and Maven profiles used by the one running the `release:perform` goal. Since there&apos;s no pom.xml, you should use the fully qualified name of the goal to ensure the right version of the maven-release-plugin is used.
 
 It is possible to force some profiles to get enabled during release (for example to enable time-consuming tasks that are only relevant at release-time) by setting a comma separated list of profiles names in the `releaseProfiles` parameter. The goals and profiles required to release the project can then be configured in the POM:

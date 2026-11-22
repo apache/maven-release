@@ -244,6 +244,7 @@ class PerformReleaseMojoTest {
                 argument.getValue().getReleaseDescriptorBuilder().build();
         assertEquals("deploy site-deploy", releaseDescriptor.getPerformGoals());
         assertEquals("scm-url", releaseDescriptor.getScmSourceUrl());
+        assertEquals("scm-tag", releaseDescriptor.getScmReleaseLabel());
 
         verifyNoMoreInteractions(releaseManagerMock);
     }

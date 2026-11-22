@@ -74,6 +74,15 @@ public class PerformReleaseMojo extends AbstractScmReadReleaseMojo {
     private String connectionUrl;
 
     /**
+     * The SCM tag to checkout. Required for SCMs like Git, where the tag cannot be part of the
+     * <code>connectionUrl</code>. A tag stored in the <code>release.properties</code> file takes precedence.
+     *
+     * @since 3.4.0
+     */
+    @Parameter(property = "tag")
+    private String tag;
+
+    /**
      * Use a local checkout instead of doing a checkout from the upstream repository.
      * ATTENTION: This will only work with distributed SCMs which support the file:// protocol
      * like e.g. git, jgit or hg!
@@ -132,6 +141,9 @@ public class PerformReleaseMojo extends AbstractScmReadReleaseMojo {
             ReleaseDescriptorBuilder releaseDescriptor = createReleaseDescriptor();
             if (connectionUrl != null) {
                 releaseDescriptor.setScmSourceUrl(connectionUrl);
+            }
+            if (tag != null) {
+                releaseDescriptor.setScmReleaseLabel(tag);
             }
 
             releaseDescriptor.setLocalCheckout(localCheckout);
