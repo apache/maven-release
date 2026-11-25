@@ -20,9 +20,15 @@ package org.apache.maven.shared.release.util;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 
+import org.apache.maven.shared.release.config.ReleaseDescriptor;
+import org.apache.maven.shared.release.config.ReleaseDescriptorBuilder;
+import org.apache.maven.shared.release.config.ReleaseUtils;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -97,6 +103,46 @@ class ReleaseUtilTest {
 
         actual = ReleaseUtil.realignScmUrl(3, "scm:svn:http://svn.repo.com/flat-multi-module/trunk/root-project/1/2/");
         assertEquals("scm:svn:http://svn.repo.com/flat-multi-module/trunk/", actual);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+        "pom.xml, scm:git:https://example.com/team/repo.git",
+        "parent/pom.xml, scm:git:https://example.com/team/repo.git",
+        "parent/pom.xml, scm:git:https://example.com/team/repo.git/",
+        "parent/pom.xml, scm:git:ssh://git@example.com/team/repo.git",
+        "parent/pom.xml, scm:git:git@example.com:team/repo.git",
+        "parent/pom.xml, scm:git|git@example.com:team/repo.git",
+        "parent/pom.xml, scm:git:file:///repositories/repo.git",
+        "modules/parent/pom.xml, scm:git:https://example.com/team/repo.git"
+    })
+    void testBasedirAlignmentPreservesGitRepositoryUrl(String pomFileName, String scmUrl) throws Exception {
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setWorkingDirectory(
+                Paths.get("target", "checkout").toAbsolutePath().toString());
+        builder.setPomFileName(pomFileName);
+        builder.setScmSourceUrl(scmUrl);
+        ReleaseDescriptor descriptor = ReleaseUtils.buildReleaseDescriptor(builder);
+
+        ReleaseDescriptor aligned =
+                ReleaseUtil.createBasedirAlignedReleaseDescriptor(descriptor, Collections.emptyList());
+
+        assertEquals(scmUrl, aligned.getScmSourceUrl());
+        assertEquals(descriptor.getWorkingDirectory(), aligned.getWorkingDirectory());
+    }
+
+    @Test
+    void testBasedirAlignmentPreservesSubversionDirectorySemantics() throws Exception {
+        ReleaseDescriptorBuilder builder = new ReleaseDescriptorBuilder();
+        builder.setWorkingDirectory(
+                Paths.get("target", "checkout").toAbsolutePath().toString());
+        builder.setPomFileName(Paths.get("modules", "parent", "pom.xml").toString());
+        builder.setScmSourceUrl("scm:svn:https://example.com/repo/trunk/modules/parent");
+
+        ReleaseDescriptor aligned = ReleaseUtil.createBasedirAlignedReleaseDescriptor(
+                ReleaseUtils.buildReleaseDescriptor(builder), Collections.emptyList());
+
+        assertEquals("scm:svn:https://example.com/repo/trunk", aligned.getScmSourceUrl());
     }
 
     @Test
