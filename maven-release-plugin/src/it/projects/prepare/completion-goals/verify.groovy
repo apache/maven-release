@@ -17,59 +17,14 @@
  * under the License.
  */
 
-try
-{
-    File buildLog = new File( basedir, "build.log" );
+File buildLog = new File( basedir, "build.log" )
 
-    System.out.println( "Checking logs.." );
+println "Checking logs.."
 
-    StringBuffer data = new StringBuffer( 1024 );
-    BufferedReader reader = new BufferedReader( new FileReader( buildLog ) );
-    char[] buf = new char[1024];
-    int numRead = 0;
-    while ( ( numRead = reader.read( buf ) ) != -1 )
-    {
-        String readData = String.valueOf( buf, 0, numRead );
-        data.append( readData );
-        buf = new char[1024];
-    }
-    reader.close();
-    String contents = data.toString();
+String contents = buildLog.getText()
 
-    String expected = "Executing preparation goals";
-    int index = 0;
-
-    if( ( index = contents.indexOf( expected, index ) ) == -1 )
-    {
-        System.out.println( "FAILED!" );
-        return false;
-    }
-    expected = "Executing goals 'validate'";
-
-    if( ( index = contents.indexOf( expected, index ) ) == -1 )
-    {
-        System.out.println( "FAILED!" );
-        return false;
-    }
-    expected = "Executing completion goals";
-
-    if( ( index = contents.indexOf( expected, index ) ) == -1 )
-    {
-        System.out.println( "FAILED!" );
-        return false;
-    }
-    expected = "Executing goals 'verify'";
-
-    if( ( index = contents.indexOf( expected, index ) ) == -1 )
-    {
-        System.out.println( "FAILED!" );
-        return false;
-    }
+int index = 0
+for (String expected : ["Executing preparation goals", "Executing goals 'validate'", "Executing completion goals", "Executing goals 'verify'"]) {
+    index = contents.indexOf(expected, index)
+    assert index != -1 : "Expected log entry not found in order: " + expected
 }
-catch( Throwable t )
-{
-    t.printStackTrace();
-    return false;
-}
-
-return true;
