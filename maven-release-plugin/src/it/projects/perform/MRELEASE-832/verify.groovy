@@ -17,9 +17,9 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
-assert buildLog.text.contains( "[DEBUG]   (f) username = perform_username" )
-assert buildLog.text.contains( "[DEBUG]   (f) password = perform_password" )
+assert buildLog.text.contains("[DEBUG]   (f) username = perform_username")
+assert buildLog.text.contains("[DEBUG]   (f) password = perform_password")
 

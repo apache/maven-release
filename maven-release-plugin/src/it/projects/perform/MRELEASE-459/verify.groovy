@@ -17,11 +17,11 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 def addArgsExpr = /\Q[INFO]     with additional arguments: \E(?:-Dhttps.protocols=TLSv1.2 )?-P(.+)\Q-DperformRelease=true -f pom.xml\E/
-def matcher = ( buildLog.getText() =~ addArgsExpr )
+def matcher = (buildLog.getText() =~ addArgsExpr)
 
 // M2:  [INFO]     with additional arguments: -P custom-release -DperformRelease=true -f pom.xml
 // M3:  [INFO]     with additional arguments: -P it-repo,it-repo,custom-release -DperformRelease=true -f pom.xml
@@ -29,4 +29,4 @@ def matcher = ( buildLog.getText() =~ addArgsExpr )
 assert matcher.find()
 assert matcher.getCount() == 1
 
-assert matcher[0][1].contains( "custom-release" )
+assert matcher[0][1].contains("custom-release")

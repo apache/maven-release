@@ -21,10 +21,10 @@
 import groovy.xml.XmlSlurper
 
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
-def projectRoot = new XmlSlurper().parse( new File( basedir, "pom.xml.next" ) )
+def projectRoot = new XmlSlurper().parse(new File(basedir, "pom.xml.next"))
 
 assert projectRoot.dependencyManagement.dependencies.dependency[0].version.text() == "1.1-SNAPSHOT"
 assert projectRoot.dependencyManagement.dependencies.dependency[1].version.text() == "1.1-SNAPSHOT"

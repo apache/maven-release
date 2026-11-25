@@ -17,12 +17,12 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert 1 == buildLog.getText().count("[DEBUG]   (f) autoResolveSnapshots = dependencies")
 
-File pomXmlNext = new File( basedir, 'pom.xml.next' )
+File pomXmlNext = new File(basedir, 'pom.xml.next')
 assert pomXmlNext.exists()
 assert 1 == pomXmlNext.getText().count("<version>1.2.3</version>")
 assert 1 == pomXmlNext.getText().count("<version>2.3.4</version>")

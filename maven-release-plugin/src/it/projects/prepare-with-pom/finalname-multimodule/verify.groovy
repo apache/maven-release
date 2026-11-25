@@ -18,7 +18,7 @@
  * under the License.
  */
 
-File moduleReleasePom = new File( basedir, 'module/release-pom.xml' )
+File moduleReleasePom = new File(basedir, 'module/release-pom.xml')
 assert moduleReleasePom.exists()
 
 assert 1 == moduleReleasePom.getText().count("<finalName>FinalName</finalName>")

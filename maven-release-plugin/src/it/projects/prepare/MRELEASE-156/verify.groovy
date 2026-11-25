@@ -18,14 +18,12 @@
  * under the License.
  */
 
-File releaseProperties = new File( basedir, 'release.properties' )
+File releaseProperties = new File(basedir, 'release.properties')
 assert releaseProperties.exists()
 
-if ( System.properties[ 'os.name' ].toLowerCase().contains( 'windows' ) )
-{ 
-  assert 1 == releaseProperties.getText().count( "scm.commentPrefix=ABCD-1234\\r\\n" ) 
+if (System.properties['os.name'].toLowerCase().contains('windows')) {
+    assert 1 == releaseProperties.getText().count("scm.commentPrefix=ABCD-1234\\r\\n")
 }
-else
-{ 
-  assert 1 == releaseProperties.getText().count( "scm.commentPrefix=ABCD-1234\\n" )
+else {
+    assert 1 == releaseProperties.getText().count("scm.commentPrefix=ABCD-1234\\n")
 }

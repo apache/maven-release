@@ -17,7 +17,7 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, "build.log" )
+File buildLog = new File(basedir, "build.log")
 
 println "Checking logs.."
 

@@ -17,11 +17,11 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 def localCheckoutExpr = /\Q[INFO] The project would have a local check out to perform the release from /
-def matcher = ( buildLog.getText() =~ localCheckoutExpr )
+def matcher = (buildLog.getText() =~ localCheckoutExpr)
 
 assert matcher.find()
 assert matcher.getCount() == 1

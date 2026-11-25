@@ -19,7 +19,7 @@
 
 import groovy.xml.XmlSlurper
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert 1 == buildLog.getText().count("[INPUT:Version] #0.1.2-SNAPSHOT#")
@@ -45,16 +45,16 @@ assert 1 == buildLog.getText().count("[INPUT:Changeset[17].comment] #Commit  2#"
 assert 1 == buildLog.getText().count("[INPUT:Changeset[17].tag] #v1.2.3#")
 
 // The pom based version is NOT related to what the actual version will be.
-File pomXml = new File( basedir, 'pom.xml' )
+File pomXml = new File(basedir, 'pom.xml')
 assert pomXml.exists()
-assert new XmlSlurper().parse( pomXml ).version.text() == "0.1.2-SNAPSHOT"
+assert new XmlSlurper().parse(pomXml).version.text() == "0.1.2-SNAPSHOT"
 
 // The actual version is hard coded
-File pomXmlTag = new File( basedir, 'pom.xml.tag' )
+File pomXmlTag = new File(basedir, 'pom.xml.tag')
 assert pomXmlTag.exists()
-assert new XmlSlurper().parse( pomXmlTag ).version.text() == "1.2.3"
+assert new XmlSlurper().parse(pomXmlTag).version.text() == "1.2.3"
 
 // The next development version is hard coded
-File pomXmlNext = new File( basedir, 'pom.xml.next' )
+File pomXmlNext = new File(basedir, 'pom.xml.next')
 assert pomXmlNext.exists()
-assert new XmlSlurper().parse( pomXmlNext ).version.text() == "4.5.6-SNAPSHOT"
+assert new XmlSlurper().parse(pomXmlNext).version.text() == "4.5.6-SNAPSHOT"

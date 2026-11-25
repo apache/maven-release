@@ -17,10 +17,10 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
-assert buildLog.text.contains( "with additional arguments: -DskipTests -DaltDeploymentRepository=\"file://" )
+assert buildLog.text.contains("with additional arguments: -DskipTests -DaltDeploymentRepository=\"file://")
 
 
 
