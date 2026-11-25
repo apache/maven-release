@@ -17,50 +17,15 @@
  * under the License.
  */
 
-try
-{
-    File buildLog = new File( basedir, "build.log" );
+File buildLog = new File( basedir, "build.log" )
 
-    System.out.println( "Checking logs.." );
+println "Checking logs.."
 
-    StringBuffer data = new StringBuffer( 1024 );
-    BufferedReader reader = new BufferedReader( new FileReader( buildLog ) );
-    char[] buf = new char[1024];
-    int numRead = 0;
-    while ( ( numRead = reader.read( buf ) ) != -1 )
-    {
-        String readData = String.valueOf( buf, 0, numRead );
-        data.append( readData );
-        buf = new char[1024];
-    }
-    reader.close();
-    String contents = data.toString();
+String contents = buildLog.getText()
 
-    String expected1 = "Full run would tag working copy '" + basedir.getParentFile() + "'";
-    String expected2 = "  with label 'parent-project-1.0'";
+String expected1 = "Full run would tag working copy '" + basedir.getParentFile() + "'"
 
-    if( contents.indexOf( expected1 ) != -1 && contents.indexOf( expected2 ) != -1 )
-    {
-        return true;
-    }
-    expected2 = "module-b with label 'module-b-1.0'";
-
-    if( contents.indexOf( expected2 ) != -1 )
-    {
-        return true;
-    }
-    expected2 = "module-a with label 'module-a-1.0'";
-
-    if( contents.indexOf( expected2 ) != -1 )
-    {
-        return true;
-    }
-}
-catch( Throwable t )
-{
-    t.printStackTrace();
-    return false;
-}
-
-System.out.println( "FAILED!" );
-return false;
+boolean found = (contents.contains(expected1) && contents.contains("  with label 'parent-project-1.0'")) ||
+    contents.contains("module-b with label 'module-b-1.0'") ||
+    contents.contains("module-a with label 'module-a-1.0'")
+assert found : "No expected tag label found in build.log"

@@ -22,37 +22,7 @@ assert buildLog.exists()
 
 assert buildLog.getText().contains("[INFO] Full run would be commit 1 files with message: '[maven-release-plugin] prepare branch test-1.0.x'")
 
-try
-{
-    System.out.println( "Checking logs..." );
+println "Checking logs..."
 
-    StringBuffer data = new StringBuffer( 1024 );
-    BufferedReader reader = new BufferedReader( new FileReader( buildLog ) );
-    char[] buf = new char[1024];
-    int numRead = 0;
-    while ( ( numRead = reader.read( buf ) ) != -1 )
-    {
-        String readData = String.valueOf( buf, 0, numRead );
-        data.append( readData );
-        buf = new char[1024];
-    }
-    reader.close();
-    String contents = data.toString();
-
-    String one_expected = "Checking in modified POMs";
-
-    int pos = contents.indexOf( one_expected );
-
-    if( contents.indexOf( one_expected, pos ) == -1 )
-    {
-        return true;
-    }
-}
-catch( Throwable t )
-{
-    t.printStackTrace();
-    return false;
-}
-
-System.out.println( "FAILED!" );
-return false;
+String contents = buildLog.getText()
+assert !contents.contains("Checking in modified POMs")
