@@ -20,13 +20,13 @@
 
 import groovy.xml.XmlSlurper
 
-def project = new XmlSlurper().parse( new File( basedir, "pom.xml" ) )
+def project = new XmlSlurper().parse(new File(basedir, "pom.xml"))
 assert project.version.text() == "1.0-SNAPSHOT"
 
-def projectTag = new XmlSlurper().parse( new File( basedir, "pom.xml.tag" ) )
+def projectTag = new XmlSlurper().parse(new File(basedir, "pom.xml.tag"))
 assert projectTag.version.text() == "1.0"
 
-def projectNext = new XmlSlurper().parse( new File( basedir, "pom.xml.next" ) )
+def projectNext = new XmlSlurper().parse(new File(basedir, "pom.xml.next"))
 assert projectNext.version.text() == "1.0-SNAPSHOT"
 
 return true

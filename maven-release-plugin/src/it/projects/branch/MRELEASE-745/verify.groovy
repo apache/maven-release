@@ -18,7 +18,7 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert 1 == buildLog.getText().count("[INFO] Full run would not commit changes, because suppressCommitBeforeTagOrBranch is set.")

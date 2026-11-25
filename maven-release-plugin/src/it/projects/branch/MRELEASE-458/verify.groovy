@@ -17,7 +17,7 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert buildLog.getText().contains("[INFO] Full run would be commit 1 files with message: '[maven-release-plugin] prepare branch test-1.0.x'")

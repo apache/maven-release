@@ -17,8 +17,8 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
-assert buildLog.text.contains( "[INFO]  - PrepProfA (source: ")
-assert buildLog.text.contains( "[INFO]  - PrepProfB (source: ")
+assert buildLog.text.contains("[INFO]  - PrepProfA (source: ")
+assert buildLog.text.contains("[INFO]  - PrepProfB (source: ")

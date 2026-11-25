@@ -18,7 +18,7 @@
  * under the License.
  */
 
-File releasePom = new File( basedir, 'release-pom.xml' )
+File releasePom = new File(basedir, 'release-pom.xml')
 assert releasePom.exists()
 
 assert 1 == releasePom.getText().count("<finalName>org.apache.maven.plugin.release.its.mrelease-808-1.0</finalName>")

@@ -18,7 +18,7 @@
  * under the License.
  */
 
-File releaseProperties = new File( basedir, 'release.properties' )
+File releaseProperties = new File(basedir, 'release.properties')
 assert releaseProperties.exists()
 
 assert 1 == releaseProperties.getText().count("project.dev.org.apache.maven.plugin.release.its\\:mrelease-483=1.0-SNAPSHOT")

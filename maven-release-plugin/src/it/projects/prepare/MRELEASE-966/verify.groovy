@@ -18,7 +18,7 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert 2 == buildLog.getText().count("[INFO] Building mrelease-966-my-pom 1.0-SNAPSHOT")

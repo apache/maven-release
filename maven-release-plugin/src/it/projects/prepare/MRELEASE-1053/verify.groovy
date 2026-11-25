@@ -20,14 +20,14 @@
 import groovy.xml.XmlSlurper
 
 // check parent project
-def project = new XmlSlurper().parse( new File( new File ( basedir, 'module-parent' ), 'pom.xml.next' ) )
+def project = new XmlSlurper().parse(new File(new File(basedir, 'module-parent'), 'pom.xml.next'))
 assert project.version.text() == '1.1-SNAPSHOT'
 assert project.scm.url.text() == 'http://localhost/myscm/${project.scm.tag}'
 
 // check execution root project
-project = new XmlSlurper().parse( new File ( basedir, 'pom.xml.next' ) )
+project = new XmlSlurper().parse(new File(basedir, 'pom.xml.next'))
 assert 0 == project.scm.size() // scm element must not exist in reactor root
 
 // check module-a project
-project = new XmlSlurper().parse( new File( new File ( basedir, 'module-a' ), 'pom.xml.next' ) )
+project = new XmlSlurper().parse(new File(new File(basedir, 'module-a'), 'pom.xml.next'))
 assert 0 == project.scm.size() // scm element must not exist in module

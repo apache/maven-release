@@ -19,9 +19,9 @@
 
 import groovy.xml.XmlSlurper
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
-assert buildLog.text.contains( "Checking out: " + new File( basedir, 'tags/gh-1040-1.0' ).absolutePath )
+assert buildLog.text.contains("Checking out: " + new File(basedir, 'tags/gh-1040-1.0').absolutePath)
 
-def pom = new XmlSlurper().parse( new File( basedir, 'target/checkout/pom.xml' ) )
+def pom = new XmlSlurper().parse(new File(basedir, 'target/checkout/pom.xml'))
 assert pom.version.text() == '1.0'

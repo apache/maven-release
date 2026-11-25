@@ -18,7 +18,7 @@
  * under the License.
  */
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert 1 == buildLog.getText().count("[DEBUG] Specified POM file is not named 'pom.xml'. Using the '-f' command-line option to accommodate non-standard filename...")

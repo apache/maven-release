@@ -19,13 +19,13 @@
 
 import groovy.xml.XmlSlurper
 
-def project = new XmlSlurper().parse( new File( basedir, "pom.xml" ) )
+def project = new XmlSlurper().parse(new File(basedir, "pom.xml"))
 assert project['@xsi:schemaLocation'] == "http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd"
 
-def projectTag = new XmlSlurper().parse( new File( basedir, "pom.xml.tag" ) )
+def projectTag = new XmlSlurper().parse(new File(basedir, "pom.xml.tag"))
 assert projectTag['@xsi:schemaLocation'] == "http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd"
 
-def projectNext = new XmlSlurper().parse( new File( basedir, "pom.xml.next" ) )
+def projectNext = new XmlSlurper().parse(new File(basedir, "pom.xml.next"))
 assert projectNext['@xsi:schemaLocation'] == "http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd"
 
 return true

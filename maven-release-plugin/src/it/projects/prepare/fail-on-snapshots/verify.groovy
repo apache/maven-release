@@ -20,13 +20,19 @@
 
 def buildLog = new File(basedir,'build.log')
 def nonReleased = buildLog.readLines()
-                          .dropWhile{ !it.endsWith("Can't release project due to non released dependencies :") }
-                          .drop(1)
-                          .collect{ (it - '[ERROR]').trim() }
-                          .takeWhile{ !it.startsWith("in project 'fail-on-snapshot'") } as Set
+        .dropWhile{
+            !it.endsWith("Can't release project due to non released dependencies :")
+        }
+        .drop(1)
+        .collect{ (it - '[ERROR]').trim() }
+        .takeWhile{
+            !it.startsWith("in project 'fail-on-snapshot'")
+        } as Set
 
-assert nonReleased == ['test:dependency:jar:1.0-SNAPSHOT:compile',
-                       'test:dependency.test:jar:1.0-SNAPSHOT:test',
-                       'test:extension:jar:1.0-SNAPSHOT',
-                       'test:plugin:maven-plugin:1.0-SNAPSHOT:runtime',                                 
-                       'test:report:maven-plugin:1.0-SNAPSHOT:runtime'] as Set
+assert nonReleased == [
+    'test:dependency:jar:1.0-SNAPSHOT:compile',
+    'test:dependency.test:jar:1.0-SNAPSHOT:test',
+    'test:extension:jar:1.0-SNAPSHOT',
+    'test:plugin:maven-plugin:1.0-SNAPSHOT:runtime',
+    'test:report:maven-plugin:1.0-SNAPSHOT:runtime'
+] as Set

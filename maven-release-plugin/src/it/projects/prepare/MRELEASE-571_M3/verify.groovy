@@ -17,11 +17,11 @@
  * under the License.
  */
 
-File releaseProperties = new File( basedir, 'release.properties' )
+File releaseProperties = new File(basedir, 'release.properties')
 assert releaseProperties.exists()
 
 def String execArgs = releaseProperties.filterLine { line ->
-   line.startsWith( 'exec.activateProfiles=' )
+    line.startsWith('exec.activateProfiles=')
 }
 
-assert execArgs.contains( "mrelease571" )
+assert execArgs.contains("mrelease571")

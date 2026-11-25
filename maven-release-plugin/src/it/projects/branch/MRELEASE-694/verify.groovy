@@ -20,15 +20,15 @@
 
 import groovy.xml.XmlSlurper
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert buildLog.getText().contains("[INFO] Full run would be commit 1 files with message: '[maven-release-plugin] prepare branch RELEASE-2.6.0'")
 
-def projectBranch = new XmlSlurper().parse( new File( basedir, "pom.xml.branch" ) )
+def projectBranch = new XmlSlurper().parse(new File(basedir, "pom.xml.branch"))
 assert projectBranch.version.text() == "2.6.0-BRANCH-SNAPSHOT"
 
-def projectNext = new XmlSlurper().parse( new File( basedir, "pom.xml.next" ) )
+def projectNext = new XmlSlurper().parse(new File(basedir, "pom.xml.next"))
 assert projectNext.version.text() == "2.6.1-DEV-SNAPSHOT"
 
 return true

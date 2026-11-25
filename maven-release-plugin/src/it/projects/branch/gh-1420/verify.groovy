@@ -19,26 +19,26 @@
 
 import groovy.xml.XmlSlurper
 
-def pom = new XmlSlurper().parse( new File( basedir, 'pom.xml.branch' ) )
+def pom = new XmlSlurper().parse(new File(basedir, 'pom.xml.branch'))
 assert pom.scm.tag.text() == 'gh-1420-1.0-SNAPSHOT'
 assert pom.version.text() == '1.0-SNAPSHOT'
 
-def pomNext = new XmlSlurper().parse( new File( basedir, 'pom.xml.next' ) )
+def pomNext = new XmlSlurper().parse(new File(basedir, 'pom.xml.next'))
 assert pomNext.scm.tag.text() == 'HEAD'
 assert pomNext.version.text() == '1.1-SNAPSHOT'
 
-def pom1 = new XmlSlurper().parse( new File( basedir, 'module1/pom.xml.branch' ) )
+def pom1 = new XmlSlurper().parse(new File(basedir, 'module1/pom.xml.branch'))
 assert pom1.scm.size() == 0
 assert pom1.parent.version.text() == '1.0-SNAPSHOT'
 
-def pom1Next = new XmlSlurper().parse( new File( basedir, 'module1/pom.xml.next' ) )
+def pom1Next = new XmlSlurper().parse(new File(basedir, 'module1/pom.xml.next'))
 assert pom1Next.scm.size() == 0
 assert pom1Next.parent.version.text() == '1.1-SNAPSHOT'
 
-def pom2 = new XmlSlurper().parse( new File( basedir, 'module1/module2/pom.xml.branch' ) )
+def pom2 = new XmlSlurper().parse(new File(basedir, 'module1/module2/pom.xml.branch'))
 assert pom2.scm.size() == 0
 assert pom2.parent.version.text() == '1.0-SNAPSHOT'
 
-def pom2Next = new XmlSlurper().parse( new File( basedir, 'module1/module2/pom.xml.next' ) )
+def pom2Next = new XmlSlurper().parse(new File(basedir, 'module1/module2/pom.xml.next'))
 assert pom2Next.scm.size() == 0
 assert pom2Next.parent.version.text() == '1.1-SNAPSHOT'

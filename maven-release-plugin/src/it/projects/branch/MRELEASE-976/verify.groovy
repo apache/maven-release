@@ -20,14 +20,14 @@
 
 import groovy.xml.XmlSlurper
 
-def project = new XmlSlurper().parse( new File( basedir, "pom.xml" ) )
+def project = new XmlSlurper().parse(new File(basedir, "pom.xml"))
 assert project.version.text() == "1.0-SNAPSHOT"
 
 // verifies that the version is unchanged because of the custom policy: 1.0-SNAPSHOT -> 1.0-SNAPSHOT
-def projectNext = new XmlSlurper().parse( new File( basedir, "pom.xml.next" ) )
+def projectNext = new XmlSlurper().parse(new File(basedir, "pom.xml.next"))
 assert projectNext.version.text() == "1.0-SNAPSHOT"
 
-File buildLog = new File( basedir, 'build.log' )
+File buildLog = new File(basedir, 'build.log')
 assert buildLog.exists()
 
 assert buildLog.getText().contains("[INFO] Full run would be commit 1 files with message: '[maven-release-plugin] prepare branch branch-mrelease-976'")
