@@ -19,14 +19,11 @@
 package org.apache.maven.shared.release.phase;
 
 import java.io.File;
-import java.nio.file.FileSystems;
-import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -96,8 +93,6 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
 
     private long startTime = -1 * 1000;
 
-    private final Set<String> exclusionPatterns = new HashSet<>();
-
     protected AbstractRewritePomsPhase(
             ScmRepositoryConfigurator scmRepositoryConfigurator,
             Map<String, ModelETLFactory> modelETLFactories,
@@ -148,12 +143,6 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             List<MavenProject> reactorProjects)
             throws ReleaseExecutionException, ReleaseFailureException {
         ReleaseResult result = new ReleaseResult();
-
-        List<String> additionalExcludes = releaseDescriptor.getCheckModificationExcludes();
-
-        if (additionalExcludes != null) {
-            exclusionPatterns.addAll(additionalExcludes);
-        }
 
         transform(releaseDescriptor, releaseEnvironment, reactorProjects, false, result);
 
@@ -208,12 +197,11 @@ public abstract class AbstractRewritePomsPhase extends AbstractReleasePhase impl
             throws ReleaseExecutionException, ReleaseFailureException {
         result.setStartTime((startTime >= 0) ? startTime : System.currentTimeMillis());
 
+        Set<MavenProject> excludedProjects = ProjectExclusionUtil.getExcludedProjects(
+                reactorProjects, releaseDescriptor.getCheckModificationExcludes());
         for (MavenProject project : reactorProjects) {
             final String path = project.getFile().getPath();
-            if (exclusionPatterns.stream()
-                    .noneMatch(exclusionPattern -> FileSystems.getDefault()
-                            .getPathMatcher("glob:" + exclusionPattern)
-                            .matches(Paths.get(path)))) {
+            if (!excludedProjects.contains(project)) {
                 logDebug(
                         result,
                         "Transforming " + path + ' '
